@@ -32907,9 +32907,12 @@ def write_portal_page():
       + '<div class="stat g"><b>' + (d.kept || 0) + '</b><span>still using it</span></div>'
       + '<div class="stat g"><b>' + (d.days3 || 0) + '</b><span>used on 3+ days</span></div>'
       + '<div class="stat"><b>' + (d.once || 0) + '</b><span>ran once only</span></div>'
-      + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div></div>';
+      + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div>'
+      // 10 Oct 2026: clicks on the download in the email fix pages' box (the live view's /~dl/t1/)
+      + '<div class="stat"><b>' + ((d.downloads || {}).d7 || 0) + '</b><span>download clicks this week</span></div></div>';
     h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> \\u00b7 used this week: <b>' + d.active7
-      + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \\u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b></p>';
+      + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \\u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b>'
+      + ' \\u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>';
     var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
     h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
       + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';

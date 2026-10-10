@@ -154,6 +154,11 @@ _VOLATILE = [
     # 10 Oct 2026: the tips-by-email sign-up box under every advice article (tips_by_email.BOX) is a site-wide sign-up,
     # not the article's content - adding it, or rewording it, must not re-date ~95 articles. An ADDITION, so no re-base.
     (_cdre.compile(r'\s*<!--tbe-->.*?<!--/tbe-->', _cdre.S), ''),
+    # 10 Oct 2026: the Techies One Mail box on the email fix pages (techies_one_boxes.py) links the newest installer and
+    # names its version and size. A new release is not new advice: it must not re-date those pages. (The box ITSELF is
+    # content - adding it re-dates them once, honestly.)
+    (_cdre.compile(r'TechiesOneMail-Setup-[\d.]+\.exe'), 'TechiesOneMail-Setup-X.exe'),
+    (_cdre.compile(r'<span class="t1v">[^<]*</span>'), '<span class="t1v"></span>'),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
@@ -1060,6 +1065,8 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};'
     'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;'
     'var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");'
+    # 10 Oct 2026: a Techies One Mail download (the box on the email fix pages) is /~dl/t1/, shown on its installs card
+    'else if(/TechiesOneMail-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/t1/");'
     'else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);'
     'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
     '}catch(e){}})();</script>\n')
@@ -8124,12 +8131,19 @@ def _human_date(iso):
     except Exception:
         return iso
 
+# 10 Oct 2026: changes made to a finished page, (slug, html) -> html, before its date is decided. A module that needs to
+# put something at a fixed place on pages built by other builders adds itself here (techies_one_boxes.py).
+PAGE_FILTERS = []
+
+
 def write_all():
     written = []
     for p in PAGES:
         slug = p["slug"]
         schema_json = p["schema"](slug)
         html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"), robots=p.get("robots"))
+        for _flt in PAGE_FILTERS:
+            html = _flt(slug, html)
         # Decide whether the page changed BEFORE stamping the date, then stamp the date
         # it genuinely last changed. The hash ignores the dateModified value, so this
         # ordering is safe; the old order wrote TODAY into every page on every build.
