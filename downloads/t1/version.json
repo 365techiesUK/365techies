@@ -1,7 +1,7 @@
 {
- "ver": "0.13.0",
- "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.0.exe",
- "sha256": "ff36a28b8eab1466c465823229ae169e55ecec7bd6deb1ab8e27d48318724e50",
- "size": 17792136,
- "notes": "The first signed release of Techies One Mail: your email, calendar and address book on your Windows PC, with scam warnings and a Clean up tool. Signed by 365 Techies Ltd."
+ "ver": "0.13.1",
+ "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.1.exe",
+ "sha256": "91dc5ac64a42ca9ef78bbf3197f72c789fce0a1b9d61d9033bda666f4a1c49ce",
+ "size": 17801880,
+ "notes": "After you add your first email address, Techies One now gets going straight away: it checks for new email and shows that it's connected, without needing to be reopened. Signed by 365 Techies Ltd."
 }
