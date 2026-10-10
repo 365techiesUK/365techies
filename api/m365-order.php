@@ -230,12 +230,15 @@ if ($do === 'pax8order') {
     foreach ((array)($jo['lineItems'] ?? array()) as $li) if (!empty($li['subscriptionId'])) $subs[] = (string)$li['subscriptionId'];
     $res = m365_update($id, function (&$r) use ($order, $subs, $who, $prefix) {
         $r['pax8'] = array_merge($r['pax8'], array('state' => 'ordered', 'order' => $order, 'subs' => $subs, 'at' => time(), 'by' => $who, 'why' => '', 'stage' => ''));
-        m365_add_log($r, $who, 'Ordered in Pax8 (order ' . $order . ', ' . $prefix . '.onmicrosoft.com)');
+        m365_add_log($r, $who, 'Ordered in Pax8: ' . m365_licences($r) . ' (order ' . $order . ', ' . $prefix . '.onmicrosoft.com)');
         return '';
     });
     m365_log('pax8 ' . $id . ' ORDERED ' . $order . ' by ' . $who);
     $r2 = $res['row'] ?? $row;
-    m365_note(':shopping_trolley: Microsoft 365 order ' . m365_tag($r2) . ' placed in Pax8 by ' . mm_esc($who) . ' (Pax8 order ' . mm_esc($order) . '). Next: start the monthly Direct Debit, then set up their users. <' . m365_portal_link($id) . '|Open it>');
+    $hand = array_values((array)($r2['by_hand'] ?? array()));
+    m365_note(':shopping_trolley: ' . m365_kind($r2) . ' ' . m365_tag($r2) . ': ' . mm_esc(m365_licences($r2)) . ' placed in Pax8 by ' . mm_esc($who) . ' (Pax8 order ' . mm_esc($order) . ').'
+        . ($hand ? ' Also order by hand in Pax8: ' . mm_esc(implode(' and ', $hand)) . '.' : '')
+        . ' Next: start the monthly Direct Debit, then set up their users' . (m365_is_care($r2) ? ', PC Manager on each computer and their 6-weekly service' : '') . '. <' . m365_portal_link($id) . '|Open it>');
     mo_out(array('ok' => true, 'order' => m365_staff($r2)));
 }
 
@@ -251,7 +254,7 @@ if ($do === 'startpay') {
         m365_add_log($r, $who, 'Started the monthly Direct Debit: ' . m365_money($work['pay']['amount']) . ($work['pay']['first'] !== '' ? ', first ' . $work['pay']['first'] : ''));
         return '';
     });
-    m365_note(':moneybag: Microsoft 365 order ' . m365_tag($work) . ': monthly Direct Debit of ' . m365_money($work['pay']['amount']) . ' started by ' . mm_esc($who)
+    m365_note(':moneybag: ' . m365_kind($work) . ' ' . m365_tag($work) . ': monthly Direct Debit of ' . m365_money($work['pay']['amount']) . ' started by ' . mm_esc($who)
         . ($work['pay']['first'] !== '' ? ', first payment ' . $work['pay']['first'] : '') . '.');
     mo_out(array('ok' => true, 'order' => m365_staff($res['row'])));
 }

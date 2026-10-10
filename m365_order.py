@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-"""/order-microsoft-365/ - order Microsoft 365 licences on our own site (9 Oct 2026, owner: "yes build it with option B").
+"""/order-microsoft-365/ - order Business Care (our support + Microsoft 365) on our own site.
 
-The page collects the plan, how many people, the business, who signs, Microsoft's Customer Agreement and the 12-month
-term, then hands the customer to GoCardless's own page for the Direct Debit. The order waits in the staff portal for a
-person to press "Order in Pax8" (api/m365-order.php + api/m365-order-lib.php). Products and prices come from
-software_offers.py - the one place they live. build_extra.py calls order_page() and the plans file writer.
+9 Oct 2026 (owner: "yes build it with option B"): the page collects the plan, how many people, the business, who signs,
+Microsoft's Customer Agreement and the 12-month term, then hands the customer to GoCardless's own page for the Direct
+Debit. The order waits in the staff portal for a person to press "Order in Pax8" (api/m365-order.php + -lib.php).
+10 Oct 2026 (owner: "package it with our support packages and don't sell it by itself", then "go with £37/£48 and option
+a"): it sells the two Business Care bundles only. Prices come from software_offers.py BUNDLES - the one place they live.
+build_extra.py calls order_page_content() and the plans file writer.
 """
 import json
 import software_offers as so
@@ -14,11 +16,16 @@ FAQS = [
      "No. The Direct Debit is set up on GoCardless&rsquo;s own secure page, and your bank details stay with them. "
      "Payments are covered by the Direct Debit Guarantee, and GoCardless emails you the date and amount before each one."),
     ("When do you take the first payment?",
-     "Only once your licences are in place. We check your order, place it with Microsoft within one working day and then "
-     "start the monthly Direct Debit. GoCardless tells you the date before anything is taken."),
+     "Once your Microsoft 365 is in place. We check your order, place it with Microsoft within one working day, set you up, and "
+     "then start the monthly Direct Debit. GoCardless tells you the date before anything is taken."),
     ("Can I cancel?",
-     "Microsoft lets licences be cancelled or reduced within 7 days of the order. After that they run until the end of the "
-     "12 months, then renew for another year unless you tell us before the renewal date. You can add people at any time."),
+     "The support is month to month. The Microsoft 365 licences inside run for Microsoft&rsquo;s 12-month year: Microsoft lets them "
+     "be cancelled or reduced within 7 days of the order, and if you leave Business Care after that, the licences are charged to "
+     "the end of their year. They renew each year unless you tell us before the renewal date. You can add people at any time."),
+    ("Can I buy just the Microsoft 365 licences?",
+     "Microsoft 365 comes with our support, because that is where we can really look after it for you. Already on one of our "
+     "business support plans? We can add licences to it &mdash; <a href=\"/which-microsoft-365-plan/#software\">see the prices</a> "
+     "or ring 01202 775566."),
     ("We already have Microsoft 365. Can we move it to you?",
      "Yes, without starting again. Choose &ldquo;Already on Microsoft 365&rdquo; and we&rsquo;ll ring you. Your Microsoft 365 "
      "admin approves one link from Microsoft that lets us look after it, and your email, files and Teams stay exactly where they are."),
@@ -31,22 +38,24 @@ FAQS = [
 def _plans_json():
     out = {}
     for k in so.ORDERABLE:
-        p = so.PRODUCTS[k]
-        out[k] = {"name": so._plain(p["name"]), "price": p["price"]}
+        b = so.BUNDLES[k]
+        out[k] = {"name": b["name"], "price": b["price"], "pc": so.SUPPORT_FROM, "licence": so._plain(so.PRODUCTS[b["licence"]]["name"])}
     return json.dumps(out, ensure_ascii=False)
 
 
 def _plan_cards():
     cells = []
     for i, k in enumerate(so.ORDERABLE):
-        p = so.PRODUCTS[k]
+        b = so.BUNDLES[k]
+        items = "".join(f"<li>{x}</li>" for x in b["parts"] + b["extras"])
         cells.append(
             f'''            <label class="moplan">
               <input type="radio" name="plan" value="{k}"{' checked' if i == 0 else ''} />
               <span class="moplan__box">
-                <span class="moplan__name">{p["name"]}</span>
-                <span class="moplan__price"><b>&pound;{p["price"]}</b> {p["per"]}</span>
-                <span class="moplan__what">{p["what"]}</span>
+                <span class="moplan__name">{b["name"]}</span>
+                <span class="moplan__price"><b>&pound;{b["price"]}</b> per person a month, one computer each</span>
+                <span class="moplan__what">{b["desc"]}</span>
+                <ul class="moplan__list">{items}</ul>
               </span>
             </label>''')
     return "\n".join(cells)
@@ -60,7 +69,8 @@ _CSS = r'''
       .moform legend{font-family:var(--font-display);font-weight:600;font-size:1.25rem;padding:0 .4rem}
       .moform .mohint{margin:.1rem 0 1rem;color:var(--muted);font-size:.93rem;line-height:1.55}
       .moform .mohint a,.modone a,.monote a{color:var(--cyan-soft)}
-      .moplans{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.75rem}
+      .moplans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.75rem}
+      .moplan__list{margin:.2rem 0 0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.3rem;font-size:.88rem;line-height:1.45}
       .moplan{display:block;cursor:pointer;position:relative}
       .moplan input{position:absolute;opacity:0;width:1px;height:1px}
       .moplan__box{display:flex;flex-direction:column;gap:.35rem;height:100%;padding:.95rem 1rem;border:1px solid var(--line);border-radius:var(--r-lg);background:rgba(255,255,255,.025);transition:border-color .15s,background .15s}
@@ -124,17 +134,23 @@ _JS = r'''
   }
   function plan() { var r = form.querySelector('input[name="plan"]:checked'); return r ? r.value : ''; }
   function qty() { var n = parseInt(el('moqty').value, 10); return isNaN(n) ? 0 : n; }
+  function pcs() { var v = String(el('mopcs').value || '').trim(); if (v === '') return 0; var n = parseInt(v, 10); return isNaN(n) || !/^\d+$/.test(v) ? -1 : n; }
+  function what(p, n, c) { return n + ' × ' + p.name + (c > 0 ? ' + ' + c + ' extra computer' + (c === 1 ? '' : 's') : ''); }
+  function total(p, n, c) { return pence(p.price) * n + pence(p.pc) * Math.max(0, c); }
   function sum() {
-    var p = PLANS[plan()], n = qty(), box = el('mosum');
+    var p = PLANS[plan()], n = qty(), c = pcs(), box = el('mosum');
     if (!p || n < 1 || n > 300) { box.innerHTML = '<b>Choose a plan and how many people (1 to 300).</b>'; return; }
-    box.innerHTML = '<b>' + n + ' × ' + esc(p.name) + '</b><span class="mosum__price">' + money(pence(p.price) * n) + ' a month</span>'
-      + '<span class="mosum__small">' + money(pence(p.price)) + ' per person a month, on a 12-month term. No VAT to add. Nothing is taken until your licences are set up.</span>';
+    if (c < 0 || c > 100) { box.innerHTML = '<b>Extra computers: a number from 0 to 100.</b>'; return; }
+    box.innerHTML = '<b>' + esc(what(p, n, c)) + '</b><span class="mosum__price">' + money(total(p, n, c)) + ' a month</span>'
+      + '<span class="mosum__small">' + money(pence(p.price)) + ' per person a month with ' + esc(p.licence) + (c > 0 ? ', ' + money(pence(p.pc)) + ' per extra computer' : '')
+      + '. No VAT to add. The support is month to month; the Microsoft 365 licences run for Microsoft’s 12-month year. Nothing is taken until you’re set up.</span>';
   }
   // ---- the plan from the button they pressed (?plan=m365-standard), and how many people
   if (qs.plan && PLANS[qs.plan]) { var pr = form.querySelector('input[name="plan"][value="' + qs.plan + '"]'); if (pr) pr.checked = true; }
   if (qs.qty && /^\d{1,3}$/.test(qs.qty)) el('moqty').value = Math.max(1, Math.min(300, parseInt(qs.qty, 10)));
   Array.prototype.forEach.call(form.querySelectorAll('input[name="plan"]'), function (r) { r.addEventListener('change', sum); });
   el('moqty').addEventListener('input', sum);
+  el('mopcs').addEventListener('input', sum);
   el('moless').addEventListener('click', function () { el('moqty').value = Math.max(1, qty() - 1); sum(); });
   el('momore').addEventListener('click', function () { el('moqty').value = Math.min(300, Math.max(1, qty() + 1)); sum(); });
   // ---- "your email today": who with, and the note for people already on Microsoft 365
@@ -148,7 +164,7 @@ _JS = r'''
   var WORDS = { required: 'Please fill this in.', 'long': 'That is too long.', email: 'That email address doesn’t look right.',
     phone: 'Please give a phone number we can ring.', domain: 'That doesn’t look like a website address. Leave it empty if you don’t have one.',
     crn: 'A company number is 8 characters, like 01234567 or SC123456. Leave it empty if you don’t have one.',
-    qty: 'Between 1 and 300 people.', plan: 'Choose a plan.', agree: 'Please tick this to carry on.' };
+    qty: 'Between 1 and 300 people.', pcs: 'A number from 0 to 100, or leave it empty.', plan: 'Choose a plan.', agree: 'Please tick this to carry on.' };
   function clearErrs() {
     Array.prototype.forEach.call(form.querySelectorAll('.field--error'), function (n) { n.classList.remove('field--error'); });
     Array.prototype.forEach.call(form.querySelectorAll('.moerr'), function (n) { n.remove(); });
@@ -168,7 +184,7 @@ _JS = r'''
   function ticked(n) { var i = form.querySelector('[name="' + n + '"]'); return !!(i && i.checked); }
   function collect() {
     var r = form.querySelector('input[name="email_now"]:checked');
-    return { 'do': 'create', plan: plan(), qty: String(qty()), biz: val('biz'), crn: val('crn'), street: val('street'), street2: val('street2'),
+    return { 'do': 'create', plan: plan(), qty: String(qty()), pcs: val('pcs'), biz: val('biz'), crn: val('crn'), street: val('street'), street2: val('street2'),
       city: val('city'), postcode: val('postcode'), domain: val('domain'), email_now: r ? r.value : '', now_with: val('now_with'),
       first: val('first'), last: val('last'), email: val('email'), phone: val('phone'), notes: val('notes'),
       signatory: ticked('signatory'), mca: ticked('mca'), term: ticked('term'), terms: ticked('terms'), website: val('website') };
@@ -177,6 +193,7 @@ _JS = r'''
     var e = {};
     if (!PLANS[b.plan]) e.plan = 'plan';
     if (!(+b.qty >= 1 && +b.qty <= 300)) e.qty = 'qty';
+    if (b.pcs !== '' && !(/^\d{1,3}$/.test(b.pcs) && +b.pcs <= 100)) e.pcs = 'pcs';
     ['biz', 'street', 'city', 'postcode', 'first', 'last', 'phone'].forEach(function (k) { if (!b[k]) e[k] = 'required'; });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email)) e.email = b.email ? 'email' : 'required';
     if (!b.email_now) e.email_now = 'required';
@@ -200,7 +217,7 @@ _JS = r'''
     post(b).then(function (r) {
       if (r && r.ok && r.url) { go.textContent = 'Opening the Direct Debit page…'; status('Taking you to GoCardless’s secure page…'); location.href = r.url; return; }
       busy = false; go.disabled = false; go.textContent = 'Continue to the Direct Debit';
-      if (r && r.ok) { showDone({ state: 'waiting', dd: 'none', plan: PLANS[b.plan].name, qty: +b.qty, monthly: money(pence(PLANS[b.plan].price) * b.qty), biz: b.biz, first: b.first, email: b.email }, 'nolink'); return; }
+      if (r && r.ok) { var P = PLANS[b.plan], c = +b.pcs || 0; showDone({ state: 'waiting', dd: 'none', what: what(P, +b.qty, c), monthly: money(total(P, +b.qty, c)), biz: b.biz, first: b.first, email: b.email }, 'nolink'); return; }
       if (r && r.error === 'invalid' && r.fields) { showErrs(r.fields); status('Please check the boxes marked above.', true); return; }
       status(r && r.error === 'rate' ? 'There have been a lot of orders from here today. Please ring us on 01202 775566 and we’ll take it over the phone.'
         : 'Something went wrong and nothing was ordered. Please try again, or ring us on 01202 775566.', true);
@@ -213,14 +230,14 @@ _JS = r'''
   // ---- back from GoCardless (?order=..&k=..&dd=done|left), or from the link in their email
   function showDone(o, why) {
     form.hidden = true; done.hidden = false;
-    var s = '<div class="modone__sum"><b>' + esc(o.qty) + ' × ' + esc(o.plan) + '</b> for ' + esc(o.biz) + ' · ' + esc(o.monthly) + ' a month</div>';
+    var s = '<div class="modone__sum"><b>' + esc(o.what || (o.qty + ' × ' + o.plan)) + '</b> for ' + esc(o.biz) + ' · ' + esc(o.monthly) + ' a month</div>';
     var h;
     if (o.state === 'cancelled') {
       h = '<h2>This order was cancelled</h2>' + s + '<p>If that’s not right, ring us on <a href="tel:+441202775566">01202 775566</a>.</p>';
     } else if (o.dd === 'ready' || o.state === 'ready' || o.state === 'ordered' || o.state === 'done') {
       h = '<h2>Thank you' + (o.first ? ', ' + esc(o.first) : '') + '. Your order is in.</h2>' + s
-        + '<p><b>✓ Your Direct Debit is set up.</b> We’ll check your order and place it with Microsoft within one working day, then ring you to set up your email and your people. '
-        + 'Nothing is taken until your licences are in place, and GoCardless emails you before each payment.</p>'
+        + '<p><b>✓ Your Direct Debit is set up.</b> We’ll check your order and place it with Microsoft within one working day, then ring you to set up your email, your people and your computers. '
+        + 'Nothing is taken until you’re set up, and GoCardless emails you before each payment.</p>'
         + '<p>We’ve emailed a copy of your order to ' + esc(o.email) + '. Questions? Ring <a href="tel:+441202775566">01202 775566</a>.</p>';
     } else if (why === 'nolink') {
       h = '<h2>Thank you' + (o.first ? ', ' + esc(o.first) : '') + '. Your order is in.</h2>' + s
@@ -270,19 +287,19 @@ _JS = r'''
 
 def order_page_content(task_head, bc_sub, faq_html, gc_badge):
     plans_js = _JS.replace("__PLANS__", _plans_json())
-    head = task_head(bc_sub("Microsoft 365 plans", "/which-microsoft-365-plan/", "Order"),
-                     'Order Microsoft 365 <em class="grad grad--cyan">for your business</em>',
-                     "Choose your plan and how many people, tell us about your business, then set up a Direct Debit on "
-                     "GoCardless&rsquo;s secure page. A person checks every order before we place it with Microsoft, then "
-                     "we ring you to set up your email.",
-                     trust=["UK businesses, sole traders and charities", "No VAT to add", "Checked by a person before we order"])
+    head = task_head(bc_sub("Business plans", "/business-it-support-plans/", "Order Business Care"),
+                     'Business Care: IT support <em class="grad grad--cyan">with Microsoft 365</em>',
+                     "Your IT support and Microsoft 365 in one price per person. Choose your plan and how many people, tell us "
+                     "about your business, then set up a Direct Debit on GoCardless&rsquo;s secure page. A person checks every "
+                     "order, then we ring you to set everything up.",
+                     trust=["UK businesses, sole traders and charities", "No VAT to add", "Support month to month"])
     app = f'''    <section class="moapp" aria-label="Order form">
       <div class="moapp__in">
         <form class="moform" id="moform" novalidate>
           <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <fieldset>
             <legend>1. Your plan</legend>
-            <p class="mohint">Per person a month. Not sure which? <a href="/which-microsoft-365-plan/">Compare the plans</a> or ring <a href="tel:+441202775566">01202 775566</a>.</p>
+            <p class="mohint">Per person a month, with one computer each. Not sure which? <a href="/which-microsoft-365-plan/">Compare the Microsoft 365 plans</a> or ring <a href="tel:+441202775566">01202 775566</a>.</p>
             <div class="moplans" role="radiogroup" aria-label="Plan">
 {_plan_cards()}
             </div>
@@ -293,7 +310,11 @@ def order_page_content(task_head, bc_sub, faq_html, gc_badge):
                 <input type="number" id="moqty" name="qty" value="1" min="1" max="300" inputmode="numeric" aria-describedby="moqtyh" />
                 <button type="button" id="momore" aria-label="One more">+</button>
               </div>
-              <span class="mohint" id="moqtyh" style="margin:0">One licence for each person who needs email or the apps.</span>
+              <span class="mohint" id="moqtyh" style="margin:0">Each person gets Microsoft 365 and support for one computer.</span>
+            </div>
+            <div class="mogrid" style="margin-top:1rem">
+              <label class="field"><span>Extra computers nobody has a licence for (optional)</span><input type="text" id="mopcs" name="pcs" inputmode="numeric" maxlength="3" placeholder="0" aria-describedby="mopcsh" /></label>
+              <p class="mohint" id="mopcsh" style="align-self:center;margin:0">A shared or spare computer: &pound;{so.SUPPORT_FROM} a month each for its support.</p>
             </div>
           </fieldset>
           <fieldset>
@@ -337,7 +358,7 @@ def order_page_content(task_head, bc_sub, faq_html, gc_badge):
             <div class="mochecks">
               <label class="mocheck"><input type="checkbox" name="signatory" /> <span>I can agree this for the business: I own it, run it or have its permission.</span></label>
               <label class="mocheck"><input type="checkbox" name="mca" /> <span>I accept the <a href="https://www.microsoft.com/licensing/docs/customeragreement" target="_blank" rel="noopener">Microsoft Customer Agreement</a>. Microsoft asks every business customer to.</span></label>
-              <label class="mocheck"><input type="checkbox" name="term" /> <span>I understand the licences are on a 12-month term: they can be cancelled or reduced within 7 days of the order, then they run for the 12 months and renew each year unless I tell you to stop.</span></label>
+              <label class="mocheck"><input type="checkbox" name="term" /> <span>I understand the support is month to month, but the Microsoft 365 licences run for Microsoft&rsquo;s 12-month year: they can be cancelled or reduced within 7 days of the order, and if I leave Business Care after that, the licences are charged to the end of their year. They renew each year unless I tell you to stop.</span></label>
               <label class="mocheck"><input type="checkbox" name="terms" /> <span>I agree to the <a href="/terms/" target="_blank" rel="noopener">365 Techies terms</a> and have read the <a href="/privacy-policy/" target="_blank" rel="noopener">privacy policy</a>.</span></label>
             </div>
           </fieldset>
@@ -356,8 +377,8 @@ def order_page_content(task_head, bc_sub, faq_html, gc_badge):
         <h2 class="section-title" style="font-size:1.5rem;margin:0 0 1rem">What happens next</h2>
         <ol>
           <li><b>We check your order</b><span>A person reads every order and places it with Microsoft within one working day.</span></li>
-          <li><b>We ring you to set it up</b><span>Your email on your own domain, your people and their logins, and moving your old email across if you have some.</span></li>
-          <li><b>Then the monthly Direct Debit starts</b><span>Nothing is taken until your licences are in place. GoCardless emails you before each payment.</span></li>
+          <li><b>We ring you to set it up</b><span>Your email on your own domain, your people and their logins, moving your old email across if you have some, and our care on each computer with its first full service.</span></li>
+          <li><b>Then the monthly Direct Debit starts</b><span>Nothing is taken until you&rsquo;re set up. GoCardless emails you before each payment.</span></li>
         </ol>
       </div>
     </section>'''

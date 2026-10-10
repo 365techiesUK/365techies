@@ -468,16 +468,18 @@ import m365_order as _m365o
 import software_offers as _swo_order
 
 def order_m365_page():
+    # 10 Oct 2026 (owner: "package it with our support packages and don't sell it by itself"): Business Care only
     slug = _swo_order.ORDER_SLUG
-    desc = ("Order Microsoft 365 Business Basic, Standard, Premium or Exchange email for your business from 365 Techies: "
-            "pick your plan, set up a Direct Debit, and we set it up for you. UK businesses, no VAT to add.")
+    desc = (f"Order Business Care from 365 Techies: IT support with Microsoft 365, £{_swo_order.bundle_price('business-care')} "
+            f"a person a month, or Business Care Plus at £{_swo_order.bundle_price('business-care-plus')}. Set up a Direct Debit and "
+            "we set everything up for you. UK businesses, no VAT to add.")
     content = _m365o.order_page_content(bp.task_head, bc_sub, faq_html, bp.gc_badge)
     def schema(s, _desc=desc, _faqs=_m365o.FAQS):
-        return graph([crumb_sub(s, "Microsoft 365 plans", "which-microsoft-365-plan", "Order Microsoft 365"),
-                      webpage(s, "Order Microsoft 365 for your business", _desc), faqpage(s, _faqs)])
-    # noindex: a checkout, not a page to rank - /which-microsoft-365-plan/ is the one Google should show
-    add(slug=slug, title="Order Microsoft 365 for Your Business | 365 Techies", desc=desc,
-        og_title="Order Microsoft 365 | 365 Techies", schema=schema, content=content, robots="noindex,follow")
+        return graph([crumb_sub(s, "Business plans", "business-it-support-plans", "Order Business Care"),
+                      webpage(s, "Order Business Care: IT support with Microsoft 365", _desc), faqpage(s, _faqs)])
+    # noindex: a checkout, not a page to rank - the plans pages are the ones Google should show
+    add(slug=slug, title="Order Business Care | 365 Techies", desc=desc,
+        og_title="Order Business Care | 365 Techies", schema=schema, content=content, robots="noindex,follow")
     _swo_order.write_order_plans_php(_os_pcm.path.join(bp.BASE, "api", "m365-order-plans.php"))
 order_m365_page()
 
@@ -16670,7 +16672,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>A count of 365 PC Manager installs.</strong> The app checks with us for updates when it starts and every hour, whether or not you have linked it to us. For copies that are not linked, we keep only an anonymous install number, the app version, whether the PC runs Windows 10, the days it was first and last seen, and the country &mdash; worked out from the internet address at that moment; the address itself is not kept. Country data: IP geolocation by <a href="https://db-ip.com" rel="noopener">DB-IP</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</li>
             <li><strong>A count of Techies One Mail installs.</strong> Our Techies One Mail email program checks with us for updates when it starts and every few hours. It sends a random install number it made up for itself, the app&rsquo;s version, the version of Windows, and which kinds of email provider it is set up for (for example BT or Gmail) &mdash; never your email addresses, your emails, your contacts or your passwords. We keep those, the days it was first and last used and the country, worked out from the internet address at that moment; the address itself is not kept. An install we have not heard from for a year is deleted.</li>
             <li><strong>A free month of 365 PC Manager.</strong> If we give a copy that is not linked to us a free month of everything, we keep a key for it against its anonymous install number until the month is over, and then only a scrambled record that it has had one. Its service reports stay on your PC. Only if you press <strong>&ldquo;Send my report to 365 Techies for a free look-over&rdquo;</strong> and tick to agree do we receive that report, with the name, email address and (if you give one) phone number you type, so a techie can look it over and email you. We keep it for 120 days.</li>
-            <li><strong>Ordering Microsoft 365 on our website.</strong> When you order on our Microsoft 365 order page we keep what you ordered; the business&rsquo;s name, address and company number; your name, email address and phone number; what you use for email today and anything you write to us; and, as our record of the agreement, the time you agreed to the Microsoft Customer Agreement, the 12-month term and our terms and the internet address you agreed from. Pax8, the distributor we buy Microsoft licences from, and Microsoft receive the business&rsquo;s details and the name and email address of the person who agreed, to set up the licences. GoCardless receives your name, email address and the business&rsquo;s address to set up your Direct Debit, and your bank details go only to them. We keep the order for as long as we supply the licences, and after that only as long as the law requires us to keep business records.</li>
+            <li><strong>Ordering Business Care on our website.</strong> When you order Business Care (our support with Microsoft 365) on our website we keep what you ordered; the business&rsquo;s name, address and company number; your name, email address and phone number; what you use for email today and anything you write to us; and, as our record of the agreement, the time you agreed to the Microsoft Customer Agreement, the 12-month term and our terms and the internet address you agreed from. Pax8, the distributor we buy Microsoft licences from, and Microsoft receive the business&rsquo;s details and the name and email address of the person who agreed, to set up the licences. GoCardless receives your name, email address and the business&rsquo;s address to set up your Direct Debit, and your bank details go only to them. We keep the order for as long as we supply the licences, and after that only as long as the law requires us to keep business records.</li>
           </ul>
 
           <h2>Moving your email: the 365 Email Mover add-on and 365 PC Manager</h2>
@@ -16811,8 +16813,9 @@ info_page(
           <p>Monthly plans are paid in advance by Direct Debit (via GoCardless). One-off work is quoted and agreed before we begin. Prices are shown on our website or in your quote.</p>
           <h2>Cancelling a monthly plan</h2>
           <p>Our monthly plans are rolling and cancel-anytime &mdash; there is no long lock-in contract. Just let us know and we&rsquo;ll stop your plan at the end of your current period.</p>
-          <h2>Microsoft 365 business licences</h2>
-          <p>Microsoft 365 business licences we buy for you are not a monthly plan: they run on Microsoft&rsquo;s 12-month term and are paid monthly by Direct Debit, at the price on our website when you ordered. Microsoft lets them be cancelled or reduced within 7 days of the order; after that they run to the end of the 12 months. They renew for another 12 months unless you tell us before the renewal date that you want to stop or change them, and if our price is changing we tell you before then. You can add people at any time. Microsoft asks every business customer to accept the <a href="https://www.microsoft.com/licensing/docs/customeragreement">Microsoft Customer Agreement</a>, and we place an order only after a person here has checked it.</p>
+          <h2>Business Care and Microsoft 365 licences</h2>
+          <p>We supply Microsoft 365 business licences as part of our business support: in Business Care and Business Care Plus, or added to a business support plan you already have. The support is month to month, like our other plans, and is paid monthly by Direct Debit at the price on our website when you ordered.</p>
+          <p>The Microsoft 365 licences we buy for you run on Microsoft&rsquo;s 12-month term. Microsoft lets them be cancelled or reduced within 7 days of the order; after that they run to the end of the 12 months. If you leave Business Care, or stop the licences, before the end of a 12-month year, we charge the licences to the end of that year at our price for the licence on its own, shown on our website. The licences renew for another 12 months unless you tell us before the renewal date that you want to stop or change them, and if our price is changing we tell you before then. You can add people at any time. Microsoft asks every business customer to accept the <a href="https://www.microsoft.com/licensing/docs/customeragreement">Microsoft Customer Agreement</a>, and we place an order only after a person here has checked it.</p>
           <h2>Changing your mind about something you bought &mdash; your 14-day right</h2>
           <p>If you are a consumer and you bought from us at a distance &mdash; online, by phone, by email, or anywhere other than face to face &mdash; you have the right to change your mind for <strong>14 days</strong>, starting the day after the goods reach you. You do not have to give a reason.</p>
           <ul>
@@ -17200,7 +17203,7 @@ def pricing_page():
             <p class="prcard__for">For sole traders and small businesses</p>
             <p class="prcard__price"><small>from</small><b>&pound;24.38</b></p>
             <p class="prcard__per">a month per computer</p>
-            <ul><li>Remote fixes included</li><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>With Microsoft 365: <a href="/business-it-support-plans/#bundles">Business Care from &pound;35</a></li></ul>
+            <ul><li>Remote fixes included</li><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>With Microsoft 365: <a href="/business-it-support-plans/#bundles">Business Care from &pound;""" + _swo_order.bundle_price("business-care") + """</a></li></ul>
             <a class="button secondary" href="/business-it-support-plans/">See business plans</a>
           </article>
           <article class="prcard">
@@ -17329,7 +17332,7 @@ info_page(
           <ul>
             <li><strong>Home support: &pound;18.25 a month per computer.</strong> A full service every 6 weeks, remote help, and a loyalty discount on any fault work. Microsoft 365 for home users is &pound;4.85 a month per person. <a href="/home-it-support-plans/">Home plans</a></li>
             <li><strong>Business support: from &pound;24.38 a month per computer, with remote fixes included.</strong> On-site visits, parts and new set-ups are quoted before we start. <a href="/business-it-support-plans/">Business plans</a></li>
-            <li><strong>Business Care: &pound;35 per person a month</strong> for support plus a Microsoft 365 Business Standard licence, or <strong>Business Care Plus at &pound;45</strong> with Business Premium, Microsoft 365 backup and staff security training. <a href="/business-it-support-plans/#bundles">The bundles</a></li>
+            <li><strong>Business Care: &pound;""" + _swo_order.bundle_price("business-care") + """ per person a month</strong> for support plus a Microsoft 365 Business Standard licence, or <strong>Business Care Plus at &pound;""" + _swo_order.bundle_price("business-care-plus") + """</strong> with Business Premium, Microsoft 365 backup and staff security training. Microsoft 365 comes with our support, not on its own. <a href="/business-it-support-plans/#bundles">The bundles</a></li>
             <li><strong>One-off remote fixes: from &pound;20</strong>, priced on the job and agreed before any chargeable work. A full Windows reinstall with your files backed up and put back takes about four hours and is &pound;149. <a href="/remote-support/">Remote support</a></li>
             <li><strong>Security and backup software</strong>, per month: Malwarebytes &pound;2.50 for a home computer, ThreatDown business antivirus &pound;4.50 per computer, the Keeper password manager &pound;3.50 per person, computer backup &pound;12.00. <a href="/cybersecurity-support/#software">Security prices</a></li>
           </ul>
@@ -30599,7 +30602,7 @@ def write_portal_page():
       h += '<div class="card" id="psgcard" style="display:none;border-left:4px solid var(--pwarn)"><h2>\\u23f3 Sign-ins waiting for approval</h2><div id="psg"></div></div>';
       // 9 Oct 2026 (owner: "yes build it with option B"): Microsoft 365 orders from /order-microsoft-365/, waiting for a
       // person to press Order in Pax8 (m365Render). Shown only while there is one from the last 60 days.
-      h += '<div class="card" id="m365card" style="display:none;border-left:4px solid var(--pcyan)"><h2>\\ud83d\\uded2 Microsoft 365 orders</h2><div id="m365box"></div></div>';
+      h += '<div class="card" id="m365card" style="display:none;border-left:4px solid var(--pcyan)"><h2>\\ud83d\\uded2 Business Care orders</h2><div id="m365box"></div></div>';
       /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
@@ -33311,7 +33314,8 @@ def write_portal_page():
     var h = '<div class="m3o" id="m3o-' + esc(o.id) + '" data-id="' + esc(o.id) + '">'
       + '<div class="m3o__top"><strong>' + esc(b.name) + '</strong> <span class="pill" style="color:' + st[1] + ';border:1px solid ' + st[1] + ';background:transparent">' + st[0] + '</span>'
       + ' <span class="quiet" style="margin:0">ordered ' + esc(m365When(o.at)) + '</span></div>'
-      + '<div class="m3o__what">' + esc(o.qty) + ' \\u00d7 ' + esc(o.plan_name) + ' \\u00b7 <b>' + esc(o.monthly_txt) + ' a month</b> <span class="quiet" style="margin:0">(' + esc(o.each_txt) + ' each, 12-month term)</span></div>'
+      + '<div class="m3o__what">' + esc(o.what_txt || (o.qty + ' x ' + o.plan_name)) + ' \\u00b7 <b>' + esc(o.monthly_txt) + ' a month</b> <span class="quiet" style="margin:0">('
+        + (o.care ? esc(o.each_txt) + ' a person' + (o.pcs ? ', ' + esc(o.pc_each_txt) + ' per extra computer' : '') + '; licences on a 12-month year' : esc(o.each_txt) + ' each, 12-month term') + ')</span></div>'
       + '<div class="quiet" style="margin:.1rem 0 .5rem">' + esc((p.first || '') + ' ' + (p.last || '')) + ' \\u00b7 <a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a> \\u00b7 <a href="tel:' + esc(String(p.phone || '').replace(/[^0-9+]/g, '')) + '">' + esc(p.phone) + '</a> \\u00b7 ' + esc(b.postcode) + '</div>'
       + '<ol class="m3steps">';
     // 1. their Direct Debit
@@ -33323,9 +33327,10 @@ def write_portal_page():
       + '<button type="button" class="sm ghost" data-m3="ddlink">Email them a new link</button></span>';
     h += '</li>';
     // 2. Pax8
+    var hand = (o.by_hand || []).length ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">Also order by hand in Pax8: ' + esc(o.by_hand.join(' and ')) + ', for ' + esc(o.qty) + ' ' + (o.qty === 1 ? 'person' : 'people') + '.</span>' : '';
     h += '<li class="' + (px.state === 'ordered' ? 'm3ok' : px.state === 'failed' ? 'm3bad' : 'm3wait') + '"><b>Pax8:</b> ';
     if (px.state === 'ordered') {
-      h += '\\u2713 Ordered ' + esc(m365When(px.at)) + (px.by ? ' by ' + esc(px.by) : '') + (px.hand ? ' (by hand)' : '') + (px.order ? ' \\u00b7 Pax8 order ' + esc(px.order) : '') + (o.prefix && !px.hand ? ' \\u00b7 ' + esc(o.prefix) + '.onmicrosoft.com' : '');
+      h += '\\u2713 Ordered ' + esc(m365When(px.at)) + (px.by ? ' by ' + esc(px.by) : '') + (px.hand ? ' (by hand)' : '') + (px.order ? ' \\u00b7 Pax8 order ' + esc(px.order) : '') + (o.prefix && !px.hand ? ' \\u00b7 ' + esc(o.prefix) + '.onmicrosoft.com' : '') + hand;
     } else if (o.email_now === 'microsoft') {
       h += 'They already have Microsoft 365' + (o.now_with ? ' (with ' + esc(o.now_with) + ')' : '') + ', so Pax8 can\\u2019t make a new account. In Pax8: add the company, send their Microsoft 365 admin the GDAP link, then order it there.'
         + (live ? '<span class="m3btns"><a class="btn sm ghost" href="https://app.pax8.com/" target="_blank" rel="noopener">Open Pax8</a><button type="button" class="sm ghost" data-m3="markordered">Mark as ordered</button></span>' : '');
@@ -33333,7 +33338,8 @@ def write_portal_page():
       if (px.state === 'failed') h += '<span style="color:var(--pbad)">Stopped at ' + esc(px.stage || '?') + ': ' + esc(px.why || '') + '</span><br />';
       if (px.state === 'placing') h += '<span style="color:var(--pwarn)">An order was started ' + esc(m365When(px.at)) + ' \\u2014 check Pax8 before trying again.</span><br />';
       if (live) {
-        h += '<span class="m3pre">Microsoft account: <input type="text" class="m3prefix" value="' + esc(o.prefix || '') + '" maxlength="40" aria-label="Microsoft account name" autocomplete="off" spellcheck="false" />.onmicrosoft.com</span>'
+        h += 'Buys <b>' + esc(o.licences_txt || '') + '</b>.' + hand
+          + '<span class="m3pre">Microsoft account: <input type="text" class="m3prefix" value="' + esc(o.prefix || '') + '" maxlength="40" aria-label="Microsoft account name" autocomplete="off" spellcheck="false" />.onmicrosoft.com</span>'
           + '<span class="m3btns"><button type="button" class="sm" data-m3="pax8"' + (dd.state === 'ready' && M365.d.pax8 ? '' : ' disabled title="' + (dd.state !== 'ready' ? 'Waiting for their Direct Debit' : 'Pax8 isn\\u2019t connected on the server') + '"') + '>\\ud83d\\uded2 Order in Pax8</button>'
           + '<button type="button" class="sm ghost" data-m3="markordered">Mark as ordered by hand</button></span>';
       }
@@ -33368,7 +33374,7 @@ def write_portal_page():
     var recent = rows.filter(function (o) { return (now - o.at) < 60 * 86400 || (o.state !== 'done' && o.state !== 'cancelled'); });
     if (!recent.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
     card.style.display = '';
-    var h = '<p class="quiet" style="margin:.1rem 0 .7rem">Ordered on the website. Each one: their Direct Debit, then <b>Order in Pax8</b> (Pax8 checks it first; nothing is bought if the check fails), then start their monthly payments. Then ring them to set up their email and people.</p>';
+    var h = '<p class="quiet" style="margin:.1rem 0 .7rem">Business Care ordered on the website. Each one: their Direct Debit, then <b>Order in Pax8</b> (Pax8 checks it first; nothing is bought if the check fails), then start their monthly payments. Then set them up as a Business Care customer (PC Manager on each computer, their 6-weekly service) and ring them to set up their email and people.</p>';
     if (!d.pax8) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\\u26a0 Pax8 isn\\u2019t connected on the server yet (api/pax8-key.php), so Order in Pax8 can\\u2019t work. Until it is: order by hand in Pax8, then press Mark as ordered.</p>';
     if (!d.gocardless) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\\u26a0 GoCardless isn\\u2019t connected on the server, so Direct Debits can\\u2019t be set up from the order page.</p>';
     var show = M365.all ? recent : openO;
@@ -33382,14 +33388,14 @@ def write_portal_page():
       if (t.hasAttribute('data-m3all')) { M365.all = !M365.all; m365Render(); return; }
       var row = t.closest('.m3o'), id = row && row.getAttribute('data-id'), o = null;
       (M365.d.orders || []).forEach(function (x) { if (x.id === id) o = x; }); if (!o) return;
-      var act = t.getAttribute('data-m3'), who = o.biz.name, n = o.qty + ' \\u00d7 ' + o.plan_name;
+      var act = t.getAttribute('data-m3'), who = o.biz.name, n = o.what_txt || (o.qty + ' x ' + o.plan_name), lic = o.licences_txt || n;
       if (act === 'check') m365Act(id, 'check', {}, t, function (r) { return r.order.dd.state === 'ready' ? 'Their Direct Debit is set up.' : 'Not finished yet. GoCardless says it is still waiting for them.'; });
       else if (act === 'ddlink') { if (confirm('Email ' + o.person.email + ' a new link to set up their Direct Debit?\\n\\nThe link opens GoCardless\\u2019s own page and works once.')) m365Act(id, 'ddlink', {}, t, function (r) { return r.sent ? 'Emailed.' : 'The link was made but the email didn\\u2019t send \\u2014 check the email settings.'; }); }
       else if (act === 'pax8') {
         var pre = (row.querySelector('.m3prefix') || {}).value || '';
         pre = pre.toLowerCase().replace(/\\s+/g, '');
         if (!/^[a-z0-9]{3,40}$/.test(pre)) { alert(M365_ERR.bad_prefix); return; }
-        if (!confirm('Place a REAL order with Pax8?\\n\\n' + n + ' for ' + who + '\\n12-month term, billed monthly. ' + o.monthly_txt + ' a month to the customer.\\nTheir new Microsoft account: ' + pre + '.onmicrosoft.com\\n\\nPax8 checks the order first, and nothing is bought if that check fails. Once placed, Microsoft lets it be cancelled or reduced only within 7 days.')) return;
+        if (!confirm('Place a REAL order with Pax8?\\n\\n' + lic + ' for ' + who + ' (' + n + ')\\n12-month term, billed monthly. ' + o.monthly_txt + ' a month to the customer.\\nTheir new Microsoft account: ' + pre + '.onmicrosoft.com\\n\\nPax8 checks the order first, and nothing is bought if that check fails. Once placed, Microsoft lets it be cancelled or reduced only within 7 days.')) return;
         m365Act(id, 'pax8order', { prefix: pre }, t, function () { return 'Ordered in Pax8. Next: start their monthly payments, then ring them to set up their email and people.'; });
       }
       else if (act === 'startpay') { if (confirm('Start the monthly Direct Debit?\\n\\n' + o.monthly_txt + ' a month from ' + who + ' (' + n + '), on the mandate they set up with this order. GoCardless emails them the date before the first payment.')) m365Act(id, 'startpay', {}, t, function (r) { return 'Started.' + (r.order.pay.first ? ' First payment ' + r.order.pay.first + '.' : ''); }); }

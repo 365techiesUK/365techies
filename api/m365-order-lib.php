@@ -123,6 +123,10 @@ function m365_validate($in, $plans = null, $now = null) {
     $q = trim($g('qty'));
     $f['qty'] = ctype_digit($q) ? (int)$q : 0;
     if ($f['qty'] < 1 || $f['qty'] > M365_MAX_QTY) $e['qty'] = 'qty';
+    // 10 Oct 2026, Business Care: computers nobody has a licence for (a shared PC), supported at the per-computer price
+    $c = trim($g('pcs'));
+    $f['pcs'] = $c === '' ? 0 : (ctype_digit($c) ? (int)$c : -1);
+    if ($f['pcs'] < 0 || $f['pcs'] > 100) { $e['pcs'] = 'pcs'; $f['pcs'] = 0; }
     foreach (array('biz' => array(2, 120, true), 'street' => array(3, 120, true), 'street2' => array(0, 120, false),
                    'city' => array(2, 60, true), 'first' => array(1, 60, true), 'last' => array(1, 60, true),
                    'now_with' => array(0, 80, false), 'notes' => array(0, 1000, false)) as $k => $r) {
@@ -157,10 +161,14 @@ function m365_new_row($f, $plans, $key, $ip, $ua, $now = null) {
     $now = $now === null ? time() : (int)$now;
     $p = $plans[$f['plan']];
     $each = m365_pence($p['price']);
+    $pcs = (int)($f['pcs'] ?? 0);
+    $pcEach = isset($p['pc']) ? m365_pence($p['pc']) : 0;
     return array(
         'id' => bin2hex(random_bytes(5)), 'kh' => hash('sha256', (string)$key), 'at' => $now,
         'plan' => $f['plan'], 'plan_name' => (string)$p['name'], 'qty' => (int)$f['qty'],
-        'each' => $each, 'monthly' => $each * (int)$f['qty'],
+        'lic_name' => (string)($p['licence'] ?? $p['name']), 'by_hand' => array_values((array)($p['by_hand'] ?? array())),
+        'pcs' => $pcs, 'pc_each' => $pcEach,
+        'each' => $each, 'monthly' => $each * (int)$f['qty'] + $pcEach * $pcs,
         'biz' => array('name' => $f['biz'], 'crn' => $f['crn'], 'street' => $f['street'], 'street2' => $f['street2'],
                        'city' => $f['city'], 'postcode' => $f['postcode']),
         'domain' => $f['domain'], 'email_now' => $f['email_now'], 'now_with' => $f['now_with'],
@@ -356,7 +364,7 @@ function m365_pay_start(&$r, $by, $now = null) {
     $mandate = (string)($r['dd']['mandate'] ?? '');
     if ($mandate === '' || ($r['dd']['state'] ?? '') !== 'ready') return array(false, 'no_mandate');
     if (($r['pay']['state'] ?? '') === 'started') return array(false, 'already');
-    $name = substr('Microsoft 365: ' . (int)$r['qty'] . ' x ' . preg_replace('/^Microsoft 365 /', '', (string)$r['plan_name']), 0, 255);
+    $name = substr((m365_is_care($r) ? '' : 'Microsoft 365: ') . m365_what($r), 0, 255);
     $body = array('subscriptions' => array('amount' => (string)(int)$r['monthly'], 'currency' => 'GBP', 'name' => $name,
         'interval_unit' => 'monthly', 'metadata' => array('m365' => (string)$r['id']), 'links' => array('mandate' => $mandate)));
     list($c, $j) = m365_gc('POST', '/subscriptions', $body, 'm365sub-' . $r['id']);
@@ -464,9 +472,30 @@ function m365_pax8_order_body($r, $plan, $companyId, $answers) {
 }
 
 /* ---- words ------------------------------------------------------------------------------------------------------ */
-function m365_what($r) { return (int)$r['qty'] . ' x ' . $r['plan_name']; }
+/* 10 Oct 2026 (owner: "package it with our support packages and don't sell it by itself"): orders are for Business Care
+   (support + a Microsoft 365 licence per person); rows from before that (a licence on its own) keep their old words. */
+function m365_is_care($r) { return strpos((string)($r['plan'] ?? ''), 'business-care') === 0; }
+function m365_kind($r) { return m365_is_care($r) ? 'Business Care order' : 'Microsoft 365 order'; }
+function m365_what($r) {
+    $pcs = (int)($r['pcs'] ?? 0);
+    return (int)$r['qty'] . ' x ' . $r['plan_name'] . ($pcs > 0 ? ' + ' . $pcs . ' extra computer' . ($pcs === 1 ? '' : 's') : '');
+}
+function m365_licences($r) { return (int)$r['qty'] . ' x ' . (string)($r['lic_name'] ?? $r['plan_name']); }
+/* "£185.00 a month (£37.00 per person)" - the brackets only when they add something (one person: just the total). */
+function m365_price_words($r) {
+    $bits = array();
+    if ((int)$r['qty'] > 1 || (int)($r['pcs'] ?? 0) > 0) $bits[] = m365_money($r['each']) . ' per person';
+    if ((int)($r['pcs'] ?? 0) > 0) $bits[] = m365_money($r['pc_each'] ?? 0) . ' per extra computer';
+    return m365_money($r['monthly']) . ' a month' . ($bits ? ' (' . implode(', ', $bits) . ')' : '');
+}
+/* Option a (owner, 10 Oct 2026): the support is month to month, the licences run for Microsoft's year. */
+function m365_term_words($r) {
+    return m365_is_care($r)
+        ? 'the support is month to month, and the Microsoft 365 licences run for Microsoft\'s 12-month year (cancel or reduce within 7 days of the order; if you leave after that, the licences are charged to the end of their year; they renew each year unless you tell us)'
+        : 'the 12-month term (cancel or reduce within 7 days of the order, then it runs for the 12 months and renews each year unless you tell us)';
+}
 function m365_portal_link($id) { return 'https://365techies.co.uk/portal/#m365order=' . $id; }
-/* The Slack card for a new order. Its plain first line is what lc_lead recognises ("Microsoft 365 order from ...") -
+/* The Slack card for a new order. Its plain first line is what lc_lead recognises ("Business Care order from ...") -
    keep the two in step (m365-order-test.php checks). */
 function m365_card($r, $now = null) {
     $p = $r['person']; $b = $r['biz'];
@@ -478,15 +507,19 @@ function m365_card($r, $now = null) {
         array('type' => 'mrkdwn', 'text' => "*Email:*\n" . mm_esc($p['email'])),
         array('type' => 'mrkdwn', 'text' => "*Phone:*\n" . mm_esc($p['phone'])),
         array('type' => 'mrkdwn', 'text' => "*Order:*\n" . mm_esc(m365_what($r))),
-        array('type' => 'mrkdwn', 'text' => "*Monthly:*\n" . m365_money($r['monthly']) . ' (12-month term)'),
+        array('type' => 'mrkdwn', 'text' => "*Licences:*\n" . mm_esc(m365_licences($r))),
+        array('type' => 'mrkdwn', 'text' => "*Monthly:*\n" . m365_money($r['monthly']) . (m365_is_care($r) ? ' (licences on a 12-month year)' : ' (12-month term)')),
         array('type' => 'mrkdwn', 'text' => "*Email today:*\n" . mm_esc(m365_email_now_words($r['email_now']) . ($r['now_with'] !== '' ? ' (' . $r['now_with'] . ')' : ''))),
         array('type' => 'mrkdwn', 'text' => "*Direct Debit:*\n" . mm_esc($ddw[$r['dd']['state'] ?? 'none'] ?? '')),
     );
     $next = $r['email_now'] === 'microsoft'
         ? 'They already have Microsoft 365, so Pax8 must take it over (their admin approves the GDAP link) - order it by hand in Pax8.'
-        : 'It waits in the portal for *Order in Pax8* once the Direct Debit is set up.';
+        : 'It waits in the portal for *Order in Pax8* (' . mm_esc(m365_licences($r)) . ') once the Direct Debit is set up.';
+    $hand = array_values((array)($r['by_hand'] ?? array()));
+    if ($hand) $next .= ' Also order by hand in Pax8: ' . mm_esc(implode(' and ', $hand)) . ', for ' . (int)$r['qty'] . ' ' . ((int)$r['qty'] === 1 ? 'person' : 'people') . '.';
+    if (m365_is_care($r)) $next .= ' Then set them up as a Business Care customer: PC Manager on each computer and their 6-weekly service.';
     $blocks = array(
-        array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => "\xF0\x9F\x9B\x92 Microsoft 365 order: " . (preg_match('/^.{0,100}/us', $b['name'], $hm) ? $hm[0] : ''), 'emoji' => true)),
+        array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => "\xF0\x9F\x9B\x92 " . m365_kind($r) . ': ' . (preg_match('/^.{0,100}/us', $b['name'], $hm) ? $hm[0] : ''), 'emoji' => true)),
         array('type' => 'section', 'fields' => $fields),
         array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => $next . ' <' . m365_portal_link($r['id']) . '|Open the order> (staff sign-in).')),
     );
@@ -494,7 +527,7 @@ function m365_card($r, $now = null) {
     $tz = new DateTimeZone('Europe/London');
     $when = (new DateTime('@' . ($now === null ? time() : (int)$now)))->setTimezone($tz)->format('H:i, D j M');
     $blocks[] = array('type' => 'context', 'elements' => array(array('type' => 'mrkdwn', 'text' => 'via ' . M365_PAGE . " \xC2\xB7 " . $when)));
-    return array('text' => 'Microsoft 365 order from ' . mm_esc($name) . ' (' . mm_esc($b['name']) . ')', 'blocks' => $blocks, 'unfurl_links' => false);
+    return array('text' => m365_kind($r) . ' from ' . mm_esc($name) . ' (' . mm_esc($b['name']) . ')', 'blocks' => $blocks, 'unfurl_links' => false);
 }
 function m365_note($text) {
     $hook = mm_hook(M365_DIR);
@@ -510,44 +543,51 @@ function m365_email($r, $key) {
     $tz = new DateTimeZone('Europe/London');
     $when = (new DateTime('@' . (int)$r['agreed']['at']))->setTimezone($tz)->format('j F Y \a\t H:i');
     $ddDone = ($r['dd']['state'] ?? '') === 'ready';
+    $care = m365_is_care($r);
+    $kindLow = $care ? 'Business Care order' : 'Microsoft 365 order';
+    $incl = $care ? m365_licences($r) . ', and our support' . ((int)($r['pcs'] ?? 0) > 0 ? ' for ' . ((int)$r['qty'] + (int)$r['pcs']) . ' computers' : '') : '';
+    $nextWords = 'What happens next: a member of our team checks your order and places your Microsoft 365 with Microsoft within one working day, then rings you to set up your email, your people'
+        . ($care ? ' and your computers' : '') . '. We take nothing until you are set up, and GoCardless emails you the date before each payment.';
     $lines = array(
         'Hello ' . $p['first'] . ',', '',
         'Thank you for your order. Here is what you asked for:', '',
-        '  ' . m365_what($r), '  ' . m365_money($r['monthly']) . ' a month (' . m365_money($r['each']) . ' per person), on a 12-month term', '  For ' . $r['biz']['name'], '',
-        'On ' . $when . ' you told us you can agree this for the business, and you agreed to the Microsoft Customer Agreement, the 12-month term (cancel or reduce within 7 days of the order, then it runs for the 12 months and renews each year unless you tell us) and our terms.', '',
+        '  ' . m365_what($r));
+    if ($incl !== '') $lines[] = '  Includes ' . $incl;
+    $lines = array_merge($lines, array('  ' . m365_price_words($r), '  For ' . $r['biz']['name'], '',
+        'On ' . $when . ' you told us you can agree this for the business, and you agreed to the Microsoft Customer Agreement, ' . m365_term_words($r) . ', and our terms.', '',
         $ddDone ? 'Your Direct Debit is set up.' : 'Your Direct Debit is not set up yet. You can finish it here: ' . $link, '',
-        'What happens next: a member of our team checks your order and places it with Microsoft within one working day, then rings you to set up your email and your people. We take nothing until your licences are in place, and GoCardless emails you the date before each payment.', '',
-        'Questions? Reply to this email or ring 01202 775566.', '', '365 Techies',
-    );
+        $nextWords, '',
+        'Questions? Reply to this email or ring 01202 775566.', '', '365 Techies'));
     $text = implode("\n", $lines);
     $e = function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
+    $row = function ($k, $v, $bold = false) use ($e) { return '<tr><td style="padding:2px 14px 2px 0;color:#5b6475;vertical-align:top">' . $k . '</td><td>' . ($bold ? '<b>' . $e($v) . '</b>' : $e($v)) . '</td></tr>'; };
     $html = '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1d2433;max-width:560px">'
         . '<p>Hello ' . $e($p['first']) . ',</p><p>Thank you for your order. Here is what you asked for:</p>'
-        . '<table style="border-collapse:collapse;margin:0 0 14px"><tr><td style="padding:2px 14px 2px 0;color:#5b6475">Licences</td><td><b>' . $e(m365_what($r)) . '</b></td></tr>'
-        . '<tr><td style="padding:2px 14px 2px 0;color:#5b6475">Price</td><td>' . $e(m365_money($r['monthly'])) . ' a month (' . $e(m365_money($r['each'])) . ' per person), 12-month term</td></tr>'
-        . '<tr><td style="padding:2px 14px 2px 0;color:#5b6475">For</td><td>' . $e($r['biz']['name']) . '</td></tr></table>'
-        . '<p style="color:#5b6475;font-size:13px">On ' . $e($when) . ' you told us you can agree this for the business, and you agreed to the <a href="https://www.microsoft.com/licensing/docs/customeragreement">Microsoft Customer Agreement</a>, the 12-month term (cancel or reduce within 7 days of the order, then it runs for the 12 months and renews each year unless you tell us) and <a href="https://365techies.co.uk/terms/">our terms</a>.</p>'
+        . '<table style="border-collapse:collapse;margin:0 0 14px">' . $row($care ? 'Plan' : 'Licences', m365_what($r), true)
+        . ($incl !== '' ? $row('Includes', $incl) : '') . $row('Price', m365_price_words($r)) . $row('For', $r['biz']['name']) . '</table>'
+        . '<p style="color:#5b6475;font-size:13px">On ' . $e($when) . ' you told us you can agree this for the business, and you agreed to the <a href="https://www.microsoft.com/licensing/docs/customeragreement">Microsoft Customer Agreement</a>, ' . $e(m365_term_words($r)) . ', and <a href="https://365techies.co.uk/terms/">our terms</a>.</p>'
         . ($ddDone ? '<p><b>Your Direct Debit is set up.</b></p>' : '<p><b>Your Direct Debit is not set up yet.</b> <a href="' . $e($link) . '">Finish setting it up</a>.</p>')
-        . '<p>What happens next: a member of our team checks your order and places it with Microsoft within one working day, then rings you to set up your email and your people. We take nothing until your licences are in place, and GoCardless emails you the date before each payment.</p>'
+        . '<p>' . $e($nextWords) . '</p>'
         . '<p>Questions? Reply to this email or ring <a href="tel:+441202775566">01202 775566</a>.</p><p>365 Techies</p></div>';
-    return array('Your Microsoft 365 order with 365 Techies', $text, $html);
+    return array('Your ' . $kindLow . ' with 365 Techies', $text, $html);
 }
 function m365_ddlink_email($r, $url) {
     $p = $r['person'];
-    $text = "Hello " . $p['first'] . ",\n\nHere is a fresh link to set up the Direct Debit for your Microsoft 365 order (" . m365_what($r) . ", " . m365_money($r['monthly'])
+    $kindLow = m365_is_care($r) ? 'Business Care order' : 'Microsoft 365 order';
+    $text = "Hello " . $p['first'] . ",\n\nHere is a fresh link to set up the Direct Debit for your " . $kindLow . " (" . m365_what($r) . ", " . m365_money($r['monthly'])
         . " a month):\n\n" . $url . "\n\nIt opens GoCardless's secure page, where you enter your bank details. We never see them. The link is for you only and works once.\n\nQuestions? Ring 01202 775566.\n\n365 Techies";
     $e = function ($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); };
     $html = '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1d2433;max-width:560px"><p>Hello ' . $e($p['first']) . ',</p>'
-        . '<p>Here is a fresh link to set up the Direct Debit for your Microsoft 365 order (' . $e(m365_what($r)) . ', ' . $e(m365_money($r['monthly'])) . ' a month):</p>'
+        . '<p>Here is a fresh link to set up the Direct Debit for your ' . $kindLow . ' (' . $e(m365_what($r)) . ', ' . $e(m365_money($r['monthly'])) . ' a month):</p>'
         . '<p><a href="' . $e($url) . '" style="display:inline-block;padding:10px 18px;background:#1a73e8;color:#fff;border-radius:8px;text-decoration:none">Set up the Direct Debit</a></p>'
         . '<p style="color:#5b6475;font-size:13px">It opens GoCardless&rsquo;s secure page, where you enter your bank details. We never see them. The link is for you only and works once.</p>'
         . '<p>Questions? Ring <a href="tel:+441202775566">01202 775566</a>.</p><p>365 Techies</p></div>';
-    return array('Set up the Direct Debit for your Microsoft 365 order', $text, $html);
+    return array('Set up the Direct Debit for your ' . $kindLow, $text, $html);
 }
 
 /* What the customer's own browser may see about their order: no address, no history. */
 function m365_public($r) {
-    return array('id' => (string)$r['id'], 'state' => m365_state($r), 'dd' => (string)($r['dd']['state'] ?? 'none'),
+    return array('id' => (string)$r['id'], 'state' => m365_state($r), 'dd' => (string)($r['dd']['state'] ?? 'none'), 'what' => m365_what($r),
         'plan' => (string)$r['plan_name'], 'qty' => (int)$r['qty'], 'monthly' => m365_money($r['monthly']), 'each' => m365_money($r['each']),
         'biz' => (string)$r['biz']['name'], 'first' => (string)$r['person']['first'], 'email' => (string)$r['person']['email']);
 }
@@ -560,6 +600,10 @@ function m365_staff($r) {
     $o['monthly_txt'] = m365_money($r['monthly']);
     $o['each_txt'] = m365_money($r['each']);
     $o['email_now_txt'] = m365_email_now_words($r['email_now']);
+    $o['what_txt'] = m365_what($r);
+    $o['licences_txt'] = m365_licences($r);
+    $o['care'] = m365_is_care($r);
+    $o['pc_each_txt'] = m365_money($r['pc_each'] ?? 0);
     return $o;
 }
 
@@ -582,11 +626,11 @@ function m365_dd_refresh($id, $now = null) {
     if (empty($res['ok'])) return (string)($row['dd']['state'] ?? '');
     $r = $res['row'];
     if ($change === 'ready') {
-        m365_note(':white_check_mark: Microsoft 365 order ' . m365_tag($r) . ': the Direct Debit is set up. '
+        m365_note(':white_check_mark: ' . m365_kind($r) . ' ' . m365_tag($r) . ': the Direct Debit is set up. '
             . ($r['email_now'] === 'microsoft' ? 'They already have Microsoft 365 - order it by hand in Pax8.' : 'Ready to order in Pax8.')
             . ' <' . m365_portal_link($r['id']) . '|Open it>');
     } elseif ($change === 'failed') {
-        m365_note(':warning: Microsoft 365 order ' . m365_tag($r) . ': the Direct Debit was not set up (' . mm_esc((string)($r['dd']['why'] ?? '')) . '). <' . m365_portal_link($r['id']) . '|Open it>');
+        m365_note(':warning: ' . m365_kind($r) . ' ' . m365_tag($r) . ': the Direct Debit was not set up (' . mm_esc((string)($r['dd']['why'] ?? '')) . '). <' . m365_portal_link($r['id']) . '|Open it>');
     }
     return (string)$r['dd']['state'];
 }

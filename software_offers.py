@@ -58,15 +58,50 @@ PRODUCTS = {
         what="Short, regular training for staff, plus practice phishing emails that show who might click &mdash; before a real one arrives."),
 }
 
+# Support + Microsoft 365 bundles - the ONLY way the Microsoft licences are sold (owner, 10 Oct 2026: "package it with our
+# support packages and don't sell it by itself", then "go with £37/£48 and option a"). Per person with one computer each,
+# no VAT. Option a: the support is month to month; the Microsoft licences run for Microsoft's 12-month year, and if a
+# customer leaves in that year the licences are charged to its end at the licence price in PRODUCTS. Started 3 Oct 2026
+# at GBP 35 / 45 (set against the local MSPs' GBP 35 / 45 + VAT per user); raised so a bundle never pays less for the
+# support than support on its own (Pax8 + its VAT, 10 Oct: Standard 11.98, Premium + backup + training about 23.55).
+SUPPORT_FROM = "24.38"   # business support, per computer a month (pricing-truth)
+BUNDLES = {
+    "business-care": dict(
+        name="Business Care", price="37.00", licence="m365-standard", by_hand=[],
+        desc="IT support and Microsoft 365 for one person, in one monthly price.",
+        parts=["Business IT support, remote fixes included",
+               "Microsoft 365 Business Standard: email on your own domain, Teams, 1&nbsp;TB of OneDrive and the full Office apps"],
+        extras=["Full computer service every 6 weeks, with a written Service Report"]),
+    "business-care-plus": dict(
+        name="Business Care Plus", price="48.00", licence="m365-premium",
+        by_hand=["acronis-m365", "usecure"],   # ordered in Pax8 by hand for now - the portal card says so
+        desc="Everything a small office needs to stay protected, in one monthly price.",
+        parts=["Business IT support, remote fixes included",
+               "Microsoft 365 Business Premium: everything in Standard, plus Microsoft&rsquo;s business security",
+               "Microsoft 365 backup of email, OneDrive, SharePoint and Teams",
+               "Staff security training with practice phishing emails"],
+        extras=["Full computer service every 6 weeks, with a written Service Report"]),
+}
+BUNDLE_FOR = {b["licence"]: k for k, b in BUNDLES.items()}   # m365-standard -> business-care
+
+def bundle_price(key):
+    """For running text: '37' for 37.00, '37.50' otherwise."""
+    p = BUNDLES[key]["price"]
+    return p[:-3] if p.endswith(".00") else p
+
+TERM_NOTE = ("The support is month to month. The Microsoft 365 licences run for Microsoft&rsquo;s 12-month year: if you "
+             "leave in that year, the licences are charged to its end.")
+
 # slug: (eyebrow, heading, lede, [product keys], bundle line or "")
 _M365 = ["m365-basic", "m365-standard", "m365-premium", "exchange"]
 _MICROSOFT = set(_M365 + ["defender"])   # the licences bought through Pax8's Microsoft partner shell (12-month NCE terms)
 _BIZ_LEDE = "We buy it, set it up for you and look after it &mdash; you deal with us, not a call centre."
+_M365_LEDE = (f"Microsoft 365 comes with our business support: <strong>Business Care</strong> (&pound;{bundle_price('business-care')} a person) "
+              f"includes Business Standard, and <strong>Business Care Plus</strong> (&pound;{bundle_price('business-care-plus')}) includes Premium. "
+              "Already on one of our support plans? Add any of these at the price shown.")
 PAGE_OFFERS = {
-    "which-microsoft-365-plan": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us",
-        "Our price per person a month. We buy the licences, set them up for you and look after them &mdash; you deal with us, not a call centre.", _M365, ""),
-    "microsoft-365-support": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us",
-        "Our price per person a month. We buy the licences, set them up for you and look after them &mdash; you deal with us, not a call centre.", _M365 + ["acronis-m365"], ""),
+    "which-microsoft-365-plan": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us", _M365_LEDE, _M365, ""),
+    "microsoft-365-support": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us", _M365_LEDE, _M365 + ["acronis-m365"], ""),
     "cloud-backup": ("// SET UP AND LOOKED AFTER BY US", "Backup we can set up for you", _BIZ_LEDE, ["acronis-pc", "acronis-m365"], ""),
     "backup-support": ("// SET UP AND LOOKED AFTER BY US", "Backup we can set up for you", _BIZ_LEDE, ["acronis-pc", "acronis-m365"], ""),
     "microsoft-365-backup-do-you-need-it": ("// SET UP AND LOOKED AFTER BY US", "Microsoft 365 backup from us", _BIZ_LEDE, ["acronis-m365", "acronis-pc"], ""),
@@ -88,40 +123,16 @@ PAGE_OFFERS = {
         ["mb-home", "mb-home-vpn", "threatdown"], ""),
 }
 
-# Support + software bundles (owner, 3 Oct 2026: "Business Care" GBP 35 and "Business Care Plus" GBP 45, per person with
-# one computer each, no VAT). Set against the published local MSP packages of GBP 35 / GBP 45 + VAT per user. The
-# "bought separately" figure is summed from the parts, so it can never drift from the prices above.
-SUPPORT_FROM = "24.38"   # business support, per computer a month (pricing-truth)
-BUNDLES = {
-    "business-care": dict(
-        name="Business Care", price="35.00",
-        desc="IT support and Microsoft 365 for one person, in one monthly price.",
-        parts=[("Business IT support, remote fixes included", SUPPORT_FROM),
-               ("Microsoft 365 Business Standard licence: email, Teams and the full Office apps", PRODUCTS["m365-standard"]["price"])],
-        extras=["Full computer service every 6 weeks, with a written Service Report"]),
-    "business-care-plus": dict(
-        name="Business Care Plus", price="45.00",
-        desc="Everything a small office needs to stay protected, in one monthly price.",
-        parts=[("Business IT support, remote fixes included", SUPPORT_FROM),
-               ("Microsoft 365 Business Premium licence: Standard plus Microsoft&rsquo;s business security", PRODUCTS["m365-premium"]["price"]),
-               ("Microsoft 365 backup of email, OneDrive, SharePoint and Teams", PRODUCTS["acronis-m365"]["price"]),
-               ("Staff security training with practice phishing emails", PRODUCTS["usecure"]["price"])],
-        extras=["Full computer service every 6 weeks, with a written Service Report"]),
-}
-
 def _bundle_card(key):
     b = BUNDLES[key]
-    separately = sum(float(p) for _, p in b["parts"])
-    items = "\n".join(f'              <li>{label} <span class="swb-was">normally &pound;{price}</span></li>' for label, price in b["parts"])
-    items += "\n" + "\n".join(f'              <li>{x}</li>' for x in b["extras"])
-    href = "/contact/?topic=business-it-support&amp;product=" + quote(b["name"])
+    items = "\n".join(f'              <li>{x}</li>' for x in b["parts"] + b["extras"])
+    href = order_href(key)
     return (f'          <article class="swb-card">\n'
             f'            <h3 class="swb-name">{b["name"]}</h3>\n'
             f'            <p class="swb-desc">{b["desc"]}</p>\n'
             f'            <p class="swb-price"><b>&pound;{b["price"]}</b><span>per person a month, one computer each &middot; no VAT to add</span></p>\n'
             f'            <ul class="swb-list">\n{items}\n            </ul>\n'
-            f'            <p class="swb-save">Bought separately: &pound;{separately:.2f}. You save &pound;{separately - float(b["price"]):.2f} a month per person.</p>\n'
-            f'            <a class="button primary" href="{href}" aria-label="Get this set up: {b["name"]}">Get this set up</a>\n'
+            f'            <a class="button primary" href="{href}" aria-label="Order online: {b["name"]}">Order online</a>\n'
             f'          </article>')
 
 def bundles_section():
@@ -136,7 +147,7 @@ def bundles_section():
         <div class="swb-grid">
 {cards}
         </div>
-        <p class="swo-note">Microsoft 365 licences are on a 12-month term. Extra computers without a licence are &pound;{SUPPORT_FROM} a month each. On-site visits, parts and new set-ups are quoted before we start.</p>
+        <p class="swo-note">Per person a month, one computer each. Extra computers without a licence are &pound;{SUPPORT_FROM} a month each. {TERM_NOTE} On-site visits, parts and new set-ups are quoted before we start.</p>
       </div>
       <style>
       .swb-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;max-width:900px;margin:0 auto}}
@@ -154,10 +165,11 @@ def bundles_section():
     </section>'''
 
 CONTACT = "/contact/?topic=software-we-supply&amp;product="
-# 9 Oct 2026 (owner: "yes build it with option B"): the Microsoft licences are ordered on our own page - plan, people,
-# business, Microsoft's agreement and a Direct Debit - and the order waits in the portal for one press of "Order in Pax8".
+# 9 Oct 2026 (owner: "yes build it with option B"): ordered on our own page - plan, people, business, Microsoft's agreement
+# and a Direct Debit - and the order waits in the portal for one press of "Order in Pax8". 10 Oct 2026: the BUNDLES only
+# (the Microsoft licences are not sold on their own); Pax8 is asked for the bundle's licence, one per person.
 ORDER_SLUG = "order-microsoft-365"
-ORDERABLE = [k for k in ["m365-basic", "m365-standard", "m365-premium", "exchange", "defender"] if PRODUCTS[k].get("pax8")]
+ORDERABLE = list(BUNDLES)
 
 def order_href(key):
     return f"/{ORDER_SLUG}/?plan={key}"
@@ -172,10 +184,13 @@ def write_order_plans_php(path):
         return "'" + str(s).replace("\\", "\\\\").replace("'", "\\'") + "'"
     rows = []
     for k in ORDERABLE:
-        p = PRODUCTS[k]
-        rows.append(f"    {q(k)} => array('name' => {q(_plain(p['name']))}, 'price' => {q(p['price'])}, "
-                    f"'pax8' => {q(p['pax8'][0])}, 'commit' => {q(p['pax8'][1])}),")
-    src = ("<?php\n// WRITTEN BY THE BUILD from software_offers.py PRODUCTS - edit prices THERE, never here. Include-only.\n"
+        b = BUNDLES[k]
+        lic = PRODUCTS[b["licence"]]
+        hand = ", ".join(q(_plain(PRODUCTS[h]["name"])) for h in b["by_hand"])
+        rows.append(f"    {q(k)} => array('name' => {q(b['name'])}, 'price' => {q(b['price'])}, 'pc' => {q(SUPPORT_FROM)}, "
+                    f"'licence' => {q(_plain(lic['name']))}, 'licence_price' => {q(lic['price'])}, "
+                    f"'pax8' => {q(lic['pax8'][0])}, 'commit' => {q(lic['pax8'][1])}, 'by_hand' => array({hand})),")
+    src = ("<?php\n// WRITTEN BY THE BUILD from software_offers.py BUNDLES + PRODUCTS - edit prices THERE, never here. Include-only.\n"
            "return array(\n" + "\n".join(rows) + "\n);\n")
     with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(src)
@@ -187,15 +202,25 @@ def _card(key):
         price = f'<p class="swo-price"><b>&pound;{p["price"]}</b><span>{p["per"]}</span></p>'
     else:
         price = f'<p class="swo-price swo-price--ask"><b>Ask us</b><span>for today&rsquo;s price, {p["per"]}</span></p>'
-    orderable = key in ORDERABLE and not p.get("soon") and p.get("price")
-    label = "Register interest" if p.get("soon") else ("Order online" if orderable else "Get this set up")   # short: a 250px card
+    label = "Register interest" if p.get("soon") else "Get this set up"   # short: a 250px card
     # the product name travels to the contact form (forms.js puts it in the message), so the Slack card says what was asked
     plain = p["name"].replace("&nbsp;", " ").replace("&mdash;", "-").replace("&rsquo;", "'")
-    href = order_href(key) if orderable else CONTACT + quote(plain)
+    href = CONTACT + quote(plain)
+    inbundle = ""
+    if key in _MICROSOFT and not p.get("soon"):
+        # 10 Oct 2026: never sold on its own - in a Business Care bundle, or added to a support plan they already have
+        price = price.replace(f'<span>{p["per"]}</span>', f'<span>{p["per"]}, with one of our support plans</span>')
+        bk = BUNDLE_FOR.get(key)
+        if bk:
+            inbundle = (f'\n            <p class="swo-in">Comes with <strong>{BUNDLES[bk]["name"]}</strong>: &pound;{bundle_price(bk)} a person, '
+                        f'with our support included</p>')
+            label, href = "Get " + BUNDLES[bk]["name"], order_href(bk)
+        else:
+            label = "Add to your support plan"
     return (f'          <article class="swo-card">{tag}\n'
             f'            <h3 class="swo-name">{p["name"]}</h3>\n'
             f'            <p class="swo-what">{p["what"]}</p>\n'
-            f'            {price}\n'
+            f'            {price}{inbundle}\n'
             f'            <a class="button {"secondary" if p.get("soon") else "primary"}" href="{href}" aria-label="{label}: {plain}">{label}</a>\n'
             f'          </article>')
 
@@ -207,7 +232,7 @@ def section(slug):
     bundle_html = f'\n        <p class="swo-bundle">{bundle}</p>' if bundle else ""
     ms = any(k in _MICROSOFT for k in keys)   # (9 Oct 2026: was "any still coming soon" - the term matters most once they can be ordered)
     note = ("Prices are per month. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add."
-            + (" Microsoft 365 plans are on a 12-month term; a monthly rolling option is available at a higher price." if ms else ""))
+            + (" Microsoft 365 licences come with our support plans. " + TERM_NOTE if ms else ""))
     return f'''    <section class="section swo" id="software" aria-label="{heading}">
       <div class="wrap">
         <div class="section-head">
@@ -230,6 +255,7 @@ def section(slug):
       .swo-price b{{font-size:1.7rem;line-height:1.1;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}}
       .swo-price--ask b{{font-size:1.3rem}}
       .swo-price span{{font-size:.82rem;color:var(--muted,#9aa6c2)}}
+      .swo-in{{margin:-.2rem 0 .2rem;font-size:.86rem;line-height:1.45;color:var(--green-soft,#5fe07a)}}
       .swo-card .button{{align-self:flex-start;white-space:nowrap}}
       .swo-bundle{{max-width:70ch;margin:1.4rem auto 0;text-align:center;line-height:1.6}}
       .swo-note{{max-width:70ch;margin:1rem auto 0;text-align:center;font-size:.82rem;color:var(--muted,#9aa6c2)}}
