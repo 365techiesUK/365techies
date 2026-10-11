@@ -228,9 +228,10 @@ function plus_send_key($to, $key, $expires) {
 // ---- Lemon Squeezy's webhook (api/pcm-plus-ls.php) ----
 // The request is genuine only if X-Signature is the HMAC-SHA256 hex of the RAW body with the signing secret the owner set
 // in Lemon Squeezy and in api/pcm-ls-secret.php ($LS_WEBHOOK_SECRET - server-only, never in git).
+// The file may be one line (<?php $LS_WEBHOOK_SECRET = '...';, as the owner's steps show it) or several, with or without a BOM.
 function plus_ls_secret($file = null) {
     $src = (string)@file_get_contents($file !== null ? $file : __DIR__ . '/pcm-ls-secret.php');
-    return preg_match('/^[ \t]*\$LS_WEBHOOK_SECRET\s*=\s*([\'"])(.+?)\1\s*;/m', $src, $m) ? $m[2] : '';
+    return preg_match('/^(?:\xEF\xBB\xBF)?[ \t]*(?:<\?php\s+)?\$LS_WEBHOOK_SECRET\s*=\s*([\'"])(.+?)\1\s*;/m', $src, $m) ? $m[2] : '';
 }
 function plus_ls_signed($raw, $sig, $secret) {
     return $secret !== '' && is_string($sig) && $sig !== '' && hash_equals(hash_hmac('sha256', (string)$raw, $secret), strtolower(trim($sig)));

@@ -158,6 +158,12 @@ check($subj === 'Your 365 PC Manager key: Unlock everything' && strpos($body, 'U
 check(plus_ls_secret(TMP_SECRET_FILE()) === '', 'no secret file: no secret');
 file_put_contents(TMP_SECRET_FILE(), "<?php\n// the owner's\n\$LS_WEBHOOK_SECRET = 'abc123XYZ';\n");
 check(plus_ls_secret(TMP_SECRET_FILE()) === 'abc123XYZ', 'the secret read from api/pcm-ls-secret.php as data');
+file_put_contents(TMP_SECRET_FILE(), "<?php \$LS_WEBHOOK_SECRET = 'abc123XYZ';");
+check(plus_ls_secret(TMP_SECRET_FILE()) === 'abc123XYZ', 'the secret read from the one-line form the owner\'s steps show');
+file_put_contents(TMP_SECRET_FILE(), "\xEF\xBB\xBF<?php \$LS_WEBHOOK_SECRET = \"abc123XYZ\" ;\r\n");
+check(plus_ls_secret(TMP_SECRET_FILE()) === 'abc123XYZ', 'the secret read with a BOM, double quotes and Windows line ends');
+file_put_contents(TMP_SECRET_FILE(), "<?php // \$LS_WEBHOOK_SECRET = 'abc123XYZ';\n");
+check(plus_ls_secret(TMP_SECRET_FILE()) === '', 'a commented-out secret is not read');
 @unlink(TMP_SECRET_FILE());
 // the checkout link the owner will paste: Lemon Squeezy's own way of carrying the install id into the order (meta.custom_data)
 file_put_contents(PLUS_CONFIG, "<?php
