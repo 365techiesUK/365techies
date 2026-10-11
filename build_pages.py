@@ -161,6 +161,10 @@ _VOLATILE = [
     # names its version and size. A new release is not new advice: it must not re-date those pages. (The box ITSELF is
     # content - adding it re-dates them once, honestly.)
     (_cdre.compile(r'TechiesOneMail-Setup-[\d.]+\.exe'), 'TechiesOneMail-Setup-X.exe'),
+    # 11 Oct 2026 (365 PC Manager 36.1): every "Download 365 PC Manager" button links the newest installer by name
+    # (365-pc-manager-setup-v37.exe). A new app release is not new advice: the ~40 pages with the button must not re-date
+    # for it (the 36.1 swap re-dated 20 before this rule). Re-based once with REBASE_HASHES=1 on the release build.
+    (_cdre.compile(r'365-pc-manager-setup-v\d+\.exe'), '365-pc-manager-setup-vX.exe'),
     (_cdre.compile(r'<span class="t1v">[^<]*</span>'), '<span class="t1v"></span>'),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),

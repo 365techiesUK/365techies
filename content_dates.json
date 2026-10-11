@@ -158,7 +158,7 @@
  },
  "bluetooth-headphones-sound-muffled-on-pc": {
   "first": "2026-10-08",
-  "h": "f05cbdd5133f1256",
+  "h": "78be3f621eefed93",
   "last": "2026-10-08"
  },
  "book-a-collection": {
@@ -408,7 +408,7 @@
  },
  "chrome-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "cffbab13bebdbb6c",
+  "h": "d7c6ac49dace27da",
   "last": "2026-10-11"
  },
  "cisco-access-point-wont-join-controller": {
@@ -457,7 +457,7 @@
  },
  "computer-asking-for-bitlocker-recovery-key": {
   "first": "2026-10-11",
-  "h": "a445977c79f51a2a"
+  "h": "1fcd6b734b1a401d"
  },
  "computer-basics-course": {
   "first": "2026-07-28",
@@ -646,7 +646,7 @@
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
-  "h": "36a43b61e4095f01",
+  "h": "4ecd788920497381",
   "last": "2026-10-08"
  },
  "computer-support-gift-for-parents": {
@@ -1026,7 +1026,7 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "f121c04bdedcb75e",
+  "h": "550d8eac7596e343",
   "last": "2026-10-08"
  },
  "domain-expiry-checker": {
@@ -1150,7 +1150,7 @@
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
-  "h": "b7b892b77bfc500c",
+  "h": "a8c1c42292c4b8c8",
   "last": "2026-10-11"
  },
  "former-it-provider-controls-microsoft-365": {
@@ -1170,7 +1170,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "b9e593b5627fdd06",
+  "h": "afb36840e82e19df",
   "last": "2026-10-11"
  },
  "free-tools": {
@@ -1190,7 +1190,7 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "4b0a00d3a3c93935",
+  "h": "97f0aa4372522fce",
   "last": "2026-10-11"
  },
  "gaming-pc-tune-up": {
@@ -1245,7 +1245,7 @@
  },
  "heic-photos-wont-open-on-windows": {
   "first": "2026-10-11",
-  "h": "87e713b7d560c737"
+  "h": "19db52adc382abb6"
  },
  "help-in-dorset": {
   "first": "2026-07-28",
@@ -1289,7 +1289,7 @@
  },
  "how-much-does-it-cost-to-run-a-pc-uk": {
   "first": "2026-10-08",
-  "h": "6c8a458e59bee100",
+  "h": "5ecb474f6d1ed3c3",
   "last": "2026-10-08"
  },
  "how-much-does-it-support-cost-uk-2026": {
@@ -1358,7 +1358,7 @@
  },
  "how-to-listen-to-the-radio-on-your-computer": {
   "first": "2026-10-08",
-  "h": "e4892ae3b8e9c6bf",
+  "h": "d46b5a0568c9205f",
   "last": "2026-10-08"
  },
  "how-to-make-a-google-app-password": {
@@ -1373,7 +1373,7 @@
  },
  "how-to-play-a-cd-on-windows-11": {
   "first": "2026-10-08",
-  "h": "d095cbf8bfda5c8c"
+  "h": "eeef567956a0d52f"
  },
  "how-to-prepare-business-for-windows-11": {
   "first": "2026-06-16",
@@ -1402,7 +1402,7 @@
  },
  "how-to-set-an-alarm-on-your-computer": {
   "first": "2026-10-08",
-  "h": "5e4f5e4ec2c43143"
+  "h": "feae34c3345c7f60"
  },
  "how-to-set-up-a-new-windows-computer": {
   "first": "2026-06-16",
@@ -1521,12 +1521,12 @@
  },
  "is-my-windows-still-supported": {
   "first": "2026-10-11",
-  "h": "394e6a44b54988b2",
+  "h": "152e3c130901a21d",
   "last": "2026-10-11"
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "65534b6cb119b2b3",
+  "h": "b1c306c75b1a5771",
   "last": "2026-10-11"
  },
  "it-advice": {
@@ -2091,7 +2091,7 @@
  },
  "make-your-house-look-lived-in-while-away": {
   "first": "2026-10-08",
-  "h": "57404ff49215228b",
+  "h": "05eebdc55f509f96",
   "last": "2026-10-08"
  },
  "malware-and-viruses": {
@@ -2116,7 +2116,7 @@
  },
  "mcafee-or-norton-expired-do-i-need-to-renew": {
   "first": "2026-10-11",
-  "h": "d114a8799da1b249"
+  "h": "f4e9c40e54c8ee86"
  },
  "meet-the-team": {
   "first": "2026-07-28",
@@ -2160,7 +2160,7 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "5df40730c6a68b2c",
+  "h": "0f2ec6c1f208dab7",
   "last": "2026-10-11"
  },
  "microsoft-word-wont-open": {
@@ -2185,7 +2185,7 @@
  },
  "monitor-stuck-at-60hz": {
   "first": "2026-10-08",
-  "h": "3392898c1b22e20f"
+  "h": "69902d7c33396990"
  },
  "monthly-it-support": {
   "first": "2026-07-28",
@@ -2204,12 +2204,12 @@
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "414f50cf05f79b85",
+  "h": "41ce78cb1c93f816",
   "last": "2026-10-11"
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "1508e7e4708e34e6",
+  "h": "8e22b390aa81d6e0",
   "last": "2026-10-11"
  },
  "new-computer-setup": {
@@ -2687,12 +2687,12 @@
  },
  "password-breach-checker": {
   "first": "2026-07-28",
-  "h": "49ee9f5b4afe739f",
+  "h": "b045b21ac7e9c0c0",
   "last": "2026-10-08"
  },
  "password-generator": {
   "first": "2026-07-28",
-  "h": "f6626aec64024372",
+  "h": "24922501dfe52f44",
   "last": "2026-10-08"
  },
  "password-manager-setup": {
@@ -2702,7 +2702,7 @@
  },
  "password-strength-checker": {
   "first": "2026-07-28",
-  "h": "2c9b180fb702da9a",
+  "h": "a5c200a953eef422",
   "last": "2026-10-08"
  },
  "pay": {
@@ -2903,7 +2903,7 @@
  },
  "qr-code-generator": {
   "first": "2026-07-28",
-  "h": "635f6d84c15799ce",
+  "h": "32c7db6c86b71286",
   "last": "2026-10-08"
  },
  "quick-quote": {
@@ -3008,7 +3008,7 @@
  },
  "repair-or-replace-advisor": {
   "first": "2026-07-28",
-  "h": "238b30f5777ff84f",
+  "h": "5f9fabf03c76ec13",
   "last": "2026-10-11"
  },
  "resources": {
@@ -3153,7 +3153,7 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "cf9f3a5d1bee715b",
+  "h": "6da191d2866b2f07",
   "last": "2026-10-11"
  },
  "sharepoint-not-syncing-file-explorer": {
@@ -3422,12 +3422,12 @@
  },
  "virgin-email-mover": {
   "first": "2026-09-29",
-  "h": "0ca09381421d1415",
+  "h": "2f251e129eb84264",
   "last": "2026-10-08"
  },
  "virgin-media-email-moving-to-junara": {
   "first": "2026-09-26",
-  "h": "6e4ce669f1269c69",
+  "h": "19a5a79a5e9e73f4",
   "last": "2026-10-11"
  },
  "virgin-media-email-wont-add-to-new-outlook": {
@@ -3447,7 +3447,7 @@
  },
  "virus-threat-protection-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "0870968b8989af63"
+  "h": "ca2307fdf4632700"
  },
  "voip-business-phones": {
   "first": "2026-07-28",
@@ -3471,7 +3471,7 @@
  },
  "webcam-mic-test": {
   "first": "2026-07-28",
-  "h": "ae01794c90a67403",
+  "h": "63a14d0cf23a0e27",
   "last": "2026-10-11"
  },
  "website-checker": {
@@ -3571,7 +3571,7 @@
  },
  "why-does-my-pc-keep-crashing": {
   "first": "2026-10-11",
-  "h": "1f8d889620a13b39"
+  "h": "ddefcb4b0815c215"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
@@ -3630,7 +3630,7 @@
  },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
-  "h": "499fde80fd45aa86",
+  "h": "4b859d63b9b3b007",
   "last": "2026-10-08"
  },
  "wifi-signal-test": {
@@ -3685,7 +3685,7 @@
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
-  "h": "213a258b79f86979",
+  "h": "ce509b766c85bc9c",
   "last": "2026-10-11"
  },
  "windows-11-cant-see-network-computers": {
@@ -3700,7 +3700,7 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "287d07441bf2130e",
+  "h": "3473dbe5799f9880",
   "last": "2026-10-11"
  },
  "windows-11-support": {
@@ -3765,7 +3765,7 @@
  },
  "youve-been-hacked-email-bitcoin-scam": {
   "first": "2026-09-05",
-  "h": "84145b7f2bc20006",
+  "h": "5bd75e4c5d968752",
   "last": "2026-10-11"
  }
 }

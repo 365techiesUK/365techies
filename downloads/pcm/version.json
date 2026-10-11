@@ -1,11 +1,11 @@
 {
-  "ver": 36,
-  "version": "1.0.36",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v36.exe",
-  "sha256": "c58016014a423013d052934a766c8fb0a6476262d17180669d0e9fb040a153a3",
-  "notes": "New in version 36: music, radio and videos in one easy window - your songs and albums with their covers, playlists (your iTunes ones too), the radio stations for your country, CDs, and your videos, with an equaliser, Volume boost, Night mode, Clear speech and settings for your speakers and headphones. Auto DJ mixes each song into the next on the beat, and the DJ decks have two turntables you can scratch, effects, a sampler and video mixing. A wake-up alarm that starts softly and gets louder, and a timer that plays the radio while you're out so the house sounds lived-in. Send us a photo from your phone by scanning a code, test your phone's signal, find the cheapest fuel near you, and new tools: Lost a file?, Copy photos to a USB stick, Photo tools, Updates for your programs, Is it down or just me?, Keep it, upgrade it or replace it?, a password maker, Is my camera working?, a QR code maker, screensavers and your photos on the desktop. A new menu, a Find a tool box, your own shortcuts on Home and a Text size menu make everything easier to find, and new checks for remote-access programs, drive encryption, Windows 10 extended updates and old programs that no longer get security fixes help keep you safe. Signed by 365 Techies Ltd.",
+  "ver": 37,
+  "version": "1.0.37",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v37.exe",
+  "sha256": "5d3f49fb038bd2fe786d82863d4fd9aeab2a6ed7fd4d81e7e619aebb87198c6a",
+  "notes": "New in version 36.1: podcasts beside the radio - find any podcast, follow the ones you like and pick up where you left off. Spotify, Netflix, BBC iPlayer and your other music and TV apps open from one list, and whatever they play shows above the player with play, pause and next. An alarm can now wake you to the radio, a podcast, your own music or an alarm sound. A new Shared folders check finds out why a shared folder, network drive or NAS won't open and points you to the fix. Share the free app with a friend by WhatsApp, Facebook or email. If your PC still has Windows Live Mail or the old Windows Mail app, it tells you about Techies One Mail, our free email program. Windows Backup's \"some files were skipped\" now counts as a finished backup, the photo tools point to the right Microsoft extension for iPhone photos, and the window opens when you open the app from the Start menu. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v36.exe",
-    "sha256": "0204e06563ea389d26ed2180baa4ae9faea2f3493d650e5cf48ebded78c3b769"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v37.exe",
+    "sha256": "d6f307f2e85a6321eccdf25fd177061401976b95148b9ddcaa601329df0759e8"
   }
 }
