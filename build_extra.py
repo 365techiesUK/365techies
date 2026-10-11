@@ -24157,6 +24157,11 @@ if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
     FIX_FLOW_PAGES.update(_PFP.FLOWS)
     for _np in _PFP.pages(PCM_SETUP_V30):
         build_new_page(_np)
+    # 11 Oct 2026: the Gaming check box on the wave-11 gaming page (built further down), before its "When to get help"
+    for _np in SEO_WAVE11_PAGES:
+        if _np['slug'] == _PFP.GAMING_SLUG:
+            assert _np['sections'][-1]['h2'].startswith('If you would rather'), 'gaming page sections changed'
+            _np['sections'].insert(len(_np['sections']) - 1, _PFP.gaming_section(PCM_SETUP_V30))
     # 8 Oct 2026: the free tool pages whose job the app also does get its box after What next
     _PFP_TB = _PFP.tool_boxes(PCM_SETUP_V30)
     for _kw in bp.PAGES:

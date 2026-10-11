@@ -408,7 +408,8 @@
  },
  "chrome-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "3682f79b363518fe"
+  "h": "cffbab13bebdbb6c",
+  "last": "2026-10-11"
  },
  "cisco-access-point-wont-join-controller": {
   "first": "2026-07-28",
@@ -453,6 +454,10 @@
   "first": "2026-06-16",
   "h": "a2ba642d9bfb638a",
   "last": "2026-09-29"
+ },
+ "computer-asking-for-bitlocker-recovery-key": {
+  "first": "2026-10-11",
+  "h": "a445977c79f51a2a"
  },
  "computer-basics-course": {
   "first": "2026-07-28",
@@ -1185,8 +1190,8 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "e7700b449205cf20",
-  "last": "2026-10-06"
+  "h": "4b0a00d3a3c93935",
+  "last": "2026-10-11"
  },
  "gaming-pc-tune-up": {
   "first": "2026-09-05",
@@ -3431,6 +3436,10 @@
   "first": "2026-07-28",
   "h": "e4e93771e7fc4681",
   "last": "2026-09-26"
+ },
+ "virus-threat-protection-managed-by-your-organization": {
+  "first": "2026-10-11",
+  "h": "0870968b8989af63"
  },
  "voip-business-phones": {
   "first": "2026-07-28",

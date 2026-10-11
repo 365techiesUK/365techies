@@ -27,6 +27,18 @@ Added 11 Oct 2026 (owner: "go ahead with all of them"), both FREE (no IsPro gate
                             Cut them off = close those programs or netsh wlan disconnect.
   Browser safety (Addons.cs) every add-on in Chrome/Edge/Brave (+ Firefox v36) and HKLM/HKCU SOFTWARE/Policies, read-only:
                             forced add-ons, policy-locked search engine / home page, program- or developer-installed add-ons.
+Added 11 Oct 2026 (owner: "yeah go ahead with 1 to 3"), all FREE (no IsPro in DriveLock.cs / WinSafety.cs / GamingCheck.cs):
+  Drive encryption (DriveLock.cs, v36)  Explorer's System.Volume.BitLockerProtection for the system drive (no admin) and the
+                            'BitLocker Management' log lines saying the recovery key was backed up (Microsoft account / work or
+                            school / AD) or failed; never reads the key. No log line = "we can't see where its key is saved" + the
+                            three steps; button opens account.microsoft.com/devices/recoverykey. NB only state 2 (off) confirmed on
+                            our PCs so far - an unknown value shows "we couldn't tell", never "not encrypted". Picture = QA demo state.
+  Safety settings (WinSafety.cs, v32)   the antivirus on duty (SecurityCenter2), Defender real-time + tamper protection
+                            (MSFT_MpComputerStatus), UAC, SmartScreen (and whether a policy switched it off), memory integrity,
+                            admin account, file name endings. It does NOT read Defender's policies - the page never says it does.
+  Gaming check (GamingCheck.cs, v35)    driver + age (flag >= 9 months); NVIDIA only (NVML): temperature, slow-down point, fan,
+                            PCIe link; Watch while I play up to 1 h (non-NVIDIA = processor only); Game Mode, power mode, screen
+                            below its refresh rate, two-chip laptop, memory. Added as a box on gaming-pc-slow-wont-load-games.
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
@@ -58,11 +70,14 @@ SHOTS = {
     'remote':  ('/images/pcm-feat-remote-v36.webp', 1272, 882, 'Remote access in 365 PC Manager: No Remote Desktop, Quick Assist or Splashtop session right now, the remote-control programs on this PC with which are running, who has connected from the programs&rsquo; own lists, and a warning that real companies never ring out of the blue asking to connect', ('Safety', 'Remote access')),
     'browser': ('/images/pcm-feat-browser-v36.webp', 1272, 1662, 'Browser safety in 365 PC Manager saying 3 things in your browsers need putting right: Chrome&rsquo;s dangerous-site warnings switched off, a site allowed to send pop-up alerts, and a policy that sets Google Chrome&rsquo;s search engine so it can&rsquo;t be changed in the browser, marked best removed', ('Safety', 'Browser safety')),
     'updates': ('/images/pcm-feat-updates-v36.webp', 1272, 1072, 'Windows Update in 365 PC Manager: Windows is getting its monthly updates, the last monthly update installed on 24 Sep 2026, and the most recent updates, starting with Windows 11, version 26H2, each marked Installed', ('My PC', 'Windows Update')),
+    'bitlocker': ('/images/pcm-feat-bitlocker-v36.webp', 1272, 720, 'Drive encryption in 365 PC Manager saying this PC&rsquo;s drive is encrypted with BitLocker and it can&rsquo;t see where its recovery key is saved, with three steps to check the key and a See my recovery keys button', ('Safety', 'Drive encryption')),
+    'winsafety': ('/images/pcm-feat-winsafety-v36.webp', 1272, 1236, 'Safety settings in 365 PC Manager saying Windows&rsquo; own protections are switched on: Malwarebytes is the antivirus on duty, the allow changes question, SmartScreen and memory integrity are on, with notes on the account and file name endings', ('Safety', 'Safety settings')),
+    'gaming':  ('/images/pcm-feat-gaming-v36.webp', 1272, 1260, 'Gaming check in 365 PC Manager saying 1 thing could be costing you frames: two NVIDIA graphics cards with their driver age, temperatures, fans and slots, a Watch while I play button, and the power mode set to Eco with a Switch to Full speed button', ('My PC', 'Gaming check')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -845,7 +860,188 @@ CM = {
         {'q': 'It&rsquo;s a work laptop. Should I remove it?', 'a': '<p>No. On a work or school computer, management is normal and expected. Leave it to your IT department.</p>'},
         {'q': 'Edge says my browser is managed too. Is that the same?', 'a': '<p>Yes. Edge uses the same policy system; edge://policy shows what has been set, and the same fix applies.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/scam-pop-up-help-poole/">scam pop-ups</a>, <a href="/how-to-spot-a-fake-website/">how to spot a fake website</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/scam-pop-up-help-poole/">scam pop-ups</a>, <a href="/virus-threat-protection-managed-by-your-organization/">Windows Security says it&rsquo;s managed too</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+# ============================================================ 11. Computer asking for a BitLocker recovery key
+# Sources (read 11 Oct 2026): Microsoft 'Find your BitLocker recovery key' (support.microsoft.com), 'BitLocker recovery
+# overview' (learn.microsoft.com, updated 8 Oct 2026), 'Device encryption in Windows' (support), 'BitLocker drive encryption
+# in Windows 11 for OEMs' (learn: 24H2 drops the HSTI / Modern Standby requirement; not with local accounts), Dell KB
+# 000134415 (suspend before a BIOS update or it asks on every reboot), BleepingComputer (May 2025 Windows 10 update).
+BL = {
+    'slug': 'computer-asking-for-bitlocker-recovery-key',
+    'title': 'Computer Asking for a BitLocker Recovery Key? What to Do',
+    'metaDesc': 'Blue screen asking for a BitLocker recovery key? Where to find the 48 digits, why Windows asked, how to stop it asking again, and what if there is no key.',
+    'ogTitle': 'Computer asking for a BitLocker recovery key? Here&rsquo;s what to do',
+    'crumbName': 'Asking for a BitLocker Recovery Key',
+    'eyebrow': '// BITLOCKER RECOVERY SCREEN',
+    'h1': 'Computer asking for a <em class="grad grad--cyan">BitLocker recovery key</em>?',
+    'lede': 'A blue screen says &ldquo;BitLocker recovery&rdquo; and wants a 48-digit key you have never heard of. Don&rsquo;t panic, and don&rsquo;t reset anything: your files are still there, just locked. Most people find the key in a minute, on their phone. Here&rsquo;s where to look, why Windows asked, and how to stop it asking again.',
+    'chips': ['Usually found in a minute', 'Free drive encryption check app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Where to find the key', '#s2'],
+    'ctaHead': 'Can&rsquo;t find the key?', 'ctaSub': 'Ring us before you reset anything. We go through every place the key could be with you, then get the PC starting normally again. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Your drive is encrypted (BitLocker, or Windows&rsquo; &ldquo;device encryption&rdquo;) and Windows couldn&rsquo;t unlock it by itself this time, so it wants the 48-digit recovery key.'),
+        ('Most likely place', 'Your Microsoft account. On your phone, go to aka.ms/myrecoverykey, sign in, and match the Key ID shown on the blue screen.'),
+        ('Other places', 'A work or school account (aka.ms/aadrecoverykey), a printout, a USB stick, or whoever set the PC up.'),
+        ('Why now', 'Usually a BIOS update, a repair or new part, a changed start-up setting, or occasionally a Windows update.'),
+        ('Asks every restart?', 'Type the key once, then suspend and resume BitLocker so Windows locks itself to the new set-up.'),
+        ('No key anywhere?', 'Nobody can unlock it &mdash; not Microsoft, not us. Check every possible place before you reset anything.'),
+        ('Free check', 'Drive encryption in our free 365 PC Manager app shows whether your drive is encrypted and whether Windows saved its key.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Your files are still there: don&rsquo;t reset anything yet',
+         'html': '<p>The BitLocker recovery screen appears when the drive inside your PC is encrypted and Windows couldn&rsquo;t unlock it automatically as it started. Microsoft says you may be asked for the key &ldquo;due to a security risk or hardware change&rdquo; (<a href="https://support.microsoft.com/en-gb/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6" rel="noopener" target="_blank">Microsoft</a>). Everything is still on the drive. It just needs the 48-digit key to open it.</p>'
+                 '<p><strong>Don&rsquo;t reset or reinstall Windows to get past it.</strong> Resetting removes all your files, and without the key they can&rsquo;t be got back. Find the key first: the next section shows where.</p>'
+                 '<p>Many people are surprised their PC was encrypted at all. Windows switches on <strong>device encryption</strong> by itself on many PCs &mdash; Windows Home included &mdash; when you first set it up and sign in with a Microsoft account, and attaches the key to that account (<a href="https://support.microsoft.com/en-gb/windows/device-encryption-in-windows-cf7e2b6f-3e70-4882-9532-18633605b7df" rel="noopener" target="_blank">Microsoft</a>). Since Windows 11 version 24H2 it does so on more PCs than before (<a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/oem-bitlocker" rel="noopener" target="_blank">Microsoft Learn</a>). So the key is usually waiting for you online.</p>'},
+        {'eyebrow': '/02 &mdash; FIND THE KEY', 'h2': 'Where your recovery key is, in the order to look',
+         'html': '<p>On the blue screen, write down the <strong>Key ID</strong>. Microsoft says the first 8 characters are enough: they tell you which key is the right one if there are several. Then, on your phone or another computer:</p>'
+                 '<ol>'
+                 '<li><strong>Your Microsoft account.</strong> Go to <strong>aka.ms/myrecoverykey</strong> and sign in with the Microsoft account used on the PC &mdash; the email you sign in to Windows, Outlook.com or Xbox with. Find the key whose ID matches and type the 48 digits in. If someone else set the PC up for you, it may be in <em>their</em> account.</li>'
+                 '<li><strong>A work or school account.</strong> If the PC was ever signed in to one, go to <strong>aka.ms/aadrecoverykey</strong>, sign in, choose Devices, then View BitLocker Keys &mdash; or ask that organisation&rsquo;s IT team.</li>'
+                 '<li><strong>A printout or a USB stick.</strong> When BitLocker is switched on by hand, Windows offers to print the key or save it to a USB stick. Look wherever you keep the PC&rsquo;s paperwork. If it&rsquo;s on a USB stick, plug the stick into the locked PC.</li>'
+                 '<li><strong>Whoever set the PC up.</strong> A shop, a relative, your employer or your IT company may have saved it.</li>'
+                 '</ol>'
+                 '<p>The key is eight groups of six digits. If the number keys don&rsquo;t respond, the screen itself tells you to use F1 to F10 instead (F10 for 0). The full list of places is on Microsoft&rsquo;s <a href="https://support.microsoft.com/en-gb/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6" rel="noopener" target="_blank">Find your BitLocker recovery key</a> page.</p>'},
+        {'eyebrow': '/03 &mdash; WHY IT ASKED', 'h2': 'Why Windows suddenly asked for it',
+         'html': '<p>BitLocker checks that nothing about how the PC starts has changed since it was locked. If something has, it wants proof it&rsquo;s you. Microsoft&rsquo;s list of common triggers includes (<a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview" rel="noopener" target="_blank">Microsoft Learn</a>):</p>'
+                 '<ul><li><strong>A BIOS or firmware update</strong> &mdash; the commonest on laptops, especially when the maker&rsquo;s update app or Windows Update installs one.</li>'
+                 '<li><strong>A repair or new part</strong> &mdash; a new motherboard, or the drive moved into another computer.</li>'
+                 '<li><strong>A changed start-up setting</strong> &mdash; the security chip (TPM) cleared or switched off, or the PC set to start from a DVD or USB stick before the hard drive.</li>'
+                 '<li><strong>Docking or undocking a laptop</strong>, on some set-ups.</li>'
+                 '<li><strong>Too many wrong PINs</strong>, if your PC asks for a BitLocker PIN as it starts.</li>'
+                 '<li><strong>Occasionally, a Windows update.</strong> Microsoft has confirmed it more than once &mdash; for example in May 2025, when an update sent some Windows 10 business PCs to the recovery screen (<a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-confirms-may-windows-10-updates-trigger-bitlocker-recovery/" rel="noopener" target="_blank">BleepingComputer</a>).</li></ul>'
+                 '<p>None of these means the PC has been hacked. It&rsquo;s BitLocker doing its job.</p>'},
+        {'eyebrow': '/04 &mdash; ASKS EVERY TIME?', 'h2': 'If it asks for the key every time you restart',
+         'html': '<p>Dell explains that if BitLocker isn&rsquo;t suspended before a BIOS update, the PC can ask for the recovery key on every restart afterwards (<a href="https://www.dell.com/support/kbdoc/en-gb/000134415/updating-the-bios-on-dell-systems-with-bitlocker-enabled" rel="noopener" target="_blank">Dell</a>). Once you&rsquo;re in with the key, lock it to the new set-up:</p>'
+                 '<ol>'
+                 '<li><strong>Windows Pro:</strong> open Control Panel, then System and Security, then BitLocker Drive Encryption, and choose <strong>Suspend protection</strong>. Restart, then come back and choose <strong>Resume protection</strong> if it hasn&rsquo;t switched back on by itself.</li>'
+                 '<li><strong>Windows Home</strong> (device encryption) has no BitLocker page in Control Panel. Right-click Start and choose Terminal (Admin) &mdash; on Windows 10, Windows PowerShell (Admin) &mdash; then type <strong>manage-bde -protectors -disable C: -RebootCount 1</strong> and press Enter, then restart once. Protection switches back on by itself after that restart.</li>'
+                 '<li><strong>Unplug any dock or USB drive</strong> and make sure the PC is set to start from its own drive first.</li>'
+                 '</ol>'
+                 '<p>Microsoft says suspending leaves the drive fully encrypted, and suspending then resuming reseals the key without needing the recovery key again (<a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview" rel="noopener" target="_blank">Microsoft Learn</a>). <strong>Before the next BIOS update</strong>, suspend protection first, as Dell and Microsoft both advise.</p>'},
+        {'eyebrow': '/05 &mdash; NO KEY ANYWHERE?', 'h2': 'If you can&rsquo;t find the key',
+         'html': '<p>This is the hard part, so it&rsquo;s worth being straight about it: <strong>without the key, nobody can unlock the drive.</strong> Microsoft says its support &ldquo;doesn&rsquo;t have the ability to retrieve, provide, or recreate a lost BitLocker recovery key&rdquo; (<a href="https://support.microsoft.com/en-gb/windows/find-your-bitlocker-recovery-key-6b71ad27-0b89-ea08-f143-056f5ab347d6" rel="noopener" target="_blank">Microsoft</a>). Data recovery firms can&rsquo;t get round it either &mdash; that&rsquo;s the whole point of encryption &mdash; and anyone who promises otherwise is after your money.</p>'
+                 '<p>Before you give up:</p>'
+                 '<ul><li><strong>Check every Microsoft account</strong> anyone in the house has used, and ask whoever set the PC up.</li>'
+                 '<li><strong>Undo what changed</strong>, if you can: put the old part back, or set the start-up order and BIOS settings back as they were. Microsoft suggests undoing the change if the key can&rsquo;t be found.</li>'
+                 '<li><strong>Ring us</strong>, and we&rsquo;ll go through every place with you before anything is wiped.</li></ul>'
+                 '<p>If the key really is gone, the only way to use the PC again is to reset it, which removes everything on it. Your files can then only come back from a backup: OneDrive, an external drive or another copy.</p>'},
+        {'eyebrow': '/06 &mdash; WHILE IT WORKS', 'h2': 'Check your key now, while the PC starts normally',
+         'html': '<p>If your PC is working today, take a minute now. It&rsquo;s the difference between a five-minute fix and losing everything.</p>'
+                 '<ol>'
+                 '<li><strong>Is your drive encrypted?</strong> Open Settings, then Privacy &amp; security, then Device encryption (on Windows Pro, also Control Panel, BitLocker Drive Encryption). On many PCs File Explorer also shows a padlock on the C: drive.</li>'
+                 '<li><strong>Is the key saved?</strong> Go to aka.ms/myrecoverykey and check there&rsquo;s a key with this PC&rsquo;s name.</li>'
+                 '<li><strong>Keep a copy away from the PC.</strong> Write the 48 digits down or print them, and keep them with the PC&rsquo;s paperwork &mdash; not in a file on the PC itself.</li>'
+                 '<li><strong>Back up your files anyway.</strong> Encryption protects them from a thief, not from a lost key or a failed drive.</li>'
+                 '</ol>'},
+        {'eyebrow': '/07 &mdash; THE QUICK WAY', 'h2': 'Let our free app check it for you',
+         'html': '__APP_BOX_BITLOCKER__'},
+        {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': '<p>Stuck at the blue screen? Ring us and we&rsquo;ll talk you through every place the key could be, on the phone, before anything is reset.</p>'
+                 + _call_us('Once the PC is starting again &mdash; or if it keeps asking after you&rsquo;ve suspended and resumed protection &mdash; we can check the key is saved in two safe places, so this never catches you out again.')},
+    ],
+    'howToName': 'What to do when your computer asks for a BitLocker recovery key',
+    'howToSteps': [
+        {'name': 'Don&rsquo;t reset the PC', 'text': 'Your files are still on the drive. Resetting or reinstalling Windows removes them, and without the key they can&rsquo;t be got back.'},
+        {'name': 'Note the Key ID', 'text': 'Write down the first 8 characters of the Key ID shown on the BitLocker recovery screen.'},
+        {'name': 'Look in your Microsoft account', 'text': 'On your phone or another computer, go to aka.ms/myrecoverykey, sign in with the Microsoft account used on the PC, and find the key with the matching ID.'},
+        {'name': 'Try the other places', 'text': 'A work or school account at aka.ms/aadrecoverykey, a printout with the PC&rsquo;s paperwork, a USB stick, or whoever set the PC up.'},
+        {'name': 'Stop it asking again', 'text': 'Once in, suspend and resume BitLocker protection so Windows locks itself to the new set-up, and keep a copy of the key away from the PC.'},
+    ],
+    'faqs': [
+        {'q': 'Why is my computer asking for a BitLocker recovery key?', 'a': '<p>Because the drive is encrypted and something about how the PC starts has changed &mdash; usually a BIOS update, a repair, a new part or a changed start-up setting &mdash; so Windows wants proof it&rsquo;s you before it unlocks the drive. Your files are still there.</p>'},
+        {'q': 'Where do I find my BitLocker recovery key?', 'a': '<p>Most often in your Microsoft account: go to aka.ms/myrecoverykey on your phone, sign in, and match the Key ID on the screen. Otherwise a work or school account (aka.ms/aadrecoverykey), a printout, a USB stick, or whoever set the PC up.</p>'},
+        {'q': 'Will Microsoft give me my recovery key?', 'a': '<p>Only through your own Microsoft account. Microsoft support says it can&rsquo;t retrieve, provide or recreate a lost recovery key, so if it isn&rsquo;t in an account you can sign in to, they can&rsquo;t help with it.</p>'},
+        {'q': 'Why did my PC encrypt itself?', 'a': '<p>Windows switches device encryption on by itself on many PCs when they&rsquo;re first set up with a Microsoft account, and saves the key to that account. Since Windows 11 version 24H2 it happens on more PCs, Windows Home included.</p>'},
+        {'q': 'Can I get past the screen without the key?', 'a': '<p>Only by resetting the PC, which erases everything on the drive. Find the key first, and ring us before you choose anything that resets or reinstalls Windows.</p>'},
+        {'q': 'Should I switch BitLocker off?', 'a': '<p>Usually not. On a laptop especially, it keeps your files private if it&rsquo;s lost or stolen. What matters is that the key is saved somewhere you can get to it, and a copy is kept away from the PC.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/data-recovery/">data recovery</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/backup-support/">backup help</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+# ============================================================ 12. "Your Virus & threat protection is managed by your organization"
+# Sources (read 11 Oct 2026): Microsoft 'Add your work or school account to a Windows device' (support: Yes to device
+# management lets the admin configure settings + enforce security policies; Settings > Accounts > Access work or school >
+# Disconnect), 'DisableAntiSpyware' (learn: Defender turns itself off when it detects another antivirus; tamper protection on
+# by default for consumers), 'Tamper protection overview' (learn: registry changes to Defender settings blocked; attackers
+# try to disable security features), 'Virus & threat protection in the Windows Security app' (support: offline scan path).
+# A normal PC's HKLM\SOFTWARE\Policies\Microsoft\Windows Defender holds only an empty 'Policy Manager' key (read on ours).
+VT = {
+    'slug': 'virus-threat-protection-managed-by-your-organization',
+    'title': 'Virus &amp; Threat Protection Is Managed by Your Organization?',
+    'metaDesc': 'Windows Security says virus and threat protection is managed by your organization on your own PC? What sets it, how to check, and how to fix it safely.',
+    'ogTitle': 'Virus &amp; threat protection managed by your organization on a home PC? Here&rsquo;s why',
+    'crumbName': 'Virus &amp; Threat Protection Managed by Your Organization',
+    'eyebrow': '// WINDOWS SECURITY SAYS IT&rsquo;S MANAGED',
+    'h1': 'Virus &amp; threat protection <em class="grad grad--cyan">&ldquo;managed by your organization&rdquo;</em>?',
+    'lede': 'It&rsquo;s your own PC and there is no organisation, yet Windows Security says someone else is in charge of your antivirus &mdash; and some of its switches are greyed out. Usually it&rsquo;s a leftover setting, not a hacker. Here&rsquo;s how to find what set it, check your PC is actually protected, and put it back to normal.',
+    'chips': ['Find out what set it', 'Free safety settings check app', 'Virus and scam specialists'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Virus removal', '/virus-removal/'],
+    'ctaHead': 'Still says managed?', 'ctaSub': 'We find what set it, make sure your PC is properly protected and put Windows Security back to normal, while you watch. No fix, no fee. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it means', 'A policy has been set for Microsoft Defender, the antivirus built into Windows. Companies use policies so staff can&rsquo;t change settings.'),
+        ('On a home PC, usually', 'An old work or school account connected to the PC, leftovers from another antivirus, a &ldquo;tweak&rdquo; tool, or occasionally malware.'),
+        ('First check', 'Settings, then Accounts, then Access work or school. Disconnect any account you no longer use.'),
+        ('Are you protected?', 'Windows Security&rsquo;s Virus &amp; threat protection page names the antivirus on duty. Another antivirus switches Defender off by design.'),
+        ('Then', 'A full scan, a Microsoft Defender Offline scan, remove what set it, and switch Tamper protection on.'),
+        ('Work or school PC?', 'Then it&rsquo;s normal. Leave it to your IT department.'),
+        ('Free check', 'Safety settings in our free 365 PC Manager app says which antivirus is on duty and whether Defender&rsquo;s tamper protection is on.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'What the message actually means',
+         'html': '<p>Windows Security says this when a <strong>policy</strong> has been set for Microsoft Defender Antivirus &mdash; a setting written into Windows that the app itself won&rsquo;t override. On a work or school computer that&rsquo;s normal: when a PC is enrolled in an organisation&rsquo;s device management, Microsoft says its administrator can configure settings and enforce security policies (<a href="https://support.microsoft.com/en-gb/windows/add-your-work-or-school-account-to-a-windows-device-a6505ceb-1a20-4b15-889c-250175481506" rel="noopener" target="_blank">Microsoft</a>).</p>'
+                 '<p>On your own PC, it means something has written Defender policies there. The wording varies &mdash; &ldquo;Your Virus &amp; threat protection is managed by your organization&rdquo;, &ldquo;Some settings are managed by your organization&rdquo; or &ldquo;This setting is managed by your administrator&rdquo; &mdash; but it&rsquo;s the same thing, with the same fix.</p>'
+                 '<p>(UK versions of Windows spell it &ldquo;organisation&rdquo;.)</p>'},
+        {'eyebrow': '/02 &mdash; THE USUAL CAUSES', 'h2': 'What sets it on a home PC, most likely first',
+         'html': '<ol>'
+                 '<li><strong>A work or school account connected to the PC.</strong> Signing in to Office, Teams or Outlook with a work or school account can offer to let that organisation manage the device, and saying Yes enrols it. People often don&rsquo;t notice, and it stays after they leave the job.</li>'
+                 '<li><strong>Another antivirus, now or in the past.</strong> Microsoft says Defender turns itself off when it detects another antivirus program (<a href="https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/security-malware-windows-defender-disableantispyware" rel="noopener" target="_blank">Microsoft Learn</a>). That on its own is normal, and Windows Security names the other program. But one removed badly can leave settings behind.</li>'
+                 '<li><strong>A &ldquo;tweak&rdquo;, debloat or privacy tool</strong> that switches Defender off to &ldquo;speed Windows up&rdquo;. These write the same policies companies use.</li>'
+                 '<li><strong>Malware.</strong> Switching off the antivirus is one of the first things harmful software tries. Microsoft says attackers often try to disable security features &mdash; which is exactly what tamper protection is there to stop (<a href="https://learn.microsoft.com/en-us/defender-endpoint/prevent-changes-to-security-settings-with-tamper-protection" rel="noopener" target="_blank">Microsoft Learn</a>).</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; CHECK', 'h2': 'Find what set it, in order',
+         'html': '<ol>'
+                 '<li><strong>Look for a work or school account.</strong> Open Settings, then Accounts, then <strong>Access work or school</strong>. If an account is listed that you no longer use, select it and choose <strong>Disconnect</strong>. If it&rsquo;s your current employer&rsquo;s, ask their IT team first: disconnecting can take away its email and files on this PC.</li>'
+                 '<li><strong>See which antivirus is on duty.</strong> Open Windows Security, then Virus &amp; threat protection. If it names another antivirus you still use and pay for, that&rsquo;s fine. If it names one you removed long ago, run that maker&rsquo;s own removal tool to clear what&rsquo;s left.</li>'
+                 '<li><strong>See the policies themselves.</strong> Right-click Start and choose Terminal (Admin) &mdash; on Windows 10, Windows PowerShell (Admin) &mdash; then type <strong>reg query "HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender" /s</strong> and press Enter. This only reads. On a normal PC it shows just the key&rsquo;s name and an empty <em>Policy Manager</em> folder, or says the key can&rsquo;t be found. Any line with a value, such as <em>DisableAntiSpyware</em> or <em>DisableRealtimeMonitoring</em>, is a policy something has set.</li>'
+                 '<li><strong>On Windows Pro</strong>, Group Policy shows the same in plain words: type <strong>gpedit.msc</strong> in the Start menu, then go to Computer Configuration, Administrative Templates, Windows Components, Microsoft Defender Antivirus. Anything that isn&rsquo;t &ldquo;Not configured&rdquo; was set by someone or something.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; THE FIX', 'h2': 'Put it back to normal',
+         'html': '<ol>'
+                 '<li><strong>Scan first.</strong> Run a Full scan in Windows Security, then a <strong>Microsoft Defender Offline scan</strong> (Virus &amp; threat protection, then Scan options). It restarts the PC and scans before Windows loads, so save your work first (<a href="https://support.microsoft.com/en-gb/windows/virus-and-threat-protection-in-the-windows-security-app-1362f4cd-d71a-b52a-0b66-c2820032b65e" rel="noopener" target="_blank">Microsoft</a>). A second opinion from a scanner such as Malwarebytes is worth having too.</li>'
+                 '<li><strong>Remove what set it.</strong> Uninstall tweak tools and any antivirus you no longer use (Settings, then Apps, then Installed apps), then restart.</li>'
+                 '<li><strong>On Windows Pro</strong>, set any Microsoft Defender Antivirus policy you didn&rsquo;t choose back to <strong>Not configured</strong> in gpedit.msc, then restart.</li>'
+                 '<li><strong>Policies still listed?</strong> They were left in the registry under <em>HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender</em>. Removing them is the fix, but editing the registry wrongly can stop Windows working properly, so only do it on your own PC, back up the registry first, or ask us to do it.</li>'
+                 '<li><strong>Switch Tamper protection on</strong>: Windows Security, then Virus &amp; threat protection, Manage settings, Tamper protection. With it on, Microsoft says attempts to change Defender&rsquo;s settings through the registry are blocked. It&rsquo;s on by default on home PCs, so finding it off is a clue in itself.</li>'
+                 '</ol>'
+                 '<p>Restart and open Windows Security again: the message should be gone and every switch usable.</p>'},
+        {'eyebrow': '/05 &mdash; NOT ALWAYS A PROBLEM', 'h2': 'When a policy is there for a good reason',
+         'html': '<p>If the PC belongs to your employer or school, leave it alone: their IT team set it, and they look after it. Some family safety and security software sets policies on purpose too. The ones to remove are those nobody can explain &mdash; above all, anything that switches real-time protection off while no other antivirus is on duty.</p>'
+                 '<p>Seeing &ldquo;managed by your organization&rdquo; in Chrome or Edge as well? That&rsquo;s the same kind of leftover policy, in the browser: see <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check it for you',
+         'html': '__APP_BOX_WINSAFETY__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the message comes back after a restart, real-time protection keeps switching itself off, or a scan found something, get the PC checked properly before you use it for banking again.')},
+    ],
+    'howToName': 'How to fix "Your Virus & threat protection is managed by your organization" on a home PC',
+    'howToSteps': [
+        {'name': 'Check for a work or school account', 'text': 'Open Settings, Accounts, Access work or school, and disconnect any account you no longer use.'},
+        {'name': 'See which antivirus is on duty', 'text': 'Open Windows Security, Virus &amp; threat protection, and check which antivirus it names. Remove leftovers with the maker&rsquo;s own removal tool.'},
+        {'name': 'Scan the PC', 'text': 'Run a Full scan, then a Microsoft Defender Offline scan from Scan options, and a second opinion from another scanner.'},
+        {'name': 'Remove what set the policy', 'text': 'Uninstall tweak tools and old antivirus, set Defender policies back to Not configured on Windows Pro, then restart.'},
+        {'name': 'Switch Tamper protection on', 'text': 'In Windows Security, Virus &amp; threat protection, Manage settings, switch Tamper protection on so the settings can&rsquo;t be changed behind your back.'},
+    ],
+    'faqs': [
+        {'q': 'Does managed by your organization mean my PC has been hacked?', 'a': '<p>Not usually. It means a policy has been set for Defender, most often by an old work or school account, a leftover from another antivirus or a tweak tool. Malware can do it too, which is why a full scan and an offline scan come first.</p>'},
+        {'q': 'Is my PC protected while it says this?', 'a': '<p>Open Windows Security, then Virus &amp; threat protection. If it names an antivirus that&rsquo;s on, you&rsquo;re protected. If real-time protection is off and no other antivirus is named, you aren&rsquo;t &mdash; put that right first.</p>'},
+        {'q': 'I removed Norton or McAfee and now it says managed. Why?', 'a': '<p>The program has gone but some of its settings may not have. Run the maker&rsquo;s own removal tool, restart, and Defender should take over again by itself.</p>'},
+        {'q': 'It&rsquo;s a work laptop. Should I remove it?', 'a': '<p>No. On a work or school computer, management is normal and expected. Leave it to your IT department.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find what set the policy, remove it safely and check you&rsquo;re properly protected, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/is-someone-remotely-accessing-my-computer/">is someone remotely accessing my computer?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
 
@@ -857,6 +1053,10 @@ FLOWS = {
     RA['slug']: {'h2': 'Check and cut them off, step by step', 'ask': 'Is that step done?', 'tip': 'Keep the internet off until the program is uninstalled.',
                  'h3s': 'Not sure it&rsquo;s gone? That is a job for us.'},
     CM['slug']: {'h2': 'Get Chrome back to normal, step by step', 'ask': 'Has the managed message gone?', 'tip': 'Press Reload policies on chrome://policy after each step.',
+                 'h3s': 'Still says managed? That is a remote job.'},
+    BL['slug']: {'h2': 'Find the key, step by step', 'ask': 'Is that step done?', 'tip': 'Write the Key ID down before you start looking.',
+                 'h3s': 'Still no key? Ring us before you reset anything.'},
+    VT['slug']: {'h2': 'Put Windows Security back to normal, step by step', 'ask': 'Has the managed message gone?', 'tip': 'Restart and open Windows Security again after each step.',
                  'h3s': 'Still says managed? That is a remote job.'},
     PQ['slug']: {'h2': 'Clear the queue, step by step', 'ask': 'Is it printing now?', 'tip': 'Print a test page from the program you were using.',
                  'h3s': 'Still stuck after every step? That is a remote job.'},
@@ -897,12 +1097,20 @@ def pages(setup_url):
         '__APP_BOX_BROWSER__': _app_box('browser', 'Browser safety: what has been forced on your browsers',
             '<p style="margin:0">It reads every add-on in Chrome, Edge, Brave and Firefox, and the policies Windows holds for them, and says in plain words what is worth a look: an add-on a policy forces in, a policy that locks the search engine or home page, an add-on put there by another program, and anything the browser itself has flagged. '
             'It changes nothing on its own &mdash; you remove things in the browser, or we can do it for you.</p>', setup_url),
+        '__APP_BOX_BITLOCKER__': _app_box('bitlocker', 'Drive encryption: is your drive locked, and is its key safe?',
+            '<p style="margin:0">It shows whether this PC&rsquo;s drive is encrypted, and reads Windows&rsquo; own record of when its recovery key was saved &mdash; to your Microsoft account or a work or school account &mdash; or failed to be. '
+            'If it can&rsquo;t see a record, it says so plainly and walks you through checking your keys, with a button that opens your Microsoft account&rsquo;s recovery keys page. The key itself is never read, kept or sent anywhere.</p>', setup_url,
+            ' It runs in Windows, so check now, while the PC starts normally.'),
+        '__APP_BOX_WINSAFETY__': _app_box('winsafety', 'Safety settings: is your PC actually protected?',
+            '<p style="margin:0">It says in plain words which antivirus is on duty &mdash; Microsoft Defender or another &mdash; and warns you if Windows can&rsquo;t name one. When Defender is the one working, it shows whether <strong>tamper protection</strong> is on. '
+            'It checks Windows&rsquo; other built-in protections too: the &ldquo;allow this app to make changes?&rdquo; question, SmartScreen&rsquo;s check on downloads (and whether a policy switched it off) and memory integrity. '
+            'It doesn&rsquo;t list Defender&rsquo;s policies &mdash; the steps above do that. Each button opens the right Windows setting; the only thing it changes itself is showing file name endings, when you press it.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
@@ -911,6 +1119,19 @@ def pages(setup_url):
         d['primaryCta'] = [d['primaryCta'][0], d['primaryCta'][1].replace('__PCM_SETUP__', setup_url)]
         out.append(d)
     return out
+
+
+# ---- the Gaming check box on the existing gaming page (11 Oct 2026; 835 impressions at position 9 in Sep): put in by
+# build_extra just before that page's "When to get help" section, rather than a new page competing with it
+GAMING_SLUG = 'gaming-pc-slow-wont-load-games'
+
+
+def gaming_section(setup_url):
+    return {'eyebrow': '// THE QUICK WAY', 'h2': 'Let our free app check the graphics side',
+            'html': _app_box('gaming', 'Gaming check: what&rsquo;s really costing you frames',
+                '<p style="margin:0">It reads each graphics card and how old its driver is. On NVIDIA cards it also shows the temperature, the point where the card slows itself down, the fan, and whether it&rsquo;s running at the full speed its slot allows. '
+                '<strong>Watch while I play</strong> keeps an eye on things for up to an hour while you game, then tells you how hot the card got and whether it slowed itself down (on cards that don&rsquo;t report their temperature, it watches the processor instead). '
+                'It checks Game Mode, the power mode, a screen running below its refresh rate, a laptop with two graphics chips, and the memory. Nothing changes unless you click a button.</p>', setup_url)}
 
 
 # ---- the free tool pages whose job the app also does: an app box after "What next" (wave 5, 8 Oct 2026)
