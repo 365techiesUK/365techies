@@ -35,6 +35,10 @@ $o = plus_offer_out('US', 'a1b2 c3');
 check($o === array('offer' => 'buy', 'buy_url' => 'https://pay.example.com/checkout?id=a1b2%20c3', 'buy_price' => '$29 a year'), 'the US: buy, with the checkout link (its install id filled in) and the price as written', json_encode($o));
 check(plus_offer_out('ng', 'x')['offer'] === 'buy' && plus_offer_out('CZ', 'x')['offer'] === 'buy', 'anywhere else abroad: buy');
 foreach (array('GB', 'IM', 'JE', 'GG', '') as $c) check(plus_offer_out($c, 'x') === array('offer' => 'plan'), 'country "' . $c . '": our support plans, as now');
+// 11 Oct 2026: the countries Lemon Squeezy won't sell to - no offer at all (the free app)
+foreach (array('RU', 'ru', 'IR', 'KP', 'CU', 'SY', 'YE', 'SD', 'SS') as $c) check(plus_offer_out($c, 'x') === array(), 'country "' . $c . '": Lemon Squeezy won\'t sell there - no Buy offer');
+check(count(explode(',', PLUS_NO_SALE)) === 17 && plus_no_sale(' ru ') && !plus_no_sale('NG') && !plus_no_sale('US') && !plus_no_sale(''), '17 countries; Nigeria, the US and "not known" are not on it');
+check(plus_offer_out('NG', 'x')['offer'] === 'buy' && plus_offer_out('IN', 'x')['offer'] === 'buy', 'Nigeria and India are still offered it');
 check(plus_config()['provider'] === 'paddle' && plus_config()['price'] === '$29 a year', 'the config read as data, never run');
 file_put_contents(PLUS_CONFIG, "<?php \$BUY_ON = true; \$BUY_URL = 'http://not-secure.example.com/'; \$BUY_PRICE = '\$5';");
 check(!plus_enabled() && plus_offer_out('US', 'x') === array(), 'a checkout link that is not https: off');

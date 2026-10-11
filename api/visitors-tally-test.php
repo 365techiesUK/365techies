@@ -162,6 +162,16 @@ check(!in_array('/~dl/pcm/', $keys, true) && !in_array('/~call' . $J, $keys, tru
 $us = array_values(array_filter($a['perCountry'], function ($x) { return $x['k'] === 'US'; }));
 check(count($us) === 1 && $us[0]['acts']['dl'] === 1 && $us[0]['acts']['call'] === 0, 'actions per country', json_encode($us));
 check(vis_act_kind('/~dl/pcm/') === 'dl' && vis_act_kind('/~lead/x/') === 'lead' && vis_act_kind('/~calling/') === '' && vis_act_kind('/call/') === '', 'only the four ping paths are actions');
+// 11 Oct 2026: a download click now carries the page it was clicked on
+check(vis_act_kind('/~dl/pcm/computer-spec-checker/') === 'dl' && vis_act_kind('/~dl/t1/techies-one-mail/') === 'dl', 'a download click with its page is still a download');
+$DLT = date('Y-m-d');
+$dvs = array('days' => array($DLT => array('t365' => array('pages' => array('/~dl/pcm/' => 1, '/~dl/pcm/computer-spec-checker/' => 3, '/~dl/pcm/free-pc-health-check/' => 2, '/~dl/t1/techies-one-mail/' => 4, '/computer-spec-checker/' => 9),
+    'byCountry' => array('US' => array('pages' => array('/~dl/pcm/computer-spec-checker/' => 2)), 'GB' => array('pages' => array('/~dl/pcm/' => 1, '/~dl/pcm/free-pc-health-check/' => 2)))))));
+$pt = vis_dl_tally($dvs, 'pcm'); $tt = vis_dl_tally($dvs, 't1');
+check($pt['d7'] === 6 && $pt['d30'] === 6 && $tt['d30'] === 4, 'PC Manager clicks: every page they came from added up (6); Techies One Mail kept apart (4)', json_encode(array($pt['d30'], $tt['d30'])));
+check($pt['from'][0] === array('k' => '/computer-spec-checker/', 'n' => 3) && count($pt['from']) === 3 && in_array(array('k' => '/', 'n' => 1), $pt['from'], true), 'the pages, busiest first; a bare /~dl/pcm/ is the home page', json_encode($pt['from']));
+check($pt['countries'] === array(array('k' => 'GB', 'n' => 3), array('k' => 'US', 'n' => 2)), 'by country, from every page', json_encode($pt['countries']));
+check(vis_dl_tally(null, 'pcm')['d30'] === 0 && vis_dl_tally(array(), 'pcm')['from'] === array(), 'no statistics yet: zeros, never an error');
 
 echo "I  data centres and VPNs: counted once a day as automated, nothing else (1 Oct 2026)\n";
 $bot = row('dddd0001', 'Ashburn', 'US', false, 'Direct', $WIN11, array('/', '/pricing/', '/~call/'));

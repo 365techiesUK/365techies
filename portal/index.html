@@ -769,9 +769,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 11 Oct 2026 &middot; 1171ebb23b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 11 Oct 2026 &middot; 653d87959b</p><script>
 (function () {
-  var P365BUILD = '1171ebb23b';
+  var P365BUILD = '653d87959b';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -6161,7 +6161,9 @@
   function nxlPage(site, p) {
     p = String(p || '/');
     if (p === '/') return 'Home page';
-    if (p === '/~dl/pcm/') return '\u2b07 PC Manager download (click)';   // the beacon's download ping (1 Oct 2026)
+    // the beacon's download pings (1 Oct 2026; from 11 Oct with the page clicked on: /~dl/pcm/<page>, /~dl/t1/<page>)
+    var dlp = /^\/~dl\/(pcm|t1)(\/.*)$/.exec(p);
+    if (dlp) return '\u2b07 ' + (dlp[1] === 'pcm' ? 'PC Manager' : 'Techies One Mail') + ' download (click)' + (dlp[2] !== '/' ? ' \u00b7 ' + nxlPage(site, dlp[2]) : '');
     // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
     var act = /^\/~(call|text|lead)(\/.*)$/.exec(p);
     if (act) return NXL_ACT[act[1]][1] + ' \u00b7 ' + nxlPage(site, act[2]);
@@ -9057,6 +9059,16 @@
     if (!c || c === '--') return 'Not known';
     try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(c) || c; } catch (e) { return c; }
   }
+  // 11 Oct 2026: which pages the download clicks came from (api vis_dl_tally; recorded from 11 Oct - before that every
+  // click shows as "home page or earlier")
+  function dlFromHtml(dl) {
+    var f = (dl && dl.from) || [];
+    if (!f.length) return '';
+    return '<p class="quiet" style="margin:.2rem 0 0">Clicked on: ' + f.map(function (x) {
+      var k = String(x.k || '/');
+      return esc(k === '/' ? 'home page or earlier' : k.replace(/^\/|\/$/g, '')) + ' <b>' + x.n + '</b>';
+    }).join(' \u00b7 ') + '</p>';
+  }
   function renderInstalls() {
     var box = document.getElementById('instbox'); if (!box) return;
     var d = INST.d;
@@ -9087,7 +9099,7 @@
         + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.vn || v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \u00b7 ' + d.linked + ' linked but free \u00b7 ' + d.plan + ' on a plan</p>'
-        + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
+        + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p>' + dlFromHtml(dl) + '</div></div>';
       // 9 Oct 2026 (owner: "people that have got the free version ... a 30-day trial ... fully featured ... say that
       // they've been specially approved"): the installs one by one, each with "Give 30 days free" (api/pcm-installs.php
       // do=trial -> pcm-plus-lib.php plus_trial_give). Only PCs never linked to us; one free month per PC, ever.
@@ -9210,7 +9222,7 @@
       + '<div class="stat"><b>' + ((d.downloads || {}).d7 || 0) + '</b><span>download clicks this week</span></div></div>';
     h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> \u00b7 used this week: <b>' + d.active7
       + '</b> \u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b>'
-      + ' \u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>';
+      + ' \u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>' + dlFromHtml(d.downloads || {});
     var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
     h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
       + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
@@ -10349,6 +10361,6 @@
     });
   })();
   </script>
-  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/TechiesOneMail-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/t1/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);else if(/TechiesOneMail-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>
 </html>

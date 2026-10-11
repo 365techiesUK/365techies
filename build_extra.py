@@ -508,6 +508,13 @@ if not PCM_DOWNLOAD_URL or not _os_pcm.path.exists(_pcm_exe):
         "    Build it with 365-pc-manager/installer/build-installer.ps1 -Sign ***\n" % (PCM_DOWNLOAD_URL or "(nothing)"))
 PCM_FILESIZE = "%.1fMB" % (_os_pcm.path.getsize(_pcm_exe) / 1048576.0)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
+# 11 Oct 2026: "Unlock everything" on sale abroad? Read from the SAME switch the server uses ($BUY_ON in
+# api/pcm-buy-config.php, as pcm-plus-lib.php plus_config reads it), so the page and the app can never disagree: when it is
+# on, the "Outside the UK?" box carries the offer and "nothing to buy" says "in the UK".
+try:
+    PCM_UNLOCK_LIVE = bool(re.search(r"^[ \t]*\$BUY_ON\s*=\s*true\s*;", open(_os_pcm.path.join(bp.BASE, "api", "pcm-buy-config.php"), encoding="utf-8").read(), re.M | re.I))
+except OSError:
+    PCM_UNLOCK_LIVE = False
 # 29 Sep 2026 (launch branch virgin-launch): the free Virgin email tools ship in 365 PC Manager v30. Every Virgin page's
 # download button (virgin_launch.py) uses THIS one link. It was pinned to setup-v30 while version.json still named an
 # installer without the Virgin tools; since the v35 release (6 Oct 2026) the manifest's installer has them, so the
@@ -1133,7 +1140,34 @@ def pcm_landing():
     # 7 Oct 2026 (owner: the Virgin email mover "has its own page ... doesn't need to be right at the top" - this page shows
     # off the app): the download, then what's inside; the Virgin tools sit after "What it does" (5), whose list names them
     _order = [17, 22, 4, 1, 2, 10, 3, 5, 23, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
-    content = "\n".join([_pcm_hero, _pcm_proof] + [_blocks[i] for i in _order] + [_pcm_fold])
+    # 11 Oct 2026 (owner: "do everything ... for all the people from different countries"; the abroad plan's step 2): a box
+    # for visitors whose clock is NOT on UK time (the spec checker's test), after the four facts. It ADDS, never hides: the
+    # UK text stays as it is for everyone. Free anywhere; our people-help is UK only and we never ring anyone abroad; email
+    # with UK hours; send the download to your computer (a third of visits are phones). The Unlock line appears only when
+    # the paid app is switched on ($BUY_ON, PCM_UNLOCK_LIVE above) - and then "nothing to buy" says "in the UK".
+    _abroad_mail = ("mailto:?subject=" + "365%20PC%20Manager%20for%20my%20computer"
+                    + "&body=" + "The%20free%20365%20PC%20Manager%20app%20for%20Windows%2010%20and%2011%3A%20https%3A%2F%2F365techies.co.uk%2Ffree-pc-health-check%2F%23download")
+    _abroad_unlock = ('          <p style="margin:0 0 .7rem">Want the full automatic service too? An optional key, <strong>Unlock everything</strong>, adds it and two more tools: '
+                      '<strong>US$19.99 once, for 12 months on up to 3 PCs</strong>, charged in US dollars. It never renews, and you can have a full refund within 30 days. '
+                      '<a href="/pc-manager-licence/">Licence and refunds</a>.</p>\n') if PCM_UNLOCK_LIVE else ''
+    _pcm_abroad = f'''    <section class="section" id="outside-uk" aria-labelledby="pcm-abroad-h" hidden data-abroad-box>
+      <div class="wrap" style="max-width:58rem">
+        <div style="border:1px solid rgba(92,184,240,.42);border-radius:18px;padding:1.4rem 1.5rem;background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))">
+          <p class="eyebrow mono" style="margin:0 0 .45rem">// OUTSIDE THE UK?</p>
+          <h2 id="pcm-abroad-h" style="margin:0 0 .7rem;font-size:clamp(1.35rem,2.6vw,1.75rem);line-height:1.2">365 PC Manager is free wherever you are</h2>
+          <p style="margin:0 0 .7rem">It works on any Windows 10 or 11 PC (64-bit), in any country: download it, run the checks and fix things yourself with its step-by-step help. There&rsquo;s nothing to sign up for.</p>
+          <p style="margin:0 0 .7rem">Our support plans, home visits, phone help and remote help are for customers in the UK, so outside the UK the app doesn&rsquo;t offer them. <strong>We never phone anyone abroad</strong>: if someone rings you saying they&rsquo;re from 365 Techies, hang up.</p>
+{_abroad_unlock}          <p style="margin:0 0 1rem">Questions? Email <a href="mailto:info@365techies.co.uk">info@365techies.co.uk</a>. We reply Monday to Friday, 9am to 5pm UK time.</p>
+          <p style="display:flex;flex-wrap:wrap;gap:.6rem;margin:0"><a class="button primary" href="{PCM_SETUP_V30}" download>Download it free &#8595;</a><a class="button secondary" href="{_abroad_mail}">Send the download to my computer</a></p>
+        </div>
+      </div>
+    </section>
+    <script>(function(){{try{{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";if(tz&&!/^Europe\\/(London|Jersey|Guernsey|Isle_of_Man)$/.test(tz)){{var s=document.querySelector("[data-abroad-box]");if(s)s.hidden=false;}}}}catch(e){{}}}})();</script>'''
+    if PCM_UNLOCK_LIVE:
+        assert "no scare tactics, nothing to buy</strong>" in _pcm_hero and "fake errors, and nothing to buy</span>" in _pcm_proof, "the 'nothing to buy' wording moved"
+        _pcm_hero = _pcm_hero.replace("no scare tactics, nothing to buy</strong>", "no scare tactics, nothing to buy in the UK</strong>")
+        _pcm_proof = _pcm_proof.replace("fake errors, and nothing to buy</span>", "fake errors, nothing to buy in the UK</span>")
+    content = "\n".join([_pcm_hero, _pcm_proof, _pcm_abroad] + [_blocks[i] for i in _order] + [_pcm_fold])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
@@ -16656,6 +16690,16 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li>So that one computer cannot sign up a flood of addresses, we keep a scrambled code made from your internet address for an hour; the address itself is not kept.</li>
           </ul>
 
+          <h2 id="unlock-everything" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Buying &ldquo;Unlock everything&rdquo; for 365 PC Manager (outside the UK)</h2>
+          <p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>). It is sold by our payment partner <strong>Lemon Squeezy</strong> (&ldquo;Sold through Link, LLC&rdquo;), which takes your payment, card or PayPal details, billing address and tax information under its own <a href="https://www.lemonsqueezy.com/privacy" rel="noopener">privacy policy</a>. Those details stay with Lemon Squeezy: we never see your card.</p>
+          <ul>
+            <li><strong>What Lemon Squeezy tells us about your order:</strong> your email address, the order number, the currency and total you paid, the anonymous install number of the PC you bought from, and whether it was a test.</li>
+            <li><strong>What we use it for:</strong> emailing you your key, sending a new one if you lose it, refunds and card disputes, and keeping each key to its three PCs. We keep the key itself only in scrambled form.</li>
+            <li><strong>Our legal basis:</strong> performing our contract with you, our legitimate interest in stopping fraud and key sharing, and our legal duty to keep financial records.</li>
+            <li><strong>How long we keep it:</strong> the order record for six years, like our other financial records (see below).</li>
+            <li><strong>No marketing:</strong> buying a key never puts you on a mailing list. We only email you about your key, unless you separately ask for our tips.</li>
+          </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>
@@ -16682,6 +16726,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Slack</strong> &mdash; our own internal team channel, where new enquiries and messages are relayed so somebody picks them up.</li>
             <li><strong>Google</strong> &mdash; Analytics (only with your consent), and the mapping data behind our free tools. Google&rsquo;s own attribution appears on any map we show.</li>
             <li><strong>Partnerize</strong> &mdash; the affiliate network behind the small number of clearly-labelled sponsored links on this site.</li>
+            <li><strong>Lemon Squeezy</strong> (Sold through Link, LLC, United States) &mdash; the seller of 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK: it takes the payment and tells us your email address and order, as described above.</li>
           </ul>
           <p>We may also share information where the law requires it. Some of these providers are based outside the UK, or process data outside it; where that happens we rely on the UK&rsquo;s approved transfer safeguards, and we will tell you more if you ask.</p>
 
@@ -16691,7 +16736,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Customer and service records</strong> &mdash; while you are a customer, and for a reasonable period afterwards so we can answer questions about work we did.</li>
             <li><strong>Enquiries that do not become work</strong> &mdash; kept only as long as we may reasonably need to follow up.</li>
             <li><strong>An unfinished booking</strong> &mdash; the phone number is deleted after 24 hours.</li>
-            <li><strong>Emails our website sends you automatically</strong> (booking confirmations and reminders, review requests, service reports, payment links, sign-in emails) &mdash; we keep a copy for 90 days so our team can see what you were sent. Any sign-in code or private link in them is hidden in our copy.</li>
+            <li><strong>Emails our website sends you automatically</strong> (booking confirmations and reminders, review requests, service reports, payment links, sign-in emails, and the email with a 365 PC Manager key) &mdash; we keep a copy for 90 days so our team can see what you were sent. Any sign-in code or private link in them is hidden in our copy.</li>
             <li><strong>Analytics</strong> &mdash; held by Google under their own retention settings.</li>
           </ul>
           <p>If you would like your data removed sooner, ask us and we will do it wherever we are not required to keep it.</p>
@@ -16779,6 +16824,8 @@ info_page(
           <p>Remote support is provided over encrypted Splashtop SOS, with your consent and while you watch on screen. Access ends when the session ends.</p>
           <h2>Our liability</h2>
           <p>We take great care in everything we do. To the extent permitted by law, our liability is limited to the value of the services provided. Nothing in these terms excludes any liability that cannot be excluded under law.</p>
+          <h2>365 PC Manager outside the UK</h2>
+          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key, sold only to computers outside the UK through our payment partner Lemon Squeezy, has its own terms and our 30-day refund promise: see <a href="/pc-manager-licence/">365 PC Manager licence and refunds</a>.</p>
           <h2>Data protection</h2>
           <p>We handle your personal data in line with our <a href="/privacy-policy/">privacy policy</a>.</p>
           <h2>Governing law</h2>
@@ -16789,6 +16836,83 @@ info_page(
           <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""" % UPDATED,
   cta_args=("Ready to get started?", "Pick a plan or talk to a friendly techie.",
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
+)
+
+# ---- 365 PC Manager licence and refunds: the paid "Unlock everything" key abroad (11 Oct 2026; owner: "yes, 30 days, start
+# on the website parts ... do everything"). What it says is pinned to the code: Unlock adds exactly three things (Ui.cs:
+# StartFullService, the Start-up page's switch-off, Backup's "Tidy old backups" = File History versions older than 30 days,
+# asked first, the latest always kept); a key = 12 months, up to 3 PCs, does not renew (pcm-plus-lib, $BUY_PRICE); a refund
+# switches the key off (plus_ls_handle order_refunded); staff can send a new key (plus_reissue) or free a PC slot; Lemon
+# Squeezy is the seller ("Sold through Link, LLC") - research/pcm-abroad-2026-10-11/06-legal-payments.md. Software only:
+# Lemon Squeezy sells no services, and our people-help is for UK customers. noindex: a page for buyers, not for search.
+_PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
+          <h2>In short</h2>
+          <ul>
+            <li><strong>365 PC Manager is free</strong> to use on any Windows 10 or 11 PC. You never need to buy anything.</li>
+            <li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong>, paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>
+            <li><strong>It does not renew.</strong> After 12 months it simply stops, and you are never charged again unless you choose to buy another.</li>
+            <li><strong>30-day refund, no questions asked</strong>, even if you have used it.</li>
+            <li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: those are for our customers in the UK.</li>
+          </ul>
+
+          <h2>What the key adds</h2>
+          <p>Everything else in 365 PC Manager stays free, with or without a key. The key adds three things:</p>
+          <ul>
+            <li><strong>The full automatic service</strong>, whenever you choose to run it: Windows, driver and app updates, a deep clean, security and repair checks and a performance check. It usually takes 40 minutes to an hour and a half, Windows asks your permission first, and your PC may restart.</li>
+            <li><strong>Switching off programs that start with Windows</strong>, from the app&rsquo;s Start-up page.</li>
+            <li><strong>Tidying old backups</strong>: removing Windows File History backup copies older than 30 days to free space. It asks you first and always keeps your most recent backup.</li>
+          </ul>
+
+          <h2>Price, tax and how you pay</h2>
+          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars. Where your country charges sales tax or VAT, it is included in that price. Your bank may show the amount in your own currency, and some banks add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
+          <p><strong>Lemon Squeezy is the seller.</strong> Our payment partner Lemon Squeezy (&ldquo;Sold through Link, LLC&rdquo;) takes the payment, adds any tax, sends your receipt and handles card questions, under its own <a href="https://www.lemonsqueezy.com/buyer-terms" rel="noopener">buyer terms</a> and <a href="https://www.lemonsqueezy.com/privacy" rel="noopener">privacy policy</a>. Your card or PayPal statement shows Lemon Squeezy (for example &ldquo;LEMSQZY*&rdquo;), not our name. We, 365 Techies Ltd, make the software, and these terms are about using it.</p>
+
+          <h2>Your key and your PCs</h2>
+          <ul>
+            <li>Your key arrives by email a few minutes after you pay. In 365 PC Manager, open <strong>Unlock everything</strong> and type it where it says &ldquo;Got your key?&rdquo;.</li>
+            <li>One key works on <strong>up to three Windows PCs</strong> in your home or small business. Please don&rsquo;t share it more widely: a key used on more PCs, or bought with a card that is later disputed, may be switched off.</li>
+            <li><strong>Lost your key, or changing a PC?</strong> Reply to the email your key came in, or email <a href="mailto:info@365techies.co.uk">info@365techies.co.uk</a> from the address you bought with. We&rsquo;ll send you a new key (the old one stops working) or free up a PC.</li>
+            <li>Every update to 365 PC Manager during your 12 months is included, and the free app keeps updating after that.</li>
+          </ul>
+
+          <h2 id="refunds" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Our 30-day refund promise</h2>
+          <p>If you&rsquo;re not happy for any reason, ask within <strong>30 days of buying</strong> and you get your money back in full. No questions asked, even if you have used the key.</p>
+          <ul>
+            <li><strong>To ask:</strong> reply to the email your key came in, or email <a href="mailto:info@365techies.co.uk?subject=Refund%%20please">info@365techies.co.uk</a> with your order number (it&rsquo;s on your Lemon Squeezy receipt) and the words &ldquo;refund please&rdquo;.</li>
+            <li>We start the refund through Lemon Squeezy, normally within two working days. It goes back to the card or PayPal account you paid with; your bank may take a few more days to show it.</li>
+            <li>Once it&rsquo;s refunded, the key stops working and the app goes back to the free version.</li>
+            <li>Lemon Squeezy can also refund you directly. And nothing here takes away any right you have under the law where you live.</li>
+          </ul>
+
+          <h2>What the app changes on your PC, and how to undo it</h2>
+          <ul>
+            <li><strong>Updates</strong> from the full service are Windows&rsquo; own: you can see and remove them in Windows Settings &rsaquo; Windows Update &rsaquo; Update history.</li>
+            <li><strong>Programs you switch off</strong> at start-up can be switched back on from the same Start-up page, or in Windows Task Manager &rsaquo; Startup apps. If you uninstall 365 PC Manager, it puts them back for you.</li>
+            <li><strong>Old backup copies</strong> that you tidy away are removed for good: that is why the app asks first and always keeps your latest backup.</li>
+            <li>To remove 365 PC Manager, use Windows Settings &rsaquo; Apps.</li>
+          </ul>
+
+          <h2>Our responsibility to you</h2>
+          <p>We build 365 PC Manager carefully and test every release on real PCs. If something we supplied damages your PC because we didn&rsquo;t take reasonable care, tell us and we&rsquo;ll put it right or compensate you, as the law requires. Nothing in these terms limits any responsibility the law doesn&rsquo;t allow us to limit, or your rights as a consumer where you live.</p>
+
+          <h2>Who we are</h2>
+          <p>365 Techies Ltd, a family IT business in Bournemouth, England, since 1995 (a limited company since 2017): company number <a href="https://find-and-update.company-information.service.gov.uk/company/11073501" rel="noopener">11073501</a>, registered office 71-75 Shelton Street, London, WC2H 9JQ, United Kingdom. These terms are governed by the laws of England &amp; Wales, without taking away the consumer protection of the country you live in. We use your details as our <a href="/privacy-policy/#unlock-everything">privacy policy</a> describes.</p>
+
+          <h2>Questions</h2>
+          <p>Email <a href="mailto:info@365techies.co.uk">info@365techies.co.uk</a>. We reply in English, Monday to Friday, 9am to 5pm UK time.</p>"""
+
+info_page(
+  slug="pc-manager-licence", crumb_name="365 PC Manager licence and refunds", eyebrow="// LICENCE &amp; REFUNDS",
+  hero_cta1=('About 365 PC Manager', '/free-pc-health-check/'), hero_cta2=('Ask about a refund', 'mailto:info@365techies.co.uk?subject=Refund%20please'),
+  h1='365 PC Manager <em class="grad grad--cyan">licence and refunds</em>',
+  lede="The terms for the optional &ldquo;Unlock everything&rdquo; key, sold to computers outside the UK, and our 30-day refund promise. The app itself is free.",
+  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
+  title="365 PC Manager Licence and Refunds | 365 Techies",
+  chips=["12 months, no renewal", "30-day refund", "Free app, optional key"],
+  inner=_PCM_LICENCE_BODY % _policy_stamp("pcm-licence", _PCM_LICENCE_BODY),
+  robots="noindex, follow",
+  cta_args=("Questions about your key?", "Email us, Monday to Friday, 9 to 5 UK time.",
+            ("Email info@365techies.co.uk", "mailto:info@365techies.co.uk"), ("About 365 PC Manager", "/free-pc-health-check/")),
 )
 
 # ---- Cookie Policy
@@ -29943,7 +30067,9 @@ def write_portal_page():
   function nxlPage(site, p) {
     p = String(p || '/');
     if (p === '/') return 'Home page';
-    if (p === '/~dl/pcm/') return '\\u2b07 PC Manager download (click)';   // the beacon's download ping (1 Oct 2026)
+    // the beacon's download pings (1 Oct 2026; from 11 Oct with the page clicked on: /~dl/pcm/<page>, /~dl/t1/<page>)
+    var dlp = /^\\/~dl\\/(pcm|t1)(\\/.*)$/.exec(p);
+    if (dlp) return '\\u2b07 ' + (dlp[1] === 'pcm' ? 'PC Manager' : 'Techies One Mail') + ' download (click)' + (dlp[2] !== '/' ? ' \\u00b7 ' + nxlPage(site, dlp[2]) : '');
     // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
     var act = /^\\/~(call|text|lead)(\\/.*)$/.exec(p);
     if (act) return NXL_ACT[act[1]][1] + ' \\u00b7 ' + nxlPage(site, act[2]);
@@ -32839,6 +32965,16 @@ def write_portal_page():
     if (!c || c === '--') return 'Not known';
     try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(c) || c; } catch (e) { return c; }
   }
+  // 11 Oct 2026: which pages the download clicks came from (api vis_dl_tally; recorded from 11 Oct - before that every
+  // click shows as "home page or earlier")
+  function dlFromHtml(dl) {
+    var f = (dl && dl.from) || [];
+    if (!f.length) return '';
+    return '<p class="quiet" style="margin:.2rem 0 0">Clicked on: ' + f.map(function (x) {
+      var k = String(x.k || '/');
+      return esc(k === '/' ? 'home page or earlier' : k.replace(/^\\/|\\/$/g, '')) + ' <b>' + x.n + '</b>';
+    }).join(' \\u00b7 ') + '</p>';
+  }
   function renderInstalls() {
     var box = document.getElementById('instbox'); if (!box) return;
     var d = INST.d;
@@ -32869,7 +33005,7 @@ def write_portal_page():
         + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.vn || v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \\u00b7 ' + d.linked + ' linked but free \\u00b7 ' + d.plan + ' on a plan</p>'
-        + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
+        + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p>' + dlFromHtml(dl) + '</div></div>';
       // 9 Oct 2026 (owner: "people that have got the free version ... a 30-day trial ... fully featured ... say that
       // they've been specially approved"): the installs one by one, each with "Give 30 days free" (api/pcm-installs.php
       // do=trial -> pcm-plus-lib.php plus_trial_give). Only PCs never linked to us; one free month per PC, ever.
@@ -32992,7 +33128,7 @@ def write_portal_page():
       + '<div class="stat"><b>' + ((d.downloads || {}).d7 || 0) + '</b><span>download clicks this week</span></div></div>';
     h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> \\u00b7 used this week: <b>' + d.active7
       + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \\u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b>'
-      + ' \\u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>';
+      + ' \\u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>' + dlFromHtml(d.downloads || {});
     var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
     h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
       + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';

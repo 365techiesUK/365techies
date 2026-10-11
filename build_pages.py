@@ -1074,9 +1074,11 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;'
     'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};'
     'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;'
-    'var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");'
+    # 11 Oct 2026: with the page it was clicked on (/~dl/pcm/computer-spec-checker/), so the installs cards can say which
+    # pages send downloads (vis_dl_tally); a bare /~dl/pcm/ = the home page
+    'var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);'
     # 10 Oct 2026: a Techies One Mail download (the box on the email fix pages) is /~dl/t1/, shown on its installs card
-    'else if(/TechiesOneMail-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/t1/");'
+    'else if(/TechiesOneMail-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);'
     'else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);'
     'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
     '}catch(e){}})();</script>\n')

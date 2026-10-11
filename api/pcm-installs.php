@@ -45,17 +45,19 @@ $given = array();
 if ($do === 'trial') {
     $d0 = @json_decode((string)@file_get_contents(inst_file()), true);
     $ids = isset($in['ids']) && is_array($in['ids']) ? array_slice($in['ids'], 0, 200) : array();
-    $n = 0; $skip = 0; $busy = 0;
+    $n = 0; $skip = 0; $busy = 0; $nosale = 0;
     foreach ($ids as $iid) {
         $iid = (string)$iid;
         $e = (is_array($d0) && plus_is_mhash($iid) && isset($d0['m'][$iid]) && is_array($d0['m'][$iid])) ? $d0['m'][$iid] : null;
         if (!$e || !empty($e['k']) || !empty($e['p']) || !empty($e['o'])) { $skip++; continue; }   // linked, on a plan, ours, or unknown
+        if (plus_no_sale($e['c'] ?? '')) { $nosale++; continue; }   // 11 Oct 2026: a country Lemon Squeezy won't sell to (pcm-plus-lib PLUS_NO_SALE)
         $r = plus_trial_give($iid, $by !== '' ? $by : 'Staff');
         if (!empty($r['ok'])) { $n++; $given[] = $iid; } elseif (($r['error'] ?? '') === 'busy') $busy++; else $skip++;
     }
     $note = $n ? ($n === 1 ? 'Given: 30 days free.' : 'Given to ' . $n . ' PCs: 30 days free each.') . ' Each PC is told within the hour, once it is on 36.1 (older copies update themselves first).'
         : ($busy ? 'That did not save - try again.' : 'Nothing given - those PCs have had a free month already, or are linked to a customer.');
     if ($n && $skip) $note .= ' ' . $skip . ' left out (had one already, or linked to a customer).';
+    if ($nosale) $note .= ' ' . $nosale . ($nosale === 1 ? ' PC is' : ' PCs are') . ' in a country our payment company won\'t sell to, so no free month there.';
 } elseif ($do === 'ours' || $do === 'notours') {
     $okM = inst_mark_ours($ip, $by !== '' ? $by : 'Staff', $do === 'ours');
     $note = $do === 'ours' ? ($okM ? 'Done - PCs on this connection are left out from their next check-in (within the hour).' : 'That did not save - try again.')
@@ -74,21 +76,8 @@ $out['rows'] = inst_rows(is_array($d) ? $d : array(), $who, plus_trial_states())
 $out['trial_days'] = PLUS_TRIAL_DAYS;
 $out['trial_min_ver'] = PLUS_TRIAL_MIN_VER;
 
-// download clicks (the live view's tally): each visitor once a day, by country
+// download clicks (the live view's tally): each visitor once a day, by country - and (11 Oct 2026) the page each came
+// from (vis_dl_tally, visitors-tally-lib.php)
 $vs = @json_decode((string)@file_get_contents(__DIR__ . '/visitors-stats.json'), true);
-$dl = array('d7' => 0, 'd30' => 0, 'countries' => array());
-if (is_array($vs) && isset($vs['days']) && is_array($vs['days'])) {
-    $cut7 = gmdate('Y-m-d', time() - 6 * 86400); $cut30 = gmdate('Y-m-d', time() - 29 * 86400); $cc = array();
-    foreach ($vs['days'] as $day => $sites) {
-        if ($day < $cut30 || !isset($sites['t365']) || !is_array($sites['t365'])) continue;
-        $t = $sites['t365'];
-        $n = (int)(isset($t['pages']['/~dl/pcm/']) ? $t['pages']['/~dl/pcm/'] : 0);
-        $dl['d30'] += $n; if ($day >= $cut7) $dl['d7'] += $n;
-        foreach ((isset($t['byCountry']) && is_array($t['byCountry'])) ? $t['byCountry'] : array() as $c => $b)
-            if (isset($b['pages']['/~dl/pcm/'])) $cc[$c] = (isset($cc[$c]) ? $cc[$c] : 0) + (int)$b['pages']['/~dl/pcm/'];
-    }
-    arsort($cc);
-    foreach (array_slice($cc, 0, 10, true) as $c => $n) $dl['countries'][] = array('k' => (string)$c, 'n' => $n);
-}
-$out['downloads'] = $dl;
+$out['downloads'] = vis_dl_tally($vs, 'pcm');
 echo json_encode($out);

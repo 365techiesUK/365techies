@@ -54,11 +54,17 @@ function plus_enabled($off = null, $config = null) {
     $c = plus_config($config);
     return $c['on'] && $c['url'] !== '' && !file_exists($off !== null ? $off : PLUS_OFF);
 }
+// 11 Oct 2026 (owner: "do everything"): the countries Lemon Squeezy will not sell to (docs.lemonsqueezy.com, Supported
+// countries, read 11 Oct 2026 - its page lists North Korea twice, so 17). A PC there is never offered Buy (the checkout
+// could not take the money) and staff never give it a free month (the plan's simplest rule; UK sanctions not researched).
+define('PLUS_NO_SALE', 'CF,CU,KP,CD,ER,GW,IR,IQ,LB,LY,ML,RU,SO,SS,SD,SY,YE');
+function plus_no_sale($country) { $c = strtoupper(trim((string)$country)); return $c !== '' && in_array($c, explode(',', PLUS_NO_SALE), true); }
 // What a keyless check-in's answer gains. $country: the check-in's country ('' = not known). $id: the install's anonymous id.
 function plus_offer_out($country, $id = '', $off = null, $config = null) {
     if (!plus_enabled($off, $config)) return array();
     $c = strtoupper((string)$country);
     if ($c === '' || in_array($c, array('GB', 'IM', 'JE', 'GG'), true)) return array('offer' => 'plan');
+    if (plus_no_sale($c)) return array();   // nothing to buy there: the free app, as if the paid app were switched off
     $cfg = plus_config($config);
     return array('offer' => 'buy', 'buy_url' => str_replace('{id}', rawurlencode((string)$id), $cfg['url']), 'buy_price' => $cfg['price']);
 }

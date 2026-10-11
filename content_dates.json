@@ -1170,7 +1170,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "afb36840e82e19df",
+  "h": "70660c808f9af7de",
   "last": "2026-10-11"
  },
  "free-tools": {
@@ -2715,6 +2715,10 @@
   "h": "5cef891a1bfbef92",
   "last": "2026-10-06"
  },
+ "pc-manager-licence": {
+  "first": "2026-10-11",
+  "h": "5dc5661ca8770b51"
+ },
  "phishing": {
   "first": "2026-07-28",
   "h": "585c6958eb589e7a",
@@ -2803,7 +2807,7 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "b0a09fe8958aa6ef",
+  "h": "c7f68773eef2dc78",
   "last": "2026-10-11"
  },
  "pre-call-checklists": {
@@ -2888,8 +2892,8 @@
  },
  "privacy-policy": {
   "first": "2026-07-28",
-  "h": "d4dfd835d278ec17",
-  "last": "2026-10-10"
+  "h": "32f82058b016172d",
+  "last": "2026-10-11"
  },
  "ps5-emulator-real-or-fake": {
   "first": "2026-10-10",
@@ -3323,8 +3327,8 @@
  },
  "terms": {
   "first": "2026-07-28",
-  "h": "2acf9e57909ee255",
-  "last": "2026-10-09"
+  "h": "9f029176f81f5163",
+  "last": "2026-10-11"
  },
  "the-set-of-folders-cannot-be-opened": {
   "first": "2026-07-28",

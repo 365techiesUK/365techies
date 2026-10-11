@@ -51,6 +51,33 @@ function vis_actions(array $pages, $nFrom = 8) {
     foreach (array_slice($from, 0, $nFrom, true) as $k => $v) $list[] = array('k' => (string)$k, 'n' => $v['n'], 'call' => $v['call'], 'text' => $v['text'], 'lead' => $v['lead']);
     return array('n' => $acts, 'from' => $list);
 }
+// 11 Oct 2026 (owner: "do everything" - the abroad plan's "measure before building more"): an app download click is
+// /~dl/<app><page> - the beacon adds the page it was clicked on (/~dl/pcm/computer-spec-checker/). A bare /~dl/pcm/ is
+// a click on the home page, or any click before 11 Oct 2026 (the page was not recorded then). For the installs cards:
+// clicks over 7 and 30 days, by country, and the pages they came from (30 days).
+function vis_dl_tally($vs, $app, $nFrom = 8) {
+    $pre = '/~dl/' . $app . '/';
+    $out = array('d7' => 0, 'd30' => 0, 'countries' => array(), 'from' => array());
+    if (!is_array($vs) || !isset($vs['days']) || !is_array($vs['days'])) return $out;
+    $cut7 = gmdate('Y-m-d', time() - 6 * 86400); $cut30 = gmdate('Y-m-d', time() - 29 * 86400); $cc = array(); $from = array();
+    foreach ($vs['days'] as $day => $sites) {
+        if ($day < $cut30 || !isset($sites['t365']) || !is_array($sites['t365'])) continue;
+        $t = $sites['t365'];
+        foreach ((isset($t['pages']) && is_array($t['pages'])) ? $t['pages'] : array() as $k => $n) {
+            if (strpos((string)$k, $pre) !== 0) continue;
+            $out['d30'] += (int)$n; if ($day >= $cut7) $out['d7'] += (int)$n;
+            $src = substr((string)$k, strlen($pre) - 1);   // "/computer-spec-checker/" (or "/")
+            $from[$src] = (isset($from[$src]) ? $from[$src] : 0) + (int)$n;
+        }
+        foreach ((isset($t['byCountry']) && is_array($t['byCountry'])) ? $t['byCountry'] : array() as $c => $b)
+            foreach ((isset($b['pages']) && is_array($b['pages'])) ? $b['pages'] : array() as $k => $n)
+                if (strpos((string)$k, $pre) === 0) $cc[$c] = (isset($cc[$c]) ? $cc[$c] : 0) + (int)$n;
+    }
+    arsort($cc); arsort($from);
+    foreach (array_slice($cc, 0, 10, true) as $c => $n) $out['countries'][] = array('k' => (string)$c, 'n' => $n);
+    foreach (array_slice($from, 0, $nFrom, true) as $p => $n) $out['from'][] = array('k' => (string)$p, 'n' => $n);
+    return $out;
+}
 // a page-count map without the action pings (the Pages lists show what people read)
 function vis_reads(array $pages) {
     $out = array();
