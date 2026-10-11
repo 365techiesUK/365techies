@@ -31,8 +31,8 @@ if not REL:
 MB = f"{round(REL['size'] / 1_048_576)} MB"   # as Windows and Edge show it (17,801,880 bytes = 17 MB)
 
 
-def shot(name, alt, eager=False):
-    base = f"/images/t1-{name}-{VER_TAG}"
+def shot(name, alt, eager=False, tag=None):
+    base = f"/images/t1-{name}-{tag or VER_TAG}"   # a picture added later carries its own tag (e.g. all-inboxes, v0134)
     lazy = "" if eager else ' loading="lazy"'
     return (f'<img src="{base}-720.webp" srcset="{base}-720.webp 720w, {base}-1440.webp 1440w" '
             f'sizes="(max-width:880px) 100vw, 720px" width="1440" height="900" alt="{alt}"{lazy} decoding="async">')
@@ -256,6 +256,13 @@ FEATS = [
      "Type your address; it does the rest",
      "Techies One knows the settings for the big UK providers, so there are no server names or port numbers to look up. It tells you which password it needs (BT&rsquo;s normal one, or a Gmail app password) and checks everything works before it saves.",
      "Adding a btinternet.com address: Techies One says it knows the settings and only asks for the BT email password (a made-up sample)"),
+    # 11 Oct 2026, 0.13.4 (owner: "yes, add All inboxes to the product page"). Picture: the real app's demo with its pretend
+    # second address given four made-up emails (tools/playwright-check/t1-allinboxes-shot.mjs), so it has its own tag.
+    ("all-inboxes", "Several email addresses to keep an eye on",
+     "All your inboxes in one list",
+     "Got a BT address, a Gmail and a work one? Add them all, and <strong>All inboxes</strong> shows the email from every one of them in one list, newest first, each marked with the address it came to. Reply, and it goes from the address the email was sent to, so you never answer from the wrong one. The Unread tab works across them all, and searching while All inboxes is open looks through every inbox.",
+     "All inboxes in Techies One Mail: one list, newest first, each email marked with the address it came to (a demo mailbox and a pretend Gmail), with an email from Ellie Pritchard open beside it (a made-up sample)",
+     "v0134"),
     ("clean-up", "Years of newsletters and junk",
      "Clean up your inbox in minutes",
      "Clean up lists everyone who fills your inbox, biggest first: mailing lists, emails you never open, senders gone quiet for over a year. Unsubscribe from genuine newsletters in one press (it refuses on anything suspicious, because that would tell a scammer your address works), delete or archive all of a sender&rsquo;s emails at once, or send a whole company to Junk from now on. Deleted email goes to Deleted, so nothing is lost by mistake.",
@@ -277,20 +284,21 @@ FEATS = [
 
 def features():
     blocks = []
-    for name, prob, h, body, alt in FEATS:
+    for feat in FEATS:
+        name, prob, h, body, alt = feat[:5]
         blocks.append(f"""          <div class="t1p-feat">
             <div class="t1p-feat__txt">
               <p class="t1p-prob mono">{prob}</p>
               <h3>{h}</h3>
               <p>{body}</p>
             </div>
-            <figure style="margin:0"><div class="t1p-shot">{shot(name, alt)}</div></figure>
+            <figure style="margin:0"><div class="t1p-shot">{shot(name, alt, tag=feat[5] if len(feat) > 5 else None)}</div></figure>
           </div>""")
     more = [
         ("Undo send", "Choose up to 30 seconds to change your mind after pressing Send."),
         ("Send later and snooze", "Have an email go tomorrow at 8am, or put one away until next week (your PC needs to be on, with Techies One running, at that time)."),
         ("Rules", "Always move emails from someone into a folder, or mark them read."),
-        ("Several addresses, one window", "BT, Gmail and a work address together, each in its own colour."),
+        ("Several addresses, one window", "BT, Gmail and a work address together, each in its own colour, or all in one list with All inboxes."),
         ("Mail Mover", "Copy all your email from one address to another (say, Plusnet to Gmail), folder by folder, without deleting anything. A big mailbox can take a few days."),
         ("Templates and a signature", "Save the replies you write again and again; add a signature with a small logo."),
         ("Club newsletters", "Send a newsletter to a club or your customers, paced to stay within your provider&rsquo;s usual limits, with a proper unsubscribe line and no tracking."),
@@ -313,7 +321,7 @@ def features():
 
 
 COMPARE = [
-    ("us", "Techies One Mail (365 Techies)", "Free", "No limit on addresses and no adverts. Catches: Windows only; no POP or offline reading; scam checks and the blocked list work only while it&rsquo;s open on screen", "Yes: ring 01202 775566 (Mon to Fri 9 to 5) or press Get help in the app. Checking a problem is free; any work is priced before we start", "Windows 10 and 11 (64-bit)"),
+    ("us", "Techies One Mail (365 Techies)", "Free", "No limit on addresses, all your inboxes in one list, and no adverts. Catches: Windows only; no POP or offline reading; scam checks and the blocked list work only while it&rsquo;s open on screen", "Yes: ring 01202 775566 (Mon to Fri 9 to 5) or press Get help in the app. Checking a problem is free; any work is priced before we start", "Windows 10 and 11 (64-bit)"),
     ("", "New Outlook (Microsoft)", "Free with adverts in the inbox; no adverts with Microsoft 365, from &pound;19.99 a year (Basic)", "The free version shows adverts", "Call-back for paying Microsoft 365 subscribers", "Windows 10 and 11"),
     ("", "Classic Outlook (Microsoft 365 Personal)", "&pound;84.99 a year, which also includes Word, Excel and 1 TB of storage", "Needs a subscription, or Office Home &amp; Business 2024 (&pound;249.99 one-off); Office Home 2024 doesn&rsquo;t include it", "Call-back for paying subscribers", "Windows (Mac has its own Outlook)"),
     ("", "Thunderbird (Mozilla)", "Free, funded by donations", "No limits; blocking a sender needs a filter", "Community forums", "Windows, Mac, Linux and Android"),
@@ -404,7 +412,7 @@ LIMITS = """    <section class="section t1p" aria-labelledby="t1-limits">
           <li><strong>Windows PCs only.</strong> There&rsquo;s no Mac, iPhone, iPad or Android version. Your phone keeps using its own email app, and both stay in step because your email is kept at your provider.</li>
           <li><strong>It checks new email while it&rsquo;s open on your screen.</strong> Scam checks, rules, the blocked and junk lists, new-email alerts and calendar reminders only work while a Techies One window is open and not minimised. When it&rsquo;s closed or minimised, your provider&rsquo;s own spam filter keeps working, and Techies One catches up as soon as you open it.</li>
           <li><strong>Send later needs your PC on.</strong> Emails set to send later wait on your PC and go at that time if it&rsquo;s on and Techies One is running (it keeps running when you close its window); otherwise they go when you next open it.</li>
-          <li><strong>Search looks through one folder at a time,</strong> including old email in that folder, and shows the newest 40 matches. There&rsquo;s no single combined inbox yet: Favourites shows each inbox one under another.</li>
+          <li><strong>Search looks through one folder at a time</strong> (or, from All inboxes, every inbox at once), including old email, and shows the newest 40 matches. It can&rsquo;t yet search Sent, Archive and your other folders all together.</li>
           <li><strong>No new folders yet.</strong> You can move email into the folders you already have, but you can&rsquo;t make, rename or delete folders in Techies One, or flag an email by hand.</li>
           <li><strong>No Outlook data files.</strong> It can&rsquo;t open .pst archives or run Outlook add-ins, and it doesn&rsquo;t repair Outlook: it replaces it for everyday email.</li>
           <li><strong>No POP or offline reading.</strong> It reads email kept on your provider&rsquo;s server, so it needs an internet connection.</li>
@@ -461,6 +469,8 @@ FAQS = [
      "Look for big, clear buttons, large text and warnings about scams. Techies One Mail has a Simple view with bigger buttons, three text sizes, read-aloud and a Get help button that asks a real person at 365 Techies to ring you back (any paid help is priced before we start)."),
     ("How do I block someone sending me emails?",
      "Open one of their emails and press Block sender. From then on, whenever Techies One is open on your screen, anything new they send is moved to your Scams folder, and your phone sees it there too. It doesn&rsquo;t stop their emails reaching your provider, so a new one can show on your phone until Techies One next checks. You can unblock them from the address book at any time."),
+    ("Can I see all my email addresses in one inbox?",
+     "Yes. Once you&rsquo;ve added a second address, <strong>All inboxes</strong> appears at the top of the folder list: the email from every address in one list, newest first, each marked with the address it came to. When you reply, it&rsquo;s sent from the address the email went to. It&rsquo;s free, with no limit on how many addresses you add."),
     ("Will I lose my old emails if I switch?",
      "Usually not. If your old program used the normal setting (IMAP), your emails are kept with your email provider, so they appear in Techies One Mail, folders and all, as soon as you add your address. Outlook Express and Windows Live Mail were often set to the older POP setting instead, which kept email only on the old PC, and Techies One can&rsquo;t open those copies. If that might be you, ask us before you remove the old program or PC."),
     ("Is it safe to put my email password into it?",
