@@ -906,8 +906,9 @@ SNIPPETS = {
         "title": "Techies One Mail | Free Replacement for Windows Mail",
         "desc": "Techies One Mail: a free email program for Windows 10 and 11 that replaces Windows Mail and Outlook Express. BT, Sky and Gmail ready, with scam warnings.",
     },
-    "free-pc-health-check": {
-        "desc": "365 PC Manager: the must-have free PC health check for Windows 10 and 11. It checks your network, programs, updates and backup. No fake errors or scares.",
+    "free-pc-health-check": {   # 11 Oct 2026: 1,723 impressions / 3 clicks in 28 days - say what it checks, drop the "must-have"
+        "title": "Free PC Health Check for Windows 10 &amp; 11 | 365 PC Manager",
+        "desc": "Free Windows 10 and 11 app that checks updates, drives, backup, Wi-Fi, start-up and scams in plain English. No sign-up, no fake errors, signed by us.",
     },
     "it-support-for-home-workers": {
         "desc": "Reliable IT support for people working from home. Email, Microsoft 365, Teams, printers, Wi-Fi, security and backups, all kept working so you can stay put.",

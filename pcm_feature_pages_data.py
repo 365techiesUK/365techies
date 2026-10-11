@@ -19,6 +19,14 @@ v36 moved all four under My PC in its new menu):
   Power & running cost      on a laptop running on battery, the whole laptop; on a desktop, the processor (and an NVIDIA
                             graphics card) only - never the screen or disks; hour-by-hour history; your own price a unit;
                             the Eco / Everyday / Full speed modes.
+Added 11 Oct 2026 (owner: "go ahead with all of them"), both FREE (no IsPro gate in Ui.cs):
+  Remote access (RemoteAccess.cs, v36)  'connected now' ONLY from Windows' own signals (an RDP session, Quick Assist /
+                            Remote Assistance open, 365's Splashtop); AnyDesk, TeamViewer, UltraViewer, ScreenConnect, RustDesk,
+                            Chrome Remote Desktop listed as running/installed, never 'connected'; AnyDesk connection_trace.txt
+                            (ProgramData or AppData/Roaming) and TeamViewer Connections_incoming.txt read on the customer's tap;
+                            Cut them off = close those programs or netsh wlan disconnect.
+  Browser safety (Addons.cs) every add-on in Chrome/Edge/Brave (+ Firefox v36) and HKLM/HKCU SOFTWARE/Policies, read-only:
+                            forced add-ons, policy-locked search engine / home page, program- or developer-installed add-ons.
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
@@ -47,11 +55,14 @@ SHOTS = {
     'wificard': ('/images/pcm-feat-wificard-v36.webp', 1320, 724, 'The Guest Wi-Fi card in 365 PC Manager: the Wi-Fi name and password typed in, and a printable card with the QR code, the network name and the password', ('Internet &amp; email', 'More internet tools, then Guest Wi-Fi card')),
     'alarm':   ('/images/pcm-feat-alarm-v36.webp', 1132, 962, 'The wake-up alarm in 365 PC Manager: it rings at 07:00 on weekdays with Radio Wimborne, up to 40% volume, rising over 10 minutes from almost silent, with Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'hometimer': ('/images/pcm-feat-hometimer-v36.webp', 1132, 962, 'The Someone&rsquo;s home timer in 365 PC Manager: it plays Radio Wimborne from 08:00 until 10:30 every day at 35% volume, with Shift the times a little each day switched on, and Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
+    'remote':  ('/images/pcm-feat-remote-v36.webp', 1272, 882, 'Remote access in 365 PC Manager: No Remote Desktop, Quick Assist or Splashtop session right now, the remote-control programs on this PC with which are running, who has connected from the programs&rsquo; own lists, and a warning that real companies never ring out of the blue asking to connect', ('Safety', 'Remote access')),
+    'browser': ('/images/pcm-feat-browser-v36.webp', 1272, 1662, 'Browser safety in 365 PC Manager saying 3 things in your browsers need putting right: Chrome&rsquo;s dangerous-site warnings switched off, a site allowed to send pop-up alerts, and a policy that sets Google Chrome&rsquo;s search engine so it can&rsquo;t be changed in the browser, marked best removed', ('Safety', 'Browser safety')),
+    'updates': ('/images/pcm-feat-updates-v36.webp', 1272, 1072, 'Windows Update in 365 PC Manager: Windows is getting its monthly updates, the last monthly update installed on 24 Sep 2026, and the most recent updates, starting with Windows 11, version 26H2, each marked Installed', ('My PC', 'Windows Update')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -690,11 +701,163 @@ AL = {
 }
 
 # the step-by-step panels (build_extra FIX_FLOW_PAGES format); the calculator page has none
+# ============================================================ 9. Is someone remotely accessing my computer?
+RA = {
+    'slug': 'is-someone-remotely-accessing-my-computer',
+    'title': 'Is Someone Remotely Accessing My Computer? How to Check',
+    'metaDesc': 'Mouse moving on its own, or worried a scammer still has access? How to check for a live remote connection on Windows, see who connected, and cut them off.',
+    'ogTitle': 'Is someone remotely accessing your computer? How to check',
+    'crumbName': 'Is Someone Remotely Accessing My Computer?',
+    'eyebrow': '// IS SOMEONE ON MY PC?',
+    'h1': 'Is someone <em class="grad grad--cyan">remotely accessing</em> your computer?',
+    'lede': 'The mouse moved on its own, a window opened that you didn&rsquo;t open, or someone &ldquo;from Microsoft&rdquo; or your bank was on your PC yesterday. Here&rsquo;s how to check, in Windows itself, whether anyone is connected right now, which remote-control programs are on the PC, and how to cut them off.',
+    'chips': ['Cut them off in seconds', 'Free remote access check app', 'Scam recovery specialists'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Scam recovery help', '/scam-recovery/'],
+    'ctaHead': 'Worried someone still has a way in?', 'ctaSub': 'We check the computer properly, remove what the scammer left behind and help you secure your accounts, while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Happening right now?', 'Disconnect from the internet first: switch Wi-Fi off or unplug the cable. That ends any remote connection.'),
+        ('The usual way in', 'A remote-control program someone talked you into installing: AnyDesk, TeamViewer, UltraViewer, ScreenConnect, RustDesk and similar.'),
+        ('Installed is not connected', 'These programs stay running all day so a helper can reach them. Running does not mean someone is watching.'),
+        ('What Windows can tell you', 'For its own tools &mdash; Remote Desktop, Quick Assist and Remote Assistance &mdash; Windows knows for certain when they are in use.'),
+        ('Then', 'Uninstall the program, run a full scan, change your passwords from another device, and ring your bank if you paid or shared card details.'),
+        ('Free check', 'The Remote access check in our free 365 PC Manager app shows what is connected and what is installed, and can cut them off.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Think someone is on your PC right now?',
+         'html': '<p><strong>If the mouse is moving or windows are opening by themselves right now, disconnect from the internet straight away.</strong> Click the network icon by the clock and switch Wi-Fi off, or pull out the network cable. A remote connection needs the internet, so that ends it immediately. Then work through the checks below calmly.</p>'
+                 '<p>Not every odd thing is a person. A pointer that drifts slowly is usually a worn mouse or a touchpad catching a sleeve; a pop-up saying &ldquo;virus found&rdquo; is usually a website&rsquo;s alert, not someone on the PC. What points to a real person is deliberate movement: the pointer going to the Start menu, typing, opening your email or online banking.</p>'},
+        {'eyebrow': '/02 &mdash; HOW THEY GET IN', 'h2': 'How someone gets remote access in the first place',
+         'html': '<p>In almost every scam it starts with a phone call or a pop-up: someone claiming to be from Microsoft, your broadband provider, your bank or Amazon says there is a problem and asks you to install a program so they can &ldquo;fix it&rdquo;. Microsoft warns that scammers ask you to install software that lets them access your computer, then present normal Windows messages as faults (<a href="https://support.microsoft.com/en-gb/windows/protect-yourself-from-tech-support-scams-2ebf91bd-f94c-2a8a-e541-f5c800d18435" rel="noopener" target="_blank">Microsoft</a>).</p>'
+                 '<ul><li><strong>The programs used are real, legitimate tools</strong> &mdash; AnyDesk, TeamViewer, UltraViewer, ScreenConnect, RustDesk, or Windows&rsquo; own Quick Assist. Companies use them for genuine support too.</li>'
+                 '<li><strong>Once installed, some can be left so they connect without anyone clicking Accept</strong> &mdash; &ldquo;unattended access&rdquo; &mdash; which is how a scammer comes back later.</li>'
+                 '<li><strong>Remote Desktop</strong>, built into Windows Pro, can also be switched on and used from outside if a router has been opened up for it. Windows Home cannot accept Remote Desktop connections.</li></ul>'},
+        {'eyebrow': '/03 &mdash; CHECK WINDOWS ITSELF', 'h2': 'Check for remote-control programs, in order',
+         'html': '<ol>'
+                 '<li><strong>Look by the clock.</strong> Click the small arrow next to the clock and look for an AnyDesk, TeamViewer or other remote-control icon you don&rsquo;t recognise.</li>'
+                 '<li><strong>Look in Task Manager.</strong> Press Ctrl, Shift and Esc together, click Processes, and look for AnyDesk, TeamViewer, UltraViewer, ScreenConnect, RustDesk or remoting_host (Chrome Remote Desktop).</li>'
+                 '<li><strong>Look at what&rsquo;s installed.</strong> Open Settings, then Apps, then Installed apps, and sort by date installed. Anything installed on the day of a phone call or pop-up is the first suspect.</li>'
+                 '<li><strong>Check Remote Desktop.</strong> On Windows Pro, open Settings, then System, then Remote Desktop. If it is On and you don&rsquo;t use it, switch it off.</li>'
+                 '<li><strong>Check for Quick Assist.</strong> If a Quick Assist window is open, someone is sharing your screen. Close it.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; WHO HAS CONNECTED?', 'h2': 'See who has connected, from the programs&rsquo; own lists',
+         'html': '<p>Two of the common programs keep their own record of incoming connections, which is the closest thing to a visitors&rsquo; book:</p>'
+                 '<ul><li><strong>AnyDesk</strong>: a file called <strong>connection_trace.txt</strong>, in <strong>C:\\ProgramData\\AnyDesk</strong> or in your own AppData\\Roaming\\AnyDesk folder.</li>'
+                 '<li><strong>TeamViewer</strong>: a file called <strong>Connections_incoming.txt</strong>, in the TeamViewer folder inside Program Files.</li></ul>'
+                 '<p>Open them in Notepad to see the dates and the IDs that connected. A missing file proves nothing either way: other programs keep no list we can read, and a file can be deleted.</p>'},
+        {'eyebrow': '/05 &mdash; CUT THEM OFF', 'h2': 'Cut them off and lock them out',
+         'html': '<ol>'
+                 '<li><strong>Stay off the internet</strong> until the program is gone.</li>'
+                 '<li><strong>Uninstall the remote-control program</strong> in Settings, then Apps, then Installed apps. If it refuses because it is running, restart the PC and try again.</li>'
+                 '<li><strong>Run a full scan</strong> with Windows Security, as Microsoft advises, then a second opinion from a scanner such as Malwarebytes.</li>'
+                 '<li><strong>Change your passwords from a different device you trust</strong> &mdash; email first, then banking and shopping &mdash; and turn on two-step verification.</li>'
+                 '<li><strong>If you paid anything or shared card or bank details</strong>, ring your bank straight away (in the UK, 159 reaches most banks).</li>'
+                 '<li><strong>Look for user accounts you don&rsquo;t recognise</strong> in Settings, then Accounts, then Other users.</li>'
+                 '</ol>'
+                 '<p>If you gave a scammer access and want the full checklist, our guide <a href="/gave-a-scammer-remote-access/">gave a scammer remote access to your computer?</a> goes through every step.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check it for you',
+         'html': '__APP_BOX_REMOTE__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If a remote-control program won&rsquo;t uninstall, keeps coming back, or you are not sure what the scammer did while they were on, get the PC checked properly before you use it for banking again.')},
+    ],
+    'howToName': 'How to check whether someone is remotely accessing your Windows computer',
+    'howToSteps': [
+        {'name': 'Disconnect from the internet', 'text': 'If the mouse moves or windows open by themselves, switch Wi-Fi off or unplug the network cable. That ends any remote connection.'},
+        {'name': 'Look for remote-control programs', 'text': 'Check the icons by the clock and Task Manager&rsquo;s Processes for AnyDesk, TeamViewer, UltraViewer, ScreenConnect, RustDesk or remoting_host.'},
+        {'name': 'Check what was installed recently', 'text': 'Open Settings, Apps, Installed apps, sort by date installed, and look for anything installed on the day of the call or pop-up.'},
+        {'name': 'Check Remote Desktop and Quick Assist', 'text': 'On Windows Pro, switch Remote Desktop off in Settings, System, Remote Desktop if you don&rsquo;t use it, and close any Quick Assist window.'},
+        {'name': 'Uninstall, scan and change passwords', 'text': 'Uninstall the program, run a full Windows Security scan, change your passwords from another device and ring your bank if you paid or shared details.'},
+    ],
+    'faqs': [
+        {'q': 'Can someone access my computer without me knowing?', 'a': '<p>They need a way in, and that is almost always a remote-control program installed with someone&rsquo;s help. Most show a banner or coloured border while connected, but a program left set up for &ldquo;unattended access&rdquo; can connect when you&rsquo;re not looking. That is why removing the program matters more than watching the screen.</p>'},
+        {'q': 'Does turning off the internet stop them?', 'a': '<p>Yes. A remote connection needs the internet, so switching Wi-Fi off or unplugging the cable ends it immediately. Keep it off until the program is uninstalled.</p>'},
+        {'q': 'Is it safe to uninstall AnyDesk or TeamViewer?', 'a': '<p>Yes, unless you use it with someone you trust, such as a family member or your own IT company. If you don&rsquo;t remember installing it, remove it.</p>'},
+        {'q': 'How do I tell a scammer from my real IT company?', 'a': '<p>A genuine support company tells you before it connects, and you contacted them first. Microsoft, banks and broadband providers do not ring out of the blue asking to connect to your PC. If in doubt, hang up and ring the company on a number you already have.</p>'},
+        {'q': 'Does a running AnyDesk mean someone is connected?', 'a': '<p>No. These programs stay running all day so a helper can reach them when needed. Running only means the door exists; whether anyone used it is in the program&rsquo;s own list of connections.</p>'},
+        {'q': 'Can you check my computer remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC using our own support program, check it properly and remove anything left behind, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/scam-recovery/">scam recovery</a>, <a href="/fake-im-not-a-robot-scam/">the fake &ldquo;I&rsquo;m not a robot&rdquo; check</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+# ============================================================ 10. Chrome "Managed by your organization" on a home PC
+CM = {
+    'slug': 'chrome-managed-by-your-organization',
+    'title': "Chrome Says 'Managed by Your Organization' on a Home PC?",
+    'metaDesc': 'Chrome says Managed by your organization on your own PC? Usually a policy left by adware or an unwanted program. How to check what is set and remove it.',
+    'ogTitle': 'Chrome says managed by your organization on your home PC? Here&rsquo;s why',
+    'crumbName': 'Chrome Managed by Your Organization',
+    'eyebrow': '// CHROME SAYS IT&rsquo;S MANAGED',
+    'h1': 'Chrome says <em class="grad grad--cyan">&ldquo;managed by your organization&rdquo;</em> on your home PC?',
+    'lede': 'You have never worked for an organisation, yet Chrome&rsquo;s menu says it is managed by one &mdash; and perhaps your search engine keeps switching to one you never chose. On a personal PC that is usually a policy set by an unwanted program, not your employer. Here&rsquo;s how to see what has been set, and how to get Chrome back to normal.',
+    'chips': ['Find out what was set', 'Free browser safety check app', 'Adware and scam specialists'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['See remote support', '/remote-support/'],
+    'ctaHead': 'Still says managed?', 'ctaSub': 'We remove the program and the policies it left behind and get your browser back to normal, while you watch. No fix, no fee. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it means', 'A policy has been set on Chrome. Google says a managed browser is one set up and maintained by a school, company or other group.'),
+        ('See what was set', 'Type chrome://management, then chrome://policy, into the address bar.'),
+        ('On a home PC', 'Usually an unwanted program &mdash; a search toolbar, PDF converter or coupon add-on &mdash; using the same settings companies use, so you can&rsquo;t change them back.'),
+        ('Fix', 'Uninstall unknown programs, remove unknown extensions, run a scan, then reset Chrome&rsquo;s settings.'),
+        ('Work or school computer?', 'Then it is normal. Leave it to your IT department.'),
+        ('Free check', 'Browser safety in our free 365 PC Manager app shows every add-on and any policy forcing settings on Chrome, Edge and Firefox.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'What &ldquo;managed by your organization&rdquo; actually means',
+         'html': '<p>Google describes a managed browser as one &ldquo;set up and maintained by a school, company or other group&rdquo;, where an administrator can set up or restrict features, install extensions and monitor activity (<a href="https://support.google.com/chrome/answer/9281740?hl=en-GB" rel="noopener" target="_blank">Google Chrome Help</a>). On a work or school computer that is perfectly normal.</p>'
+                 '<p>On your own PC, it means something has written a <strong>policy</strong> for Chrome into Windows. Companies use policies so staff can&rsquo;t change settings; unwanted programs use exactly the same trick, because a policy cannot be undone from inside the browser. That&rsquo;s why the search engine &ldquo;keeps changing back&rdquo;.</p>'
+                 '<p>(UK versions of Chrome spell it &ldquo;organisation&rdquo;. It is the same message, and the same fix.)</p>'},
+        {'eyebrow': '/02 &mdash; SEE WHAT WAS SET', 'h2': 'See exactly what has been set',
+         'html': '<ol>'
+                 '<li><strong>Type chrome://management</strong> into Chrome&rsquo;s address bar and press Enter. It says whether the browser or your profile is managed.</li>'
+                 '<li><strong>Type chrome://policy</strong> and press Enter. Each line is one setting that has been forced.</li>'
+                 '<li><strong>Read the names.</strong> <em>ExtensionInstallForcelist</em> means extensions are forced in. <em>DefaultSearchProvider</em> settings lock your search engine. <em>HomepageLocation</em> or <em>RestoreOnStartupURLs</em> lock the pages Chrome opens with.</li>'
+                 '<li><strong>Check the account you&rsquo;re signed in with</strong>, as Google suggests: a personal account ends in @gmail.com; a company or school one uses its own name.</li>'
+                 '</ol>'
+                 '<p>Microsoft Edge has the same system: <strong>edge://policy</strong> shows its policies, and it may say &ldquo;Your browser is managed by your organization&rdquo; for the same reason.</p>'},
+        {'eyebrow': '/03 &mdash; THE FIX', 'h2': 'Get Chrome back to normal, in order',
+         'html': '<ol>'
+                 '<li><strong>Uninstall programs you don&rsquo;t recognise.</strong> Settings, then Apps, then Installed apps; sort by date installed. PDF converters, &ldquo;search&rdquo; tools, coupon and shopping helpers and free download managers are the usual culprits.</li>'
+                 '<li><strong>Remove extensions you don&rsquo;t recognise</strong> at chrome://extensions. One marked &ldquo;installed by your administrator&rdquo; can&rsquo;t be removed until the policy behind it is gone.</li>'
+                 '<li><strong>Run a scan</strong>: a full scan in Windows Security, then a second opinion from a scanner that looks for adware, such as Malwarebytes.</li>'
+                 '<li><strong>Reset Chrome</strong>: Settings, then Reset settings, then Restore settings to their original defaults. Google lists this step too.</li>'
+                 '<li><strong>Check chrome://policy again</strong> and press Reload policies. If it is now empty, you are done.</li>'
+                 '</ol>'
+                 '<p><strong>Still listed, with the program gone?</strong> The policies were left behind in Windows&rsquo; registry, under <em>SOFTWARE\\Policies\\Google\\Chrome</em> (for Edge, <em>SOFTWARE\\Policies\\Microsoft\\Edge</em>). Removing them is the fix, but editing the registry wrongly can stop Windows working properly, so only do it on your own PC, back up the registry first, or ask us to do it.</p>'},
+        {'eyebrow': '/04 &mdash; NOT ALWAYS ADWARE', 'h2': 'When a policy is there for a good reason',
+         'html': '<p>Some genuine software sets browser policies too: parental controls, some security programs, and software left over from an old work laptop or a past employer&rsquo;s set-up. If a policy names a program you trust and use, leave it. The ones to remove are those you can&rsquo;t explain, especially anything that changes your search engine or forces in an extension.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check it for you',
+         'html': '__APP_BOX_BROWSER__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If Chrome still says it is managed after these steps, or the search engine keeps switching back, the program behind it is still there or its policies were left in the registry.')},
+    ],
+    'howToName': 'How to remove "Managed by your organization" from Chrome on a home PC',
+    'howToSteps': [
+        {'name': 'See what was set', 'text': 'Type chrome://management, then chrome://policy, into the address bar to see which settings have been forced.'},
+        {'name': 'Uninstall unknown programs', 'text': 'Open Settings, Apps, Installed apps, sort by date installed, and uninstall programs you don&rsquo;t recognise.'},
+        {'name': 'Remove unknown extensions', 'text': 'At chrome://extensions, remove extensions you don&rsquo;t recognise.'},
+        {'name': 'Run a scan', 'text': 'Run a full scan in Windows Security, then a second opinion from a scanner that looks for adware.'},
+        {'name': 'Reset Chrome and check again', 'text': 'In Chrome&rsquo;s Settings, choose Reset settings, then Restore settings to their original defaults, and check chrome://policy again.'},
+    ],
+    'faqs': [
+        {'q': 'Does managed by your organization mean someone is watching me?', 'a': '<p>Not necessarily. It means policies have been set. On a home PC they are usually an unwanted program&rsquo;s settings, such as a forced search engine or extension, rather than monitoring. chrome://policy shows exactly what has been set.</p>'},
+        {'q': 'Why can&rsquo;t I remove an extension?', 'a': '<p>If it says it was installed by your administrator, a policy is forcing it in. Remove the program that set the policy, or the policy itself, and then the extension can go.</p>'},
+        {'q': 'Will resetting Chrome remove it?', 'a': '<p>Resetting puts Chrome&rsquo;s own settings back to normal and switches extensions off, but a policy written into Windows survives a reset. Remove the program first, then check chrome://policy.</p>'},
+        {'q': 'It&rsquo;s a work laptop. Should I remove it?', 'a': '<p>No. On a work or school computer, management is normal and expected. Leave it to your IT department.</p>'},
+        {'q': 'Edge says my browser is managed too. Is that the same?', 'a': '<p>Yes. Edge uses the same policy system; edge://policy shows what has been set, and the same fix applies.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/scam-pop-up-help-poole/">scam pop-ups</a>, <a href="/how-to-spot-a-fake-website/">how to spot a fake website</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
                  'h3s': 'Still muffled after every step? That is a remote job.'},
     HZ['slug']: {'h2': 'Get it off 60Hz, step by step', 'ask': 'Is the higher refresh rate there now?', 'tip': 'Choose it in Advanced display, then restart once to be sure it sticks.',
                  'h3s': 'Still stuck at 60Hz after every step? That is a remote job.'},
+    RA['slug']: {'h2': 'Check and cut them off, step by step', 'ask': 'Is that step done?', 'tip': 'Keep the internet off until the program is uninstalled.',
+                 'h3s': 'Not sure it&rsquo;s gone? That is a job for us.'},
+    CM['slug']: {'h2': 'Get Chrome back to normal, step by step', 'ask': 'Has the managed message gone?', 'tip': 'Press Reload policies on chrome://policy after each step.',
+                 'h3s': 'Still says managed? That is a remote job.'},
     PQ['slug']: {'h2': 'Clear the queue, step by step', 'ask': 'Is it printing now?', 'tip': 'Print a test page from the program you were using.',
                  'h3s': 'Still stuck after every step? That is a remote job.'},
     AL['slug']: {'h2': 'Get your alarm going off, step by step', 'ask': 'Did it go off?', 'tip': 'Test it with an alarm two minutes ahead before you rely on it.',
@@ -728,12 +891,18 @@ def pages(setup_url):
         '__APP_BOX_ALARM__': _app_box('alarm', 'A wake-up alarm that wakes the PC too',
             '<p style="margin:0">Choose the time and the days (or just once), then what plays: a <strong>radio station</strong>, your favourite songs, all your music shuffled, or a playlist. It starts <strong>almost silent and rises</strong> to the volume you choose over 3 to 30 minutes, and a Good morning window has <strong>Stop</strong> and <strong>Snooze</strong> (10 minutes). '
             'It won&rsquo;t fail silently: it turns Windows&rsquo; sound up if it&rsquo;s muted or very low, plays your songs if the station won&rsquo;t start, and Windows&rsquo; alarm sound if there are none. The PC can be asleep &mdash; it wakes itself a minute early (leave a laptop plugged in) &mdash; but not switched off. BBC and Global stations can&rsquo;t be alarms.</p>', setup_url),
+        '__APP_BOX_REMOTE__': _app_box('remote', 'Remote access: is anyone connected right now?',
+            '<p style="margin:0">It tells you for certain when Windows&rsquo; own remote tools are in use &mdash; a Remote Desktop session, Quick Assist or Remote Assistance &mdash; and lists the remote-control programs on the PC, such as AnyDesk and TeamViewer, saying which are running. '
+            'It never calls a running program a connection. When you tap, it reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who connected, and its Cut them off button closes those programs or disconnects the Wi-Fi.</p>', setup_url),
+        '__APP_BOX_BROWSER__': _app_box('browser', 'Browser safety: what has been forced on your browsers',
+            '<p style="margin:0">It reads every add-on in Chrome, Edge, Brave and Firefox, and the policies Windows holds for them, and says in plain words what is worth a look: an add-on a policy forces in, a policy that locks the search engine or home page, an add-on put there by another program, and anything the browser itself has flagged. '
+            'It changes nothing on its own &mdash; you remove things in the browser, or we can do it for you.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")

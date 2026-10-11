@@ -406,6 +406,10 @@
   "h": "6254af7b623da3db",
   "last": "2026-09-28"
  },
+ "chrome-managed-by-your-organization": {
+  "first": "2026-10-11",
+  "h": "3682f79b363518fe"
+ },
  "cisco-access-point-wont-join-controller": {
   "first": "2026-07-28",
   "h": "c8cf26c381ab5d01",
@@ -1161,8 +1165,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "b119f03fc53c2ad1",
-  "last": "2026-10-08"
+  "h": "872902737456991d",
+  "last": "2026-10-11"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -1505,6 +1509,16 @@
   "first": "2026-07-28",
   "h": "9cb72722087b0e1d",
   "last": "2026-09-26"
+ },
+ "is-my-windows-still-supported": {
+  "first": "2026-10-11",
+  "h": "394e6a44b54988b2",
+  "last": "2026-10-11"
+ },
+ "is-someone-remotely-accessing-my-computer": {
+  "first": "2026-10-11",
+  "h": "65534b6cb119b2b3",
+  "last": "2026-10-11"
  },
  "it-advice": {
   "first": "2026-07-28",
