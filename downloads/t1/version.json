@@ -1,7 +1,7 @@
 {
- "ver": "0.13.2",
- "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.2.exe",
- "sha256": "fe9165e5510104ec87b402b10a228c04399ad1867f38fbf143e6d873172f69ff",
- "size": 17929696,
- "notes": "A new Techies One Mail icon, and it now shows its own icon on the taskbar instead of Microsoft Edge's, so it's easy to spot and you can pin it there. Signed by 365 Techies Ltd."
+ "ver": "0.13.3",
+ "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.3.exe",
+ "sha256": "4f7927034a9cb1acf2b6566a679ad28fbee7ecd608ce5a718a09df8addca50b2",
+ "size": 17931136,
+ "notes": "A small wording fix: the screen for adding an email address now names the providers Techies One Mail has settings for built in, and says it looks up the settings for other addresses itself. Signed by 365 Techies Ltd."
 }
