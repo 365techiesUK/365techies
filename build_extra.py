@@ -24669,6 +24669,9 @@ def write_portal_page():
   #p365app .instgrid table { width:100%; border-collapse:collapse; }
   #p365app .instgrid td { padding:.2rem .3rem; border-bottom:1px solid var(--pline); }
   #p365app .instgrid td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  #p365app .appcmp th.num, #p365app .appcmp td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  #p365app .appcmp th { vertical-align:bottom; line-height:1.25; } #p365app .appcmp td b { font-size:1.15rem; }
+  #p365app .appcmp tbody th { vertical-align:middle; color:var(--pwhite); white-space:nowrap; padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); }
   @media (max-width:700px) { #p365app .instgrid { grid-template-columns:1fr; } }
   /* 9 Oct 2026: a free month for people on the free app - the installs, one by one, with "Give 30 days free" */
   #p365app .insttrial { margin-top:1.1rem; padding-top:.9rem; border-top:1px solid var(--pline); }
@@ -30377,6 +30380,8 @@ def write_portal_page():
         + '<div class="stats" id="fstats"></div>'
         + '<div class="fupd" id="fupd" aria-live="polite"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\\u2026</p></div></div>';
+      // 11 Oct 2026 (owner): our two apps side by side - downloads against installs, and who is still using each
+      h += '<div class="card"><h2>\\ud83d\\udcca Our apps side by side</h2><div id="appcmp"><p class="quiet">Counting\\u2026</p></div></div>';
       // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
       h += '<div class="card"><h2>\\ud83d\\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\\u2026</p></div></div>';
       // 10 Oct 2026: Techies One Mail, counted from the email app's own check-in (api/t1-installs.php)
@@ -32792,9 +32797,10 @@ def write_portal_page():
   function loadInstalls(act, extra) {   // act: 'ours' | 'notours' (7 Oct 2026: our own PCs on this connection) | 'trial' {ids} (9 Oct 2026)
     var box = document.getElementById('instbox'); if (!box) return;
     var body = { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' }; for (var xk in (extra || {})) body[xk] = extra[xk];
+    var who = INST.who;
     post('/api/pcm-installs.php', body)
-      .then(function (d) { INST.d = d; renderInstalls(); })
-      .catch(function () { INST.d = { ok: false }; renderInstalls(); });
+      .then(function (d) { INST.d = d; if (who === 'free' && d && d.ok) INST.cmp = d; renderInstalls(); renderAppCompare(); })
+      .catch(function () { INST.d = { ok: false }; if (!INST.cmp) INST.cmp = { ok: false }; renderInstalls(); renderAppCompare(); });
   }
   function instCountry(c) {
     if (!c || c === '--') return 'Not known';
@@ -32906,8 +32912,38 @@ def write_portal_page():
   function loadT1Installs() {
     var box = document.getElementById('t1ibox'); if (!box) return;
     post('/api/t1-installs.php', { stoken: S.stoken, machine: mid() })
-      .then(function (d) { T1I.d = d; renderT1Installs(); })
-      .catch(function () { T1I.d = { ok: false }; renderT1Installs(); });
+      .then(function (d) { T1I.d = d; renderT1Installs(); renderAppCompare(); })
+      .catch(function () { T1I.d = { ok: false }; renderT1Installs(); renderAppCompare(); });
+  }
+  // 11 Oct 2026 (owner: "how many is downloaded and how many installed on the Techies One Mail app ... in comparison ...
+  // with the PC Manager downloads and how many people are using it"): the two apps side by side, from the figures the two
+  // cards below already load (no extra request). PC Manager = its "Not on a plan" copies, the ones people download from us.
+  function renderAppCompare() {
+    var box = document.getElementById('appcmp'); if (!box) return;
+    var p = INST.cmp, t = T1I.d;
+    function n30(d) { var n = 0; (d.daily || []).forEach(function (x) { n += x.n; }); return n; }
+    function row(name, d) {
+      if (!d) return '<tr><th scope="row">' + name + '</th><td colspan="6" class="quiet">Counting\\u2026</td></tr>';
+      if (!d.ok) return '<tr><th scope="row">' + name + '</th><td colspan="6" class="quiet">Couldn\\u2019t load - refresh to retry.</td></tr>';
+      var dl = d.downloads || {}, c30 = dl.d30 || 0, i30 = n30(d);
+      return '<tr><th scope="row">' + name + '</th>'
+        + '<td class="num"><b>' + (dl.d7 || 0) + '</b> <span class="quiet">\\u00b7 ' + c30 + '</span></td>'
+        + '<td class="num"><b>' + (d.new7 || 0) + '</b> <span class="quiet">\\u00b7 ' + i30 + '</span></td>'
+        + '<td class="num">' + (c30 >= 10 ? '<b>' + Math.round(100 * i30 / c30) + '</b>' : '<span class="quiet">too few clicks</span>') + '</td>'
+        + '<td class="num"><b>' + (d.total || 0) + '</b></td>'
+        + '<td class="num" style="color:var(--pgood)"><b>' + (d.kept || 0) + '</b></td>'
+        + '<td class="num"><b>' + (d.active7 || 0) + '</b></td></tr>';
+    }
+    var h = '<div class="tblwrap"><table class="appcmp"><thead><tr><th></th><th class="num">Download clicks<br><span class="quiet">week \\u00b7 30 days</span></th>'
+      + '<th class="num">New installs<br><span class="quiet">week \\u00b7 30 days</span></th><th class="num">Installs per<br>100 clicks</th>'
+      + '<th class="num">Installs<br>in all</th><th class="num">Still<br>using it</th><th class="num">Used this<br>week</th></tr></thead><tbody>'
+      + row('PC Manager', p) + row('Techies One Mail', t) + '</tbody></table></div>';
+    h += '<p class="quiet" style="font-size:.9rem;margin:.6rem 0 0">PC Manager: copies not on a plan (the ones people download from us)'
+      + (p && p.ok && p.plan ? ', plus <b>' + p.plan + '</b> on a plan that we set up' : '') + '. Our own PCs are left out of both. '
+      + 'Counting began ' + (p && p.since ? instDay(p.since) : '1 Oct') + ' for PC Manager and ' + (t && t.since ? instDay(t.since) : '10 Oct') + ' for Techies One Mail, '
+      + 'so early \\u201cnew installs\\u201d include copies that were already in use. A download click is a click on a download button '
+      + '(each visitor once a day), so installs per 100 clicks is a rough guide: not every click becomes an install, and some installs come from a file passed on.</p>';
+    box.innerHTML = h;
   }
   function renderT1Installs() {
     var box = document.getElementById('t1ibox'); if (!box) return;
