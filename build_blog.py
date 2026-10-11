@@ -25,6 +25,7 @@ from ps5_emulator_post import PS5_EMULATOR_POST   # IT Advice post: PS5 emulator
 import tips_by_email        # /tips-by-email/ + the sign-up box under every article (10 Oct 2026; double opt-in via api/t1-signup.php)
 import techies_one_boxes    # Techies One Mail box on the 9 email fix pages it genuinely helps (10 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)
+import email_lives_video    # the 'Where does your email actually live?' explainer film on its six pages (11 Oct 2026; a write_all page filter)
 import ai_pages             # /ai/ section (9 pages, copy in ai_pages_data.py) - GATED: AI_LAUNCH=False means it registers NOTHING until the owner-authorised release commit
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
