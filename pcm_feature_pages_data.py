@@ -103,10 +103,11 @@ SHOTS = {
     'officelicence': ('/images/pcm-feat-officelicence-v36.webp', 1272, 332, 'The Microsoft Office row on This PC in 365 PC Manager: Microsoft 365 for home, licensed, Microsoft last confirmed the subscription on 7 October 2026, Office renews this by itself whenever the PC is online', ('My PC', 'This PC')),
     'keepreplace': ('/images/pcm-feat-keepreplace-v36.webp', 1272, 848, 'This PC in 365 PC Manager on a sample Dell Latitude 7490, about 8 years old: keep it, upgrade it or replace it? Back up first, then decide - the drive check is warning, it can probably move to Windows 11 for free, the battery holds about 61% of its charge, it has an SSD and 8 GB of memory', ('My PC', 'This PC')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
+    'shares':  ('/images/pcm-feat-shares-v37.webp', 1296, 988, 'Shared folders in 365 PC Manager: this PC has Windows 11 24H2, which blocks folders shared without a password and insists on signed connections; NAS Photos on drive P opens fine, OFFICE-PC Accounts turned down the username or password, OLD-NAS Public is blocked because it lets anyone in without a password, each with a button to read the fix', ('Internet &amp; email', 'Shared folders')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.', 'shares': 'The real app (sample shared folders).'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -1438,6 +1439,39 @@ def office_section(setup_url):
                     + _app_box('officelicence', 'Is your Office licence OK?',
                         '<p style="margin:0">Its <strong>This PC</strong> page shows which Office is installed and what Office&rsquo;s own licence record says: <strong>licensed</strong> (with the date Microsoft last confirmed the subscription), <strong>subscription ended</strong> (still working until a date it names), <strong>not licensed</strong> &mdash; the &ldquo;Unlicensed Product&rdquo; state &mdash; or <strong>not signed in</strong> with the account that has the subscription. '
                         'For an Office bought once, it says when its security fixes end. Where it can&rsquo;t tell, it says so rather than guess, and it keeps nothing personal: no email address, no account.</p>', setup_url)}
+
+
+# ---- the Shared folders box on our five shared-folder pages (11 Oct 2026; owner: "go ahead with 1 and 4", then "do
+# everything for this release"). Ships WITH 365 PC Manager 36.1 - its Shared folders check (ShareCheck.cs) is new in 36.1, so
+# these go live only with that release. What the app does, from ShareCheck.cs: it tries each mapped drive and each shared
+# folder File Explorer has opened (at most 10), or one the person types, with ONE look at \\server\share and reads Windows'
+# own error number - 1272 guest logon blocked (the 24H2 change), 1326 username or password turned down, 53 computer not
+# found, 67 no such folder, 5 no permission; it says whether the PC has 24H2 and whether the network is set to Public, and
+# links the page for that cause. It changes no setting and never reads saved passwords. FREE (no Unlock gate).
+# Each page gets it right after the part that asks "which fault is it?" - the question the app answers.
+SHARES_AT = {   # slug -> the h2 of the section the box follows
+    'shared-folders-not-working-after-windows-11-24h2-update': 'The errors that confirm it&rsquo;s 24H2',
+    'windows-11-network-credentials-shared-folder': 'What the Enter network credentials box is actually asking for',
+    'windows-11-cant-access-windows-10-shared-folder': 'Work out which of the two faults you actually have',
+    'fix-shared-folder-error-0x80004005': 'Four questions to answer before you change anything',
+    'nas-drive-not-showing-after-windows-11-update': 'Reach it by address, and the answer tells you which fault you have',
+}
+_SHARES_LEAD = {
+    'shared-folders-not-working-after-windows-11-24h2-update': 'Not sure it&rsquo;s the 24H2 change? On the PC that can&rsquo;t get in, our free app tries the folder and reads the reason Windows gives.',
+    'windows-11-network-credentials-shared-folder': 'Want to know whether it&rsquo;s the login or something else? Our free app tries the folder and reads the reason Windows gives.',
+    'windows-11-cant-access-windows-10-shared-folder': 'Rather not work it out by hand? On the new PC, our free app tries the folder and reads the reason Windows gives.',
+    'fix-shared-folder-error-0x80004005': '0x80004005 hides the reason. Our free app asks Windows for the real one by trying the folder itself.',
+    'nas-drive-not-showing-after-windows-11-update': 'Our free app does the one-minute test for you: it tries the NAS and reads the reason Windows gives.',
+}
+
+
+def shares_section(slug, setup_url):
+    return {'eyebrow': '// THE QUICK CHECK', 'h2': 'Let our free app tell you which fault it is',
+            'html': '<p>' + _SHARES_LEAD[slug] + '</p>'
+                    + _app_box('shares', 'Why won&rsquo;t that shared folder open?',
+                        '<p style="margin:0">Its <strong>Shared folders</strong> page tries each mapped drive and each shared folder this PC has opened before &mdash; or one you type in &mdash; and says, in plain words, what Windows answered: <strong>opens fine</strong>, '
+                        '<strong>blocked because the folder lets anyone in without a password</strong> (the 24H2 change), <strong>username or password turned down</strong>, <strong>computer not found</strong>, <strong>no such folder</strong> or <strong>no permission</strong>. '
+                        'It tells you whether this PC has the 24H2 update and whether your network is set to Public, and links the fix for that cause. It changes nothing on your PC and never reads your saved passwords.</p>', setup_url)}
 
 
 # ---- the free tool pages

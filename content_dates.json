@@ -1150,8 +1150,8 @@
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
-  "h": "6115949f8f1fb19d",
-  "last": "2026-09-26"
+  "h": "b7b892b77bfc500c",
+  "last": "2026-10-11"
  },
  "former-it-provider-controls-microsoft-365": {
   "first": "2026-07-28",
@@ -2209,8 +2209,8 @@
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "da37067233b0e829",
-  "last": "2026-10-06"
+  "h": "1508e7e4708e34e6",
+  "last": "2026-10-11"
  },
  "new-computer-setup": {
   "first": "2026-07-28",
@@ -3153,8 +3153,8 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "0bed38ec38d73d7d",
-  "last": "2026-10-06"
+  "h": "cf9f3a5d1bee715b",
+  "last": "2026-10-11"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
@@ -3685,8 +3685,8 @@
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
-  "h": "e305eb262cabe365",
-  "last": "2026-09-26"
+  "h": "213a258b79f86979",
+  "last": "2026-10-11"
  },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
@@ -3700,8 +3700,8 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "87929d42cf8a6480",
-  "last": "2026-10-06"
+  "h": "287d07441bf2130e",
+  "last": "2026-10-11"
  },
  "windows-11-support": {
   "first": "2026-07-28",

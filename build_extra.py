@@ -24142,6 +24142,19 @@ def custom_dashboards():
 custom_dashboards()
 
 
+# 11 Oct 2026: the Shared folders box (new in 365 PC Manager 36.1 - goes live WITH that release) on our five shared-folder
+# pages, right after the part that asks which fault it is. Here, before NEW_PAGES are built, as the 24H2 page is one of them.
+# Wording, places and what the app really does: pcm_feature_pages_data.SHARES_AT / shares_section.
+import pcm_feature_pages_data as _PFP_SH
+_sh_done = 0
+for _lst in (NEW_PAGES, SEO_WAVE5_PAGES, SEO_WAVE8_PAGES):
+    for _np in _lst:
+        if _np.get('slug') in _PFP_SH.SHARES_AT:
+            _i = [s.get('h2', '') for s in _np['sections']].index(_PFP_SH.SHARES_AT[_np['slug']]) + 1
+            _np['sections'].insert(_i, _PFP_SH.shares_section(_np['slug'], PCM_SETUP_V30))
+            _sh_done += 1
+assert _sh_done == len(_PFP_SH.SHARES_AT), 'shared-folder pages moved: %d of %d boxes placed' % (_sh_done, len(_PFP_SH.SHARES_AT))
+
 for _np in NEW_PAGES:
     build_new_page(_np)
 
