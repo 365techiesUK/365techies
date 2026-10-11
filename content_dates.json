@@ -1243,6 +1243,10 @@
   "h": "7b27c6c00d764047",
   "last": "2026-09-26"
  },
+ "heic-photos-wont-open-on-windows": {
+  "first": "2026-10-11",
+  "h": "87e713b7d560c737"
+ },
  "help-in-dorset": {
   "first": "2026-07-28",
   "h": "b93a59fdcffc8570",
@@ -2109,6 +2113,10 @@
   "first": "2026-07-28",
   "h": "a2e392493b135423",
   "last": "2026-10-06"
+ },
+ "mcafee-or-norton-expired-do-i-need-to-renew": {
+  "first": "2026-10-11",
+  "h": "d114a8799da1b249"
  },
  "meet-the-team": {
   "first": "2026-07-28",
@@ -3463,8 +3471,8 @@
  },
  "webcam-mic-test": {
   "first": "2026-07-28",
-  "h": "ed20957ef8cea97f",
-  "last": "2026-08-31"
+  "h": "ae01794c90a67403",
+  "last": "2026-10-11"
  },
  "website-checker": {
   "first": "2026-07-28",
@@ -3560,6 +3568,10 @@
   "first": "2026-07-28",
   "h": "f515991497389fae",
   "last": "2026-09-26"
+ },
+ "why-does-my-pc-keep-crashing": {
+  "first": "2026-10-11",
+  "h": "1f8d889620a13b39"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
@@ -3753,7 +3765,7 @@
  },
  "youve-been-hacked-email-bitcoin-scam": {
   "first": "2026-09-05",
-  "h": "c8220b91dc4f358f",
-  "last": "2026-09-26"
+  "h": "84145b7f2bc20006",
+  "last": "2026-10-11"
  }
 }

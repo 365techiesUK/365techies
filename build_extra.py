@@ -24162,6 +24162,11 @@ if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
         if _np['slug'] == _PFP.GAMING_SLUG:
             assert _np['sections'][-1]['h2'].startswith('If you would rather'), 'gaming page sections changed'
             _np['sections'].insert(len(_np['sections']) - 1, _PFP.gaming_section(PCM_SETUP_V30))
+    # 11 Oct 2026: the Camera & microphone box on the wave-10 "you've been hacked" email page, before "When to worry"
+    for _np in SEO_WAVE10_PAGES:
+        if _np['slug'] == _PFP.BITCOIN_SLUG:
+            _i = [s.get('eyebrow') for s in _np['sections']].index('// WHEN TO WORRY')
+            _np['sections'].insert(_i, _PFP.cammic_section(PCM_SETUP_V30))
     # 8 Oct 2026: the free tool pages whose job the app also does get its box after What next
     _PFP_TB = _PFP.tool_boxes(PCM_SETUP_V30)
     for _kw in bp.PAGES:

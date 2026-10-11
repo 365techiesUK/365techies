@@ -39,6 +39,20 @@ Added 11 Oct 2026 (owner: "yeah go ahead with 1 to 3"), all FREE (no IsPro in Dr
   Gaming check (GamingCheck.cs, v35)    driver + age (flag >= 9 months); NVIDIA only (NVML): temperature, slow-down point, fan,
                             PCIe link; Watch while I play up to 1 h (non-NVIDIA = processor only); Game Mode, power mode, screen
                             below its refresh rate, two-chip laptop, memory. Added as a box on gaming-pc-slow-wont-load-games.
+Added 11 Oct 2026 later (owner: "yeah go ahead with all of them"), all FREE (no IsPro in PhotoTools.cs / Program.cs Programs
+check / Reliability.cs / CamMic.cs):
+  Photo tools (PhotoTools.cs, v36)  shrink to 1600 px JPEG q85 into Pictures/Smaller for email; HEIC -> JPG through Windows'
+                            own codecs (WIC) into Pictures/Converted from HEIC, EXIF turn applied; photos -> one PDF (A4 page each)
+                            in Documents. ⚠ A .heic needs HEIF Image Extensions (free) + an HEVC extension: the free 'from Device
+                            Manufacturer' one is NOT generally in the Store (Windows Latest, Jul 2025); Microsoft's HEVC Video
+                            Extensions 9NMZLZ57R3T7 costs US$0.99. The app's HEVC button points at 9N4WGH0Z6VHQ - fix in v37.
+  Programs check (Program.cs)       Security Center register: who protects in real time, two at once, one on duty but out of
+                            date; installed programs vs 365's rules list (tune-up tools, driver updaters, adware, no longer
+                            patched). Read-only. Picture = QA demo (McAfee + Norton at once).
+  What keeps going wrong (Reliability.cs, v34)  Reliability Monitor via WMI: stability 1-10, crashes/freezes 30 days, blue
+                            screens + unexpected shutdowns 90 days, failed updates. Picture = QA demo.
+  Camera & microphone (CamMic.cs, v32)  ConsentStore LastUsedTimeStart/Stop per program; "Windows has no record", never
+                            "never used". Its button links to /youve-been-hacked-email-bitcoin-scam/ - that page gets the box.
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
@@ -73,11 +87,15 @@ SHOTS = {
     'bitlocker': ('/images/pcm-feat-bitlocker-v36.webp', 1272, 720, 'Drive encryption in 365 PC Manager saying this PC&rsquo;s drive is encrypted with BitLocker and it can&rsquo;t see where its recovery key is saved, with three steps to check the key and a See my recovery keys button', ('Safety', 'Drive encryption')),
     'winsafety': ('/images/pcm-feat-winsafety-v36.webp', 1272, 1236, 'Safety settings in 365 PC Manager saying Windows&rsquo; own protections are switched on: Malwarebytes is the antivirus on duty, the allow changes question, SmartScreen and memory integrity are on, with notes on the account and file name endings', ('Safety', 'Safety settings')),
     'gaming':  ('/images/pcm-feat-gaming-v36.webp', 1272, 1260, 'Gaming check in 365 PC Manager saying 1 thing could be costing you frames: two NVIDIA graphics cards with their driver age, temperatures, fans and slots, a Watch while I play button, and the power mode set to Eco with a Switch to Full speed button', ('My PC', 'Gaming check')),
+    'phototools': ('/images/pcm-feat-phototools-v36.webp', 1272, 1000, 'Photo tools in 365 PC Manager: Shrink photos to email them, Change phone photos (.HEIC) to JPG and Turn photos into a PDF, each with a Pick photos button, and a note that Windows needs two Microsoft add-ons to open .HEIC photos', ('Photos &amp; files', 'Photo tools')),
+    'programs': ('/images/pcm-feat-programs-v36.webp', 1272, 1168, 'Programs check in 365 PC Manager saying two security programs are protecting at once, McAfee LiveSafe and Norton 360, with Microsoft Defender standing by, then programs this PC doesn&rsquo;t need and one that no longer gets security fixes', ('Safety', 'Programs check')),
+    'crashes': ('/images/pcm-feat-crashes-v36.webp', 1272, 1112, 'What keeps going wrong in 365 PC Manager: Windows rates this PC 4.2 out of 10, Microsoft Outlook crashed 9 times and froze 4 times in the last 30 days, 3 blue screens, one unexpected shutdown and an update that failed to install', ('My PC', 'What keeps going wrong')),
+    'cammic':  ('/images/pcm-feat-cammic-v36.webp', 1272, 1328, 'Camera and microphone in 365 PC Manager: Zoom Workplace is using the camera and microphone right now, WhatsApp and Sound Recorder with the dates they last used them, and a note on the I recorded you on your webcam email', ('Safety', 'Camera &amp; microphone')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -1044,6 +1062,238 @@ VT = {
     'crossLinksHtml': '<p>Related help: <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/is-someone-remotely-accessing-my-computer/">is someone remotely accessing my computer?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
+# ============================================================ 13. HEIC photos won't open on Windows
+# Sources (read 11 Oct 2026): Apple 'Using HEIF or HEVC media on Apple devices' (support.apple.com/en-gb/116944: Camera >
+# Formats > Most Compatible = JPEG; USB imports may be converted to JPEG); Windows Latest 16 Jul 2025 (the free 'HEVC Video
+# Extensions from Device Manufacturer' is an OEM version, not in the Store; HEVC Video Extensions 9NMZLZ57R3T7 = US$0.99;
+# HEIF Image Extensions 9PMMSR1CGPWG free). Owner rule: NO Apple support - the page says so and sends phone questions to Apple.
+PH = {
+    'slug': 'heic-photos-wont-open-on-windows',
+    'title': 'HEIC Photos Won&rsquo;t Open on Windows? Open or Convert to JPG',
+    'metaDesc': 'Phone photos ending .HEIC won&rsquo;t open on your Windows PC? Why, the Microsoft add-ons Windows needs, and how to turn them into JPGs without uploading them.',
+    'ogTitle': 'HEIC photos won&rsquo;t open on your Windows PC? Here&rsquo;s the fix',
+    'crumbName': 'HEIC Photos Won&rsquo;t Open on Windows',
+    'eyebrow': '// PHONE PHOTOS WON&rsquo;T OPEN',
+    'h1': '<em class="grad grad--cyan">HEIC photos</em> won&rsquo;t open on your Windows PC?',
+    'lede': 'You copied photos from an iPhone or iPad (or some Android phones) to your PC and they end in .HEIC. Windows shows blank icons, the Photos app asks for an extension, and the website you&rsquo;re uploading to won&rsquo;t take them. Here&rsquo;s why, what Windows needs to open them, and how to turn them into ordinary JPGs &mdash; without uploading your photos to a converter website.',
+    'chips': ['Nothing uploaded', 'Free photo tools app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Turn them into JPGs', '#s3'],
+    'ctaHead': 'Still won&rsquo;t open?', 'ctaSub': 'We get your Windows PC opening and converting phone photos, while you watch. We work on Windows PCs only, not phones. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What HEIC is', 'The photo format iPhones and iPads use by default, and some Android phones can too. Smaller files than JPG for the same picture.'),
+        ('Why Windows won&rsquo;t open it', 'It needs two Microsoft add-ons: HEIF Image Extensions and an HEVC video extension. Many PCs don&rsquo;t have them.'),
+        ('Are the photos damaged?', 'No. Windows just can&rsquo;t read the format yet.'),
+        ('The add-ons', 'HEIF Image Extensions is free. The HEVC one is free on some PCs where the maker included it; otherwise Microsoft charges a small one-off fee.'),
+        ('Turn them into JPGs', 'Open one in Paint and Save as JPEG, or convert a whole folder with our free app.'),
+        ('Converter websites', 'They mean uploading private photos, often with their location hidden inside. Convert on your own PC instead.'),
+        ('Free tool', 'Photo tools in our free 365 PC Manager app turns HEIC into JPG, shrinks photos to email and makes PDFs &mdash; nothing uploaded.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Why your PC won&rsquo;t open HEIC photos',
+         'html': '<p><strong>HEIC</strong> is the photo format iPhones and iPads use by default, and some Android phones can use it too. It keeps the same picture in a smaller file than a JPG, which is why phone makers like it.</p>'
+                 '<p>Windows can show HEIC photos, but only with two add-ons from Microsoft: <strong>HEIF Image Extensions</strong>, and an <strong>HEVC</strong> video extension. (The photos are compressed the same way as HEVC video, which is why a &ldquo;video&rdquo; add-on is needed for pictures.) Many PCs don&rsquo;t have them, so the photos show as blank icons, or the Photos app says you need an extension to open them.</p>'
+                 '<p>The photos aren&rsquo;t damaged, and nothing is wrong with the phone or the PC. Windows simply can&rsquo;t read the format yet.</p>'},
+        {'eyebrow': '/02 &mdash; OPEN THEM', 'h2': 'Get Windows to open them',
+         'html': '<ol>'
+                 '<li><strong>Install HEIF Image Extensions.</strong> Open the Microsoft Store app, search for <em>HEIF Image Extensions</em> (made by Microsoft) and choose Get. It&rsquo;s free.</li>'
+                 '<li><strong>Install an HEVC extension.</strong> Some PCs already have the free <em>HEVC Video Extensions from Device Manufacturer</em>, which the PC&rsquo;s maker included. If yours doesn&rsquo;t, Microsoft&rsquo;s <em>HEVC Video Extensions</em> in the Store costs a small one-off fee &mdash; US$0.99 in the US (<a href="https://www.windowslatest.com/2025/07/16/can-you-get-hevc-codec-for-free-on-windows-11/" rel="noopener" target="_blank">Windows Latest</a>). Only ever install it from the Microsoft Store, never from a download site.</li>'
+                 '<li><strong>Open a photo again.</strong> Close and reopen the Photos app, or restart the PC. HEIC photos should now open, and show as thumbnails in File Explorer.</li>'
+                 '</ol>'
+                 '<p>Every Windows program that uses Windows&rsquo; own picture support &mdash; Photos, Paint, File Explorer, and our app &mdash; needs these add-ons to read HEIC.</p>'},
+        {'eyebrow': '/03 &mdash; TURN THEM INTO JPGS', 'h2': 'Turn them into JPGs, on your own PC',
+         'html': '<p>Once Windows can open them, you can make ordinary JPG copies that every website, email and older program accepts:</p>'
+                 '<ul><li><strong>One or two photos:</strong> open the photo in <strong>Paint</strong>, choose File, then Save as, then JPEG picture.</li>'
+                 '<li><strong>A whole folder:</strong> our free app&rsquo;s Photo tools turns as many as you pick into JPGs in one go, and turns phone photos the right way up as it does (next section).</li></ul>'
+                 '<p>Your originals are kept either way, so nothing is lost.</p>'},
+        {'eyebrow': '/04 &mdash; THE QUICK WAY', 'h2': 'Let our free app do a whole folder',
+         'html': '__APP_BOX_PHOTOTOOLS__'},
+        {'eyebrow': '/05 &mdash; YOUR PRIVACY', 'h2': 'Why not just use a converter website?',
+         'html': '<p>Search for &ldquo;HEIC to JPG&rdquo; and you get pages of free converter websites. Most of them work, but every one means uploading your photos to someone else&rsquo;s computer &mdash; family pictures, children, the inside of your home. Phone photos also often carry the place they were taken, hidden inside the file.</p>'
+                 '<p>If the photos are private, read the site&rsquo;s privacy policy before uploading anything, or convert them on your own PC instead, where they never leave it.</p>'},
+        {'eyebrow': '/06 &mdash; AT THE SOURCE', 'h2': 'Stop the phone making HEIC photos',
+         'html': '<p>If you&rsquo;d rather the phone took JPGs in the first place, Apple explains the setting on its own help page: on the iPhone, Settings, then Camera, then Formats, then <strong>Most Compatible</strong>. New photos are then saved as JPG; photos already taken stay HEIC. Apple also says photos copied to a computer with a USB cable may be converted to JPG on the way (<a href="https://support.apple.com/en-gb/116944" rel="noopener" target="_blank">Apple</a>).</p>'
+                 '<p>We look after Windows PCs only, not iPhones or iPads, so for anything on the phone itself, Apple&rsquo;s own help is the place to go.</p>'},
+        {'eyebrow': '/07 &mdash; TOO BIG TO EMAIL', 'h2': 'Photos too big to email?',
+         'html': '<p>Phone photos are often several megabytes each, and email services limit how much one email can carry &mdash; Gmail&rsquo;s limit is 25 MB of attachments. A handful of full-size photos can go over it.</p>'
+                 '<p>Our app&rsquo;s <strong>Shrink photos to email them</strong> makes smaller copies (1,600 pixels on the longest side, still sharp on any screen) in a separate folder, and leaves your originals untouched. And <strong>Turn photos into a PDF</strong> puts photographed letters or forms into one PDF, a page each, ready to send.</p>'},
+        {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If HEIC photos still won&rsquo;t open after both add-ons are installed, or you have hundreds to sort out on a Windows PC, we can do it with you.')
+                 + '<p>We work on Windows PCs only &mdash; not iPhones, iPads or Macs.</p>'},
+    ],
+    'howToName': 'How to open HEIC photos on Windows and turn them into JPGs',
+    'howToSteps': [
+        {'name': 'Install HEIF Image Extensions', 'text': 'In the Microsoft Store app, search for HEIF Image Extensions by Microsoft and choose Get. It is free.'},
+        {'name': 'Install an HEVC extension', 'text': 'If the PC doesn&rsquo;t already have HEVC Video Extensions from Device Manufacturer, get Microsoft&rsquo;s HEVC Video Extensions from the Microsoft Store.'},
+        {'name': 'Open the photo again', 'text': 'Close and reopen the Photos app or restart the PC. HEIC photos now open and show as thumbnails.'},
+        {'name': 'Save JPG copies', 'text': 'Open a photo in Paint and choose File, Save as, JPEG picture, or convert a whole folder with a program that works on your PC.'},
+    ],
+    'faqs': [
+        {'q': 'What is a HEIC file?', 'a': '<p>A photo in the format iPhones and iPads use by default (some Android phones can use it too). It holds the same picture as a JPG in a smaller file, but Windows needs Microsoft add-ons to open it.</p>'},
+        {'q': 'Why won&rsquo;t HEIC photos open on Windows 11?', 'a': '<p>Windows needs two Microsoft add-ons for them: HEIF Image Extensions and an HEVC video extension. Without them, Photos asks for an extension and File Explorer shows blank icons.</p>'},
+        {'q': 'Is the HEVC extension free?', 'a': '<p>On some PCs, yes: the &ldquo;from Device Manufacturer&rdquo; version is free where the PC&rsquo;s maker included it. Otherwise Microsoft&rsquo;s HEVC Video Extensions costs a small one-off fee in the Microsoft Store. HEIF Image Extensions is free.</p>'},
+        {'q': 'Are online HEIC to JPG converters safe?', 'a': '<p>Many work, but they all mean uploading your photos to someone else&rsquo;s server, often with the location they were taken hidden inside. For private photos, convert them on your own PC.</p>'},
+        {'q': 'Does converting HEIC to JPG lose quality?', 'a': '<p>Not that you&rsquo;d notice for viewing, printing or sharing. The JPG is usually a bigger file, and your original HEIC is kept, so nothing is lost.</p>'},
+        {'q': 'Can you help with my iPhone?', 'a': '<p>No. We work on Windows PCs only, not iPhones, iPads or Macs. For settings on the phone, Apple&rsquo;s own support is the place to start.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving photos to a new computer</a>, <a href="/how-to-take-a-screenshot/">taking a screenshot</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+# ============================================================ 14. McAfee or Norton expired: do you need to renew?
+# Sources (read 11 Oct 2026): Microsoft Learn 'Microsoft Defender Antivirus compatibility with other security products'
+# (updated Sep 2026: disabled automatically under another AV; "can be re-enabled automatically if the non-Microsoft ...
+# product expires, is uninstalled, or otherwise stops providing real-time protection"; Manage providers path); Which?
+# 'Revealed: the traps antivirus companies use to get you to overpay' (second-year price jumps); FTC 'How to recognize a
+# fake Geek Squad renewal scam' (Oct 2022). Site stance kept (how-to-choose-antivirus): Defender = decent baseline; one
+# good paid product is a fair choice; never two at once. We sell Malwarebytes - this page doesn't pitch it.
+AV = {
+    'slug': 'mcafee-or-norton-expired-do-i-need-to-renew',
+    'title': 'McAfee or Norton Expired? Do You Need to Renew?',
+    'metaDesc': 'McAfee or Norton trial or subscription ran out? What happens if you don&rsquo;t renew, why two antivirus programs at once is bad, and how to remove one properly.',
+    'ogTitle': 'McAfee or Norton expired? Do you need to renew?',
+    'crumbName': 'McAfee or Norton Expired?',
+    'eyebrow': '// ANTIVIRUS RENEWAL',
+    'h1': 'McAfee or Norton <em class="grad grad--cyan">expired</em>: do you need to renew?',
+    'lede': 'A pop-up says your McAfee or Norton protection has expired, or a renewal is about to come off your card. Do you need it? Here&rsquo;s what Windows does when it runs out, the one thing never to do (run two at once), how to remove one properly, and how to spot the fake renewal emails.',
+    'chips': ['No scare tactics', 'Free programs check app', 'Antivirus and scam specialists'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Is the renewal email real?', '#s5'],
+    'ctaHead': 'Not sure what to keep?', 'ctaSub': 'We check what&rsquo;s protecting your PC, remove what isn&rsquo;t needed properly, and make sure it&rsquo;s protected, while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('If it runs out', 'Windows&rsquo; own antivirus, Microsoft Defender, can switch itself back on when another antivirus expires or is removed.'),
+        ('Do you have to pay?', 'No. Defender is a decent baseline; a paid product adds extra layers. It&rsquo;s a choice, not something a pop-up should rush.'),
+        ('Never run two', 'Two antivirus programs protecting at once slow the PC and can clash. Keep one.'),
+        ('Removing one', 'Turn off auto-renewal, uninstall it in Settings, then run the maker&rsquo;s own removal tool.'),
+        ('Watch the price', 'Which? has found second-year prices far above the first-year deal. Check before it renews.'),
+        ('Renewal email?', 'Fake McAfee and Norton invoices are common. Never ring the number in the email.'),
+        ('Free check', 'Programs check in our free 365 PC Manager app shows what&rsquo;s protecting your PC and anything it doesn&rsquo;t need.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'What happens if you don&rsquo;t renew',
+         'html': '<p>Many new laptops come with a McAfee or Norton trial already installed. When the trial or a subscription ends, it stops updating and the pop-ups start, and it&rsquo;s easy to feel the PC is about to be left unprotected.</p>'
+                 '<p>Windows has its own antivirus built in: <strong>Microsoft Defender</strong>. It steps aside while another antivirus is in charge, and Microsoft says it can switch itself back on automatically when that product expires, is uninstalled, or stops protecting the PC (<a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-compatibility" rel="noopener" target="_blank">Microsoft Learn</a>). So letting McAfee or Norton lapse doesn&rsquo;t leave you with nothing &mdash; as long as you then remove the expired one, so it isn&rsquo;t still sitting in charge while out of date.</p>'
+                 '<p><strong>Is Defender enough?</strong> For a careful user it&rsquo;s a decent baseline; paid products add extra web and scam protection, and someone to ask. It&rsquo;s a genuine choice &mdash; our guide on <a href="/how-to-choose-antivirus/">how to choose antivirus</a> goes through it. What it shouldn&rsquo;t be is a decision a countdown pop-up makes for you.</p>'},
+        {'eyebrow': '/02 &mdash; NEVER TWO', 'h2': 'Never run two antivirus programs at once',
+         'html': '<p>It&rsquo;s common to find the McAfee that came with the laptop and the Norton bought later both running. Two programs checking everything at once slow the PC and can get in each other&rsquo;s way &mdash; and they don&rsquo;t add up to double protection. Keep the one you pay for or prefer, and remove the other.</p>'
+                 '<p>To see what&rsquo;s protecting your PC: open Windows Security, then Virus &amp; threat protection, and under <em>Who&rsquo;s protecting me?</em> choose <strong>Manage providers</strong> (<a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-compatibility" rel="noopener" target="_blank">Microsoft Learn</a>).</p>'},
+        {'eyebrow': '/03 &mdash; REMOVE IT PROPERLY', 'h2': 'How to remove McAfee or Norton properly',
+         'html': '<ol>'
+                 '<li><strong>Turn off auto-renewal first</strong>, in your McAfee or Norton account online, if you&rsquo;ve paid for it and don&rsquo;t want it again. Uninstalling the program doesn&rsquo;t cancel a subscription.</li>'
+                 '<li><strong>Uninstall it</strong>: Settings, then Apps, then Installed apps. Find McAfee or Norton, choose Uninstall, then restart.</li>'
+                 '<li><strong>Clear what&rsquo;s left with the maker&rsquo;s own removal tool</strong>: the <em>McAfee Consumer Product Removal tool</em> (MCPR) or the <em>Norton Remove and Reinstall tool</em>, which has a remove-only option. Download them only from mcafee.com or norton.com.</li>'
+                 '<li><strong>Check Defender is back on</strong>: Windows Security, then Virus &amp; threat protection, should say Microsoft Defender is protecting the PC.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; BEFORE IT RENEWS', 'h2': 'Check the renewal price first',
+         'html': '<p>Antivirus subscriptions usually renew automatically, and the renewal price can be far higher than the first-year deal: Which? found second-year prices several times the introductory price (<a href="https://www.which.co.uk/news/article/revealed-the-traps-antivirus-companies-use-to-get-you-to-overpay-aX6PA5f1922s" rel="noopener" target="_blank">Which?</a>).</p>'
+                 '<p>Whatever you decide, look up the renewal date and price in your account before it renews &mdash; so it&rsquo;s your choice, not the card&rsquo;s.</p>'},
+        {'eyebrow': '/05 &mdash; FAKE RENEWAL EMAILS', 'h2': 'The fake McAfee and Norton renewal emails',
+         'html': '<p>One of the commonest scam emails is an &ldquo;invoice&rdquo; saying your McAfee, Norton or Geek Squad subscription has renewed for hundreds of pounds or dollars, with a number to ring within 24 hours to cancel. The US Federal Trade Commission explains how it plays out: the &ldquo;refund&rdquo; call ends with someone asking to connect to your computer and for your bank details (<a href="https://consumer.ftc.gov/consumer-alerts/2022/10/how-recognize-fake-geek-squad-renewal-scam" rel="noopener" target="_blank">FTC</a>).</p>'
+                 '<ul><li><strong>Never ring the number in the email.</strong> Check your bank statement, or log in to your McAfee or Norton account by typing the address yourself.</li>'
+                 '<li><strong>No charge on your statement? It&rsquo;s a scam.</strong> Delete it &mdash; in the UK, forward it to report@phishing.gov.uk first.</li>'
+                 '<li><strong>Already rang them and let them on the PC?</strong> See <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a> and act today.</li></ul>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check it for you',
+         'html': '__APP_BOX_PROGRAMS__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If you&rsquo;re not sure which program to keep, a removal won&rsquo;t finish, or a renewal email has you worried, we&rsquo;ll check it with you.')},
+    ],
+    'howToName': 'What to do when McAfee or Norton expires',
+    'howToSteps': [
+        {'name': 'See what&rsquo;s protecting your PC', 'text': 'Open Windows Security, Virus &amp; threat protection, and choose Manage providers under Who&rsquo;s protecting me.'},
+        {'name': 'Turn off auto-renewal if you don&rsquo;t want it', 'text': 'Do it in your McAfee or Norton account online. Uninstalling does not cancel a subscription.'},
+        {'name': 'Uninstall the one you don&rsquo;t want', 'text': 'Open Settings, Apps, Installed apps, choose Uninstall on McAfee or Norton, then restart.'},
+        {'name': 'Run the maker&rsquo;s removal tool', 'text': 'Use the McAfee Consumer Product Removal tool or the Norton Remove and Reinstall tool, downloaded only from the maker&rsquo;s own website.'},
+        {'name': 'Check Defender is protecting', 'text': 'Windows Security should now say Microsoft Defender is protecting the PC.'},
+    ],
+    'faqs': [
+        {'q': 'Do I need McAfee if I have Windows Defender?', 'a': '<p>You don&rsquo;t have to have it. Defender is built into Windows and is a decent baseline; a paid product adds extra layers. Whichever you choose, run only one.</p>'},
+        {'q': 'What happens if I don&rsquo;t renew Norton or McAfee?', 'a': '<p>It stops updating and keeps reminding you. Uninstall it properly, and Microsoft Defender can take over by itself.</p>'},
+        {'q': 'Is it bad to have two antivirus programs?', 'a': '<p>Yes. Two protecting at once slow the PC and can clash, without adding real protection. Keep one and remove the other.</p>'},
+        {'q': 'Is my McAfee or Norton renewal email real?', 'a': '<p>Maybe not &mdash; fake renewal invoices are one of the commonest scams. Never ring the number in the email; check your bank statement or log in to your account by typing the address yourself.</p>'},
+        {'q': 'Does uninstalling cancel my subscription?', 'a': '<p>No. Turn off auto-renewal in your McAfee or Norton account online as well, or the next payment can still be taken.</p>'},
+        {'q': 'Can you remove it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed properly and check the PC is protected, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-choose-antivirus/">how to choose antivirus</a>, <a href="/virus-threat-protection-managed-by-your-organization/">Windows Security says it&rsquo;s managed</a>, <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+# ============================================================ 15. Why does my PC keep crashing?
+# Sources (read 11 Oct 2026): Microsoft Learn 'Review reliability with Reliability Monitor' (stability index 1-10);
+# Microsoft Support 'Troubleshooting Windows unexpected restarts and stop code errors' (black screen from Windows 11 24H2;
+# remove new hardware, safe mode, Device Manager warnings, 10-15% free space, updates, restore point).
+CR = {
+    'slug': 'why-does-my-pc-keep-crashing',
+    'title': 'Why Does My PC Keep Crashing? See What Windows Recorded',
+    'metaDesc': 'Programs crashing, freezing or a blue screen? Windows records every crash. How to see which program or driver is to blame, and what to do about each one.',
+    'ogTitle': 'Why does your PC keep crashing? Windows already knows',
+    'crumbName': 'Why Does My PC Keep Crashing?',
+    'eyebrow': '// CRASHES, FREEZES, BLUE SCREENS',
+    'h1': 'Why does your PC <em class="grad grad--cyan">keep crashing</em>?',
+    'lede': 'Programs close on their own, the PC freezes, or it restarts with a blue (or now black) screen. Before you guess, look at what Windows has already written down: it keeps a record of every crash, freeze and failed update. Here&rsquo;s how to read it, and what to do about what it shows.',
+    'chips': ['Windows already knows', 'Free crash history app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Read Windows&rsquo; record', '#s2'],
+    'ctaHead': 'Still crashing?', 'ctaSub': 'We read the crash record with you, fix the program or driver behind it, and tell you straight if it&rsquo;s hardware. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Windows&rsquo; own record', 'Reliability Monitor. Type reliability in the Start menu and choose View reliability history.'),
+        ('The score', 'A stability index from 1 to 10, where 10 is the most stable.'),
+        ('One program keeps crashing', 'Update it, or uninstall it and install it fresh. The fault is usually in that program, not Windows.'),
+        ('Blue or black screen', 'Usually a driver or hardware fault. One is nothing to worry about; several in a few weeks is worth a look.'),
+        ('Switched off by itself', 'A power cut, the power button held down, a flat battery, overheating, or a fault.'),
+        ('Free check', 'What keeps going wrong in our free 365 PC Manager app reads the same record in plain words.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Windows already knows what crashed',
+         'html': '<p>Every time a program crashes or stops responding, Windows stops with a blue screen, or an update fails to install, Windows writes it down. The record is called <strong>Reliability Monitor</strong>. It has been part of Windows for years, but very few people know it&rsquo;s there.</p>'
+                 '<p>It turns that history into a <strong>stability index</strong> from 1 to 10, where 1 is the least stable and 10 the most (<a href="https://learn.microsoft.com/en-us/training/modules/monitor-windows-server-performance/4-review-reliability-with-reliability-monitor" rel="noopener" target="_blank">Microsoft Learn</a>). The number itself matters less than what&rsquo;s behind it: which program, how often, and since when.</p>'},
+        {'eyebrow': '/02 &mdash; READ THE RECORD', 'h2': 'How to read Windows&rsquo; crash record',
+         'html': '<ol>'
+                 '<li><strong>Open it:</strong> click Start, type <strong>reliability</strong>, and choose <strong>View reliability history</strong>.</li>'
+                 '<li><strong>Look along the graph:</strong> each column is a day. A red circle with a cross is a crash or failure, a yellow triangle is a warning, and a blue <em>i</em> is information, such as an update that installed.</li>'
+                 '<li><strong>Click a day with a red cross</strong> and read the list underneath: the program&rsquo;s name and what happened &mdash; &ldquo;Stopped working&rdquo;, &ldquo;Stopped responding&rdquo;, or &ldquo;Windows was not properly shut down&rdquo;.</li>'
+                 '<li><strong>Look for the pattern.</strong> One program appearing again and again is your answer. Problems that started on one day often line up with an update or a new program installed that day.</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; WHAT IT MEANS', 'h2': 'What each kind of problem usually means',
+         'html': '<ul>'
+                 '<li><strong>One program keeps crashing or freezing.</strong> The fault is almost always in that program. Update it, or uninstall it and install it fresh. For Outlook or another Office app, Office&rsquo;s own Repair (Settings, Apps, Microsoft 365, Modify) often sorts it.</li>'
+                 '<li><strong>Lots of different programs crashing.</strong> That points at something underneath them all: a driver, a nearly full drive, memory, or overheating.</li>'
+                 '<li><strong>Blue or black screens.</strong> Windows stops to protect itself, usually because of a driver or a hardware fault. One on its own is nothing to worry about; several in a few weeks is worth a look. From Windows 11 version 24H2 the screen is black rather than blue (<a href="https://support.microsoft.com/en-gb/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6" rel="noopener" target="_blank">Microsoft</a>).</li>'
+                 '<li><strong>&ldquo;Windows was not properly shut down&rdquo;.</strong> A power cut, someone holding the power button, a laptop battery running flat &mdash; or the PC switching itself off, which can mean overheating or a power fault.</li>'
+                 '<li><strong>Failed updates.</strong> Most install at the next try. One failing again and again is worth sorting, because it holds back security fixes.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; WHAT TO TRY', 'h2': 'What to try, in order',
+         'html': '<ol>'
+                 '<li><strong>Install Windows updates</strong> and restart properly (Restart, not Shut down).</li>'
+                 '<li><strong>Unplug anything new</strong> &mdash; a printer, dock, USB device or part added just before the trouble started. Microsoft suggests this first for blue screens.</li>'
+                 '<li><strong>Check Device Manager</strong> (right-click Start) for anything with a yellow warning sign, and update, roll back or uninstall that driver.</li>'
+                 '<li><strong>Keep 10 to 15% of the drive free</strong>, as Microsoft advises.</li>'
+                 '<li><strong>Undo a recent change</strong>: uninstall a program installed the day the trouble began, or use System Restore to go back to a restore point.</li>'
+                 '</ol>'
+                 '<p>Microsoft&rsquo;s full list is on its page about <a href="https://support.microsoft.com/en-gb/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6" rel="noopener" target="_blank">unexpected restarts and stop code errors</a>.</p>'},
+        {'eyebrow': '/05 &mdash; WHEN IT&rsquo;S HARDWARE', 'h2': 'When it&rsquo;s the hardware',
+         'html': '<p>If blue screens keep coming with every driver up to date, or the PC switches off under load &mdash; games, video calls &mdash; or gets very hot, it&rsquo;s more likely to be hardware: a failing drive, memory, a worn power supply, or dust choking the fans. Software won&rsquo;t fix those, but knowing it&rsquo;s hardware saves a weekend of trying.</p>'
+                 '<p>Gaming PC? See <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app read it for you',
+         'html': '__APP_BOX_CRASHES__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the same crash keeps coming back, or blue screens are getting more frequent, it&rsquo;s worth having it checked before a fault becomes a failure.')},
+    ],
+    'howToName': 'How to find out why your Windows PC keeps crashing',
+    'howToSteps': [
+        {'name': 'Open Reliability Monitor', 'text': 'Click Start, type reliability and choose View reliability history.'},
+        {'name': 'Find the pattern', 'text': 'Click the days with red crosses and look for one program appearing again and again, or problems starting on one day.'},
+        {'name': 'Fix the crashing program', 'text': 'Update it, or uninstall it and install it fresh.'},
+        {'name': 'Unplug new hardware and check drivers', 'text': 'Remove anything added just before the trouble started and check Device Manager for warning signs.'},
+        {'name': 'Undo a recent change', 'text': 'Uninstall a recently installed program, or use System Restore to go back to a restore point.'},
+    ],
+    'faqs': [
+        {'q': 'Why does my computer keep crashing?', 'a': '<p>Usually one program with a fault, a driver, a nearly full drive, overheating or failing hardware. Windows&rsquo; Reliability Monitor shows which programs crashed and when, which points to the cause.</p>'},
+        {'q': 'How do I find out why my PC crashed?', 'a': '<p>Click Start, type reliability and choose View reliability history. Click a day with a red cross to see what crashed and what happened.</p>'},
+        {'q': 'Is a blue screen serious?', 'a': '<p>One on its own usually isn&rsquo;t. Several in a few weeks are worth looking into, as they usually point to a driver or a hardware fault.</p>'},
+        {'q': 'Why is my blue screen black now?', 'a': '<p>From Windows 11 version 24H2, Microsoft shows the stop screen in black rather than blue. It means the same thing.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Software causes, yes: with your permission we connect to your Windows PC and sort it while you watch. If it turns out to be hardware, we collect it free across Bournemouth, Christchurch, Poole and Dorset, repair it and bring it back.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
 
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
@@ -1058,6 +1308,12 @@ FLOWS = {
                  'h3s': 'Still no key? Ring us before you reset anything.'},
     VT['slug']: {'h2': 'Put Windows Security back to normal, step by step', 'ask': 'Has the managed message gone?', 'tip': 'Restart and open Windows Security again after each step.',
                  'h3s': 'Still says managed? That is a remote job.'},
+    PH['slug']: {'h2': 'Get HEIC photos opening, step by step', 'ask': 'Do they open now?', 'tip': 'Close and reopen the Photos app after each add-on.',
+                 'h3s': 'Still won&rsquo;t open? That is a remote job.'},
+    AV['slug']: {'h2': 'Sort out the expired antivirus, step by step', 'ask': 'Is that step done?', 'tip': 'Restart after uninstalling, then check Windows Security.',
+                 'h3s': 'Removal won&rsquo;t finish? That is a remote job.'},
+    CR['slug']: {'h2': 'Track down the crash, step by step', 'ask': 'Has it stopped crashing?', 'tip': 'Give it a few days, then look at Reliability Monitor again.',
+                 'h3s': 'Still crashing? That is a remote job.'},
     PQ['slug']: {'h2': 'Clear the queue, step by step', 'ask': 'Is it printing now?', 'tip': 'Print a test page from the program you were using.',
                  'h3s': 'Still stuck after every step? That is a remote job.'},
     AL['slug']: {'h2': 'Get your alarm going off, step by step', 'ask': 'Did it go off?', 'tip': 'Test it with an alarm two minutes ahead before you rely on it.',
@@ -1105,12 +1361,21 @@ def pages(setup_url):
             '<p style="margin:0">It says in plain words which antivirus is on duty &mdash; Microsoft Defender or another &mdash; and warns you if Windows can&rsquo;t name one. When Defender is the one working, it shows whether <strong>tamper protection</strong> is on. '
             'It checks Windows&rsquo; other built-in protections too: the &ldquo;allow this app to make changes?&rdquo; question, SmartScreen&rsquo;s check on downloads (and whether a policy switched it off) and memory integrity. '
             'It doesn&rsquo;t list Defender&rsquo;s policies &mdash; the steps above do that. Each button opens the right Windows setting; the only thing it changes itself is showing file name endings, when you press it.</p>', setup_url),
+        '__APP_BOX_PHOTOTOOLS__': _app_box('phototools', 'Photo tools: done on your PC, nothing uploaded',
+            '<p style="margin:0"><strong>Change phone photos (.HEIC) to JPG</strong> &mdash; pick as many as you like and JPG copies go into Pictures, in a <em>Converted from HEIC</em> folder, turned the right way up. <strong>Shrink photos to email them</strong> makes smaller copies for email, and <strong>Turn photos into a PDF</strong> makes one PDF, a page per photo. Your originals are never touched. '
+            'It uses Windows&rsquo; own picture support, so for HEIC it needs the same two Microsoft add-ons, and it tells you if they&rsquo;re missing.</p>', setup_url),
+        '__APP_BOX_PROGRAMS__': _app_box('programs', 'Programs check: what&rsquo;s really protecting your PC',
+            '<p style="margin:0">It reads Windows&rsquo; own register of security programs and says which one is protecting the PC, warns when <strong>two are protecting at once</strong>, and when one is switched on but says its protection is <strong>out of date</strong> &mdash; often a subscription that has ended. '
+            'It also looks through your installed programs for ones the PC doesn&rsquo;t need &mdash; tune-up tools, driver updaters, adware and programs that no longer get security fixes &mdash; each with the reason. It only reads: you remove things in Settings, or we can do it with you.</p>', setup_url),
+        '__APP_BOX_CRASHES__': _app_box('crashes', 'What keeps going wrong: Windows&rsquo; crash record, in plain words',
+            '<p style="margin:0">It reads the same record as Reliability Monitor and puts it in plain words: Windows&rsquo; stability score, which programs crashed or froze in the last 30 days and how often, blue screens and unexpected shutdowns in the last 90 days, and Windows updates that failed to install. '
+            'It names what happened without guessing, and never calls a single event a problem. It only reads; a button opens Windows&rsquo; own Reliability Monitor.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
@@ -1134,6 +1399,26 @@ def gaming_section(setup_url):
                 'It checks Game Mode, the power mode, a screen running below its refresh rate, a laptop with two graphics chips, and the memory. Nothing changes unless you click a button.</p>', setup_url)}
 
 
+# ---- the Camera & microphone box on the existing "you've been hacked" email page (11 Oct 2026): the app's own button links
+# there; put in by build_extra before that page's "When to worry" section
+BITCOIN_SLUG = 'youve-been-hacked-email-bitcoin-scam'
+
+
+def _cammic_box(setup_url, head):
+    return _app_box('cammic', head,
+        '<p style="margin:0">It lists the programs Windows says used your camera and microphone, and when each one last did &mdash; and what&rsquo;s using them right now. '
+        'Windows keeps this record for programs that ask its permission, which almost all do, so the app says &ldquo;Windows has no record&rdquo;, never &ldquo;never used&rdquo;. It changes nothing: its buttons open Windows&rsquo; camera and microphone settings.</p>', setup_url)
+
+
+def cammic_section(setup_url):
+    return {'eyebrow': '// CHECK FOR YOURSELF', 'h2': 'See what your webcam has actually done',
+            'html': '<p>You don&rsquo;t have to take anyone&rsquo;s word for it. Windows keeps its own record of the programs that use your camera and microphone: on Windows 11, Settings, then Privacy &amp; security, then Camera (or Microphone) lists the desktop apps it has detected using them (<a href="https://support.microsoft.com/en-us/windows/windows-camera-microphone-and-privacy-a83257bc-e990-d54a-d212-b5e41beba857" rel="noopener" target="_blank">Microsoft</a>). Our free app shows the same record with dates, in one place.</p>'
+                    + _cammic_box(setup_url, 'Camera &amp; microphone: what Windows actually recorded')}
+
+
+# ---- the free tool pages
+
+
 # ---- the free tool pages whose job the app also does: an app box after "What next" (wave 5, 8 Oct 2026)
 def tool_boxes(setup_url):
     """slug -> the section to insert on that tool page."""
@@ -1149,10 +1434,12 @@ def tool_boxes(setup_url):
             '<p style="margin:0">Our free app has a QR code maker for a web address, a phone number or a short note &mdash; for a poster, a letter or the club newsletter. It&rsquo;s made on your PC with nothing fetched from anywhere, and you can save it as a picture, copy it or print it straight away.</p>', setup_url),
         'wifi-qr-code-generator': _app_box('wificard', 'Print a guest Wi-Fi card from your PC',
             '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
+        'webcam-mic-test': _cammic_box(setup_url, 'See which programs have used your camera and mic'),   # 11 Oct 2026
     }
+    heads = {'webcam-mic-test': 'Who has used your camera?'}
     return {slug: ('    <section class="section" aria-label="In our free app" id="in-the-app">\n      <div class="wrap">\n'
                    '        <p class="eyebrow mono">// ALSO IN OUR FREE WINDOWS APP</p>\n'
-                   '        <h2 class="section-title" data-title>Prefer it on your PC?<span class="title-underline"></span></h2>\n'
+                   '        <h2 class="section-title" data-title>' + heads.get(slug, 'Prefer it on your PC?') + '<span class="title-underline"></span></h2>\n'
                    '        ' + box + '\n      </div>\n    </section>\n') for slug, box in boxes.items()}
 
 
