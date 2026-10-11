@@ -40,9 +40,11 @@ def shot(name, alt, eager=False, tag=None):
 
 # The explainer film (made 10-11 Oct 2026: director/critic panels, the real app's demo mailbox, Lily's voice). A new cut
 # gets a NEW file name (images are cached for a year). Owner, 11 Oct 2026: "put the film on the product page".
-FILM = "/images/t1-mail-film-v3.mp4"
+# v4 (11 Oct 2026, owner: "add All inboxes to the Techies One Mail film"): + the All inboxes scene after "Type your email
+# address". The poster frame (the scam warning) comes before it, so the v3 poster stays.
+FILM = "/images/t1-mail-film-v4.mp4"
 FILM_POSTER = "/images/t1-mail-film-poster-v3.jpg"
-FILM_SECS = 78
+FILM_SECS = 85
 FILM_UPLOADED = "2026-10-11"
 FILM_SAYS = ("Techies One Mail: a free email program for Windows computers, from 365 Techies. If Windows Mail or Outlook "
              "Express stopped, your email is most likely still with your email company. In this made-up inbox, your "
@@ -50,7 +52,8 @@ FILM_SAYS = ("Techies One Mail: a free email program for Windows computers, from
              "arrives. Techies One is open, so obvious scams go to Scams, and the sender is blocked. It tells you why, in plain "
              "English. The sender isn&rsquo;t the taxman. The link pretends to be a government website. It tries to rush you. "
              "It can get things wrong. You can put it back, or ask us. Type your email address, and it fills in the settings "
-             "itself. Simple view gives you fewer, bigger buttons, and a green one that asks us to ring you back. We&rsquo;re "
+             "itself. Got more than one email address? All inboxes puts them in one list, and your reply goes from the right "
+             "one. Simple view gives you fewer, bigger buttons, and a green one that asks us to ring you back. We&rsquo;re "
              "a Bournemouth family firm. Download it free at 365techies.co.uk, or ring us if you&rsquo;d rather we set it up.")
 
 
