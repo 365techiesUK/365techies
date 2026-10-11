@@ -1,7 +1,7 @@
 {
- "ver": "0.13.3",
- "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.3.exe",
- "sha256": "4f7927034a9cb1acf2b6566a679ad28fbee7ecd608ce5a718a09df8addca50b2",
- "size": 17931136,
- "notes": "A small wording fix: the screen for adding an email address now names the providers Techies One Mail has settings for built in, and says it looks up the settings for other addresses itself. Signed by 365 Techies Ltd."
+ "ver": "0.13.4",
+ "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.13.4.exe",
+ "sha256": "1f99cc7eb9fdd032e77fa62cd8267c0754017fa19be22ae1204827d97e0e23af",
+ "size": 17941680,
+ "notes": "New in 0.13.4: All inboxes - if you have more than one email address, every inbox's emails in one list, newest first, each marked with the address it came to; reply and it goes from that address. In the address book, the counts of emails you've sent someone and had from them now open the emails themselves. Signed by 365 Techies Ltd."
 }
