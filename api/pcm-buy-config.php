@@ -10,7 +10,9 @@
  */
 $BUY_ON = false;
 $BUY_URL = '';
-$BUY_PRICE = '';
+// Owner, 11 Oct 2026: "go with $19.99 a year" - a 12-month key for up to 3 PCs that simply ends (no renewal), one price
+// worldwide in US dollars with tax included. The Lemon Squeezy product must say the same. The app shows 40 characters at most.
+$BUY_PRICE = 'US$19.99 for 1 year - does not renew';
 $BUY_PROVIDER = '';
 // Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not
 // listed gets a key for a year (a subscription's key then follows its renewals).
