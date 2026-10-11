@@ -40,8 +40,8 @@ def shot(name, alt, eager=False):
 
 # The explainer film (made 10-11 Oct 2026: director/critic panels, the real app's demo mailbox, Lily's voice). A new cut
 # gets a NEW file name (images are cached for a year). Owner, 11 Oct 2026: "put the film on the product page".
-FILM = "/images/t1-mail-film-v2.mp4"
-FILM_POSTER = "/images/t1-mail-film-poster-v2.jpg"
+FILM = "/images/t1-mail-film-v3.mp4"
+FILM_POSTER = "/images/t1-mail-film-poster-v3.jpg"
 FILM_SECS = 78
 FILM_UPLOADED = "2026-10-11"
 FILM_SAYS = ("Techies One Mail: a free email program for Windows computers, from 365 Techies. If Windows Mail or Outlook "
