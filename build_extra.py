@@ -24167,6 +24167,11 @@ if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
         if _np['slug'] == _PFP.BITCOIN_SLUG:
             _i = [s.get('eyebrow') for s in _np['sections']].index('// WHEN TO WORRY')
             _np['sections'].insert(_i, _PFP.cammic_section(PCM_SETUP_V30))
+    # 11 Oct 2026: the Office licence box on the "Unlicensed Product" page (OFFICE_PAGES, built further down), before branch two
+    for _np in OFFICE_PAGES:
+        if _np['slug'] == _PFP.OFFICE_SLUG:
+            _i = [s.get('eyebrow', '') for s in _np['sections']].index('Branch two &mdash; work &amp; business')
+            _np['sections'].insert(_i, _PFP.office_section(PCM_SETUP_V30))
     # 8 Oct 2026: the free tool pages whose job the app also does get its box after What next
     _PFP_TB = _PFP.tool_boxes(PCM_SETUP_V30)
     for _kw in bp.PAGES:

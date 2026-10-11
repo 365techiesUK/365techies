@@ -53,6 +53,15 @@ check / Reliability.cs / CamMic.cs):
                             screens + unexpected shutdowns 90 days, failed updates. Picture = QA demo.
   Camera & microphone (CamMic.cs, v32)  ConsentStore LastUsedTimeStart/Stop per program; "Windows has no record", never
                             "never used". Its button links to /youve-been-hacked-email-bitcoin-scam/ - that page gets the box.
+Added 11 Oct 2026 (owner: "yeah do the two upgrades now"), boxes on EXISTING pages only (no new URLs while this week's
+pages get indexed), both on This PC (FREE):
+  Microsoft Office (OfficeLicence.cs, v32)  which Office + Office's own licence record: licensed (+ date Microsoft last
+                            confirmed it) / grace = subscription ended, works until a date / lapsed = 'Unlicensed product' /
+                            not signed in with the subscription's account; bought-once Office = when security fixes end; the
+                            older licensing system is never guessed at. Nothing personal kept. -> office unlicensed page.
+  Keep it, upgrade it or replace it? (KeepOrReplace.cs, v36)  Windows 11 / processor, SSD or hard drive + Windows' drive
+                            check, memory, battery wear, processor age; NO prices; a failing drive first = back up. Picture =
+                            QA demo (a sample Dell Latitude 7490). -> repair-or-replace-advisor (tool box).
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
@@ -91,11 +100,13 @@ SHOTS = {
     'programs': ('/images/pcm-feat-programs-v36.webp', 1272, 1168, 'Programs check in 365 PC Manager saying two security programs are protecting at once, McAfee LiveSafe and Norton 360, with Microsoft Defender standing by, then programs this PC doesn&rsquo;t need and one that no longer gets security fixes', ('Safety', 'Programs check')),
     'crashes': ('/images/pcm-feat-crashes-v36.webp', 1272, 1112, 'What keeps going wrong in 365 PC Manager: Windows rates this PC 4.2 out of 10, Microsoft Outlook crashed 9 times and froze 4 times in the last 30 days, 3 blue screens, one unexpected shutdown and an update that failed to install', ('My PC', 'What keeps going wrong')),
     'cammic':  ('/images/pcm-feat-cammic-v36.webp', 1272, 1328, 'Camera and microphone in 365 PC Manager: Zoom Workplace is using the camera and microphone right now, WhatsApp and Sound Recorder with the dates they last used them, and a note on the I recorded you on your webcam email', ('Safety', 'Camera &amp; microphone')),
+    'officelicence': ('/images/pcm-feat-officelicence-v36.webp', 1272, 332, 'The Microsoft Office row on This PC in 365 PC Manager: Microsoft 365 for home, licensed, Microsoft last confirmed the subscription on 7 October 2026, Office renews this by itself whenever the PC is online', ('My PC', 'This PC')),
+    'keepreplace': ('/images/pcm-feat-keepreplace-v36.webp', 1272, 848, 'This PC in 365 PC Manager on a sample Dell Latitude 7490, about 8 years old: keep it, upgrade it or replace it? Back up first, then decide - the drive check is warning, it can probably move to Windows 11 for free, the battery holds about 61% of its charge, it has an SSD and 8 GB of memory', ('My PC', 'This PC')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -1416,6 +1427,22 @@ def cammic_section(setup_url):
                     + _cammic_box(setup_url, 'Camera &amp; microphone: what Windows actually recorded')}
 
 
+# ---- the Office licence box on the existing "Unlicensed Product" page (11 Oct 2026; 2,821 impressions at position 8 in
+# Sep): put in by build_extra after its home branch, before 'Branch two'
+OFFICE_SLUG = 'microsoft-office-unlicensed-product-error'
+
+
+def office_section(setup_url):
+    return {'eyebrow': 'The quick check', 'h2': 'Let our free app read your Office licence',
+            'html': '<p>Not sure which of these you&rsquo;re in? On a Windows PC, our free app reads Office&rsquo;s own licence record and says it in plain words, in a few seconds.</p>'
+                    + _app_box('officelicence', 'Is your Office licence OK?',
+                        '<p style="margin:0">Its <strong>This PC</strong> page shows which Office is installed and what Office&rsquo;s own licence record says: <strong>licensed</strong> (with the date Microsoft last confirmed the subscription), <strong>subscription ended</strong> (still working until a date it names), <strong>not licensed</strong> &mdash; the &ldquo;Unlicensed Product&rdquo; state &mdash; or <strong>not signed in</strong> with the account that has the subscription. '
+                        'For an Office bought once, it says when its security fixes end. Where it can&rsquo;t tell, it says so rather than guess, and it keeps nothing personal: no email address, no account.</p>', setup_url)}
+
+
+# ---- the free tool pages
+
+
 # ---- the free tool pages
 
 
@@ -1435,8 +1462,11 @@ def tool_boxes(setup_url):
         'wifi-qr-code-generator': _app_box('wificard', 'Print a guest Wi-Fi card from your PC',
             '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
         'webcam-mic-test': _cammic_box(setup_url, 'See which programs have used your camera and mic'),   # 11 Oct 2026
+        'repair-or-replace-advisor': _app_box('keepreplace', 'Keep it, upgrade it or replace it?',   # 11 Oct 2026
+            '<p style="margin:0">Instead of four questions, our free app reads the facts from Windows: whether the PC runs Windows 11 or its processor can take it, whether the drive is an SSD or an old hard drive and what Windows&rsquo; own drive check says, the memory, the battery&rsquo;s wear and roughly how old the processor is. '
+            'Then it gives a plain verdict &mdash; keep it, upgrade a part or replace it &mdash; and a drive that&rsquo;s failing always comes first: back up. No prices and no pressure.</p>', setup_url),
     }
-    heads = {'webcam-mic-test': 'Who has used your camera?'}
+    heads = {'webcam-mic-test': 'Who has used your camera?', 'repair-or-replace-advisor': 'Let your PC answer for itself'}
     return {slug: ('    <section class="section" aria-label="In our free app" id="in-the-app">\n      <div class="wrap">\n'
                    '        <p class="eyebrow mono">// ALSO IN OUR FREE WINDOWS APP</p>\n'
                    '        <h2 class="section-title" data-title>' + heads.get(slug, 'Prefer it on your PC?') + '<span class="title-underline"></span></h2>\n'
