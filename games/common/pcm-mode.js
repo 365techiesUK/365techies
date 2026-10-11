@@ -4,18 +4,26 @@
    PC Manager), and a slim 365 Games bar takes their place, so the launcher - the greeting, daily challenges, every game
    and the Hall of Fame - fills the window like a games console. The cookie banner and the text-size button stay.
    The mode lasts for the visit in that window (sessionStorage) and is passed on to the links into our games.
-   Loaded in <head> (games_hub_page.py, HEAD_EXTRA) so the website's header never flashes up first. Plain ES5. */
+   Loaded in <head> (games_hub_page.py, HEAD_EXTRA) so the website's header never flashes up first. Plain ES5.
+   11 Oct 2026: the same console look when the hub runs as the installed 365 Games app (the Microsoft Store app, or the
+   web app installed from the browser): owner, "this is for games, not trying to sell them support". An app window
+   reports its display mode, and the app's start address carries ?src=app. The app needs no sessionStorage and no
+   link tagging: every page it opens is in the same app window. */
 (function () {
-  var on = /[?&]from=pcm(&|#|$)/.test(location.search);
-  try { if (on) sessionStorage.setItem('pcm-mode', '1'); else on = sessionStorage.getItem('pcm-mode') === '1'; } catch (e) {}
-  if (!on) return;
+  var pcm = /[?&]from=pcm(&|#|$)/.test(location.search), app = /[?&]src=app(&|#|$)/.test(location.search);
+  try {
+    app = app || navigator.standalone === true || !!(window.matchMedia && matchMedia('(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui), (display-mode: window-controls-overlay)').matches);
+  } catch (e) {}
+  try { if (pcm) sessionStorage.setItem('pcm-mode', '1'); else pcm = sessionStorage.getItem('pcm-mode') === '1'; } catch (e) {}
+  if (!pcm && !app) return;
   var d = document.documentElement;
-  d.className += (d.className ? ' ' : '') + 'pcm';
+  d.className += (d.className ? ' ' : '') + 'pcm' + (app ? ' app365' : '');
   var css =
-    'html.pcm .site-header,html.pcm .site-footer,html.pcm .mobile-cta-bar,html.pcm .taskhead,html.pcm #faq,html.pcm .cta-band,' +
+    'html.pcm .site-header,html.pcm #mobile-menu,html.pcm .site-footer,html.pcm .mobile-cta-bar,html.pcm .taskhead,html.pcm #faq,html.pcm .cta-band,' +
     'html.pcm .gh-pcm,html.pcm main>section:not(.gh){display:none!important}' +
     'html.pcm body{padding:0!important}' +
     'html.pcm .section.gh{padding-top:1.4rem}' +
+    'html.app365 #hubspot-messages-iframe-container{display:none!important}' +   // the app: no support chat bubble either
     '.pcm-bar{position:sticky;top:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.4rem 1.2rem;' +
     'padding:.75rem var(--pad-x,1.5rem);background:linear-gradient(90deg,rgba(28,17,72,.97),rgba(8,30,66,.97));border-bottom:1px solid rgba(143,179,217,.18)}' +
     '.pcm-mark{font-family:var(--font-display,sans-serif);font-weight:700;font-size:1.45rem;letter-spacing:.01em;color:#eaf4ff;line-height:1.1}' +
@@ -30,7 +38,8 @@
     bar.className = 'pcm-bar';
     bar.innerHTML = '<span class="pcm-mark"><b>365</b> Games</span><span class="pcm-note">No adverts · no sign-in · just play</span>';
     document.body.insertBefore(bar, document.body.firstChild);
-    // links into our games keep the mode (before any #part of the address)
+    // links into our games keep the mode (before any #part of the address); PC Manager only, see above
+    if (!pcm) return;
     var links = document.querySelectorAll('a[href^="/games/"],a[href^="https://365techies.co.uk/games/"]');
     for (var i = 0; i < links.length; i++) {
       var h = links[i].getAttribute('href'), hash = '', k = h.indexOf('#');
