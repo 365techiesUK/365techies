@@ -1148,7 +1148,7 @@ def pcm_landing():
     _abroad_mail = ("mailto:?subject=" + "365%20PC%20Manager%20for%20my%20computer"
                     + "&body=" + "The%20free%20365%20PC%20Manager%20app%20for%20Windows%2010%20and%2011%3A%20https%3A%2F%2F365techies.co.uk%2Ffree-pc-health-check%2F%23download")
     _abroad_unlock = ('          <p style="margin:0 0 .7rem">Want the full automatic service too? An optional key, <strong>Unlock everything</strong>, adds it and two more tools: '
-                      '<strong>US$19.99 once, for 12 months on up to 3 PCs</strong>, charged in US dollars. It never renews, and you can have a full refund within 30 days. '
+                      '<strong>US$19.99 once, for 12 months on up to 3 PCs</strong> (US$9.99 in many countries), charged in US dollars. It never renews, and you can have a full refund within 30 days. '
                       '<a href="/pc-manager-licence/">Licence and refunds</a>.</p>\n') if PCM_UNLOCK_LIVE else ''
     _pcm_abroad = f'''    <section class="section" id="outside-uk" aria-labelledby="pcm-abroad-h" hidden data-abroad-box>
       <div class="wrap" style="max-width:58rem">
@@ -16849,7 +16849,7 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           <h2>In short</h2>
           <ul>
             <li><strong>365 PC Manager is free</strong> to use on any Windows 10 or 11 PC. You never need to buy anything.</li>
-            <li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong>, paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>
+            <li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong> (<strong>US$9.99</strong> in many countries), paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>
             <li><strong>It does not renew.</strong> After 12 months it simply stops, and you are never charged again unless you choose to buy another.</li>
             <li><strong>30-day refund, no questions asked</strong>, even if you have used it.</li>
             <li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: those are for our customers in the UK.</li>
@@ -16864,7 +16864,7 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           </ul>
 
           <h2>Price, tax and how you pay</h2>
-          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars. Where your country charges sales tax or VAT, it is included in that price. Your bank may show the amount in your own currency, and some banks add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
+          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars. In many countries, including India, Pakistan, Bangladesh, the Philippines, Indonesia, Nigeria, Kenya and Egypt, it is <strong>US$9.99</strong>: the app&rsquo;s Buy button applies the lower price for you, and the checkout shows it before you pay. Where your country charges sales tax or VAT, it is included in that price. The app also shows roughly what the price comes to in your own money, but the exact amount is up to your bank, and some banks add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
           <p><strong>Lemon Squeezy is the seller.</strong> Our payment partner Lemon Squeezy (&ldquo;Sold through Link, LLC&rdquo;) takes the payment, adds any tax, sends your receipt and handles card questions, under its own <a href="https://www.lemonsqueezy.com/buyer-terms" rel="noopener">buyer terms</a> and <a href="https://www.lemonsqueezy.com/privacy" rel="noopener">privacy policy</a>. Your card or PayPal statement shows Lemon Squeezy (for example &ldquo;LEMSQZY*&rdquo;), not our name. We, 365 Techies Ltd, make the software, and these terms are about using it.</p>
 
           <h2>Your key and your PCs</h2>
@@ -16906,7 +16906,7 @@ info_page(
   hero_cta1=('About 365 PC Manager', '/free-pc-health-check/'), hero_cta2=('Ask about a refund', 'mailto:info@365techies.co.uk?subject=Refund%20please'),
   h1='365 PC Manager <em class="grad grad--cyan">licence and refunds</em>',
   lede="The terms for the optional &ldquo;Unlock everything&rdquo; key, sold to computers outside the UK, and our 30-day refund promise. The app itself is free.",
-  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
+  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 (US$9.99 in many countries) once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
   title="365 PC Manager Licence and Refunds | 365 Techies",
   chips=["12 months, no renewal", "30-day refund", "Free app, optional key"],
   inner=_PCM_LICENCE_BODY % _policy_stamp("pcm-licence", _PCM_LICENCE_BODY),

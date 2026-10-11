@@ -25,6 +25,9 @@
  *   $BUY_URL = 'https://...';        the checkout page; "{id}" in it is replaced with the install's anonymous id
  *   $BUY_PRICE = '$29 a year';       shown as written, beside the button
  *   $BUY_PROVIDER = 'paddle';        or 'lemonsqueezy' - recorded with keys its webhook issues (later)
+ *   $BUY_USD = '19.99';              the price in US dollars: adds "about €17" in the buyer's money (PLUS_FX_FILE)
+ *   $BUY_LOW_USD / $BUY_LOW_PRICE / $BUY_LOW_CODE   the lower price in PLUS_LOW_PRICE's countries: the checkout link
+ *                                    carries the Lemon Squeezy discount code that makes it so (all three, or no lower price)
  * Stop at once, without a deploy: create api/pcm-buy.off on the server (gitignored).
  *
  * Library only - constants and functions (no globals). NO closing tag in this file.
@@ -35,6 +38,7 @@ if (!defined('PLUS_FILE')) define('PLUS_FILE', __DIR__ . '/pcm-plus.json');
 if (!defined('PLUS_OFF')) define('PLUS_OFF', __DIR__ . '/pcm-buy.off');
 if (!defined('PLUS_CONFIG')) define('PLUS_CONFIG', __DIR__ . '/pcm-buy-config.php');
 if (!defined('PLUS_MAX_PCS')) define('PLUS_MAX_PCS', 3);
+if (!defined('PLUS_FX_FILE')) define('PLUS_FX_FILE', __DIR__ . '/pcm-fx.json');   // the day's exchange rates (gitignored)
 define('PLUS_ALPHA', '23456789ABCDEFGHJKMNPQRSTUVWXYZ');   // no 0/O, 1/I/L: read over the phone or copied by hand
 
 function plus_cut($s, $n) { $s = (string)$s; return function_exists('mb_substr') ? mb_substr($s, 0, $n) : substr($s, 0, $n); }
@@ -48,7 +52,9 @@ function plus_config($file = null) {
     // a setting is a line of its own: words in the file's comments never count (its doc comment says "$BUY_ON = true;")
     $g = function ($n) use ($src) { return preg_match('/^[ \t]*\$' . $n . '\s*=\s*([\'"])(.*?)\1\s*;/m', $src, $m) ? $m[2] : ''; };
     $url = $g('BUY_URL');
-    return array('on' => (bool)preg_match('/^[ \t]*\$BUY_ON\s*=\s*true\s*;/mi', $src), 'url' => preg_match('#^https://[^\s<>"\']+$#', $url) ? $url : '', 'price' => plus_cut($g('BUY_PRICE'), 40), 'provider' => preg_replace('/[^a-z]/', '', strtolower($g('BUY_PROVIDER'))));
+    $usd = function ($n) use ($g) { $v = trim($g($n)); return preg_match('/^\d{1,4}(\.\d{1,2})?$/', $v) && (float)$v > 0 ? $v : ''; };
+    return array('on' => (bool)preg_match('/^[ \t]*\$BUY_ON\s*=\s*true\s*;/mi', $src), 'url' => preg_match('#^https://[^\s<>"\']+$#', $url) ? $url : '', 'price' => plus_cut($g('BUY_PRICE'), 40), 'provider' => preg_replace('/[^a-z]/', '', strtolower($g('BUY_PROVIDER'))),
+        'usd' => $usd('BUY_USD'), 'low_usd' => $usd('BUY_LOW_USD'), 'low_price' => plus_cut($g('BUY_LOW_PRICE'), 40), 'low_code' => preg_match('/^[A-Za-z0-9_-]{3,40}$/', $g('BUY_LOW_CODE')) ? $g('BUY_LOW_CODE') : '');
 }
 function plus_enabled($off = null, $config = null) {
     $c = plus_config($config);
@@ -66,7 +72,105 @@ function plus_offer_out($country, $id = '', $off = null, $config = null) {
     if ($c === '' || in_array($c, array('GB', 'IM', 'JE', 'GG'), true)) return array('offer' => 'plan');
     if (plus_no_sale($c)) return array();   // nothing to buy there: the free app, as if the paid app were switched off
     $cfg = plus_config($config);
-    return array('offer' => 'buy', 'buy_url' => str_replace('{id}', rawurlencode((string)$id), $cfg['url']), 'buy_price' => $cfg['price']);
+    $url = str_replace('{id}', rawurlencode((string)$id), $cfg['url']);
+    $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '' && $cfg['low_code'] !== '';
+    // the lower price: Lemon Squeezy's own discount code, already filled in at its checkout (checkout[discount_code])
+    if ($low) $url .= (strpos($url, '?') === false ? '?' : '&') . 'checkout[discount_code]=' . rawurlencode($cfg['low_code']);
+    $line = $low ? $cfg['low_price'] : $cfg['price'];
+    $usd = $low ? $cfg['low_usd'] : $cfg['usd'];
+    $local = $usd !== '' ? plus_local_amount($c, (float)$usd) : '';
+    return array('offer' => 'buy', 'buy_url' => $url, 'buy_price' => $local !== '' ? plus_price_line($usd, $local, $line) : $line);
+}
+
+// 11 Oct 2026 (owner: "do $9.99 for those countries"): the lower price. The World Bank's low- and lower-middle-income
+// economies (FY2027 list, read 11 Oct 2026 at datahelpdesk.worldbank.org/knowledgebase/articles/906519) plus Indonesia and
+// the Philippines, which the owner named (both upper-middle now). Its no-sale countries (CF, CD, ER, GW, KP, LB, ML, SO, SS,
+// SD, SY, YE) are left out: they are never offered anything.
+define('PLUS_LOW_PRICE', 'AF,BF,BI,TD,ET,GM,LR,MG,MW,MZ,NE,RW,SL,UG,'
+    . 'AO,BD,BJ,BT,BO,KH,CM,KM,CG,CI,DJ,EG,SZ,GH,GN,HT,HN,IN,KE,KI,KG,LA,LS,MR,MA,MM,NA,NP,NI,NG,PK,PG,ST,SN,SB,TJ,TZ,TL,TG,TN,UZ,VU,VE,PS,ZM,ZW,'
+    . 'ID,PH');
+function plus_low_price($country) { $c = strtoupper(trim((string)$country)); return $c !== '' && in_array($c, explode(',', PLUS_LOW_PRICE), true); }
+
+// "About €17": what the US-dollar price comes to in the buyer's own money, so they needn't work it out. Shown only - Lemon
+// Squeezy charges everyone in US dollars ("processes all transactions in US dollars (USD)", its Currencies doc, 11 Oct 2026)
+// and their bank converts. Countries whose money the European Central Bank's daily rates cover; anywhere else, US$ alone.
+function plus_currency($country) {
+    static $map = null;
+    if ($map === null) {
+        $map = array();
+        // the euro area (Bulgaria from 1 Jan 2026) and the places that use the euro
+        foreach (explode(',', 'AT,BE,BG,HR,CY,EE,FI,FR,DE,GR,IE,IT,LV,LT,LU,MT,NL,PT,SK,SI,ES,AD,MC,SM,VA,ME,XK,GP,MQ,GF,RE,YT') as $cc) $map[$cc] = array('EUR', "\u{20AC}", '');
+        $o = array('CA' => array('CAD', 'C$', ''), 'AU' => array('AUD', 'A$', ''), 'NZ' => array('NZD', 'NZ$', ''), 'JP' => array('JPY', "\u{00A5}", ''),
+            'CH' => array('CHF', 'CHF ', ''), 'LI' => array('CHF', 'CHF ', ''), 'NO' => array('NOK', '', ' kr'), 'SE' => array('SEK', '', ' kr'),
+            'DK' => array('DKK', '', ' kr'), 'FO' => array('DKK', '', ' kr'), 'GL' => array('DKK', '', ' kr'), 'IS' => array('ISK', '', ' kr'),
+            'CZ' => array('CZK', '', " K\u{010D}"), 'PL' => array('PLN', '', " z\u{0142}"), 'HU' => array('HUF', '', ' Ft'), 'RO' => array('RON', '', ' lei'),
+            'TR' => array('TRY', "\u{20BA}", ''), 'BR' => array('BRL', 'R$', ''), 'CN' => array('CNY', "CN\u{00A5}", ''), 'HK' => array('HKD', 'HK$', ''),
+            'ID' => array('IDR', 'Rp', ''), 'IL' => array('ILS', "\u{20AA}", ''), 'IN' => array('INR', "\u{20B9}", ''), 'KR' => array('KRW', "\u{20A9}", ''),
+            'MX' => array('MXN', 'MX$', ''), 'MY' => array('MYR', 'RM', ''), 'PH' => array('PHP', "\u{20B1}", ''), 'SG' => array('SGD', 'S$', ''),
+            'TH' => array('THB', "\u{0E3F}", ''), 'ZA' => array('ZAR', 'R', ''));
+        $map += $o;
+    }
+    $c = strtoupper(trim((string)$country));
+    return isset($map[$c]) ? $map[$c] : null;
+}
+// rounded the way a person would say it: €17, ₹880, ¥3,000, Rp166,000
+function plus_about($a) {
+    $r = $a < 100 ? round($a) : ($a < 1000 ? round($a / 10) * 10 : ($a < 10000 ? round($a / 100) * 100 : round($a / 1000) * 1000));
+    return number_format($r, 0, '.', ',');
+}
+function plus_local_amount($country, $usd, $now = null) {
+    $cur = plus_currency($country);
+    if ($cur === null || $usd <= 0) return '';
+    $fx = plus_fx($now);
+    if (!isset($fx[$cur[0]]) || $fx[$cur[0]] <= 0) return '';
+    return $cur[1] . plus_about($usd * $fx[$cur[0]]) . $cur[2];
+}
+// the app shows 40 characters at most: the fullest wording that fits, else the price as the owner wrote it
+function plus_price_line($usd, $local, $fallback) {
+    $u = 'US$' . $usd;
+    foreach (array($u . ' (about ' . $local . ') a year, no renewal', $u . '/yr (about ' . $local . '), no renewal', $u . ' a year (about ' . $local . ')') as $s)
+        if (preg_match_all('/./us', $s) <= 40) return $s;
+    return $fallback;
+}
+// The European Central Bank's euro reference rates, turned into "per US dollar": fetched at most once a day (a failed try
+// waits an hour), kept in PLUS_FX_FILE, and not used once more than 10 days old. Never fetched when PLUS_FX_NOFETCH is
+// defined (the tests). $fetch: a function returning the ECB's XML (tests).
+function plus_fx($now = null, $fetch = null) {
+    $now = $now === null ? time() : (int)$now;
+    $d = json_decode((string)@file_get_contents(PLUS_FX_FILE), true);
+    if (!is_array($d)) $d = array();
+    $at = (int)($d['at'] ?? 0); $tried = (int)($d['tried'] ?? 0);
+    if (($fetch !== null || !defined('PLUS_FX_NOFETCH')) && $now - $at > 20 * 3600 && $now - $tried > 3600) {
+        $lk = @fopen(PLUS_FX_FILE . '.lock', 'c');
+        if ($lk && flock($lk, LOCK_EX | LOCK_NB)) {   // one refresh at a time; anyone else uses what is there
+            $xml = $fetch !== null ? (string)call_user_func($fetch) : plus_fx_ecb();
+            $fresh = plus_fx_parse($xml);
+            $d = $fresh !== null ? array('at' => $now, 'tried' => $now, 'date' => $fresh['date'], 'per_usd' => $fresh['per_usd']) : array('tried' => $now) + $d;
+            $tmp = PLUS_FX_FILE . '.tmp' . getmypid();
+            if (@file_put_contents($tmp, json_encode($d)) !== false) @rename($tmp, PLUS_FX_FILE);
+            flock($lk, LOCK_UN);
+        }
+        if ($lk) fclose($lk);
+        $at = (int)($d['at'] ?? 0);
+    }
+    return $at > 0 && $now - $at <= 10 * 86400 && isset($d['per_usd']) && is_array($d['per_usd']) ? $d['per_usd'] : array();
+}
+function plus_fx_ecb() {
+    if (!function_exists('curl_init')) return '';
+    $ch = curl_init('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml');
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6, CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_FOLLOWLOCATION => true, CURLOPT_USERAGENT => '365techies.co.uk exchange rates (daily)'));
+    $x = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    return $code === 200 && is_string($x) ? $x : '';
+}
+// <Cube time='2026-10-09'> <Cube currency='USD' rate='1.0812'/> ... (euros) -> per US dollar, the euro included
+function plus_fx_parse($xml) {
+    if (!preg_match("/time=['\"](\d{4}-\d\d-\d\d)['\"]/", (string)$xml, $t)) return null;
+    if (!preg_match_all("/currency=['\"]([A-Z]{3})['\"]\s+rate=['\"]([0-9.]+)['\"]/", (string)$xml, $m, PREG_SET_ORDER)) return null;
+    $eur = array(); foreach ($m as $x) if ((float)$x[2] > 0) $eur[$x[1]] = (float)$x[2];
+    if (!isset($eur['USD']) || $eur['USD'] < 0.5 || $eur['USD'] > 2 || count($eur) < 20) return null;
+    $per = array('EUR' => round(1 / $eur['USD'], 6));
+    foreach ($eur as $cur => $r) if ($cur !== 'USD') $per[$cur] = round($r / $eur['USD'], 6);
+    return array('date' => $t[1], 'per_usd' => $per);
 }
 
 /* ---------------- the keys ---------------- */

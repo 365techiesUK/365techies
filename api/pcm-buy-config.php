@@ -16,6 +16,15 @@ $BUY_URL = 'https://365techies.lemonsqueezy.com/checkout/buy/fba7bdf3-7140-4601-
 // Owner, 11 Oct 2026: "go with $19.99 a year" - a 12-month key for up to 3 PCs that simply ends (no renewal), one price
 // worldwide in US dollars with tax included. The Lemon Squeezy product must say the same. The app shows 40 characters at most.
 $BUY_PRICE = 'US$19.99 for 1 year - does not renew';
+// 11 Oct 2026 (owner: "yes build 1, and do $9.99 for those countries"). $BUY_USD adds what the price comes to in the
+// buyer's own money where the European Central Bank has a rate ("US$19.99 (about €17) a year, no renewal") - shown only:
+// Lemon Squeezy charges in US dollars. The lower price, in pcm-plus-lib.php PLUS_LOW_PRICE's countries, is Lemon Squeezy's
+// discount code FAIRPRICE ($10.00 off this product) already filled in by the checkout link. The code must exist in Lemon
+// Squeezy - in test mode AND again in live mode (they are kept apart) - or those buyers would see US$19.99 at checkout.
+$BUY_USD = '19.99';
+$BUY_LOW_USD = '9.99';
+$BUY_LOW_PRICE = 'US$9.99 for 1 year - does not renew';
+$BUY_LOW_CODE = 'FAIRPRICE';
 $BUY_PROVIDER = 'lemonsqueezy';
 // Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not
 // listed gets a key for a year (a subscription's key then follows its renewals).

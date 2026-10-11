@@ -11,6 +11,8 @@ $TMP = sys_get_temp_dir() . '/pcm-plus-test-' . getmypid();
 define('PLUS_FILE', $TMP . '/pcm-plus.json');
 define('PLUS_OFF', $TMP . '/pcm-buy.off');
 define('PLUS_CONFIG', $TMP . '/pcm-buy-config.php');
+define('PLUS_FX_FILE', $TMP . '/pcm-fx.json');   // the exchange rates: a temp file, and never fetched from the ECB here
+define('PLUS_FX_NOFETCH', true);
 require __DIR__ . '/pcm-plus-lib.php';
 function TMP_SECRET_FILE() { return sys_get_temp_dir() . '/pcm-plus-test-secret-' . getmypid() . '.php'; }
 $fails = 0;
@@ -261,6 +263,64 @@ $mhC = plus_mhash('dddddddd44444444'); plus_trial_give($mhC, 'Steve', $now);
 check(plus_trial_handover($mhC, 37, $now) !== null, '(a second PC given one)');
 foreach (plus_list() as $k) if ($k['trial'] && strpos($k['note'], $mhC) !== false) plus_set_status($k['id'], 'revoked');
 check(plus_trial_handover($mhC, 37, $now) === null && plus_trial_states($now)[$mhC]['state'] === 'off', 'switched off by staff: not handed over, shown as off');
+
+echo "L  11 Oct 2026: US\$9.99 in lower-income countries, and \"about \u{20AC}17\" in the buyer's own money\n";
+$LSURL = 'https://365techies.lemonsqueezy.com/checkout/buy/fba7bdf3-7140-4601-84ab-94621a072a7b?checkout[custom][install]={id}';
+$cfgLow = "<?php\n\$BUY_ON = true;\n\$BUY_URL = '$LSURL';\n\$BUY_PRICE = 'US\$19.99 for 1 year - does not renew';\n\$BUY_USD = '19.99';\n"
+    . "\$BUY_LOW_USD = '9.99';\n\$BUY_LOW_PRICE = 'US\$9.99 for 1 year - does not renew';\n\$BUY_LOW_CODE = 'FAIRPRICE';\n";
+file_put_contents(PLUS_CONFIG, $cfgLow);
+@unlink(PLUS_FX_FILE);
+$o = plus_offer_out('US', 'abc');
+check($o['buy_url'] === str_replace('{id}', 'abc', $LSURL) && $o['buy_price'] === 'US$19.99 for 1 year - does not renew', 'the US: the full price, no discount code, no "about"');
+$o = plus_offer_out('IN', 'abc');
+check($o['buy_url'] === str_replace('{id}', 'abc', $LSURL) . '&checkout[discount_code]=FAIRPRICE' && $o['buy_price'] === 'US$9.99 for 1 year - does not renew', 'India: the checkout link carries the discount code; US$9.99 (no rates yet: no "about")');
+check(strpos(plus_offer_out('ng', 'x')['buy_url'], 'discount_code]=FAIRPRICE') !== false && strpos(plus_offer_out('PH', 'x')['buy_url'], 'FAIRPRICE') !== false && strpos(plus_offer_out('ID', 'x')['buy_url'], 'FAIRPRICE') !== false, 'Nigeria, the Philippines and Indonesia (named by the owner): the lower price');
+foreach (array('DE', 'FR', 'CA', 'AU', 'JP', 'BR', 'ZA', 'MX', 'CN', 'TR', 'MY', 'TH', 'LK', 'VN', 'UA') as $c) check(strpos(plus_offer_out($c, 'x')['buy_url'], 'discount') === false, "country $c: the full price");
+$bad = array(); foreach (explode(',', PLUS_LOW_PRICE) as $c) if (!preg_match('/^[A-Z]{2}$/', $c) || plus_no_sale($c)) $bad[] = $c;
+check(!$bad && count(explode(',', PLUS_LOW_PRICE)) === 62 && count(array_unique(explode(',', PLUS_LOW_PRICE))) === 62, '62 countries (World Bank low 14 + lower-middle 46 that Lemon Squeezy sells to, + ID, PH), none a no-sale country', implode(',', $bad));
+check(plus_offer_out('YE', 'x') === array() && plus_offer_out('LB', 'x') === array(), 'a no-sale country on the World Bank list still gets nothing');
+file_put_contents(PLUS_CONFIG, str_replace("\$BUY_LOW_CODE = 'FAIRPRICE';\n", '', $cfgLow));
+check(strpos(plus_offer_out('IN', 'x')['buy_url'], 'discount') === false && plus_offer_out('IN', 'x')['buy_price'] === 'US$19.99 for 1 year - does not renew', 'no discount code set: no lower price anywhere (never promise a price the checkout won\'t show)');
+file_put_contents(PLUS_CONFIG, str_replace("\$BUY_LOW_CODE = 'FAIRPRICE';", "\$BUY_LOW_CODE = 'FAIR PRICE\"><';", $cfgLow));
+check(strpos(plus_offer_out('IN', 'x')['buy_url'], 'discount') === false, 'a discount code with odd characters is ignored');
+file_put_contents(PLUS_CONFIG, $cfgLow);
+// the ECB's daily file, as it looks (rates per euro); the fetch is a fixture - nothing goes to the network
+$ecb = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><gesmes:Envelope><Cube><Cube time='2026-10-09'>"
+    . "<Cube currency='USD' rate='1.1600'/><Cube currency='JPY' rate='172.50'/><Cube currency='CZK' rate='24.300'/><Cube currency='DKK' rate='7.4600'/>"
+    . "<Cube currency='HUF' rate='390.00'/><Cube currency='PLN' rate='4.2500'/><Cube currency='RON' rate='5.0800'/><Cube currency='SEK' rate='10.950'/>"
+    . "<Cube currency='CHF' rate='0.9350'/><Cube currency='ISK' rate='143.50'/><Cube currency='NOK' rate='11.600'/><Cube currency='TRY' rate='48.500'/>"
+    . "<Cube currency='AUD' rate='1.7600'/><Cube currency='BRL' rate='6.2500'/><Cube currency='CAD' rate='1.6200'/><Cube currency='CNY' rate='8.2600'/>"
+    . "<Cube currency='HKD' rate='9.0200'/><Cube currency='IDR' rate='19200'/><Cube currency='ILS' rate='3.8800'/><Cube currency='INR' rate='102.30'/>"
+    . "<Cube currency='KRW' rate='1640.0'/><Cube currency='MXN' rate='21.300'/><Cube currency='MYR' rate='4.9000'/><Cube currency='NZD' rate='2.0100'/>"
+    . "<Cube currency='PHP' rate='66.500'/><Cube currency='SGD' rate='1.5000'/><Cube currency='THB' rate='37.800'/><Cube currency='ZAR' rate='20.300'/>"
+    . "</Cube></Cube></gesmes:Envelope>";
+$T0 = time() - 60;   // the offers below read the rates at the real time: as if kept a minute ago
+check(plus_fx($T0) === array(), 'no rates kept, and fetching is off in the tests: no "about" anywhere');
+$fx = plus_fx($T0, function () use ($ecb) { return $ecb; });
+check(abs($fx['EUR'] - 0.862069) < 0.00001 && abs($fx['INR'] - 88.189655) < 0.0001 && !isset($fx['USD']), 'the ECB\'s rates (per euro) become per US dollar, the euro included');
+$p = function ($c) use ($T0) { return plus_offer_out($c, 'x')['buy_price']; };
+check($p('DE') === "US\$19.99 (about \u{20AC}17) a year, no renewal", 'Germany: ' . $p('DE'));
+check($p('IN') === "US\$9.99 (about \u{20B9}880) a year, no renewal", 'India: ' . $p('IN'));
+check($p('ID') === "US\$9.99/yr (about Rp165,000), no renewal", 'Indonesia (too long for the first wording): ' . $p('ID'));
+check($p('JP') === "US\$19.99/yr (about \u{00A5}3,000), no renewal", 'Japan: ' . $p('JP'));
+check($p('HU') === "US\$19.99/yr (about 6,700 Ft), no renewal", 'Hungary: ' . $p('HU'));
+check($p('CZ') === "US\$19.99/yr (about 420 K\u{010D}), no renewal" && $p('CA') === 'US$19.99 (about C$28) a year, no renewal', 'Czechia and Canada: ' . $p('CZ') . ' / ' . $p('CA'));
+check($p('PK') === 'US$9.99 for 1 year - does not renew' && $p('US') === 'US$19.99 for 1 year - does not renew', 'no ECB rate (Pakistan) and the US: the price as written');
+$long = array(); foreach (array_merge(explode(',', PLUS_LOW_PRICE), explode(',', 'AT,BE,BG,HR,FR,DE,IE,IT,NL,ES,CA,AU,NZ,JP,CH,NO,SE,DK,IS,CZ,PL,HU,RO,TR,BR,CN,HK,IL,KR,MX,MY,SG,TH,ZA,US')) as $c) { $s = $p($c); if (preg_match_all('/./us', $s) > 40) $long[] = "$c: $s"; }
+check(!$long, 'every price line fits the app\'s 40 characters', implode(' | ', $long));
+check(plus_about(17.23) === '17' && plus_about(881.0) === '880' && plus_about(2972.7) === '3,000' && plus_about(165352) === '165,000' && plus_about(28262) === '28,000', 'rounded the way a person says it');
+// kept for the day; a failed try keeps the last rates and waits an hour; stale rates are dropped
+check(plus_fx($T0 + 3600, function () { return 'NOT CALLED'; })['EUR'] > 0, 'an hour on: the kept rates, no new fetch');
+$calls = 0; $fail = function () use (&$calls) { $calls++; return '<html>maintenance</html>'; };
+check(plus_fx($T0 + 21 * 3600, $fail)['EUR'] > 0 && $calls === 1, '21 hours on, the ECB fails: the last rates are kept');
+plus_fx($T0 + 21 * 3600 + 600, $fail);
+check($calls === 1, '...and it does not try again within the hour');
+check(plus_fx($T0 + 11 * 86400, $fail) === array(), 'rates more than 10 days old are not used: no "about" rather than a wrong one');
+check(plus_fx_parse('<Cube time=\'2026-10-09\'><Cube currency=\'USD\' rate=\'9.9\'/></Cube>') === null && plus_fx_parse('') === null, 'a broken or odd ECB answer is refused');
+// the shipped config: the same switches, Buy still off
+copy(__DIR__ . '/pcm-buy-config.php', PLUS_CONFIG);
+$sc = plus_config();
+check(!$sc['on'] && $sc['usd'] === '19.99' && $sc['low_usd'] === '9.99' && $sc['low_code'] === 'FAIRPRICE' && $sc['low_price'] === 'US$9.99 for 1 year - does not renew', 'the shipped config: US$19.99 / US$9.99 with FAIRPRICE, still switched off');
 
 array_map('unlink', glob("$TMP/*")); @rmdir($TMP);
 echo "\n" . ($fails ? "pcm-plus-test: $fails FAILED\n" : "pcm-plus-test: all passed\n");

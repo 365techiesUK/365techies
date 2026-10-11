@@ -164,6 +164,9 @@ api/pcm-plus.json.*
 api/pcm-buy.off
 api/pcm-ls-secret.php
 api/pcm-plus-ls.log
+# 11 Oct 2026: the day's exchange rates for "about €17" (pcm-plus-lib.php plus_fx) - written by the server
+api/pcm-fx.json
+api/pcm-fx.json.*
 api/bm-sea-cache.json
 api/bm-sea-cache.json.*
 api/bm-sea-beat.json
