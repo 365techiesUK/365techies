@@ -1,11 +1,11 @@
 {
-  "ver": 37,
-  "version": "1.0.37",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v37.exe",
-  "sha256": "5d3f49fb038bd2fe786d82863d4fd9aeab2a6ed7fd4d81e7e619aebb87198c6a",
-  "notes": "New in version 36.1: podcasts beside the radio - find any podcast, follow the ones you like and pick up where you left off. Spotify, Netflix, BBC iPlayer and your other music and TV apps open from one list, and whatever they play shows above the player with play, pause and next. An alarm can now wake you to the radio, a podcast, your own music or an alarm sound. A new Shared folders check finds out why a shared folder, network drive or NAS won't open and points you to the fix. Share the free app with a friend by WhatsApp, Facebook or email. If your PC still has Windows Live Mail or the old Windows Mail app, it tells you about Techies One Mail, our free email program. Windows Backup's \"some files were skipped\" now counts as a finished backup, the photo tools point to the right Microsoft extension for iPhone photos, and the window opens when you open the app from the Start menu. Signed by 365 Techies Ltd.",
+  "ver": 38,
+  "version": "1.0.38",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v38.exe",
+  "sha256": "73d328268844c8d2e873c79c2b2ce1709ab5a94a4fa7a9a0c5e1ce93b2dfb369",
+  "notes": "Version 36.2 is a small update for people using 365 PC Manager outside the UK. Our phone, visits, support plans and remote help are for customers in the UK, so on a PC abroad the app no longer offers them anywhere - including in its health report - and its safety advice works wherever you are. The Unlock everything window now links its licence and 30-day refund. In the UK everything works just as before. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v37.exe",
-    "sha256": "d6f307f2e85a6321eccdf25fd177061401976b95148b9ddcaa601329df0759e8"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v38.exe",
+    "sha256": "62b79c0ed2b462ed38de6478abe387f4fa2eac147bf929811741761ba1af85c3"
   }
 }
