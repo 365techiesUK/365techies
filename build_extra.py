@@ -29787,6 +29787,9 @@ def write_portal_page():
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
         plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
+        // 11 Oct 2026 (owner couldn't find them): the two apps side by side, and Techies One Mail installs, beside the
+        // PC Manager installs card - they were landing at the bottom of Today because this list didn't know them
+        appcmp = cardOf('appcmp'), t1inst = cardOf('t1ibox'),
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
         m365 = cardOf('m365card');   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
@@ -29822,7 +29825,9 @@ def write_portal_page():
     [cust, lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
     if (worth) panels.computers.appendChild(worth);
     if (fleet) panels.computers.appendChild(fleet);
+    if (appcmp) panels.computers.appendChild(appcmp);
     if (inst) panels.computers.appendChild(inst);
+    if (t1inst) panels.computers.appendChild(t1inst);
     if (invq) panels.invoices.appendChild(invq);
     [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
