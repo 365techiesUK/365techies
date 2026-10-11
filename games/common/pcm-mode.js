@@ -28,7 +28,8 @@
     'padding:.75rem var(--pad-x,1.5rem);background:linear-gradient(90deg,rgba(28,17,72,.97),rgba(8,30,66,.97));border-bottom:1px solid rgba(143,179,217,.18)}' +
     '.pcm-mark{font-family:var(--font-display,sans-serif);font-weight:700;font-size:1.45rem;letter-spacing:.01em;color:#eaf4ff;line-height:1.1}' +
     '.pcm-mark b{color:#1d97e3}' +
-    '.pcm-note{font-family:var(--font-mono,monospace);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#8fb3d9}';
+    '.pcm-note{font-family:var(--font-mono,monospace);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#8fb3d9}' +
+    '@media (max-width:560px){.pcm-bar{padding:.6rem 1rem}.pcm-note{font-size:.68rem;letter-spacing:.04em}}';   // a phone: the line fits under the name, not split in two
   var st = document.createElement('style');
   st.appendChild(document.createTextNode(css));
   (document.head || d).appendChild(st);

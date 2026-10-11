@@ -221,7 +221,10 @@ _CSS = """      <style>
         .gh-qb--go{background:linear-gradient(135deg,#2aa8f2,#1859b8);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(24,89,184,.35)}
         .gh-qb--go:hover{background:linear-gradient(135deg,#3db4f5,#1d66c9)}
         /* (a phone: room on the right for the floating Text size button, which sat on the third button - critic 2) */
-        @media (max-width:560px){.gh-quick{gap:.4rem;padding-right:56px}.gh-qb{flex:1 1 0;padding:.5rem .3rem;font-size:.95rem;min-width:0;white-space:nowrap}}
+        @media (max-width:560px){.gh-quick{gap:.3rem;padding-right:56px}.gh-qb{flex:1 1 auto;padding:.5rem .3rem;font-size:.95rem;white-space:nowrap}}
+        /* (11 Oct 2026: on a 360 px phone the three were squeezed to 82 px with 84-97 px of words, so the words ran over the
+           edges. Now they keep their size and wrap instead: one row from about 410 px, below that Solitaire + Hearts, then
+           All games on its own row - never smaller words, never an overflow) */
         /* a phone with big text (6 Oct 2026, owner's Galaxy S22: Chrome turns the text size into page zoom, so this page can be
            180-250 px wide): the quick buttons one per row, one game per row, the PC Manager link wraps */
         @media (max-width:250px){.gh-qb{flex:1 1 100%;white-space:normal}.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-pcm a{white-space:normal}}

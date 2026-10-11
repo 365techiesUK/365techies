@@ -11,4 +11,4 @@ script: in the head, so the website's header never flashes up before the script 
 """
 import build_pages as bp
 
-bp.HEAD_EXTRA["games"] = bp.HEAD_EXTRA.get("games", "") + '\n  <script src="/games/common/pcm-mode.js?v=2"></script>'
+bp.HEAD_EXTRA["games"] = bp.HEAD_EXTRA.get("games", "") + '\n  <script src="/games/common/pcm-mode.js?v=3"></script>'
