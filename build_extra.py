@@ -1073,6 +1073,10 @@ def pcm_landing():
           <h2 class="section-title section-title--center" data-title>Is this Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No &mdash; similar names, different things. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> clean-up utility <strong>isn&rsquo;t officially available to download in the UK</strong>: it has been region-limited out of the UK Microsoft Store for years (as of mid-2026). <strong>365 PC Manager</strong> is different. Made in Dorset for UK users, it is a plain-English health check of the things that actually catch people out: drive health, backup, protection, risky programs, network openings, missed Windows updates, age and value. Your data stays on your PC, and a real local techie is one tap away when you want a human.</p>
         </div>
+        <ul class="security-grid" data-stagger>
+          <li><h3>Checking if this PC can run Windows 11?</h3><p>That&rsquo;s the job of Microsoft&rsquo;s PC Health Check, and it&rsquo;s free: type <strong>PC Health Check</strong> into the Start menu, because many Windows 10 PCs already have it. Or start in your browser with our <a href="/computer-spec-checker/#windows-11" style="color:var(--cyan);text-decoration:underline">Can this PC run Windows 11?</a> check, and see where your version stands on <a href="/is-my-windows-still-supported/" style="color:var(--cyan);text-decoration:underline">Is my Windows still supported?</a></p></li>
+          <li><h3>Looking for Microsoft PC Manager in the UK?</h3><p>You won&rsquo;t find it in the UK Microsoft Store. 365 PC Manager is free, works here with no change of region, and does the everyday jobs people want it for: a health score, a tidy-up, start-up programs and Windows Update. <a href="#download" style="color:var(--cyan);text-decoration:underline">Download it free</a>.</p></li>
+        </ul>
       </div>
     </section>''',
       '''    <section class="section" aria-label="Built by us, growing with you">
@@ -14963,6 +14967,8 @@ def computer_spec_checker():
        "No &mdash; none of it. Everything on this page is read by <em>your own browser</em>, shown only to you, and vanishes when you close the tab. The only way we ever see your specs is if you download the sheet and choose to send it to us."),
       ("How much RAM do I actually have?",
        "This page shows the rounded figure your browser is allowed to share, and browsers stop at 32&nbsp;GB (older ones at 8&nbsp;GB), so a well-equipped machine can show less than is fitted. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."),
+      ("What graphics card do I have?",
+       "Look at the <strong>Graphics card</strong> line in your results above. Most browsers share the card&rsquo;s name, such as an NVIDIA GeForce, AMD Radeon or Intel graphics chip; some hide it for privacy and say so instead. To see it from Windows itself, right-click the Start button, choose <strong>Device Manager</strong> and open <strong>Display adapters</strong>, or press <strong>Ctrl+Shift+Esc</strong>, choose <strong>Performance</strong> and look for <strong>GPU</strong>. Many laptops have two: a built-in chip plus a separate graphics card. The browser names the one it is drawing with, which on a laptop is often the built-in one. To see how fast yours is, try our <a href=\"/graphics-card-benchmark/\">graphics card benchmark</a>."),
       ("Can this page tell me whether my PC can run Windows 11?",
        "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Update &amp; Security (Privacy &amp; security on Windows 11) &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>: its This PC page reads the security chip, Secure Boot and the processor and gives you a straight answer. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."),
       ("Is it safe to run the benchmark on this page?",
@@ -15049,7 +15055,7 @@ def pc_benchmark():
     ]
     content = "\n".join([
       hero(bc("PC Benchmark"), "// FREE PC BENCHMARK",
-           'How fast is your computer, <em class="grad grad--cyan">really?</em>',
+           'PC benchmark: how fast is your computer, <em class="grad grad--cyan">really?</em>',
            "Six real tests &mdash; processor, encryption, memory, graphics and storage &mdash; run live in your browser with a clear score out of 100, a comparison scale, and a score card you can download and share. Run it again after a tune-up and watch the score jump.",
            cta1=("Start the Benchmark", "#benchtool"), cta2=("Book a Tune-Up", "/contact/"),
            chips=["6 real tests","Live readouts","Share your score"]),

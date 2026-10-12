@@ -355,6 +355,13 @@ SNIPPETS = {
     "coverage-checker": {
         "desc": "Do we cover your area? Enter your postcode and instantly see whether 365 Techies offers on-site IT support near you across Dorset and the New Forest.",
     },
+    "pc-benchmark": {
+        # 12 Oct 2026: "pc benchmark" is 11.9K Bing searches in 3 months (US 5.1K, UK 1.3K) and the page earned
+        # 3 Google impressions for it - the title said "Test My Computer Speed". Lead with the head term and
+        # keep the speed-test words, which are what clicks today ("pc speed test" 22 clicks @ 8.4).
+        "title": "PC Benchmark &amp; Computer Speed Test, Free Online",
+        "desc": "Free PC benchmark and speed test. Six real tests of your processor, memory, graphics and storage, in your browser, scored out of 100. Nothing to install.",
+    },
     "is-it-down": {
         # 5 Sep 2026: the page is a SERVICE status checker (WhatsApp, M365, Gmail, PlayStation) and its H1 says
         # "Is it down, or is it just you?" - but the title said "Is My Broadband Down", mis-describing the page and
