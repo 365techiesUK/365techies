@@ -268,8 +268,8 @@ SNIPPETS = {
         "title": "How to Safely Wipe &amp; Recycle an Old Computer (UK)",
         "desc": "How to safely wipe an old computer before selling or recycling it: Windows reset, why delete is not enough, SSD versus hard drive, and where to take it.",
     },
-    "windows-accessibility-features-guide": {
-        "desc": "A plain-English guide to the free accessibility features built into Windows: larger text, Magnifier, high contrast, Narrator, voice typing and captions.",
+    "windows-accessibility-features-guide": {   # 12 Oct 2026: features by the names people search (Bing), read aloud + Sticky Keys added
+        "desc": "Free in Windows 10 and 11: bigger text and pointer, Magnifier, voice typing, read aloud, live captions and Sticky Keys, with steps to switch them on.",
     },
     "windows-10-esu-free-enrolment-help": {
         "desc": "Windows 10 ESU free enrolment help. What consumer Extended Security Updates are, and the three ways to enrol, including free via a Microsoft account.",
@@ -1017,8 +1017,9 @@ SNIPPETS = {
     "home-assistant-victron-cerbo-gx": {
         "desc": "Connect a Victron Cerbo GX to Home Assistant with the official integrations, MQTT or Modbus (we measured both), and skip the old custom-component route.",
     },
-    "computer-help-for-seniors": {
-        "desc": "Patient, plain-English computer help for older people: staying safe, video calling, online banking, accessibility, and a real person when you want one.",
+    "computer-help-for-seniors": {   # 12 Oct 2026: 169 impressions at position 11, 2 clicks (GSC 28 days) - say how, and the price
+        "title": "Computer Help for Seniors: Patient Help by Phone or Screen",
+        "desc": "Patient computer help for older people, by phone or on your own screen: email, video calls, scams and banking. Unlimited help for £18.25 a month per PC.",
     },
     "bournemouth/live-map": {
         "title": "Bournemouth Live Map: Buses, Traffic, Floods, Sea Quality",
@@ -1110,6 +1111,20 @@ SNIPPETS = {
     },
     "take-over-email-domain-after-buying-business": {
         "desc": "Bought a small business? Secure the domain first, because it controls the email. What to ask the seller for, and what to do when nobody has the logins.",
+    },
+    # 12 Oct 2026 (owner: "go ahead with the five improvements"). Title kept: it ranks (913 impressions, position 9); the
+    # description now says it checks a website address too (Bing: "is this website a scam", the UK the top country).
+    "link-safety-checker": {
+        "desc": "Paste a link or a website address to spot the warning signs of a scam before you click or buy. Free and instant, and it never opens the link.",
+    },
+    # 12 Oct 2026: shown at positions 7-11 but hardly clicked; "private computer lessons for seniors near me" = 33 impressions at 8
+    "computer-lessons-for-seniors-bournemouth": {
+        "title": "Private Computer Lessons for Seniors in Bournemouth",
+        "desc": "One-to-one computer lessons for older people, online on your own screen or at our Kinson base, plus friendly group classes. Patient and plain English.",
+    },
+    "laptop-set-up-for-elderly-parent": {
+        "title": "Laptop Set Up for an Elderly Parent, Ready to Use",
+        "desc": "Send us the laptop or choose a refurbished Dell from £510. We set up large text, email, video calls, the printer and security, with 30 days of help.",
     },
 }
 

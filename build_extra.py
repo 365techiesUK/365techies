@@ -12494,14 +12494,36 @@ def scam_link_checker():
       ("If it says &lsquo;no red flags&rsquo;, is the link definitely safe?", "It&rsquo;s reassuring, but not a guarantee &mdash; a clean-looking address can still be malicious. Always ask yourself: were you expecting this link? If a message feels off, don&rsquo;t click &mdash; check with us."),
       ("I&rsquo;ve clicked a bad link &mdash; what now?", "Don&rsquo;t panic. Don&rsquo;t enter any details, close the page, and if you already typed a password, change it straight away. See our <a href=\"/ive-been-scammed-what-to-do/\">I&rsquo;ve been scammed</a> guide, or <a href=\"/contact/\">call us</a> &mdash; we&rsquo;ll help."),
       ("Where can I learn to spot scams myself?", "Try our free <a href=\"/spot-the-scam/\">Spot the Scam quiz</a> and our <a href=\"/online-safety/\">online safety hub</a> &mdash; both in plain English, no jargon."),
+      # 12 Oct 2026 (owner: "go ahead with the five improvements"): Bing "is this website a scam" 985 a quarter, the UK the top
+      # country; "is this website safe" 2,200. The checker reads any address, so the page now says so - and says what it can't see.
+      ("Is this website safe? How can I tell?", "Paste its address into the checker above to look for the warning signs in the address itself. Then ask: did you find the site yourself, or follow a link from a message or advert? Is the price too good to be true? Do they want paying by bank transfer only? Can you reach a real person? A padlock on its own doesn&rsquo;t mean a site is safe."),
+      ("Can it tell me if a shopping website is a scam?", "It checks the address for warning signs, but it can&rsquo;t see the shop itself &mdash; its prices, reviews or how new it is. Get Safe Online&rsquo;s free <a href=\"https://www.getsafeonline.org/checkawebsite/\" target=\"_blank\" rel=\"noopener\">Check a website</a> tool gives a trust score from many sources, and our guide to <a href=\"/how-to-spot-a-fake-website/\">spotting a fake website</a> covers the rest."),
+      ("Does a padlock mean a website is safe?", "No. The padlock only means the connection between you and the site is private. Scam websites have padlocks too, so it tells you nothing about who runs the site."),
     ]
+    _website_block = '''    <section class="section section--alt" aria-label="Is this website safe?" id="website-safe">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">// IS THIS WEBSITE SAFE?</p>
+        <h2>Checking a whole website, not just a link</h2>
+        <p>The checker works on any web address, so you can paste the address of a shop or website you&rsquo;re not sure about, too. It looks for the same warning signs in the address. What it can&rsquo;t see is what&rsquo;s on the page, so before you buy anything or sign in, run through these:</p>
+        <ol>
+          <li><strong>Is it the real company&rsquo;s address?</strong> Type the company&rsquo;s name into a search engine yourself, or use the address on a letter or bill, rather than a link from a message or an advert. Fake sites copy real ones with an extra word, or a different ending such as .shop, .online or .co instead of .co.uk.</li>
+          <li><strong>Is the price too good to be true?</strong> Big brands at a fraction of the usual price, on a site you&rsquo;ve never heard of, is the classic fake shop.</li>
+          <li><strong>How long has it been around?</strong> Scam shops are often only weeks old. Get Safe Online&rsquo;s free <a href="https://www.getsafeonline.org/checkawebsite/" target="_blank" rel="noopener">Check a website</a> tool gives a trust score drawn from many sources.</li>
+          <li><strong>How do they want paying?</strong> Paying by card or PayPal gives you a way to get your money back if things go wrong. Being asked to pay by bank transfer only is a warning sign.</li>
+          <li><strong>Can you reach a real person?</strong> No address, no phone number, or only a contact form, is a warning sign. Look for reviews on other websites, not just the shop&rsquo;s own.</li>
+          <li><strong>A padlock doesn&rsquo;t mean safe.</strong> It means the connection is private, nothing more. Scam sites have padlocks too.</li>
+        </ol>
+        <p>Already paid, or typed in your card details? Ring your bank straight away on the number on the back of your card, or call 159, then report it to <a href="https://www.reportfraud.police.uk/" target="_blank" rel="noopener">Report Fraud</a>. Our <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve been scammed</a> guide walks you through it step by step, and <a href="/how-to-spot-a-fake-website/">how to spot a fake website</a> goes further.</p>
+      </div>
+    </section>'''
     content = "\n".join([
       hero(bc("Link Safety Checker"), "// FREE LINK SAFETY CHECK",
            'Is that link <em class="grad grad--cyan">safe to click?</em>',
-           "Got a link in a text or email and not sure? Paste it here and we&rsquo;ll check the address for the warning signs scammers use &mdash; safely, without ever opening it.",
+           "Got a link in a text or email, or a website you&rsquo;re not sure about? Paste the address here and we&rsquo;ll check it for the warning signs scammers use &mdash; safely, without ever opening it.",
            cta1=("Check a Link", "#scamtool"), cta2=("Spot the Scam Quiz", "/spot-the-scam/"),
            chips=["We never open the link","Instant &amp; free","Plain-English result"]),
       SCAM_TOOL,
+      _website_block,
       faq_html(faqs),
       cta("Had a suspicious message?",
           "Forward it, screenshot it, or just describe it &mdash; we&rsquo;ll tell you if it&rsquo;s a scam and what to do, with no judgement. Helping Dorset stay safe online since 1995.",
@@ -19339,10 +19361,14 @@ info_page(
 info_page(
   slug="windows-accessibility-features-guide", crumb_name="Windows Accessibility Features", eyebrow="// PLAIN-ENGLISH HOW-TO",
   hero_cta1=('Book a visit to set it up', '/book-service/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
-  h1='Turn on Windows <em class="grad grad--cyan">accessibility features</em>',
-  lede="Your computer has a whole set of free tools to make it easier to see, hear and use &mdash; and they&rsquo;re already built in. Here&rsquo;s how to switch on the ones that help, in plain English.",
-  desc="A plain-English guide to the free accessibility features built into Windows - larger text, Magnifier, high contrast, Narrator, voice typing, captions and more - with simple steps. From 365 Techies, accessibility specialists.",
-  title="Turn On Windows Accessibility Features — Easy Guide",
+  # 12 Oct 2026 (owner: "go ahead with the five improvements"): no Google impressions in 28 days under a "turn on" title,
+  # while Bing shows people searching the features by name - dictation 24.8K, read aloud 33.1K, magnifier 18.2K, live
+  # captions 7.3K, mouse pointer size 4.9K, sticky keys 38.7K. Title + h1 now use those words; read aloud, Sticky / Filter
+  # Keys, colour filters and "switched on by accident" added. Shortcuts checked against Microsoft's accessibility shortcuts page.
+  h1='Make your computer <em class="grad grad--cyan">easier to see, hear and use</em>',
+  lede="Bigger text and a bigger pointer, a magnifier, voice typing, read aloud and live captions are all built into Windows 10 and 11, free. Here&rsquo;s how to switch on the ones that help, in plain English &mdash; and how to switch them off if one comes on by accident.",
+  desc="A plain-English guide to the free accessibility features built into Windows - larger text, Magnifier, high contrast, Narrator, voice typing, read aloud, captions and Sticky Keys - with simple steps.",
+  title="Windows Accessibility: Bigger Text, Magnifier, Voice Typing",
   og_title="Windows Accessibility Features Guide | 365 Techies",
   chips=["Free &amp; already there","Step by step","We can set it up for you"],
   pre=f'''    <section class="section section--alt" aria-label="Accessibility areas">
@@ -19362,7 +19388,14 @@ info_page(
             <li><strong>Bigger text:</strong> Settings &rarr; Accessibility &rarr; Text size &mdash; drag the slider until it&rsquo;s comfortable, then Apply.</li>
             <li><strong>Magnifier:</strong> hold the <em>Windows</em> key and press <em>+</em> to zoom in; <em>Windows</em> and <em>Esc</em> turns it off.</li>
             <li><strong>Larger mouse pointer:</strong> Settings &rarr; Accessibility &rarr; Mouse pointer and touch &mdash; make it bigger or change its colour.</li>
-            <li><strong>High contrast / colour themes:</strong> Settings &rarr; Accessibility &rarr; Contrast themes &mdash; easier on tired eyes.</li>
+            <li><strong>High contrast / colour themes:</strong> Settings &rarr; Accessibility &rarr; Contrast themes &mdash; easier on tired eyes. <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em> turns high contrast on and off.</li>
+            <li><strong>Colour filters:</strong> Settings &rarr; Accessibility &rarr; Colour filters &mdash; for colour blindness, or a greyscale screen that&rsquo;s calmer to read. <em>Windows</em> + <em>Ctrl</em> + <em>C</em> turns them on and off (on some PCs you switch that shortcut on in the same page first).</li>
+          </ul>
+          <h2>Having things read to you</h2>
+          <ul>
+            <li><strong>Read aloud in Microsoft Edge:</strong> open the web page, then press <em>Ctrl</em> + <em>Shift</em> + <em>U</em>, or right-click the page and choose <strong>Read aloud</strong>. It reads the article and highlights each word as it goes.</li>
+            <li><strong>Read Aloud in Word:</strong> on the <strong>Review</strong> tab, choose <strong>Read Aloud</strong> to hear a letter or document read back to you.</li>
+            <li><strong>Narrator</strong> (below) reads everything on the screen, menus and buttons included, for anyone who can&rsquo;t see the screen well.</li>
           </ul>
           <h2>Making things easier to hear</h2>
           <ul>
@@ -19372,16 +19405,34 @@ info_page(
           <h2>Using your computer without a keyboard or mouse</h2>
           <ul>
             <li><strong>Narrator:</strong> reads aloud what&rsquo;s on screen. Turn it on with <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
-            <li><strong>Voice typing / dictation:</strong> press <em>Windows</em> + <em>H</em> and simply talk &mdash; your words appear as text. (Voice access, for controlling the whole PC by voice, is available on newer Windows 11 PCs.)</li>
+            <li><strong>Voice typing (dictation):</strong> click where you want the words, press <em>Windows</em> + <em>H</em> and simply talk &mdash; your words appear as text. Say &ldquo;comma&rdquo; or &ldquo;question mark&rdquo; for punctuation. (Voice access, for controlling the whole PC by voice, is available on newer Windows 11 PCs.)</li>
+          </ul>
+          <h2>If pressing two keys at once is hard</h2>
+          <ul>
+            <li><strong>Sticky Keys:</strong> lets you press keyboard shortcuts one key at a time &mdash; <em>Ctrl</em>, then <em>C</em>, instead of both together. Settings &rarr; Accessibility &rarr; Keyboard.</li>
+            <li><strong>Filter Keys:</strong> ignores very quick or repeated key presses, which helps with shaky hands. Same place.</li>
           </ul>
           <h2>Making the screen calmer</h2>
           <ul>
             <li><strong>Reduce animations:</strong> Settings &rarr; Accessibility &rarr; Visual effects &mdash; turn off movement that can feel distracting.</li>
           </ul>
+          <h2>Switched one on by accident?</h2>
+          <p>These shortcuts are easy to press without meaning to. To switch each one off again:</p>
+          <ul>
+            <li><strong>Everything zoomed in (Magnifier):</strong> <em>Windows</em> + <em>Esc</em>.</li>
+            <li><strong>The computer is talking (Narrator):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
+            <li><strong>Black screen with bright text (high contrast):</strong> <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em>.</li>
+            <li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings &rarr; Accessibility &rarr; Colour filters.</li>
+            <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard.</li>
+          </ul>
           <p>For more, see <a href="https://www.microsoft.com/en-gb/accessibility" target="_blank" rel="noopener">Microsoft Accessibility</a> and the charity <a href="https://abilitynet.org.uk/" target="_blank" rel="noopener">AbilityNet</a>, which offers free advice. A quick note: we support Windows and Android devices remotely, but not Apple Macs, iPhones or iPads.</p>""" + PRINT_BTN,
   faqs=[
     ("Are these features free?","Completely &mdash; they&rsquo;re built into Windows at no extra cost. There&rsquo;s nothing to buy or download."),
     ("Will I break anything by turning them on?","No. Every setting can be turned straight back off, and nothing here changes your files or programs."),
+    ("How do I turn on voice typing?","Click where you want the words to go, press the Windows key and H together, and start talking. Your words appear as text, and you can say &ldquo;comma&rdquo; or &ldquo;question mark&rdquo; for punctuation."),
+    ("Can my computer read web pages out loud?","Yes. In Microsoft Edge, press Ctrl, Shift and U together, or right-click the page and choose Read aloud. In Word, use Read Aloud on the Review tab. Narrator reads everything on the screen."),
+    ("How do I make the mouse pointer bigger?","Settings, then Accessibility, then Mouse pointer and touch. Drag the size slider, and choose a colour that stands out if that helps."),
+    ("How do I turn off Sticky Keys?","Go to Settings, then Accessibility, then Keyboard, and switch Sticky Keys off. If a box pops up after you press Shift several times, choose No. Holding the right Shift key for eight seconds asks about Filter Keys in the same way."),
     ("Can you set them up for me?","Yes &mdash; this is a specialism of ours. We&rsquo;ll set up the right features for you, patiently and at your pace. See our <a href=\"/it-support-for-disabled-people/\">accessible IT support</a>."),
   ],
   cta_args=("Prefer we set it up for you?","Helping retired and disabled people get comfortable with technology is what we do best &mdash; patiently, kindly and never rushed.",

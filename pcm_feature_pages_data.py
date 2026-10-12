@@ -1318,6 +1318,8 @@ CR = {
 # The clock runs in the browser: the day, the part of the day (the app's own hours: morning from 5, afternoon from 12, evening
 # from 17, night from 21), the date and the time. Year off unless ticked (Alzheimer's Society leaves it off its calendar clock).
 # Full screen + Screen Wake Lock where the browser has them; choices kept in localStorage ('dck1') on that device only.
+# Talking clock (12 Oct 2026, Bing "talking clock" 580, the UK the top country): Say the time + Say the time every hour, by the
+# browser's speechSynthesis; the controls hide where the browser has no voice.
 # /dementia-clock/#clock opens it straight away (a bookmark or home-screen link for the relative's tablet or laptop).
 _DCK_FACE = ('<div class="dck__face"><span class="dck__day" data-w="2.3"></span><span class="dck__part" data-w="1.45"></span>'
              '<span class="dck__date" data-w="1.05"></span><span class="dck__time" data-w="1.05"></span></div>')
@@ -1333,11 +1335,14 @@ _DCLOCK = ('<div class="dck" id="clock">'
            '<label><input type="radio" name="dck-col" value="dark" checked> White on black</label>'
            '<label><input type="radio" name="dck-col" value="light"> Black on cream</label>'
            '<label><input type="radio" name="dck-col" value="auto"> Cream by day, black at night</label></fieldset>'
+           '<fieldset class="dck__opts" id="dck-talk"><legend>Talking clock</legend>'
+           '<button type="button" class="dck__say" id="dck-say1">&#128264; Say the time</button>'
+           '<label><input type="checkbox" id="dck-say"> Say the time every hour</label></fieldset>'
            '<p class="dck__note">Works in any up-to-date web browser on a computer, laptop or tablet. To open the clock straight away next time, bookmark this link or add it to the home screen: '
            '<a href="#clock">365techies.co.uk/dementia-clock/#clock</a>. Nothing is sent anywhere: your choices are remembered on this device only.</p>'
            '</div>'
            '<div class="dck-full dck--dark" id="dck-full" role="dialog" aria-modal="true" aria-label="Day and date clock" tabindex="-1" hidden>' + _DCK_FACE +
-           '<div class="dck-bar"><span id="dck-hint"></span><span id="dck-wl"></span><button type="button" id="dck-fs">Full screen</button><button type="button" id="dck-x">Close</button></div></div>'
+           '<div class="dck-bar"><span id="dck-hint"></span><span id="dck-wl"></span><button type="button" id="dck-say2">Say the time</button><button type="button" id="dck-fs">Full screen</button><button type="button" id="dck-x">Close</button></div></div>'
            '<style>.dck{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}'
            '.dck__screen{position:relative;height:0;padding-top:56%;border-radius:14px;overflow:hidden;border:8px solid #0b1019;box-shadow:0 22px 50px -26px rgba(0,0,0,.8)}'
            '.dck__face{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-body);transition:transform 30s linear}'
@@ -1345,6 +1350,7 @@ _DCLOCK = ('<div class="dck" id="clock">'
            '.dck--dark{background:#000;color:#fff}.dck--dark .dck__part{color:#ffb066}.dck--dark .dck__time{color:#c4d0e0}'
            '.dck--light{background:#fbf6ea;color:#15181d}.dck--light .dck__part{color:#0a55a3}.dck--light .dck__time{color:#3a4555}'
            '.dck__go{margin:1rem 0 0;text-align:center}.dck__go .button{font-size:1.1rem;min-height:52px}'
+           '.dck__say{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:.45rem 1rem;border-radius:999px;border:1px solid rgba(79,216,196,.6);background:rgba(79,216,196,.12);color:inherit;font:600 .95rem var(--font-body);cursor:pointer}'
            '.dck__opts{margin:1rem 0 0;padding:0;border:0;min-width:0;display:flex;flex-wrap:wrap;gap:.5rem .6rem}'
            '.dck__opts legend{float:left;width:100%;margin:0 0 .45rem;padding:0;font-size:.86rem;color:var(--muted)}'
            '.dck__opts label{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.45rem .85rem;border-radius:999px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.25);font-size:.95rem;cursor:pointer}'
@@ -1362,10 +1368,10 @@ _DCLOCK = ('<div class="dck" id="clock">'
            'document.body.appendChild(F);'   # out of any transformed section, so position:fixed means the whole window
            'function $(i){return document.getElementById(i);}'
            'var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];'
-           'var o={date:1,year:0,time:1,h24:0,col:"dark"},k;'
+           'var o={date:1,year:0,time:1,h24:0,col:"dark",say:0},k,hr=-1;'
            'try{var s=JSON.parse(localStorage.getItem("dck1")||"null");if(s)for(k in o)if(s.hasOwnProperty(k))o[k]=s[k];}catch(e){}'
            'function save(){try{localStorage.setItem("dck1",JSON.stringify(o));}catch(e){}}'
-           'var cb={date:$("dck-date"),year:$("dck-year"),time:$("dck-time"),h24:$("dck-24")},cols=document.getElementsByName("dck-col");'
+           'var cb={date:$("dck-date"),year:$("dck-year"),time:$("dck-time"),h24:$("dck-24"),say:$("dck-say")},cols=document.getElementsByName("dck-col");'
            'function sync(){for(var k in cb)cb[k].checked=!!o[k];cb.year.disabled=!o.date;for(var i=0;i<cols.length;i++)cols[i].checked=cols[i].value===o.col;}'
            'function part(h){return h>=5&&h<12?"Morning":h>=12&&h<17?"Afternoon":h>=17&&h<21?"Evening":"Night";}'   # DayDate.cs's own hours
            'function txt(n){var h=n.getHours(),m=n.getMinutes(),mm=(m<10?"0":"")+m;'
@@ -1386,8 +1392,13 @@ _DCLOCK = ('<div class="dck" id="clock">'
            'var key="",tm;'
            'function tick(){var n=new Date(),t=txt(n),kk=JSON.stringify(t)+JSON.stringify(o)+(F.hidden?0:1);'
            'if(kk!==key){key=kk;paint(P,t);if(!F.hidden)paint(F,t);P.setAttribute("aria-label","The clock: "+t.day+" "+t.part.toLowerCase()+(o.date?", "+t.date:"")+(o.time?", "+t.time:""));}'
+           'if(o.say&&n.getMinutes()===0&&n.getHours()!==hr){hr=n.getHours();speak(t);}'   # on the hour, once
            'drift(n.getTime());clearTimeout(tm);tm=setTimeout(tick,1030-n.getMilliseconds());}'
            'function again(){key="";tick();}'
+           # the talking clock: the browser's own voice (a British one when the device has it), e.g. "It's Monday afternoon. 12 October. The time is 4:52 pm."
+           'var canSay=!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);'
+           'function speak(t){if(!canSay)return;try{var u=new SpeechSynthesisUtterance("It\u2019s "+t.day+" "+t.part.toLowerCase()+". "+(o.date?t.date+". ":"")+"The time is "+t.time.replace(/(am|pm)$/," $1")+".");'
+           'u.lang="en-GB";u.rate=.9;var vs=speechSynthesis.getVoices();for(var i=0;i<vs.length;i++)if(vs[i].lang==="en-GB"){u.voice=vs[i];break;}speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}'
            'var lock=null,fsOn=false,idle;'
            'function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}'
            'function canFs(){return!!(F.requestFullscreen||F.webkitRequestFullscreen);}'
@@ -1408,6 +1419,10 @@ _DCLOCK = ('<div class="dck" id="clock">'
            '$("dck-fs").addEventListener("click",function(e){e.stopPropagation();goFs();bar();});'
            '$("dck-x").addEventListener("click",function(e){e.stopPropagation();hide();});'
            '$("dck-open").addEventListener("click",function(){show(true);});'
+           'if(!canSay){$("dck-talk").style.display="none";$("dck-say2").style.display="none";}'
+           '$("dck-say1").addEventListener("click",function(){speak(txt(new Date()));});'
+           '$("dck-say2").addEventListener("click",function(e){e.stopPropagation();speak(txt(new Date()));bar();});'
+           'cb.say.addEventListener("change",function(){if(cb.say.checked)speak(txt(new Date()));});'   # ticking it says the time once, so you know it works
            'document.addEventListener("keydown",function(e){if(F.hidden)return;if(e.key==="Escape"||e.keyCode===27)hide();else bar();});'
            'document.addEventListener("click",function(e){var a=e.target;while(a&&a.tagName!=="A")a=a.parentNode;if(a&&a.getAttribute("href")==="#clock"){e.preventDefault();show(true);}});'
            'window.addEventListener("hashchange",function(){if(location.hash==="#clock"&&F.hidden)show(false);});'
@@ -1439,11 +1454,12 @@ DC = {
         ('What you need', 'Any computer, laptop or tablet with an up-to-date web browser, left plugged in.'),
         ('Clocks going forward or back', 'Handled, as long as the device sets its own time and is on UK time.'),
         ('The year', 'Left off unless you tick it: Alzheimer&rsquo;s Society notes the year can confuse some people.'),
+        ('Talking clock', 'Press Say the time, or tick Say the time every hour. It uses the voice built into the device.'),
         ('On a Windows PC', 'Our free 365 PC Manager app adds a Day and date screensaver that appears by itself.'),
     ],
     'sections': [
         {'eyebrow': '/01 &mdash; THE CLOCK', 'h2': 'A free day and date clock, right here',
-         'html': '<p>It shows the day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in words big enough to read across a room. Press the button and it fills the screen. Choose what it shows underneath; it remembers your choices on this device.</p>' + _DCLOCK},
+         'html': '<p>It shows the day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in words big enough to read across a room. Press the button and it fills the screen. It can say the time out loud too, like a talking clock. Choose what it shows underneath; it remembers your choices on this device.</p>' + _DCLOCK},
         {'eyebrow': '/02 &mdash; WHY IT HELPS', 'h2': 'Why a day clock helps someone with dementia',
          'html': f'<p>We use the time to plan our day: meals, going out, going to bed. {_UHS}&rsquo;s dementia team explains that losing track of it can leave someone disorientated, anxious and confused, and that many people with dementia lose the meaning of an ordinary clock face. A day clock spells it out in words instead.</p>'
                  '<p>That&rsquo;s why the day and the part of the day are the biggest words here, and the time is smaller. '
@@ -1489,6 +1505,7 @@ DC = {
         {'q': 'Does it need the internet?', 'a': '<p>Only to open it. Once it&rsquo;s showing, it keeps going from the device&rsquo;s own clock if the internet drops. If the page is closed or the device restarts, it needs the internet to open again.</p>'},
         {'q': 'Why doesn&rsquo;t it show the year?', 'a': '<p>Alzheimer&rsquo;s Society leaves the year off one of its calendar clocks because it may confuse some people, so we leave it off unless you tick The year.</p>'},
         {'q': 'Will leaving it on mark the screen?', 'a': '<p>The words drift slowly round the screen, so no part of it shows the same thing for long. Turning the brightness down a little helps too.</p>'},
+        {'q': 'Can it say the time out loud, like a talking clock?', 'a': '<p>Yes. Press <strong>Say the time</strong> and it says the day, the part of the day, the date and the time. Tick <strong>Say the time every hour</strong> and it says it on the hour while this page is open. It uses the voice built into the device&rsquo;s web browser, so the sound needs to be on.</p>'},
         {'q': 'Can a Windows PC show it as a screensaver?', 'a': '<p>Yes. Our free 365 PC Manager app adds a Day and date screensaver: Photos &amp; files, then Screensaver &amp; photos. It can show your own photos behind the words.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/setting-up-a-computer-for-an-older-relative/">setting up a computer for an older relative</a>, <a href="/laptop-set-up-for-elderly-parent/">a laptop set up for an elderly parent</a>, <a href="/how-to-set-an-alarm-on-your-computer/">set an alarm on your computer</a>, <a href="/how-to-listen-to-the-radio-on-your-computer/">the radio on your computer</a>, <a href="/worried-about-a-parent-being-scammed/">worried about a parent being scammed?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
