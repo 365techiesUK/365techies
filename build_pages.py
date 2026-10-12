@@ -3305,6 +3305,8 @@ TOOLS = {
   "domainexp":    ("Domain Expiry Checker", "/domain-expiry-checker/", "When does your domain expire? Check the official registry record before you lose it."),
   "solarcalc":    ("Battery &amp; Solar Calculator", "/solar-battery-calculator/", "Campervan, boat or off-grid? Tick what you run and get an honest battery &amp; solar panel sizing."),
   "avtest":       ("Webcam &amp; Mic Test", "/webcam-mic-test/", "Video call in ten minutes? Test your camera, microphone and speakers &mdash; privately, on your device."),
+  "kbtest":       ("Keyboard &amp; Mouse Test", "/keyboard-test/", "Press every key and watch it light up &mdash; see which keys and mouse buttons don&rsquo;t work."),
+  "dclock":       ("Dementia Clock", "/dementia-clock/", "A free day and date clock in big, clear words &mdash; full screen on any spare laptop or tablet."),
   "vbuilder":     ("Victron System Builder", "/victron-system-builder/", "Four questions &#8594; a complete, honestly-sized Victron kit list with links to buy every part."),
   "pcbuild":      ("Custom PC Builder", "/custom-pc-builder/", "Your budget, split the way experienced builders do it &mdash; what to spend per part, and live links to buy."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),

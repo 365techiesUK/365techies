@@ -15559,7 +15559,9 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcmapp","speccheck","pcbench","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcmapp","speccheck","pcbench","kbtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+      ("Everyday help", "Simple free helpers for home.",
+       ["dclock"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
       ("On the road", "Fuel is costing everyone a fortune &mdash; find the cheapest.",
@@ -23832,6 +23834,10 @@ def build_new_page(d):
             nodes.append(service(s, _d.get('serviceName', _d['crumbName']), _d['metaDesc'], _d.get('serviceName', _d['crumbName']), area=_area))
         if _d.get('howToSteps'):
             nodes.append(bp.howto_node(s, _d.get('howToName', _d['crumbName']), [(st['name'], st['text']) for st in _d['howToSteps']]))
+        if _d.get('webApp'):   # 12 Oct 2026: a free in-page tool (free_tool_pages_data.py), marked up like the other tool pages
+            nodes.append({"@type": "WebApplication", "name": _d['webApp'], "applicationCategory": "UtilitiesApplication",
+                          "operatingSystem": "Web (all browsers)", "url": SITE + "/" + s + "/",
+                          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"}, "provider": {"@id": SITE + "/#business"}})
         if _d.get('productOffer'):
             po = _d['productOffer']
             nodes.append({"@type": "Product", "@id": SITE + "/" + s + "/#product",
@@ -24439,6 +24445,11 @@ for _np in SEO_WAVE14_PAGES:
 from accessibility_pages_data import ACCESS_PAGES, ACCESS_FLOWS
 FIX_FLOW_PAGES.update(ACCESS_FLOWS)
 for _np in ACCESS_PAGES:
+    build_new_page(_np)
+# 12 Oct 2026 (owner: "go ahead with the keyboard test page"): free in-page test tools, tool first then the fixes.
+from free_tool_pages_data import TOOL_PAGES, TOOL_FLOWS
+FIX_FLOW_PAGES.update(TOOL_FLOWS)
+for _np in TOOL_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;
