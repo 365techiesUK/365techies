@@ -14,12 +14,15 @@ RewriteEngine On
 RewriteCond %{HTTP_HOST} ^365techies\.365-computers\.com$ [NC]
 RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
 
-# --- 11 Oct 2026: mta-sts.365techies.co.uk serves this same folder too, and Search Console listed 23 of its pages with
-# impressions. The name exists only for the MTA-STS policy, /.well-known/mta-sts.txt, which must answer 200 itself
-# (RFC 8461: mail servers MUST NOT follow a redirect when fetching it). Today SiteGround's nginx serves /.well-known/
-# straight from disk and Apache never sees it; the exclusion keeps the policy safe if that ever changes. Everything
-# else on that name goes to the real address. The X-Robots-Tag for this host is in the mod_headers block below. ---
-RewriteCond %{HTTP_HOST} ^mta-sts\.365techies\.co\.uk$ [NC]
+# --- 12 Oct 2026: EVERY subdomain serves this same folder too (DNS answers any name with this server, and SiteGround
+# maps them all here), so each one was a full second copy of the site: Search Console listed 23 mta-sts.365techies.co.uk
+# pages with impressions, and Bing found sitemap. and sitemaps.365techies.co.uk as sitemap hosts. Any subdomain goes to
+# the real address. It matches subdomains rather than "not the real name" on purpose: it can never touch the real name,
+# so it can never loop the live site. /.well-known/ is left alone because mta-sts.365techies.co.uk/.well-known/mta-sts.txt
+# must answer 200 itself (RFC 8461: mail servers MUST NOT follow a redirect for it). Today SiteGround's nginx serves
+# /.well-known/ from disk before Apache sees it; the exclusion keeps the policy safe if that ever changes.
+# The X-Robots-Tag for these hosts is in the mod_headers block below. ---
+RewriteCond %{HTTP_HOST} \.365techies\.co\.uk\.?(:[0-9]+)?$ [NC]
 RewriteRule !^\.well-known/ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
 
 # --- Force non-www, then HTTPS (loop-safe behind SiteGround/Cloudflare) ---
@@ -666,9 +669,9 @@ ErrorDocument 404 /404.html
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   #    Geolocation is NOT restricted: the signal checker asks for it.
   Header always set Permissions-Policy "camera=(), payment=(), usb=()"
-  #    mta-sts.365techies.co.uk is not for the index (see the redirect at the top of this file).
-  SetEnvIfNoCase Host "^mta-sts\.365techies\.co\.uk$" MTASTSHOST
-  Header always set X-Robots-Tag "noindex" env=MTASTSHOST
+  #    No subdomain is for the index (see the redirect at the top of this file). Never the real name itself.
+  SetEnvIfNoCase Host "\.365techies\.co\.uk\.?(:[0-9]+)?$" SUBDOMAINHOST
+  Header always set X-Robots-Tag "noindex" env=SUBDOMAINHOST
   # ⚠ STANDING RULES (researched + live-verified 2026-07-27):
   # 1. These Cache-Control headers are the ONLY thing keeping HTML out of SiteGround's
   #    NGINX Dynamic Cache (12h TTL). FTPS deploys do NOT purge it and there is no
