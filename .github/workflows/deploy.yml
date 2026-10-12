@@ -290,3 +290,19 @@ jobs:
         if: ${{ !(inputs.dry_run || false) && steps.chromium.outcome != 'success' }}
         shell: bash
         run: echo "::warning title=Header smoke skipped::Chromium install failed on the runner; the dropdown/SOS smoke test did not run. Check the header by hand (open a menu)."
+
+      # ---- 6. IndexNow: tell Bing which pages really changed -----------------------------
+      # Added 2026-10-12 (owner: "yeah go ahead with IndexNow") - Bing Webmaster Tools' top warning
+      # was pages never submitted via IndexNow (only the old WordPress plugin ever did). Sends the
+      # pages whose content fingerprint changed in content_dates.json in THIS push (plus any that
+      # left the sitemap), so a CSSV bump that rewrites every page sends nothing. Runs only after a
+      # successful deploy, only on a push, and can never fail the run. Key file: /<KEY>.txt.
+      - name: IndexNow (tell Bing which pages changed)
+        if: ${{ !(inputs.dry_run || false) && github.event_name == 'push' }}
+        continue-on-error: true
+        shell: bash
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BEFORE" || echo "could not fetch the previous commit $BEFORE"
+          python3 tools/indexnow.py --before "$BEFORE"
