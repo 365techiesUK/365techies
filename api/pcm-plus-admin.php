@@ -75,4 +75,13 @@ $out['keys'] = plus_list();
 $lsLog = @file(__DIR__ . '/pcm-plus-ls.log', FILE_IGNORE_NEW_LINES);
 $out['ls'] = array('secret_set' => plus_ls_secret() !== '', 'log' => array_map(function ($l) { $p = explode("\t", $l); return array('at' => $p[0] ?? '', 'code' => (int)($p[1] ?? 0), 'event' => $p[2] ?? '', 'note' => $p[3] ?? ''); },
     is_array($lsLog) ? array_reverse(array_slice($lsLog, -8)) : array()));
+// PayPal (12 Oct 2026, after Lemon Squeezy declined): are the owner's PayPal keys on the server, test or live, where it is on
+// sale, and the last few lines of api/pcm-plus-pp.log (never a key or a secret)
+require_once __DIR__ . '/pcm-plus-pp-lib.php';
+$ppc = pp_creds();
+$ppLog = @file(PP_LOG, FILE_IGNORE_NEW_LINES);
+$out['provider'] = $cfg['provider'];
+$out['pp'] = array('set' => $ppc !== null, 'env' => $ppc ? $ppc['env'] : '', 'webhook' => $ppc !== null && $ppc['webhook'] !== '', 'countries' => $cfg['pp_countries'],
+    'log' => array_map(function ($l) { $p = explode("\t", $l, 2); return array('at' => $p[0] ?? '', 'text' => str_replace("\t", ' - ', $p[1] ?? '')); },
+        is_array($ppLog) ? array_reverse(array_slice($ppLog, -8)) : array()));
 pa_out($out);

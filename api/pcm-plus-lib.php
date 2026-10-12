@@ -53,8 +53,11 @@ function plus_config($file = null) {
     $g = function ($n) use ($src) { return preg_match('/^[ \t]*\$' . $n . '\s*=\s*([\'"])(.*?)\1\s*;/m', $src, $m) ? $m[2] : ''; };
     $url = $g('BUY_URL');
     $usd = function ($n) use ($g) { $v = trim($g($n)); return preg_match('/^\d{1,4}(\.\d{1,2})?$/', $v) && (float)$v > 0 ? $v : ''; };
+    // 12 Oct 2026: PayPal - where we may sell as the seller ourselves (pcm-plus-pp-lib.php)
+    $pp = array(); foreach (preg_split('/[\s,]+/', strtoupper($g('PP_COUNTRIES'))) as $cc) if (preg_match('/^[A-Z]{2}$/', $cc)) $pp[] = $cc;
     return array('on' => (bool)preg_match('/^[ \t]*\$BUY_ON\s*=\s*true\s*;/mi', $src), 'url' => preg_match('#^https://[^\s<>"\']+$#', $url) ? $url : '', 'price' => plus_cut($g('BUY_PRICE'), 40), 'provider' => preg_replace('/[^a-z]/', '', strtolower($g('BUY_PROVIDER'))),
-        'usd' => $usd('BUY_USD'), 'low_usd' => $usd('BUY_LOW_USD'), 'low_price' => plus_cut($g('BUY_LOW_PRICE'), 40), 'low_code' => preg_match('/^[A-Za-z0-9_-]{3,40}$/', $g('BUY_LOW_CODE')) ? $g('BUY_LOW_CODE') : '');
+        'usd' => $usd('BUY_USD'), 'low_usd' => $usd('BUY_LOW_USD'), 'low_price' => plus_cut($g('BUY_LOW_PRICE'), 40), 'low_code' => preg_match('/^[A-Za-z0-9_-]{3,40}$/', $g('BUY_LOW_CODE')) ? $g('BUY_LOW_CODE') : '',
+        'pp_countries' => $pp);
 }
 function plus_enabled($off = null, $config = null) {
     $c = plus_config($config);
@@ -72,10 +75,14 @@ function plus_offer_out($country, $id = '', $off = null, $config = null) {
     if ($c === '' || in_array($c, array('GB', 'IM', 'JE', 'GG'), true)) return array('offer' => 'plan');
     if (plus_no_sale($c)) return array();   // nothing to buy there: the free app, as if the paid app were switched off
     $cfg = plus_config($config);
+    $paypal = $cfg['provider'] === 'paypal';
+    // 12 Oct 2026, PayPal: we are the seller, so only in the countries pcm-buy-config.php $PP_COUNTRIES lists (no tax to register)
+    if ($paypal && !in_array($c, $cfg['pp_countries'], true)) return array();
     $url = str_replace('{id}', rawurlencode((string)$id), $cfg['url']);
-    $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '' && $cfg['low_code'] !== '';
-    // the lower price: Lemon Squeezy's own discount code, already filled in at its checkout (checkout[discount_code])
-    if ($low) $url .= (strpos($url, '?') === false ? '?' : '&') . 'checkout[discount_code]=' . rawurlencode($cfg['low_code']);
+    // the lower price: with PayPal our own buy page charges it (pcm-plus-pp-lib.php pp_offer); with Lemon Squeezy, its
+    // discount code, already filled in at its checkout (checkout[discount_code])
+    $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '' && ($paypal || $cfg['low_code'] !== '');
+    if ($low && !$paypal) $url .= (strpos($url, '?') === false ? '?' : '&') . 'checkout[discount_code]=' . rawurlencode($cfg['low_code']);
     $line = $low ? $cfg['low_price'] : $cfg['price'];
     $usd = $low ? $cfg['low_usd'] : $cfg['usd'];
     $local = $usd !== '' ? plus_local_amount($c, (float)$usd) : '';

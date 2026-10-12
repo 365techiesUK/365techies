@@ -311,6 +311,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(m365-orders\.(json(\..*)?|log)|m365-order-(lib|plans|test)\.php|pax8-key\.php|pax8-token\.json)$">
   Require all denied
 </FilesMatch>
+# PC Manager's "Unlock everything" through PayPal (12 Oct 2026): api/pcm-plus-pp.php is the URL. pcm-paypal-key.php holds the
+# owner's PayPal app secret (server-only, never in git); the token cache, the orders we made, the log, the library and the
+# test are not URLs.
+<FilesMatch "^(pcm-paypal-key\.php|pcm-paypal-token\.json|pcm-plus-pp-orders\.json(\..*)?|pcm-plus-pp\.log|pcm-plus-pp-(lib|test)\.php)$">
+  Require all denied
+</FilesMatch>
 # Emails in the inbox (2 Oct 2026): mail-imap.php holds the mailbox passwords (server-only, made by the owner, never in
 # git); the library is include-only and the test CLI-only. Nothing here is a URL.
 <FilesMatch "^(mail-imap\.php(\.example)?|comms-mail-(lib|test)\.php)$">

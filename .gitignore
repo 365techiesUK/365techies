@@ -330,3 +330,12 @@ api/m365-orders.json.*.tmp
 api/m365-orders.log
 api/pax8-key.php
 api/pax8-token.json
+
+# 12 Oct 2026: PC Manager Unlock everything through PayPal - the owner's PayPal app keys (server-only), the token cache, the
+# orders our buy page made and the log
+api/pcm-paypal-key.php
+api/pcm-paypal-token.json
+api/pcm-plus-pp-orders.json
+api/pcm-plus-pp-orders.json.lock
+api/pcm-plus-pp-orders.json.*.tmp
+api/pcm-plus-pp.log

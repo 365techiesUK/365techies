@@ -9,10 +9,10 @@
  * read beside the button, $BUY_ON = true; deploy. To stop it at once without a deploy: create api/pcm-buy.off on the server.
  */
 $BUY_ON = false;
-// 11 Oct 2026: the Lemon Squeezy product "365 PC Manager - Unlock everything (12 months)" (id 1430686), made in TEST MODE.
-// checkout[custom][install] carries the PC's anonymous id into the order (meta.custom_data). When the store goes live, check
-// the live product's checkout link is this same one - if Lemon Squeezy gives the live copy a new link, put that here.
-$BUY_URL = 'https://365techies.lemonsqueezy.com/checkout/buy/fba7bdf3-7140-4601-84ab-94621a072a7b?checkout[custom][install]={id}';
+// 12 Oct 2026: Lemon Squeezy declined the store, so the Buy button opens OUR buy page, which takes the payment with PayPal
+// (pcm-plus-pp-lib.php). The page reads the price and the countries below; PayPal's keys are in api/pcm-paypal-key.php
+// (server-only, the owner's). (Was the Lemon Squeezy checkout, product 1430686.)
+$BUY_URL = 'https://365techies.co.uk/pc-manager-buy/?install={id}';
 // Owner, 11 Oct 2026: "go with $19.99 a year" - a 12-month key for up to 3 PCs that simply ends (no renewal), one price
 // worldwide in US dollars with tax included. The Lemon Squeezy product must say the same. The app shows 40 characters at most.
 $BUY_PRICE = 'US$19.99 for 1 year - does not renew';
@@ -25,7 +25,13 @@ $BUY_USD = '19.99';
 $BUY_LOW_USD = '9.99';
 $BUY_LOW_PRICE = 'US$9.99 for 1 year - does not renew';
 $BUY_LOW_CODE = 'FAIRPRICE';
-$BUY_PROVIDER = 'lemonsqueezy';
+$BUY_PROVIDER = 'paypal';
+// PayPal (12 Oct 2026): 365 Techies Ltd is the seller, so sell only where a small seller has no sales tax or VAT to register
+// for - each of these has a registration threshold far above our sales (US states about $100,000 or 200 sales a year each,
+// Canada C$30,000, Australia A$75,000, New Zealand NZ$60,000, Norway NOK 50,000, Japan 10 million yen, Singapore S$100,000
+// plus S$1 million worldwide; Hong Kong has none). NOT the EU: it taxes a non-EU seller's software from the FIRST sale. Not
+// Switzerland (CHF 100,000 counts our WHOLE turnover). Check this list with the accountant; add a country only after that.
+$PP_COUNTRIES = 'US,CA,AU,NZ,NO,JP,SG,HK';
 // Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not
 // listed gets a key for a year (a subscription's key then follows its renewals).
 $LS_VARIANTS = '';

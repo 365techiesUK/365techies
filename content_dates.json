@@ -2407,7 +2407,8 @@
  },
  "order-microsoft-365": {
   "first": "2026-10-10",
-  "h": "b631dbf600961179"
+  "h": "1f6530bb11c32e4d",
+  "last": "2026-10-12"
  },
  "our-guarantees": {
   "first": "2026-07-28",
@@ -2729,10 +2730,15 @@
   "h": "5cef891a1bfbef92",
   "last": "2026-10-06"
  },
+ "pc-manager-buy": {
+  "first": "2026-10-12",
+  "h": "d0d27c39e8c86da2",
+  "last": "2026-10-12"
+ },
  "pc-manager-licence": {
   "first": "2026-10-11",
-  "h": "3ba4f55863e83a21",
-  "last": "2026-10-11"
+  "h": "e5d9dc9eacdf1c9b",
+  "last": "2026-10-12"
  },
  "phishing": {
   "first": "2026-07-28",
@@ -2822,7 +2828,7 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "26f6b6ddb61dc15a",
+  "h": "6705f9bed4eb94da",
   "last": "2026-10-12"
  },
  "pre-call-checklists": {
@@ -2907,7 +2913,7 @@
  },
  "privacy-policy": {
   "first": "2026-07-28",
-  "h": "d8563a9525f89098",
+  "h": "901a49a27e2258c8",
   "last": "2026-10-12"
  },
  "ps5-emulator-real-or-fake": {
@@ -3342,7 +3348,7 @@
  },
  "terms": {
   "first": "2026-07-28",
-  "h": "e18f67f5a8d6bf4a",
+  "h": "875466351ca6da6f",
   "last": "2026-10-12"
  },
  "the-set-of-folders-cannot-be-opened": {

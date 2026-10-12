@@ -483,6 +483,19 @@ def order_m365_page():
     _swo_order.write_order_plans_php(_os_pcm.path.join(bp.BASE, "api", "m365-order-plans.php"))
 order_m365_page()
 
+# ===================================================== BUY "UNLOCK EVERYTHING" WITH PAYPAL (12 Oct 2026)
+# Lemon Squeezy declined the store; the app's Buy button (api/pcm-buy-config.php $BUY_URL) opens this page, which takes the
+# payment with PayPal (api/pcm-plus-pp.php) and shows + emails the key. noindex: a checkout reached from the app.
+import pcm_buy_page as _pcmbuy
+
+def pcm_buy_page():
+    desc = "Buy Unlock everything for 365 PC Manager with PayPal or a card: one key for 12 months on up to 3 PCs, paid once, no renewal, 30-day refund."
+    def schema(s, _desc=desc, _faqs=_pcmbuy.FAQS):
+        return graph([crumb(s, "Unlock everything"), webpage(s, "Buy Unlock everything for 365 PC Manager", _desc), faqpage(s, _faqs)])
+    add(slug="pc-manager-buy", title="Buy Unlock everything | 365 PC Manager", desc=desc, og_title="Unlock everything | 365 PC Manager",
+        schema=schema, content=_pcmbuy.buy_page_content(bp.task_head, bc, faq_html), robots="noindex,follow")
+pcm_buy_page()
+
 # ---- 365 PC Manager - free download landing page ----
 # Owner supplies the hosted (ideally code-signed) .exe URL. Until then the page
 # routes to "ask us to install it" rather than showing a dead download button.
@@ -1150,7 +1163,7 @@ def pcm_landing():
     _abroad_mail = ("mailto:?subject=" + "365%20PC%20Manager%20for%20my%20computer"
                     + "&body=" + "The%20free%20365%20PC%20Manager%20app%20for%20Windows%2010%20and%2011%3A%20https%3A%2F%2F365techies.co.uk%2Ffree-pc-health-check%2F%23download")
     _abroad_unlock = ('          <p style="margin:0 0 .7rem">Want the full automatic service too? An optional key, <strong>Unlock everything</strong>, adds it and two more tools: '
-                      '<strong>US$19.99 once, for 12 months on up to 3 PCs</strong> (US$9.99 in many countries), charged in US dollars. It never renews, and you can have a full refund within 30 days. '
+                      '<strong>US$19.99 once, for 12 months on up to 3 PCs</strong>, charged in US dollars, in the countries where it is on sale (the app offers it there). It never renews, and you can have a full refund within 30 days. '
                       '<a href="/pc-manager-licence/">Licence and refunds</a>.</p>\n') if PCM_UNLOCK_LIVE else ''
     _pcm_abroad = f'''    <section class="section" id="outside-uk" aria-labelledby="pcm-abroad-h" hidden data-abroad-box>
       <div class="wrap" style="max-width:58rem">
@@ -16717,9 +16730,9 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           </ul>
 
           <h2 id="unlock-everything" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Buying &ldquo;Unlock everything&rdquo; for 365 PC Manager (outside the UK)</h2>
-          <p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>). It is sold by our payment partner <strong>Lemon Squeezy</strong> (&ldquo;Sold through Link, LLC&rdquo;), which takes your payment, card or PayPal details, billing address and tax information under its own <a href="https://www.lemonsqueezy.com/privacy" rel="noopener">privacy policy</a>. Those details stay with Lemon Squeezy: we never see your card.</p>
+          <p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>). We, 365 Techies Ltd, sell it, and <strong>PayPal</strong> takes the payment under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>. Your card or PayPal account details stay with PayPal: we never see them.</p>
           <ul>
-            <li><strong>What Lemon Squeezy tells us about your order:</strong> your email address, the order number, the currency and total you paid, the anonymous install number of the PC you bought from, and whether it was a test.</li>
+            <li><strong>What PayPal tells us about your payment:</strong> your name, your email address, the payment and order numbers and the amount you paid. We keep your email address, those numbers and the amount, with the anonymous install number of the PC you bought from and whether it was a test. We don&rsquo;t keep your name.</li>
             <li><strong>What we use it for:</strong> emailing you your key, sending a new one if you lose it, refunds and card disputes, and keeping each key to its three PCs. We keep the key itself only in scrambled form.</li>
             <li><strong>Our legal basis:</strong> performing our contract with you, our legitimate interest in stopping fraud and key sharing, and our legal duty to keep financial records.</li>
             <li><strong>How long we keep it:</strong> the order record for six years, like our other financial records (see below).</li>
@@ -16752,7 +16765,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Slack</strong> &mdash; our own internal team channel, where new enquiries and messages are relayed so somebody picks them up.</li>
             <li><strong>Google</strong> &mdash; Analytics (only with your consent), and the mapping data behind our free tools. Google&rsquo;s own attribution appears on any map we show.</li>
             <li><strong>Partnerize</strong> &mdash; the affiliate network behind the small number of clearly-labelled sponsored links on this site.</li>
-            <li><strong>Lemon Squeezy</strong> (Sold through Link, LLC, United States) &mdash; the seller of 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK: it takes the payment and tells us your email address and order, as described above.</li>
+            <li><strong>PayPal</strong> &mdash; takes the payment for 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK, and tells us your email address and payment, as described above.</li>
           </ul>
           <p>We may also share information where the law requires it. Some of these providers are based outside the UK, or process data outside it; where that happens we rely on the UK&rsquo;s approved transfer safeguards, and we will tell you more if you ask.</p>
 
@@ -16852,7 +16865,7 @@ info_page(
           <h2>Our liability</h2>
           <p>We take great care in everything we do. To the extent permitted by law, our liability is limited to the value of the services provided. Nothing in these terms excludes any liability that cannot be excluded under law.</p>
           <h2>365 PC Manager outside the UK</h2>
-          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key, sold only to computers outside the UK through our payment partner Lemon Squeezy, has its own terms and our 30-day refund promise: see <a href="/pc-manager-licence/">365 PC Manager licence and refunds</a>.</p>
+          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key, sold only to computers outside the UK with PayPal taking the payment, has its own terms and our 30-day refund promise: see <a href="/pc-manager-licence/">365 PC Manager licence and refunds</a>.</p>
           <h2>Data protection</h2>
           <p>We handle your personal data in line with our <a href="/privacy-policy/">privacy policy</a>.</p>
           <h2>Governing law</h2>
@@ -16869,14 +16882,26 @@ info_page(
 # on the website parts ... do everything"). What it says is pinned to the code: Unlock adds exactly three things (Ui.cs:
 # StartFullService, the Start-up page's switch-off, Backup's "Tidy old backups" = File History versions older than 30 days,
 # asked first, the latest always kept); a key = 12 months, up to 3 PCs, does not renew (pcm-plus-lib, $BUY_PRICE); a refund
-# switches the key off (plus_ls_handle order_refunded); staff can send a new key (plus_reissue) or free a PC slot; Lemon
-# Squeezy is the seller ("Sold through Link, LLC") - research/pcm-abroad-2026-10-11/06-legal-payments.md. Software only:
-# Lemon Squeezy sells no services, and our people-help is for UK customers. noindex: a page for buyers, not for search.
+# switches the key off (pcm-plus-pp-lib.php pp_event, refunded / reversed); staff can send a new key (plus_reissue) or free a
+# PC slot. 12 Oct 2026: Lemon Squeezy declined the store, so 365 Techies Ltd is the seller and PayPal takes the payment, in
+# the countries pcm-buy-config.php $PP_COUNTRIES lists (read here, so the page and the server agree). Software only: our
+# people-help is for UK customers. noindex: a page for buyers, not for search.
+_PP_COUNTRY_NAMES = {"US": "the United States", "CA": "Canada", "AU": "Australia", "NZ": "New Zealand", "NO": "Norway", "JP": "Japan",
+                     "SG": "Singapore", "HK": "Hong Kong", "CH": "Switzerland", "IS": "Iceland", "IL": "Israel", "KR": "South Korea"}
+def _pp_countries_words():
+    try:
+        _src = open(_os_pcm.path.join(bp.BASE, "api", "pcm-buy-config.php"), encoding="utf-8").read()
+        _m = re.search(r"^[ \t]*\$PP_COUNTRIES\s*=\s*'([^']*)'", _src, re.M)
+        _codes = [c for c in re.split(r"[\s,]+", (_m.group(1) if _m else "").upper()) if re.match(r"^[A-Z]{2}$", c)]
+    except Exception:
+        _codes = []
+    _names = [_PP_COUNTRY_NAMES.get(c, c) for c in _codes]
+    return (", ".join(_names[:-1]) + " and " + _names[-1]) if len(_names) > 1 else (_names[0] if _names else "a few countries")
 _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>In short</h2>
           <ul>
             <li><strong>365 PC Manager is free</strong> to use on any Windows 10 or 11 PC. You never need to buy anything.</li>
-            <li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong> (<strong>US$9.99</strong> in many countries), paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>
+            <li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong>, paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>
             <li><strong>It does not renew.</strong> After 12 months it simply stops, and you are never charged again unless you choose to buy another.</li>
             <li><strong>30-day refund, no questions asked</strong>, even if you have used it.</li>
             <li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: those are for our customers in the UK.</li>
@@ -16891,8 +16916,8 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           </ul>
 
           <h2>Price, tax and how you pay</h2>
-          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars. In many countries, including India, Pakistan, Bangladesh, the Philippines, Indonesia, Nigeria, Kenya and Egypt, it is <strong>US$9.99</strong>: the app&rsquo;s Buy button applies the lower price for you, and the checkout shows it before you pay. Where your country charges sales tax or VAT, it is included in that price. The app also shows roughly what the price comes to in your own money, but the exact amount is up to your bank, and some banks add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
-          <p><strong>Lemon Squeezy is the seller.</strong> Our payment partner Lemon Squeezy (&ldquo;Sold through Link, LLC&rdquo;) takes the payment, adds any tax, sends your receipt and handles card questions, under its own <a href="https://www.lemonsqueezy.com/buyer-terms" rel="noopener">buyer terms</a> and <a href="https://www.lemonsqueezy.com/privacy" rel="noopener">privacy policy</a>. Your card or PayPal statement shows Lemon Squeezy (for example &ldquo;LEMSQZY*&rdquo;), not our name. We, 365 Techies Ltd, make the software, and these terms are about using it.</p>
+          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars, with nothing added. For now it is on sale in """ + _pp_countries_words() + """; the app offers it only where it is on sale. The app also shows roughly what the price comes to in your own money, but the exact amount is up to your bank or PayPal, and some add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
+          <p><strong>We are the seller.</strong> You buy the key from us, 365 Techies Ltd. <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details; your statement shows PayPal and our name. PayPal handles the payment under its own terms and <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>; these terms are about the key and using the software.</p>
 
           <h2>Your key and your PCs</h2>
           <ul>
@@ -16905,10 +16930,10 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           <h2 id="refunds" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Our 30-day refund promise</h2>
           <p>If you&rsquo;re not happy for any reason, ask within <strong>30 days of buying</strong> and you get your money back in full. No questions asked, even if you have used the key.</p>
           <ul>
-            <li><strong>To ask:</strong> reply to the email your key came in, or email <a href="mailto:info@365techies.co.uk?subject=Refund%%20please">info@365techies.co.uk</a> with your order number (it&rsquo;s on your Lemon Squeezy receipt) and the words &ldquo;refund please&rdquo;.</li>
-            <li>We start the refund through Lemon Squeezy, normally within two working days. It goes back to the card or PayPal account you paid with; your bank may take a few more days to show it.</li>
+            <li><strong>To ask:</strong> reply to the email your key came in, or email <a href="mailto:info@365techies.co.uk?subject=Refund%%20please">info@365techies.co.uk</a> from the address you bought with and the words &ldquo;refund please&rdquo;.</li>
+            <li>We refund you through PayPal, normally within two working days. It goes back to the card or PayPal account you paid with; your bank may take a few more days to show it.</li>
             <li>Once it&rsquo;s refunded, the key stops working and the app goes back to the free version.</li>
-            <li>Lemon Squeezy can also refund you directly. And nothing here takes away any right you have under the law where you live.</li>
+            <li>Nothing here takes away any right you have under the law where you live.</li>
           </ul>
 
           <h2>What the app changes on your PC, and how to undo it</h2>
@@ -16933,7 +16958,7 @@ info_page(
   hero_cta1=('About 365 PC Manager', '/free-pc-health-check/'), hero_cta2=('Ask about a refund', 'mailto:info@365techies.co.uk?subject=Refund%20please'),
   h1='365 PC Manager <em class="grad grad--cyan">licence and refunds</em>',
   lede="The terms for the optional &ldquo;Unlock everything&rdquo; key, sold to computers outside the UK, and our 30-day refund promise. The app itself is free.",
-  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 (US$9.99 in many countries) once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
+  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
   title="365 PC Manager Licence and Refunds | 365 Techies",
   chips=["12 months, no renewal", "30-day refund", "Free app, optional key"],
   inner=_PCM_LICENCE_BODY % _policy_stamp("pcm-licence", _PCM_LICENCE_BODY),
@@ -33434,8 +33459,13 @@ def write_portal_page():
         : '<b>\\u25cb Switched off</b> \\u2014 nobody is offered it (' + esc(d.why_off) + '). It goes on once you\\u2019ve chosen the payment company and the price.') + '</p>'
       + '<p class="quiet" style="margin:0 0 .6rem">Outside the UK, the app\\u2019s locked \\u201cdo it for me\\u201d buttons offer \\u201cUnlock everything\\u201d instead of our support plans: the full service and the tools, no visits, email support. Their service reports stay on their PC \\u2014 nothing comes to Slack or email; the card counts the runs. Never offered to a PC linked to a customer. A key works on up to ' + (d.max_pcs || 3) + ' PCs, from the PC Manager release that includes it.</p>';
     // Lemon Squeezy (8 Oct 2026): sales there make and email the key by themselves once the signing secret is on the server
-    var ls = d.ls || {};
-    h += '<p style="margin:0 0 .6rem">' + (ls.secret_set ? '<b style="color:var(--pgood)">\\u25cf Lemon Squeezy connected</b> \\u2014 each sale makes its key and emails it to the buyer from info@; a refund switches it off; a yearly subscription\\u2019s key follows its renewals.'
+    var ls = d.ls || {}, pp = d.pp || {}, isPP = d.provider === 'paypal';
+    // 12 Oct 2026: Lemon Squeezy declined the store; our own buy page takes the payment with PayPal (api/pcm-plus-pp.php)
+    if (isPP) h += '<p style="margin:0 0 .6rem">' + (pp.set ? '<b style="color:var(--pgood)">\\u25cf PayPal connected' + (pp.env === 'sandbox' ? ' (TEST: PayPal sandbox, no real money)' : '') + '</b> \\u2014 the buy page takes the payment, shows the key and emails it from info@; a full refund or a reversed payment switches it off.'
+        + (pp.webhook ? '' : ' <b class="err">No webhook id in the keys file yet:</b> a refund won\\u2019t switch its key off by itself.')
+        : '<b>\\u25cb PayPal not connected yet</b> \\u2014 waiting for api/pcm-paypal-key.php on the server (your PayPal app\\u2019s keys).')
+        + ' On sale in: <b>' + esc((pp.countries || []).join(', ') || 'nowhere yet') + '</b> (pcm-buy-config.php $PP_COUNTRIES).</p>';
+    else h += '<p style="margin:0 0 .6rem">' + (ls.secret_set ? '<b style="color:var(--pgood)">\\u25cf Lemon Squeezy connected</b> \\u2014 each sale makes its key and emails it to the buyer from info@; a refund switches it off; a yearly subscription\\u2019s key follows its renewals.'
         : '<b>\\u25cb Lemon Squeezy not connected yet</b> \\u2014 waiting for the webhook\\u2019s signing secret in api/pcm-ls-secret.php on the server. Until then Lemon Squeezy\\u2019s deliveries are turned away and it tries again later, so no sale is lost.') + '</p>';
     if (PLUS.key) h += '<div class="plus-new" role="status"><span class="quiet">New key \\u2014 copy it now, it won\\u2019t be shown again:</span><b class="plus-key" id="plusnewkey">' + esc(PLUS.key) + '</b>'
       + '<button type="button" class="sm ghost" id="pluscopy">Copy</button></div>';
@@ -33449,7 +33479,7 @@ def write_portal_page():
     var keys = d.keys || [];
     h += keys.length ? '<div class="tblwrap"><table class="plus-tbl"><tr><th>Key</th><th>Email</th><th>Made</th><th>Until</th><th>PCs</th><th>Full services</th><th>Status</th><th></th></tr>' + keys.map(function (k) {
         var exp = k.expires ? plusDay(k.expires) : 'lifetime', gone = k.expires && k.expires * 1000 < Date.now();
-        return '<tr><td class="mono">\\u2026' + esc(k.last4) + (k.test ? ' <span class="plus-test" title="Made by a Lemon Squeezy test-mode order - no money was taken">TEST</span>' : '') + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
+        return '<tr><td class="mono">\\u2026' + esc(k.last4) + (k.test ? ' <span class="plus-test" title="Made by a test order (PayPal sandbox or Lemon Squeezy test mode) - no money was taken">TEST</span>' : '') + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
           + '<td>' + esc(plusDay(k.created)) + (k.by ? '<br /><span class="quiet">by ' + esc(k.by) + '</span>' : '') + '</td><td>' + esc(exp) + (gone ? ' (expired)' : '') + '</td>'
           + '<td>' + k.pcs + ' of ' + (d.max_pcs || 3) + '</td><td>' + (k.runs || 0) + (k.last_run ? '<br /><span class="quiet">last ' + esc(plusDay(k.last_run)) + '</span>' : '') + '</td>'
           + '<td>' + (k.status === 'active' ? 'working' : 'switched off') + '</td>'
@@ -33457,7 +33487,10 @@ def write_portal_page():
           + (k.pcs ? ' <button type="button" class="sm ghost" data-plusact="freepcs" data-plusid="' + esc(k.id) + '">Clear PCs</button>' : '')
           + (k.status === 'active' && k.email ? ' <button type="button" class="sm ghost" data-plusact="reissue" data-plusid="' + esc(k.id) + '" data-plusemail="' + esc(k.email) + '">Send a new key</button>' : '') + '</td></tr>';
       }).join('') + '</table></div>' : '<p class="quiet">No keys yet.</p>';
-    var log = ls.log || [];
+    if (isPP && (pp.log || []).length) h += '<details class="plus-log"><summary>PayPal\\u2019s last ' + pp.log.length + ' messages</summary><ul>' + pp.log.map(function (l) {
+        return '<li><span class="mono">' + esc(l.at) + ' UTC</span> ' + esc(l.text) + '</li>';
+      }).join('') + '</ul><p class="quiet" style="margin:.3rem 0 0">401 = not confirmed by PayPal (ignored). 503 = the keys file or its webhook id isn\\u2019t on the server yet; PayPal sends it again.</p></details>';
+    var log = isPP ? [] : (ls.log || []);
     if (log.length) h += '<details class="plus-log"><summary>Lemon Squeezy\\u2019s last ' + log.length + ' deliveries</summary><ul>' + log.map(function (l) {
         return '<li><span class="mono">' + esc(l.at) + ' UTC</span> ' + (l.code === 200 ? '' : '<b class="err">' + esc(String(l.code)) + '</b> ') + esc(l.event.replace(/_/g, ' ')) + ' \\u2014 ' + esc(l.note) + '</li>';
       }).join('') + '</ul><p class="quiet" style="margin:.3rem 0 0">401 = not signed by Lemon Squeezy (ignored). 503 = the signing secret isn\\u2019t on the server yet. 409 = a renewal arrived before its order; Lemon Squeezy sends it again.</p></details>';
