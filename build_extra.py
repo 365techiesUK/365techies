@@ -24862,6 +24862,11 @@ def write_portal_page():
   #p365app .tline.done .ttime { color:var(--pmut); }
   #p365app .nbbtn { width:100%; font-size:1.02rem; padding:.75rem 1rem; margin:.1rem 0 .6rem; background:var(--pgood); color:#06220b; font-weight:800; letter-spacing:.01em; }
   #p365app .nbbtn:hover { filter:brightness(1.06); }
+  /* 12 Oct 2026 (owner, for David): New job at the top of Today, for a job taken on a phone call */
+  #p365app .njbar { display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; margin:0 0 1rem; padding:.85rem 1rem; border:1px solid #1d97e3; border-radius:14px; background:linear-gradient(135deg, rgba(29,151,227,.16), rgba(29,151,227,.05)); }
+  #p365app .njbtn { flex:0 0 auto; min-height:48px; font-size:1.05rem; padding:.7rem 1.4rem; background:#1d97e3; color:#fff; font-weight:800; letter-spacing:.01em; border:0; border-radius:12px; }
+  #p365app .njbtn:hover { filter:brightness(1.08); }
+  #p365app .njbar p { margin:0; flex:1 1 260px; }
   #p365app .nbwiz { border:1px solid var(--pline); border-radius:12px; padding:.8rem .9rem; margin-bottom:.7rem; background:var(--pink); animation:p365fadeUp .3s ease both; }
   /* booking wizard: same card/day/time treatment as the website's booking page */
   #p365app .svcgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:.5rem; margin:.15rem 0 .2rem; }
@@ -29960,6 +29965,8 @@ def write_portal_page():
     var grid = document.createElement('div'); grid.className = 'nx-today nx-today--3';
     var colA = document.createElement('div'), colB = document.createElement('div'), colC = document.createElement('div');
     grid.appendChild(colA); grid.appendChild(colB); grid.appendChild(colC);
+    // 12 Oct 2026 (owner, for David): New job, for a job taken on a phone call - the first thing on Today
+    var njb = document.getElementById('njbar'); if (njb) panels.today.appendChild(njb);
     panels.today.appendChild(lstrip); panels.today.appendChild(kp);
     if (sos) panels.today.appendChild(sos);
     if (psg) panels.today.appendChild(psg);   // 8 Oct 2026: sign-ins waiting for approval (shown only while one waits)
@@ -30503,6 +30510,10 @@ def write_portal_page():
         document.body.appendChild(cf); cf.submit(); return;
       }
       var h = topRow('365 staff \\u00b7 ' + esc(S.email || ''));
+      // 12 Oct 2026 (owner, for David: "if he takes a job on a phone call, that isn't voicemail, isn't a text message, he wants
+      // to be able to add the new job the same way"): the voicemail's New job form, at the top of Today
+      h += '<div class="njbar" id="njbar"><button type="button" class="njbtn" id="njopen">\\ud83d\\udcde New job</button>'
+        + '<p class="quiet">Took a job on the phone? The same form as a voicemail\\u2019s or a text\\u2019s New job: it goes in the job list, and the \\u201cNew job in\\u201d card goes in #sos-jobs-in-out. You can book it in the diary straight after.</p></div>';
       h += '<div class="card"><h2>\\ud83d\\udcc5 Diary <span class="dlive" id="dlive" title="Booking statuses update automatically \\u2013 no need to refresh"><i></i>Live</span></h2>'
         + '<button class="nbbtn" id="nbopen">\\u2795 Book a new job</button>'
         + '<div class="nbwiz" id="nbwiz" style="display:none"></div>'
@@ -30644,6 +30655,7 @@ def write_portal_page():
         loadSosq();
       }, 30000);
       document.getElementById('nbopen').onclick = function () { toggleWiz(); };
+      document.getElementById('njopen').onclick = function () { ncOpen(ncPhone()); };
       var st;
       document.getElementById('dsearch').addEventListener('input', function () {
         var q = this.value.trim().toLowerCase();
@@ -32439,7 +32451,12 @@ def write_portal_page():
     if (num) { if (/^\\+447\\d{9}$/.test(num)) p.mobile = cmUk(num); else p.phone = cmUk(num); }
     return p;
   }
-  var NC = { pre: null, busy: false, ret: null };
+  var NC = { pre: null, busy: false, ret: null, save: 'Save customer' };
+  // 12 Oct 2026: a job taken on a phone call (Today's New job) - the same form, headed New job, the call's time in Issue
+  function ncPhone() {
+    var d = new Date(), hm = ('0' + d.getHours()).slice(-2) + '.' + ('0' + d.getMinutes()).slice(-2);   // 11.42, never 11:42 - the Slack reader strips :42: as an emoji code
+    return { assigned: cmMe(), heading: 'New job', save: 'Save job', issue: 'Phoned in ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' at ' + hm + ' - ' };
+  }
   var NC_F = [['name', 'Customer name', 'text', 1], ['company', 'Company'], ['address', 'Address'], ['postcode', 'Postcode'], ['phone', 'Contact number', 'tel'],
     ['mobile', 'Mobile phone', 'tel'], ['email', 'Email', 'email'], ['website', 'Website address'], ['jobtype', 'Job type', ['Remote', 'On-site', 'Hardware']],
     ['issue', 'Issue', 'area'], ['assigned', 'Assigned to'], ['priority', 'Priority', ['Low', 'Medium', 'High']], ['price', 'Price \\u00a3']];
@@ -32451,7 +32468,7 @@ def write_portal_page():
   }
   function ncOpen(pre) {
     ncClose();
-    NC.pre = pre || { assigned: cmMe() }; NC.busy = false; NC.ret = document.activeElement;
+    NC.pre = pre || { assigned: cmMe() }; NC.busy = false; NC.ret = document.activeElement; NC.save = NC.pre.save || 'Save customer';
     var known = NC.pre.known || '';
     var boxes = NC_F.map(function (x) {
       var id = 'nc_' + x[0], v = NC.pre[x[0]] || '', t = x[2] || 'text', wide = x[0] === 'name' || t === 'area';
@@ -32464,13 +32481,13 @@ def write_portal_page():
     }).join('');
     var mask = document.createElement('div'); mask.className = 'tmask'; mask.id = 'ncmask';
     mask.innerHTML = '<div class="tmodal nc-dlg" role="dialog" aria-modal="true" aria-labelledby="nch">'
-      + '<div class="nc-top"><div><h3 id="nch">' + (known ? 'New job for ' + esc(known) : 'New customer') + '</h3>'
+      + '<div class="nc-top"><div><h3 id="nch">' + (NC.pre.heading ? esc(NC.pre.heading) : known ? 'New job for ' + esc(known) : 'New customer') + '</h3>'
       + '<p class="quiet">The same boxes as Slack\\u2019s \\u201cNew job in\\u201d: saving posts that card to #sos-jobs-in-out and puts the job in the job list straight away.'
       + (NC.pre.from_label ? ' Filled in from ' + esc(NC.pre.from_label) + ' \\u2014 a note goes into its Slack thread too.' : '') + '</p></div>'
       + '<button type="button" class="sm ghost" id="ncx" aria-label="Close">\\u2715</button></div>'
       + '<div id="ncbody"><div class="nc-grid">' + boxes + '</div>'
       + '<div class="err" id="ncerr" aria-live="polite"></div>'
-      + '<div class="nc-act"><button type="button" id="ncsave">Save customer</button><button type="button" class="ghost" id="nccancel">Cancel</button></div></div></div>';
+      + '<div class="nc-act"><button type="button" id="ncsave">' + esc(NC.save) + '</button><button type="button" class="ghost" id="nccancel">Cancel</button></div></div></div>';
     el.appendChild(mask);
     document.getElementById('ncx').onclick = ncClose;
     document.getElementById('nccancel').onclick = ncClose;
@@ -32491,14 +32508,14 @@ def write_portal_page():
         // 6 Oct 2026 (owner): the "<name> is in the job list" line belongs in THIS dialog (ncDone says it), not in the
         // Voicemails column's status line, where it sat for good beside somebody else's voicemail
         if (d && d.ok && d.job && d.job.id) { var jerr = d.err || ''; d.note = ''; d.err = ''; CM.d = d; renderComms(); ncDone(d.job, jerr); return; }
-        b.disabled = false; b.textContent = 'Save customer';
+        b.disabled = false; b.textContent = NC.save;
         var errs = (d && d.job && d.job.errors) || {}, firstBad = '';
         Object.keys(errs).forEach(function (k) { var s3 = document.getElementById('nc_' + k + '_e'); if (s3) { s3.textContent = errs[k]; if (!firstBad) firstBad = k; } });
         if (firstBad) { var fb = document.getElementById('nc_' + firstBad); if (fb) fb.focus(); }
         er.textContent = d && d.error === 'auth' ? 'Your staff session has expired \\u2014 sign out and in again.' : (d && (d.err || d.error)) || 'No answer from the server \\u2014 try again.';
       })
       .catch(function () {
-        NC.busy = false; b.disabled = false; b.textContent = 'Save customer';
+        NC.busy = false; b.disabled = false; b.textContent = NC.save;
         er.textContent = 'No answer from the server. Look in #sos-jobs-in-out before trying again, in case it went through.';
       });
   }
