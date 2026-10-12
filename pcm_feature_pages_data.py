@@ -62,6 +62,13 @@ pages get indexed), both on This PC (FREE):
   Keep it, upgrade it or replace it? (KeepOrReplace.cs, v36)  Windows 11 / processor, SSD or hard drive + Windows' drive
                             check, memory, battery wear, processor age; NO prices; a failing drive first = back up. Picture =
                             QA demo (a sample Dell Latitude 7490). -> repair-or-replace-advisor (tool box).
+Added 12 Oct 2026 (owner: "Yeah, I do that uh, dementia clock thing"; Bing: "dementia clock" 1,300 searches in 3 months,
+the UK the top country), one new page, FREE (no IsPro in DayDate.cs / BuildScreensaver):
+  Dementia clock  the page's own clock, in the browser (day, morning/afternoon/evening/night by the app's own hours -
+                            5, 12, 17, 21 - the date, the time; year off by default, after Alzheimer's Society's calendar clock),
+                            plus the Day and date screensaver (DayDate.cs, v36): Photos & files > Screensaver & photos; day, date,
+                            part of the day and time; "Show my photos behind the words" (dimmed); "24-hour clock"; the words drift;
+                            a touch of the mouse or keyboard ends it. Start after 5/10/15/30 min; screen off 10 min..Never.
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
@@ -103,11 +110,12 @@ SHOTS = {
     'officelicence': ('/images/pcm-feat-officelicence-v36.webp', 1272, 332, 'The Microsoft Office row on This PC in 365 PC Manager: Microsoft 365 for home, licensed, Microsoft last confirmed the subscription on 7 October 2026, Office renews this by itself whenever the PC is online', ('My PC', 'This PC')),
     'keepreplace': ('/images/pcm-feat-keepreplace-v36.webp', 1272, 848, 'This PC in 365 PC Manager on a sample Dell Latitude 7490, about 8 years old: keep it, upgrade it or replace it? Back up first, then decide - the drive check is warning, it can probably move to Windows 11 for free, the battery holds about 61% of its charge, it has an SSD and 8 GB of memory', ('My PC', 'This PC')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
+    'daydate': ('/images/pcm-feat-daydate-v36.webp', 1272, 976, 'Screensaver and photos in 365 PC Manager: the Day and date screensaver picked, its preview showing Thursday, 8 October 2026, Afternoon, 4:47pm, with Start after 5, 10, 15 or 30 minutes and Use this, Try it now and Its settings buttons', ('Photos &amp; files', 'Screensaver &amp; photos')),
     'shares':  ('/images/pcm-feat-shares-v37.webp', 1296, 988, 'Shared folders in 365 PC Manager: this PC has Windows 11 24H2, which blocks folders shared without a password and insists on signed connections; NAS Photos on drive P opens fine, OFFICE-PC Accounts turned down the username or password, OLD-NAS Public is blocked because it lets anyone in without a password, each with a button to read the fix', ('Internet &amp; email', 'Shared folders')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.', 'shares': 'The real app (sample shared folders).'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.', 'shares': 'The real app (sample shared folders).', 'daydate': 'The real app, with the Day and date screensaver in its preview.'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -1306,6 +1314,186 @@ CR = {
     'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
+# ============================================================ 16. A dementia clock: the page's own clock + v36's Day and date screensaver
+# The clock runs in the browser: the day, the part of the day (the app's own hours: morning from 5, afternoon from 12, evening
+# from 17, night from 21), the date and the time. Year off unless ticked (Alzheimer's Society leaves it off its calendar clock).
+# Full screen + Screen Wake Lock where the browser has them; choices kept in localStorage ('dck1') on that device only.
+# /dementia-clock/#clock opens it straight away (a bookmark or home-screen link for the relative's tablet or laptop).
+_DCK_FACE = ('<div class="dck__face"><span class="dck__day" data-w="2.3"></span><span class="dck__part" data-w="1.45"></span>'
+             '<span class="dck__date" data-w="1.05"></span><span class="dck__time" data-w="1.05"></span></div>')
+_DCLOCK = ('<div class="dck" id="clock">'
+           '<div class="dck__screen dck--dark" id="dck-prev" role="img" aria-label="The clock">' + _DCK_FACE + '</div>'
+           '<p class="dck__go"><button type="button" class="button primary" id="dck-open">Open the clock full screen</button></p>'
+           '<fieldset class="dck__opts"><legend>What it shows</legend>'
+           '<label><input type="checkbox" id="dck-date" checked> The date</label>'
+           '<label><input type="checkbox" id="dck-year"> The year</label>'
+           '<label><input type="checkbox" id="dck-time" checked> The time</label>'
+           '<label><input type="checkbox" id="dck-24"> 24-hour clock</label></fieldset>'
+           '<fieldset class="dck__opts"><legend>Colours</legend>'
+           '<label><input type="radio" name="dck-col" value="dark" checked> White on black</label>'
+           '<label><input type="radio" name="dck-col" value="light"> Black on cream</label>'
+           '<label><input type="radio" name="dck-col" value="auto"> Cream by day, black at night</label></fieldset>'
+           '<p class="dck__note">Works in any up-to-date web browser on a computer, laptop or tablet. To open the clock straight away next time, bookmark this link or add it to the home screen: '
+           '<a href="#clock">365techies.co.uk/dementia-clock/#clock</a>. Nothing is sent anywhere: your choices are remembered on this device only.</p>'
+           '</div>'
+           '<div class="dck-full dck--dark" id="dck-full" role="dialog" aria-modal="true" aria-label="Day and date clock" tabindex="-1" hidden>' + _DCK_FACE +
+           '<div class="dck-bar"><span id="dck-hint"></span><span id="dck-wl"></span><button type="button" id="dck-fs">Full screen</button><button type="button" id="dck-x">Close</button></div></div>'
+           '<style>.dck{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}'
+           '.dck__screen{position:relative;height:0;padding-top:56%;border-radius:14px;overflow:hidden;border:8px solid #0b1019;box-shadow:0 22px 50px -26px rgba(0,0,0,.8)}'
+           '.dck__face{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-body);transition:transform 30s linear}'
+           '.dck__face span{display:inline-block;white-space:nowrap;line-height:1.12}.dck__day,.dck__part{font-weight:700}.dck__date{font-weight:600}.dck__time{font-weight:500}'
+           '.dck--dark{background:#000;color:#fff}.dck--dark .dck__part{color:#ffb066}.dck--dark .dck__time{color:#c4d0e0}'
+           '.dck--light{background:#fbf6ea;color:#15181d}.dck--light .dck__part{color:#0a55a3}.dck--light .dck__time{color:#3a4555}'
+           '.dck__go{margin:1rem 0 0;text-align:center}.dck__go .button{font-size:1.1rem;min-height:52px}'
+           '.dck__opts{margin:1rem 0 0;padding:0;border:0;min-width:0;display:flex;flex-wrap:wrap;gap:.5rem .6rem}'
+           '.dck__opts legend{float:left;width:100%;margin:0 0 .45rem;padding:0;font-size:.86rem;color:var(--muted)}'
+           '.dck__opts label{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;padding:.45rem .85rem;border-radius:999px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.25);font-size:.95rem;cursor:pointer}'
+           '.dck__opts input{width:20px;height:20px;margin:0;accent-color:#4fd8c4;flex:none}.dck__opts label:has(input:disabled){opacity:.5;cursor:default}'
+           '.dck__note{margin:.9rem 0 0;font-size:.82rem;line-height:1.5;color:var(--muted)}.dck__note a{color:var(--cyan-soft);overflow-wrap:anywhere}'
+           '.dck-full{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;overflow:hidden}.dck-full[hidden]{display:none!important}.dck-full:focus{outline:none}.dck-full.is-idle{cursor:none}'
+           '.dck-bar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.6rem;width:max-content;max-width:calc(100% - 24px);padding:.6rem;border-radius:16px;background:rgba(128,128,128,.22);transition:opacity .4s}'
+           '.dck--dark .dck-bar{background:rgba(28,30,34,.94)}.dck--light .dck-bar{background:rgba(228,223,210,.96)}'   # solid enough to read over the words for its 5 seconds
+           '.dck-full.is-idle .dck-bar{opacity:0;pointer-events:none}'
+           '.dck-bar button{min-height:52px;padding:.5rem 1.2rem;border-radius:12px;border:1px solid rgba(128,128,128,.55);background:rgba(128,128,128,.18);color:inherit;font:600 1.05rem var(--font-body);cursor:pointer}'
+           '.dck-bar span{font-size:.92rem;opacity:.85;text-align:center}.dck-bar span:empty{display:none}'
+           '@media (prefers-reduced-motion:reduce){.dck__face,.dck-bar{transition:none}}'
+           '@media (max-width:520px){.dck{padding:1rem .8rem}.dck__screen{padding-top:75%;border-width:6px}.dck__opts label{font-size:.9rem}}</style>'
+           '<script>(function(){var P=document.getElementById("dck-prev"),F=document.getElementById("dck-full");if(!P||!F||!document.body)return;'
+           'document.body.appendChild(F);'   # out of any transformed section, so position:fixed means the whole window
+           'function $(i){return document.getElementById(i);}'
+           'var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];'
+           'var o={date:1,year:0,time:1,h24:0,col:"dark"},k;'
+           'try{var s=JSON.parse(localStorage.getItem("dck1")||"null");if(s)for(k in o)if(s.hasOwnProperty(k))o[k]=s[k];}catch(e){}'
+           'function save(){try{localStorage.setItem("dck1",JSON.stringify(o));}catch(e){}}'
+           'var cb={date:$("dck-date"),year:$("dck-year"),time:$("dck-time"),h24:$("dck-24")},cols=document.getElementsByName("dck-col");'
+           'function sync(){for(var k in cb)cb[k].checked=!!o[k];cb.year.disabled=!o.date;for(var i=0;i<cols.length;i++)cols[i].checked=cols[i].value===o.col;}'
+           'function part(h){return h>=5&&h<12?"Morning":h>=12&&h<17?"Afternoon":h>=17&&h<21?"Evening":"Night";}'   # DayDate.cs's own hours
+           'function txt(n){var h=n.getHours(),m=n.getMinutes(),mm=(m<10?"0":"")+m;'
+           'return{day:DAYS[n.getDay()],part:part(h),date:n.getDate()+" "+MON[n.getMonth()]+(o.year?" "+n.getFullYear():""),'
+           'time:o.h24?(h<10?"0":"")+h+":"+mm:(h%12||12)+":"+mm+(h<12?"am":"pm"),dark:o.col==="dark"||(o.col==="auto"&&(h<7||h>=21))};}'
+           # each visible line gets its share of 80% of the height; if any would be wider than 88% of the screen, ALL shrink
+           # together, so the day stays the biggest word on a narrow phone too
+           'function fit(b){var W=b.clientWidth,H=b.clientHeight;if(!W||!H)return;var c=b.querySelector(".dck__face").children,v=[],f=[],t=0,sc=1,i;'
+           'for(i=0;i<c.length;i++)if(c[i].style.display!=="none"){v.push(c[i]);t+=+c[i].getAttribute("data-w");}'
+           'for(i=0;i<v.length;i++){f[i]=H*.8*v[i].getAttribute("data-w")/t/1.12;v[i].style.fontSize=f[i]+"px";sc=Math.min(sc,W*.88/v[i].offsetWidth);}'
+           'if(sc<1)for(i=0;i<v.length;i++)v[i].style.fontSize=f[i]*sc+"px";}'
+           'function paint(b,t){var c=b.querySelector(".dck__face").children;c[0].textContent=t.day;c[1].textContent=t.part;c[2].textContent=t.date;c[3].textContent=t.time;'
+           'c[2].style.display=o.date?"":"none";c[3].style.display=o.time?"":"none";b.classList.remove(t.dark?"dck--light":"dck--dark");b.classList.add(t.dark?"dck--dark":"dck--light");fit(b);}'
+           # the words drift slowly (30 s glides; with reduced motion, a still move every 10 minutes) so no spot shows the same thing for long
+           'var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches,last=0;'
+           'function drift(now){if(now-last<(rm?600000:30000))return;last=now;var bs=[P,F];'
+           'for(var i=0;i<2;i++){var b=bs[i],x=(Math.random()*2-1)*b.clientWidth*.035,y=(Math.random()*2-1)*b.clientHeight*.035;b.querySelector(".dck__face").style.transform="translate("+x.toFixed(1)+"px,"+y.toFixed(1)+"px)";}}'
+           'var key="",tm;'
+           'function tick(){var n=new Date(),t=txt(n),kk=JSON.stringify(t)+JSON.stringify(o)+(F.hidden?0:1);'
+           'if(kk!==key){key=kk;paint(P,t);if(!F.hidden)paint(F,t);P.setAttribute("aria-label","The clock: "+t.day+" "+t.part.toLowerCase()+(o.date?", "+t.date:"")+(o.time?", "+t.time:""));}'
+           'drift(n.getTime());clearTimeout(tm);tm=setTimeout(tick,1030-n.getMilliseconds());}'
+           'function again(){key="";tick();}'
+           'var lock=null,fsOn=false,idle;'
+           'function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}'
+           'function canFs(){return!!(F.requestFullscreen||F.webkitRequestFullscreen);}'
+           'function goFs(){var r=F.requestFullscreen||F.webkitRequestFullscreen;if(!r||fsEl())return;try{var p=r.call(F);if(p&&p.then)p.then(null,function(){});}catch(e){}}'
+           'function hint(){$("dck-hint").textContent=!fsEl()&&canFs()?"Tap the screen to fill it.":"";$("dck-fs").style.display=!fsEl()&&canFs()?"":"none";}'
+           'function wake(){var w=$("dck-wl");if(F.hidden)return;if(!("wakeLock" in navigator)){w.textContent="This browser can\\u2019t keep the screen on by itself: see step 3 on the page.";return;}'
+           'try{navigator.wakeLock.request("screen").then(function(l){lock=l;w.textContent="Keeping the screen on.";l.addEventListener("release",function(){lock=null;});},function(){w.textContent="Couldn\\u2019t keep the screen on: see step 3 on the page.";});}catch(e){}}'
+           'function bar(){F.classList.remove("is-idle");clearTimeout(idle);idle=setTimeout(function(){F.classList.add("is-idle");},5000);}'
+           'function show(full){F.hidden=false;document.documentElement.style.overflow="hidden";last=0;hint();again();if(full)goFs();wake();bar();try{F.focus();}catch(e){}}'
+           'function hide(){if(fsEl()){var x=document.exitFullscreen||document.webkitExitFullscreen;try{if(x)x.call(document);}catch(e){}}'
+           'F.hidden=true;document.documentElement.style.overflow="";if(lock){try{lock.release();}catch(e){}lock=null;}'
+           'if(location.hash==="#clock"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);again();}'
+           # leaving full screen (Esc, or Back on a tablet) closes the clock too
+           'function fsc(){var on=!!fsEl();if(fsOn&&!on&&!F.hidden)hide();fsOn=on;hint();again();}'
+           'document.addEventListener("fullscreenchange",fsc);document.addEventListener("webkitfullscreenchange",fsc);'
+           'F.addEventListener("mousemove",bar);F.addEventListener("touchstart",bar,{passive:true});'
+           'F.addEventListener("click",function(e){if(e.target.tagName!=="BUTTON")goFs();bar();});'
+           '$("dck-fs").addEventListener("click",function(e){e.stopPropagation();goFs();bar();});'
+           '$("dck-x").addEventListener("click",function(e){e.stopPropagation();hide();});'
+           '$("dck-open").addEventListener("click",function(){show(true);});'
+           'document.addEventListener("keydown",function(e){if(F.hidden)return;if(e.key==="Escape"||e.keyCode===27)hide();else bar();});'
+           'document.addEventListener("click",function(e){var a=e.target;while(a&&a.tagName!=="A")a=a.parentNode;if(a&&a.getAttribute("href")==="#clock"){e.preventDefault();show(true);}});'
+           'window.addEventListener("hashchange",function(){if(location.hash==="#clock"&&F.hidden)show(false);});'
+           'for(k in cb)(function(k){cb[k].addEventListener("change",function(){o[k]=cb[k].checked?1:0;sync();save();again();});})(k);'
+           'for(var j=0;j<cols.length;j++)cols[j].addEventListener("change",function(){if(this.checked){o.col=this.value;save();again();}});'
+           'window.addEventListener("resize",again);'
+           'document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"){again();wake();}});'
+           'sync();if(location.hash==="#clock")show(false);else tick();})();</script>')
+
+_UHS = '<a href="https://www.uhs.nhs.uk/departments/medicine-for-older-people/services/dementia/enhanced-dementia-care-ward/why-is-it-important-to-have-clocks" rel="noopener" target="_blank">University Hospital Southampton</a>'
+_ALZ_CLOCK = '<a href="https://shop.alzheimers.org.uk/products/large-square-calendar-clock-white" rel="noopener" target="_blank">Alzheimer&rsquo;s Society</a>'
+
+DC = {
+    'slug': 'dementia-clock',
+    'title': 'Free Dementia Clock: Day and Date on Any Screen',
+    'metaDesc': 'A free dementia clock: the day, morning or afternoon, the date and the time in big, clear words. Full screen on an old laptop or tablet. No sign-up.',
+    'ogTitle': 'A free dementia clock for any laptop or tablet',
+    'crumbName': 'Dementia Clock',
+    'eyebrow': '// A FREE DAY AND DATE CLOCK',
+    'h1': 'A free <em class="grad grad--cyan">dementia clock</em> for any screen',
+    'lede': 'The day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in big, clear words. Open it full screen on a spare laptop or tablet and it becomes a day clock for someone living with dementia. Free, no sign-up, and nothing is sent anywhere.',
+    'chips': ['Free, no sign-up', 'Big, clear words', 'Any laptop or tablet'],
+    'primaryCta': ['Open the clock', '#clock'], 'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We can turn an old Windows laptop into a day clock for a relative, or put the Day and date screensaver on their PC. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it shows', 'The day, morning, afternoon, evening or night, the date and the time, in big, clear words.'),
+        ('What it costs', 'Nothing. No sign-up, no adverts, and nothing you choose is sent anywhere.'),
+        ('What you need', 'Any computer, laptop or tablet with an up-to-date web browser, left plugged in.'),
+        ('Clocks going forward or back', 'Handled, as long as the device sets its own time and is on UK time.'),
+        ('The year', 'Left off unless you tick it: Alzheimer&rsquo;s Society notes the year can confuse some people.'),
+        ('On a Windows PC', 'Our free 365 PC Manager app adds a Day and date screensaver that appears by itself.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE CLOCK', 'h2': 'A free day and date clock, right here',
+         'html': '<p>It shows the day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in words big enough to read across a room. Press the button and it fills the screen. Choose what it shows underneath; it remembers your choices on this device.</p>' + _DCLOCK},
+        {'eyebrow': '/02 &mdash; WHY IT HELPS', 'h2': 'Why a day clock helps someone with dementia',
+         'html': f'<p>We use the time to plan our day: meals, going out, going to bed. {_UHS}&rsquo;s dementia team explains that losing track of it can leave someone disorientated, anxious and confused, and that many people with dementia lose the meaning of an ordinary clock face. A day clock spells it out in words instead.</p>'
+                 '<p>That&rsquo;s why the day and the part of the day are the biggest words here, and the time is smaller. '
+                 f'{_ALZ_CLOCK} leaves the year off one of its calendar clocks because it may confuse some people, so this clock leaves it off too, unless you tick <strong>The year</strong>.</p>'
+                 '<p>It won&rsquo;t suit everyone: some people find a screen confusing, or stop noticing it. Try it for a week or two. For advice on what else might help, ask the memory service or GP, or see <a href="https://www.alzheimers.org.uk/" rel="noopener" target="_blank">Alzheimer&rsquo;s Society</a>.</p>'},
+        {'eyebrow': '/03 &mdash; SET IT UP', 'h2': 'Turn an old laptop or tablet into a day clock',
+         'html': '<ol>'
+                 '<li><strong>Plug it in for good.</strong> A clock on battery goes flat. An old laptop or tablet that&rsquo;s too slow for anything else is ideal.</li>'
+                 '<li><strong>Open the clock.</strong> Press <strong>Open the clock full screen</strong> above, or go straight to <strong>365techies.co.uk/dementia-clock/#clock</strong>. Bookmark it, or on an Android tablet use Chrome&rsquo;s menu and <strong>Add to Home screen</strong>, so it&rsquo;s one tap next time.</li>'
+                 '<li><strong>Keep the screen on.</strong> In Chrome and Edge the clock asks the device to keep the screen on while it&rsquo;s showing, and says if it can&rsquo;t. To be sure, on Windows go to Settings, System, then Power (Power &amp; battery on a laptop) and set the screen and sleep times for when it&rsquo;s plugged in to <strong>Never</strong>. On an Android tablet: Settings, Display, Screen timeout, the longest time.</li>'
+                 '<li><strong>Let it set its own time.</strong> Check the device sets the time automatically, in UK time, so it changes for British Summer Time by itself.</li>'
+                 '<li><strong>Quiet it down.</strong> Turn off notifications and sounds so nothing pops up over the clock: on Windows, Settings, System, Notifications; on Android, Do not disturb.</li>'
+                 '<li><strong>Put it where it&rsquo;s seen.</strong> Facing their chair or bed, at eye level, out of bright sunlight. White on black is gentler at night; black on cream is easiest to read in a bright room.</li>'
+                 '<li><strong>Check it when you visit.</strong> Windows sometimes restarts overnight to finish updates, and then the clock needs opening again.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; ON A WINDOWS PC', 'h2': 'On a Windows PC: a Day and date screensaver',
+         'html': '<p>If they still use their Windows PC, a screensaver can be the clock: it appears by itself whenever the PC is left alone, and goes at a touch of the mouse, so the PC still works for everything else.</p>__APP_BOX_DAYDATE__'
+                 '<ol style="margin-top:1.2rem">'
+                 '<li>In the app, open <strong>Photos &amp; files</strong>, then <strong>Screensaver &amp; photos</strong>, and pick <strong>Day and date</strong>.</li>'
+                 '<li>Choose <strong>Start after 5 min</strong>. If the PC is only theirs, leave <strong>Ask for my password</strong> unticked. Press <strong>Use this</strong>. <strong>Its settings</strong> adds their photos behind the words, or a 24-hour clock.</li>'
+                 '<li>Under <strong>Turn the screen off after</strong>, choose <strong>Never</strong>, and set Windows&rsquo; sleep time to Never when plugged in (step 3 above).</li>'
+                 '</ol>'},
+        {'eyebrow': '/05 &mdash; SCREEN OR SHOP CLOCK?', 'h2': 'A screen, or a clock from a shop?',
+         'html': '<p>A plug-in day clock from a shop &mdash; Alzheimer&rsquo;s Society sells several &mdash; does one job, needs no setting up, and radio-controlled ones change for British Summer Time by themselves. '
+                 'This clock is free if you have a spare screen, shows bigger words than most, and lets you choose exactly what it shows.</p>'
+                 '<p>A laptop or tablet left on all day uses some electricity; our <a href="/how-much-does-it-cost-to-run-a-pc-uk/">running cost calculator</a> works out what.</p>'},
+        {'eyebrow': '/06 &mdash; WANT A HAND?', 'h2': 'We can set it up for you',
+         'html': _call_us('We can set up an old Windows laptop as a day clock for a relative, or put the Day and date screensaver on their PC.')},
+    ],
+    'howToName': 'How to turn an old laptop or tablet into a dementia clock',
+    'howToSteps': [
+        {'name': 'Plug it in', 'text': 'Use a spare laptop or tablet and leave it plugged in.'},
+        {'name': 'Open the clock full screen', 'text': 'Go to 365techies.co.uk/dementia-clock/#clock and choose full screen.'},
+        {'name': 'Keep the screen on', 'text': 'Set the screen and sleep times for when it is plugged in to Never.'},
+        {'name': 'Let it set its own time', 'text': 'Check the device sets the time automatically in UK time, so it changes for British Summer Time.'},
+        {'name': 'Turn off notifications', 'text': 'Switch off notifications and sounds so nothing appears over the clock.'},
+        {'name': 'Put it where it is seen', 'text': 'Face it towards their chair or bed, at eye level, out of bright sunlight.'},
+    ],
+    'faqs': [
+        {'q': 'What is a dementia clock?', 'a': '<p>A clock that spells out the day, the part of the day and often the date in words, for people who find an ordinary clock face hard to follow. Many show &ldquo;Tuesday morning&rdquo; as well as the time.</p>'},
+        {'q': 'Is this dementia clock really free?', 'a': '<p>Yes. No sign-up, no adverts, and nothing you choose is sent anywhere. It runs in your web browser.</p>'},
+        {'q': 'Will it change when the clocks go forward or back?', 'a': '<p>Yes, as long as the device sets its own time automatically and is on UK time. The clock reads the device&rsquo;s own time.</p>'},
+        {'q': 'Does it need the internet?', 'a': '<p>Only to open it. Once it&rsquo;s showing, it keeps going from the device&rsquo;s own clock if the internet drops. If the page is closed or the device restarts, it needs the internet to open again.</p>'},
+        {'q': 'Why doesn&rsquo;t it show the year?', 'a': '<p>Alzheimer&rsquo;s Society leaves the year off one of its calendar clocks because it may confuse some people, so we leave it off unless you tick The year.</p>'},
+        {'q': 'Will leaving it on mark the screen?', 'a': '<p>The words drift slowly round the screen, so no part of it shows the same thing for long. Turning the brightness down a little helps too.</p>'},
+        {'q': 'Can a Windows PC show it as a screensaver?', 'a': '<p>Yes. Our free 365 PC Manager app adds a Day and date screensaver: Photos &amp; files, then Screensaver &amp; photos. It can show your own photos behind the words.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/setting-up-a-computer-for-an-older-relative/">setting up a computer for an older relative</a>, <a href="/laptop-set-up-for-elderly-parent/">a laptop set up for an elderly parent</a>, <a href="/how-to-set-an-alarm-on-your-computer/">set an alarm on your computer</a>, <a href="/how-to-listen-to-the-radio-on-your-computer/">the radio on your computer</a>, <a href="/worried-about-a-parent-being-scammed/">worried about a parent being scammed?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
 
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
@@ -1385,9 +1573,14 @@ def pages(setup_url):
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
+        '__APP_BOX_DAYDATE__': _app_box('daydate', 'Day and date: a clock screensaver for Windows',
+            '<p style="margin:0">Pick <strong>Day and date</strong> and it fills the screen whenever the PC is resting: the day, the date, morning, afternoon, evening or night, and the time, in big, clear words. '
+            'It can show your own photos behind the words, dimmed so they stay readable, and use a 24-hour clock. The words drift slowly round the screen. '
+            'The same page sets when the screen switches off &mdash; choose <strong>Never</strong> for a clock that stays on.</p>', setup_url,
+            ' A touch of the mouse or keyboard brings the desktop back.'),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
