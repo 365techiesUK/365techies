@@ -8,7 +8,8 @@
  * $BUY_URL = their checkout link ("{id}" is replaced with the install's anonymous id), $BUY_PRICE = the price as it should
  * read beside the button, $BUY_ON = true; deploy. To stop it at once without a deploy: create api/pcm-buy.off on the server.
  */
-$BUY_ON = false;
+// SWITCHED ON 12 Oct 2026 (owner: "go ahead and put it live"), after a PayPal sandbox sale + refund passed on the live site.
+$BUY_ON = true;
 // 12 Oct 2026: Lemon Squeezy declined the store, so the Buy button opens OUR buy page, which takes the payment with PayPal
 // (pcm-plus-pp-lib.php). The page reads the price and the countries below; PayPal's keys are in api/pcm-paypal-key.php
 // (server-only, the owner's). (Was the Lemon Squeezy checkout, product 1430686.)
