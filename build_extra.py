@@ -19423,7 +19423,7 @@ info_page(
             <li><strong>The computer is talking (Narrator):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
             <li><strong>Black screen with bright text (high contrast):</strong> <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em>.</li>
             <li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings &rarr; Accessibility &rarr; Colour filters.</li>
-            <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard.</li>
+            <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard. Our page on <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a> has every step, and how to stop it coming back.</li>
           </ul>
           <p>For more, see <a href="https://www.microsoft.com/en-gb/accessibility" target="_blank" rel="noopener">Microsoft Accessibility</a> and the charity <a href="https://abilitynet.org.uk/" target="_blank" rel="noopener">AbilityNet</a>, which offers free advice. A quick note: we support Windows and Android devices remotely, but not Apple Macs, iPhones or iPads.</p>""" + PRINT_BTN,
   faqs=[
@@ -24431,6 +24431,14 @@ FIX_FLOW_AUTO_SKIP.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
 FIX_PANEL_OFF.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
 bp._APPLE_NOTICE_SKIP.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
 for _np in SEO_WAVE14_PAGES:
+    build_new_page(_np)
+
+# 12 Oct 2026 (owner: "go ahead with the sticky keys page"): accessibility symptom pages - a setting that came on by
+# accident, put right on the page. Data, Bing figures and the Microsoft pages each step was checked against:
+# accessibility_pages_data.py.
+from accessibility_pages_data import ACCESS_PAGES, ACCESS_FLOWS
+FIX_FLOW_PAGES.update(ACCESS_FLOWS)
+for _np in ACCESS_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

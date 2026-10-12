@@ -1464,6 +1464,10 @@
   "h": "ed01b6d9c0eeed57",
   "last": "2026-09-05"
  },
+ "how-to-turn-off-sticky-keys": {
+  "first": "2026-10-12",
+  "h": "7e17f1a0954d6731"
+ },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
   "h": "331eebd487facc0a",
@@ -3725,7 +3729,7 @@
  },
  "windows-accessibility-features-guide": {
   "first": "2026-07-28",
-  "h": "e2ed5de9ceb0be7f",
+  "h": "756e9ee6f0075743",
   "last": "2026-10-12"
  },
  "windows-reinstall": {
