@@ -55,9 +55,18 @@ function plus_config($file = null) {
     $usd = function ($n) use ($g) { $v = trim($g($n)); return preg_match('/^\d{1,4}(\.\d{1,2})?$/', $v) && (float)$v > 0 ? $v : ''; };
     // 12 Oct 2026: PayPal - where we may sell as the seller ourselves (pcm-plus-pp-lib.php)
     $pp = array(); foreach (preg_split('/[\s,]+/', strtoupper($g('PP_COUNTRIES'))) as $cc) if (preg_match('/^[A-Z]{2}$/', $cc)) $pp[] = $cc;
+    // 12 Oct 2026: FastSpring (merchant of record) sells everywhere else (pcm-plus-fs-lib.php). Its popup checkout is
+    // "<store>.test.onfastspring.com/<popup>" while testing and "<store>.onfastspring.com/<popup>" when live.
+    $fsf = strtolower($g('FS_STOREFRONT')); $fsp = function ($n) use ($g) { $v = strtolower($g($n)); return preg_match('/^[a-z0-9][a-z0-9-]{0,59}$/', $v) ? $v : ''; };
     return array('on' => (bool)preg_match('/^[ \t]*\$BUY_ON\s*=\s*true\s*;/mi', $src), 'url' => preg_match('#^https://[^\s<>"\']+$#', $url) ? $url : '', 'price' => plus_cut($g('BUY_PRICE'), 40), 'provider' => preg_replace('/[^a-z]/', '', strtolower($g('BUY_PROVIDER'))),
         'usd' => $usd('BUY_USD'), 'low_usd' => $usd('BUY_LOW_USD'), 'low_price' => plus_cut($g('BUY_LOW_PRICE'), 40), 'low_code' => preg_match('/^[A-Za-z0-9_-]{3,40}$/', $g('BUY_LOW_CODE')) ? $g('BUY_LOW_CODE') : '',
-        'pp_countries' => $pp);
+        'pp_countries' => $pp,
+        'fs_storefront' => preg_match('#^[a-z0-9-]+(\.test)?\.onfastspring\.com/[a-z0-9-]+$#', $fsf) ? $fsf : '', 'fs_product' => $fsp('FS_PRODUCT'), 'fs_product_low' => $fsp('FS_PRODUCT_LOW'));
+}
+// FastSpring's mode from the storefront: '' (not set up) | 'test' (pretend money) | 'live'
+function plus_fs_mode($cfg) {
+    if (!is_array($cfg) || ($cfg['fs_storefront'] ?? '') === '' || ($cfg['fs_product'] ?? '') === '') return '';
+    return strpos($cfg['fs_storefront'], '.test.onfastspring.com/') !== false ? 'test' : 'live';
 }
 function plus_enabled($off = null, $config = null) {
     $c = plus_config($config);
@@ -76,16 +85,21 @@ function plus_offer_out($country, $id = '', $off = null, $config = null) {
     if (plus_no_sale($c)) return array();   // nothing to buy there: the free app, as if the paid app were switched off
     $cfg = plus_config($config);
     $paypal = $cfg['provider'] === 'paypal';
-    // 12 Oct 2026, PayPal: we are the seller, so only in the countries pcm-buy-config.php $PP_COUNTRIES lists (no tax to register)
-    if ($paypal && !in_array($c, $cfg['pp_countries'], true)) return array();
+    // 12 Oct 2026, PayPal: we are the seller, so only in the countries pcm-buy-config.php $PP_COUNTRIES lists (no tax to register).
+    // Everywhere else FastSpring sells it (it is the seller and pays the tax) - but only once its checkout is LIVE: while it
+    // is testing, a buyer abroad would land on a checkout that cannot take real money.
+    if ($paypal && !in_array($c, $cfg['pp_countries'], true) && plus_fs_mode($cfg) !== 'live') return array();
     $url = str_replace('{id}', rawurlencode((string)$id), $cfg['url']);
     // the lower price: with PayPal our own buy page charges it (pcm-plus-pp-lib.php pp_offer); with Lemon Squeezy, its
     // discount code, already filled in at its checkout (checkout[discount_code])
-    $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '' && ($paypal || $cfg['low_code'] !== '');
+    // (FastSpring: its own cheaper product, pcm-buy-config.php $FS_PRODUCT_LOW)
+    $viaFs = $paypal && !in_array($c, $cfg['pp_countries'], true);
+    $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '' && ($viaFs ? $cfg['fs_product_low'] !== '' : ($paypal || $cfg['low_code'] !== ''));
     if ($low && !$paypal) $url .= (strpos($url, '?') === false ? '?' : '&') . 'checkout[discount_code]=' . rawurlencode($cfg['low_code']);
     $line = $low ? $cfg['low_price'] : $cfg['price'];
     $usd = $low ? $cfg['low_usd'] : $cfg['usd'];
-    $local = $usd !== '' ? plus_local_amount($c, (float)$usd) : '';
+    // (no "about €18" where FastSpring sells it: its checkout adds any tax and shows the real amount in their money)
+    $local = $usd !== '' && !$viaFs ? plus_local_amount($c, (float)$usd) : '';
     return array('offer' => 'buy', 'buy_url' => $url, 'buy_price' => $local !== '' ? plus_price_line($usd, $local, $line) : $line);
 }
 

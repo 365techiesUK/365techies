@@ -21,7 +21,8 @@ function check($ok, $what, $detail = '') { global $fails; echo ($ok ? "  PASS  "
 echo "A  switched off until the owner says go\n";
 check(plus_offer_out('US', 'abc') === array(), 'no config: a check-in\'s answer gains nothing (the app behaves as before)');
 copy(__DIR__ . '/pcm-buy-config.php', PLUS_CONFIG);
-check(plus_offer_out('US', 'abc') === array() && !plus_config()['on'], 'the config as shipped (8 Oct 2026): switched off');
+// 12 Oct 2026 (owner: "go ahead and put it live"): switched ON - PayPal in its countries, FastSpring still on its TEST checkout
+check(plus_config()['on'] && (plus_offer_out('US', 'abc')['offer'] ?? '') === 'buy' && plus_offer_out('DE', 'abc') === array(), 'the config as shipped (12 Oct 2026): ON - the US is offered Buy; Germany not until FastSpring is live');
 file_put_contents(PLUS_CONFIG, "<?php\n\$BUY_ON = true;\n\$BUY_URL = '';\n");
 check(plus_offer_out('US', 'abc') === array(), 'switched on, but no checkout link: still nothing');
 file_put_contents(PLUS_CONFIG, "<?php\n\$BUY_ON = false;\n\$BUY_URL = 'https://pay.example.com/checkout?id={id}';\n\$BUY_PRICE = '\$29 a year';\n\$BUY_PROVIDER = 'Paddle';\n");
@@ -320,7 +321,7 @@ check(plus_fx_parse('<Cube time=\'2026-10-09\'><Cube currency=\'USD\' rate=\'9.9
 // the shipped config: the same switches, Buy still off
 copy(__DIR__ . '/pcm-buy-config.php', PLUS_CONFIG);
 $sc = plus_config();
-check(!$sc['on'] && $sc['usd'] === '19.99' && $sc['low_usd'] === '9.99' && $sc['low_code'] === 'FAIRPRICE' && $sc['low_price'] === 'US$9.99 for 1 year - does not renew', 'the shipped config: US$19.99 / US$9.99 with FAIRPRICE, still switched off');
+check($sc['on'] && $sc['usd'] === '19.99' && $sc['low_usd'] === '9.99' && $sc['low_price'] === 'US$9.99 for 1 year - does not renew' && $sc['fs_product'] === 'unlock-everything' && $sc['fs_product_low'] === 'unlock-everything-low', 'the shipped config: US$19.99 / US$9.99, switched on, the two FastSpring products');
 
 array_map('unlink', glob("$TMP/*")); @rmdir($TMP);
 echo "\n" . ($fails ? "pcm-plus-test: $fails FAILED\n" : "pcm-plus-test: all passed\n");

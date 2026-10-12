@@ -33,6 +33,14 @@ $BUY_PROVIDER = 'paypal';
 // plus S$1 million worldwide; Hong Kong has none). NOT the EU: it taxes a non-EU seller's software from the FIRST sale. Not
 // Switzerland (CHF 100,000 counts our WHOLE turnover). Check this list with the accountant; add a country only after that.
 $PP_COUNTRIES = 'US,CA,AU,NZ,NO,JP,SG,HK';
+// FastSpring (12 Oct 2026, owner: "take it over and do it"): a merchant of record - IT is the seller and pays the VAT / sales
+// tax - so it sells everywhere PayPal does not (never the UK or the no-sale countries). pcm-plus-fs-lib.php has the rules.
+// The popup checkout: "365techies.test.onfastspring.com/popup-365techies" while TESTING (pretend money - the app offers
+// nothing there yet); take out ".test" to go LIVE, once FastSpring has activated the store (contract, payout, tax details).
+// The products' ids in FastSpring: US$19.99, and US$9.99 where PLUS_LOW_PRICE (pcm-plus-lib.php) applies.
+$FS_STOREFRONT = '365techies.test.onfastspring.com/popup-365techies';
+$FS_PRODUCT = 'unlock-everything';
+$FS_PRODUCT_LOW = 'unlock-everything-low';
 // Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not
 // listed gets a key for a year (a subscription's key then follows its renewals).
 $LS_VARIANTS = '';

@@ -1191,8 +1191,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "bce3527471592a9f",
-  "last": "2026-10-11"
+  "h": "54f1a2b54f2197c9",
+  "last": "2026-10-12"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -2758,7 +2758,7 @@
  },
  "pc-manager-buy": {
   "first": "2026-10-12",
-  "h": "0c25c07d3d6d5432",
+  "h": "dd537c7ab813e927",
   "last": "2026-10-12"
  },
  "pc-manager-licence": {

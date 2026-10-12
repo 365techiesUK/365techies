@@ -4,6 +4,7 @@
  *
  * Our buy page (/pc-manager-buy/?install=<id>):
  *   {do: 'config', install}  -> {ok, available, reason, usd, line, client_id, env}   (the price for the install's country)
+ *       12 Oct 2026: outside PayPal's countries -> via:'fastspring', storefront, product, env 'test'|'live' (pcm-plus-fs-lib.php)
  *   {do: 'create', install}  -> {ok, id}     a PayPal order at OUR price (PayPal's buttons call this)
  *   {do: 'capture', order}   -> {ok, state, key, email, note}   take the payment, make the key, email it
  * PayPal's webhook (a POST carrying PayPal-Transmission-* headers): genuine only when PayPal's own verify call says so;
@@ -18,6 +19,7 @@ header('X-Robots-Tag: noindex, nofollow');
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') { http_response_code(405); echo '{"ok":false,"error":"post"}'; exit; }
 $raw = (string)file_get_contents('php://input', false, null, 0, 200000);
 require_once __DIR__ . '/pcm-plus-pp-lib.php';
+require_once __DIR__ . '/pcm-plus-fs-lib.php';    // 12 Oct 2026: FastSpring sells where PayPal does not
 require_once __DIR__ . '/pcm-mailmove-lib.php';   // mm_rate_take, mm_ip_key
 
 function ppo($a, $code = 200) { http_response_code($code); echo json_encode($a, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); exit; }
@@ -51,7 +53,20 @@ if ($do === 'config' || $do === 'create') {
     $tcc = strtoupper(preg_replace('/[^A-Za-z]/', '', substr((string)($in['test_cc'] ?? ''), 0, 2)));
     $tcr = $tcc !== '' ? pp_creds() : null;
     if (strlen($tcc) === 2 && $tcr && $tcr['env'] === 'sandbox') $country = $tcc;
+    // ... and with FastSpring's TEST checkout, for a country PayPal does not sell to (so ?cc= never reaches live PayPal)
+    elseif (strlen($tcc) === 2 && fs_mode() === 'test' && !in_array($tcc, pp_countries(), true)) $country = $tcc;
     $offer = pp_offer($country);
+    // 12 Oct 2026: not one of PayPal's countries -> FastSpring sells it there (pcm-plus-fs-lib.php); the page opens its checkout
+    if (!$offer['ok'] && !in_array($offer['reason'], array('uk', 'no_sale'), true)) {
+        $fo = fs_offer($country);
+        if (!$fo['ok'] && in_array($fo['reason'], array('uk', 'no_sale'), true)) $offer = array('ok' => false, 'reason' => $fo['reason']);   // the clearer answer
+        if ($fo['ok']) {
+            if ($do === 'create') ppo(array('ok' => false, 'error' => 'fastspring'));
+            ppo(array('ok' => true, 'available' => true, 'reason' => '', 'country' => $country, 'via' => 'fastspring',
+                'usd' => $fo['usd'], 'line' => $fo['line'], 'local' => $fo['local'], 'client_id' => '', 'env' => $fo['mode'],
+                'storefront' => $fo['storefront'], 'product' => $fo['product']));
+        }
+    }
     if ($do === 'config') {
         $cr = pp_creds();
         ppo(array('ok' => true, 'available' => $offer['ok'], 'reason' => $offer['reason'], 'country' => $country,

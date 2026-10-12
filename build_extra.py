@@ -16665,6 +16665,19 @@ def _policy_stamp(key, text):
     return "Last updated: " + cur["date"]
 
 
+# 12 Oct 2026: FastSpring (our reseller, a merchant of record: the seller, it pays the tax) sells "Unlock everything" outside
+# the UK wherever PayPal is not used. The privacy, terms and licence pages say so ONLY once its checkout is live
+# (pcm-buy-config.php $FS_STOREFRONT without ".test"), so they never describe a checkout that cannot take money yet; while it
+# is testing they build exactly as before. Going live = edit that line, rebuild, push: the pages follow.
+def _fs_live():
+    try:
+        _src = open(_os_pcm.path.join(bp.BASE, "api", "pcm-buy-config.php"), encoding="utf-8").read()
+        _m = re.search(r"^[ \t]*\$FS_STOREFRONT\s*=\s*'([^']*)'", _src, re.M)
+        return bool(_m and re.match(r"^[a-z0-9-]+\.onfastspring\.com/[a-z0-9-]+$", _m.group(1).strip().lower()))
+    except Exception:
+        return False
+_FS_LIVE = _fs_live()
+
 # ---- Privacy Policy
 # Assigned first so the "last updated" stamp can hash the wording itself. The old
 # label was hand-typed and said "June 2026" on text edited on 18 August; a date
@@ -16730,9 +16743,10 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           </ul>
 
           <h2 id="unlock-everything" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Buying &ldquo;Unlock everything&rdquo; for 365 PC Manager (outside the UK)</h2>
-          <p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>). We, 365 Techies Ltd, sell it, and <strong>PayPal</strong> takes the payment under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>. Your card or PayPal account details stay with PayPal: we never see them.</p>
+          <p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>). We, 365 Techies Ltd, sell it, and <strong>PayPal</strong> takes the payment under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>. Your card or PayPal account details stay with PayPal: we never see them.</p>""" + ("""
+          <p>Everywhere else outside the UK the key is sold by <strong>FastSpring</strong>, our reseller: FastSpring is the seller, takes the payment and handles any sales tax, under its own <a href="https://fastspring.com/privacy/" rel="noopener">privacy policy</a>. Your card details stay with FastSpring: we never see them.</p>""" if _FS_LIVE else "") + """
           <ul>
-            <li><strong>What PayPal tells us about your payment:</strong> your name, your email address, the payment and order numbers and the amount you paid. We keep your email address, those numbers and the amount, with the anonymous install number of the PC you bought from and whether it was a test. We don&rsquo;t keep your name.</li>
+            <li><strong>What PayPal""" + (" or FastSpring" if _FS_LIVE else "") + """ tells us about your payment:</strong> your name, your email address, the payment and order numbers and the amount you paid""" + (" (FastSpring also tells us your country)" if _FS_LIVE else "") + """. We keep your email address, those numbers and the amount, with the anonymous install number of the PC you bought from and whether it was a test. We don&rsquo;t keep your name.</li>
             <li><strong>What we use it for:</strong> emailing you your key, sending a new one if you lose it, refunds and card disputes, and keeping each key to its three PCs. We keep the key itself only in scrambled form.</li>
             <li><strong>Our legal basis:</strong> performing our contract with you, our legitimate interest in stopping fraud and key sharing, and our legal duty to keep financial records.</li>
             <li><strong>How long we keep it:</strong> the order record for six years, like our other financial records (see below).</li>
@@ -16765,7 +16779,8 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Slack</strong> &mdash; our own internal team channel, where new enquiries and messages are relayed so somebody picks them up.</li>
             <li><strong>Google</strong> &mdash; Analytics (only with your consent), and the mapping data behind our free tools. Google&rsquo;s own attribution appears on any map we show.</li>
             <li><strong>Partnerize</strong> &mdash; the affiliate network behind the small number of clearly-labelled sponsored links on this site.</li>
-            <li><strong>PayPal</strong> &mdash; takes the payment for 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK, and tells us your email address and payment, as described above.</li>
+            <li><strong>PayPal</strong> &mdash; takes the payment for 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK, and tells us your email address and payment, as described above.</li>""" + ("""
+            <li><strong>FastSpring</strong> &mdash; our reseller for 365 PC Manager&rsquo;s &ldquo;Unlock everything&rdquo; key outside the UK where PayPal isn&rsquo;t used: it sells you the key, takes the payment and tells us your email address, country and order, as described above.</li>""" if _FS_LIVE else "") + """
           </ul>
           <p>We may also share information where the law requires it. Some of these providers are based outside the UK, or process data outside it; where that happens we rely on the UK&rsquo;s approved transfer safeguards, and we will tell you more if you ask.</p>
 
@@ -16815,7 +16830,7 @@ info_page(
   lede="The terms on which 365 Techies Limited provides IT support and services to home and business customers.",
   desc="Terms of service for 365 Techies Limited — how we provide IT support and services, plans and payment, your responsibilities, and our mutual commitments.",
   chips=["Clear &amp; fair","No lock-in","Plain English"],
-  inner="""          <p class="mono" style="color:var(--cyan)">%s</p>
+  inner=("""          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>About us</h2>
           <p>These terms apply to IT support and services provided by 365 Techies Limited (company number 11073501), Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and this website is 365techies.co.uk. By using our services you agree to these terms.</p>
           <h2>Our services</h2>
@@ -16865,7 +16880,7 @@ info_page(
           <h2>Our liability</h2>
           <p>We take great care in everything we do. To the extent permitted by law, our liability is limited to the value of the services provided. Nothing in these terms excludes any liability that cannot be excluded under law.</p>
           <h2>365 PC Manager outside the UK</h2>
-          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key, sold only to computers outside the UK with PayPal taking the payment, has its own terms and our 30-day refund promise: see <a href="/pc-manager-licence/">365 PC Manager licence and refunds</a>.</p>
+          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key, sold only to computers outside the UK""" + (" (by us with PayPal taking the payment, or by FastSpring, our reseller)" if _FS_LIVE else " with PayPal taking the payment") + """, has its own terms and our 30-day refund promise: see <a href="/pc-manager-licence/">365 PC Manager licence and refunds</a>.</p>
           <h2>Data protection</h2>
           <p>We handle your personal data in line with our <a href="/privacy-policy/">privacy policy</a>.</p>
           <h2>Governing law</h2>
@@ -16873,7 +16888,7 @@ info_page(
           <h2>Changes</h2>
           <p>We may update these terms from time to time; the current version will always be on this page.</p>
           <h2>Contact us</h2>
-          <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""" % UPDATED,
+          <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""") % UPDATED,
   cta_args=("Ready to get started?", "Pick a plan or talk to a friendly techie.",
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
@@ -16916,8 +16931,10 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           </ul>
 
           <h2>Price, tax and how you pay</h2>
-          <p>The price is <strong>US$19.99</strong>, charged once, in US dollars, with nothing added. For now it is on sale in """ + _pp_countries_words() + """; the app offers it only where it is on sale. The app also shows roughly what the price comes to in your own money, but the exact amount is up to your bank or PayPal, and some add a fee for paying in dollars. The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
-          <p><strong>We are the seller.</strong> You buy the key from us, 365 Techies Ltd. <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details; your statement shows PayPal and our name. PayPal handles the payment under its own terms and <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>; these terms are about the key and using the software.</p>
+          <p>""" + (("The price is <strong>US$19.99</strong> (<strong>US$9.99</strong> in some lower-income countries), charged once. In " + _pp_countries_words() + " it is charged in US dollars with nothing added; the app shows roughly what that comes to in your own money, but the exact amount is up to your bank or PayPal, and some add a fee for paying in dollars. Everywhere else outside the UK, FastSpring&rsquo;s checkout shows the price in your own currency and adds any VAT or sales tax due where you live. The app offers the key only where it is on sale.") if _FS_LIVE else
+          ("The price is <strong>US$19.99</strong>, charged once, in US dollars, with nothing added. For now it is on sale in " + _pp_countries_words() + "; the app offers it only where it is on sale. The app also shows roughly what the price comes to in your own money, but the exact amount is up to your bank or PayPal, and some add a fee for paying in dollars.")) + """ The key lasts 12 months from the day you buy it. When it ends, the app goes back to the free version and offers the key again; nothing happens unless you buy one.</p>
+          <p>""" + (("<strong>Who sells it.</strong> In " + _pp_countries_words() + " we are the seller: you buy the key from us, 365 Techies Ltd, and <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details; your statement shows PayPal and our name. PayPal handles the payment under its own terms and <a href=\"https://www.paypal.com/uk/legalhub/paypal/privacy-full\" rel=\"noopener\">privacy statement</a>. Everywhere else outside the UK, <strong>FastSpring</strong> is the seller: it sells you the key as our reseller, takes the payment, adds any tax due and sends your receipt, under its own <a href=\"https://fastspring.com/legal/\" rel=\"noopener\">terms</a> and <a href=\"https://fastspring.com/privacy/\" rel=\"noopener\">privacy policy</a>. Either way, these terms are about the key and using the software.") if _FS_LIVE else
+          ("<strong>We are the seller.</strong> You buy the key from us, 365 Techies Ltd. <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details; your statement shows PayPal and our name. PayPal handles the payment under its own terms and <a href=\"https://www.paypal.com/uk/legalhub/paypal/privacy-full\" rel=\"noopener\">privacy statement</a>; these terms are about the key and using the software.")) + """</p>
 
           <h2>Your key and your PCs</h2>
           <ul>
@@ -16931,7 +16948,8 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           <p>If you&rsquo;re not happy for any reason, ask within <strong>30 days of buying</strong> and you get your money back in full. No questions asked, even if you have used the key.</p>
           <ul>
             <li><strong>To ask:</strong> reply to the email your key came in, or email <a href="mailto:info@365techies.co.uk?subject=Refund%%20please">info@365techies.co.uk</a> from the address you bought with and the words &ldquo;refund please&rdquo;.</li>
-            <li>We refund you through PayPal, normally within two working days. It goes back to the card or PayPal account you paid with; your bank may take a few more days to show it.</li>
+            <li>""" + ("We refund you through PayPal or FastSpring, whichever took your payment, normally within two working days. It goes back to the card or account you paid with; your bank may take a few more days to show it." if _FS_LIVE else
+          "We refund you through PayPal, normally within two working days. It goes back to the card or PayPal account you paid with; your bank may take a few more days to show it.") + """</li>
             <li>Once it&rsquo;s refunded, the key stops working and the app goes back to the free version.</li>
             <li>Nothing here takes away any right you have under the law where you live.</li>
           </ul>

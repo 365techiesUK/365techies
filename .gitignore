@@ -339,3 +339,8 @@ api/pcm-plus-pp-orders.json
 api/pcm-plus-pp-orders.json.lock
 api/pcm-plus-pp-orders.json.*.tmp
 api/pcm-plus-pp.log
+# ... and through FastSpring: the owner's webhook signing secret (server-only), the keys the buy page may show for 3 hours, the log
+api/pcm-fs-secret.php
+api/pcm-plus-fs-recent.json
+api/pcm-plus-fs-recent.json.lock
+api/pcm-plus-fs.log
