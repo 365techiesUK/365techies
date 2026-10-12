@@ -29951,7 +29951,7 @@ def write_portal_page():
     var panels = {};
     TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
     // the Live view: its own tab, plus a strip at the top of Today (maps are rebuilt with the page)
-    NXL.map = NXL.mini = NXL.layer = NXL.miniLayer = null; NXL.view = 'dorset'; NXL.sel = null;
+    NXL.map = NXL.mini = NXL.layer = NXL.miniLayer = null; NXL.view = 'world'; NXL.sel = null;
     panels.live.id = 'nxLivePanel'; panels.live.innerHTML = nxlTabHTML();
     var lstrip = document.createElement('section'); lstrip.className = 'nx-lstrip'; lstrip.id = 'nxLStrip';
     lstrip.setAttribute('aria-label', 'Live on the sites'); lstrip.innerHTML = nxlStripHTML();
@@ -30021,7 +30021,8 @@ def write_portal_page():
   var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
   var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
     'Email': '#16b3bd', 'Direct': '#7f95a8', 'AI assistant': '#e0a13a', 'X': '#9aa9c4', 'LinkedIn': '#3b82c4', 'YouTube': '#d9534f', 'Nextdoor': '#3aa76d', 'TikTok': '#c04b7a' };
-  var NXL_VIEWS = { dorset: [[50.45, -2.95], [51.0, -1.6]], uk: [[49.9, -8.2], [58.7, 1.9]] };
+  // 12 Oct 2026 (owner: "shows like the globe ... the whole of the world"): World is the first view; visitors abroad get dots too
+  var NXL_VIEWS = { world: [[-48, -150], [70, 160]], dorset: [[50.45, -2.95], [51.0, -1.6]], uk: [[49.9, -8.2], [58.7, 1.9]] };
   // 29 Sep 2026: what each visitor is on (the Worker's dev: os, br, dv, sc, dk, lg - short words, or null from an older Worker)
   var NXL_DEV = { phone: ['Phone', '#6cc4f5'], tablet: ['Tablet', '#8a74e8'], pc: ['PC', '#1d97e3'] };
   function nxlDevWords(r) {   // ["Windows 11", "Edge 140", "PC", "large screen", "dark mode", "Polish"]
@@ -30318,7 +30319,7 @@ def write_portal_page():
   function nxlGroups(rows) {
     var g = {}, out = [];
     rows.forEach(function (x) {
-      if (x.r.la === null || x.r.lo === null || x.r.la === undefined || x.abroad) return;
+      if (x.r.la === null || x.r.lo === null || x.r.la === undefined || x.r.lo === undefined) return;
       var k = Number(x.r.la).toFixed(2) + ',' + Number(x.r.lo).toFixed(2);
       if (!g[k]) { g[k] = { la: Number(x.r.la), lo: Number(x.r.lo), list: [] }; out.push(g[k]); }
       g[k].list.push(x);
@@ -30368,12 +30369,15 @@ def write_portal_page():
   function nxlMap(id, mini) {
     var box = document.getElementById(id); if (!box || !window.L || !window.protomapsL) return null;
     nxlDefs();
-    var map = L.map(box, { zoomControl: !mini, attributionControl: true, dragging: !mini, scrollWheelZoom: false, doubleClickZoom: !mini, touchZoom: !mini, boxZoom: false, keyboard: !mini, zoomSnap: 0.25 });
+    var map = L.map(box, { zoomControl: !mini, attributionControl: true, dragging: !mini, scrollWheelZoom: false, doubleClickZoom: !mini, touchZoom: !mini, boxZoom: false, keyboard: !mini, zoomSnap: 0.25, minZoom: 0, maxZoom: 18 });   // explicit: the world layer's maxZoom 5 would otherwise cap the whole map at 5
     map.attributionControl.setPrefix(false);
     // our own self-hosted map (the signal checker's), dark style; the small map drops the town names
     var probe = protomapsL.leafletLayer({ url: '/vendor/protomaps/uk.pmtiles', flavor: 'dark' });
     var base = { paintRules: probe.paintRules, labelRules: mini ? [] : probe.labelRules, backgroundColor: probe.backgroundColor };
-    protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/uk.pmtiles', maxDataZoom: 10, attribution: '' }, base)).addTo(map);
+    // the whole world, zoomed out (z0-5, 15 MB); the UK layer takes over from z5, or it would paint its dark background over
+    // every country it holds no data for
+    if (!mini) protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/world-z5-20261011.pmtiles', maxDataZoom: 5, maxZoom: 5, noWrap: true, attribution: '' }, base)).addTo(map);
+    protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/uk.pmtiles', maxDataZoom: 10, minZoom: mini ? 0 : 5, attribution: '' }, base)).addTo(map);
     protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/southcoast.pmtiles', maxDataZoom: 14, minZoom: 11, bounds: [[50.45, -2.98], [51.15, -0.90]],
       attribution: '\\u00a9 <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> \\u00b7 <a href="https://protomaps.com">Protomaps</a>' }, base)).addTo(map);
     map.fitBounds(NXL_VIEWS[mini ? 'dorset' : NXL.view]);
@@ -30408,8 +30412,9 @@ def write_portal_page():
       + '<div class="nx-lvk" id="nxLvK"></div>'
       + '<div class="nx-lvgrid">'
       + '<section class="card" aria-label="Where they are"><div class="nx-h2row"><h2>Where they are</h2><div class="nx-lvviews">'
-      + '<button type="button" class="nx-lvview" data-v="dorset" aria-pressed="true">Dorset</button>'
+      + '<button type="button" class="nx-lvview" data-v="world" aria-pressed="true">World</button>'
       + '<button type="button" class="nx-lvview" data-v="uk" aria-pressed="false">Whole UK</button>'
+      + '<button type="button" class="nx-lvview" data-v="dorset" aria-pressed="false">Dorset</button>'
       + '<button type="button" class="nx-lvview" id="nxLvFs">Full screen</button></div></div>'
       + '<div class="nx-lvmap" id="nxLvMap" role="region" aria-label="Map of where visitors are"></div>'
       + '<div class="nx-lvlegend"><span><i class="nx-mkdot"></i>Visitor</span><span><i class="nx-mkdot nx-mkdot--warm"></i>On a booking, contact, price or plan page</span>'
