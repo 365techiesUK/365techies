@@ -1418,8 +1418,7 @@ body.menu-open { overflow: hidden; }
   /* Hint that wide tables scroll sideways */
   .cmp-wrap, .price-table-wrap { box-shadow: inset -18px 0 18px -18px rgba(0, 0, 0, 0.6); }
 
-  /* Perf: drop GPU-heavy backdrop blur on phones (glass keeps its solid background) */
-  *, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+  /* (the backdrop blur is now off on every screen - see the end of this file) */
 }
 @media print { .mobile-cta-bar { display: none !important; } }
 
@@ -3073,6 +3072,22 @@ html { overflow-x: clip; }
 /* ...and the one quiet line at the end of those pages, where the page shows no number of its own (build_pages.HELP_LINE) */
 .tool-help { max-width: 1180px; margin: 0 auto; padding: 1.6rem var(--pad-x) 2.2rem; text-align: center; color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
 .tool-help a { color: var(--cyan); font-weight: 600; white-space: nowrap; }
+
+/* ===== No backdrop blur on any screen (12 Oct 2026, v122) =====
+   Owner's video from a customer's Dell OptiPlex 9020 (Chrome, over Splashtop): the header, the status strip and the
+   hero card blinking out and back several times a second on /free-pc-health-check/. That page had 69 elements with
+   backdrop-filter at desktop width - whole 3,000 px sections, every tile and FAQ, the footer, and two FIXED bars (cookie
+   note, PC Manager bar) - re-blurred on every frame because the status strip never stops moving (the homepage adds a
+   WebGL scene under its blurred panels). Older graphics chips run out of room and drop those layers. Phones already had
+   the blur off (v113 perf audit); every glass panel keeps its own semi-transparent background, so the look barely
+   changes (measured: under 1% of first-screen pixels on that page). Put back ONLY for a single small element, never
+   for sections, lists or anything fixed. */
+*, *::before, *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+/* without the blur, the bars that page text scrolls under (and the Text size panel) need to be nearer solid, or the words
+   behind show through faintly - measured side by side against the blurred v121 header */
+.status-ticker { background: rgba(3, 8, 20, 0.98); }
+.site-header.is-scrolled .header-bar { background: rgba(4, 10, 22, 0.97); }
+.a11y__panel { background-color: rgba(12, 20, 44, 0.97); }
 
 /* ============================================================
    SENTINEL — must stay the LAST rule in this file.
