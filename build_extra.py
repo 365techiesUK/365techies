@@ -19453,6 +19453,7 @@ info_page(
             <li><strong>The computer is talking (Narrator):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
             <li><strong>Black screen with bright text (high contrast):</strong> <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em>.</li>
             <li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings &rarr; Accessibility &rarr; Colour filters.</li>
+            <li><strong>Screen upside down or sideways:</strong> Settings &rarr; System &rarr; Display &rarr; Display orientation &rarr; Landscape. See <a href="/screen-upside-down-or-sideways/">screen upside down or sideways</a>.</li>
             <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard. Our page on <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a> has every step, and how to stop it coming back.</li>
           </ul>
           <p>Our guides to <a href="/dyslexia-friendly-computer-settings/">dyslexia-friendly fonts and settings</a> and <a href="/assistive-technology-at-home/">assistive technology at home</a> go further.</p>
@@ -24484,6 +24485,11 @@ for _np in tool_pages(PCM_SETUP_V30):   # the speaker and screen tests carry the
 from mail_pages_data import MAIL_PAGES, MAIL_FLOWS
 FIX_FLOW_PAGES.update(MAIL_FLOWS)
 for _np in MAIL_PAGES:
+    build_new_page(_np)
+# 12 Oct 2026 (owner: "go ahead with printer offline, touchpad and rotate screen"): everyday PC symptom pages
+from symptom_pages_data import symptom_pages, SYMPTOM_FLOWS
+FIX_FLOW_PAGES.update(SYMPTOM_FLOWS)
+for _np in symptom_pages(PCM_SETUP_V30):
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

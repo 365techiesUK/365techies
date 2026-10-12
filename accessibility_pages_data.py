@@ -81,6 +81,7 @@ STICKY = {
                  '<li><strong>The computer is talking (Narrator):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>'
                  '<li><strong>Black screen with bright text (high contrast):</strong> <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em>.</li>'
                  '<li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings, Accessibility, Colour filters.</li>'
+                 '<li><strong>Screen upside down or sideways:</strong> see <a href="/screen-upside-down-or-sideways/">how to rotate it back</a>.</li>'
                  '</ul>'},
         {'eyebrow': '/06 &mdash; NOT STICKY KEYS?', 'h2': 'Not Sticky Keys? Other reasons a keyboard plays up',
          'html': '<ul>'

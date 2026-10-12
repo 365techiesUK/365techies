@@ -1039,8 +1039,8 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "550d8eac7596e343",
-  "last": "2026-10-08"
+  "h": "15ecd513e018b0b3",
+  "last": "2026-10-12"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1478,7 +1478,8 @@
  },
  "how-to-turn-off-sticky-keys": {
   "first": "2026-10-12",
-  "h": "7e17f1a0954d6731"
+  "h": "945deced0f25343d",
+  "last": "2026-10-12"
  },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
@@ -2017,7 +2018,7 @@
  },
  "keyboard-test": {
   "first": "2026-10-12",
-  "h": "acd06e293c9af414",
+  "h": "14e0d3b946d7897d",
   "last": "2026-10-12"
  },
  "landline-switch-off-help": {
@@ -2074,6 +2075,10 @@
   "first": "2026-08-01",
   "h": "4fd0ae16fb95f1b3",
   "last": "2026-09-26"
+ },
+ "laptop-touchpad-not-working": {
+  "first": "2026-10-12",
+  "h": "b98d7fa5ea52b3d0"
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
@@ -2868,6 +2873,10 @@
   "h": "526f44a76ec7e0f8",
   "last": "2026-10-06"
  },
+ "printer-offline": {
+  "first": "2026-10-12",
+  "h": "cbc20fa1c1b74927"
+ },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
   "h": "4a72223ff67594e6",
@@ -3127,6 +3136,10 @@
   "first": "2026-08-18",
   "h": "c1af862b4d189955",
   "last": "2026-10-06"
+ },
+ "screen-upside-down-or-sideways": {
+  "first": "2026-10-12",
+  "h": "943622d4ce9f659e"
  },
  "second-hand-office-computers-poole": {
   "first": "2026-07-28",
@@ -3760,7 +3773,7 @@
  },
  "windows-accessibility-features-guide": {
   "first": "2026-07-28",
-  "h": "6e16a00e17c40b15",
+  "h": "b8e8f0da33cd1c39",
   "last": "2026-10-12"
  },
  "windows-live-mail-not-working": {

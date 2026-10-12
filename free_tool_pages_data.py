@@ -230,7 +230,7 @@ KEYBOARD = {
         {'q': 'Why does my mouse double-click when I click once?', 'a': '<p>The switch under the button is wearing out. The mouse test on this page spots it. A new mouse is the cure.</p>'},
         {'q': 'Can you fix a laptop keyboard?', 'a': '<p>Yes. We collect the laptop free across Bournemouth, Christchurch, Poole and Dorset, tell you the price before any work, replace the keyboard and bring it back.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a>, <a href="/webcam-mic-test/">webcam, mic and speaker test</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a>, <a href="/computer-fault-checker/">the computer fault checker</a> and <a href="/free-tools/">all our free tools</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/laptop-touchpad-not-working/">laptop touchpad not working</a>, <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a>, <a href="/webcam-mic-test/">webcam, mic and speaker test</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a>, <a href="/computer-fault-checker/">the computer fault checker</a> and <a href="/free-tools/">all our free tools</a>.</p>',
 }
 
 # ================================================================ 2. Speaker and headphone test (12 Oct 2026, "do everything")

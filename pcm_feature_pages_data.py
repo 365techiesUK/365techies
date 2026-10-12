@@ -354,7 +354,7 @@ PQ = {
         {'q': 'Does this work on Windows 10?', 'a': '<p>Yes. The Print Spooler and the spool folder are the same; on Windows 10 the printers are under Settings &gt; Devices &gt; Printers &amp; scanners.</p>'},
         {'q': 'Can you clear it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and get it printing while you watch, often the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/printer-support/">printer support</a>, <a href="/printer-disappeared-after-windows-update/">printer disappeared after a Windows update</a>, <a href="/why-does-my-printer-keep-disconnecting/">printer keeps disconnecting</a>, <a href="/how-to-set-up-a-printer/">how to set up a printer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/printer-support/">printer support</a>, <a href="/printer-offline/">printer says offline</a>, <a href="/printer-disappeared-after-windows-update/">printer disappeared after a Windows update</a>, <a href="/why-does-my-printer-keep-disconnecting/">printer keeps disconnecting</a>, <a href="/how-to-set-up-a-printer/">how to set up a printer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 
