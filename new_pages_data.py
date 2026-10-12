@@ -1129,7 +1129,8 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                 'h2': 'Why the new Outlook shows a blank white screen',
                 'html': '<p>A blank or white screen in the new Outlook - the window opens but the inbox area stays empty and white - is nearly always a <strong>display problem, not a data '
                         "problem</strong>. The new Outlook renders its interface much like a web page (it uses a built-in WebView engine), so it leans on your PC's graphics. When the graphics driver "
-                        "is out of date, or the graphics chip and Outlook fall out of step, the page simply doesn't paint and you get a white void.</p><p>The other common cause is a <strong>corrupt "
+                        "is out of date, or the graphics chip and Outlook fall out of step, the page simply doesn't paint and you get a white void. Sometimes it shows the words "
+                        "<strong>about:blank</strong> instead - that is just the name of an empty page, and it is the same fault with the same fixes.</p><p>The other common cause is a <strong>corrupt "
                         'local cache</strong>, or occasionally a misbehaving <strong>add-in</strong> (an extra tool bolted onto Outlook). Because your mail, calendar and contacts are stored in the '
                         'cloud with the new Outlook, clearing the cache or turning off an add-in is safe - nothing important is deleted, it just re-downloads.</p><p>Below we go from the gentlest fix '
                         'to the fullest. Try them in order and stop as soon as your inbox comes back.</p>'},
@@ -1140,6 +1141,14 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
             'a': 'No. A blank or white screen is a display and rendering problem, not a data-loss problem. In the new Outlook your mail, calendar and contacts are stored in the cloud, so even when '
                  'you clear the cache or reset the app, nothing important is deleted - it simply re-downloads once the screen is working again. You can confirm your mail is safe by signing in '
                  'through a browser at outlook.com.'},
+           # 12 Oct 2026: Bing's AI Performance showed ~620 Copilot citations for "outlook about:blank" (three spellings) - and no
+           # page on the site said "about:blank". No official Microsoft article covers it; this answer only explains the term and
+           # points to the fixes above.
+           {'q': "Outlook shows 'about:blank' - what does that mean?",
+            'a': "about:blank is simply the name of an empty page - what you see when the part of Outlook that draws the window loads nothing. In the new Outlook that part is "
+                 "Microsoft's WebView engine, so it is the same fault as the white screen: work through the steps above, starting with the graphics driver and clearing the cache (including "
+                 "the EBWebView folder). If it happens in Outlook on the web instead (outlook.com or Microsoft 365 webmail in your browser), try a different browser or switch off your browser "
+                 "extensions - if it works there, the browser is the problem, not your mailbox."},
            {'q': "There's no 'disable hardware graphics acceleration' option in the new Outlook - what do I do instead?",
             'a': "That old tick box (File > Options > Advanced in classic Outlook) doesn't exist in the new Outlook. The most effective replacement is to update your graphics driver via Device "
                  'Manager and restart. If your laptop has two graphics chips (built-in plus a separate NVIDIA or AMD card), you can also set Outlook to Power saving graphics under Settings > System '

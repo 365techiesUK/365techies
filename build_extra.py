@@ -11473,7 +11473,7 @@ def threadripper_workstations():
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Threadripper Workstations"), webpage(s, "AMD Threadripper Workstations", _desc),
                       service(s, "AMD Threadripper Workstation Supply & Support", "Supply, setup and support of high-end AMD Threadripper and Threadripper PRO workstations, custom-built by Scan 3XS, for creative, engineering and AI professionals.", "High-performance workstation supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "AMD Threadripper Workstations", "description": "High-end custom AMD Threadripper and Threadripper PRO workstations, built by Scan 3XS, supplied and supported by 365 Techies.", "brand": {"@type": "Brand", "name": "Scan 3XS"}, "category": "Workstation", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Service", "@id": SITE + "/" + s + "/#service", "name": "AMD Threadripper Workstations", "description": "High-end custom AMD Threadripper and Threadripper PRO workstations, built by Scan 3XS, supplied and supported by 365 Techies.", "serviceType": "Custom workstation supply, set-up and support", "provider": {"@id": SITE + "/#business"}, "category": "Workstation", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="AMD Threadripper Workstations | Scan 3XS Partner | 365 Techies",
         desc=desc, og_title="AMD Threadripper Workstations | 365 Techies", schema=schema, content=content)
@@ -11558,7 +11558,7 @@ def gaming_pcs():
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Gaming PCs"), webpage(s, "NVIDIA Gaming PCs", _desc),
                       service(s, "Gaming PC Supply & Support", "Supply, setup and support of custom NVIDIA GeForce RTX gaming PCs, built by Scan 3XS, for gamers, streamers and creators.", "Gaming PC supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "NVIDIA GeForce RTX Gaming PCs", "description": "Custom NVIDIA GeForce RTX gaming PCs, built by Scan 3XS, supplied, set up and supported by 365 Techies.", "brand": {"@type": "Brand", "name": "Scan 3XS"}, "category": "Gaming PC", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Service", "@id": SITE + "/" + s + "/#service", "name": "NVIDIA GeForce RTX Gaming PCs", "description": "Custom NVIDIA GeForce RTX gaming PCs, built by Scan 3XS, supplied, set up and supported by 365 Techies.", "serviceType": "Custom gaming PC supply, set-up and support", "provider": {"@id": SITE + "/#business"}, "category": "Gaming PC", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="NVIDIA Gaming PCs | Custom RTX Builds | 365 Techies",
         desc=desc, og_title="NVIDIA Gaming PCs | 365 Techies", schema=schema, content=content)
@@ -11656,7 +11656,7 @@ def content_creator_pcs():
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Content Creator PCs"), webpage(s, "Content Creator PCs & Laptops", _desc),
                       service(s, "Content Creator PC & Laptop Supply & Support", "Supply, setup and support of content creator PCs and laptops with NVIDIA Studio graphics for video, photo, design, music and 3D creators.", "Content creation PC supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Content Creator PCs & Laptops", "description": "NVIDIA Studio content creator PCs and laptops, built by Scan 3XS, supplied, set up and supported by 365 Techies.", "brand": {"@type": "Brand", "name": "Scan 3XS"}, "category": "Workstation", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Service", "@id": SITE + "/" + s + "/#service", "name": "Content Creator PCs & Laptops", "description": "NVIDIA Studio content creator PCs and laptops, built by Scan 3XS, supplied, set up and supported by 365 Techies.", "serviceType": "Custom creator PC supply, set-up and support", "provider": {"@id": SITE + "/#business"}, "category": "Workstation", "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)])
     add(slug=slug, title="Content Creator PCs & Laptops | NVIDIA Studio | 365 Techies",
         desc=desc, og_title="Content Creator PCs & Laptops | 365 Techies", schema=schema, content=content)

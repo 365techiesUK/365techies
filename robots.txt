@@ -28,6 +28,11 @@ Disallow: /node_modules/
 Disallow: /src/
 Disallow: /out/
 Disallow: /open-in-edge.bat
+# 12 Oct 2026: the visitor beacon's click pings (/~call/, /~text/, /~lead/, /~dl/...) and the stylesheet's one-off
+# retry address (styles.min.css?v=N&sos=...) are not pages - Search Console listed them as 404s / "crawled, not indexed".
+# Repeated in the Googlebot and Bingbot groups below: a crawler with its own group never reads this one.
+Disallow: /~
+Disallow: /*&sos=
 Crawl-delay: 1
 
 # ── AI / answer-engine crawlers — explicitly allowed so we can be cited ──
@@ -63,6 +68,8 @@ Allow: /
 # Google  (Google-Extended opts in to Gemini / AI Overviews grounding)
 User-agent: Googlebot
 Allow: /
+Disallow: /~
+Disallow: /*&sos=
 User-agent: Google-Extended
 Allow: /
 User-agent: GoogleOther
@@ -71,6 +78,8 @@ Allow: /
 # Microsoft / Bing  (also powers Copilot)
 User-agent: Bingbot
 Allow: /
+Disallow: /~
+Disallow: /*&sos=
 
 # Apple  (Applebot-Extended opts in to Apple Intelligence)
 User-agent: Applebot
