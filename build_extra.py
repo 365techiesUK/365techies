@@ -684,7 +684,7 @@ def pcm_landing():
           <a class="pcm-new" href="#whats-new"><b>NEW</b><span class="pcm-new__l">Just updated: podcasts, your TV apps and a shared-folder check</span><span class="pcm-new__s">New: podcasts and a shared-folder check</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
           <h1>Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
-          <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
+          <p class="lede">365 PC Manager is a free computer health check for your PC or laptop. It shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
           <div class="page-hero__cta">
             <a href="{_pcm_c1[1]}" class="button primary button--lg">{_pcm_c1[0]}</a>
             <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
@@ -1033,7 +1033,7 @@ def pcm_landing():
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// UNDER THE BONNET</p>
-          <h2 class="section-title section-title--center" data-title>What the free health check actually looks at<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>What the free computer health check actually looks at<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Everything is read from your own PC &mdash; measured, never made up. If something can&rsquo;t be read, the report says so rather than guessing.</p>
         </div>
         <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table">
