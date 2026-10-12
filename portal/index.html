@@ -769,9 +769,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 12 Oct 2026 &middot; b7cd2530a3</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 12 Oct 2026 &middot; e44bbc06d0</p><script>
 (function () {
-  var P365BUILD = 'b7cd2530a3';
+  var P365BUILD = 'e44bbc06d0';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -6623,7 +6623,7 @@
       h += '<div class="card" id="psgcard" style="display:none;border-left:4px solid var(--pwarn)"><h2>\u23f3 Sign-ins waiting for approval</h2><div id="psg"></div></div>';
       // 9 Oct 2026 (owner: "yes build it with option B"): Microsoft 365 orders from /order-microsoft-365/, waiting for a
       // person to press Order in Pax8 (m365Render). Shown only while there is one from the last 60 days.
-      h += '<div class="card" id="m365card" style="display:none;border-left:4px solid var(--pcyan)"><h2>\ud83d\uded2 Microsoft 365 orders</h2><div id="m365box"></div></div>';
+      h += '<div class="card" id="m365card" style="display:none;border-left:4px solid var(--pcyan)"><h2>\ud83d\uded2 Business Care orders</h2><div id="m365box"></div></div>';
       /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
@@ -9335,7 +9335,8 @@
     var h = '<div class="m3o" id="m3o-' + esc(o.id) + '" data-id="' + esc(o.id) + '">'
       + '<div class="m3o__top"><strong>' + esc(b.name) + '</strong> <span class="pill" style="color:' + st[1] + ';border:1px solid ' + st[1] + ';background:transparent">' + st[0] + '</span>'
       + ' <span class="quiet" style="margin:0">ordered ' + esc(m365When(o.at)) + '</span></div>'
-      + '<div class="m3o__what">' + esc(o.qty) + ' \u00d7 ' + esc(o.plan_name) + ' \u00b7 <b>' + esc(o.monthly_txt) + ' a month</b> <span class="quiet" style="margin:0">(' + esc(o.each_txt) + ' each, 12-month term)</span></div>'
+      + '<div class="m3o__what">' + esc(o.what_txt || (o.qty + ' x ' + o.plan_name)) + ' \u00b7 <b>' + esc(o.monthly_txt) + ' a month</b> <span class="quiet" style="margin:0">('
+        + (o.care ? esc(o.each_txt) + ' a person' + (o.pcs ? ', ' + esc(o.pc_each_txt) + ' per extra computer' : '') + '; licences on a 12-month year' : esc(o.each_txt) + ' each, 12-month term') + ')</span></div>'
       + '<div class="quiet" style="margin:.1rem 0 .5rem">' + esc((p.first || '') + ' ' + (p.last || '')) + ' \u00b7 <a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a> \u00b7 <a href="tel:' + esc(String(p.phone || '').replace(/[^0-9+]/g, '')) + '">' + esc(p.phone) + '</a> \u00b7 ' + esc(b.postcode) + '</div>'
       + '<ol class="m3steps">';
     // 1. their Direct Debit
@@ -9347,9 +9348,10 @@
       + '<button type="button" class="sm ghost" data-m3="ddlink">Email them a new link</button></span>';
     h += '</li>';
     // 2. Pax8
+    var hand = (o.by_hand || []).length ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">Also order by hand in Pax8: ' + esc(o.by_hand.join(' and ')) + ', for ' + esc(o.qty) + ' ' + (o.qty === 1 ? 'person' : 'people') + '.</span>' : '';
     h += '<li class="' + (px.state === 'ordered' ? 'm3ok' : px.state === 'failed' ? 'm3bad' : 'm3wait') + '"><b>Pax8:</b> ';
     if (px.state === 'ordered') {
-      h += '\u2713 Ordered ' + esc(m365When(px.at)) + (px.by ? ' by ' + esc(px.by) : '') + (px.hand ? ' (by hand)' : '') + (px.order ? ' \u00b7 Pax8 order ' + esc(px.order) : '') + (o.prefix && !px.hand ? ' \u00b7 ' + esc(o.prefix) + '.onmicrosoft.com' : '');
+      h += '\u2713 Ordered ' + esc(m365When(px.at)) + (px.by ? ' by ' + esc(px.by) : '') + (px.hand ? ' (by hand)' : '') + (px.order ? ' \u00b7 Pax8 order ' + esc(px.order) : '') + (o.prefix && !px.hand ? ' \u00b7 ' + esc(o.prefix) + '.onmicrosoft.com' : '') + hand;
     } else if (o.email_now === 'microsoft') {
       h += 'They already have Microsoft 365' + (o.now_with ? ' (with ' + esc(o.now_with) + ')' : '') + ', so Pax8 can\u2019t make a new account. In Pax8: add the company, send their Microsoft 365 admin the GDAP link, then order it there.'
         + (live ? '<span class="m3btns"><a class="btn sm ghost" href="https://app.pax8.com/" target="_blank" rel="noopener">Open Pax8</a><button type="button" class="sm ghost" data-m3="markordered">Mark as ordered</button></span>' : '');
@@ -9357,7 +9359,8 @@
       if (px.state === 'failed') h += '<span style="color:var(--pbad)">Stopped at ' + esc(px.stage || '?') + ': ' + esc(px.why || '') + '</span><br />';
       if (px.state === 'placing') h += '<span style="color:var(--pwarn)">An order was started ' + esc(m365When(px.at)) + ' \u2014 check Pax8 before trying again.</span><br />';
       if (live) {
-        h += '<span class="m3pre">Microsoft account: <input type="text" class="m3prefix" value="' + esc(o.prefix || '') + '" maxlength="40" aria-label="Microsoft account name" autocomplete="off" spellcheck="false" />.onmicrosoft.com</span>'
+        h += 'Buys <b>' + esc(o.licences_txt || '') + '</b>.' + hand
+          + '<span class="m3pre">Microsoft account: <input type="text" class="m3prefix" value="' + esc(o.prefix || '') + '" maxlength="40" aria-label="Microsoft account name" autocomplete="off" spellcheck="false" />.onmicrosoft.com</span>'
           + '<span class="m3btns"><button type="button" class="sm" data-m3="pax8"' + (dd.state === 'ready' && M365.d.pax8 ? '' : ' disabled title="' + (dd.state !== 'ready' ? 'Waiting for their Direct Debit' : 'Pax8 isn\u2019t connected on the server') + '"') + '>\ud83d\uded2 Order in Pax8</button>'
           + '<button type="button" class="sm ghost" data-m3="markordered">Mark as ordered by hand</button></span>';
       }
@@ -9392,7 +9395,7 @@
     var recent = rows.filter(function (o) { return (now - o.at) < 60 * 86400 || (o.state !== 'done' && o.state !== 'cancelled'); });
     if (!recent.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
     card.style.display = '';
-    var h = '<p class="quiet" style="margin:.1rem 0 .7rem">Ordered on the website. Each one: their Direct Debit, then <b>Order in Pax8</b> (Pax8 checks it first; nothing is bought if the check fails), then start their monthly payments. Then ring them to set up their email and people.</p>';
+    var h = '<p class="quiet" style="margin:.1rem 0 .7rem">Business Care ordered on the website. Each one: their Direct Debit, then <b>Order in Pax8</b> (Pax8 checks it first; nothing is bought if the check fails), then start their monthly payments. Then set them up as a Business Care customer (PC Manager on each computer, their 6-weekly service) and ring them to set up their email and people.</p>';
     if (!d.pax8) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\u26a0 Pax8 isn\u2019t connected on the server yet (api/pax8-key.php), so Order in Pax8 can\u2019t work. Until it is: order by hand in Pax8, then press Mark as ordered.</p>';
     if (!d.gocardless) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\u26a0 GoCardless isn\u2019t connected on the server, so Direct Debits can\u2019t be set up from the order page.</p>';
     var show = M365.all ? recent : openO;
@@ -9406,14 +9409,14 @@
       if (t.hasAttribute('data-m3all')) { M365.all = !M365.all; m365Render(); return; }
       var row = t.closest('.m3o'), id = row && row.getAttribute('data-id'), o = null;
       (M365.d.orders || []).forEach(function (x) { if (x.id === id) o = x; }); if (!o) return;
-      var act = t.getAttribute('data-m3'), who = o.biz.name, n = o.qty + ' \u00d7 ' + o.plan_name;
+      var act = t.getAttribute('data-m3'), who = o.biz.name, n = o.what_txt || (o.qty + ' x ' + o.plan_name), lic = o.licences_txt || n;
       if (act === 'check') m365Act(id, 'check', {}, t, function (r) { return r.order.dd.state === 'ready' ? 'Their Direct Debit is set up.' : 'Not finished yet. GoCardless says it is still waiting for them.'; });
       else if (act === 'ddlink') { if (confirm('Email ' + o.person.email + ' a new link to set up their Direct Debit?\n\nThe link opens GoCardless\u2019s own page and works once.')) m365Act(id, 'ddlink', {}, t, function (r) { return r.sent ? 'Emailed.' : 'The link was made but the email didn\u2019t send \u2014 check the email settings.'; }); }
       else if (act === 'pax8') {
         var pre = (row.querySelector('.m3prefix') || {}).value || '';
         pre = pre.toLowerCase().replace(/\s+/g, '');
         if (!/^[a-z0-9]{3,40}$/.test(pre)) { alert(M365_ERR.bad_prefix); return; }
-        if (!confirm('Place a REAL order with Pax8?\n\n' + n + ' for ' + who + '\n12-month term, billed monthly. ' + o.monthly_txt + ' a month to the customer.\nTheir new Microsoft account: ' + pre + '.onmicrosoft.com\n\nPax8 checks the order first, and nothing is bought if that check fails. Once placed, Microsoft lets it be cancelled or reduced only within 7 days.')) return;
+        if (!confirm('Place a REAL order with Pax8?\n\n' + lic + ' for ' + who + ' (' + n + ')\n12-month term, billed monthly. ' + o.monthly_txt + ' a month to the customer.\nTheir new Microsoft account: ' + pre + '.onmicrosoft.com\n\nPax8 checks the order first, and nothing is bought if that check fails. Once placed, Microsoft lets it be cancelled or reduced only within 7 days.')) return;
         m365Act(id, 'pax8order', { prefix: pre }, t, function () { return 'Ordered in Pax8. Next: start their monthly payments, then ring them to set up their email and people.'; });
       }
       else if (act === 'startpay') { if (confirm('Start the monthly Direct Debit?\n\n' + o.monthly_txt + ' a month from ' + who + ' (' + n + '), on the mandate they set up with this order. GoCardless emails them the date before the first payment.')) m365Act(id, 'startpay', {}, t, function (r) { return 'Started.' + (r.order.pay.first ? ' First payment ' + r.order.pay.first + '.' : ''); }); }

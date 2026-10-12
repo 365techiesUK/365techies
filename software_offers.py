@@ -233,6 +233,9 @@ def section(slug):
     ms = any(k in _MICROSOFT for k in keys)   # (9 Oct 2026: was "any still coming soon" - the term matters most once they can be ordered)
     note = ("Prices are per month. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add."
             + (" Microsoft 365 licences come with our support plans. " + TERM_NOTE if ms else ""))
+    # the "Comes with Business Care" line's style, only on pages that show a Microsoft card (others stay byte-identical)
+    swo_in = ("\n      .swo-in{margin:-.2rem 0 .2rem;font-size:.86rem;line-height:1.45;color:var(--green-soft,#5fe07a)}"
+              if any(k in BUNDLE_FOR for k in keys) else "")
     return f'''    <section class="section swo" id="software" aria-label="{heading}">
       <div class="wrap">
         <div class="section-head">
@@ -254,8 +257,7 @@ def section(slug):
       .swo-price{{margin:.2rem 0 .3rem;display:flex;flex-direction:column}}
       .swo-price b{{font-size:1.7rem;line-height:1.1;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}}
       .swo-price--ask b{{font-size:1.3rem}}
-      .swo-price span{{font-size:.82rem;color:var(--muted,#9aa6c2)}}
-      .swo-in{{margin:-.2rem 0 .2rem;font-size:.86rem;line-height:1.45;color:var(--green-soft,#5fe07a)}}
+      .swo-price span{{font-size:.82rem;color:var(--muted,#9aa6c2)}}{swo_in}
       .swo-card .button{{align-self:flex-start;white-space:nowrap}}
       .swo-bundle{{max-width:70ch;margin:1.4rem auto 0;text-align:center;line-height:1.6}}
       .swo-note{{max-width:70ch;margin:1rem auto 0;text-align:center;font-size:.82rem;color:var(--muted,#9aa6c2)}}
