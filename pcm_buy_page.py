@@ -56,6 +56,7 @@ _JS = r'''
       .then(function (r) { return r.json().catch(function () { return { ok: false, error: 'http_' + r.status }; }); });
   }
   var m = /[?&]install=([a-f0-9]{8,32})/i.exec(location.search), install = m ? m[1].toLowerCase() : '';
+  var t = /[?&]cc=([a-z]{2})(?:&|$)/i.exec(location.search), testCc = t ? t[1].toUpperCase() : '';   // the server honours it with PayPal TEST keys only
   var card = el('pbuycard'), done = el('pbuydone');
   function status(t, bad) { var s = el('pbuystatus'); s.textContent = t; s.className = 'pbuy__status' + (bad ? ' pbuy__status--bad' : ''); }
   var WHY = {
@@ -97,7 +98,7 @@ _JS = r'''
         style: { layout: 'vertical', label: 'pay', shape: 'rect' },
         createOrder: function () {
           status('');
-          return post({ 'do': 'create', install: install }).then(function (r) {
+          return post({ 'do': 'create', install: install, test_cc: testCc }).then(function (r) {
             if (r && r.ok && r.id) return r.id;
             throw new Error(r && r.error === 'rate' ? 'Too many tries from here today - please write to info@365techies.co.uk.' : 'We couldn’t start the payment. Please try again.');
           });
@@ -113,7 +114,7 @@ _JS = r'''
     };
     document.head.appendChild(s);
   }
-  post({ 'do': 'config', install: install }).then(function (c) {
+  post({ 'do': 'config', install: install, test_cc: testCc }).then(function (c) {
     if (!c || !c.ok) { status('We couldn’t reach our server. Refresh the page in a minute.', true); return; }
     if (!c.available) { el('pbuyoffer').hidden = true; el('pbuywhy').innerHTML = WHY[c.reason] || WHY.off; el('pbuywhy').hidden = false; return; }
     el('pbuyamt').textContent = 'US$' + c.usd;

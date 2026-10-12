@@ -46,6 +46,11 @@ $install = preg_replace('/[^a-f0-9]/', '', strtolower(substr((string)($in['insta
 
 if ($do === 'config' || $do === 'create') {
     $country = pp_country_of($install, $ip);
+    // TESTING from the UK: the buy page passes ?cc=US through as test_cc. Honoured ONLY with sandbox keys (no real money);
+    // with live keys it is ignored, so a real buyer is always priced by their own PC's country.
+    $tcc = strtoupper(preg_replace('/[^A-Za-z]/', '', substr((string)($in['test_cc'] ?? ''), 0, 2)));
+    $tcr = $tcc !== '' ? pp_creds() : null;
+    if (strlen($tcc) === 2 && $tcr && $tcr['env'] === 'sandbox') $country = $tcc;
     $offer = pp_offer($country);
     if ($do === 'config') {
         $cr = pp_creds();
