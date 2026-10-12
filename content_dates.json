@@ -1170,6 +1170,10 @@
   "h": "a8c1c42292c4b8c8",
   "last": "2026-10-11"
  },
+ "forgot-windows-password-or-pin": {
+  "first": "2026-10-12",
+  "h": "4782e63e5175bbda"
+ },
  "former-it-provider-controls-microsoft-365": {
   "first": "2026-07-28",
   "h": "a6a4c1318cf7c939",
@@ -1192,7 +1196,7 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "442be4c88b8dbe5a",
+  "h": "b3de6da249d30e40",
   "last": "2026-10-12"
  },
  "fuel-prices": {
@@ -2031,6 +2035,10 @@
   "h": "33e90a11caca53df",
   "last": "2026-10-06"
  },
+ "laptop-plugged-in-not-charging": {
+  "first": "2026-10-12",
+  "h": "56a7717aca46fe73"
+ },
  "laptop-repair": {
   "first": "2026-07-28",
   "h": "74a01ac135707643",
@@ -2216,7 +2224,8 @@
  },
  "monitor-stuck-at-60hz": {
   "first": "2026-10-08",
-  "h": "69902d7c33396990"
+  "h": "e02a776066c0f85f",
+  "last": "2026-10-12"
  },
  "monthly-it-support": {
   "first": "2026-07-28",
@@ -2986,6 +2995,10 @@
   "first": "2026-07-28",
   "h": "65b7fbb076abe5a8",
   "last": "2026-09-27"
+ },
+ "refresh-rate-test": {
+  "first": "2026-10-12",
+  "h": "62e38a3e69754b1f"
  },
  "refurbished-dell-desktops-dorset": {
   "first": "2026-07-28",
@@ -3784,6 +3797,10 @@
   "first": "2026-07-28",
   "h": "402f91214aeb77ee",
   "last": "2026-10-06"
+ },
+ "windows-update-stuck": {
+  "first": "2026-10-12",
+  "h": "b5cbe605d0da6a4a"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",

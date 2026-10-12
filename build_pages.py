@@ -3307,6 +3307,7 @@ TOOLS = {
   "avtest":       ("Webcam &amp; Mic Test", "/webcam-mic-test/", "Video call in ten minutes? Test your camera, microphone and speakers &mdash; privately, on your device."),
   "kbtest":       ("Keyboard &amp; Mouse Test", "/keyboard-test/", "Press every key and watch it light up &mdash; see which keys and mouse buttons don&rsquo;t work."),
   "spktest":      ("Speaker &amp; Headphone Test", "/speaker-and-headphone-test/", "Play a sound on the left, the right and both &mdash; find out which side isn&rsquo;t working, and why."),
+  "rrtest":       ("Refresh Rate Test", "/refresh-rate-test/", "What Hz is your screen really running at? Check a 144 Hz monitor isn&rsquo;t stuck at 60."),
   "deadpixel":    ("Dead Pixel Test", "/dead-pixel-test/", "Fill your screen with one colour at a time to spot dead or stuck pixels, light bleed and banding."),
   "vtimer":       ("Visual Timer", "/visual-timer/", "A coloured circle that shrinks as time runs out &mdash; full screen, for homework, focus and cooking."),
   "dclock":       ("Dementia Clock", "/dementia-clock/", "A free day and date clock in big, clear words &mdash; full screen on any spare laptop or tablet."),

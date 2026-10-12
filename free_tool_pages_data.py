@@ -641,6 +641,117 @@ DEADPIXEL = {
 }
 
 
+# ================================================================ 5. Refresh rate test (12 Oct 2026, round 2)
+# Bing: "refresh rate test" 3,700 a quarter (UK 193); "ufo test" 25,800 is another site's name, so it's never used here.
+# The browser draws once per screen refresh (requestAnimationFrame), so the median gap between frames over ~2.5 s gives the Hz
+# of the screen the window is on. Steadiness = share of gaps within 15% of the median; unsteady -> say so. Two lanes: a block
+# moving every frame and one moving every other frame (what half the Hz looks like). Reduced motion: lanes still, test runs.
+_RRT = ('<div class="rrt" id="rrt">'
+        '<div class="rrt__big" aria-live="polite"><b id="rrt-hz">&ndash;</b><span>Hz</span></div>'
+        '<p class="rrt__msg" id="rrt-msg">Measuring&hellip; keep this window on screen.</p>'
+        '<p class="rrt__go"><button type="button" class="button primary" id="rrt-go">Measure again</button></p>'
+        '<div class="rrt__lanes" aria-hidden="true">'
+        '<p class="rrt__lab">Every frame (your screen&rsquo;s full speed)</p><div class="rrt__lane"><span class="rrt__blk" id="rrt-a"></span></div>'
+        '<p class="rrt__lab">Every other frame (half the speed)</p><div class="rrt__lane"><span class="rrt__blk" id="rrt-b"></span></div>'
+        '</div>'
+        '<p class="rrt__note">It measures the screen this window is on. Nothing is sent anywhere.</p>'
+        '</div>'
+        '<style>'
+        '.rrt{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02));text-align:center}'
+        '.rrt__big{display:flex;justify-content:center;align-items:baseline;gap:.4rem}.rrt__big b{font:700 clamp(3.5rem,14vw,6rem)/1 var(--font-body);color:#4fd8c4;font-variant-numeric:tabular-nums}'
+        '.rrt__big span{font-size:1.6rem;font-weight:700;color:var(--ink,#eaf4ff)}'
+        '.rrt__msg{margin:.6rem auto 0;max-width:40rem;font-size:1rem}.rrt__go{margin:1rem 0 0}.rrt__go .button{min-height:52px;font-size:1.05rem}'
+        '.rrt__lanes{margin:1.4rem 0 0;text-align:left}.rrt__lab{margin:.8rem 0 .35rem;font-size:.85rem;color:var(--muted)}'
+        '.rrt__lane{position:relative;height:44px;border-radius:10px;background:#0b1019;overflow:hidden;border:1px solid rgba(125,170,220,.25)}'
+        '.rrt__blk{position:absolute;top:6px;left:0;width:32px;height:32px;border-radius:7px;background:#4fd8c4;will-change:transform}'
+        '.rrt__lane:nth-of-type(2) .rrt__blk{background:#ffb066}'
+        '.rrt__note{margin:1rem 0 0;font-size:.8rem;color:var(--muted)}'
+        '@media (max-width:520px){.rrt{padding:1rem .8rem}}'
+        '</style>'
+        '<script>(function(){var R=document.getElementById("rrt");if(!R||!window.requestAnimationFrame)return;function $(i){return document.getElementById(i);}'
+        'var COMMON=[24,30,48,50,60,72,75,90,100,120,144,165,170,175,180,200,240,280,300,360,480],t=[],run=false,lastT=0,n=0,x=0,xb=0,'
+        'rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;'
+        'function near(h){var b=COMMON[0];for(var i=0;i<COMMON.length;i++)if(Math.abs(COMMON[i]-h)<Math.abs(b-h))b=COMMON[i];return b;}'
+        'function finish(){run=false;var g=[];for(var i=11;i<t.length;i++)g.push(t[i]-t[i-1]);if(g.length<20){$("rrt-msg").textContent="Couldn\\u2019t measure: keep this window on screen and press Measure again.";return;}'
+        'var s=g.slice().sort(function(a,b){return a-b;}),med=s[Math.floor(s.length/2)],hz=1000/med,ok=0;for(var j=0;j<g.length;j++)if(Math.abs(g[j]-med)<med*.15)ok++;'
+        'var n2=near(hz),steady=ok/g.length>=.7;$("rrt-hz").textContent=Math.abs(n2-hz)<hz*.04?n2:Math.round(hz);'
+        'var m="Your screen is refreshing about "+Math.round(hz)+" times a second.";'
+        'if(!steady)m+=" The measurement was a little unsteady: close other tabs and busy programs, then measure again.";'
+        'else if(n2<=60)m+=" If your monitor or laptop is sold as 90, 120, 144 Hz or more, it\\u2019s running slower than it can: see the steps below.";'
+        'else m+=" That\\u2019s a high refresh rate: motion should look smooth.";$("rrt-msg").textContent=m;}'
+        'function frame(ts){if(run){t.push(ts);if(ts-t[0]>2500)finish();}'
+        'if(!rm){var lane=R.querySelector(".rrt__lane"),w=lane?lane.clientWidth-32:300,dt=lastT?Math.min(100,ts-lastT):16;lastT=ts;x=(x+dt*.48)%Math.max(1,w);n++;if(n%2===0)xb=x;'
+        '$("rrt-a").style.transform="translateX("+x.toFixed(1)+"px)";$("rrt-b").style.transform="translateX("+xb.toFixed(1)+"px)";}'
+        'requestAnimationFrame(frame);}'
+        'function start(){t=[];run=true;$("rrt-hz").textContent="\\u2013";$("rrt-msg").textContent="Measuring\\u2026 keep this window on screen.";}'
+        '$("rrt-go").addEventListener("click",start);'
+        'document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"&&run)start();});'
+        'setTimeout(start,600);requestAnimationFrame(frame);})();</script>')
+
+REFRESH = {
+    'slug': 'refresh-rate-test',
+    'title': 'Refresh Rate Test: What Hz Is Your Screen Really Running?',
+    'metaDesc': 'Free refresh rate test: see how many hertz your screen is really running at, and how to switch it to its full 120, 144 or 165 Hz in Windows.',
+    'ogTitle': 'Free refresh rate test: what Hz is your screen running?',
+    'crumbName': 'Refresh Rate Test',
+    'eyebrow': '// FREE REFRESH RATE TEST',
+    'h1': 'Free <em class="grad grad--cyan">refresh rate</em> test',
+    'lede': 'See how many times a second your screen is really refreshing, in hertz (Hz), and compare smooth and half-speed motion side by side. Bought a 144 Hz monitor or a gaming laptop? Check it isn&rsquo;t stuck at 60. Nothing to install.',
+    'chips': ['Measures in seconds', 'Any screen, any browser', 'How to fix a 60 Hz screen'],
+    'primaryCta': ['Test my screen', '#s1'], 'secondaryCta': ['Gaming PC tune-up', '/gaming-pc-tune-up/'],
+    'ctaHead': 'Screen still stuck at 60 Hz?',
+    'ctaSub': 'With your permission we connect to your Windows PC and get the screen running at its full speed while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'webApp': '365 Techies Refresh Rate Test',
+    'atAGlance': [
+        ('What it measures', 'How many times a second the screen this window is on redraws: its refresh rate, in hertz.'),
+        ('Most screens', '60 Hz. Gaming monitors and laptops are often 120, 144, 165 Hz or more.'),
+        ('Says 60 on a 144 Hz monitor?', 'Windows, the cable or the port is holding it back. The fix is usually one setting.'),
+        ('The setting', 'Settings, System, Display, Advanced display, Choose a refresh rate.'),
+        ('Laptop on battery', 'Some laptops drop to 60 Hz on battery or in battery saver to save power. That&rsquo;s normal.'),
+        ('Unsteady result', 'Close other tabs and busy programs, then measure again.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE TEST', 'h2': 'Test your screen&rsquo;s refresh rate',
+         'html': '<p>The test starts by itself and takes a few seconds. Keep this window on the screen you want to test, and don&rsquo;t scroll while it measures. Two screens? Drag the window to the other one and press <strong>Measure again</strong>.</p>' + _RRT},
+        {'eyebrow': '/02 &mdash; WHAT IT MEANS', 'h2': 'What the number means',
+         'html': '<ul>'
+                 '<li><strong>60 Hz</strong> is normal for most office monitors, TVs and everyday laptops.</li>'
+                 '<li><strong>120 to 165 Hz</strong> is common on gaming monitors and gaming laptops: scrolling and games look noticeably smoother.</li>'
+                 '<li><strong>240 Hz and above</strong> is for fast competitive games.</li>'
+                 '<li><strong>The two moving blocks</strong> show the difference: the top one moves on every refresh, the bottom one on every other, which is what half your screen&rsquo;s speed looks like.</li>'
+                 '</ul>'},
+        {'eyebrow': '/03 &mdash; STUCK AT 60 HZ?', 'h2': 'Get it running at its full speed',
+         'html': '<ol>'
+                 '<li><strong>Choose the higher rate in Windows:</strong> Settings, System, Display, <strong>Advanced display</strong>, then <strong>Choose a refresh rate</strong>. Pick the highest number offered. Windows puts the old setting back by itself if the screen goes blank.</li>'
+                 '<li><strong>Use the right cable and socket:</strong> DisplayPort, or the HDMI cable that came with the monitor. An old HDMI cable, an adapter, or the motherboard&rsquo;s socket instead of the graphics card&rsquo;s can cap it at 60 Hz.</li>'
+                 '<li><strong>Laptops:</strong> plug the charger in and switch off battery saver; some laptops run at 60 Hz on battery to save power.</li>'
+                 '<li><strong>Update the graphics driver</strong> from NVIDIA, AMD or Intel, or the laptop maker.</li>'
+                 '</ol>'
+                 '<p>Every step, in detail: <a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a>.</p>'},
+        {'eyebrow': '/04 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your screens', 'html': '__APP_BOX_SCREEN__'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.replace(' If it&rsquo;s the keyboard itself, we collect the laptop free across Bournemouth, Christchurch, Poole and Dorset, tell you the price before any work, repair it and bring it back.', ' Gaming PC? Our <a href="/gaming-pc-tune-up/">gaming PC tune-up</a> sets the screen, drivers and power settings up properly.')},
+    ],
+    'howToName': 'How to check and fix your screen’s refresh rate',
+    'howToSteps': [
+        {'name': 'Run the test', 'text': 'Keep this window on the screen you want to test; the result shows in a few seconds.'},
+        {'name': 'Compare with the monitor’s rating', 'text': 'Check the refresh rate your monitor or laptop is sold as, such as 144 Hz.'},
+        {'name': 'Choose the higher rate in Windows', 'text': 'Settings, System, Display, Advanced display, Choose a refresh rate.'},
+        {'name': 'Check the cable and socket', 'text': 'Use DisplayPort or the monitor’s own HDMI cable, plugged into the graphics card.'},
+        {'name': 'Measure again', 'text': 'Run the test again to see the new rate.'},
+    ],
+    'faqs': [
+        {'q': 'How do I check my monitor&rsquo;s refresh rate?', 'a': '<p>Run the test on this page, or look in Settings, System, Display, Advanced display, where Windows shows the refresh rate it&rsquo;s using.</p>'},
+        {'q': 'Why is my 144 Hz monitor running at 60 Hz?', 'a': '<p>Usually the refresh rate hasn&rsquo;t been chosen in Windows, or the cable or socket can&rsquo;t carry more than 60 Hz. See <a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a>.</p>'},
+        {'q': 'Is the test accurate?', 'a': '<p>It measures how often your browser draws the page, which follows the screen&rsquo;s refresh rate. If other programs are busy the result can wobble; close them and measure again.</p>'},
+        {'q': 'Why does my laptop show 60 Hz on battery?', 'a': '<p>Many laptops lower the refresh rate on battery or in battery saver to save power. Plug the charger in and measure again.</p>'},
+        {'q': 'Does a higher refresh rate matter for everyday use?', 'a': '<p>It makes scrolling and moving windows look smoother, and matters most for games. For email and browsing, 60 Hz is fine.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a>, <a href="/dead-pixel-test/">dead pixel test</a>, <a href="/gaming-pc-tune-up/">gaming PC tune-up</a>, <a href="/pc-benchmark/">free PC benchmark</a> and <a href="/free-tools/">all our free tools</a>.</p>',
+}
+
+
 def tool_pages(setup_url):
     """The tool pages, with the 365 PC Manager boxes filled in (pcm_feature_pages_data._app_box: the same box and wording
     as the feature pages, so every claim stays pinned to what the released app does)."""
@@ -654,7 +765,7 @@ def tool_pages(setup_url):
             'It never changes the setting itself &mdash; it opens Display settings, and Windows puts the old setting back if the screen goes blank.</p>', setup_url),
     }
     out = []
-    for d in (KEYBOARD, SPEAKER, TIMER, DEADPIXEL):
+    for d in (KEYBOARD, SPEAKER, TIMER, DEADPIXEL, REFRESH):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():

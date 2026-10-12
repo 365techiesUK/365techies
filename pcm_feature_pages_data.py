@@ -283,7 +283,7 @@ HZ = {
         {'q': 'Does a higher refresh rate use more electricity?', 'a': '<p>A little, mostly through the graphics card working harder in games. See <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> for the bigger picture.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. We connect to your Windows PC remotely and set the screen, driver and settings up while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-up-a-second-monitor/">setting up a second monitor</a>, <a href="/gaming-pc-tune-up/">gaming PC tune-up</a>, <a href="/gaming-pc-slow-wont-load-games/">games running slow</a>, <a href="/pc-benchmark/">free PC benchmark</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/refresh-rate-test/">free refresh rate test</a>, <a href="/how-to-set-up-a-second-monitor/">setting up a second monitor</a>, <a href="/gaming-pc-tune-up/">gaming PC tune-up</a>, <a href="/gaming-pc-slow-wont-load-games/">games running slow</a>, <a href="/pc-benchmark/">free PC benchmark</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
 # ============================================================ 3. Documents stuck in the print queue
