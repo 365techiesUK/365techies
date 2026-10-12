@@ -88,6 +88,13 @@ PAGES = {
         "email program. Gmail, Yahoo, AOL and Virgin Media need an app password."),
 }
 
+# 12 Oct 2026 (owner: "go ahead and do everything"): the Windows Live Mail symptom page (mail_pages_data.py)
+PAGES["windows-live-mail-not-working"] = (FIX, "A simple replacement for Windows Live Mail",
+    "Our free Techies One Mail for Windows PCs is a simple email program made for people moving from Windows Live Mail and "
+    "Outlook Express, with the settings for BT, Sky, Plusnet, Gmail and Outlook.com built in.",
+    "It can&rsquo;t open emails that Windows Live Mail kept only on this PC (the older POP setting): keep the backup folder, "
+    "or ask us to move them.")
+
 POINTS = [
     "Free, from 365 Techies, the family IT firm that wrote this guide",
     "Signed by 365 Techies Ltd, and it tells you when there&rsquo;s an update",

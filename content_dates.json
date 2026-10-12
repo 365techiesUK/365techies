@@ -141,6 +141,10 @@
   "h": "65c9b6bb950e3dd6",
   "last": "2026-10-06"
  },
+ "assistive-technology-at-home": {
+  "first": "2026-10-12",
+  "h": "75ad28a524672662"
+ },
  "avoiding-tech-overwhelm": {
   "first": "2026-07-28",
   "h": "1df98fb2ef2de34b",
@@ -754,6 +758,10 @@
   "h": "7c424416edd65017",
   "last": "2026-10-06"
  },
+ "dead-pixel-test": {
+  "first": "2026-10-12",
+  "h": "05ff00700532af3d"
+ },
  "dell-business-support-dorset": {
   "first": "2026-07-28",
   "h": "51d3dff728889e59",
@@ -1044,6 +1052,10 @@
   "h": "d13875e80a578584",
   "last": "2026-08-31"
  },
+ "dyslexia-friendly-computer-settings": {
+  "first": "2026-10-12",
+  "h": "b4ba575264e60f53"
+ },
  "eircom-email-price-increase": {
   "first": "2026-10-11",
   "h": "81ca5edb17f6d1a4"
@@ -1180,7 +1192,7 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "237f0735941a28e0",
+  "h": "442be4c88b8dbe5a",
   "last": "2026-10-12"
  },
  "fuel-prices": {
@@ -1431,7 +1443,7 @@
  },
  "how-to-set-up-two-factor-authentication": {
   "first": "2026-07-28",
-  "h": "62ed0d37022656e8",
+  "h": "72d910847d47fa25",
   "last": "2026-09-28"
  },
  "how-to-speed-up-a-slow-computer": {
@@ -3266,6 +3278,10 @@
   "h": "8637ba59575b8385",
   "last": "2026-09-29"
  },
+ "speaker-and-headphone-test": {
+  "first": "2026-10-12",
+  "h": "69e835bc52c1881d"
+ },
  "splashtop-business-guide": {
   "first": "2026-07-28",
   "h": "9d86c6e8534f8246",
@@ -3473,6 +3489,10 @@
  "virus-threat-protection-managed-by-your-organization": {
   "first": "2026-10-11",
   "h": "ca2307fdf4632700"
+ },
+ "visual-timer": {
+  "first": "2026-10-12",
+  "h": "2d582228b743c69f"
  },
  "voip-business-phones": {
   "first": "2026-07-28",
@@ -3740,8 +3760,12 @@
  },
  "windows-accessibility-features-guide": {
   "first": "2026-07-28",
-  "h": "756e9ee6f0075743",
+  "h": "6e16a00e17c40b15",
   "last": "2026-10-12"
+ },
+ "windows-live-mail-not-working": {
+  "first": "2026-10-12",
+  "h": "c7f55ad6a4dfec9c"
  },
  "windows-reinstall": {
   "first": "2026-07-28",

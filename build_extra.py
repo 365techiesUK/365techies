@@ -15574,9 +15574,9 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcmapp","speccheck","pcbench","kbtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcmapp","speccheck","pcbench","kbtest","spktest","deadpixel","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Everyday help", "Simple free helpers for home.",
-       ["dclock"]),
+       ["dclock","vtimer"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
       ("On the road", "Fuel is costing everyone a fortune &mdash; find the cheapest.",
@@ -19455,6 +19455,7 @@ info_page(
             <li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings &rarr; Accessibility &rarr; Colour filters.</li>
             <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard. Our page on <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a> has every step, and how to stop it coming back.</li>
           </ul>
+          <p>Our guides to <a href="/dyslexia-friendly-computer-settings/">dyslexia-friendly fonts and settings</a> and <a href="/assistive-technology-at-home/">assistive technology at home</a> go further.</p>
           <p>For more, see <a href="https://www.microsoft.com/en-gb/accessibility" target="_blank" rel="noopener">Microsoft Accessibility</a> and the charity <a href="https://abilitynet.org.uk/" target="_blank" rel="noopener">AbilityNet</a>, which offers free advice. A quick note: we support Windows and Android devices remotely, but not Apple Macs, iPhones or iPads.</p>""" + PRINT_BTN,
   faqs=[
     ("Are these features free?","Completely &mdash; they&rsquo;re built into Windows at no extra cost. There&rsquo;s nothing to buy or download."),
@@ -24475,9 +24476,14 @@ FIX_FLOW_PAGES.update(ACCESS_FLOWS)
 for _np in ACCESS_PAGES:
     build_new_page(_np)
 # 12 Oct 2026 (owner: "go ahead with the keyboard test page"): free in-page test tools, tool first then the fixes.
-from free_tool_pages_data import TOOL_PAGES, TOOL_FLOWS
+from free_tool_pages_data import tool_pages, TOOL_FLOWS
 FIX_FLOW_PAGES.update(TOOL_FLOWS)
-for _np in TOOL_PAGES:
+for _np in tool_pages(PCM_SETUP_V30):   # the speaker and screen tests carry the app's Sound check / Screen check boxes
+    build_new_page(_np)
+# 12 Oct 2026: email symptom pages that lead to Techies One Mail (mail_pages_data.py; its box: techies_one_boxes.PAGES)
+from mail_pages_data import MAIL_PAGES, MAIL_FLOWS
+FIX_FLOW_PAGES.update(MAIL_FLOWS)
+for _np in MAIL_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

@@ -1114,6 +1114,11 @@ SNIPPETS = {
     },
     # 12 Oct 2026 (owner: "go ahead with the five improvements"). Title kept: it ranks (913 impressions, position 9); the
     # description now says it checks a website address too (Bing: "is this website a scam", the UK the top country).
+    # 12 Oct 2026: the description was cut mid-sentence ("...how to turn it on for...") - Bing shows it at position 6
+    # (2,100 impressions, no clicks). A complete sentence that names the accounts the page covers.
+    "how-to-set-up-two-factor-authentication": {
+        "desc": "Turn on two-factor authentication (2FA) for your email, bank, Facebook and WhatsApp: which method is safest, the steps, and how not to get locked out.",
+    },
     "link-safety-checker": {
         "desc": "Paste a link or a website address to spot the warning signs of a scam before you click or buy. Free and instant, and it never opens the link.",
     },
