@@ -19,7 +19,8 @@ import build_pages as bp
 import pcm_feature_pages_data as pfp
 
 # key -> (picture, box heading, what it does); _CLIP = the 9-second clip that replaces the picture (none for Wi-Fi: no Wi-Fi screen)
-_CLIP = {'battery': 'battery', 'isitdown': 'isitdown', 'printers': 'printers', 'windows': 'windows', 'remote': 'remote'}
+_CLIP = {'battery': 'battery', 'isitdown': 'isitdown', 'printers': 'printers', 'windows': 'windows', 'remote': 'remote',
+         'printupd': 'printers', 'devices': 'devices'}   # (wave 2, 13 Oct)
 _BOX = {
     'battery': ('battery', 'Battery health: how much charge does yours really hold?',
         '<p style="margin:0">On a laptop, our free app reads Windows&rsquo; own measurement of the battery and shows its <strong>health</strong> &mdash; how much of its '
@@ -42,6 +43,20 @@ _BOX = {
         'whether you&rsquo;re on <strong>2.4 or 5 GHz</strong>, the Wi-Fi standard and the link speed. Its lag test shows the delay when the line is busy, and it checks for a '
         'VPN and which DNS your PC uses. It shows your connection as it is now; it doesn&rsquo;t keep a log of dropouts. On Windows 11 version 24H2 and later, Windows '
         'only shares Wi-Fi details with apps while Location is switched on, and the app tells you so.</p>'),
+    # wave 2 (13 Oct 2026, owner: "yes start with number 1" - videos on the problem pages that get the traffic): what the v40
+    # source really does - Printers reads Windows' Spooler service state and says when it has stopped (no restart button: it
+    # says restarting the PC usually brings it back); NetDevices = ping + ARP + the discovery Windows' own Network folder uses
+    # (SSDP/UPnP, WS-Discovery incl. ONVIF cameras, mDNS, NetBIOS); no log-ins, no port scan, never on a Public network.
+    'printupd': ('printer', 'Has Windows lost the printer, or stopped printing?',
+        '<p style="margin:0">Our free app lists every printer Windows still knows and whether it&rsquo;s <strong>offline</strong>, shows any documents '
+        '<strong>stuck in the queue</strong> (with a button that clears only those), and says whether Windows&rsquo; <strong>printing service</strong> is '
+        'running. When that service stops, printers vanish and nothing prints; the app says so, and restarting the PC usually brings it back. '
+        'It only reads, until you press a button.</p>'),
+    'devices': ('devices', 'See everything on your network',
+        '<p style="margin:0">Our free app&rsquo;s <strong>Devices on your network</strong> scan lists what&rsquo;s connected to your router &mdash; PCs, '
+        'phones, <strong>printers</strong>, <strong>cameras and recorders</strong>, TVs and storage drives &mdash; with each one&rsquo;s address, found the '
+        'same way Windows finds them for its Network folder. So after a new router you can see at once whether the printer or camera has joined. It '
+        'doesn&rsquo;t log in to anything or change anything, and it never scans a public network such as a caf&eacute;&rsquo;s.</p>'),
     'remote': ('remote', 'Is anyone still connected to your PC?',
         '<p style="margin:0">Our free app&rsquo;s <strong>Remote access</strong> page says for certain whether a Remote Desktop, Quick Assist or Splashtop session is open '
         'right now, lists the remote-control programs on the PC and which are running, and reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected. '
@@ -69,6 +84,16 @@ PAGES = {
         'Once the printer has the right password, our free app shows whether Windows can see it again and clears anything stuck in the queue.'),
     'printer-stopped-working-after-changing-wifi-password': ('printers', '// THE QUICK CHECK', 'See what Windows thinks of your printer',
         'Not sure whether the printer is offline or the queue is stuck? Our free app reads it from Windows in seconds.'),
+    # wave 2: the biggest printer page, the EE-hub printer page and the CCTV page (GSC, 3 months to 13 Oct: 12,465 / 3,735 / 1,565 impressions)
+    'printer-disappeared-after-windows-update': ('printupd', '// THE QUICK CHECK', 'Is Windows&rsquo; printing service still running?',
+        'After an update, a printer can vanish because Windows&rsquo; printing service has stopped. Our free app shows whether it&rsquo;s running, '
+        'and lists every printer Windows still knows.'),
+    'printer-wont-connect-to-ee-smart-hub': ('devices', '// IS IT ON YOUR NETWORK?', 'Has the printer joined your hub?',
+        'Not sure whether the printer made it onto the Smart Hub&rsquo;s network? Our free app scans your network and lists what&rsquo;s there, '
+        'printers included, with each one&rsquo;s address.'),
+    'cctv-not-working-after-changing-broadband': ('devices', '// IS IT ON YOUR NETWORK?', 'Is the recorder on your new network?',
+        'After a new router, the recorder or cameras often haven&rsquo;t joined its network yet. Our free app scans your network and lists '
+        'what&rsquo;s connected, cameras and recorders included.'),
     'windows-10-end-of-life': ('windows', '// CHECK YOUR OWN PC', 'Is your PC still getting updates?',
         'Not sure which Windows you have, or whether extended updates are really reaching it? Our free app reads it from Windows.'),
     'wifi-keeps-dropping': ('wifi', '// SEE YOUR SIGNAL', 'Check your Wi-Fi signal from the PC',

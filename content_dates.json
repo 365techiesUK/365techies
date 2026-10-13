@@ -377,8 +377,8 @@
  },
  "cctv-not-working-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "049cf1cd028c899c",
-  "last": "2026-09-26"
+  "h": "904d71fb96b7b172",
+  "last": "2026-10-13"
  },
  "cctv-smart-home": {
   "first": "2026-07-28",
@@ -2921,8 +2921,8 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "526f44a76ec7e0f8",
-  "last": "2026-10-06"
+  "h": "c075c17ddbedecfa",
+  "last": "2026-10-13"
  },
  "printer-offline": {
   "first": "2026-10-12",
@@ -2965,8 +2965,8 @@
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "7e6488c1836ddf5f",
-  "last": "2026-10-06"
+  "h": "896671588c633a7f",
+  "last": "2026-10-13"
  },
  "printer-wont-connect-to-mesh-wifi": {
   "first": "2026-07-28",
