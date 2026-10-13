@@ -40,21 +40,24 @@ def shot(name, alt, eager=False, tag=None):
 
 # The explainer film (made 10-11 Oct 2026: director/critic panels, the real app's demo mailbox, Lily's voice). A new cut
 # gets a NEW file name (images are cached for a year). Owner, 11 Oct 2026: "put the film on the product page".
-# v4 (11 Oct 2026, owner: "add All inboxes to the Techies One Mail film"): + the All inboxes scene after "Type your email
-# address". The poster frame (the scam warning) comes before it, so the v3 poster stays.
-FILM = "/images/t1-mail-film-v4.mp4"
-FILM_POSTER = "/images/t1-mail-film-poster-v3.jpg"
-FILM_SECS = 85
-FILM_UPLOADED = "2026-10-11"
-FILM_SAYS = ("Techies One Mail: a free email program for Windows computers, from 365 Techies. If Windows Mail or Outlook "
-             "Express stopped, your email is most likely still with your email company. In this made-up inbox, your "
-             "daughter&rsquo;s email gets a green box: no warning signs. While you&rsquo;re reading, a fake tax refund email "
-             "arrives. Techies One is open, so obvious scams go to Scams, and the sender is blocked. It tells you why, in plain "
-             "English. The sender isn&rsquo;t the taxman. The link pretends to be a government website. It tries to rush you. "
-             "It can get things wrong. You can put it back, or ask us. Type your email address, and it fills in the settings "
-             "itself. Got more than one email address? All inboxes puts them in one list, and your reply goes from the right "
-             "one. Simple view gives you fewer, bigger buttons, and a green one that asks us to ring you back. We&rsquo;re "
-             "a Bournemouth family firm. Download it free at 365techies.co.uk, or ring us if you&rsquo;d rather we set it up.")
+# v5 (13 Oct 2026, owner: "a different video for the website ... focusing on the problems it solves ... that's what gets
+# people to the page"): problem -> fix, one card each, in the order people search (Bing UK, 13 Oct: Windows Live Mail is the
+# biggest replacement search). The YouTube film (Retro Rebooted) is a separate cut. Made in reels/techies-one-web-2026-10-13.
+FILM = "/images/t1-mail-film-v5.mp4"
+FILM_POSTER = "/images/t1-mail-film-poster-v5.jpg"
+FILM_SECS = 81
+FILM_UPLOADED = "2026-10-13"
+FILM_SAYS = ("Email giving you trouble? Here&rsquo;s a simpler way. Techies One Mail is a free email program for Windows "
+             "computers, from 365 Techies. If Windows Live Mail or Windows Mail has stopped working, your email is most likely "
+             "still with your email company, and Techies One can show it. If your BT or Sky email won&rsquo;t go into the new "
+             "Outlook, type your address into Techies One. It already knows the settings. Find it all too fiddly? One tick "
+             "turns on Simple view: fewer, bigger buttons. Every email is checked for the signs of a scam while Techies One is "
+             "open. Fakes go in their own folder, with the reasons in plain English. Inbox full of old emails? Clean up shows "
+             "who sends the most, and clears thousands in a few clicks. Deleted emails go to your Deleted folder first. More "
+             "than one address? All inboxes puts every email in one list, and your reply goes from the right one. Your "
+             "password stays on your computer, so we never see it. And it&rsquo;s free, with no adverts. If you get stuck, "
+             "press Get help, and a real person from 365 Techies rings you back. Download Techies One Mail free from "
+             "365techies.co.uk, or ring us if you&rsquo;d rather we set it up.")
 
 
 CSS = """    <style>
@@ -137,8 +140,8 @@ def hero():
         </div>
         <figure id="video" style="margin:0">
           <div class="t1p-film" data-t1film>
-            <video controls playsinline preload="none" poster="{FILM_POSTER}" width="1920" height="1080" aria-label="Techies One Mail in {FILM_SECS} seconds: what it does, with a spoken guide and captions"><source src="{FILM}" type="video/mp4"></video>
-            <button class="t1p-play" type="button" aria-label="Play the {FILM_SECS}-second film about Techies One Mail"><span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><b class="long">Watch: what it does, in {FILM_SECS} seconds</b><b class="short">Watch the film ({FILM_SECS} s)</b></span></button>
+            <video controls playsinline preload="none" poster="{FILM_POSTER}" width="1920" height="1080" aria-label="Techies One Mail in {FILM_SECS} seconds: the email problems it fixes, with a spoken guide and captions"><source src="{FILM}" type="video/mp4"></video>
+            <button class="t1p-play" type="button" aria-label="Play the {FILM_SECS}-second film about Techies One Mail"><span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><b class="long">Watch: the problems it fixes, in {FILM_SECS} seconds</b><b class="short">Watch the film ({FILM_SECS} s)</b></span></button>
           </div>
           <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people and emails are made-up samples, apart from us.</figcaption>
           <details class="t1p-says"><summary>What the film says</summary><p>{FILM_SAYS}</p></details>
@@ -518,8 +521,9 @@ def build():
             "datePublished": "2026-10-10", "url": f"{bp.SITE}/{s}/",
         }
         video = {"@type": "VideoObject", "@id": f"{bp.SITE}/{s}/#video", "name": "Techies One Mail in %d seconds" % FILM_SECS,
-                 "description": ("What Techies One Mail does: plain-English scam warnings, adding a BT address, Simple view and "
-                                 "Get help, from 365 Techies in Bournemouth. The real program with a made-up demo mailbox."),
+                 "description": ("The email problems Techies One Mail fixes: an old email program that stopped, BT or Sky email "
+                                 "that won't go in, fiddly buttons, scam emails, an inbox full of old email and more than one "
+                                 "address. From 365 Techies in Bournemouth; the real program with a made-up demo mailbox."),
                  "thumbnailUrl": [bp.SITE + FILM_POSTER], "uploadDate": FILM_UPLOADED,
                  "duration": "PT%dM%dS" % (FILM_SECS // 60, FILM_SECS % 60), "contentUrl": bp.SITE + FILM,
                  "embedUrl": f"{bp.SITE}/{s}/#video", "inLanguage": "en-GB", "publisher": {"@id": bp.SITE + "/#business"}}

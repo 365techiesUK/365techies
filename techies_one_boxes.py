@@ -95,6 +95,47 @@ PAGES["windows-live-mail-not-working"] = (FIX, "A simple replacement for Windows
     "It can&rsquo;t open emails that Windows Live Mail kept only on this PC (the older POP setting): keep the backup folder, "
     "or ask us to move them.")
 
+# 13 Oct 2026 (owner: "use Lily, and do the clips too"): a 9-second silent clip of the real app in each box, problem ->
+# fix, captions burned in, made in reels/techies-one-web-2026-10-13 (engine/build_clips.py). Muted, it plays only while
+# on screen and stops when scrolled away; with reduced motion it never starts by itself (the poster shows, with controls).
+# A new cut gets a NEW file name (images are cached for a year).
+CLIPS = {
+    "bt": ("btinternet-email-wont-add-to-new-outlook", "cant-send-btinternet-email-new-outlook"),
+    "sky": ("sky-email-wont-add-to-new-outlook",),
+    "plusnet": ("plusnet-email-wont-add-to-new-outlook",),
+    "mover": ("move-plusnet-email-to-gmail", "eircom-email-price-increase", "comcast-email-moving-to-yahoo"),
+    "simple": ("new-outlook-not-syncing", "new-outlook-only-showing-recent-emails", "new-outlook-no-send-receive-button",
+               "new-outlook-emails-stuck-in-drafts"),
+    "oldprog": ("windows-live-mail-not-working",),
+}
+CLIP_OF = {slug: name for name, slugs in CLIPS.items() for slug in slugs}
+# what each clip shows, for screen readers (the burned-in captions, in order)
+CLIP_SAYS = {
+    "bt": "Techies One Mail: type in your BT email address, Techies One knows BT&rsquo;s settings, and your password stays on your computer.",
+    "sky": "Techies One Mail: type in your Sky email address, Techies One knows Sky&rsquo;s settings, and your password stays on your computer.",
+    "plusnet": "Techies One Mail: type in your Plusnet email address, Techies One knows Plusnet&rsquo;s settings, and your password stays on your computer.",
+    "mover": "Techies One Mail&rsquo;s Mail Mover copies every folder to your new address, with dates and read or unread kept. Nothing is deleted from the old address.",
+    "simple": "Techies One Mail: one tick turns on Simple view, with fewer, bigger buttons. Stuck? Press Get help and a real person rings you back.",
+    "oldprog": "Old email program stopped? Most likely your email is still there, and Techies One Mail can show it: type your address and it knows the settings.",
+}
+CLIP_JS = ('<script>(function(){var f=document.querySelector("[data-t1clip]");if(!f)return;var v=f.querySelector("video");'
+           'function still(){v.controls=true;}'
+           'if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}'
+           'new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();'
+           'if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script>')
+
+
+def clip(slug):
+    name = CLIP_OF.get(slug)
+    if not name:
+        return ""
+    return (f'          <figure class="t1m__clip" data-t1clip><div class="t1m__vid"><video muted loop playsinline preload="none" '
+            f'poster="/images/t1-clip-{name}.jpg" width="1280" height="720" aria-label="{CLIP_SAYS[name]}">'
+            f'<source src="/images/t1-clip-{name}.mp4" type="video/mp4"></video></div>'
+            f'<figcaption>The real program, with made-up demo emails &middot; 9 seconds, no sound</figcaption></figure>\n'
+            f'          {CLIP_JS}\n')
+
+
 POINTS = [
     "Free, from 365 Techies, the family IT firm that wrote this guide",
     "Signed by 365 Techies Ltd, and it tells you when there&rsquo;s an update",
@@ -115,6 +156,11 @@ STYLE = """      <style>
         .t1m__cta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.2rem}
         .t1m__cta .button{flex:1 1 15rem;text-align:center}
         .t1m__small{color:var(--faint,var(--muted));font-size:.72rem;letter-spacing:.04em}
+        .t1m__clip{margin:.15rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+        .t1m__vid{border:1px solid rgba(125,170,220,.28);border-radius:12px;overflow:hidden;background:#060c1c;aspect-ratio:16/9}
+        .t1m__vid video{display:block;width:100%;height:100%;object-fit:cover;background:#060c1c}
+        .t1m__clip figcaption{color:var(--muted);font-size:.85rem;line-height:1.4}
+        @media (max-width:600px){.t1m__vid{margin-inline:calc(-1*clamp(1.1rem,3vw,1.8rem) + 1px);border-radius:0;border-inline:0}}
       </style>
 """
 
@@ -166,7 +212,7 @@ def box(slug):
           <p class="eyebrow mono">{eyebrow}</p>
           <h2>{heading}</h2>
           <p class="t1m__lede">{lede}</p>
-          <ul class="t1m__pts">{points}</ul>
+{clip(slug)}          <ul class="t1m__pts">{points}</ul>
           <p class="t1m__note">{note} <a href="/techies-one-mail/">See what it does, with pictures</a>.</p>
           <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One Mail, free</a>{'<a class="button secondary button--lg" href="/techies-one-mail/">What it looks like</a></p>' if slug in NO_SETUP else '<a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>'}
           <p class="t1m__small mono">FOR WINDOWS 10 AND 11 PCs<span class="t1v"> &middot; VERSION {ver} &middot; {mb} MB</span> &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
