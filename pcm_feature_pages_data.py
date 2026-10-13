@@ -112,13 +112,29 @@ SHOTS = {
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
     'daydate': ('/images/pcm-feat-daydate-v36.webp', 1272, 976, 'Screensaver and photos in 365 PC Manager: the Day and date screensaver picked, its preview showing Thursday, 8 October 2026, Afternoon, 4:47pm, with Start after 5, 10, 15 or 30 minutes and Use this, Try it now and Its settings buttons', ('Photos &amp; files', 'Screensaver &amp; photos')),
     'shares':  ('/images/pcm-feat-shares-v37.webp', 1296, 988, 'Shared folders in 365 PC Manager: this PC has Windows 11 24H2, which blocks folders shared without a password and insists on signed connections; NAS Photos on drive P opens fine, OFFICE-PC Accounts turned down the username or password, OLD-NAS Public is blocked because it lets anyone in without a password, each with a button to read the fix', ('Internet &amp; email', 'Shared folders')),
+    # 13 Oct 2026 (owner: "do them all"): the boxes on the battery, is-it-down, Windows 10, Wi-Fi and startup pages
+    'isitdown': ('/images/pcm-feat-isitdown-v36.webp', 1272, 1444, 'Is it down, or just me? in 365 PC Manager saying one service isn&rsquo;t reaching this PC and the rest are fine: Gmail, Outlook and Microsoft 365, BBC iPlayer, Facebook, WhatsApp, Instagram, YouTube, Amazon, Spotify and X working, Netflix working for everyone else but not reachable from this PC, and Zoom working with some people having problems', ('Internet &amp; email', 'Is it down, or just me?')),
+    'thispcwin': ('/images/pcm-feat-thispcwin-v36.webp', 1272, 296, 'The Windows rows on This PC in 365 PC Manager: Windows 11 Pro 26H2, already on Windows 11, Windows updates until 10 October 2028 for version 26H2, and start-up certificates up to date', ('My PC', 'This PC')),
+    'netcheck': ('/images/pcm-feat-netcheck-v36.webp', 1272, 824, 'Network check in 365 PC Manager saying your connection is set up well: the connection, a lag test with Run the lag test and Full speed test buttons, and settings that matter such as no VPN running and which DNS looks up web addresses', ('Internet &amp; email', 'Network check')),
+    'battery': ('/images/pcm-feat-keepreplace-v36.webp', 1272, 848, 'This PC in 365 PC Manager on a sample Dell Latitude 7490 laptop: the battery holds about 61% of its original charge, alongside the drive check and whether it can move to Windows 11 for free', ('My PC', 'This PC')),
+    'startup': ('/images/pcm-feat-startup-v36.webp', 1272, 724, 'What starts with Windows in 365 PC Manager: 10 programs start with Windows, listed by name - Microsoft OneDrive, Epic Games Launcher, Steam, NVIDIA Broadcast, QuickLook and Signal', ('My PC', 'Startup')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.', 'shares': 'The real app (sample shared folders).', 'daydate': 'The real app, with the Day and date screensaver in its preview.'}
+CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, on our office PC (our own support program is the one listed).', 'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).', 'winsafety': 'The real app, on our office PC (Malwarebytes is the antivirus there).', 'gaming': 'The real app, on our office PC: it caught the power mode holding games back.', 'phototools': 'The real app, on our office PC.', 'officelicence': 'The real app, on our office PC.', 'shares': 'The real app (sample shared folders).', 'daydate': 'The real app, with the Day and date screensaver in its preview.', 'isitdown': 'The real app (a sample check).', 'thispcwin': 'The real app, on our office PC.', 'netcheck': 'The real app, on our office PC, which is on a cable; on Wi-Fi it shows the signal, band and link speed as well.', 'startup': 'The real app, on our office PC. In the free version the list is to look at; switching programs off from the app comes with the paid version.', 'battery': 'The real app on a sample laptop: the battery holds about 61% of its original charge.'}
 
 
-def _app_box(key, head, what_html, setup_url, note=''):
+# 13 Oct 2026: clip = a 9-second silent clip of the same screen (images/pcm-clip-<clip>.mp4 + .jpg poster, made in
+# reels/pcm-problem-clips-2026-10-13) shown instead of the still: muted, plays only while on screen; with reduced motion it
+# never starts by itself (poster + controls).
+_CLIP_JS = ('<script>(function(){var f=document.currentScript&&document.currentScript.previousElementSibling;'
+            'var v=f&&f.querySelector("video");if(!v)return;function still(){v.controls=true;}'
+            'if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}'
+            'new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();'
+            'if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script>')
+
+
+def _app_box(key, head, what_html, setup_url, note='', clip=''):
     src, w, h, alt, where = SHOTS[key]
     return (f'<div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;'
             f'border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))">'
@@ -128,10 +144,15 @@ def _app_box(key, head, what_html, setup_url, note=''):
             f'<p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="{setup_url}" download data-pfa-dl="{key}" style="text-decoration:none">Download 365 PC Manager free &#8595;</a>'
             f'<a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p>'
             f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.{note}</p></div>'
-            f'<figure style="margin:0"><img src="{src}" width="{w}" height="{h}" alt="{alt}" loading="lazy" decoding="async" '
-            f'style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
-            f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">{CAPS.get(key, "The real app catching it (a sample PC).")}</figcaption></figure></div>'
-            f'<style>@media (max-width:820px){{.pfa{{grid-template-columns:1fr!important}}}}</style>'
+            + (f'<figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);aspect-ratio:16/9;background:#060c1c">'
+               f'<video muted loop playsinline preload="none" poster="/images/pcm-clip-{clip}.jpg" width="1280" height="720" aria-label="{alt}" '
+               f'style="display:block;width:100%;height:100%;object-fit:cover"><source src="/images/pcm-clip-{clip}.mp4" type="video/mp4"></video></div>'
+               f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption></figure>' + _CLIP_JS + '</div>'
+               if clip else
+               f'<figure style="margin:0"><img src="{src}" width="{w}" height="{h}" alt="{alt}" loading="lazy" decoding="async" '
+               f'style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
+               f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">{CAPS.get(key, "The real app catching it (a sample PC).")}</figcaption></figure></div>')
+            +             f'<style>@media (max-width:820px){{.pfa{{grid-template-columns:1fr!important}}}}</style>'
             f'<script>(function(){{var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){{'
             f'try{{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")}});}}catch(e){{}}}});}})();</script>')
 
@@ -1512,6 +1533,180 @@ DC = {
 }
 
 
+
+# ============================================================ 17. How to check laptop battery health (13 Oct 2026)
+# Owner, 13 Oct 2026: "do them all ... add the new pages now rather than wait". Why: Bing Keyword Research, 13 Jul - 10 Oct
+# 2026 (seo-research/pcm-problems-2026-10-13): "how to check laptop battery health" 11,411 UK / 176,651 worldwide, "battery
+# health" 10,980 UK; the site had no page for it (the battery FAULT pages mention the report in passing). Sources (read 13
+# Oct 2026): Microsoft Learn 'Powercfg command-line options' (/batteryreport writes an HTML report to the current path; it is
+# not among the options Microsoft marks as needing an elevated prompt). The app: v37 Ui.cs/Program.cs Battery.Read (Windows'
+# own WMI capacity figures, laptops only, cycle count where reported) and its own charging-habits text (charge caps: Lenovo
+# Conservation Mode, Dell and HP in BIOS or their power apps). No pass mark is quoted: there isn't an official one.
+BH = {
+    'slug': 'how-to-check-laptop-battery-health',
+    'title': 'How to Check Laptop Battery Health on Windows 11 and 10',
+    'metaDesc': 'Check your laptop battery\'s health in a minute with Windows\' own battery report: what design and full charge capacity mean, and when to replace it.',
+    'ogTitle': 'How to check your laptop battery\'s health, in a minute',
+    'crumbName': 'How to Check Laptop Battery Health',
+    'eyebrow': '// LAPTOP BATTERY HEALTH',
+    'h1': 'How to check your <em class="grad grad--cyan">laptop battery&rsquo;s health</em>',
+    'lede': 'Windows already measures how much charge your battery holds compared with when it was new. One command turns that into a report: divide the <strong>full charge capacity</strong> by the <strong>design capacity</strong> and you have the battery&rsquo;s health. Here&rsquo;s how, what the numbers mean, and when a new battery is worth it.',
+    'chips': ['Windows&rsquo; own figures', 'Free battery check app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Make the battery report', '#s1'],
+    'ctaHead': 'Battery not lasting, or shutting off?', 'ctaSub': 'We check the battery with you, tell you straight whether a new one is worth it, and fit it. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('The quick way', 'Right-click Start, open Terminal, type powercfg /batteryreport and press Enter, then open the battery-report.html file it saves.'),
+        ('The two numbers', 'Design capacity is what the battery held when new. Full charge capacity is what it holds today.'),
+        ('Battery health', 'Full charge capacity divided by design capacity. 39,000 out of 52,000 mWh is 75%.'),
+        ('Cycle count', 'How many charge cycles it has been through, on laptops that report it.'),
+        ('A new battery?', 'When it no longer lasts long enough for you, or the laptop shuts off with charge still showing.'),
+        ('Free check', 'Our free 365 PC Manager app shows the battery&rsquo;s health and charge cycles on its This PC page.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE QUICK WAY', 'h2': 'Check battery health with Windows&rsquo; battery report',
+         'html': '<p>Windows has a battery report built in. It takes about a minute and needs nothing installed.</p>'
+                 '<ol>'
+                 '<li><strong>Right-click the Start button</strong> and choose <strong>Terminal</strong> (on Windows 10, <strong>Windows PowerShell</strong>).</li>'
+                 '<li>Type <strong>powercfg /batteryreport</strong> and press <strong>Enter</strong>.</li>'
+                 '<li>Windows replies with where it saved <strong>battery-report.html</strong> &mdash; usually your own user folder, such as <em>C:\\Users\\YourName</em>.</li>'
+                 '<li><strong>Open that file</strong> (it opens in your web browser) and scroll to <strong>Installed batteries</strong>.</li>'
+                 '</ol>'
+                 '<p>If Windows says it can&rsquo;t write the report, right-click Start, choose <strong>Terminal (Admin)</strong> and try again. '
+                 'The command comes from Microsoft&rsquo;s own <a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options" rel="noopener" target="_blank">powercfg documentation</a>.</p>'},
+        {'eyebrow': '/02 &mdash; READ THE NUMBERS', 'h2': 'What design capacity and full charge capacity mean',
+         'html': '<ul>'
+                 '<li><strong>Design capacity</strong> is how much energy the battery held when it was new, in milliwatt-hours (mWh).</li>'
+                 '<li><strong>Full charge capacity</strong> is how much it holds now, when Windows says it&rsquo;s at 100%.</li>'
+                 '<li><strong>Cycle count</strong>, where your laptop reports it, is how many full charge cycles the battery has done. Some laptops leave it blank.</li>'
+                 '</ul>'
+                 '<p><strong>Battery health = full charge capacity &divide; design capacity &times; 100.</strong> A battery designed for 52,000 mWh that now holds 39,000 mWh is at 75%: it runs for roughly three-quarters as long as it did new.</p>'
+                 '<p>Further down, <strong>Battery capacity history</strong> shows how the full charge capacity has fallen over the months, and <strong>Battery life estimates</strong> compares how long it lasted when new with how long it lasts now.</p>'},
+        {'eyebrow': '/03 &mdash; WHAT IT MEANS', 'h2': 'Is your battery&rsquo;s health good enough?',
+         'html': '<p>Every battery wears a little with each charge, so a laptop a few years old won&rsquo;t show 100%. There&rsquo;s no official pass mark: what matters is whether it still lasts long enough for you.</p>'
+                 '<p>Two signs a new battery is worth it:</p>'
+                 '<ul>'
+                 '<li><strong>It no longer gets you through</strong> what you need it for &mdash; a morning, a train journey, a meeting.</li>'
+                 '<li><strong>The laptop switches off with charge still showing</strong>, at 20 or 30%, when you move it, or the moment you unplug it. A worn battery can&rsquo;t deliver what the laptop asks of it. See <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30%</a> and <a href="/laptop-turns-off-when-unplugged/">laptop turns off when unplugged</a>.</li>'
+                 '</ul>'
+                 '<p><strong>Stop straight away if the case is bulging</strong>, the trackpad lifts or the keyboard rises: that&rsquo;s a swollen battery. Don&rsquo;t charge it; ring us (<a href="/dell-xps-swollen-battery/">what a swollen battery looks like</a>).</p>'},
+        {'eyebrow': '/04 &mdash; THE MAKER&rsquo;S CHECK', 'h2': 'Your laptop maker&rsquo;s own battery check',
+         'html': '<p>Most makers have their own app that shows the battery&rsquo;s condition: <strong>Lenovo Vantage</strong>, <strong>HP Support Assistant</strong> and Dell&rsquo;s power app, and many laptops have a battery test in the BIOS start-up screen too. They read the same chip as Windows&rsquo; report.</p>'
+                 '<p>To slow the wear down on a laptop that lives plugged in, many can stop charging at about 80%: Lenovo calls it Conservation Mode, and Dell and HP put the setting in the BIOS or their power apps. More in <a href="/how-to-make-your-laptop-battery-last-longer/">how to make your laptop battery last longer</a>.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app read it for you',
+         'html': '__APP_BOX_BATTERY__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the battery no longer lasts or the laptop keeps switching itself off, we can check it with you and fit a new one. The price depends on your model and the battery it takes, and you get a clear price before we start.')},
+    ],
+    'howToName': 'How to check a Windows laptop&rsquo;s battery health',
+    'howToSteps': [
+        {'name': 'Open Terminal', 'text': 'Right-click the Start button and choose Terminal (on Windows 10, Windows PowerShell).'},
+        {'name': 'Make the battery report', 'text': 'Type powercfg /batteryreport and press Enter. Windows saves battery-report.html, usually in your user folder.'},
+        {'name': 'Open the report', 'text': 'Open battery-report.html and scroll to Installed batteries.'},
+        {'name': 'Work out the health', 'text': 'Divide the full charge capacity by the design capacity and multiply by 100. That is how much of its original charge the battery still holds.'},
+    ],
+    'faqs': [
+        {'q': 'How do I check my laptop battery health on Windows?', 'a': '<p>Right-click Start, open Terminal, type <strong>powercfg /batteryreport</strong> and press Enter, then open the battery-report.html file it saves. Divide the full charge capacity by the design capacity to get the health as a percentage.</p>'},
+        {'q': 'What is a good battery health percentage?', 'a': '<p>There&rsquo;s no official pass mark. The figure is simply how much of its original charge the battery still holds, so at 70% it runs for roughly 70% as long as it did new. If that still gets you through your day, it&rsquo;s fine. If it doesn&rsquo;t, or the laptop shuts off with charge left, a new battery is worth it.</p>'},
+        {'q': 'Where is the battery report saved?', 'a': '<p>In the folder Terminal was in when you ran the command, which is usually your own user folder (C:\\Users\\YourName). Windows tells you the exact path when it finishes.</p>'},
+        {'q': 'What does design capacity mean?', 'a': '<p>How much energy the battery held when it was new, in milliwatt-hours. Full charge capacity is how much it holds today.</p>'},
+        {'q': 'Why does my laptop shut off when the battery says 30%?', 'a': '<p>A worn battery can&rsquo;t deliver the power the laptop needs, so the voltage drops and the laptop switches off even though the gauge shows charge left. Check the battery&rsquo;s health first; see <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30%</a>.</p>'},
+        {'q': 'Can you replace my laptop battery?', 'a': '<p>Yes. We check the battery and fit the right replacement for your model, with a clear price before we start. Call 01202 775566 or text 07520 615332.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/laptop-turns-off-when-unplugged/">laptop turns off when unplugged</a>, <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30% battery</a>, <a href="/laptop-shuts-off-when-moved/">laptop shuts off when moved</a>, <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>, <a href="/dell-laptop-battery-replacement-dorset/">Dell laptop battery replacement</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+}
+
+# ============================================================ 18. Stop programs starting with Windows (13 Oct 2026)
+# Why: Bing 13 Jul - 10 Oct 2026: "startup programs" 2,313 UK / 38,632 worldwide (26,080 US); no page on the site. Sources (read
+# 13 Oct 2026): Microsoft Support 'Configure startup applications in Windows' (Settings > Apps > Startup; Task Manager Startup
+# apps with Startup impact - Low under 300 ms CPU and 292 KB disk; shell:startup; some apps live in the registry Run keys).
+# The app: v37 Nav.cs - Startup lists what starts with Windows for everyone; switching off from the app is Pro (IsPro);
+# machine-wide entries are list-only on purpose (Ui.cs).
+SU = {
+    'slug': 'stop-programs-starting-with-windows',
+    'title': 'Startup Programs: Stop Apps Opening With Windows 11 and 10',
+    'metaDesc': 'Too many programs starting with Windows? How to see them all, switch off the ones you don\'t need in Settings or Task Manager, and which to leave on.',
+    'ogTitle': 'Stop programs starting with Windows, and which to leave on',
+    'crumbName': 'Stop Programs Starting With Windows',
+    'eyebrow': '// STARTUP PROGRAMS',
+    'h1': 'Stop programs <em class="grad grad--cyan">starting with Windows</em>',
+    'lede': 'Every program that starts with Windows makes the PC slower to be ready and keeps running in the background. Switching off the ones you don&rsquo;t need is free, safe and easy to undo. Here&rsquo;s where to find them in Windows 11 and 10, and which to leave alone.',
+    'chips': ['Free and reversible', 'Free startup check app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Switch them off in Settings', '#s1'],
+    'ctaHead': 'PC still slow to start?', 'ctaSub': 'We look at what starts with your PC and why it&rsquo;s slow, and sort it while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Windows 11', 'Settings, then Apps, then Startup. Switch off what you don&rsquo;t need.'),
+        ('Windows 10 (and 11)', 'Task Manager (Ctrl + Shift + Esc), the Startup apps tab, then Disable.'),
+        ('Startup impact', 'Windows rates each one High, Medium or Low by how much it slows the start.'),
+        ('Leave on', 'Your antivirus, drivers for the touchpad, sound and graphics, and OneDrive if it backs up your files.'),
+        ('Undo it', 'Switching one off doesn&rsquo;t uninstall it. Switch it back on any time.'),
+        ('Free check', 'Our free 365 PC Manager app lists everything that starts with Windows by its real name.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WINDOWS 11', 'h2': 'Turn off startup apps in Settings',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong> (Start, then the gear), then <strong>Apps</strong>, then <strong>Startup</strong>.</li>'
+                 '<li>Use <strong>Sort by</strong> to put the ones with the biggest <strong>Startup impact</strong> at the top.</li>'
+                 '<li><strong>Switch off</strong> the ones you don&rsquo;t need starting by themselves. You can still open them whenever you want.</li>'
+                 '<li><strong>Restart</strong> to feel the difference.</li>'
+                 '</ol>'
+                 '<p>These are Microsoft&rsquo;s own steps: <a href="https://support.microsoft.com/en-us/windows/configure-startup-applications-in-windows-115a420a-0bff-4a6f-90e0-1934c844e473" rel="noopener" target="_blank">Configure startup applications in Windows</a>.</p>'},
+        {'eyebrow': '/02 &mdash; TASK MANAGER', 'h2': 'Or use Task Manager (Windows 11 and 10)',
+         'html': '<ol>'
+                 '<li>Press <strong>Ctrl + Shift + Esc</strong>, or right-click Start and choose <strong>Task Manager</strong>. If it opens small, click <strong>More details</strong>.</li>'
+                 '<li>Open <strong>Startup apps</strong> (on Windows 10, the <strong>Startup</strong> tab).</li>'
+                 '<li>Click a program, then <strong>Disable</strong>.</li>'
+                 '</ol>'
+                 '<p>The <strong>Startup impact</strong> column rates each one. Microsoft counts <strong>Low</strong> as under 300 milliseconds of processor time and under 292 KB read from the drive at start-up; <strong>High</strong> ones are the ones worth switching off first.</p>'},
+        {'eyebrow': '/03 &mdash; WHICH ONES?', 'h2': 'Which ones can you switch off?',
+         'html': '<p><strong>Usually fine to switch off:</strong></p>'
+                 '<ul>'
+                 '<li>Game launchers, such as Steam and Epic Games Launcher.</li>'
+                 '<li>Music, chat and meeting apps you open yourself when you need them.</li>'
+                 '<li>Update helpers for programs you rarely use; the program still checks for updates when you open it.</li>'
+                 '</ul>'
+                 '<p><strong>Leave these on:</strong></p>'
+                 '<ul>'
+                 '<li>Your <strong>antivirus</strong> or security program.</li>'
+                 '<li>Drivers and helpers for the <strong>touchpad, sound and graphics</strong> (names such as Realtek, Synaptics, Intel, AMD or NVIDIA).</li>'
+                 '<li><strong>OneDrive</strong>, if it backs up your Desktop, Documents or photos.</li>'
+                 '<li>Printer or scanner software you use.</li>'
+                 '<li>Anything you don&rsquo;t recognise: look it up first, or ask us.</li>'
+                 '</ul>'
+                 '<p>Switching a program off doesn&rsquo;t uninstall it or delete anything. If something stops working, switch it back on.</p>'},
+        {'eyebrow': '/04 &mdash; NOT IN THE LIST?', 'h2': 'Programs that aren&rsquo;t in the list',
+         'html': '<ul>'
+                 '<li><strong>The Startup folder:</strong> press <strong>Windows + R</strong>, type <strong>shell:startup</strong> and press Enter. Deleting a shortcut from that folder stops the program starting; it doesn&rsquo;t remove the program.</li>'
+                 '<li><strong>Programs that switch themselves back on:</strong> some turn their own &ldquo;start with Windows&rdquo; option on again after an update. Look in that program&rsquo;s own settings for an option such as <em>Open at login</em> and untick it.</li>'
+                 '<li>Some start from the Windows registry. Leave those to us: a wrong change there can stop Windows starting properly.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; WILL IT HELP?', 'h2': 'Will it make my PC faster?',
+         'html': '<p>It makes the PC quicker to be ready after you switch it on, and frees memory that background programs were holding. It won&rsquo;t fix a PC that&rsquo;s slow because of an old hard drive, a drive that&rsquo;s nearly full or too little memory: see <a href="/why-is-my-computer-slow/">why is my computer slow?</a> and <a href="/how-to-speed-up-a-slow-computer/">how to speed up a slow computer</a>.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'See everything that starts with your PC',
+         'html': '__APP_BOX_STARTUP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the PC is still slow to start, or something you don&rsquo;t recognise keeps starting by itself, we&rsquo;ll find out what it is.')},
+    ],
+    'howToName': 'How to stop programs starting with Windows',
+    'howToSteps': [
+        {'name': 'Open the startup list', 'text': 'On Windows 11: Settings, then Apps, then Startup. On Windows 10: press Ctrl + Shift + Esc and open the Startup tab.'},
+        {'name': 'Sort by impact', 'text': 'Put the ones with the highest Startup impact at the top.'},
+        {'name': 'Switch off what you don&rsquo;t need', 'text': 'Switch off game launchers and apps you open yourself. Leave your antivirus, drivers and OneDrive on.'},
+        {'name': 'Restart', 'text': 'Restart the PC. Switch anything back on if it stops working the way you expect.'},
+    ],
+    'faqs': [
+        {'q': 'How do I stop programs starting with Windows 11?', 'a': '<p>Open Settings, then Apps, then Startup, and switch off the ones you don&rsquo;t need. Task Manager&rsquo;s Startup apps tab (Ctrl + Shift + Esc) does the same.</p>'},
+        {'q': 'Is it safe to disable startup programs?', 'a': '<p>Yes, for programs you open yourself: switching one off doesn&rsquo;t uninstall it, and you can switch it back on. Leave your antivirus, drivers for the touchpad, sound and graphics, and OneDrive (if it backs up your files) switched on.</p>'},
+        {'q': 'What does Startup impact mean?', 'a': '<p>Windows&rsquo; rating of how much a program slows the start. Microsoft counts Low as under 300 milliseconds of processor time and under 292 KB read from the drive; High ones are worth switching off first.</p>'},
+        {'q': 'Will disabling startup programs speed up my PC?', 'a': '<p>It makes the PC quicker to be ready and frees memory. It won&rsquo;t fix slowness caused by an old hard drive, a full drive or too little memory.</p>'},
+        {'q': 'A program keeps starting even though I switched it off. Why?', 'a': '<p>Some programs turn their own &ldquo;start with Windows&rdquo; option back on after an update. Untick it in the program&rsquo;s own settings, or check the Startup folder (Windows + R, then shell:startup).</p>'},
+        {'q': 'Can you sort it out for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through what starts with it and why it&rsquo;s slow, and sort it while you watch: remote help from &pound;20, and no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/why-is-my-computer-slow/">why is my computer slow?</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+}
+
+
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
                  'h3s': 'Still muffled after every step? That is a remote job.'},
@@ -1535,6 +1730,10 @@ FLOWS = {
                  'h3s': 'Still stuck after every step? That is a remote job.'},
     AL['slug']: {'h2': 'Get your alarm going off, step by step', 'ask': 'Did it go off?', 'tip': 'Test it with an alarm two minutes ahead before you rely on it.',
                  'h3s': 'Still silent after every step? That is a remote job.'},
+    BH['slug']: {'h2': 'Check your battery, step by step', 'ask': 'Is that step done?', 'tip': 'Run the report with the laptop plugged in or on battery: the capacity figures are the same.',
+                 'h3s': 'Battery worn, or the laptop keeps switching off? That is a job for us.'},
+    SU['slug']: {'h2': 'Switch them off, step by step', 'ask': 'Is that step done?', 'tip': 'Switch off one or two at a time, restart, and see how it feels.',
+                 'h3s': 'Still slow to start after every step? That is a remote job.'},
     CD['slug']: {'h2': 'Get your CD playing, step by step', 'ask': 'Is it playing now?', 'tip': 'Set Audio CD to play in AutoPlay, so next time it starts by itself.',
                  'h3s': 'Still won&rsquo;t play after every step? That is a remote job.'},
 }
@@ -1596,8 +1795,14 @@ def pages(setup_url):
             'The same page sets when the screen switches off &mdash; choose <strong>Never</strong> for a clock that stays on.</p>', setup_url,
             ' A touch of the mouse or keyboard brings the desktop back.'),
     }
+    boxes['__APP_BOX_BATTERY__'] = _app_box('battery', 'Battery health: let your laptop tell you',
+        '<p style="margin:0">On a laptop, our free app reads Windows&rsquo; own measurement of the battery and shows its <strong>health</strong> &mdash; how much of its original charge it still holds &mdash; and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page, with no command to type. '
+        'A desktop never sees it, and nothing is estimated. It also explains how many laptops can stop charging at about 80% to slow the wear down.</p>', setup_url, clip='battery')
+    boxes['__APP_BOX_STARTUP__'] = _app_box('startup', 'Startup: everything that starts with your PC, by its real name',
+        '<p style="margin:0">Our free app lists every program that starts with Windows, including the ones set up for every user of the PC, by a name you&rsquo;ll recognise. '
+        'In the free version the list is to look at, and you switch things off in Settings as above, which is free. Switching them off from inside the app comes with the paid version.</p>', setup_url, clip='startup')
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")

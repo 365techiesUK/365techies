@@ -242,8 +242,8 @@
  },
  "broadband-down": {
   "first": "2026-07-28",
-  "h": "23ea334060743075",
-  "last": "2026-10-06"
+  "h": "bd3696f8fe7ecc31",
+  "last": "2026-10-13"
  },
  "broadband-help": {
   "first": "2026-07-28",
@@ -1345,6 +1345,11 @@
   "h": "a8a2f3c970ca0a39",
   "last": "2026-09-26"
  },
+ "how-to-check-laptop-battery-health": {
+  "first": "2026-10-13",
+  "h": "c37a83024fb5adac",
+  "last": "2026-10-13"
+ },
  "how-to-choose-a-laptop": {
   "first": "2026-07-28",
   "h": "559bffa987c016c4",
@@ -1396,8 +1401,8 @@
  },
  "how-to-make-your-laptop-battery-last-longer": {
   "first": "2026-06-16",
-  "h": "c789ebb02fbd3aa0",
-  "last": "2026-09-05"
+  "h": "1f4110a77893c320",
+  "last": "2026-10-13"
  },
  "how-to-play-a-cd-on-windows-11": {
   "first": "2026-10-08",
@@ -1459,8 +1464,8 @@
  },
  "how-to-speed-up-a-slow-computer": {
   "first": "2026-06-16",
-  "h": "b2a8e7023ec0b7c2",
-  "last": "2026-09-26"
+  "h": "4337123d0ae4739d",
+  "last": "2026-10-13"
  },
  "how-to-spot-a-fake-website": {
   "first": "2026-06-16",
@@ -1524,8 +1529,8 @@
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
-  "h": "cd41d8abecc9abe2",
-  "last": "2026-09-26"
+  "h": "0a680f6e7832d783",
+  "last": "2026-10-13"
  },
  "identity-theft": {
   "first": "2026-07-28",
@@ -1539,8 +1544,8 @@
  },
  "is-it-down": {
   "first": "2026-07-28",
-  "h": "bc50dccfddd77c21",
-  "last": "2026-09-28"
+  "h": "ae68adcecd2e8d42",
+  "last": "2026-10-13"
  },
  "is-it-safe-to-buy-a-refurbished-laptop": {
   "first": "2026-06-19",
@@ -2019,8 +2024,8 @@
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
-  "h": "b780bb68b683fdc3",
-  "last": "2026-10-02"
+  "h": "8e38e308e72c5264",
+  "last": "2026-10-13"
  },
  "join": {
   "first": "2026-07-28",
@@ -2073,13 +2078,13 @@
  },
  "laptop-shuts-down-at-30-percent-battery": {
   "first": "2026-08-01",
-  "h": "ef7350b354259baf",
-  "last": "2026-09-26"
+  "h": "e4589f20b49b844f",
+  "last": "2026-10-13"
  },
  "laptop-shuts-off-when-moved": {
   "first": "2026-08-01",
-  "h": "019be25a050ef7d7",
-  "last": "2026-09-26"
+  "h": "c92ac8102190c6a7",
+  "last": "2026-10-13"
  },
  "laptop-ssd-upgrade-bournemouth": {
   "first": "2026-07-28",
@@ -2097,8 +2102,8 @@
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
-  "h": "6c8a2d903ec67932",
-  "last": "2026-10-06"
+  "h": "1caade49a1ac50da",
+  "last": "2026-10-13"
  },
  "laptop-wont-turn-on-no-lights": {
   "first": "2026-07-28",
@@ -2900,13 +2905,13 @@
  },
  "printer-says-wifi-password-incorrect": {
   "first": "2026-07-28",
-  "h": "40d59fb6350e3177",
-  "last": "2026-10-06"
+  "h": "cd96930a6619dcc5",
+  "last": "2026-10-13"
  },
  "printer-stopped-working-after-changing-wifi-password": {
   "first": "2026-07-28",
-  "h": "5e636493341ed416",
-  "last": "2026-10-06"
+  "h": "4ef6fb831b2a2894",
+  "last": "2026-10-13"
  },
  "printer-support": {
   "first": "2026-07-28",
@@ -2915,8 +2920,8 @@
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "11ce8b66c3f4378e",
-  "last": "2026-10-06"
+  "h": "9506d59f138c847f",
+  "last": "2026-10-13"
  },
  "printer-wont-connect-after-moving-house": {
   "first": "2026-07-28",
@@ -3340,6 +3345,11 @@
   "h": "b50c03276985d192",
   "last": "2026-09-26"
  },
+ "stop-programs-starting-with-windows": {
+  "first": "2026-10-13",
+  "h": "8bbf41c9021bbca8",
+  "last": "2026-10-13"
+ },
  "stop-using-onedrive-without-losing-files": {
   "first": "2026-07-28",
   "h": "865eb200901a2680",
@@ -3658,8 +3668,8 @@
  },
  "why-is-my-computer-slow": {
   "first": "2026-06-16",
-  "h": "8a48a2d1da333331",
-  "last": "2026-09-05"
+  "h": "ff6ff6d070c27279",
+  "last": "2026-10-13"
  },
  "why-monthly-it-support-beats-per-repair": {
   "first": "2026-06-16",
@@ -3703,8 +3713,8 @@
  },
  "wifi-keeps-dropping": {
   "first": "2026-07-31",
-  "h": "895598043324b7bd",
-  "last": "2026-10-06"
+  "h": "d654d5f412e17635",
+  "last": "2026-10-13"
  },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
@@ -3743,8 +3753,8 @@
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
-  "h": "cde5c048e6ad894e",
-  "last": "2026-09-26"
+  "h": "1096911cccc61d58",
+  "last": "2026-10-13"
  },
  "windows-10-esu-business-cost": {
   "first": "2026-07-29",
