@@ -1753,7 +1753,7 @@ def pages(setup_url):
             'It never changes the setting itself &mdash; it opens Display settings, and Windows puts the old setting back if the screen goes blank.</p>', setup_url),
         '__APP_BOX_PRINTER__': _app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
-            'It only reads, until you press a button.</p>', setup_url),
+            'It only reads, until you press a button.</p>', setup_url, clip='printers'),
         '__APP_BOX_RADIO__': _app_box('radio', 'Radio: the stations near you, one click each',
             '<p style="margin:0">It lists the stations for the country your PC is in, with the ones <strong>near you</strong> first and a heart to keep your favourites, and plays them in one click. '
             'BBC and Global stations open in BBC Sounds and Global Player, because those broadcasters keep them to their own apps. The equaliser and Volume boost work on the music and stations it plays itself, and it can wake you with the radio.</p>', setup_url),
@@ -1768,7 +1768,7 @@ def pages(setup_url):
             'It won&rsquo;t fail silently: it turns Windows&rsquo; sound up if it&rsquo;s muted or very low, plays your songs if the station won&rsquo;t start, and Windows&rsquo; alarm sound if there are none. The PC can be asleep &mdash; it wakes itself a minute early (leave a laptop plugged in) &mdash; but not switched off. BBC and Global stations can&rsquo;t be alarms.</p>', setup_url, clip='alarm'),   # 13 Oct 2026: the 9-second clip (the real 36.3 alarm editor) - its searchers ask "will it go off?"
         '__APP_BOX_REMOTE__': _app_box('remote', 'Remote access: is anyone connected right now?',
             '<p style="margin:0">It tells you for certain when Windows&rsquo; own remote tools are in use &mdash; a Remote Desktop session, Quick Assist or Remote Assistance &mdash; and lists the remote-control programs on the PC, such as AnyDesk and TeamViewer, saying which are running. '
-            'It never calls a running program a connection. When you tap, it reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who connected, and its Cut them off button closes those programs or disconnects the Wi-Fi.</p>', setup_url),
+            'It never calls a running program a connection. When you tap, it reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who connected, and its Cut them off button closes those programs or disconnects the Wi-Fi.</p>', setup_url, clip='remote'),
         '__APP_BOX_BROWSER__': _app_box('browser', 'Browser safety: what has been forced on your browsers',
             '<p style="margin:0">It reads every add-on in Chrome, Edge, Brave and Firefox, and the policies Windows holds for them, and says in plain words what is worth a look: an add-on a policy forces in, a policy that locks the search engine or home page, an add-on put there by another program, and anything the browser itself has flagged. '
             'It changes nothing on its own &mdash; you remove things in the browser, or we can do it for you.</p>', setup_url),
@@ -1826,7 +1826,7 @@ def gaming_section(setup_url):
             'html': _app_box('gaming', 'Gaming check: what&rsquo;s really costing you frames',
                 '<p style="margin:0">It reads each graphics card and how old its driver is. On NVIDIA cards it also shows the temperature, the point where the card slows itself down, the fan, and whether it&rsquo;s running at the full speed its slot allows. '
                 '<strong>Watch while I play</strong> keeps an eye on things for up to an hour while you game, then tells you how hot the card got and whether it slowed itself down (on cards that don&rsquo;t report their temperature, it watches the processor instead). '
-                'It checks Game Mode, the power mode, a screen running below its refresh rate, a laptop with two graphics chips, and the memory. Nothing changes unless you click a button.</p>', setup_url)}
+                'It checks Game Mode, the power mode, a screen running below its refresh rate, a laptop with two graphics chips, and the memory. Nothing changes unless you click a button.</p>', setup_url, clip='gaming')}
 
 
 # ---- the Camera & microphone box on the existing "you've been hacked" email page (11 Oct 2026): the app's own button links
@@ -1856,7 +1856,7 @@ def office_section(setup_url):
             'html': '<p>Not sure which of these you&rsquo;re in? On a Windows PC, our free app reads Office&rsquo;s own licence record and says it in plain words, in a few seconds.</p>'
                     + _app_box('officelicence', 'Is your Office licence OK?',
                         '<p style="margin:0">Its <strong>This PC</strong> page shows which Office is installed and what Office&rsquo;s own licence record says: <strong>licensed</strong> (with the date Microsoft last confirmed the subscription), <strong>subscription ended</strong> (still working until a date it names), <strong>not licensed</strong> &mdash; the &ldquo;Unlicensed Product&rdquo; state &mdash; or <strong>not signed in</strong> with the account that has the subscription. '
-                        'For an Office bought once, it says when its security fixes end. Where it can&rsquo;t tell, it says so rather than guess, and it keeps nothing personal: no email address, no account.</p>', setup_url)}
+                        'For an Office bought once, it says when its security fixes end. Where it can&rsquo;t tell, it says so rather than guess, and it keeps nothing personal: no email address, no account.</p>', setup_url, clip='officelicence')}
 
 
 # ---- the Shared folders box on our five shared-folder pages (11 Oct 2026; owner: "go ahead with 1 and 4", then "do
@@ -1889,7 +1889,7 @@ def shares_section(slug, setup_url):
                     + _app_box('shares', 'Why won&rsquo;t that shared folder open?',
                         '<p style="margin:0">Its <strong>Shared folders</strong> page tries each mapped drive and each shared folder this PC has opened before &mdash; or one you type in &mdash; and says, in plain words, what Windows answered: <strong>opens fine</strong>, '
                         '<strong>blocked because the folder lets anyone in without a password</strong> (the 24H2 change), <strong>username or password turned down</strong>, <strong>computer not found</strong>, <strong>no such folder</strong> or <strong>no permission</strong>. '
-                        'It tells you whether this PC has the 24H2 update and whether your network is set to Public, and links the fix for that cause. It changes nothing on your PC and never reads your saved passwords.</p>', setup_url)}
+                        'It tells you whether this PC has the 24H2 update and whether your network is set to Public, and links the fix for that cause. It changes nothing on your PC and never reads your saved passwords.</p>', setup_url, clip='shares')}
 
 
 # ---- the free tool pages

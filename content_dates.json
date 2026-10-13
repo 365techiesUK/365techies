@@ -1062,8 +1062,8 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "15ecd513e018b0b3",
-  "last": "2026-10-12"
+  "h": "7ce72f5f3fc27311",
+  "last": "2026-10-13"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1191,8 +1191,8 @@
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
-  "h": "a8c1c42292c4b8c8",
-  "last": "2026-10-11"
+  "h": "89f133128b7d005d",
+  "last": "2026-10-13"
  },
  "forgot-windows-password-or-pin": {
   "first": "2026-10-12",
@@ -1235,8 +1235,8 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "97f0aa4372522fce",
-  "last": "2026-10-11"
+  "h": "835e4099e3fd0436",
+  "last": "2026-10-13"
  },
  "gaming-pc-tune-up": {
   "first": "2026-09-05",
@@ -1595,7 +1595,7 @@
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "7aff5dc3322793c6",
+  "h": "bef2dacf0b836b3d",
   "last": "2026-10-13"
  },
  "it-advice": {
@@ -2242,8 +2242,8 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "0f2ec6c1f208dab7",
-  "last": "2026-10-11"
+  "h": "8b10d08ceccd2ade",
+  "last": "2026-10-13"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
@@ -2292,8 +2292,8 @@
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "8e22b390aa81d6e0",
-  "last": "2026-10-11"
+  "h": "1f95e8a509ef3c9f",
+  "last": "2026-10-13"
  },
  "new-computer-setup": {
   "first": "2026-07-28",
@@ -2927,7 +2927,8 @@
  },
  "printer-offline": {
   "first": "2026-10-12",
-  "h": "cbc20fa1c1b74927"
+  "h": "081f9b95f651b0e1",
+  "last": "2026-10-13"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
@@ -3259,8 +3260,8 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "6da191d2866b2f07",
-  "last": "2026-10-11"
+  "h": "bdded9bd1b2949ff",
+  "last": "2026-10-13"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
@@ -3816,8 +3817,8 @@
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
-  "h": "ce509b766c85bc9c",
-  "last": "2026-10-11"
+  "h": "0b0c2cd2aeccd080",
+  "last": "2026-10-13"
  },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
@@ -3831,8 +3832,8 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "3473dbe5799f9880",
-  "last": "2026-10-11"
+  "h": "0b21a124851098d0",
+  "last": "2026-10-13"
  },
  "windows-11-support": {
   "first": "2026-07-28",

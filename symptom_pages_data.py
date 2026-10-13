@@ -503,7 +503,7 @@ def symptom_pages(setup_url):
     boxes = {
         '__APP_BOX_PRINTER__': pfp._app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
-            'It only reads, until you press a button.</p>', setup_url),
+            'It only reads, until you press a button.</p>', setup_url, clip='printers'),
         '__APP_BOX_KEEP__': pfp._app_box('keepreplace', 'Keep it, upgrade it or replace it?',
             '<p style="margin:0">Its <strong>This PC</strong> page reads the facts from Windows, including the battery&rsquo;s wear, along with the drive, the memory, Windows 11 readiness and roughly how old the processor is. '
             'Then it gives a plain verdict &mdash; keep it, upgrade a part or replace it &mdash; and a drive that&rsquo;s failing always comes first: back up. No prices and no pressure.</p>', setup_url),
