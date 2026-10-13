@@ -66,8 +66,9 @@ RewriteCond %{QUERY_STRING} (^|&)amp(=[^&]*)?(&|$) [NC]
 RewriteRule ^(.*)$ /$1? [R=301,L]
 
 # --- 410 Gone: dead WordPress / WooCommerce / BuddyPress system pages ---
+# (13 Oct 2026: "videos" taken off this list - /videos/ is now our real video index, with the film watch pages)
 # NB: "activate" removed from this Gone list - /activate/ is now the live PC Manager activation page
-RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|videos|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
+RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 
 # The game moved 23 Sep 2026: /efoil-game/ -> /bournemouth/games/seafront/. It was unlisted and
