@@ -81,7 +81,7 @@ $w = $code === 200 ? json_decode((string)$raw, true) : null;
 if (!is_array($w)) wc_out(array('ok' => false, 'why' => 'error'));
 
 // ---- just what the app shows ----
-function wc_s($v, $max) { $v = is_scalar($v) ? trim(preg_replace('/\s+/u', ' ', (string)$v)) : ''; return function_exists('mb_substr') ? mb_substr($v, 0, $max, 'UTF-8') : (preg_match('/^.{0,' . (int)$max . '}/us', $v, $mm) ? $mm[0] : ''); }
+function wc_s($v, $max) { $v = is_scalar($v) ? trim(preg_replace('/\s+/u', ' ', (string)$v)) : ''; if (strcasecmp($v, 'unknown') === 0) $v = ''; return function_exists('mb_substr') ? mb_substr($v, 0, $max, 'UTF-8') : (preg_match('/^.{0,' . (int)$max . '}/us', $v, $mm) ? $mm[0] : ''); }   // (a place Windy calls "unknown" is left blank)
 function wc_url($v) { $v = is_string($v) ? trim($v) : ''; $h = strtolower((string)parse_url($v, PHP_URL_HOST)); return (strpos($v, 'https://') === 0 && ($h === 'windy.com' || substr($h, -10) === '.windy.com')) ? $v : ''; }
 function wc_pic($imgs, $part, $size) { return isset($imgs[$part][$size]) ? wc_url($imgs[$part][$size]) : ''; }
 $cams = array();
