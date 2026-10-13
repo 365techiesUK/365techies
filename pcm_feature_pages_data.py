@@ -850,7 +850,7 @@ RA = {
         {'q': 'Does a running AnyDesk mean someone is connected?', 'a': '<p>No. These programs stay running all day so a helper can reach them when needed. Running only means the door exists; whether anyone used it is in the program&rsquo;s own list of connections.</p>'},
         {'q': 'Can you check my computer remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC using our own support program, check it properly and remove anything left behind, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/scam-recovery/">scam recovery</a>, <a href="/fake-im-not-a-robot-scam/">the fake &ldquo;I&rsquo;m not a robot&rdquo; check</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/scam-recovery/">scam recovery</a>, <a href="/fake-im-not-a-robot-scam/">the fake &ldquo;I&rsquo;m not a robot&rdquo; check</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/virus-threat-protection-managed-by-your-organization/">virus protection says it is managed by your organisation</a>.</p>',
 }
 
 # ============================================================ 10. Chrome "Managed by your organization" on a home PC
@@ -1017,7 +1017,7 @@ BL = {
         {'q': 'Can I get past the screen without the key?', 'a': '<p>Only by resetting the PC, which erases everything on the drive. Find the key first, and ring us before you choose anything that resets or reinstalls Windows.</p>'},
         {'q': 'Should I switch BitLocker off?', 'a': '<p>Usually not. On a laptop especially, it keeps your files private if it&rsquo;s lost or stolen. What matters is that the key is saved somewhere you can get to it, and a copy is kept away from the PC.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/data-recovery/">data recovery</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/backup-support/">backup help</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/data-recovery/">data recovery</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/backup-support/">backup help</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/forgot-windows-password-or-pin/">forgot your Windows password or PIN</a>.</p>',
 }
 
 # ============================================================ 12. "Your Virus & threat protection is managed by your organization"
@@ -1100,7 +1100,7 @@ VT = {
         {'q': 'It&rsquo;s a work laptop. Should I remove it?', 'a': '<p>No. On a work or school computer, management is normal and expected. Leave it to your IT department.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find what set the policy, remove it safely and check you&rsquo;re properly protected, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/is-someone-remotely-accessing-my-computer/">is someone remotely accessing my computer?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/is-someone-remotely-accessing-my-computer/">is someone remotely accessing my computer?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/mcafee-or-norton-expired-do-i-need-to-renew/">McAfee or Norton expired: do I need to renew?</a>.</p>',
 }
 
 # ============================================================ 13. HEIC photos won't open on Windows
@@ -1332,7 +1332,7 @@ CR = {
         {'q': 'Why is my blue screen black now?', 'a': '<p>From Windows 11 version 24H2, Microsoft shows the stop screen in black rather than blue. It means the same thing.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Software causes, yes: with your permission we connect to your Windows PC and sort it while you watch. If it turns out to be hardware, we collect it free across Bournemouth, Christchurch, Poole and Dorset, repair it and bring it back.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/windows-update-stuck/">Windows Update stuck or failing</a>.</p>',
 }
 
 # ============================================================ 16. A dementia clock: the page's own clock + v36's Day and date screensaver

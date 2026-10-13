@@ -452,7 +452,7 @@
  },
  "comcast-email-moving-to-yahoo": {
   "first": "2026-10-11",
-  "h": "8977ce6d20ed38ee",
+  "h": "def35852640b6c3b",
   "last": "2026-10-13"
  },
  "common-outlook-problems-and-fixes": {
@@ -462,7 +462,8 @@
  },
  "computer-asking-for-bitlocker-recovery-key": {
   "first": "2026-10-11",
-  "h": "1fcd6b734b1a401d"
+  "h": "97ba466baa768e63",
+  "last": "2026-10-13"
  },
  "computer-basics-course": {
   "first": "2026-07-28",
@@ -1080,7 +1081,7 @@
  },
  "eircom-email-price-increase": {
   "first": "2026-10-11",
-  "h": "d03b7d7934f74464",
+  "h": "fb7e682cc3a3eaec",
   "last": "2026-10-13"
  },
  "email-basics-course": {
@@ -1105,7 +1106,7 @@
  },
  "email-support": {
   "first": "2026-07-28",
-  "h": "ccf0aebed5f63185",
+  "h": "9e08455a4a714b7e",
   "last": "2026-10-13"
  },
  "emails-on-computer-but-not-phone": {
@@ -1135,8 +1136,8 @@
  },
  "employee-left-dont-know-computer-password": {
   "first": "2026-07-28",
-  "h": "f456281d4cfec1ff",
-  "last": "2026-10-06"
+  "h": "b9bc9af04b209adc",
+  "last": "2026-10-13"
  },
  "event-wifi-dorset": {
   "first": "2026-07-28",
@@ -1249,8 +1250,8 @@
  },
  "gave-a-scammer-remote-access": {
   "first": "2026-07-28",
-  "h": "44228de13fe5d664",
-  "last": "2026-10-06"
+  "h": "88e6bd828bbe5c53",
+  "last": "2026-10-13"
  },
  "gdpr-it-compliance": {
   "first": "2026-07-28",
@@ -1593,13 +1594,13 @@
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "b1c306c75b1a5771",
-  "last": "2026-10-11"
+  "h": "7aff5dc3322793c6",
+  "last": "2026-10-13"
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "ae649e36bfa98612",
-  "last": "2026-10-10"
+  "h": "a8820927010d9fba",
+  "last": "2026-10-13"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2107,7 +2108,7 @@
  },
  "laptop-shuts-down-at-30-percent-battery": {
   "first": "2026-08-01",
-  "h": "e4589f20b49b844f",
+  "h": "d03147f5097bdd32",
   "last": "2026-10-13"
  },
  "laptop-shuts-off-when-moved": {
@@ -2131,7 +2132,7 @@
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
-  "h": "1caade49a1ac50da",
+  "h": "ce80cb87c14ad764",
   "last": "2026-10-13"
  },
  "laptop-wont-turn-on-no-lights": {
@@ -2944,8 +2945,8 @@
  },
  "printer-support": {
   "first": "2026-07-28",
-  "h": "76cc4bf6bb5109db",
-  "last": "2026-10-08"
+  "h": "06c2d3e32be68ddd",
+  "last": "2026-10-13"
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
@@ -3173,13 +3174,13 @@
  },
  "scam-pop-up-help-poole": {
   "first": "2026-07-28",
-  "h": "b8b4d681ae05c5f4",
-  "last": "2026-10-03"
+  "h": "8a28e0b1feb336fb",
+  "last": "2026-10-13"
  },
  "scam-recovery": {
   "first": "2026-09-05",
-  "h": "18bbdb48ed13f960",
-  "last": "2026-10-06"
+  "h": "bb5cba21de846807",
+  "last": "2026-10-13"
  },
  "scan-to-folder-stopped-working-after-windows-update": {
   "first": "2026-08-01",
@@ -3465,8 +3466,8 @@
  },
  "transfer-photos-to-a-new-computer-bournemouth": {
   "first": "2026-07-28",
-  "h": "83822dccf78d1495",
-  "last": "2026-09-26"
+  "h": "d9283d81273aeabe",
+  "last": "2026-10-13"
  },
  "two-onedrive-accounts-personal-and-work": {
   "first": "2026-09-05",
@@ -3570,7 +3571,8 @@
  },
  "virus-threat-protection-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "ca2307fdf4632700"
+  "h": "20baf24ff90e11cb",
+  "last": "2026-10-13"
  },
  "visual-timer": {
   "first": "2026-10-12",
@@ -3698,7 +3700,8 @@
  },
  "why-does-my-pc-keep-crashing": {
   "first": "2026-10-11",
-  "h": "ddefcb4b0815c215"
+  "h": "7e0637ae3a0eb4cc",
+  "last": "2026-10-13"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
@@ -3832,8 +3835,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "229a082efd07fb2f",
-  "last": "2026-10-10"
+  "h": "6cceea3eab941725",
+  "last": "2026-10-13"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",

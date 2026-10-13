@@ -67,7 +67,7 @@ SEO_WAVE10_PAGES = [
   'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
   'secondaryCta': ['Start SOS remote support', '/sos/'],
   'schemaKind': 'service',
-  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve been scammed &mdash; what to do</a> &middot; <a href="/gave-a-scammer-remote-access/">Gave a scammer remote access</a> &middot; <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a> &middot; <a href="/youve-been-hacked-email-bitcoin-scam/">The &ldquo;you&rsquo;ve been hacked&rdquo; email</a> &middot; <a href="/virus-removal/">Virus &amp; malware removal</a> &middot; <a href="/online-safety/">Online safety hub</a></p>'},
+  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve been scammed &mdash; what to do</a> &middot; <a href="/gave-a-scammer-remote-access/">Gave a scammer remote access</a> &middot; <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a> &middot; <a href="/youve-been-hacked-email-bitcoin-scam/">The &ldquo;you&rsquo;ve been hacked&rdquo; email</a> &middot; <a href="/virus-removal/">Virus &amp; malware removal</a> &middot; <a href="/online-safety/">Online safety hub</a> &middot; <a href="/is-someone-remotely-accessing-my-computer/">Is someone remotely accessing my computer?</a></p>'},
 
  {'slug': 'youve-been-hacked-email-bitcoin-scam',
   'title': '&ldquo;You&rsquo;ve Been Hacked&rdquo; Email Wants Bitcoin? It&rsquo;s a Bluff (UK)',

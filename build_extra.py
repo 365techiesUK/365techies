@@ -116,6 +116,17 @@ SPECIALIST = [
      ("/dell-inspiron-desktop-windows-11/", "Can a Dell Inspiron desktop run Windows 11?"),
      ("/printer-wont-scan-to-computer-windows-11/", "The printer will not scan to the computer"),
      ("/restrict-staff-access-to-shared-folders-windows-11/", "Restrict which staff can open a shared folder"),
+     ("/windows-update-stuck/", "Windows Update is stuck, or keeps failing"),
+     ("/why-does-my-pc-keep-crashing/", "The PC keeps crashing or restarting"),
+     ("/forgot-windows-password-or-pin/", "Forgot the Windows password or PIN"),
+     ("/computer-asking-for-bitlocker-recovery-key/", "It is asking for a BitLocker recovery key"),
+     ("/stop-programs-starting-with-windows/", "Too many programs open when Windows starts"),
+     ("/laptop-touchpad-not-working/", "The laptop touchpad has stopped working"),
+     ("/screen-upside-down-or-sideways/", "The screen is upside down or sideways"),
+     ("/laptop-plugged-in-not-charging/", "The laptop is plugged in but not charging"),
+     ("/how-to-check-laptop-battery-health/", "How worn is the laptop battery?"),
+     ("/heic-photos-wont-open-on-windows/", "iPhone photos (HEIC) will not open"),
+     ("/is-my-windows-still-supported/", "Is my Windows still getting security updates?"),
      ("/windows-11-course-for-beginners/", "Learn Windows 11 from scratch: the free course"),
    ],
    split_title="The right help, home or work",
@@ -174,6 +185,10 @@ SPECIALIST = [
      ("/business-email-compromise/", "Business email compromise: what it is and how to stay safe"),
      ("/youve-been-hacked-email-bitcoin-scam/", "The &ldquo;you&rsquo;ve been hacked&rdquo; Bitcoin email is a bluff"),
      ("/email-basics-course/", "Learn email from scratch: the free course"),
+     ("/gmail-check-mail-from-other-accounts-ending/", "Gmail stops collecting other email in January 2027"),
+     ("/windows-live-mail-not-working/", "Windows Live Mail has stopped working"),
+     ("/comcast-email-moving-to-yahoo/", "Comcast email is moving to Yahoo (USA)"),
+     ("/eircom-email-price-increase/", "eir email is going up to &euro;18.99 (Ireland)"),
      ("/outlook-problems/", "Something else in Outlook: every problem we cover"),
    ],
    split_title="Email sorted, however you work",
@@ -219,6 +234,7 @@ SPECIALIST = [
      ("/printer-prints-but-wont-scan-after-new-router/", "Prints but won&rsquo;t scan since the new router"),
      ("/printer-wont-scan-to-computer-windows-11/", "Won&rsquo;t scan to the computer on Windows 11"),
      ("/printer-asking-for-admin-password/", "Asks for an administrator password"),
+     ("/printer-offline/", "Windows says the printer is offline"),
      ("/how-to-set-up-a-printer/", "It is new and I am setting it up"),
    ],
    split_title="Printing that just works",
@@ -23989,6 +24005,12 @@ def build_new_page(d):
         nodes.append(faqpage(s, _faqs))
         return graph(nodes)
     add(slug=d['slug'], title=d['title'], desc=d['metaDesc'], og_title=d['ogTitle'], schema=schema, content=content)
+    GUIDE_REGISTRY.append((d['slug'], d.get('crumbName') or d['title'].split(' | ')[0]))
+
+
+# 13 Oct 2026 (nav audit: 63 of 76 pages added since 13 Sep sat on no site-wide hub, 6 with no link in at all): every page
+# built here is remembered, so /it-advice/ (build_blog.hub) can list each step-by-step guide without anyone adding it by hand.
+GUIDE_REGISTRY = []
 
 # ---- Custom VRM dashboards (worldwide flagship service page) ----
 def custom_dashboards():

@@ -537,6 +537,54 @@ def hub():
 {cards}        </div>
       </div>\n'''
     chips_html = "".join(f'          <button type="button" class="hub-chip" data-filter="{c}">{c}</button>\n' for c in CATS)
+    # 13 Oct 2026 (nav audit): the posts above are only part of the advice. Every step-by-step guide built by
+    # build_extra.build_new_page joins this index on its own (GUIDE_REGISTRY), so a new page can't be left with no way in.
+    import re
+    _post_slugs = {p["slug"] for p in POSTS}
+    _robots = {p["slug"]: (p.get("robots") or "") for p in bp.PAGES}
+    _local = re.compile(r"bournemouth|poole|dorset|christchurch|ferndown|wimborne|ringwood|new-forest|swanage|wareham|verwood|"
+                        r"weymouth|dorchester|blandford|highcliffe|kinson|boscombe|southbourne|westbourne|broadstone|parkstone|purbeck")
+    _tool = re.compile(r"-(test|checker|timer|clock|calculator|planner|sizer|map)$")
+    def _words(ws):   # whole slug words only ("password" must not match "word")
+        return re.compile(r"(^|-)(%s)(-|$)" % "|".join(ws.split()))
+    _skip = re.compile(r"^play-|^it-support-for-|^websites-for-|(^|-)(service|services|plans|installation|repair|tune|lessons|gift|"
+                       r"outsourced|contract)(-|$)|emergency-support|remote-support")      # games have /games/; services aren't guides
+    _topics = [  # first match wins
+        ("Email", _words("email emails outlook gmail mail virgin plusnet btinternet talktalk yahoo aol junara greenby eircom comcast "
+                         "thunderbird mailbox google") ),
+        ("Printers &amp; scanners", _words("printer printers print scan")),
+        ("Scams, viruses &amp; security", _words("scam scams scammed scammer virus malware hacked hack security phishing vpn antivirus "
+                                                 "mcafee norton defender remotely managed robot fraud breach hostage")),
+        ("Wi-Fi, internet &amp; networks", _words("wifi broadband router mesh signal internet network ethernet nas mapped shared share "
+                                                  "server cctv")),
+        ("Dell computers", _words("dell latitude optiplex alienware precision xps vostro inspiron")),
+        ("Victron, off-grid &amp; on the road", re.compile(r"(^|-)(victron|cerbo|vrm|solar|boat|campervan|motorhome|glamping)(-|$)|off-grid|holiday-let")),
+        ("Older users &amp; accessibility", _words("elderly seniors assistive dyslexia sticky accessibility deceased")),
+        ("Parents &amp; children", _words("parental parents family minecraft nintendo playstation xbox youtube")),
+        ("Microsoft 365, Office &amp; business software", _words("office microsoft 365 onedrive word excel teams sharepoint sage "
+                                                                 "quickbooks paye provider")),
+        ("Windows &amp; PC problems", _words("windows pc computer computers laptop screen keyboard touchpad bluetooth monitor sound audio "
+                                             "webcam startup bitlocker password update crashing heic photos cd alarm radio battery charging "
+                                             "driver program programs boot logo xp gaming power")),
+        ("Websites", _words("website websites wordpress wix squarespace web")),
+    ]
+    _other = "Everything else"
+    _pin = {"the-set-of-folders-cannot-be-opened": "Email"}   # an Outlook error whose slug names no topic
+    _by_topic = {}
+    for _s, _label in build_extra.GUIDE_REGISTRY:
+        if (_s in _post_slugs or "noindex" in _robots.get(_s, "noindex") or _local.search(_s) or _tool.search(_s)
+                or _skip.search(_s)):
+            continue
+        _t = _pin.get(_s) or next((n for n, rx in _topics if rx.search(_s)), _other)
+        _by_topic.setdefault(_t, {})[_s] = _label
+    _order = [n for n, _ in _topics] + [_other]
+    # one fold-out per topic (the FAQ's own <details> styling): 285 cards in a row was ~22,000px of scrolling on a phone
+    guides_html = '        <div class="faq-wrap">\n' + "".join(
+        f'''          <details class="faq" data-reveal>
+            <summary>{t} ({len(_by_topic[t])})<span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__ans"><ul class="guide-list">{"".join(f'<li><a href="/{s}/">{l}</a></li>' for s, l in sorted(_by_topic[t].items(), key=lambda x: x[1].lower()))}</ul></div>
+          </details>\n''' for t in _order if t in _by_topic) + '        </div>\n'
+    _n_guides = sum(len(v) for v in _by_topic.values())
     content = "\n".join([
       hero(f'<a href="/">Home</a> <span>/</span> <span aria-current="page">IT Advice</span>',
            "// IT ADVICE HUB", 'IT advice <em class="grad grad--cyan">that actually helps</em>',
@@ -560,6 +608,16 @@ def hub():
       f'''    <section class="blog-section" aria-label="Advice articles">
       <div class="wrap">
 {groups}      </div>
+    </section>''',
+      f'''    <section class="section section--alt" aria-label="Every step-by-step guide" id="all-guides">
+      <style>.guide-list{{columns:2 280px;column-gap:2.4rem;margin:.3rem 0 .2rem;padding-left:1.1rem}}.guide-list li{{break-inside:avoid;margin:.38rem 0}}</style>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// EVERY STEP-BY-STEP GUIDE</p>
+          <h2 class="section-title" data-title>All {_n_guides} step-by-step guides, by topic<span class="title-underline"></span></h2>
+          <p class="lede" data-reveal>Something not working, or not sure what to do? Find the closest one and follow the steps on that page.</p>
+        </div>
+{guides_html}      </div>
     </section>''',
       '''    <script>
     (function(){

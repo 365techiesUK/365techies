@@ -164,7 +164,7 @@ SEO_WAVE4_PAGES = [
                 "a": "Laptop batteries are consumables. They generally hold most of their capacity for a few hundred full charge cycles, so after three or four years of daily use a noticeable drop is normal rather than a fault. Heat shortens that life considerably, which is why laptops that live on a bed or a sofa, or that run hot under load, tend to reach this point sooner. Replacement is routine work, not a sign the laptop is finished.",
             },
         ],
-        "crossLinksHtml": "<p><strong>Related guides:</strong> <a href=\"/laptop-turns-off-when-unplugged/\">Laptop only works plugged in</a> &middot; <a href=\"/laptop-wont-turn-on-no-lights/\">Laptop won't turn on, no lights</a> &middot; <a href=\"/laptop-repair/\">Laptop repair</a></p>",
+        "crossLinksHtml": "<p><strong>Related guides:</strong> <a href=\"/laptop-turns-off-when-unplugged/\">Laptop only works plugged in</a> &middot; <a href=\"/laptop-wont-turn-on-no-lights/\">Laptop won't turn on, no lights</a> &middot; <a href=\"/laptop-plugged-in-not-charging/\">Laptop plugged in but not charging</a> &middot; <a href=\"/laptop-repair/\">Laptop repair</a></p>",
         "primaryCta": CTA1,
         "secondaryCta": CTA2,
         "schemaKind": "service",

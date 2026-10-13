@@ -99,7 +99,7 @@ SEO_WAVE14_PAGES = [
   'chips': ['Copy before you cancel', 'In the order that loses nothing', 'Checked 11 October 2026'],
   'primaryCta': ['Call +44 1202 775566', 'tel:+441202775566'],
   'secondaryCta': ['Send us a message', '/contact/'],
-  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/move-virgin-media-email-to-gmail/">Moving email into Gmail with Thunderbird</a> &middot; <a href="/gmail-check-mail-from-other-accounts-ending/">Gmail stops collecting other email in January 2027</a> &middot; <a href="/how-to-add-gmail-to-outlook/">Add Gmail to Outlook</a></p>'},
+  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/move-virgin-media-email-to-gmail/">Moving email into Gmail with Thunderbird</a> &middot; <a href="/gmail-check-mail-from-other-accounts-ending/">Gmail stops collecting other email in January 2027</a> &middot; <a href="/how-to-add-gmail-to-outlook/">Add Gmail to Outlook</a> &middot; <a href="/comcast-email-moving-to-yahoo/">Comcast email moving to Yahoo</a></p>'},
 
  {'slug': 'comcast-email-moving-to-yahoo',
   'title': 'Comcast Email Moving to Yahoo: Keep Address, Fix Outlook',
@@ -166,5 +166,5 @@ SEO_WAVE14_PAGES = [
   'chips': ['You keep your address', 'Spot the real invite', 'Fix Outlook afterwards'],
   'primaryCta': ['Fix Outlook after the move', '#s4'],
   'secondaryCta': ['Is the invitation genuine?', '#s2'],
-  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/gmail-check-mail-from-other-accounts-ending/">Gmail stops collecting other email in January 2027</a> &middot; <a href="/how-to-add-gmail-to-outlook/">Add Gmail to Outlook</a> &middot; <a href="/how-to-spot-a-fake-website/">How to spot a fake website</a></p>'},
+  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/gmail-check-mail-from-other-accounts-ending/">Gmail stops collecting other email in January 2027</a> &middot; <a href="/how-to-add-gmail-to-outlook/">Add Gmail to Outlook</a> &middot; <a href="/how-to-spot-a-fake-website/">How to spot a fake website</a> &middot; <a href="/eircom-email-price-increase/">Eircom email price rise to &euro;18.99</a></p>'},
 ]
