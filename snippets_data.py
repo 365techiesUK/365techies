@@ -76,8 +76,17 @@ SNIPPETS = {
     "refurbished-laptops-dorset": {
         "desc": "Refurbished Dell Latitude laptops and OptiPlex PCs in Bournemouth, Poole and across Dorset. Tested, fitted with a new Samsung Pro SSD, and supported.",
     },
-    "dell-precision-vs-latitude": {
+    "dell-precision-vs-latitude": {   # 13 Oct 2026 CTR test (seo-research/dell-2026-10-13): 3,698 imps, 8 clicks, pos 7.2; judge ~10 Nov
+        "title": "Dell Latitude vs Precision: Which Do You Actually Need?",
         "desc": "Precision is a mobile workstation, Latitude is a business laptop. What certified drivers and ECC memory actually buy you, and when they buy you nothing.",
+    },
+    "dell-latitude-7000-guide": {   # 13 Oct 2026 CTR test: 2,942 imps, 7 clicks, pos 12.1 (old title had no model numbers); judge ~10 Nov
+        "title": "Dell Latitude 7000 Series: 7420, 7430 and 7440 Guide",
+        "desc": "The Dell Latitude 7320 to 7440 explained: which have soldered memory, which SSD fits, the ports and screens, and honest buying advice.",
+    },
+    "dell-optiplex-vs-inspiron-desktop": {   # 13 Oct 2026 CTR test: 1,765 imps, 8 clicks, pos 5.3 ("optiplex vs inspiron" pos 3.5-5, 0 clicks); judge ~10 Nov
+        "title": "Dell OptiPlex vs Inspiron: the Difference, and Which to Buy",
+        "desc": "OptiPlex is Dell's business desktop: tougher, standard parts and upgradeable for years. Inspiron is the home line, built to a price. Which to buy.",
     },
     "how-long-do-dell-latitude-laptops-last": {
         "desc": "Five to eight years is normal, and the battery goes long before the laptop does. What actually kills them, and the two cheap upgrades that add years.",

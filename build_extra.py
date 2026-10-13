@@ -22,6 +22,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
 import greenby_page_data   # /greenby-email-login/ (13 Oct 2026): appends to NEW_PAGES
+import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
@@ -9231,6 +9232,9 @@ _DELL_CLUSTER = [
    ("dell-xps-swollen-battery", "XPS battery swelling", "Make it safe in four steps, then a correct-fit replacement."),
    ("dell-docking-station-not-working", "Docking station not working", "It is usually not the dock: which fault you have, and what fixes it."),
    ("dell-this-pc-cant-run-windows-11", "PC Health Check says this Dell cannot run Windows 11", "Find the real blocker in the BIOS and enable the safe settings."),
+   ("dell-supportassist-keeps-popping-up", "SupportAssist keeps popping up", "Turn its reminders down in its own settings, or remove it safely."),
+   ("how-to-update-dell-bios", "Update the BIOS safely", "Dell&rsquo;s steps, and why to suspend BitLocker first."),
+   ("how-to-find-dell-service-tag-and-check-warranty", "Find the service tag, check the warranty", "On the label, in Windows or the BIOS, then Dell&rsquo;s warranty check."),
  ]),
  ("Dell support, servicing &amp; emergency", [
    ("dell-remote-support", "Remote Dell support", "Fix your Dell over a secure session you watch &mdash; Windows, email, drivers, slowdowns, often the same day."),
@@ -9302,6 +9306,9 @@ _DELL_CLUSTER = [
  ]),
  ("Is this Dell worth it?", [
    ("dell-latitude-5410-worth-it-2026", "Latitude 5410 in 2026", "Still worth buying? The honest verdict for a 10th-gen refurb."),
+   ("dell-latitude-5420-worth-it-2026", "Latitude 5420 in 2026", "The 11th-gen 5000 workhorse: what to check before you buy."),
+   ("dell-latitude-7420-worth-it-2026", "Latitude 7420 in 2026", "The premium 14-inch: soldered memory, so buy 16GB or more."),
+   ("dell-latitude-5440-worth-it-2026", "Latitude 5440 in 2026", "The newer 2023 model: check which processor it has."),
    ("dell-latitude-3510-refurbished-worth-it", "Latitude 3510", "Any good, or a false economy? Who it suits and what to check."),
    ("dell-latitude-5300-refurbished-worth-it", "Latitude 5300", "The light 13-inch business ultraportable &mdash; a smart refurb buy?"),
  ]),
@@ -9540,7 +9547,7 @@ def responsive_video(eyebrow, title, poster_wide, poster_tall, alt):
       '            <span class="rvid__play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8 8 0 0 0-5.6-5.7C56 .7 34 .7 34 .7s-22 0-26.9 1.3a8 8 0 0 0-5.6 5.7A83 83 0 0 0 .2 24a83 83 0 0 0 1.3 16.3 8 8 0 0 0 5.6 5.7C12 47.3 34 47.3 34 47.3s22 0 26.9-1.3a8 8 0 0 0 5.6-5.7A83 83 0 0 0 67.8 24a83 83 0 0 0-1.3-16.3z" fill="#1d97e3"/><path d="M27 34.5 45 24 27 13.5z" fill="#fff"/></svg></span>\n'
       '          </button>\n'
       '        </div>\n'
-      f'        <p class="rvid__fallback mono"><a href="{watch}" target="_blank" rel="noopener">Watch on YouTube &#8594;</a></p>\n'
+      f'        <p class="rvid__fallback mono"><a href="{watch}" target="_blank" rel="noopener">Watch on YouTube &#8594;</a> &middot; <a href="/dell-it-support-film/">Watch it on its own page</a></p>\n'
       '      </div>\n'
       '      <style>\n'
       '        .rvid{position:relative;aspect-ratio:16/9;max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.4)}\n'
@@ -10018,6 +10025,8 @@ def dell_hardware():
       ("Is it safe to buy refurbished?", "From us, yes. Every machine is fully tested and securely wiped. You&rsquo;re buying from a real local firm, a Dorset family business you can phone, text or email, here since 1995, and you&rsquo;re covered by our own warranty plus your Consumer Rights Act protection. That is very different from an untested bargain off a marketplace."),
       ("What do the condition grades mean?", "We grade Dell Latitude laptops <strong>A, B or C</strong> by how they <em>look</em>, not by how they work. A is near-mint, B has light cosmetic wear, C has more visible marks. Every grade is fully tested and working, and we tell you the exact grade before you buy."),
       ("What about the storage and battery?", "Every machine is fitted with a <strong>brand-new Samsung Pro SSD</strong> (with a 5-year guarantee) for speed and reliability. Laptop batteries wear with use, so we check each one and tell you its condition up front &mdash; and can fit a fresh battery if you&rsquo;d like."),
+      # 13 Oct 2026 (seo-research/dell-2026-10-13): "dell outlet uk" 1,176 Bing UK searches a quarter - the honest answer
+      ("Is this the Dell Outlet?", "No. Dell runs its own UK outlet on dell.com, selling Dell Certified Refurbished machines. We&rsquo;re an independent Dell reseller (since 2001): our refurbished Latitude laptops and OptiPlex desktops are ex-business machines we test, wipe and fit with a brand-new Samsung Pro SSD, then set up for you, with a local firm to ring if anything goes wrong. Compare the two before you buy."),
       ("What warranty do I get?", "Every machine comes with a <strong>12-month return-to-base guarantee</strong> as standard. That becomes a <strong>5-year guarantee for as long as you&rsquo;re on a 365 support plan</strong> (home &pound;18.25/month per computer, business from &pound;24.38). On top of that: any remaining Dell warranty where applicable, and the new Samsung 990 PRO SSD&rsquo;s own 5-year guarantee. Your Consumer Rights Act protection applies too, including a 30-day right to reject if something&rsquo;s faulty."),
       ("Can I check availability and get a quote online?", "Yes &mdash; use the <a href=\"#pick\">picker</a> on this page: choose laptop or desktop, pick the model, add your details and it goes straight to the team. Because refurbished stock changes week to week, we don&rsquo;t promise every model is in at once. A real 365 techie will confirm availability and your exact quote shortly, or suggest the nearest equivalent. No payment online, no obligation."),
       ("Can you supply screens, webcams and other accessories?", "Yes &mdash; we&rsquo;ll supply and set up whatever you need alongside your Dell: monitors, webcams, backup drives, speakers, keyboards, mice and more, all configured and ready to use."),
@@ -22743,6 +22752,9 @@ def _wants_courses_band(slug):
 # The Dell cluster - repair, buying, model guides, Windows - all breadcrumb under
 # the Dell hardware hub so they read as one "everything Dell" section of the site.
 _DELL_HUB_SLUGS = frozenset({
+ # 13 Oct 2026 (dell_new_pages.py)
+ 'how-to-find-dell-service-tag-and-check-warranty', 'dell-supportassist-keeps-popping-up', 'how-to-update-dell-bios',
+ 'dell-latitude-5420-worth-it-2026', 'dell-latitude-7420-worth-it-2026', 'dell-latitude-5440-worth-it-2026',
  'dell-laptop-repair-bournemouth', 'dell-optiplex-repair-poole', 'dell-laptop-battery-replacement-dorset', 'dell-latitude-charging-on-the-go',
  'laptop-ssd-upgrade-bournemouth', 'refurbished-dell-laptops-bournemouth', 'refurbished-dell-desktops-dorset',
  'dell-latitude-5410-worth-it-2026', 'dell-latitude-3510-refurbished-worth-it', 'dell-latitude-5300-refurbished-worth-it',

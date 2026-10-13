@@ -143,7 +143,7 @@ def hero():
             <video controls playsinline preload="none" poster="{FILM_POSTER}" width="1920" height="1080" aria-label="Techies One Mail in {FILM_SECS} seconds: the email problems it fixes, with a spoken guide and captions"><source src="{FILM}" type="video/mp4"></video>
             <button class="t1p-play" type="button" aria-label="Play the {FILM_SECS}-second film about Techies One Mail"><span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><b class="long">Watch: the problems it fixes, in {FILM_SECS} seconds</b><b class="short">Watch the film ({FILM_SECS} s)</b></span></button>
           </div>
-          <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people and emails are made-up samples, apart from us.</figcaption>
+          <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people and emails are made-up samples, apart from us. <a href="/techies-one-mail-film/">Watch it on its own page</a>.</figcaption>
           <details class="t1p-says"><summary>What the film says</summary><p>{FILM_SAYS}</p></details>
         </figure>
         <script>(function(){{var f=document.querySelector("[data-t1film]");if(!f)return;var v=f.querySelector("video"),b=f.querySelector(".t1p-play");v.controls=false;b.addEventListener("click",function(){{f.classList.add("on");v.controls=true;v.play();}});v.addEventListener("play",function(){{f.classList.add("on");}});}})();</script>

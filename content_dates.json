@@ -785,8 +785,8 @@
  },
  "dell-hardware": {
   "first": "2026-07-28",
-  "h": "aafe88e553bfd435",
-  "last": "2026-09-26"
+  "h": "4a387270a4afcb4c",
+  "last": "2026-10-13"
  },
  "dell-inspiron-15-3000-windows-11": {
   "first": "2026-07-28",
@@ -810,8 +810,13 @@
  },
  "dell-it-support-dorset": {
   "first": "2026-07-28",
-  "h": "3663841eeb244b88",
-  "last": "2026-10-06"
+  "h": "62bff4b95775f503",
+  "last": "2026-10-13"
+ },
+ "dell-it-support-film": {
+  "first": "2026-10-13",
+  "h": "3f899d5c09c4407a",
+  "last": "2026-10-13"
  },
  "dell-killer-wifi-problems": {
   "first": "2026-07-28",
@@ -873,10 +878,22 @@
   "h": "d2603344ce8153ee",
   "last": "2026-10-06"
  },
+ "dell-latitude-5420-worth-it-2026": {
+  "first": "2026-10-13",
+  "h": "07db9012878a6a0e"
+ },
+ "dell-latitude-5440-worth-it-2026": {
+  "first": "2026-10-13",
+  "h": "a655e7b3db955608"
+ },
  "dell-latitude-7000-guide": {
   "first": "2026-07-28",
-  "h": "fed1bdc2d7d78c90",
-  "last": "2026-09-26"
+  "h": "e441585ba5eb99aa",
+  "last": "2026-10-13"
+ },
+ "dell-latitude-7420-worth-it-2026": {
+  "first": "2026-10-13",
+  "h": "b6e5bd9702dd52e1"
  },
  "dell-latitude-charging-on-the-go": {
   "first": "2026-09-24",
@@ -945,8 +962,8 @@
  },
  "dell-optiplex-vs-inspiron-desktop": {
   "first": "2026-07-28",
-  "h": "24be2e13e7b74498",
-  "last": "2026-10-06"
+  "h": "70d092ae20c3fcf1",
+  "last": "2026-10-13"
  },
  "dell-out-of-warranty-repair": {
   "first": "2026-07-28",
@@ -955,8 +972,8 @@
  },
  "dell-precision-vs-latitude": {
   "first": "2026-07-28",
-  "h": "6719e17f421b1587",
-  "last": "2026-10-06"
+  "h": "09b3d2b902ed93e0",
+  "last": "2026-10-13"
  },
  "dell-precision-workstation-repair-support-dorset": {
   "first": "2026-07-28",
@@ -987,6 +1004,10 @@
   "first": "2026-07-28",
   "h": "fb8df2d4f17f762b",
   "last": "2026-10-03"
+ },
+ "dell-supportassist-keeps-popping-up": {
+  "first": "2026-10-13",
+  "h": "b89146b5bb6ee375"
  },
  "dell-this-pc-cant-run-windows-11": {
   "first": "2026-07-28",
@@ -1365,6 +1386,10 @@
   "h": "e005b9cee0fbe521",
   "last": "2026-09-28"
  },
+ "how-to-find-dell-service-tag-and-check-warranty": {
+  "first": "2026-10-13",
+  "h": "be9c1301085622f2"
+ },
  "how-to-free-up-storage-space": {
   "first": "2026-06-16",
   "h": "e798c9c24dd20261",
@@ -1496,6 +1521,10 @@
   "first": "2026-10-12",
   "h": "945deced0f25343d",
   "last": "2026-10-12"
+ },
+ "how-to-update-dell-bios": {
+  "first": "2026-10-13",
+  "h": "f67121819ea4a575"
  },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
@@ -3402,7 +3431,12 @@
  },
  "techies-one-mail": {
   "first": "2026-10-10",
-  "h": "17740ceceeff5546",
+  "h": "21528e527a745b9a",
+  "last": "2026-10-13"
+ },
+ "techies-one-mail-film": {
+  "first": "2026-10-13",
+  "h": "ab708dfce175e56a",
   "last": "2026-10-13"
  },
  "terms": {
@@ -3503,6 +3537,11 @@
   "first": "2026-07-28",
   "h": "d9650e5395e4803d",
   "last": "2026-09-28"
+ },
+ "videos": {
+  "first": "2026-10-13",
+  "h": "bb560e4ada260066",
+  "last": "2026-10-13"
  },
  "virgin-email-mover": {
   "first": "2026-09-29",
