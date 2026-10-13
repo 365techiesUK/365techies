@@ -76,6 +76,10 @@ SNIPPETS = {
     "refurbished-laptops-dorset": {
         "desc": "Refurbished Dell Latitude laptops and OptiPlex PCs in Bournemouth, Poole and across Dorset. Tested, fitted with a new Samsung Pro SSD, and supported.",
     },
+    "how-to-set-an-alarm-on-your-computer": {   # 13 Oct 2026 CTR test (owner: "do the alarm page next"): 1,060 imps, 2 clicks, pos 4.8 in 3 months; the queries ask "can I set an alarm on my laptop" and "will it go off"; judge ~10 Nov
+        "title": "Can You Set an Alarm on a Laptop? Yes, and Make It Go Off",
+        "desc": "Yes: the Windows Clock app sets one in a minute, but it stays silent if the laptop goes to sleep. Here is how to make sure your alarm goes off.",
+    },
     "dell-precision-vs-latitude": {   # 13 Oct 2026 CTR test (seo-research/dell-2026-10-13): 3,698 imps, 8 clicks, pos 7.2; judge ~10 Nov
         "title": "Dell Latitude vs Precision: Which Do You Actually Need?",
         "desc": "Precision is a mobile workstation, Latitude is a business laptop. What certified drivers and ECC memory actually buy you, and when they buy you nothing.",
