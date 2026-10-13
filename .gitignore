@@ -66,6 +66,10 @@ api/pcm-msg-*.json.*.tmp
 api/pcm-msg-beat.json
 api/pcm-msg-cron.lock
 api/tm-key.php
+# 365 PC Manager World webcams (build 40): the Windy Webcams API key + the relay's 5-minute store - server-only
+api/pcm-windy-key.php
+api/pcm-webcams-cache.json
+api/pcm-webcams-cache.json.lock
 # Tips by email sign-ups (10 Oct 2026): names + emails until Techies One Mail collects them
 api/t1-signups.json
 api/t1-signups.json.*
