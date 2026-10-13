@@ -75,6 +75,10 @@ plus_trial_tidy();
 $out['rows'] = inst_rows(is_array($d) ? $d : array(), $who, plus_trial_states());
 $out['trial_days'] = PLUS_TRIAL_DAYS;
 $out['trial_min_ver'] = PLUS_TRIAL_MIN_VER;
+// 13 Oct 2026: the newest build (the self-updater's version.json), so the list can say which PCs still in use haven't updated yet
+$vj = @json_decode((string)@file_get_contents(dirname(__DIR__) . '/downloads/pcm/version.json'), true);
+$out['latest'] = is_array($vj) ? (int)($vj['ver'] ?? 0) : 0;
+$out['latest_vn'] = $out['latest'] && function_exists('pcm_vname') ? pcm_vname($out['latest']) : '';
 
 // download clicks (the live view's tally): each visitor once a day, by country - and (11 Oct 2026) the page each came
 // from (vis_dl_tally, visitors-tally-lib.php)

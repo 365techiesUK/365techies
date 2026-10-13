@@ -25059,6 +25059,9 @@ def write_portal_page():
   #p365app .instgrid table { width:100%; border-collapse:collapse; }
   #p365app .instgrid td { padding:.2rem .3rem; border-bottom:1px solid var(--pline); }
   #p365app .instgrid td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  #p365app .instgrid tr[data-icc] { cursor:pointer; }
+  #p365app .instgrid tr[data-icc]:hover td { background:rgba(127,232,255,.06); }
+  #p365app .instgrid tr[data-icc].on td { background:rgba(127,232,255,.14); }
   #p365app .appcmp th.num, #p365app .appcmp td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
   #p365app .appcmp th { vertical-align:bottom; line-height:1.25; } #p365app .appcmp td b { font-size:1.15rem; }
   #p365app .appcmp tbody th { vertical-align:middle; color:var(--pwhite); white-space:nowrap; padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); }
@@ -33260,7 +33263,7 @@ def write_portal_page():
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
       h += '<div class="instgrid"><div><h3>Countries</h3>'
-        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { var k = c.k || '--'; return '<tr data-icc="' + esc(k) + '"' + (INST.cc === k ? ' class="on"' : '') + ' title="Show these PCs one by one"><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '</div><div><h3>Versions</h3>'
         + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.vn || v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
@@ -33269,6 +33272,7 @@ def write_portal_page():
       // 9 Oct 2026 (owner: "people that have got the free version ... a 30-day trial ... fully featured ... say that
       // they've been specially approved"): the installs one by one, each with "Give 30 days free" (api/pcm-installs.php
       // do=trial -> pcm-plus-lib.php plus_trial_give). Only PCs never linked to us; one free month per PC, ever.
+      h += instListHtml(d);   // 13 Oct 2026: each PC, one by one, on every tab (it lived inside the free-month box)
       if (INST.who !== 'plan') h += instTrialHtml(d);
       // our own PCs (7 Oct 2026): pressed on the connection our PCs use; only a scrambled code of it is kept
       var oi = d.ours_info || {}, ou = d.ours || 0;
@@ -33284,7 +33288,16 @@ def write_portal_page():
       h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = used on two or more different days, and seen in the last week; <b>used on 3+ days</b> = the surest sign of a real person (days are counted from 8 Oct 2026); <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
       box.innerHTML = h;
     }
-    Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); INST.cc = null; INST.all = false; loadInstalls(); }; });
+    // 13 Oct 2026: a country's row shows just its PCs in the list below (again: every country)
+    Array.prototype.forEach.call(box.querySelectorAll('[data-icc]'), function (r) {
+      r.onclick = function () {
+        var k = r.getAttribute('data-icc'); INST.cc = INST.cc === k ? null : k; INST.all = false; renderInstalls();
+        var l = document.getElementById('instlist'); if (l && l.scrollIntoView) l.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+    });
+    var clr = box.querySelector('[data-icclear]');
+    if (clr) clr.onclick = function (e) { e.preventDefault(); INST.cc = null; renderInstalls(); };
     Array.prototype.forEach.call(box.querySelectorAll('[data-iours]'), function (b) { b.onclick = function () { b.disabled = true; loadInstalls(b.getAttribute('data-iours')); }; });
     // 9 Oct 2026: a free month - one PC, or everyone still using it (asked first)
     Array.prototype.forEach.call(box.querySelectorAll('[data-itrial]'), function (b) {
@@ -33310,8 +33323,33 @@ def write_portal_page():
     var h = '<div class="insttrial"><h3>\\ud83c\\udf81 Give a free month</h3>'
       + '<p class="quiet" style="margin:0 0 .3rem">Everything unlocked on that PC for ' + days + ' days \\u2014 the full automatic service with its report, and every tool. Within the hour the app tells them <i>\\u201c365 Techies has given this PC ' + days + ' days of everything, free\\u201d</i>. Their report stays on their PC unless they choose to send it to us for a free look-over (it arrives in Messages). Near the end it reminds them; after it, UK PCs are offered our plans. Only PCs never linked to us, one free month each. It needs PC Manager 36.1 \\u2014 an older copy updates itself first, then gets it.</p>';
     h += '<div class="itr-actions">' + (using.length ? '<button type="button" class="sm" data-itrial="using">Give ' + days + ' days free to everyone still using it (' + using.length + ')</button>' : '<span class="quiet">Everyone still using it has been given a free month, or none can be.</span>') + '</div>';
+    if (!rows.length) return h + '</div>';
+    return h + '<p class="quiet" style="margin:.45rem 0 0">One PC at a time: the <b>Free month</b> column in the list above.</p></div>';
+  }
+  function instHow(r) { return r.how === 'using' ? 'Still using it' + (r.n > 1 ? ' (' + r.n + ' days)' : '') : r.how === 'stopped' ? 'Stopped (' + r.n + ' days)' : r.how === 'once' ? 'Ran once' : 'New \\u2014 too soon to tell'; }
+  // 13 Oct 2026 (owner: "is there any way we can see the individual machines ... drill into it"): every PC on this tab,
+  // one by one. A copy that isn't linked to us tells us only this (the privacy page promises it: an install number, the
+  // version, Windows 10 or not, the days it was seen, the country) - its name, owner and spec only once it's linked
+  function instListHtml(d) {
+    var all = d.rows || [], cc = INST.cc, rows = cc ? all.filter(function (r) { return (r.c || '--') === cc; }) : all, latest = d.latest || 0, free = INST.who !== 'plan';
+    var h = '<div class="insttrial" id="instlist"><h3>\\ud83d\\udcbb Each PC, one by one</h3>'
+      + '<p class="quiet" style="margin:0 0 .4rem">' + (cc ? 'PCs in <b>' + esc(instCountry(cc)) + '</b>: ' + rows.length + ' \\u00b7 <a href="#" data-icclear>show every country</a>. ' : 'Click a country above to see just its PCs. ')
+      + 'A PC that isn\\u2019t linked to us tells us only this \\u2014 never its name, owner or spec. Linked PCs show in full in the fleet.</p>';
     if (!rows.length) return h + '<p class="quiet">No installs in this list.</p></div>';
-    var how = function (r) { return r.how === 'using' ? 'Still using it' + (r.n > 1 ? ' (' + r.n + ' days)' : '') : r.how === 'stopped' ? 'Stopped (' + r.n + ' days)' : r.how === 'once' ? 'Ran once' : 'New \\u2014 too soon to tell'; };
+    var ver = function (r) { return 'v' + esc(r.vn || r.v) + (latest && r.v < latest && (r.how === 'using' || r.how === 'soon') ? ' <span class="quiet">\\u00b7 update waiting</span>' : ''); };
+    var linked = function (r) { return r.p ? 'On a plan' : r.k ? 'Linked, free' : 'Never linked'; };
+    var show = INST.all ? rows : rows.slice(0, 25);
+    h += '<div class="tblwrap"><table><thead><tr><th>Country</th><th>Version</th><th>Windows</th><th>Using it?</th><th>Linked?</th><th>First seen</th><th>Last seen</th>' + (free ? '<th>Free month</th>' : '') + '</tr></thead><tbody>'
+      + show.map(function (r) {
+          return '<tr><td>' + esc(instCountry(r.c)) + '</td><td class="num">' + ver(r) + '</td><td>' + (r.w ? '10' : '11') + '</td><td>' + instHow(r) + '</td><td>' + linked(r) + '</td>'
+            + '<td class="num">' + instDay(r.f) + '</td><td class="num">' + instDay(r.l) + '</td>' + (free ? '<td>' + instTrialCell(r, d) + '</td>' : '') + '</tr>';
+        }).join('') + '</tbody></table></div>';
+    if (rows.length > show.length) h += '<button type="button" class="sm ghost" data-itmore style="margin-top:.5rem">Show all ' + rows.length + '</button>';
+    if (latest) h += '<p class="quiet" style="font-size:.88rem;margin:.45rem 0 0"><b>Update waiting</b> = still in use but not yet on v' + esc(d.latest_vn || latest) + '. The app updates itself: at start-up, or when its window has been closed for two minutes \\u2014 never while someone is using it.</p>';
+    return h + '</div>';
+  }
+  function instTrialCell(r, d) {   // a PC's free month: given, has it, ended - or the button
+    var days = d.trial_days || 30, minv = d.trial_min_ver || 37;
     var trial = function (r) {
       var t = r.trial;
       if (t) {
@@ -33324,14 +33362,7 @@ def write_portal_page():
       if (r.k) return '<span class="quiet">Linked to a customer</span>';
       return '<button type="button" class="sm ghost" data-itrial="' + esc(r.id) + '">Give ' + days + ' days free</button>';
     };
-    var show = INST.all ? rows : rows.slice(0, 25);
-    h += '<div class="tblwrap"><table><thead><tr><th>Country</th><th>Version</th><th>Using it?</th><th>First seen</th><th>Last seen</th><th>Free month</th></tr></thead><tbody>'
-      + show.map(function (r) {
-          return '<tr><td>' + esc(instCountry(r.c)) + (r.w ? ' <span class="quiet">\\u00b7 Win 10</span>' : '') + '</td><td class="num">v' + esc(r.vn || r.v) + '</td><td>' + how(r) + '</td>'
-            + '<td class="num">' + instDay(r.f) + '</td><td class="num">' + instDay(r.l) + '</td><td>' + trial(r) + '</td></tr>';
-        }).join('') + '</tbody></table></div>';
-    if (rows.length > show.length) h += '<button type="button" class="sm ghost" data-itmore style="margin-top:.5rem">Show all ' + rows.length + '</button>';
-    return h + '</div>';
+    return trial(r);
   }
   // 10 Oct 2026 (owner: "yes, build the updater, check-ins and portal card"): Techies One Mail installs - same words as
   // the PC Manager card. Only anonymous figures exist: an install number the app made up, version, Windows, the KINDS of
