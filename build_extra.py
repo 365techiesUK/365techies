@@ -641,6 +641,18 @@ def pcm_landing():
                 '<p style="margin-top:.7rem">Windows SmartScreen shows that blue box for <em>any</em> program it hasn&rsquo;t seen many people download yet &mdash; even signed ones. It fades as more people install it. To check the file is genuinely ours: click <strong>More info</strong> and look for the publisher <strong>365 Techies Ltd</strong>, then <strong>Run anyway</strong>. If it says &ldquo;Unknown publisher&rdquo;, don&rsquo;t run it &mdash; ring us on 01202 775566.</p>'
                 '<p>Or right-click the file &rarr; Properties &rarr; Digital Signatures: it should show <strong>365 Techies Ltd</strong>, issued by Microsoft. If you&rsquo;d rather we simply set it up for you, we&rsquo;ll do that free, by hand or remotely.</p>'
                 '</details>') if PCM_DOWNLOAD_URL else ''
+    # 14 Oct 2026 (download walk-through): what happens after the click, as the Techies One Mail page already says -
+    # the people we write for don't always know where a download goes. Installer facts: per-user Inno setup
+    # (PrivilegesRequired=lowest, so no administrator password); its last page starts the app, which opens its window.
+    dlsteps = ('<ol class="prose" data-reveal style="max-width:640px;margin:0 auto;padding:0;list-style:none;line-height:1.55">'
+               '<li style="margin:0 0 .6rem"><strong>1. Open the file.</strong> It&rsquo;s called ' + PCM_DOWNLOAD_URL.rsplit('/', 1)[-1] + '. Your browser '
+               'shows it at the top or bottom of the window, or it&rsquo;s in your Downloads folder.</li>'
+               '<li style="margin:0 0 .6rem"><strong>2. Let it install.</strong> Click through the short setup. It takes a few seconds and needs no administrator password.</li>'
+               '<li><strong>3. It opens and checks your PC.</strong> Your health score comes up in plain English. After that it&rsquo;s in your '
+               'Start menu, and you can remove it any time from Settings &gt; Apps.</li>'
+               '</ol>'
+               '<p style="text-align:center;color:var(--muted);font-size:.9rem;margin:.8rem 0 0" data-reveal>On a phone or tablet? '
+               'Tap the button and we&rsquo;ll help you send the link to your Windows computer.</p>') if PCM_DOWNLOAD_URL else ''
     _live_get = f'''    <section class="section" aria-label="Download 365 PC Manager" id="download">
       <div class="wrap">
         <div class="section-head">
@@ -649,6 +661,7 @@ def pcm_landing():
           <p class="lede lede--center" data-reveal>{dlnote}</p>
         </div>
         <p style="text-align:center;margin:1.4rem 0" data-reveal>{dl}</p>
+        {dlsteps}
         {dlsafety}
         <p style="text-align:center;color:var(--muted);font-size:.9rem" data-reveal>Rather a person checked it over instead? Book a <a href="/free-it-health-check/">free IT health check</a> and a techie will look at everything with you.</p>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem" data-reveal>// FAMILY-RUN SINCE 1995 &middot; 4.9 ON GOOGLE &middot; MON&ndash;FRI 9&ndash;5 &middot; BOURNEMOUTH, POOLE &amp; DORSET</p>
@@ -26149,7 +26162,7 @@ def write_portal_page():
   #p365app .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
   #p365app .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
   /* 1 Oct 2026: what they did - the action counts and the pages they acted from */
-  #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; }
+  #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; grid-template-columns:repeat(5,minmax(0,1fr)); }
   #p365app .nx-lvact { margin:0 0 1rem; }
   #p365app .nx-lvact h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; }
   #p365app .nx-lvtag--act { border:1px solid #6b5320; color:#ffc940; font-style:normal; }
@@ -30263,7 +30276,9 @@ def write_portal_page():
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
   // 1 Oct 2026: what visitors DO (the beacon's action pings): [short name, Live view line, warm label]
-  var NXL_ACT = { dl: ['Downloads', '\\u2b07 Downloaded PC Manager', ''], call: ['Tapped Call', '\\u260e Tapped Call', 'Tapped Call'],
+  // 14 Oct 2026: send = on a phone, tablet or Mac the download opens "Send it to your computer" and they sent the link
+  var NXL_ACT = { dl: ['Downloads', '\\u2b07 Downloaded PC Manager', ''], send: ['Sent to a computer', '\\u2197 Sent the app link to a computer', ''],
+    call: ['Tapped Call', '\\u260e Tapped Call', 'Tapped Call'],
     text: ['Tapped Text', '\\u2709 Tapped Text', 'Tapped Text'], lead: ['Sent the form', '\\u2714 Sent an enquiry', 'Sent an enquiry'] };
   function nxlWarm(p) { var m = /^\\/~(call|text|lead)\\//.exec(String(p || '')); return m ? NXL_ACT[m[1]][2] : (NXL_WARM[p] || ''); }
   var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
@@ -30319,6 +30334,9 @@ def write_portal_page():
     // the beacon's download pings (1 Oct 2026; from 11 Oct with the page clicked on: /~dl/pcm/<page>, /~dl/t1/<page>)
     var dlp = /^\\/~dl\\/(pcm|t1)(\\/.*)$/.exec(p);
     if (dlp) return '\\u2b07 ' + (dlp[1] === 'pcm' ? 'PC Manager' : 'Techies One Mail') + ' download (click)' + (dlp[2] !== '/' ? ' \\u00b7 ' + nxlPage(site, dlp[2]) : '');
+    // 14 Oct 2026: /~send/<app><page> - the link sent to a computer from the phone panel
+    var snd = /^\\/~send\\/(pcm|t1)(\\/.*)$/.exec(p);
+    if (snd) return '\\u2197 ' + (snd[1] === 'pcm' ? 'PC Manager' : 'Techies One Mail') + ' link sent to a computer' + (snd[2] !== '/' ? ' \\u00b7 ' + nxlPage(site, snd[2]) : '');
     // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
     var act = /^\\/~(call|text|lead)(\\/.*)$/.exec(p);
     if (act) return NXL_ACT[act[1]][1] + ' \\u00b7 ' + nxlPage(site, act[2]);
@@ -30479,7 +30497,7 @@ def write_portal_page():
   // "2 calls \\u00b7 1 form"; withNone: "No calls, texts, forms or downloads" when there were none (a country's line)
   function nxlActWords(a, withNone) {
     var w = [['call', 'call', 'calls'], ['text', 'text', 'texts'], ['lead', 'form', 'forms']];
-    if (withNone) w.push(['dl', 'download', 'downloads']);
+    if (withNone) { w.push(['dl', 'download', 'downloads']); w.push(['send', 'link sent to a computer', 'links sent to a computer']); }
     var out = w.filter(function (x) { return a[x[0]]; }).map(function (x) { return a[x[0]] + ' ' + (a[x[0]] === 1 ? x[1] : x[2]); });
     return out.length ? out.join(' \\u00b7 ') : (withNone ? 'No calls, texts, forms or downloads' : '');
   }
@@ -30520,8 +30538,8 @@ def write_portal_page():
     // 1 Oct 2026: what they did - Call and Text taps, enquiries sent, PC Manager download clicks (the beacon's action pings)
     var ac = s.acts || {}, acN = (ac.call || 0) + (ac.text || 0) + (ac.lead || 0);
     h += '<h3 class="nx-lvcc-h">What they did <span>each visitor once a day \\u00b7 counted from 1 Oct 2026</span></h3>'
-      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl'].map(function (k) {
-          return '<div' + (k !== 'dl' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
+      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl', 'send'].map(function (k) {
+          return '<div' + (k !== 'dl' && k !== 'send' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
         }).join('') + '</div>'
       + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
           return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';
@@ -33258,7 +33276,9 @@ def write_portal_page():
         + '<div class="stat"><b>' + dl.d7 + '</b><span>download clicks this week</span></div></div>';
       // 8 Oct 2026: still using it now also needs a sighting this week; used on 2+ days but not since = stopped
       h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> (used on two or more days, not in the last week) \\u00b7 used this week: <b>' + d.active7
-        + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> (first seen in the last two days)</p>';
+        + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> (first seen in the last two days)'
+        // 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer"
+        + ' \\u00b7 link sent to a computer from a phone, this week: <b>' + ((d.sends || {}).d7 || 0) + '</b></p>';
       var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
@@ -33419,7 +33439,9 @@ def write_portal_page():
       + '<div class="stat"><b>' + ((d.downloads || {}).d7 || 0) + '</b><span>download clicks this week</span></div></div>';
     h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> \\u00b7 used this week: <b>' + d.active7
       + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \\u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b>'
-      + ' \\u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b></p>' + dlFromHtml(d.downloads || {});
+      + ' \\u00b7 download clicks, 30 days: <b>' + ((d.downloads || {}).d30 || 0) + '</b>'
+      // 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer"
+      + ' \\u00b7 link sent to a computer from a phone, this week: <b>' + ((d.sends || {}).d7 || 0) + '</b></p>' + dlFromHtml(d.downloads || {});
     var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
     h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
       + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';

@@ -345,6 +345,118 @@ if (WANT_BG) {
   else window.addEventListener("load", () => setTimeout(initBackground, 250));
 } else if (bgCanvas) bgCanvas.remove();
 
+/* ---------------- an app download tapped on a phone, tablet or Mac: send it to the computer ----------------
+   14 Oct 2026 (download walk-through): 44% of visitors are on a phone or tablet (portal Live, 7 days), and our two apps
+   are Windows programs, so a tap on Download there only saved an .exe the device can't open. Off Windows, a tap on any
+   365 PC Manager / Techies One Mail installer link opens this panel instead: send yourself the page link (the device's
+   own share sheet), email it, or copy it - or download the file anyway. Windows PCs download exactly as before.
+   The click is cancelled in the WINDOW capture phase, before the visitors beacon (document capture) sees it, so the
+   beacon doesn't count it as a download; sending the link fires tt:send, which the beacon counts as /~send/<app><page>. */
+(function () {
+  const ua = navigator.userAgent || "";
+  const uad = navigator.userAgentData;
+  const isWin = /Windows NT|Win64|WOW64/.test(ua) || (uad && uad.platform === "Windows");
+  if (isWin) return;
+  const APPS = {
+    pcm: { re: /365-pc-manager-setup[^/?#]*\.exe([?#]|$)/i, name: "365 PC Manager", page: "/free-pc-health-check/#download" },
+    t1: { re: /TechiesOneMail-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies One Mail", page: "/techies-one-mail/#download" },
+  };
+  const device = /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "iPad"
+    : /iPhone|iPod/.test(ua) ? "iPhone"
+    : /Android/.test(ua) ? (/Mobile/.test(ua) ? "phone" : "tablet")
+    : /CrOS/.test(ua) ? "Chromebook"
+    : /Macintosh/.test(ua) ? "Mac" : "device";
+  let panel = null, back = null;
+
+  function close() {
+    if (!panel) return;
+    panel.remove(); panel = null;
+    document.documentElement.classList.remove("dlsend-open");
+    if (back) { try { back.focus(); } catch (e) {} back = null; }
+  }
+  function sent(app, how) {
+    document.dispatchEvent(new CustomEvent("tt:send", { detail: { app, how } }));
+  }
+  function open(app, link) {
+    close();
+    const a = APPS[app], url = location.origin + a.page;
+    const subject = a.name + " for my computer";
+    const body = a.name + " - free for Windows 10 and 11. Open this on the computer to download it:\n" + url;
+    if (!document.getElementById("dlsend-css")) {
+      const st = document.createElement("style");
+      st.id = "dlsend-css";
+      st.textContent =
+        ".dlsend{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,6,16,.72);padding:1rem}"
+        + "@media (min-width:640px){.dlsend{align-items:center}}"
+        + ".dlsend__box{position:relative;width:100%;max-width:30rem;max-height:calc(100vh - 2rem);overflow:auto;background:#0e1730;color:#eef3fb;border:1px solid rgba(120,160,230,.28);border-radius:1.2rem;padding:1.5rem 1.3rem 1.2rem;box-shadow:0 20px 60px rgba(0,0,0,.55)}"
+        + ".dlsend__kick{font:600 .72rem/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;color:#4fb3ff;margin:0 0 .5rem}"
+        + ".dlsend__box h2{font-size:1.45rem;line-height:1.2;margin:0 2rem .6rem 0;color:#fff}"
+        + ".dlsend__box p{margin:0 0 1rem;line-height:1.5}"
+        + ".dlsend__btns{display:grid;gap:.6rem;margin:0 0 1rem}"
+        + ".dlsend__btns .button{width:100%;justify-content:center;text-align:center}"
+        + ".dlsend__x{position:absolute;top:.6rem;right:.6rem;width:2.6rem;height:2.6rem;border-radius:50%;border:1px solid rgba(120,160,230,.3);background:transparent;color:#eef3fb;font-size:1.4rem;line-height:1;cursor:pointer}"
+        + ".dlsend__small{font-size:.88rem;color:#a9b6cc;margin:0!important}.dlsend__small a{color:#a9b6cc}"
+        + "html.dlsend-open{overflow:hidden}";
+      document.head.appendChild(st);
+    }
+    panel = document.createElement("div");
+    panel.className = "dlsend";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", "dlsend-h");
+    const canShare = typeof navigator.share === "function";
+    panel.innerHTML =
+      '<div class="dlsend__box">'
+      + '<button type="button" class="dlsend__x" aria-label="Close">&times;</button>'
+      + '<p class="dlsend__kick">// FOR A WINDOWS PC</p>'
+      + '<h2 id="dlsend-h">Send it to your computer</h2>'
+      + '<p>' + a.name + ' is a Windows program, so it won&rsquo;t install on this ' + device
+      + '. Send yourself the link, then open it on your Windows 10 or 11 PC or laptop to download it.</p>'
+      + '<div class="dlsend__btns">'
+      + (canShare ? '<button type="button" class="button primary" data-dlsend="share">Send me the link</button>' : '')
+      + '<a class="button ' + (canShare ? 'secondary' : 'primary') + '" data-dlsend="email" href="mailto:?subject='
+      + encodeURIComponent(subject) + '&amp;body=' + encodeURIComponent(body) + '">Email me the link</a>'
+      + '<button type="button" class="button secondary" data-dlsend="copy">Copy the link</button>'
+      + '</div>'
+      + '<p class="dlsend__small"><a data-dlsend="anyway" href="' + link.getAttribute("href").replace(/"/g, "&quot;")
+      + '" download>Download the Windows file here anyway</a></p>'
+      + '</div>';
+    back = link;
+    document.body.appendChild(panel);
+    document.documentElement.classList.add("dlsend-open");
+    panel.addEventListener("click", (e) => {
+      if (e.target === panel || e.target.closest(".dlsend__x")) { close(); return; }
+      const b = e.target.closest("[data-dlsend]");
+      if (!b) return;
+      const how = b.getAttribute("data-dlsend");
+      if (how === "share") {
+        navigator.share({ title: subject, text: body.split("\n")[0], url }).then(() => sent(app, "share")).catch(() => {});
+      } else if (how === "email") {
+        sent(app, "email");
+      } else if (how === "copy") {
+        const done = () => { b.textContent = "Copied ✓ - paste it into an email or message to yourself"; sent(app, "copy"); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => { window.prompt("Copy this link:", url); sent(app, "copy"); });
+        else { window.prompt("Copy this link:", url); sent(app, "copy"); }
+      } else if (how === "anyway") {
+        setTimeout(close, 300);
+      }
+    });
+    panel.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    const first = panel.querySelector("[data-dlsend]");
+    if (first) { try { first.focus(); } catch (e) {} }
+  }
+
+  window.addEventListener("click", (e) => {
+    const link = e.target && e.target.closest && e.target.closest("a[href]");
+    if (!link || link.closest(".dlsend")) return;
+    const href = link.getAttribute("href") || "";
+    const app = Object.keys(APPS).find((k) => APPS[k].re.test(href));
+    if (!app) return;
+    e.preventDefault();
+    open(app, link);
+  }, true);
+})();
+
 // Reading-progress bar: long guides only (4+ content sections), motion-safe.
 // A 2px gradient line at the very top tracking scroll position.
 (function () {

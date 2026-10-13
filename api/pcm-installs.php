@@ -84,4 +84,6 @@ $out['latest_vn'] = $out['latest'] && function_exists('pcm_vname') ? pcm_vname($
 // from (vis_dl_tally, visitors-tally-lib.php)
 $vs = @json_decode((string)@file_get_contents(__DIR__ . '/visitors-stats.json'), true);
 $out['downloads'] = vis_dl_tally($vs, 'pcm');
+// 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer" - the links they sent themselves
+$out['sends'] = vis_dl_tally($vs, 'pcm', 8, 'send');
 echo json_encode($out);

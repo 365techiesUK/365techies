@@ -1076,11 +1076,16 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;'
     # 11 Oct 2026: with the page it was clicked on (/~dl/pcm/computer-spec-checker/), so the installs cards can say which
     # pages send downloads (vis_dl_tally); a bare /~dl/pcm/ = the home page
-    'var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);'
+    # 14 Oct 2026: a download tap that something cancelled (js/interior.js, off Windows: the "Send it to your computer"
+    # panel opens instead) is not a download - only real downloads count, so the installs cards compare like with like
+    'var h=a.getAttribute("href")||"";if(ev.defaultPrevented&&/\\.exe([?#]|$)/i.test(h))return;'
+    'if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);'
     # 10 Oct 2026: a Techies One Mail download (the box on the email fix pages) is /~dl/t1/, shown on its installs card
     'else if(/TechiesOneMail-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);'
     'else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);'
     'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
+    # 14 Oct 2026: that panel's Send / Email / Copy (js/interior.js fires tt:send) is /~send/<app><page>
+    'document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1")tap("/~send/"+p+location.pathname);});'
     '}catch(e){}})();</script>\n')
 
 
@@ -1295,7 +1300,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=22"></script>
+  <script type="module" src="/js/interior.min.js?v=23"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>

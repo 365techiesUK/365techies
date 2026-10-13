@@ -147,18 +147,22 @@ $s = vis_fold(array(), live($T, array(
     row('cccc0001', 'Poole', 'GB', true, 'Google', $IPH, array($J, '/~call' . $J)),
     row('cccc0002', 'Leeds', 'GB', false, 'Google', $WIN11, array($J, '/~lead' . $J, '/~dl/pcm/')),
     row('cccc0003', 'Austin', 'US', false, 'Direct', $WIN11, array('/', '/~dl/pcm/')),
-    row('cccc0004', 'Bristol', 'GB', false, 'Bing', $ANDR, array('/contact/', '/~text/contact/', '/~call/')),
+    row('cccc0004', 'Bristol', 'GB', false, 'Bing', $ANDR, array('/contact/', '/~text/contact/', '/~call/', '/~send/pcm/free-pc-health-check/')),
 )), $T);
 $d = $s['days'][$DAY]['t365'];
 check($d['warm'] === 3, 'a call, a text or an enquiry makes a visitor warm; a download alone does not', $d['warm']);
 $s = vis_fold($s, live($T + 60, array(row('cccc0001', 'Poole', 'GB', true, 'Google', $IPH, array($J, '/~call' . $J, '/~call' . $J)))), $T + 60);
 $st = vis_stats($s, $T + 60); $a = $st['sites']['all']['today'];
-check($a['acts'] === array('dl' => 2, 'call' => 2, 'text' => 1, 'lead' => 1), 'actions counted, each visitor once a day', json_encode($a['acts']));
+check($a['acts'] === array('dl' => 2, 'send' => 1, 'call' => 2, 'text' => 1, 'lead' => 1), 'actions counted, each visitor once a day', json_encode($a['acts']));
 check($a['actFrom'][0]['k'] === $J && $a['actFrom'][0]['n'] === 2 && $a['actFrom'][0]['call'] === 1 && $a['actFrom'][0]['lead'] === 1, 'where they acted: the Junara page first', json_encode($a['actFrom']));
 $home = array_values(array_filter($a['actFrom'], function ($x) { return $x['k'] === '/'; }));
 check(count($home) === 1 && $home[0]['call'] === 1, 'a Call tap on the home page is from /', json_encode($a['actFrom']));
 $keys = array_map(function ($x) { return $x['k']; }, $a['pages']);
-check(!in_array('/~dl/pcm/', $keys, true) && !in_array('/~call' . $J, $keys, true) && in_array($J, $keys, true), 'the Pages list shows reading only', json_encode($keys));
+check(!in_array('/~dl/pcm/', $keys, true) && !in_array('/~call' . $J, $keys, true) && !in_array('/~send/pcm/free-pc-health-check/', $keys, true) && in_array($J, $keys, true), 'the Pages list shows reading only', json_encode($keys));
+// 14 Oct 2026: a link sent from the phone panel is an action, not a page, and not "where they called from"
+check(vis_act_kind('/~send/pcm/free-pc-health-check/') === 'send' && vis_act_kind('/~send/t1/techies-one-mail/') === 'send' && vis_act_kind('/~sending/') === '', 'a link sent to a computer is an action');
+check(!in_array('/free-pc-health-check/', array_map(function ($x) { return $x['k']; }, $a['actFrom']), true), 'a sent link is not listed with the calls, texts and forms', json_encode($a['actFrom']));
+check($d['warm'] === 3, 'sending the link alone does not make a visitor warm', $d['warm']);
 $us = array_values(array_filter($a['perCountry'], function ($x) { return $x['k'] === 'US'; }));
 check(count($us) === 1 && $us[0]['acts']['dl'] === 1 && $us[0]['acts']['call'] === 0, 'actions per country', json_encode($us));
 check(vis_act_kind('/~dl/pcm/') === 'dl' && vis_act_kind('/~lead/x/') === 'lead' && vis_act_kind('/~calling/') === '' && vis_act_kind('/call/') === '', 'only the four ping paths are actions');
@@ -172,6 +176,10 @@ check($pt['d7'] === 6 && $pt['d30'] === 6 && $tt['d30'] === 4, 'PC Manager click
 check($pt['from'][0] === array('k' => '/computer-spec-checker/', 'n' => 3) && count($pt['from']) === 3 && in_array(array('k' => '/', 'n' => 1), $pt['from'], true), 'the pages, busiest first; a bare /~dl/pcm/ is the home page', json_encode($pt['from']));
 check($pt['countries'] === array(array('k' => 'GB', 'n' => 3), array('k' => 'US', 'n' => 2)), 'by country, from every page', json_encode($pt['countries']));
 check(vis_dl_tally(null, 'pcm')['d30'] === 0 && vis_dl_tally(array(), 'pcm')['from'] === array(), 'no statistics yet: zeros, never an error');
+// 14 Oct 2026: links sent to a computer (the phone panel) are tallied apart from the downloads
+$dvs['days'][$DLT]['t365']['pages']['/~send/pcm/free-pc-health-check/'] = 5;
+$ps = vis_dl_tally($dvs, 'pcm', 8, 'send'); $pd = vis_dl_tally($dvs, 'pcm');
+check($ps['d7'] === 5 && $ps['from'] === array(array('k' => '/free-pc-health-check/', 'n' => 5)) && $pd['d30'] === 6, 'sent links counted apart; the download clicks unchanged (6)', json_encode(array($ps, $pd['d30'])));
 
 echo "I  data centres and VPNs: counted once a day as automated, nothing else (1 Oct 2026)\n";
 $bot = row('dddd0001', 'Ashburn', 'US', false, 'Direct', $WIN11, array('/', '/pricing/', '/~call/'));

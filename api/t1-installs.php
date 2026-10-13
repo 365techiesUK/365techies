@@ -27,4 +27,6 @@ $out['latest'] = $latest ? array('ver' => $latest['ver'], 'size' => $latest['siz
 // (11 Oct 2026: and the page each click came from - vis_dl_tally, visitors-tally-lib.php)
 $vs = @json_decode((string)@file_get_contents(__DIR__ . '/visitors-stats.json'), true);
 $out['downloads'] = vis_dl_tally($vs, 't1');
+// 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer" - the links they sent themselves
+$out['sends'] = vis_dl_tally($vs, 't1', 8, 'send');
 echo json_encode($out);

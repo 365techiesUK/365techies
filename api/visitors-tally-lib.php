@@ -28,19 +28,21 @@ function vis_warm_paths() {
         '/monthly-it-support/', '/plan-finder/', '/dell-support-plans/');
 }
 // 1 Oct 2026: the beacon's action pings - /~dl/pcm/ (a PC Manager download click), /~call/<page>, /~text/<page>,
-// /~lead/<page> (an enquiry form sent). Returns dl, call, text or lead; '' for an ordinary page.
+// /~lead/<page> (an enquiry form sent). 14 Oct 2026: /~send/<app><page> - on a phone, tablet or Mac the download
+// opens a "Send it to your computer" panel (js/interior.js) and they sent themselves the link.
+// Returns dl, send, call, text or lead; '' for an ordinary page.
 function vis_act_kind($p) {
-    return preg_match('#^/~(dl|call|text|lead)/#', (string)$p, $m) ? $m[1] : '';
+    return preg_match('#^/~(dl|send|call|text|lead)/#', (string)$p, $m) ? $m[1] : '';
 }
 // the actions in a page-count map: how many of each (each visitor once a day), and the pages the calls, texts and
-// enquiries came from (the page path after the kind; a download says nothing about its page)
+// enquiries came from (the page path after the kind; the app pings have their own per-app tally, vis_dl_tally)
 function vis_actions(array $pages, $nFrom = 8) {
-    $acts = array('dl' => 0, 'call' => 0, 'text' => 0, 'lead' => 0); $from = array();
+    $acts = array('dl' => 0, 'send' => 0, 'call' => 0, 'text' => 0, 'lead' => 0); $from = array();
     foreach ($pages as $k => $n) {
         $kind = vis_act_kind($k);
         if ($kind === '') continue;
         $acts[$kind] += (int)$n;
-        if ($kind === 'dl') continue;
+        if ($kind === 'dl' || $kind === 'send') continue;
         $src = substr((string)$k, strlen($kind) + 2);
         if ($src === '' || $src[0] !== '/') $src = '/';
         if (!isset($from[$src])) $from[$src] = array('call' => 0, 'text' => 0, 'lead' => 0, 'n' => 0);
@@ -55,8 +57,9 @@ function vis_actions(array $pages, $nFrom = 8) {
 // /~dl/<app><page> - the beacon adds the page it was clicked on (/~dl/pcm/computer-spec-checker/). A bare /~dl/pcm/ is
 // a click on the home page, or any click before 11 Oct 2026 (the page was not recorded then). For the installs cards:
 // clicks over 7 and 30 days, by country, and the pages they came from (30 days).
-function vis_dl_tally($vs, $app, $nFrom = 8) {
-    $pre = '/~dl/' . $app . '/';
+// 14 Oct 2026: $kind 'send' = the same tally for links sent to a computer from the phone panel (/~send/<app><page>).
+function vis_dl_tally($vs, $app, $nFrom = 8, $kind = 'dl') {
+    $pre = '/~' . ($kind === 'send' ? 'send' : 'dl') . '/' . $app . '/';
     $out = array('d7' => 0, 'd30' => 0, 'countries' => array(), 'from' => array());
     if (!is_array($vs) || !isset($vs['days']) || !is_array($vs['days'])) return $out;
     $cut7 = gmdate('Y-m-d', time() - 6 * 86400); $cut30 = gmdate('Y-m-d', time() - 29 * 86400); $cc = array(); $from = array();
