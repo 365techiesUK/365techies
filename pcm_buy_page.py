@@ -24,7 +24,7 @@ FAQS = [
      "info@365techies.co.uk. <a href=\"/pc-manager-licence/#refunds\">Our refund promise</a>."),
     ("Is it a subscription to support?",
      "No. It is software only: it switches on three extra features in 365 PC Manager. It does not include phone calls, visits "
-     "or remote help. In the UK, those come with our <a href=\"/home-it-support-plans/\">support plans</a>."),
+     "or remote help. In the UK, unlimited remote help and a real person to call come with our <a href=\"/home-it-support-plans/\">support plans</a>."),
 ]
 
 _CSS = r'''
