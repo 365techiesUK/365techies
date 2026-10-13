@@ -71,6 +71,8 @@ if ($do === 'config' || $do === 'create') {
         $cr = pp_creds();
         ppo(array('ok' => true, 'available' => $offer['ok'], 'reason' => $offer['reason'], 'country' => $country,
             'usd' => $offer['usd'] ?? '', 'line' => $offer['line'] ?? '', 'local' => $offer['local'] ?? '',
+            // 13 Oct 2026: the UK key is in pounds - the page shows £ and asks PayPal's buttons for GBP
+            'currency' => $offer['currency'] ?? 'USD', 'amount' => $offer['amount'] ?? ($offer['usd'] ?? ''), 'uk' => !empty($offer['uk']),
             'client_id' => $offer['ok'] && $cr ? $cr['id'] : '', 'env' => $offer['ok'] && $cr ? $cr['env'] : ''));
     }
     if (!$offer['ok']) ppo(array('ok' => false, 'error' => $offer['reason']));

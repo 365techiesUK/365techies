@@ -33,6 +33,21 @@ $BUY_PROVIDER = 'paypal';
 // plus S$1 million worldwide; Hong Kong has none). NOT the EU: it taxes a non-EU seller's software from the FIRST sale. Not
 // Switzerland (CHF 100,000 counts our WHOLE turnover). Check this list with the accountant; add a country only after that.
 $PP_COUNTRIES = 'US,CA,AU,NZ,NO,JP,SG,HK';
+// 13 Oct 2026 (owner: "£19.99 a year, 3 PCs" ... "Build it all for release 37"): the same key IN THE UK, for a PC that is not
+// on one of our support plans - "service it yourself", offered BESIDE the plans (the app shows both), never instead of them,
+// and never to a PC linked to a customer. We sell it ourselves and PayPal takes it in pounds (365 Techies Ltd is not VAT
+// registered, so nothing is added - the accountant to confirm these sales just count toward the turnover threshold).
+//   $BUY_UK = 'off'   nothing changes: UK PCs are offered our plans, the buy page says so, the legal pages don't mention it
+//             'page'  the buy page sells it to a UK PC (so the owner can buy one and refund it) - the app is not offered it
+//             'on'    the app offers it too, beside the plans (build 39 on; older builds keep showing the plans alone)
+// $UK_GBP is the price in pounds; $UK_PRICE is how it reads beside the button (40 characters at most).
+$BUY_UK = 'off';
+$UK_GBP = '19.99';
+$UK_PRICE = '£19.99 for 1 year - does not renew';
+// 13 Oct 2026 (owner: "Yes, automatic"): every NEW UK install that isn't linked to a customer gets the free month once -
+// first seen by its check-ins on or after this date (installs already counted before it are left to staff, as before).
+// '' = off. Our own PCs are never given one.
+$TRIAL_AUTO_UK_FROM = '2026-10-13';
 // FastSpring (12 Oct 2026, owner: "take it over and do it"): a merchant of record - IT is the seller and pays the VAT / sales
 // tax - so it sells everywhere PayPal does not (never the UK or the no-sale countries). pcm-plus-fs-lib.php has the rules.
 // The popup checkout: "365techies.test.onfastspring.com/popup-365techies" while TESTING (pretend money - the app offers

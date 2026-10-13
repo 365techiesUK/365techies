@@ -52,7 +52,11 @@ $key = strtoupper(trim((string)($in['key'] ?? '')));
 $machine = preg_replace('/[^a-f0-9]/', '', strtolower(substr((string)($in['machine'] ?? ''), 0, 64)));
 if (!plus_is_key($key) || $machine === '') lo_fail('not_trial');
 $tri = plus_trial_of($key);
-if (!$tri) lo_fail('not_trial');   // a bought Unlock key: no look-overs (software, not a service)
+// 13 Oct 2026: a key bought IN THE UK may ask too (we sold it ourselves; the look-over is how a do-it-yourself customer meets
+// a techie). A key bought abroad still can't: there it is software only.
+$ukk = $tri ? null : plus_uk_key_of($key);
+if (!$tri && !$ukk) lo_fail('not_trial');
+if (!$tri) $tri = array('until' => (int)$ukk['expires']);
 $pr = plus_check($key, $machine, false);
 if (empty($pr['ok'])) lo_fail($pr['error'] === 'expired' ? 'trial_ended' : 'not_trial');
 if (empty($in['consent'])) lo_fail('consent');
@@ -65,6 +69,7 @@ $f['phone'] = trim((string)($in['phone'] ?? '')) === '' ? '' : mm_uk_phone($in['
 $f['kind'] = ((string)($in['kind'] ?? '')) === 'health' ? 'health' : 'service';
 $f['ver'] = (isset($in['ver']) && is_scalar($in['ver']) && preg_match('/^\d{1,3}(\.\d{1,3}){0,2}$/', (string)$in['ver'])) ? (string)$in['ver'] : '';
 $f['cc'] = geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+$f['who'] = $ukk ? 'uk' : 'trial';
 $b = base64_decode(substr((string)($in['html'] ?? ''), 0, 600000), true);
 if ($b === false || strlen($b) < 500 || strlen($b) > 420000) lo_fail('bad_report');
 if (stripos(substr($b, 0, 300), '<html') === false && stripos(substr($b, 0, 300), '<!doctype') === false) lo_fail('bad_report');
@@ -80,7 +85,7 @@ if (!is_dir(LO_DIR)) @mkdir(LO_DIR, 0755, true);
 lo_tidy(LO_DIR, $now);
 $id = bin2hex(random_bytes(8));
 $meta = array('at' => $now, 'name' => $f['name'], 'email' => $f['email'], 'phone' => $f['phone'], 'kind' => $f['kind'], 'cc' => $f['cc'],
-    'install' => plus_mhash($machine), 'key4' => substr($key, -4), 'until' => (int)$tri['until'], 'ver' => $f['ver'], 'consent' => gmdate('c', $now));
+    'install' => plus_mhash($machine), 'key4' => substr($key, -4), 'until' => (int)$tri['until'], 'who' => $f['who'], 'ver' => $f['ver'], 'consent' => gmdate('c', $now));
 if (@file_put_contents(LO_DIR . '/' . $id . '.html', $b) === false || @file_put_contents(LO_DIR . '/' . $id . '.json', json_encode($meta, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) === false) {
     @unlink(LO_DIR . '/' . $id . '.html'); lo_fail('unavailable');
 }

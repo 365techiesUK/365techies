@@ -530,6 +530,32 @@ try:
     PCM_UNLOCK_LIVE = bool(re.search(r"^[ \t]*\$BUY_ON\s*=\s*true\s*;", open(_os_pcm.path.join(bp.BASE, "api", "pcm-buy-config.php"), encoding="utf-8").read(), re.M | re.I))
 except OSError:
     PCM_UNLOCK_LIVE = False
+# 13 Oct 2026 (owner: "£19.99 a year, 3 PCs" ... "Build it all for release 37"): the same key IN THE UK, for a PC that isn't
+# on one of our plans - read from the server's own switch, pcm-buy-config.php $BUY_UK ('off' | 'page' | 'on'), as
+# pcm-plus-lib.php plus_config reads it. UK_KEY_SOLD ('page' or 'on', with a price): the legal pages describe a UK sale.
+# UK_KEY_OFFERED ('on' only - the app offers it too): the app page says so, and "nothing to buy" becomes "nothing you have to
+# buy". UK_KEY_PRICE is the price as HTML ("&pound;19.99"). While $BUY_UK is 'off' every page builds exactly as before.
+def _uk_key_state():
+    try:
+        _src = open(_os_pcm.path.join(bp.BASE, "api", "pcm-buy-config.php"), encoding="utf-8").read()
+    except OSError:
+        return "off", ""
+    _m = re.search(r"^[ \t]*\$BUY_UK\s*=\s*'([^']*)'", _src, re.M)
+    _p = re.search(r"^[ \t]*\$UK_GBP\s*=\s*'(\d{1,4}(?:\.\d{1,2})?)'", _src, re.M)
+    _state = _m.group(1).strip().lower() if _m else "off"
+    if _state not in ("page", "on") or not _p or not PCM_UNLOCK_LIVE:
+        return "off", ""
+    return _state, "&pound;" + _p.group(1)
+_UK_KEY_STATE, UK_KEY_PRICE = _uk_key_state()
+UK_KEY_SOLD = _UK_KEY_STATE in ("page", "on")
+UK_KEY_OFFERED = _UK_KEY_STATE == "on"
+def _uk_swap(text, pairs, where):
+    """Each (old, new) must be found exactly once - a silent miss would leave a page describing the wrong sale."""
+    for _old, _new in pairs:
+        if text.count(_old) != 1:
+            raise SystemExit("\n*** UK key wording (%s): expected this once, found it %d times:\n    %s ***\n" % (where, text.count(_old), _old[:120]))
+        text = text.replace(_old, _new)
+    return text
 # 29 Sep 2026 (launch branch virgin-launch): the free Virgin email tools ship in 365 PC Manager v30. Every Virgin page's
 # download button (virgin_launch.py) uses THIS one link. It was pinned to setup-v30 while version.json still named an
 # installer without the Virgin tools; since the v35 release (6 Oct 2026) the manifest's installer has them, so the
@@ -578,6 +604,10 @@ def pcm_landing():
       (("How do I get it, and is the download safe?", "It&rsquo;s live: tap <a href=\"#download\">Download free for Windows</a>, open it, and it installs in a couple of clicks &mdash; then it lives in your Start menu like any other program, and you can remove it any time from Settings &gt; Apps. The download is <strong>digitally signed by 365 Techies Ltd</strong> (a Microsoft-issued certificate), so Windows shows our name as the publisher rather than &ldquo;unknown&rdquo;. If you&rsquo;d rather we set it up for you, ring 01202 775566 and we&rsquo;ll do it free, by hand.") if PCM_LIVE else ("When does it launch, and how do I get it?", "It&rsquo;s in final testing now. Join the <a href=\"#waitlist\">waitlist</a> and we&rsquo;ll email you the download the moment it&rsquo;s ready &mdash; and if you&rsquo;d rather not install it yourself, we&rsquo;ll happily set it up for you free, by hand, when it&rsquo;s ready. We won&rsquo;t promise a date until it&rsquo;s genuinely ready; we&rsquo;d rather ship it right than rush it.")),
       ("Why can&rsquo;t I download Microsoft&rsquo;s PC Manager in the UK?", "Microsoft hasn&rsquo;t made its &ldquo;PC Manager&rdquo; utility officially available in the UK Microsoft Store &mdash; it has been region-limited for years (still, as of mid-2026). If what you actually wanted was a friendly Windows health check and tidy-up from someone you can phone, that&rsquo;s exactly what our free 365 PC Manager is. Made in Dorset, works right here, and your data stays on your PC."),
     ]
+    # 13 Oct 2026: once the key is offered in the UK too (UK_KEY_OFFERED), "really free?" names it - and says it's optional
+    if UK_KEY_OFFERED:
+        faqs[0] = (faqs[0][0], _uk_swap(faqs[0][1], [("but you never have to.",
+            "or, without a plan, an optional key (" + UK_KEY_PRICE + " for 12 months on up to 3 PCs, no renewal) lets you run the full service yourself. You never have to do either.")], "app page FAQ"))
     dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download data-pcm-cta="download">Download free for Windows &#8595;</a>'
           if PCM_DOWNLOAD_URL else
           '<a class="button primary button--lg" href="/contact/?topic=365-pc-manager" data-pcm-cta="ask">Ask us to set it up for you &#8594;</a>')
@@ -1184,9 +1214,14 @@ def pcm_landing():
     <script>(function(){{try{{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";if(tz&&!/^Europe\\/(London|Jersey|Guernsey|Isle_of_Man)$/.test(tz)){{var s=document.querySelector("[data-abroad-box]");if(s)s.hidden=false;}}}}catch(e){{}}}})();</script>'''
     if PCM_UNLOCK_LIVE:
         assert "no scare tactics, nothing to buy</strong>" in _pcm_hero and "fake errors, and nothing to buy</span>" in _pcm_proof, "the 'nothing to buy' wording moved"
-        _pcm_hero = _pcm_hero.replace("no scare tactics, nothing to buy</strong>", "no scare tactics, nothing to buy in the UK</strong>")
-        _pcm_proof = _pcm_proof.replace("fake errors, and nothing to buy</span>", "fake errors, nothing to buy in the UK</span>")
+        # 13 Oct 2026: once the key is offered in the UK too, "in the UK" would be untrue - it is optional everywhere
+        _nb = "nothing you have to buy" if UK_KEY_OFFERED else "nothing to buy in the UK"
+        _pcm_hero = _pcm_hero.replace("no scare tactics, nothing to buy</strong>", "no scare tactics, " + _nb + "</strong>")
+        _pcm_proof = _pcm_proof.replace("fake errors, and nothing to buy</span>", "fake errors, " + _nb + "</span>")
     content = "\n".join([_pcm_hero, _pcm_proof, _pcm_abroad] + [_blocks[i] for i in _order] + [_pcm_fold])
+    if UK_KEY_OFFERED:
+        content = _uk_swap(content, [("But the free app stands on its own, and we&rsquo;re happy either way.</p>",
+            "Rather service it yourself, without a plan? An optional key (" + UK_KEY_PRICE + " for 12 months on up to 3 PCs, no renewal) unlocks the full service for you to run whenever you like. But the free app stands on its own, and we&rsquo;re happy either way.</p>")], "app page")
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
@@ -16816,6 +16851,14 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>Contact us</h2>
           <p>For any privacy question or to exercise your rights, contact <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>"""
 
+# 13 Oct 2026: the key is sold in the UK too once pcm-buy-config.php $BUY_UK is 'page' or 'on' (UK_KEY_SOLD, above)
+if UK_KEY_SOLD:
+    _PRIVACY_BODY = _uk_swap(_PRIVACY_BODY, [
+        (" for 365 PC Manager (outside the UK)</h2>", " for 365 PC Manager</h2>"),
+        ('<p>Outside the UK, 365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>).',
+         '<p>365 PC Manager offers an optional paid key, &ldquo;Unlock everything&rdquo; (see <a href="/pc-manager-licence/">licence and refunds</a>): outside the UK, and in the UK for a PC that isn&rsquo;t on one of our support plans.'),
+    ], "privacy")
+
 info_page(
   slug="privacy-policy", crumb_name="Privacy Policy", eyebrow="// PRIVACY",
   hero_cta1=('Contact us', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
@@ -16828,6 +16871,15 @@ info_page(
             ("Contact Us", "/contact/"), ("Cookie Policy", "/cookie-policy/")),
 )
 
+# 13 Oct 2026: once the key is sold in the UK too (UK_KEY_SOLD), its section stops saying "outside the UK" only
+def _uk_terms(text):
+    if not UK_KEY_SOLD:
+        return text
+    _m = re.search(r"<h2>365 PC Manager outside the UK</h2>\s*<p>.*?</p>", text, re.S)
+    if not _m:
+        raise SystemExit("*** UK key wording (terms): the '365 PC Manager outside the UK' section moved ***")
+    return text[:_m.start()] + ("<h2>365 PC Manager&rsquo;s optional key</h2>" + chr(10) + "          <p>365 PC Manager is free to use anywhere. The optional &ldquo;Unlock everything&rdquo; key is sold in the UK, to a PC that isn&rsquo;t on one of our support plans, and outside the UK. It has its own terms and our 30-day refund promise: see <a href=\"/pc-manager-licence/\">365 PC Manager licence and refunds</a>.</p>") + text[_m.end():]
+
 # ---- Terms of Service
 info_page(
   slug="terms", crumb_name="Terms of Service", eyebrow="// TERMS",
@@ -16836,7 +16888,7 @@ info_page(
   lede="The terms on which 365 Techies Limited provides IT support and services to home and business customers.",
   desc="Terms of service for 365 Techies Limited — how we provide IT support and services, plans and payment, your responsibilities, and our mutual commitments.",
   chips=["Clear &amp; fair","No lock-in","Plain English"],
-  inner=("""          <p class="mono" style="color:var(--cyan)">%s</p>
+  inner=_uk_terms(("""          <p class="mono" style="color:var(--cyan)">%s</p>
           <h2>About us</h2>
           <p>These terms apply to IT support and services provided by 365 Techies Limited (company number 11073501), Bournemouth, Dorset. Our registered office is 71-75 Shelton Street, London, Greater London, WC2H 9JQ, United Kingdom, and this website is 365techies.co.uk. By using our services you agree to these terms.</p>
           <h2>Our services</h2>
@@ -16894,7 +16946,7 @@ info_page(
           <h2>Changes</h2>
           <p>We may update these terms from time to time; the current version will always be on this page.</p>
           <h2>Contact us</h2>
-          <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""") % UPDATED,
+          <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""") % UPDATED),
   cta_args=("Ready to get started?", "Pick a plan or talk to a friendly techie.",
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
@@ -16977,12 +17029,28 @@ _PCM_LICENCE_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p
           <h2>Questions</h2>
           <p>Email <a href="mailto:info@365techies.co.uk">info@365techies.co.uk</a>. We reply in English, Monday to Friday, 9am to 5pm UK time.</p>"""
 
+# 13 Oct 2026 (owner: "£19.99 a year, 3 PCs"): the key in the UK, for a PC that isn't on one of our plans - described once a
+# UK sale is possible (UK_KEY_SOLD: pcm-buy-config.php $BUY_UK 'page' or 'on'). We are the seller; PayPal takes it in pounds.
+if UK_KEY_SOLD:
+    _PCM_LICENCE_BODY = _uk_swap(_PCM_LICENCE_BODY, [
+        ("<li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key for computers <strong>outside the UK</strong>: <strong>US$19.99</strong>, paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>",
+         "<li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key: <strong>" + UK_KEY_PRICE + "</strong> in the UK, for a PC that isn&rsquo;t on one of our support plans, and <strong>US$19.99</strong> outside the UK. Paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>"),
+        ("<li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: those are for our customers in the UK.</li>",
+         "<li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: in the UK those come with our <a href=\"/home-it-support-plans/\">support plans</a>.</li>"),
+        ("<h2>Price, tax and how you pay</h2>\n          <p>",
+         "<h2>Price, tax and how you pay</h2>\n          <p><strong>In the UK</strong> the price is <strong>" + UK_KEY_PRICE + "</strong>, charged once in pounds, with nothing added. We are the seller: you buy the key from us, 365 Techies Ltd, and <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details. It is for a PC that isn&rsquo;t on one of our support plans: a PC on a plan already has the full service, run for it by us.</p>\n          <p><strong>Outside the UK.</strong> "),
+        ("<li>Nothing here takes away any right you have under the law where you live.</li>",
+         "<li>Nothing here takes away any right you have under the law where you live. In the UK that includes your rights under the Consumer Rights Act 2015, and our 30 days are longer than the 14-day cancellation period the law gives you.</li>"),
+    ], "licence")
+
 info_page(
   slug="pc-manager-licence", crumb_name="365 PC Manager licence and refunds", eyebrow="// LICENCE &amp; REFUNDS",
   hero_cta1=('About 365 PC Manager', '/free-pc-health-check/'), hero_cta2=('Ask about a refund', 'mailto:info@365techies.co.uk?subject=Refund%20please'),
   h1='365 PC Manager <em class="grad grad--cyan">licence and refunds</em>',
-  lede="The terms for the optional &ldquo;Unlock everything&rdquo; key, sold to computers outside the UK, and our 30-day refund promise. The app itself is free.",
-  desc="Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 once for 12 months on up to 3 PCs, no renewal, 30-day refund.",
+  lede=("The terms for the optional &ldquo;Unlock everything&rdquo; key, in the UK and abroad, and our 30-day refund promise. The app itself is free." if UK_KEY_SOLD else
+        "The terms for the optional &ldquo;Unlock everything&rdquo; key, sold to computers outside the UK, and our 30-day refund promise. The app itself is free."),
+  desc=("Licence and refunds for 365 PC Manager's optional Unlock everything key: GBP " + UK_KEY_PRICE.replace("&pound;", "") + " in the UK, US$19.99 abroad, 12 months on up to 3 PCs, 30-day refund." if UK_KEY_SOLD else
+        "Licence and refunds for 365 PC Manager's optional Unlock everything key outside the UK: US$19.99 once for 12 months on up to 3 PCs, no renewal, 30-day refund."),
   title="365 PC Manager Licence and Refunds | 365 Techies",
   chips=["12 months, no renewal", "30-day refund", "Free app, optional key"],
   inner=_PCM_LICENCE_BODY % _policy_stamp("pcm-licence", _PCM_LICENCE_BODY),

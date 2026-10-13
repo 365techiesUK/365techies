@@ -15,11 +15,14 @@ function lo_card($f, $id, $until, $now = null) {
     if ($f['phone'] !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Phone:*\n" . mm_esc($f['phone']));
     $fields[] = array('type' => 'mrkdwn', 'text' => "*Report:*\n" . ($f['kind'] === 'service' ? 'Full service' : 'Health check'));
     if ($f['cc'] !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Country:*\n" . mm_esc($f['cc']));
-    if ($until) $fields[] = array('type' => 'mrkdwn', 'text' => "*Free month ends:*\n" . gmdate('j M Y', (int)$until));
+    $uk = ($f['who'] ?? '') === 'uk';   // 13 Oct 2026: a key bought in the UK, not a free month
+    if ($until) $fields[] = array('type' => 'mrkdwn', 'text' => ($uk ? "*Key runs until:*\n" : "*Free month ends:*\n") . gmdate('j M Y', (int)$until));
     $blocks = array(
         array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => "\xF0\x9F\x93\x8B Report look-over: please email back", 'emoji' => true)),
         array('type' => 'section', 'fields' => $fields),
-        array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => 'They are on a *free month of PC Manager* and asked a techie to look over their report, free, and email them. '
+        array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => ($uk
+            ? 'They *bought the PC Manager key in the UK* (they service their PC themselves, not on a plan) and asked a techie to look over their report, free, and email them. A good moment to mention our plans. '
+            : 'They are on a *free month of PC Manager* and asked a techie to look over their report, free, and email them. ')
             . '<https://365techies.co.uk/portal/#lookover=' . $id . '|Open the report> (staff sign-in).')),
     );
     $tz = new DateTimeZone('Europe/London');

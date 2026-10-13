@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-12"
+      "dateModified": "2026-10-13"
     },
     {
       "@type": "FAQPage",
@@ -322,7 +322,7 @@
           "name": "Is it a subscription to support?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. It is software only: it switches on three extra features in 365 PC Manager. It does not include phone calls, visits or remote help."
+            "text": "No. It is software only: it switches on three extra features in 365 PC Manager. It does not include phone calls, visits or remote help. In the UK, those come with our <a href=\"/home-it-support-plans/\">support plans</a>."
           }
         }
       ]
@@ -807,7 +807,7 @@
         <h1 class="taskhead__h">Unlock everything for <em class="grad grad--cyan">365 PC Manager</em></h1>
         <p class="taskhead__lede">One key for 12 months on up to 3 PCs. Paid once, and it does not renew. 365 PC Manager stays free whether you buy it or not.</p>
         <p class="taskhead__trust mono"><span>Paid once, no renewal</span><span>30-day refund</span><span>Software only</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 12 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -843,6 +843,7 @@
             <p class="pbuy__small" id="pbuysmall">You&rsquo;re buying from <b>365 Techies Ltd</b>, the family IT business in Bournemouth, England that makes 365 PC Manager. PayPal takes the payment, so we never see your card. Your key is shown here and emailed to you. <a href="/pc-manager-licence/">Licence and 30-day refunds</a> &middot; <a href="/privacy-policy/#unlock-everything">Privacy</a>.</p>
           </div>
           <p class="pbuy__note" id="pbuywhy" hidden></p>
+          <p class="pbuy__note" id="pbuyplans" hidden>Rather we did it for you? On one of our <a href="/home-it-support-plans/">support plans</a> we run the full service for you about every six weeks, write up what we found, and you have a real person to call.</p>
         </div>
         <div class="pbuy__card pbuy__done" id="pbuydone" hidden aria-live="polite"></div>
       </div>
@@ -918,7 +919,7 @@
   }
   function buttons(cfg) {
     var s = document.createElement('script');
-    s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(cfg.client_id) + '&currency=USD&intent=capture&components=buttons';
+    s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(cfg.client_id) + '&currency=' + (cfg.currency === 'GBP' ? 'GBP' : 'USD') + '&intent=capture&components=buttons';
     s.onerror = function () { status('PayPal’s buttons didn’t load. Check your connection or ad blocker, then refresh the page.', true); };
     s.onload = function () {
       if (!window.paypal || !window.paypal.Buttons) { status('PayPal’s buttons didn’t load. Refresh the page to try again.', true); return; }
@@ -979,8 +980,13 @@
   post({ 'do': 'config', install: install, test_cc: testCc }).then(function (c) {
     if (!c || !c.ok) { status('We couldn’t reach our server. Refresh the page in a minute.', true); return; }
     if (!c.available) { el('pbuyoffer').hidden = true; el('pbuywhy').innerHTML = WHY[c.reason] || WHY.off; el('pbuywhy').hidden = false; return; }
-    el('pbuyamt').textContent = 'US$' + c.usd;
+    el('pbuyamt').textContent = c.currency === 'GBP' ? '£' + c.amount : 'US$' + c.usd;
     el('pbuylocal').textContent = c.local ? '(about ' + c.local + ')' : '';
+    // 13 Oct 2026: a UK PC that isn't on one of our plans - "service it yourself", with the plans one click away
+    if (c.uk) {
+      el('pbuysmall').innerHTML = 'You’re buying from <b>365 Techies Ltd</b>, the family IT business in Bournemouth that makes 365 PC Manager. PayPal takes the payment, so we never see your card, and nothing is added to the price. Your key is shown here and emailed to you. <a href="/pc-manager-licence/">Licence and 30-day refunds</a> &middot; <a href="/privacy-policy/#unlock-everything">Privacy</a>.';
+      el('pbuyplans').hidden = false;
+    }
     if (c.via === 'fastspring') {
       el('pbuylocal').textContent = '';   // FastSpring's checkout shows the real amount in their money, with any tax - not our rough guess
       if (c.env === 'test') { el('pbuytest').textContent = 'TEST MODE: FastSpring’s test checkout. No real money is taken.'; el('pbuytest').hidden = false; }
@@ -1012,7 +1018,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>Is it a subscription to support?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>No. It is software only: it switches on three extra features in 365 PC Manager. It does not include phone calls, visits or remote help.</p></div>
+          <div class="faq__ans"><p>No. It is software only: it switches on three extra features in 365 PC Manager. It does not include phone calls, visits or remote help. In the UK, those come with our <a href="/home-it-support-plans/">support plans</a>.</p></div>
         </details>
         </div>
       </div>

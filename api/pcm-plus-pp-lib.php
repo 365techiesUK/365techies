@@ -69,14 +69,18 @@ function pp_offer($country, $config = null, $creds = 'auto', $off = null) {
     if ($cfg['provider'] !== 'paypal' || !$cr) return array('ok' => false, 'reason' => 'not_set_up');
     $on = $cr['env'] === 'sandbox' || plus_enabled($off, $config);
     if (!$on) return array('ok' => false, 'reason' => 'off');
-    if ($c === '' || in_array($c, array('GB', 'IM', 'JE', 'GG'), true)) return array('ok' => false, 'reason' => 'uk');
+    // 13 Oct 2026: the UK key, in pounds, once pcm-buy-config.php $BUY_UK is 'page' or 'on' (otherwise: our plans, as before)
+    if (plus_is_uk($c) && plus_uk_sells($cfg))
+        return array('ok' => true, 'reason' => '', 'uk' => true, 'currency' => 'GBP', 'amount' => number_format((float)$cfg['uk_gbp'], 2, '.', ''),
+            'usd' => '', 'local' => '', 'env' => $cr['env'], 'line' => $cfg['uk_price']);
+    if ($c === '' || plus_is_uk($c)) return array('ok' => false, 'reason' => 'uk');
     if (plus_no_sale($c)) return array('ok' => false, 'reason' => 'no_sale');
     if (!in_array($c, pp_countries($config), true)) return array('ok' => false, 'reason' => 'not_here');
     $low = plus_low_price($c) && $cfg['low_usd'] !== '' && $cfg['low_price'] !== '';
     $usd = $low ? $cfg['low_usd'] : $cfg['usd'];
     if ($usd === '') return array('ok' => false, 'reason' => 'not_set_up');
     $local = plus_local_amount($c, (float)$usd);
-    return array('ok' => true, 'reason' => '', 'usd' => number_format((float)$usd, 2, '.', ''), 'local' => $local, 'env' => $cr['env'],
+    return array('ok' => true, 'reason' => '', 'currency' => 'USD', 'amount' => number_format((float)$usd, 2, '.', ''), 'usd' => number_format((float)$usd, 2, '.', ''), 'local' => $local, 'env' => $cr['env'],
         'line' => $local !== '' ? plus_price_line($usd, $local, $low ? $cfg['low_price'] : $cfg['price']) : ($low ? $cfg['low_price'] : $cfg['price']));
 }
 
@@ -146,16 +150,19 @@ function pp_order_known($id) {
 /* Create the PayPal order for this install at the server's price. -> array(ok, order id or error) */
 function pp_create($cr, $install, $offer) {
     $install = preg_replace('/[^a-f0-9]/', '', strtolower((string)$install));
+    // 13 Oct 2026: pounds for the UK key, US dollars everywhere else (an offer from before then has only 'usd')
+    $cur = (($offer['currency'] ?? 'USD') === 'GBP') ? 'GBP' : 'USD';
+    $amt = (string)($offer['amount'] ?? $offer['usd']);
     $body = array('intent' => 'CAPTURE',
         'purchase_units' => array(array('reference_id' => 'unlock', 'custom_id' => $install !== '' ? $install : 'web',
             'invoice_id' => 'PCM-' . gmdate('ymd') . '-' . strtoupper(bin2hex(random_bytes(4))), 'description' => PP_DESC,
-            'amount' => array('currency_code' => 'USD', 'value' => $offer['usd']))),
+            'amount' => array('currency_code' => $cur, 'value' => $amt))),
         'application_context' => array('brand_name' => '365 Techies', 'shipping_preference' => 'NO_SHIPPING', 'user_action' => 'PAY_NOW'));
     list($c, $j) = pp_api($cr, 'POST', '/v2/checkout/orders', $body, array('PayPal-Request-Id: pcm-' . bin2hex(random_bytes(8))));
     $id = (string)($j['id'] ?? '');
     if (($c !== 200 && $c !== 201) || !preg_match('/^[A-Z0-9]{10,30}$/', $id)) { pp_log('create FAILED http ' . $c . ' ' . pp_why($j)); return array(false, 'paypal_failed'); }
-    $usd = $offer['usd'];
-    pp_orders_locked(function (&$d) use ($id, $install, $usd) { $d[$id] = array('at' => time(), 'install' => $install, 'usd' => $usd); return true; });
+    // (orders made before 13 Oct 2026 carry only 'usd'; pp_keep reads either)
+    pp_orders_locked(function (&$d) use ($id, $install, $cur, $amt) { $d[$id] = array('at' => time(), 'install' => $install, 'cur' => $cur, 'amt' => $amt) + ($cur === 'USD' ? array('usd' => $amt) : array()); return true; });
     return array(true, $id);
 }
 
@@ -168,13 +175,14 @@ function pp_keep($cr, $capture, $orderId, $email, $mail) {
     $st = strtoupper((string)($capture['status'] ?? ''));
     $amt = (string)($capture['amount']['value'] ?? ''); $cur = (string)($capture['amount']['currency_code'] ?? '');
     if ($cid === '') return array('refused', '', '', 'no capture id');
-    if ($cur !== 'USD' || abs((float)$amt - (float)$known['usd']) > 0.001) return array('refused', '', '', 'amount ' . $cur . ' ' . $amt . ' is not the ' . $known['usd'] . ' we asked for');
+    $wantCur = (string)($known['cur'] ?? 'USD'); $wantAmt = (string)($known['amt'] ?? ($known['usd'] ?? ''));
+    if ($cur !== $wantCur || $wantAmt === '' || abs((float)$amt - (float)$wantAmt) > 0.001) return array('refused', '', '', 'amount ' . $cur . ' ' . $amt . ' is not the ' . $wantCur . ' ' . $wantAmt . ' we asked for');
     if ($st === 'PENDING') return array('pending', '', '', 'PayPal is still checking the payment');
     if ($st !== 'COMPLETED') return array('refused', '', '', 'capture ' . strtolower($st));
     $email = strtolower(trim((string)$email));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return array('busy', '', '', 'no payer email yet');
-    $note = 'PayPal order ' . $orderId . ($cr['env'] === 'sandbox' ? ' (TEST)' : '') . ' USD ' . $amt;
-    $r = plus_issue_for_order($email, 1, 'paypal', $cid, $note, array('install' => $known['install'], 'test' => $cr['env'] === 'sandbox'));
+    $note = 'PayPal order ' . $orderId . ($cr['env'] === 'sandbox' ? ' (TEST)' : '') . ' ' . $cur . ' ' . $amt;
+    $r = plus_issue_for_order($email, 1, 'paypal', $cid, $note, array('install' => $known['install'], 'test' => $cr['env'] === 'sandbox', 'uk' => $cur === 'GBP'));
     if ($r === null) return array('busy', '', $email, 'could not store the key');
     if (!$r[2]) return array('had', '', $email, 'capture already has its key');
     $d = plus_load(); $exp = 0; foreach (($d ? $d['keys'] : array()) as $e) if ($e['id'] === $r[1]) $exp = (int)$e['expires'];

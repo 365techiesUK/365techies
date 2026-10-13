@@ -73,7 +73,7 @@ $sent = array(); $mail = function ($to, $key, $exp) use (&$sent) { $sent[] = arr
 pp_orders_locked(function (&$d) { $d['ORDER1234567'] = array('at' => time(), 'install' => 'a1b2c3d4e5f60718', 'usd' => '19.99'); return true; });
 $cap = array('id' => 'CAP111', 'status' => 'COMPLETED', 'amount' => array('value' => '19.99', 'currency_code' => 'USD'));
 $r = pp_keep($SB, $cap, 'NOTOURS99999', 'b@x.com', $mail); check($r[0] === 'refused' && strpos($r[3], 'not an order we made') !== false, 'an order our server did not create: refused, no key (a buyer can make their own one-cent order with the public client id)');
-$r = pp_keep($SB, array_merge($cap, array('amount' => array('value' => '0.01', 'currency_code' => 'USD'))), 'ORDER1234567', 'b@x.com', $mail); check($r[0] === 'refused' && strpos($r[3], 'not the 19.99') !== false, 'the wrong amount: refused', $r[3]);
+$r = pp_keep($SB, array_merge($cap, array('amount' => array('value' => '0.01', 'currency_code' => 'USD'))), 'ORDER1234567', 'b@x.com', $mail); check($r[0] === 'refused' && strpos($r[3], 'not the USD 19.99') !== false, 'the wrong amount: refused', $r[3]);
 $r = pp_keep($SB, array_merge($cap, array('amount' => array('value' => '19.99', 'currency_code' => 'EUR'))), 'ORDER1234567', 'b@x.com', $mail); check($r[0] === 'refused', 'the wrong currency: refused');
 $r = pp_keep($SB, array_merge($cap, array('status' => 'PENDING')), 'ORDER1234567', 'b@x.com', $mail); check($r[0] === 'pending' && !$sent, 'PayPal still checking: no key yet');
 $r = pp_keep($SB, $cap, 'ORDER1234567', 'Buyer@Example.com', $mail);

@@ -61,6 +61,10 @@ function plus_config($file = null) {
     return array('on' => (bool)preg_match('/^[ \t]*\$BUY_ON\s*=\s*true\s*;/mi', $src), 'url' => preg_match('#^https://[^\s<>"\']+$#', $url) ? $url : '', 'price' => plus_cut($g('BUY_PRICE'), 40), 'provider' => preg_replace('/[^a-z]/', '', strtolower($g('BUY_PROVIDER'))),
         'usd' => $usd('BUY_USD'), 'low_usd' => $usd('BUY_LOW_USD'), 'low_price' => plus_cut($g('BUY_LOW_PRICE'), 40), 'low_code' => preg_match('/^[A-Za-z0-9_-]{3,40}$/', $g('BUY_LOW_CODE')) ? $g('BUY_LOW_CODE') : '',
         'pp_countries' => $pp,
+        // 13 Oct 2026: the UK key ('off' | 'page' | 'on'), its price in pounds, and the automatic free month's start date
+        'uk' => in_array(strtolower($g('BUY_UK')), array('page', 'on'), true) ? strtolower($g('BUY_UK')) : 'off',
+        'uk_gbp' => $usd('UK_GBP'), 'uk_price' => plus_cut($g('UK_PRICE'), 40),
+        'trial_uk_from' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $g('TRIAL_AUTO_UK_FROM')) ? $g('TRIAL_AUTO_UK_FROM') : '',
         'fs_storefront' => preg_match('#^[a-z0-9-]+(\.test)?\.onfastspring\.com/[a-z0-9-]+$#', $fsf) ? $fsf : '', 'fs_product' => $fsp('FS_PRODUCT'), 'fs_product_low' => $fsp('FS_PRODUCT_LOW'));
 }
 // FastSpring's mode from the storefront: '' (not set up) | 'test' (pretend money) | 'live'
@@ -77,11 +81,23 @@ function plus_enabled($off = null, $config = null) {
 // could not take the money) and staff never give it a free month (the plan's simplest rule; UK sanctions not researched).
 define('PLUS_NO_SALE', 'CF,CU,KP,CD,ER,GW,IR,IQ,LB,LY,ML,RU,SO,SS,SD,SY,YE');
 function plus_no_sale($country) { $c = strtoupper(trim((string)$country)); return $c !== '' && in_array($c, explode(',', PLUS_NO_SALE), true); }
+function plus_is_uk($country) { return in_array(strtoupper(trim((string)$country)), array('GB', 'IM', 'JE', 'GG'), true); }
+// 13 Oct 2026: the UK key - sellable on our buy page ('page' or 'on', with a price), or offered in the app as well ('on')
+function plus_uk_sells($cfg) { return is_array($cfg) && in_array($cfg['uk'] ?? 'off', array('page', 'on'), true) && ($cfg['uk_gbp'] ?? '') !== '' && ($cfg['uk_price'] ?? '') !== ''; }
+function plus_uk_offered($cfg) { return plus_uk_sells($cfg) && $cfg['uk'] === 'on'; }
 // What a keyless check-in's answer gains. $country: the check-in's country ('' = not known). $id: the install's anonymous id.
+//   13 Oct 2026: in the UK with $BUY_UK 'on' -> offer 'both': our plans AND the key. An app older than build 39 knows only
+//   'plan' and 'buy', so it treats 'both' as neither and keeps showing the plans, exactly as before.
 function plus_offer_out($country, $id = '', $off = null, $config = null) {
     if (!plus_enabled($off, $config)) return array();
     $c = strtoupper((string)$country);
-    if ($c === '' || in_array($c, array('GB', 'IM', 'JE', 'GG'), true)) return array('offer' => 'plan');
+    if (plus_is_uk($c)) {
+        $cfg = plus_config($config);
+        if (plus_uk_offered($cfg) && $cfg['provider'] === 'paypal')
+            return array('offer' => 'both', 'buy_url' => str_replace('{id}', rawurlencode((string)$id), $cfg['url']), 'buy_price' => $cfg['uk_price']);
+        return array('offer' => 'plan');
+    }
+    if ($c === '') return array('offer' => 'plan');   // where we can't tell, our plans, as before - never a sale
     if (plus_no_sale($c)) return array();   // nothing to buy there: the free app, as if the paid app were switched off
     $cfg = plus_config($config);
     $paypal = $cfg['provider'] === 'paypal';
@@ -295,7 +311,9 @@ function plus_issue_for_order($email, $years, $provider, $order, $note, $extra =
         $d['keys'][$h] = array('id' => $id, 'last4' => substr($key, -4), 'email' => $email, 'created' => $now,
             'expires' => $years ? strtotime('+' . $years . ' year', $now) : 0, 'status' => 'active', 'provider' => $provider, 'order' => $order,
             'note' => plus_cut($note, 120), 'by' => 'checkout', 'pcs' => array(),
-            'install' => preg_replace('/[^a-f0-9]/', '', substr((string)($extra['install'] ?? ''), 0, 16)), 'test' => !empty($extra['test']));
+            'install' => preg_replace('/[^a-f0-9]/', '', substr((string)($extra['install'] ?? ''), 0, 16)), 'test' => !empty($extra['test']))
+            // 13 Oct 2026: a key bought in the UK, in pounds (it may ask us for a report look-over, like a free month)
+            + (!empty($extra['uk']) ? array('uk' => true) : array());
         $out = array($key, $id, true);
         return true;
     }, $file);
@@ -485,6 +503,22 @@ function plus_trial_give($mhash, $by, $now = null, $file = null) {
     }, $file);
     return $res;
 }
+// 13 Oct 2026 (owner: "Yes, automatic"): a NEW UK install that isn't linked to a customer is given its free month by
+// itself, so people see the full service and its report before anyone asks them to pay. pcm.php calls this on a keyless
+// check-in; $inst is the install's row in pcm-installs.json (f = first day seen, o = one of our own PCs). Only installs
+// first seen on or after pcm-buy-config.php $TRIAL_AUTO_UK_FROM, only a build that can take the key, one month per PC ever
+// (plus_trial_give). -> {ok, until} when it gave one now, else null.
+function plus_trial_auto_uk($mhash, $country, $ver, $inst, $now = null, $file = null, $config = null) {
+    if (!plus_is_mhash($mhash) || !plus_is_uk($country) || (int)$ver < PLUS_TRIAL_MIN_VER || !is_array($inst)) return null;
+    $from = plus_config($config)['trial_uk_from'];
+    if ($from === '' || !empty($inst['o']) || !empty($inst['k']) || !empty($inst['p'])) return null;
+    $f = (string)($inst['f'] ?? '');
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $f) || strcmp($f, $from) < 0) return null;
+    $d = plus_load($file);
+    if ($d && isset($d['trials'][$mhash])) return null;   // had one already - the usual case, and no lock taken for it
+    $r = plus_trial_give($mhash, 'auto (UK)', $now, $file);
+    return !empty($r['ok']) ? $r : null;
+}
 // For a keyless check-in from this install (app build $ver): the key to hand over now, or null. Handing it over is
 // noted (the first time, and again at most daily) - never in the check-in's way.
 function plus_trial_handover($mhash, $ver, $now = null, $file = null) {
@@ -510,6 +544,13 @@ function plus_trial_of($key, $now = null, $file = null) {
     if ($mh !== '' && isset($d['trials'][$mh]) && !(int)$d['trials'][$mh]['got'])
         plus_locked(function (&$d) use ($mh, $now) { if (!isset($d['trials'][$mh]) || (int)$d['trials'][$mh]['got']) return false; $d['trials'][$mh]['got'] = $now; return true; }, $file);
     return array('until' => (int)$d['keys'][$h]['expires'], 'install' => $mh);
+}
+// 13 Oct 2026: a key bought in the UK (pp_keep marks it 'uk') -> {expires, id} or null. pcm-lookover.php lets it ask too.
+function plus_uk_key_of($key, $file = null) {
+    if (!plus_is_key($key)) return null;
+    $d = plus_load($file); $h = plus_hash($key);
+    if (!$d || !isset($d['keys'][$h]) || empty($d['keys'][$h]['uk']) || ($d['keys'][$h]['provider'] ?? '') === 'trial') return null;
+    return array('expires' => (int)$d['keys'][$h]['expires'], 'id' => (string)$d['keys'][$h]['id']);
 }
 // Tidy: a month that is over no longer needs its key kept (the record stays - one free month per PC, ever).
 function plus_trial_tidy($now = null, $file = null) {

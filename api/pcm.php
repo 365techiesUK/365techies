@@ -243,6 +243,18 @@ if ($action === 'checkin') {
     }
     // 9 Oct 2026: a free month waiting for this PC (staff gave it in the portal's installs card) is handed over here - to
     // build 37 ("36.1") on, the first that knows what to do with it; an older copy gets it once it has updated itself
+    // 13 Oct 2026 (owner: "Yes, automatic"): a NEW UK install, not linked to a customer, is given its free month by itself
+    // (pcm-plus-lib.php plus_trial_auto_uk - first seen from $TRIAL_AUTO_UK_FROM on, one per PC ever) and handed it below
+    if ($key === '' && function_exists('plus_trial_auto_uk') && (int)($in['ver'] ?? 0) >= PLUS_TRIAL_MIN_VER) {
+        try {
+            $auCc = geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+            if (plus_is_uk($auCc)) {
+                $auD = @json_decode((string)@file_get_contents(inst_file()), true);
+                $auId = plus_mhash($machine);
+                if ($auId !== '' && is_array($auD) && isset($auD['m'][$auId])) plus_trial_auto_uk($auId, $auCc, (int)$in['ver'], $auD['m'][$auId]);
+            }
+        } catch (Throwable $e) { }
+    }
     $trHand = ($key === '' && function_exists('plus_trial_handover')) ? plus_trial_handover(plus_mhash($machine), (int)($in['ver'] ?? 0)) : null;
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
         + ($trHand ? array('trial_key'=>$trHand['key'], 'trial_until'=>$trHand['until'], 'trial_days'=>$trHand['days']) : array())

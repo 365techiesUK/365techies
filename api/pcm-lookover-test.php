@@ -48,7 +48,8 @@ check(!$denied, 'still served: pcm-lookover.php (the app sends to it, staff open
 $GI = (string)file_get_contents(__DIR__ . '/../.gitignore');
 check(preg_match('#^api/pcm-lookover/\*\r?$#m', $GI) === 1 && preg_match('#^!api/pcm-lookover/\.htaccess\r?$#m', $GI) === 1, 'the reports are never committed; the folder\'s .htaccess is');
 $src = (string)file_get_contents(__DIR__ . '/pcm-lookover.php');
-check(strpos($src, "if (!\$tri) lo_fail('not_trial');") !== false, 'only a free month - never a bought Unlock key (sold as software, not a service)');
+check(strpos($src, "if (!\$tri && !\$ukk) lo_fail('not_trial');") !== false && strpos($src, '$ukk = $tri ? null : plus_uk_key_of($key);') !== false,
+    'only a free month or a key bought IN THE UK (13 Oct 2026) - never a key bought abroad (sold as software, not a service)');
 check(strpos($src, "if (empty(\$in['consent'])) lo_fail('consent');") !== false, 'only with their tick');
 
 echo "\n" . ($fails ? "pcm-lookover-test: $fails FAILED\n" : "pcm-lookover-test: all passed\n");
