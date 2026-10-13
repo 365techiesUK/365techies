@@ -160,16 +160,17 @@ test('every 5th wave is the Mothership, in three stages: guns first, then the co
   assert.equal(W.wave, 6); assert.equal(W.invaders.length, 55, 'then a formation again');
 });
 
-test('the Mothership: its guns take turns firing at you; the open core fires fans of three, four when angry, and sends down little ones', () => {
+test('the Mothership: its guns fire aimed volleys; the open core fires fans of three, five when angry, and sends down little ones', () => {
+  // (13 Oct 2026: its attacks are a set now - engine-attacks.test.mjs; this one checks the guns and the core's fans)
   const W = blockWorld(2, 9); toPlay(W); still(W); W.invaders = []; W.order = []; W.shields = [];
-  W.boss = { x: 88, y: 40, w: 48, h: 20, hp: 30, max: 30, dir: 1, t: 0, fireT: 3, phase: 1, dead: 0, flash: 0, drops: 0,
-    L: { hp: 4, max: 4, flash: 0 }, R: { hp: 4, max: 4, flash: 0 }, C: { hp: 22, max: 22 }, gun: 0, miniT: 999 };
-  W.player.x = 20; play(W, 5);
-  assert.equal(W.bombs.length, 1, 'one aimed shot'); assert.ok(W.bombs[0].dx < 0, 'aimed at the ship (to its left)');
-  W.bombs = []; W.boss.L.hp = 0; W.boss.R.hp = 0; W.boss.phase = 2; W.boss.fireT = 1; E.step(W, idle);
+  W.boss = { x: 88, y: 40, w: 48, h: 20, hp: 30, max: 30, dir: 1, t: 0, fireT: 1e9, phase: 1, dead: 0, flash: 0, drops: 0,
+    L: { hp: 4, max: 4, flash: 0 }, R: { hp: 4, max: 4, flash: 0 }, C: { hp: 22, max: 22 }, gun: 0, miniT: 999, mvT: 1e9, escT: 1e9 };
+  W.player.x = 20; W.boss.atk = { k: 'volley', t: 0, n: 50 }; play(W, 20);
+  assert.equal(W.bombs.length, 2, 'both guns fire'); assert.ok(W.bombs.every((b) => b.dx < 0), 'aimed at the ship (to its left)');
+  W.bombs = []; W.boss.L.hp = 0; W.boss.R.hp = 0; W.boss.phase = 2; W.boss.atk = { k: 'fan', t: 17, n: 26 }; E.step(W, idle);
   assert.equal(W.bombs.length, 3, 'a fan of three');
-  W.bombs = []; W.boss.phase = 3; W.boss.fireT = 1; E.step(W, idle);
-  assert.equal(W.bombs.length, 4, 'four when angry');
+  W.bombs = []; W.boss.phase = 3; W.boss.atk = { k: 'fan', t: 17, n: 26 }; E.step(W, idle);
+  assert.equal(W.bombs.length, 5, 'five when angry');
   W.boss.miniT = 1; E.step(W, idle);
   assert.equal(W.minis.length, 2, 'two little ones');
 });

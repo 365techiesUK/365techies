@@ -277,6 +277,16 @@ export function createWorld() {
         sparks(f.x, f.y, 30, '#ffb03a', 2.2, 40, 0.7); flashLight(f.x, f.y, '#ffb03a', 14, 30); ringAt(f.x, f.y, '#ffd84a', 34, 30); ringAt(f.x, f.y, '#ffffff', 12, 12, true); break;
       case 'coreopen': sparks(f.x, f.y, 36, '#ff3fd2', 2, 36, 0.6); flashLight(f.x, f.y, '#ff3fd2', 12, 30); ringAt(f.x, f.y, '#ff3fd2', 44, 34); break;
       case 'rage': flashLight(f.x, f.y, '#ff2850', 10, 30); break;
+      // the Mothership's attacks (13 Oct 2026)
+      case 'bossatk': if (f.a === 'volley') { flashLight(f.x - 16, f.y, '#ffb03a', 3, 14); flashLight(f.x + 16, f.y, '#ffb03a', 3, 14); } else if (f.a !== 'fan') flashLight(f.x, f.y, f.a === 'mines' ? '#ffd84a' : '#ff3fd2', 6, 20); break;
+      case 'curtain': flashLight(f.x, f.y, '#ff3fd2', 9, 18); ringAt(f.x, f.y, '#ff3fd2', 24, 20); break;
+      case 'minedrop': sparks(f.x, f.y, 3, '#ffd84a', 0.6, 12, 0.4); break;
+      case 'minekill': burst('bomb50', f.x, f.y, 1.0, { life: 50 }); sparks(f.x, f.y, 10, '#ffd84a', 1.5, 20, 0.5); flashLight(f.x, f.y, '#ff8a2a', 4, 10); ringAt(f.x, f.y, '#ffd84a', 12, 14); break;
+      case 'mineburst': sparks(f.x, f.y, 10, '#ff6a2a', 1.3, 18, 0.5); flashLight(f.x, f.y, '#ff6a2a', 5, 12); ringAt(f.x, f.y, '#ff8a2a', 14, 14); break;
+      case 'drones': ringAt(f.x, f.y, '#3fe0ff', 40, 30); flashLight(f.x, f.y, '#3fe0ff', 8, 20); break;
+      case 'dronehit': sparks(f.x, f.y, 5, '#d0faff', 1.2, 14, 0.4); break;
+      case 'dronekill': burst('drone0', f.x, f.y, 1.4, { life: 80 }); sparks(f.x, f.y, 16, '#3fe0ff', 1.8, 26, 0.6); flashLight(f.x, f.y, '#3fe0ff', 6, 16); ringAt(f.x, f.y, '#3fe0ff', 16, 18); break;
+      case 'stun': sparks(f.x, f.y, 30, '#ffd84a', 2, 40, 0.6); flashLight(f.x, f.y, '#ffd84a', 14, 34); ringAt(f.x, f.y, '#ffd84a', 50, 36); ringAt(f.x, f.y, '#ffffff', 20, 18, true); break;
     }
   }
 
@@ -428,6 +438,10 @@ export function createWorld() {
       sprite(B.vent > 0 && ((t / 90) | 0) % 2 === 0 ? 'vent' : pre + (rage ? 'bossrage' : 'bosspart|C'), x, y, Object.assign({ white: B.flash > 3 && !gunHit }, o));
       if (B.L.hp > 0) sprite(pre + 'bosspart|L', x, y, Object.assign({ white: B.L.flash > 3 }, o));
       if (B.R.hp > 0) sprite(pre + 'bosspart|R', x, y, Object.assign({ white: B.R.flash > 3 }, o));
+      if (B.drones && !B.dead) for (const D of B.drones) {   // its drones (13 Oct 2026): circling it, nearer you on the front of the orbit
+        const p = E.droneXY(B, D);
+        sprite('drone' + (((t / 220) | 0) % 2), p.x, p.y, { yaw: t / 300 + D.a, white: D.flash > 3, z: Math.sin(D.a) * 5 * K, scale: 1.35 });
+      }
       rayGlow.visible = false;
       if (!B.dead && W.intro === 0) {
         const R = B.ray, cx = B.x + B.w / 2, by = B.y + B.h - 2;
@@ -544,7 +558,7 @@ export function createWorld() {
     for (const b of W.bombs) {
       if (b.kind === 3) { cube(wx(b.x + 1.5), wy(b.y + 2), 0, 2.4, 2.4, 2.4, hot.set(0xff3fd2)); continue; }
       if (b.kind === 4) { R.setFromEuler(EU.set(0, 0, Math.atan2(b.dx || 0, 1))); cube(wx(b.x + 1.5), wy(b.y + 3), 0, 1.1, 6, 1.1, hot.set(0xff3030), R); R.identity(); continue; }   // a sniper's bolt, along its line
-      sprite('bomb' + b.kind + ((b.f >> 3) & 1), b.x + 1.5, b.y + 3.5, { yaw: t / 120 * K });
+      sprite('bomb' + b.kind + ((b.f >> 3) & 1), b.x + 1.5, b.y + 3.5, { yaw: t / 120 * K, scale: b.kind === 5 ? 1.3 : 1 });   // (a mine: bigger)
     }
     // your shots: thin bright beams
     const pc = W.power && W.power.kind === 'rapid' ? C.set(0xffe48a) : C.set(0xbff6ff);

@@ -52,6 +52,9 @@
     bomb20: ['.a.', '.a.', 'aaa', '.a.', '.a.', 'aaa', '.b.'], bomb21: ['.a.', 'aaa', '.a.', '.a.', 'aaa', '.a.', '.b.'],
     // the little ones a splitter bursts into (and the Mothership sends down)
     mini0: ['.b..b.', 'aaaaaa', 'aeaaea', '.aaaa.', 'c.cc.c'], mini1: ['b....b', '.aaaa.', 'aeaaea', 'aaaaaa', '.c..c.'],
+    // the Mothership's mines (the spikes pulse) and drones (an eye that blinks) - 13 Oct 2026
+    bomb50: ['...a...', '.a.b.a.', '..bbb..', 'abbebba', '..bbb..', '.a.b.a.', '...a...'], bomb51: ['.a...a.', '...b...', '..bbb..', '.bbebb.', '..bbb..', '...b...', '.a...a.'],
+    drone0: ['..bbb..', '.baaab.', 'baaeaab', 'aaeeeaa', 'caaeaac', '.caaac.', '..c.c..'], drone1: ['..bbb..', '.baaab.', 'baaaaab', 'aaaeaaa', 'caaaaac', '.caaac.', '.c...c.'],
     // the ten waves' new kinds (10 Oct 2026): the sniper (red eyes, a barrel), the phantom, the carrier (three hits)
     snip0: ['..b......b..', '.bab....bab.', '.aaaaaaaaaa.', 'aaeeaaaaeeaa', 'aaaaaaaaaaaa', '.caa.aa.aac.', '....caac....', '.....cc.....'],
     snip1: ['b..........b', '.bab....bab.', '.aaaaaaaaaa.', 'aaeeaaaaeeaa', 'aaaaaaaaaaaa', 'c.aa.aa.aa.c', '....caac....', '.....cc.....'],
@@ -69,6 +72,7 @@
     boss: { a: '#7b4dff', b: '#d2c2ff', c: '#3a1f8f', e: '#ff3fd2', l: '#ffe14a', glow: '#8f63ff' },
     bomb0: { a: '#ff9b3b', b: '#fff0c0', glow: '#ff8a20' }, bomb1: { a: '#ff5ce1', b: '#ffd0f6', glow: '#ff3fd2' }, bomb2: { a: '#8ff7ff', b: '#ffffff', glow: '#40e0ff' },
     mini: { a: '#9dff3a', b: '#eaffc8', c: '#4a9a12', e: '#ff3b6e', glow: '#8cff2a' },
+    bomb5: { a: '#ffd84a', b: '#ff6a2a', e: '#ffffff', glow: '#ff8a2a' }, drone: { a: '#3fe0ff', b: '#d0faff', c: '#1677a8', e: '#ff3fd2', glow: '#3fe0ff' },
     snip: { a: '#8e98ad', b: '#e6ecf6', c: '#4c5468', e: '#ff2a2a', glow: '#ff3a3a' },
     ghost: { a: '#9d7bff', b: '#efe6ff', c: '#5a3fb8', e: '#ffffff', glow: '#a98cff' },
     carr: { a: '#4f7fd6', b: '#c8dcff', c: '#243f80', e: '#ffe14a', glow: '#5a8cff' }
@@ -331,7 +335,7 @@
         if (!W.boss || W.boss.L.hp > 0 || W.boss.R.hp > 0) floater('GUN DOWN!', f.x, f.y + 16, '#ffd84a', 1, 80);   // (the second: CORE OPEN says it)
         break;
       case 'coreopen':
-        BANNER = { a: 'CORE OPEN', b: 'NOW HIT THE CORE!', col: '#ff3fd2', life: 120, max: 120 };
+        BANNER = { a: 'CORE OPEN', b: W.boss && W.boss.drones && W.boss.drones.length ? 'SHOOT ITS DRONES - THEN THE CORE!' : 'NOW HIT THE CORE!', col: '#ff3fd2', life: 120, max: 120 };   // (13 Oct 2026: its drones come out with it)
         ring(f.x, f.y, 40, '#ff3fd2', 34, 2); screen('#ff3fd2', 0.12, 24); break;
       case 'slowoff': ring(W.player.x + 6.5, PY + 3, 20, CAP.slow.col, 20, 1.5); floater('SPEED UP!', W.player.x + 6.5, PY - 16, CAP.slow.col, 1, 60); break;
       case 'shot': flash(f.x, f.y + 3, 4, f.kind === 'rapid' ? '#ffd84a' : '#7fe8ff', 6); break;
@@ -347,7 +351,7 @@
         emit(f.x, f.y, 34, [PAL.saucer.a, PAL.saucer.b, PAL.saucer.e, '#ffffff'], 2, 46, { spread: 10, flat: 0.6 });
         ring(f.x, f.y, 22, '#ff6070', 24); flash(f.x, f.y, 22, '#ff4060', 18); shake(2.5);
         floater(String(f.pts), f.x, f.y - 2, '#ffe24a', 2, 90); break;
-      case 'capdrop': ring(f.x, f.y, 9, CAP[f.kind].col, 16); break;
+      case 'capdrop': ring(f.x, f.y, 9, CAP[f.kind].col, 16); if (f.gift) floater('CATCH IT!', f.x, f.y + 12, CAP[f.kind].col, 1, 90); break;
       case 'collect':
         ring(f.x, f.y, 18, CAP[f.kind].col, 22, 1.5); emit(f.x, f.y, 22, [CAP[f.kind].col, '#ffffff'], 1.6, 30);
         floater(CAP[f.kind].name, f.x, f.y - 14, CAP[f.kind].col, 1, 70); break;
@@ -374,7 +378,21 @@
       case 'raycharge': ring(f.x, f.y, 14, '#ff3050', 30, 1.5); flash(f.x, f.y, 10, '#ff3050', 30); break;
       case 'rayfire': shake(2.4); screen('#ff2040', 0.14, 18); flash(f.x, f.y, 14, '#ffffff', 10); break;
       case 'vent': emit(f.x, f.y, 14, ['#ffb070', '#ff6a2a', '#9a9aa8'], 0.9, 40, { vy: -0.5 }); floater('OVERHEATED!', f.x, f.y + 20, '#ff9a3d', 1, 90); break;
-      case 'bossmove': if (f.m === 'charge') { floater('INCOMING!', f.x, f.y + 22, '#ff4060', 1, 60); shake(1.2); } else if (f.m === 'swoop') shake(0.8); break;
+      case 'bossmove': if (f.m === 'charge') { floater('INCOMING!', f.x, f.y + 22, '#ff4060', 1, 60); shake(1.2); } else if (f.m === 'run') { floater('BOMBING RUN!', f.x, f.y + 22, '#ff9a3d', 1, 80); shake(1.5); } else if (f.m === 'swoop') shake(0.8); break;
+      // the Mothership's attacks (13 Oct 2026)
+      case 'bossatk':
+        if (f.a === 'mines') floater('MINES!', f.x, f.y + 14, '#ffd84a', 1, 70);
+        else if (f.a === 'curtain' || f.a === 'curtain2') { floater(f.a === 'curtain2' ? 'DOUBLE WALL!' : 'PLASMA WALL!', f.x, f.y + 14, '#ff3fd2', 1, 80); ring(f.x, f.y, 16, '#ff3fd2', 30, 1.5); }
+        else if (f.a === 'volley') { flash(f.x - 16, f.y - 2, 6, '#ffb03a', 18); flash(f.x + 16, f.y - 2, 6, '#ffb03a', 18); }
+        break;
+      case 'curtain': flash(f.x, f.y, 14, '#ff3fd2', 16); shake(1.2); break;
+      case 'minedrop': flash(f.x, f.y, 4, '#ffd84a', 8); break;
+      case 'minekill': emit(f.x, f.y, 14, ['#ffd84a', '#ff6a2a', '#ffffff'], 1.6, 24); ring(f.x, f.y, 9, '#ffd84a', 14); if (f.pts) floater('+' + f.pts, f.x, f.y - 6, '#ffe14a', 1, 45); break;
+      case 'mineburst': emit(f.x, f.y, 12, ['#ff6a2a', '#ffd84a'], 1.3, 20); ring(f.x, f.y, 11, '#ff8a2a', 14); flash(f.x, f.y, 8, '#ff6a2a', 10); break;
+      case 'drones': ring(f.x, f.y, 40, PAL.drone.glow, 30, 1.5); floater('DRONES!', f.x, f.y + 26, PAL.drone.glow, 1, 80); break;
+      case 'dronehit': emit(f.x, f.y, 5, [PAL.drone.b, PAL.drone.a], 1.2, 14); break;
+      case 'dronekill': emit(f.x, f.y, 22, [PAL.drone.a, PAL.drone.b, '#ffffff'], 1.8, 30); ring(f.x, f.y, 14, PAL.drone.glow, 18); flash(f.x, f.y, 10, PAL.drone.glow, 12); if (f.pts) floater('+' + f.pts, f.x, f.y - 8, '#ffe14a', 1, 55); break;
+      case 'stun': BANNER = { a: 'STUNNED!', b: 'DOUBLE DAMAGE', col: '#ffd84a', life: 110, max: 110 }; ring(f.x, f.y, 50, '#ffd84a', 36, 2); screen('#ffd84a', 0.14, 22); shake(3); break;
       case 'escorts': flash(f.x, f.y, 8, '#7fe8ff', 12); break;
       case 'perfect': BANNER = { a: 'PERFECT!', b: '+500 BONUS', col: '#ffe14a', life: 150, max: 150 }; break;
     }
@@ -521,6 +539,12 @@
         rect(b.x + 1, b.y, 1.2, 6, '#ff4040', 1); rect(b.x + 1.2, b.y + 1, 0.6, 4, '#ffffff', 0.9);
         return;
       }
+      if (b.kind === 5) {   // a mine: it blinks faster as it gets near its burst
+        var near = b.det ? Math.max(0, 1 - (b.det - b.y) / 60) : 0, mid = 'bomb5' + (((b.f / (8 - 5 * near)) | 0) & 1), ms = sprite(mid);
+        light(b.x + 1.5, b.y + 3.5, 5 + 3 * near, near > 0.6 && (b.f >> 2) & 1 ? '#ffffff' : '#ff8a2a', 0.6 + 0.3 * near);
+        glowAt(halo(ms, 'h|' + mid, PAL.bomb5.glow, K * 2), b.x - 2, b.y, 0.9); blit(ms, b.x - 2, b.y);
+        return;
+      }
       if (b.kind === 3) {   // the Mothership's plasma
         light(b.x + 1.5, b.y + 2, 6, '#ff3fd2', 0.8);
         rect(b.x + 0.5, b.y + 1, 2, 2, '#ffffff', 1);
@@ -578,7 +602,19 @@
     // a hit flashes the part that was hit
     var fl = B.L.flash ? ['L', 0, GL, B.L.flash] : B.R.flash ? ['R', GR, E.BOSS_W, B.R.flash] : B.flash ? ['C', GL, GR, B.flash] : null;
     if (fl) blit(cropped(silhouette('boss', '#ffffff'), 'bossw|' + fl[0], fl[1], fl[2]), x, y, fl[3] / 6 * 0.8);
+    if (B.drones && B.drones.length && !B.dead) drawDrones(W, B, t, alpha);
     if (!B.dead && W.intro === 0) drawBossBar(W);   // its strength, under the scores
+  }
+  function drawDrones(W, B, t, alpha) {   // its drones (13 Oct 2026): a faint orbit, then each one - white when hit
+    var c0 = E.droneXY(B, { a: 0 }), cx = c0.x - 36, cy = c0.y;
+    G.globalCompositeOperation = 'lighter'; G.globalAlpha = 0.16 * alpha; G.strokeStyle = PAL.drone.glow; G.lineWidth = Math.max(1, S * 0.5);
+    G.beginPath(); G.ellipse(cx * S + OX, cy * S + OY, 36 * S, 15 * S, 0, 0, Math.PI * 2); G.stroke(); G.globalCompositeOperation = 'source-over';
+    B.drones.forEach(function (D) {
+      var p = E.droneXY(B, D), id = 'drone' + (((t / 220) | 0) % 2), spr = sprite(id);
+      glowAt(halo(spr, 'h|' + id, PAL.drone.glow, K * 2), p.x - 3.5, p.y - 3.5, 0.85 * alpha); blit(spr, p.x - 3.5, p.y - 3.5, alpha);
+      if (D.flash > 3) blit(silhouette(id, '#ffffff'), p.x - 3.5, p.y - 3.5, 0.85 * alpha);
+      light(p.x, p.y, 3.5, PAL.drone.e, 0.5 * alpha);
+    });
   }
   function drawRay(W, B, x, y, t, alpha) {   // the death beam: charging (a glow and an aiming line), firing (a burning column); then venting
     var bh = ART.boss.length, cx = x + E.BOSS_W / 2, by = y + bh - 2, R = B.ray;
@@ -756,6 +792,16 @@
     if (name === 'ray') { A.noise(1.1, 0.14, 900, { type: 'bandpass', q: 0.6, to: 300, pan: p, verb: 0.4 }); A.tone(60, 2.0, 0.12, { type: 'sawtooth', to: 48, pan: p }); A.tone(121, 2.0, 0.05, { type: 'square', to: 97, pan: p, verb: 0.3 }); return true; }   // (the beam's roar)
     if (name === 'vent') { A.noise(1.0, 0.09, 5200, { type: 'highpass', to: 1800, pan: p, verb: 0.3 }); A.tone(520, 0.5, 0.025, { type: 'triangle', to: 180, pan: p }); return true; }   // (a hiss of steam)
     if (name === 'bossmove') { A.noise(0.6, 0.06, 500, { type: 'bandpass', q: 0.8, to: 2200, pan: p }); A.tone(70, 0.6, 0.05, { type: 'sawtooth', to: 110, pan: p }); return true; }   // (its engines surge)
+    // the Mothership's attacks (13 Oct 2026)
+    if (name === 'gunwarm') { A.tone(220, 0.25, 0.03, { type: 'sawtooth', to: 660, pan: p }); return true; }   // (its guns spinning up)
+    if (name === 'minedrop') { A.tone(330, 0.3, 0.035, { type: 'square', to: 165, pan: p, verb: 0.3 }); A.tone(660, 0.12, 0.02, { type: 'triangle', when: 0.05, pan: p }); return true; }
+    if (name === 'minekill') { A.noise(0.25, 0.12, 5000, { pan: p, verb: 0.3 }); A.tone(1320, 0.1, 0.035, { type: 'square', to: 1760, pan: p }); return true; }
+    if (name === 'mineburst') { A.noise(0.35, 0.16, 2600, { pan: p, verb: 0.35 }); A.tone(200, 0.3, 0.08, { type: 'sine', to: 60, pan: p }); return true; }
+    if (name === 'curtain') { A.tone(140, 0.6, 0.07, { type: 'sawtooth', to: 70, verb: 0.4 }); A.tone(880, 0.5, 0.02, { type: 'sine', to: 220, verb: 0.5 }); return true; }
+    if (name === 'bombrun') { for (var k = 0; k < 4; k++) A.tone(k % 2 ? 620 : 880, 0.2, 0.035, { type: 'square', when: k * 0.2, pan: p, verb: 0.3 }); A.noise(0.9, 0.07, 500, { type: 'bandpass', q: 0.8, to: 2200, pan: p }); return true; }   // (a siren as it drops low)
+    if (name === 'drones') { [660, 880, 1100].forEach(function (f, k) { A.tone(f, 0.12, 0.03, { type: 'triangle', when: k * 0.08, pan: p, verb: 0.4 }); }); return true; }
+    if (name === 'dronekill') { A.noise(0.5, 0.16, 4200, { pan: p, verb: 0.4 }); A.tone(900, 0.25, 0.04, { type: 'square', to: 300, pan: p }); return true; }
+    if (name === 'stun') { A.tone(1600, 0.9, 0.05, { type: 'sine', to: 400, verb: 0.6 }); A.tone(800, 0.9, 0.04, { type: 'triangle', to: 200, verb: 0.6 }); A.noise(0.6, 0.1, 3000, { verb: 0.5 }); return true; }
     if (name === 'groupbonus') { [784, 988, 1175, 1568].forEach(function (f, k) { A.tone(f, 0.1, 0.045, { type: 'square', when: k * 0.06, verb: 0.35 }); }); return true; }
     return false;
   }

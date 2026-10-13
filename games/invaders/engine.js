@@ -37,9 +37,9 @@
   // little ones stop steering and commit to their line (so a side-step at the end can still dodge them), the waves
   // from which the top one, two and three rows wear armour, and each of the Mothership's guns' share of its strength
   var REBOOT = {
-    1: { diveFrom: 3, diveMax: [1, 1, 2], diveEvery: 360, diveTurn: 0.03, miniTurn: 0.03, miniVx: 1.0, miniVy: 0.9, splitFrom: 5, bossMinis: [0, 300], diveCommit: 70, miniCommit: 50, armour: [4, 7, 10], bossGun: 0.18, snipe: 300, wander: 2.0, enter: 1 },
-    2: { diveFrom: 3, diveMax: [1, 1, 2], diveEvery: 360, diveTurn: 0.03, miniTurn: 0.035, miniVx: 1.3, miniVy: 1.0, splitFrom: 4, bossMinis: [0, 300], diveCommit: 70, miniCommit: 50, armour: [4, 7, 10], bossGun: 0.18, snipe: 170, wander: 2.6, enter: 1 },
-    3: { diveFrom: 2, diveMax: [1, 2, 2], diveEvery: 220, diveTurn: 0.05, miniTurn: 0.06, miniVx: 1.6, miniVy: 1.15, splitFrom: 4, bossMinis: [300, 220], diveCommit: 50, miniCommit: 36, armour: [3, 6, 9], bossGun: 0.18, snipe: 120, wander: 3.2, enter: 1 }
+    1: { diveFrom: 3, diveMax: [1, 1, 2], diveEvery: 360, diveTurn: 0.03, miniTurn: 0.03, miniVx: 1.0, miniVy: 0.9, splitFrom: 5, bossMinis: [0, 300], diveCommit: 70, miniCommit: 50, armour: [4, 7, 10], bossGun: 0.21, snipe: 300, wander: 2.0, enter: 1 },
+    2: { diveFrom: 3, diveMax: [1, 1, 2], diveEvery: 360, diveTurn: 0.03, miniTurn: 0.035, miniVx: 1.3, miniVy: 1.0, splitFrom: 4, bossMinis: [0, 300], diveCommit: 70, miniCommit: 50, armour: [4, 7, 10], bossGun: 0.21, snipe: 170, wander: 2.6, enter: 1 },
+    3: { diveFrom: 2, diveMax: [1, 2, 2], diveEvery: 220, diveTurn: 0.05, miniTurn: 0.06, miniVx: 1.6, miniVy: 1.15, splitFrom: 4, bossMinis: [300, 220], diveCommit: 50, miniCommit: 36, armour: [3, 6, 9], bossGun: 0.21, snipe: 120, wander: 3.2, enter: 1 }
   };
   Object.keys(REBOOT).forEach(function (k) { var R = REBOOT[k]; for (var q in R) SPEEDS[k][q] = R[q]; });
   // ---------------------------------------------------------------- THE WAVES (Enhanced; 10 Oct 2026, owner: "each level a
@@ -137,6 +137,19 @@
   var BOSS_GUN_L = 15, BOSS_GUN_R = 33;   // the Mothership: its left gun is x 0-14 across it, the core 15-32, the right gun 33-47
   var MINI_W = 6, MINI_H = 5, MINI_PTS = 15, ARMOUR_PTS = 5;
   var POWER_NAMES = { rapid: 'Rapid fire!', spread: 'Spread shot!', shield: 'Shield on!', laser: 'Laser!', slow: 'Slow time!' };
+  // the Mothership's ATTACKS (13 Oct 2026; owner: "the mothership's like really boring ... make them much better ... more full
+  // on"). Measured first (Classic, a good player): 76 s against one target (the Dreadnought 113 s), one shot in four landing,
+  // 13 s without a hit, and the same aimed shot ~37 times a minute. Now it works through a set of attacks, each shown coming:
+  // gun VOLLEYS, MINES (shoot them for points; left alone they burst into shards), a plasma CURTAIN with a gap to find, a low
+  // BOMBING RUN; when its core opens it raises orbiting DRONES (kill them all and it's stunned: no fire, double damage). Per
+  // speed: the pause between attacks, mines per drop, the curtain's spacing (the ship is 13 wide) and speed, drones and their hits,
+  // the bombing run's spacing, the power-up as the fight starts
+  var BOSS_ATK = {
+    1: { gap: 125, mines: 2, wall: 17, orb: 0.68, drones: 3, droneHp: 1, run: 34, gift: 1 },
+    2: { gap: 82, mines: 3, wall: 14, orb: 0.8, drones: 4, droneHp: 2, run: 30, gift: 1 },
+    3: { gap: 66, mines: 4, wall: 12, orb: 0.95, drones: 5, droneHp: 2, run: 28, gift: 1 }
+  };
+  var MINE_PTS = 25, DRONE_PTS = 100, DRONE_RX = 36, DRONE_RY = 15;
 
   function rngOf(seed) {   // mulberry32: the same seed, the same game (for the tests)
     var a = seed >>> 0;
@@ -243,11 +256,12 @@
       W.events.push({ sfx: 'swarm' }); if (W.wave > 1) W.events.push({ say: 'Wave ' + W.wave + ' – here they come' });
     }
     if (bossWave) {
-      var hp = Math.round(W.sp.bossHp * 0.85) + 5 * (W.wave / BOSS_EVERY - 1);   // each a little tougher (11 Oct: it moves and has escorts now - less to chew through)
-      var gun = Math.max(3, Math.round(hp * (W.sp.bossGun || 0.25))), core = Math.max(6, hp - 2 * gun);   // (sp.bossGun: each gun's share)
+      var hp = Math.round(W.sp.bossHp * 0.58) + 4 * (W.wave / BOSS_EVERY - 1);   // each a little tougher (13 Oct: its drones and mines are more to shoot - a shorter, busier fight)
+      var gun = Math.max(3, Math.round(hp * (W.sp.bossGun || 0.25) * (tier === 2 ? 0.8 : 1))), core = Math.max(6, Math.round((hp - 2 * gun) * (tier === 2 ? 0.85 : 1)));   // (the Dreadnought: lighter guns and core - its beam is in play from the start)   // (sp.bossGun: each gun's share)
       W.boss = { x: (WIDTH - BOSS_W) / 2, y: BOSS_Y, w: BOSS_W, h: BOSS_H, hp: gun * 2 + core, max: gun * 2 + core, dir: 1, t: 0, fireT: 100, phase: 1, dead: 0, flash: 0, drops: 0,
         L: { hp: gun, max: gun, flash: 0 }, R: { hp: gun, max: gun, flash: 0 }, C: { hp: core, max: core }, gun: 0, miniT: 200,
-        tier: tier, escT: 170, escSide: 1, mv: null, mvT: 260, oy: 0, ray: null, rayT: tier === 2 ? 640 : 9e9 };
+        tier: tier, escT: 170, escSide: 1, mv: null, mvT: 260, oy: 0, ray: null, rayT: tier === 2 ? 640 : 9e9,
+        atk: null, last: '', drones: null, reDrone: false, told: {} };
       W.intro = 150;
       W.events.push('warning'); W.events.push({ say: 'Level ' + W.wave + ': the ' + (tier === 2 ? 'Dreadnought' : 'Mothership') + ' is coming! Shoot its two guns off first.' });
     }
@@ -425,7 +439,7 @@
     moveCaps(W);
 
     if (W.hold > 0) { W.hold--; return; }
-    if (W.intro > 0) { if (--W.intro === 0) W.phase = 'play'; return; }   // the Mothership coming down
+    if (W.intro > 0) { if (--W.intro === 0) { W.phase = 'play'; if (W.boss && W.enh) bossGift(W); } return; }   // the Mothership coming down (then a power-up from it, to fight back with)
 
     if (W.phase === 'spawn') {   // the new wave appears one invader at a time
       W.spawnN = Math.min(W.invaders.length, W.spawnN + 1);
@@ -575,18 +589,22 @@
       // the mystery ship
       var U = W.saucer;
       if (U && sx >= U.x && sx < U.x + 16 && s.y < SAUCER_Y + 7 && s.y + 4 > SAUCER_Y) { hitSaucer(W); return 'hit'; }
-      // the Mothership: a gun, the core - or the gap where a gun was (the shot flies on)
+      // the Mothership: a drone in the way, a gun, the core - or the gap where a gun was (the shot flies on)
       var B = W.boss;
+      if (B && !B.dead && W.intro === 0 && B.drones) {
+        for (var di = 0; di < B.drones.length; di++) { var dp = droneXY(B, B.drones[di]); if (Math.abs(sx - dp.x) <= 5 && s.y < dp.y + 5 && s.y + 4 > dp.y - 5) { droneHit(W, di); return 'hit'; } }
+      }
       if (B && !B.dead && W.intro === 0 && sx >= B.x + 2 && sx < B.x + B.w - 2 && s.y < B.y + B.h - 2 && s.y + 4 > B.y + 2) {
         var r = bossHit(W, sx, s.y);
         if (r === 'hit') return 'hit';
         if (r === 'deflect') return 'gone';
       }
-      // a bomb: both go
+      // a bomb: both go (a mine is worth points)
       for (var j = 0; j < W.bombs.length; j++) {
-        var Bo = W.bombs[j];
-        if (sx >= Bo.x - 1 && sx <= Bo.x + 3 && s.y < Bo.y + 7 && s.y + 4 > Bo.y) {
+        var Bo = W.bombs[j], mw = Bo.kind === 5 ? 3 : 1;
+        if (sx >= Bo.x - mw && sx <= Bo.x + 2 + mw && s.y < Bo.y + 7 && s.y + 4 > Bo.y - (mw - 1) * 2) {
           W.bombs.splice(j, 1); W.booms.push({ kind: 'small', x: sx - 3, y: s.y - 2, t: 10 });
+          if (Bo.kind === 5) { mineShot(W, Bo); return 'hit'; }
           fx(W, { k: 'cancel', x: sx, y: s.y }); W.events.push({ sfx: 'cancel', x: sx });
           return 'gone';
         }
@@ -616,13 +634,15 @@
       var ox = cx - B.x, part = ox < BOSS_GUN_L ? 'L' : ox >= BOSS_GUN_R ? 'R' : 'C';
       if (part === 'C' || B[part].hp > 0) consider(B.y + B.h - 2, { k: 'boss' });
     }
+    if (B && !B.dead && W.intro === 0 && B.drones) B.drones.forEach(function (D) { var dp = droneXY(B, D); if (Math.abs(cx - dp.x) <= 5) consider(dp.y + 5, { k: 'drone', d: D }); });
     W.beam.top = best ? Math.max(16, by - 2) : 16;
     if (W.beam.t % 6 !== 1 || !best) return;
     W.events.push({ sfx: 'laser', x: cx });
     if (best.k === 'inv') hitInvader(W, best.v);
     else if (best.k === 'mini') { var mi = W.minis.indexOf(best.m); if (mi >= 0) hitMini(W, mi); }
-    else if (best.k === 'bomb') { var bi = W.bombs.indexOf(best.b); if (bi >= 0) { W.bombs.splice(bi, 1); fx(W, { k: 'cancel', x: cx, y: best.b.y }); } }
+    else if (best.k === 'bomb') { var bi = W.bombs.indexOf(best.b); if (bi >= 0) { W.bombs.splice(bi, 1); if (best.b.kind === 5) mineShot(W, best.b); else fx(W, { k: 'cancel', x: cx, y: best.b.y }); } }
     else if (best.k === 'ufo') hitSaucer(W);
+    else if (best.k === 'drone') { var dj = B.drones.indexOf(best.d); if (dj >= 0) droneHit(W, dj); }
     else if (best.k === 'boss') bossHit(W, cx, B.y + B.h - 4);
   }
 
@@ -766,14 +786,17 @@
       var both = B.L.hp <= 0 && B.R.hp <= 0;
       W.events.push({ sfx: 'bosspart', x: gx }); W.events.push({ say: both ? 'Both guns gone - hit the core!' : 'A gun blown off!' });
       fx(W, { k: 'bosspart', part: part, x: gx, y: B.y + B.h / 2 });
-      if (both) { B.phase = 2; B.miniT = W.sp.bossMinis[0] ? 90 : 9e9; B.rayT = Math.min(B.rayT == null ? 9e9 : B.rayT, 240); fx(W, { k: 'coreopen', x: B.x + B.w / 2, y: B.y + B.h / 2 }); }   // (the core open: its beam comes soon after)
+      if (both) { B.phase = 2; B.miniT = W.sp.bossMinis[0] ? 90 : 9e9; B.rayT = Math.min(B.rayT == null ? 9e9 : B.rayT, 360); fx(W, { k: 'coreopen', x: B.x + B.w / 2, y: B.y + B.h / 2 }); raiseDrones(W, B); }   // (the core open: its drones come out, its beam soon after)
     }
     if (part === 'C' && B.phase === 2 && B.C.hp <= B.C.max * 0.4) {
       B.phase = 3; if (B.miniT > W.sp.bossMinis[1]) B.miniT = 60; W.events.push('bossrage'); W.events.push({ say: 'The Mothership is angry!' }); fx(W, { k: 'rage', x: B.x + B.w / 2, y: B.y + B.h / 2 });
+      if ((!B.drones || !B.drones.length) && !B.reDrone) { B.reDrone = true; raiseDrones(W, B); }   // (angry: a fresh ring of drones, faster)
     }
     if (B.C.hp <= 0) {
       var bonus = 1000 * Math.max(1, Math.round(W.wave / BOSS_EVERY));
-      B.dead = 150; W.bombs = []; W.minis = []; W.beam = null; B.ray = null;
+      B.dead = 150; W.bombs = []; W.minis = []; W.beam = null; B.ray = null; B.atk = null; B.mv = null;
+      if (B.drones) B.drones.forEach(function (D) { var dp = droneXY(B, D); fx(W, { k: 'dronekill', x: dp.x, y: dp.y, pts: 0 }); });
+      B.drones = null;
       W.invaders.forEach(function (q) { if (q.alive && q.esc) { var qp = pos(q); q.alive = false; q.dv = null; fx(W, { k: 'kill', x: qp.x + 6, y: qp.y + 4, type: q.type, kind: q.kind, pts: 0, mult: 1, dive: true, f: q.f }); } });   // (its escorts go with it)
       addScore(W, bonus);
       W.lives = Math.min(9, W.lives + 1); W.events.push('extra'); fx(W, { k: 'extra' });   // a Mothership down is worth a life
@@ -794,8 +817,12 @@
     }
     // (11 Oct 2026; owner: "the mothership level looked really boring") it moves with purpose - a dash across, a swoop down
     // at you and back, an angry charge at your ship - launches streams of escorts that swoop out and dive, and once its core
-    // is open (the Dreadnought: from the start) it charges a death beam you can see coming, then sweeps it across the ground
-    var spd = sp.bossSpeed * (B.phase === 3 ? 1.5 : B.phase === 2 ? 1.1 : 1) * (B.tier === 2 ? 1.15 : 1) * f;   // (the core is a small target: it mustn't race about - farm, 9 Oct)
+    // is open (the Dreadnought: from the start) it charges a death beam you can see coming, then sweeps it across the ground.
+    // (13 Oct 2026; owner: "the mothership's like really boring ... more full on") between moves it ATTACKS (startAttack: gun
+    // volleys, mines, a plasma curtain, fans), makes BOMBING RUNS low across the field, and from the core opening it's guarded
+    // by orbiting DRONES - shoot them all and it's stunned
+    var A = BOSS_ATK[W.speed] || BOSS_ATK[2];
+    var spd = sp.bossSpeed * (B.phase === 3 ? 1.3 : B.phase === 2 ? 1.1 : 1) * (B.tier === 2 ? 1.15 : 1) * f;   // (the core is a small target: it mustn't race about - farm, 9 Oct)
     var R = B.ray;
     if (R) bossRay(W, B, R, f);
     else {
@@ -803,19 +830,21 @@
         B.mv.t += f;
         if (B.mv.k === 'dash') spd *= 3.2;
         if (B.mv.k === 'charge') { var tx = clamp(P.x + 6.5 - B.w / 2, LEFT, RIGHT - B.w); B.dir = tx > B.x ? 1 : -1; if (Math.abs(tx - B.x) < 2) spd = 0; else spd *= 2.4; }
-        if (B.mv.t >= B.mv.n) B.mv = null;
-      } else if ((B.mvT -= f) <= 0) {
-        var k = B.phase === 1 ? 'dash' : B.phase === 2 ? (W.rng() < 0.6 ? 'swoop' : 'dash') : (W.rng() < 0.45 ? 'charge' : 'swoop');
-        B.mv = { k: k, t: 0, n: k === 'swoop' ? 150 : k === 'charge' ? 110 : 46 };
+        if (B.mv.k === 'run') spd = runStep(W, B, A, f);
+        else if (B.mv.t >= B.mv.n) B.mv = null;
+      } else if (!B.atk && (B.mvT -= f) <= 0) {
+        var r0 = W.rng(), k = B.phase === 1 ? 'dash' : B.phase === 2 ? (r0 < 0.42 ? 'run' : r0 < 0.72 ? 'swoop' : 'dash') : (r0 < 0.4 ? 'run' : r0 < 0.72 ? 'charge' : 'swoop');
+        B.mv = { k: k, t: 0, n: k === 'swoop' ? 150 : k === 'charge' ? 110 : 46, st: 'down' };
         B.mvT = Math.round((B.phase === 3 ? 200 : 300) * (0.75 + W.rng() * 0.5));
-        if (k === 'dash') B.dir = B.x + B.w / 2 < WIDTH / 2 ? 1 : -1;   // (across to the far side)
-        W.events.push({ sfx: 'bossmove', x: B.x + B.w / 2, k: k }); fx(W, { k: 'bossmove', m: k, x: B.x + B.w / 2, y: B.y + B.h });
+        if (k === 'dash' || k === 'run') B.dir = B.x + B.w / 2 < WIDTH / 2 ? 1 : -1;   // (across to the far side)
+        W.events.push({ sfx: k === 'run' ? 'bombrun' : 'bossmove', x: B.x + B.w / 2, k: k }); fx(W, { k: 'bossmove', m: k, x: B.x + B.w / 2, y: B.y + B.h });
+        if (k === 'run') tell(W, B, 'run', 'Bombing run! Get under a shield or into a gap');
       }
       B.x += B.dir * spd;
       if (B.x < LEFT) { B.x = LEFT; B.dir = 1; }
       if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; B.dir = -1; }
-      // the beam: with the core open (the Dreadnought: always), now and then - never while it's mid-move
-      if (!B.mv && (B.phase >= 2 || B.tier === 2) && (B.rayT -= f) <= 0 && W.intro === 0) {
+      // the beam: with the core open (the Dreadnought: always), now and then - never while it's mid-move or mid-attack
+      if (!B.mv && !B.atk && (B.phase >= 2 || B.tier === 2) && (B.rayT -= f) <= 0 && W.intro === 0) {
         // it sweeps towards you only when you have room to run ahead of it - never into a corner
         var pc = P.x + 6.5, toward = pc > B.x + B.w / 2 ? 1 : -1, room = toward > 0 ? RIGHT - pc : pc - LEFT;
         B.ray = { st: 'charge', t: 0, n: 75, dir: room >= 84 ? toward : -toward };
@@ -823,14 +852,26 @@
         W.events.push({ sfx: 'raycharge', x: B.x + B.w / 2 }); fx(W, { k: 'raycharge', x: B.x + B.w / 2, y: B.y + B.h });
       }
     }
-    // the swoop: down towards you and back up (it's a bigger target down there - and a bigger threat)
-    var sw = B.mv && B.mv.k === 'swoop' ? Math.sin(Math.PI * B.mv.t / B.mv.n) : 0;
-    B.oy += ((sw * 34) - B.oy) * Math.min(1, 0.2 * f);
+    // the swoop: down towards you and back up (it's a bigger target down there - and a bigger threat); the bombing run: low
+    var run = B.mv && B.mv.k === 'run', sw = B.mv && B.mv.k === 'swoop' ? Math.sin(Math.PI * B.mv.t / B.mv.n) : 0;
+    var low = run && B.mv.st !== 'up' ? 64 : sw * 34;
+    B.oy += (low - B.oy) * Math.min(1, (run ? 0.07 : 0.2) * f);
     B.y = BOSS_Y + B.oy + Math.sin(B.t / 45) * (B.phase === 3 ? 8 : 6);
+    // its drones circle it (faster when it's angry); angry, the lowest one fires down at you now and then
+    if (B.drones) {
+      var om = (B.phase === 3 ? 0.032 : 0.022) * f;
+      B.drones.forEach(function (D) { D.a += om; if (D.flash) D.flash--; });
+      if (B.drones.length && B.phase === 3 && !B.vent && (B.droneT -= f) <= 0) {
+        B.droneT = Math.round(A.gap * 1.4 * (0.8 + W.rng() * 0.4));
+        var lo = null; B.drones.forEach(function (D) { var q = droneXY(B, D); if (!lo || q.y > lo.y) lo = q; });
+        W.bombs.push({ x: lo.x - 1.5, y: lo.y + 3, dx: clamp((P.x + 6.5 - lo.x) / 110, -0.8, 0.8), kind: 3, f: 0, src: 'drone' });
+        W.events.push({ sfx: 'bossfire', x: lo.x }); fx(W, { k: 'bossfire', x: lo.x, y: lo.y + 3 });
+      }
+    }
     // escorts: a stream from its bay, from alternate sides (two at once when it's angry, and from the Dreadnought)
-    if (W.intro === 0 && (B.escT -= f) <= 0) {
+    if (W.intro === 0 && !run && (B.escT -= f) <= 0) {
       var live = 0; for (var e = 0; e < W.invaders.length; e++) if (W.invaders[e].alive) live++;
-      B.escT = Math.round((B.phase === 1 ? 520 : B.phase === 2 ? 460 : 420) * (B.tier === 2 ? 1.2 : 1) * (0.85 + W.rng() * 0.3));
+      B.escT = Math.round((B.phase === 1 ? 520 : B.phase === 2 ? 640 : 560) * (B.tier === 2 ? 1.2 : 1) * (0.85 + W.rng() * 0.3));   // (13 Oct: fewer once its core is open - the drones and attacks are the fight then)
       if (live <= 8) {
         var both = B.phase === 3;
         launchEscorts(W, B.phase === 1 ? 5 : 6, B.escSide); if (both) launchEscorts(W, B.phase === 1 ? 4 : 5, -B.escSide);
@@ -838,21 +879,9 @@
       }
     }
     if (B.vent > 0) B.vent -= f;
-    if (R || B.vent > 0 || (B.mv && B.mv.k === 'charge')) { beat(W, Math.round(14 + 30 * B.hp / B.max)); return; }   // (no gunfire while the beam is on, while it vents, or while it charges at you)
-    if ((B.fireT -= f) <= 0) {
-      var by = B.y + B.h, cx;
-      if (B.phase === 1) {   // the guns take turns, aimed at you
-        B.fireT = Math.round(sp.bossFire * 0.55 * (B.tier === 2 ? 1.35 : 1) * (0.8 + W.rng() * 0.4));   // (the Dreadnought: slower guns - its beam is in play)
-        var guns = []; if (B.L.hp > 0) guns.push(8); if (B.R.hp > 0) guns.push(40);
-        cx = B.x + guns[B.gun++ % guns.length];
-        W.bombs.push({ x: cx - 1, y: by - 2, dx: clamp((P.x + 6.5 - cx) / 90, -0.9, 0.9), kind: 3, f: 0 });
-      } else {   // the core: fans of plasma, wider when it's angry
-        B.fireT = Math.round(sp.bossFire * (B.phase === 3 ? 0.75 : 0.95) * (B.oy > 10 ? 1.4 : 1) * (B.tier === 2 ? 1.3 : 1) * (0.8 + W.rng() * 0.4));   // (the Dreadnought's beam is its weapon: less plasma)   // (swooping close: the plasma would arrive too fast)
-        var n = B.phase === 3 && B.tier !== 2 ? 4 : 3; cx = B.x + B.w / 2 - 1;
-        for (var k = 0; k < n; k++) W.bombs.push({ x: cx, y: by, dx: (k - (n - 1) / 2) * 0.45, kind: 3, f: 0 });
-      }
-      W.events.push({ sfx: 'bossfire', x: cx }); fx(W, { k: 'bossfire', x: cx + 1, y: by });
-    }
+    if (R || B.vent > 0 || (B.mv && (B.mv.k === 'charge' || run))) { beat(W, Math.round(14 + 30 * B.hp / B.max)); return; }   // (no gunfire while the beam is on, while it vents or is stunned, while it charges at you or makes a bombing run)
+    if (B.atk) bossAttack(W, B, A, f);
+    else if (!(B.mv && B.mv.k === 'swoop' && B.oy > 12) && (B.fireT -= f) <= 0) startAttack(W, B, A);   // (not swooping close: it would arrive too fast)
     var every = sp.bossMinis[B.phase === 3 ? 1 : 0];
     if (B.phase >= 2 && B.tier !== 2 && every && (B.miniT -= f) <= 0 && W.minis.length < 6) {   // the open core sends down little ones (the Mothership's; the Dreadnought has its beam)
       B.miniT = every;
@@ -872,6 +901,117 @@
     }
     W.escorts[gid] = { n: n, hit: 0 };
     W.events.push({ sfx: 'swarm' }); fx(W, { k: 'escorts', x: bx, y: by, n: n, side: side });
+  }
+  function tell(W, B, key, words) { if (!B.told) B.told = {}; if (!B.told[key]) { B.told[key] = 1; W.events.push({ say: words }); } }   // (once a fight, for screen readers)
+  function bossGift(W) {   // as the fight starts it drops a power-up to fight back with: rapid fire and spread shot by turns
+    var B = W.boss, A = BOSS_ATK[W.speed] || BOSS_ATK[2];
+    if (!A.gift || W.caps.length) return;
+    var kind = Math.round(W.wave / BOSS_EVERY) % 2 ? 'rapid' : 'spread', x = B.x + B.w / 2, y = B.y + B.h + 6;
+    W.caps.push({ x: x, y: y, kind: kind, t: 0 });
+    W.events.push({ sfx: 'capdrop', x: x }); fx(W, { k: 'capdrop', x: x, y: y, kind: kind, gift: true });
+  }
+  function startAttack(W, B, A) {   // the next attack - never the same twice running. Its guns first; then its core; angry, all of it
+    var list = B.phase === 1 ? ['volley', 'mines', 'volley']
+      : B.phase === 2 ? ['curtain', 'mines', 'fan', 'curtain'] : ['curtain2', 'mines', 'fan', 'curtain', 'mines'];
+    var k = list[Math.floor(W.rng() * list.length)];
+    for (var g = 0; g < 3 && k === B.last; g++) k = list[(list.indexOf(k) + 1) % list.length];
+    B.last = k;
+    B.atk = { k: k, t: 0, n: k === 'volley' ? 50 : k === 'mines' ? 16 + 10 * A.mines : k === 'curtain' ? 44 : k === 'curtain2' ? 112 : 26 };
+    var cx = B.x + B.w / 2, by = B.y + B.h;
+    fx(W, { k: 'bossatk', a: k, x: cx, y: by, n: k === 'mines' ? A.mines : 0 });
+    if (k === 'volley') W.events.push({ sfx: 'gunwarm', x: cx });
+    else if (k === 'mines') { W.events.push({ sfx: 'minedrop', x: cx }); tell(W, B, 'mines', 'Mines! Shoot them before they burst'); }
+    else if (k !== 'fan') { W.events.push({ sfx: 'curtain', x: cx }); tell(W, B, 'curtain', 'A wall of plasma - find the gap'); }
+  }
+  function bossAttack(W, B, A, f) {
+    var K = B.atk, P = W.player, by = B.y + B.h, prev = K.t, i;
+    K.t += f;
+    function at(n) { return prev < n && K.t >= n; }   // (once, at step n of the attack - slow time steps by halves)
+    if (K.k === 'volley') {   // each gun still on it fires three, aimed at you
+      if (at(18) || at(28) || at(38)) {
+        [[B.L, 8], [B.R, 40]].forEach(function (g) {
+          if (g[0].hp <= 0) return;
+          var cx = B.x + g[1]; W.bombs.push({ x: cx - 1, y: by - 2, dx: clamp((P.x + 6.5 - cx) / 90, -0.9, 0.9), kind: 3, f: 0 }); fx(W, { k: 'bossfire', x: cx, y: by });
+        });
+        W.events.push({ sfx: 'bossfire', x: B.x + B.w / 2 });
+      }
+    } else if (K.k === 'mines') {   // dropped one by one from along its belly; shoot them, or they burst low into shards
+      for (i = 0; i < A.mines; i++) if (at(8 + 10 * i)) {
+        var mx = B.x + 6 + W.rng() * (B.w - 14);
+        W.bombs.push({ x: mx, y: by - 2, dx: (W.rng() - 0.5) * 0.3, vy: 0.38 + 0.1 * W.rng(), kind: 5, f: 0, det: 118 + W.rng() * 24 });
+        fx(W, { k: 'minedrop', x: mx + 1.5, y: by });
+      }
+    } else if (K.k === 'fan') {   // a fan of plasma from the core: 3 (angry: 5; the Dreadnought 4)
+      if (at(18)) {
+        var n = B.phase === 3 ? (B.tier === 2 ? 4 : 5) : 3, cx = B.x + B.w / 2 - 1;
+        for (var k = 0; k < n; k++) W.bombs.push({ x: cx, y: by, dx: (k - (n - 1) / 2) * 0.45, kind: 3, f: 0 });
+        W.events.push({ sfx: 'bossfire', x: cx }); fx(W, { k: 'bossfire', x: cx + 1, y: by });
+      }
+    } else {   // the CURTAIN: a wall of slow plasma, two when it's angry
+      if (at(30)) curtain(W, B, A, null);
+      if (K.k === 'curtain2' && at(105)) curtain(W, B, A, B.gapX);
+    }
+    if (K.t >= K.n) { B.atk = null; B.fireT = Math.round(A.gap * (B.phase === 3 ? 0.8 : 1) * (B.tier === 2 ? 1.15 : 1) * (0.8 + W.rng() * 0.4)); }
+  }
+  // the CURTAIN: orbs fanned out from the core so they arrive at your height evenly spaced, closer than the ship is wide - with
+  // one gap, a little to one side of you (you have to move to it); a second wall's gap is somewhere else, near enough to reach
+  function curtain(W, B, A, prevGap) {
+    var cx = B.x + B.w / 2, cy = B.y + B.h - 2, P = W.player, pc = P.x + 6.5, sp = A.wall;
+    var gw = sp * 2.6, v = A.orb * (B.phase === 3 ? 1.1 : 1), T = (PY + 2 - cy) / v, side = W.rng() < 0.5 ? -1 : 1;
+    var gx = prevGap == null ? pc + side * (20 + W.rng() * 24) : prevGap + side * (30 + W.rng() * 16);
+    if (gx < LEFT + gw / 2 + 4 || gx > RIGHT - gw / 2 - 4) gx = prevGap == null ? pc - side * (20 + W.rng() * 24) : prevGap - side * (30 + W.rng() * 16);
+    gx = clamp(gx, LEFT + gw / 2 + 4, RIGHT - gw / 2 - 4);
+    B.gapX = gx;
+    for (var x = LEFT + 2; x <= RIGHT - 2; x += sp) {
+      if (Math.abs(x - gx) < gw / 2) continue;
+      W.bombs.push({ x: cx - 1.5, y: cy, dx: (x - cx) / T, vy: v, kind: 3, f: 0, src: 'curtain' });
+    }
+    W.events.push({ sfx: 'bossfire', x: cx }); fx(W, { k: 'curtain', x: cx, y: cy, gap: gx });
+  }
+  function runStep(W, B, A, f) {   // the BOMBING RUN: down low, across the field dropping a carpet of plasma (gaps wider than the ship), back up
+    var M = B.mv;
+    if (M.st === 'down') { if (B.oy > 56 || M.t > 80) { M.st = 'across'; M.t = 0; M.lx = B.x; } return 0; }
+    if (M.st === 'across') {
+      if (Math.abs(B.x - M.lx) >= A.run) {
+        M.lx = B.x; var cx = B.x + B.w / 2;
+        W.bombs.push({ x: cx - 1, y: B.y + B.h - 2, dx: 0, vy: W.sp.bomb * 1.05, kind: 3, f: 0, src: 'run' });
+        W.events.push({ sfx: 'bossfire', x: cx }); fx(W, { k: 'bossfire', x: cx, y: B.y + B.h });
+      }
+      if ((B.dir > 0 && B.x + B.w >= RIGHT - 1) || (B.dir < 0 && B.x <= LEFT + 1)) { M.st = 'up'; M.t = 0; }
+      return 1.5 * f;
+    }
+    if (M.t > 55) B.mv = null;   // back up to its height
+    return 0;
+  }
+  function droneXY(B, D) { return { x: B.x + B.w / 2 + Math.cos(D.a) * DRONE_RX, y: B.y + B.h / 2 + 4 + Math.sin(D.a) * DRONE_RY }; }
+  function raiseDrones(W, B) {   // a ring of drones circling it: they take the shots meant for the core
+    var A = BOSS_ATK[W.speed] || BOSS_ATK[2], n = B.reDrone ? Math.max(2, A.drones - 1) : A.drones, hp = B.reDrone ? 1 : A.droneHp;   // (angry: one fewer, one hit each - but faster)
+    B.drones = []; for (var i = 0; i < n; i++) B.drones.push({ a: i * 2 * Math.PI / n + (B.reDrone ? Math.PI / n : 0), hp: hp, max: hp, flash: 0 });
+    B.droneT = 160;
+    W.events.push({ sfx: 'drones', x: B.x + B.w / 2 }); fx(W, { k: 'drones', x: B.x + B.w / 2, y: B.y + B.h / 2, n: n });
+    tell(W, B, 'drones', 'Drones guard the core - shoot them all and it is stunned');
+  }
+  function droneHit(W, i) {
+    var B = W.boss, D = B.drones[i], dp = droneXY(B, D), m = hitCombo(W);
+    D.hp--; D.flash = 6;
+    if (D.hp > 0) { addScore(W, 10 * m); W.events.push({ sfx: 'armor', x: dp.x }); fx(W, { k: 'dronehit', x: dp.x, y: dp.y }); return; }
+    B.drones.splice(i, 1); addScore(W, DRONE_PTS * m);
+    W.events.push({ sfx: 'dronekill', x: dp.x }); fx(W, { k: 'dronekill', x: dp.x, y: dp.y, pts: DRONE_PTS * m });
+    if (!B.drones.length) {   // all down: the core is stunned - it can't fire, every hit on it counts double (and maybe a power-up)
+      B.vent = 260; B.atk = null; B.ray = null; B.mv = null; B.mvT = Math.max(B.mvT, 280);
+      W.events.push({ sfx: 'stun', x: B.x + B.w / 2 }); W.events.push({ say: 'Drones down - the core is stunned! Double damage' });
+      fx(W, { k: 'stun', x: B.x + B.w / 2, y: B.y + B.h / 2 });
+      maybeDrop(W, B.x + B.w / 2, B.y + B.h, 0.6);
+    }
+  }
+  function mineShot(W, Bo) {   // a mine shot down
+    var m = hitCombo(W); addScore(W, MINE_PTS * m);
+    W.events.push({ sfx: 'minekill', x: Bo.x + 1.5 }); fx(W, { k: 'minekill', x: Bo.x + 1.5, y: Bo.y + 3, pts: MINE_PTS * m });
+  }
+  function mineBurst(W, Bo) {   // a mine left alone bursts into three shards
+    var v = W.sp.bomb * 0.8;
+    [-0.75, 0, 0.75].forEach(function (d) { W.bombs.push({ x: Bo.x, y: Bo.y + 2, dx: d, vy: v, kind: 3, f: 0, src: 'mine' }); });
+    W.events.push({ sfx: 'mineburst', x: Bo.x + 1.5 }); fx(W, { k: 'mineburst', x: Bo.x + 1.5, y: Bo.y + 3 });
   }
   function bossRay(W, B, R, f) {   // the death beam: it stops and charges (you can see it coming), then sweeps across, burning through shields
     var P = W.player;
@@ -933,8 +1073,9 @@
     var P = W.player, sp = W.sp; f = f == null ? 1 : f;
     for (var i = W.bombs.length - 1; i >= 0; i--) {
       var B = W.bombs[i];
-      B.y += sp.bomb * f; B.x += (B.dx || 0) * f; B.f++;
+      B.y += (B.vy != null ? B.vy : sp.bomb) * f; B.x += (B.dx || 0) * f; B.f++;   // (vy: a bomb with its own speed - the Mothership's mines and curtain)
       if (B.x < -4 || B.x > WIDTH + 1) { W.bombs.splice(i, 1); continue; }
+      if (B.kind === 5 && B.y >= B.det) { W.bombs.splice(i, 1); mineBurst(W, B); continue; }
       var hit = shieldAt(W, B.x, B.y + 4, 3, 3);
       if (hit) { splat(W, hit); W.bombs.splice(i, 1); continue; }
       // the ship: its body and its nose
@@ -942,6 +1083,7 @@
       if (overlap(bb, { x: P.x + 1, y: PY + 3, w: 11, h: 5 }) || overlap(bb, { x: P.x + 5, y: PY, w: 3, h: 3 })) {
         W.bombs.splice(i, 1);
         if (W.shieldUp) { W.shieldUp = false; W.events.push({ sfx: 'shieldpop', x: P.x + 6 }); W.events.push({ say: 'Your shield took that one' }); fx(W, { k: 'shieldpop', x: P.x + 6.5, y: PY + 2 }); continue; }
+        W.lastHit = B.src || (B.kind === 5 ? 'mine' : '');   // (which of the Mothership's attacks it was - for the playtests)
         killPlayer(W, B.kind === 3 ? 'plasma' : B.kind === 4 ? 'snipe' : B.src === 'dive' ? 'divebomb' : 'bomb'); return;
       }
       if (B.y + 7 >= GROUND) { W.booms.push({ kind: 'small', x: B.x - 2, y: GROUND - 6, t: 10 }); fx(W, { k: 'ground', x: B.x + 1, y: GROUND }); W.bombs.splice(i, 1); }
@@ -970,6 +1112,7 @@
     SHIELD_Y: SHIELD_Y, SAUCER_Y: SAUCER_Y, EXTRA_AT: EXTRA_AT, EXTRA_EVERY: EXTRA_EVERY, BOSS_EVERY: BOSS_EVERY, BOSS_W: BOSS_W, BOSS_H: BOSS_H, levelName: levelName,
     BOSS_GUN_L: BOSS_GUN_L, BOSS_GUN_R: BOSS_GUN_R, MINI_W: MINI_W, MINI_H: MINI_H, MINI_PTS: MINI_PTS,
     POWER_NAMES: POWER_NAMES, SHAPES: SHAPES, WAVES: WAVES, KIND_PTS: KIND_PTS, PATHS: PATHS, GROUPS: GROUPS, PER_GROUP: PER_GROUP, phased: phased,
-    newWorld: newWorld, step: step, hud: hud, alive: alive, box: box, slotBox: slotBox, pos: pos, shieldAt: shieldAt, nextWave: nextWave
+    newWorld: newWorld, step: step, hud: hud, alive: alive, box: box, slotBox: slotBox, pos: pos, shieldAt: shieldAt, nextWave: nextWave,
+    droneXY: droneXY, BOSS_ATK: BOSS_ATK
   };
 });

@@ -57,7 +57,8 @@
         var B = W.bombs[b];
         if (rnd() < blind) continue;
         if (B.y + 7 < SY + SH && E.shieldAt(W, B.x, Math.max(B.y + 4, SY), 3, SY + SH - Math.max(B.y + 4, SY))) continue;   // a shield is in its way
-        var t = (PY - (B.y + 7)) / bv, t1 = (PY + 8 - B.y) / bv, ax = B.x + (B.dx || 0) * f * Math.max(0, t);   // from touching the ship's top to passing its bottom
+        var bvB = B.vy != null ? B.vy * f : bv;   // (13 Oct 2026: the Mothership's mines and curtain fall at their own speed)
+        var t = (PY - (B.y + 7)) / bvB, t1 = (PY + 8 - B.y) / bvB, ax = B.x + (B.dx || 0) * f * Math.max(0, t);   // from touching the ship's top to passing its bottom
         arrivalHazard(ax - 1, 5, t, t1, 400);
       }
       (W.invaders || []).forEach(function (v) {
@@ -112,14 +113,22 @@
       if (W.saucer) { var U = W.saucer, Tu = (PY - 4 - (E.SAUCER_Y + 7)) / shotV, ux = U.x + U.dir * sp.saucer * f * Tu; if (ux > 4 && ux < 204) addTarget(ux + 2, ux + 14, 34); }
       var Bo = W.boss;
       if (Bo && !Bo.dead && !W.intro) {
-        var Tb = (PY - 4 - (Bo.y + Bo.h)) / shotV, spd = sp.bossSpeed * (Bo.phase === 3 ? 1.5 : Bo.phase === 2 ? 1.1 : 1) * f;
+        var Tb = (PY - 4 - (Bo.y + Bo.h)) / shotV, spd = sp.bossSpeed * (Bo.phase === 3 ? 1.3 : Bo.phase === 2 ? 1.1 : 1) * f;
         var fx0 = Bo.x + Bo.dir * spd * Tb, bounce = fx0 < 8 ? 8 - fx0 : fx0 > 216 - Bo.w ? (216 - Bo.w) - fx0 : 0;
         fx0 += 2 * bounce;   // it turns at the edges
         if (Bo.L) {   // the three-stage Mothership: guns first, then the core
           if (Bo.L.hp > 0) addTarget(fx0 + 3, fx0 + (E.BOSS_GUN_L || 15) - 1, 45);
           if (Bo.R.hp > 0) addTarget(fx0 + (E.BOSS_GUN_R || 33) + 1, fx0 + Bo.w - 3, 45);
           if (Bo.L.hp <= 0 && Bo.R.hp <= 0) addTarget(fx0 + 17, fx0 + 31, 50);
+          (Bo.drones || []).forEach(function (D) {   // its drones (13 Oct 2026): where each will be when the shot gets there
+            var dq = E.droneXY(Bo, D), Td = (PY - 4 - dq.y) / shotV, a2 = D.a + (Bo.phase === 3 ? 0.032 : 0.022) * f * Td;
+            var dx2 = fx0 + Bo.w / 2 + Math.cos(a2) * 36; addTarget(dx2 - 3, dx2 + 3, 55);
+          });
         } else addTarget(fx0 + 6, fx0 + Bo.w - 6, 45);   // (the old single-target one: the farm's "before" engine)
+      }
+      for (var mi = 0; mi < W.bombs.length; mi++) {   // a mine: worth shooting down before it bursts
+        var Mn = W.bombs[mi]; if (Mn.kind !== 5 || Mn.y < 50) continue;
+        var Tm = (PY - 4 - (Mn.y + 3)) / (shotV + (Mn.vy || 0.5) * f), mx2 = Mn.x + (Mn.dx || 0) * f * Tm; addTarget(mx2 - 1, mx2 + 4, 38);
       }
       // ---- a capsule it can get to in time (less keen on one it doesn't need)
       for (var q = 0; q < (W.caps || []).length; q++) {
