@@ -23,7 +23,8 @@ Facts, all read 13 Oct 2026:
     2026 "you'll only be able to send emails using addresses that are configured on your Greenby account". Staff reply
     Oct 2026: batches still going. Forum users: Greenby webmail is inside the Greenby login; some got no completion email;
     one address was marked closed after the move; superuser: 993/995/587 work, imap./mail./relay. are one server.
-No Techies One Mail box here: its Plusnet preset is untested against Greenby (rule: no T1 box until tested).
+Techies One Mail box (13 Oct 2026, owner): the app's Plusnet preset matches Greenby's own guides and the servers were
+checked to answer as Greenby's mail system (techies_one_boxes.py). Signing in with a moved mailbox is still untested.
 """
 from new_pages_data import NEW_PAGES
 
@@ -119,7 +120,12 @@ NEW_PAGES.append({
            '<p>Greenby&rsquo;s own settings page lists older, unencrypted ports (143 for incoming, 25 for sending) and an outgoing '
            'server called mail.plusnet.enmail.co. Try the secure settings above first: Plusnet says secure connections can be '
            'used, Greenby&rsquo;s own Outlook guide uses them, and an unencrypted connection sends your password as plain text. '
-           'A superuser on Plusnet&rsquo;s forum, writing about Greenby, gives the same secure settings: 993, 995 and 587.</p>'
+           'A superuser on Plusnet&rsquo;s forum, writing about Greenby, gives the same secure settings: 993, 995 and 587. When we '
+           'checked on 13 October 2026, imap.plus.net, mail.plus.net and relay.plus.net all answered from Greenby&rsquo;s own '
+           'mail system on these secure ports.</p>'
+           '<p><strong>Rather not type settings at all?</strong> Our free <a href="/techies-one-mail/">Techies One Mail</a> '
+           'for Windows PCs fills in these secure settings when you type your Plusnet address: <a href="#techies-one-mail">'
+           'more below</a>.</p>'
            '<p><strong>Sending from another address?</strong> Since the move you can only send from addresses that are set up '
            'on your Greenby account, Plusnet said on 12 October 2026. An address on a domain looked after '
            'by another company has to send through that company instead.</p>'

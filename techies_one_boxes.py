@@ -105,7 +105,7 @@ CLIPS = {
     "plusnet": ("plusnet-email-wont-add-to-new-outlook",),
     "mover": ("move-plusnet-email-to-gmail", "eircom-email-price-increase", "comcast-email-moving-to-yahoo"),
     "simple": ("new-outlook-not-syncing", "new-outlook-only-showing-recent-emails", "new-outlook-no-send-receive-button",
-               "new-outlook-emails-stuck-in-drafts"),
+               "new-outlook-emails-stuck-in-drafts", "greenby-email-login"),
     "oldprog": ("windows-live-mail-not-working",),
 }
 CLIP_OF = {slug: name for name, slugs in CLIPS.items() for slug in slugs}
@@ -135,6 +135,16 @@ def clip(slug):
             f'<figcaption>The real program, with made-up demo emails &middot; 9 seconds, no sound</figcaption></figure>\n'
             f'          {CLIP_JS}\n')
 
+
+# 13 Oct 2026 (owner: "Are we linking this to our Techies One Mail?"): the Greenby login page. The app's Plusnet preset
+# (imap.plus.net 993 SSL, relay.plus.net 465 SSL, full address as username) is what Greenby's own Outlook and iPhone
+# guides use, and on 13 Oct 2026 imap/mail/relay.plus.net all answered as mail.enmail.co (Greenby's mail system) over
+# TLS. Signing in with a moved mailbox is not yet tested on a real PC, hence "if it won't connect, ring us".
+PAGES["greenby-email-login"] = (FIX, "Rather use an email program? Ours already has the settings",
+    "Our free Techies One Mail for Windows PCs fills in the Plusnet settings as soon as you type your address. They are the "
+    "same secure settings Greenby&rsquo;s own Outlook guide uses, and they reach Greenby&rsquo;s mail servers.",
+    "Check your Greenby login works at greenby.com first: the program uses the same email address and password. Older "
+    "Force9 and Free-Online addresses may need their settings typed in. If it won&rsquo;t connect, ring us.")
 
 POINTS = [
     "Free, from 365 Techies, the family IT firm that wrote this guide",
