@@ -21,6 +21,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
                          SIGGEN_TOOL, SSLCHECK_TOOL, DOMEXP_TOOL, SOLARCALC_TOOL, AVTEST_TOOL, VBUILDER_TOOL, PCBUILD_TOOL, TOOLS, tool_cards, tools_strip, PROMISE_CALL, PROMISE_ETA, PROMISE_SMS, PROMISE_PEOPLE)
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
+import greenby_page_data   # /greenby-email-login/ (13 Oct 2026): appends to NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
@@ -151,6 +152,7 @@ SPECIALIST = [
      ("/how-to-make-a-google-app-password/", "Making a Google app password"),
      ("/change-your-email-address-everywhere/", "Changed your email address? Update it everywhere"),
      ("/move-plusnet-email-to-gmail/", "Plusnet email is closing: moving it to Gmail"),
+     ("/greenby-email-login/", "Plusnet email moved to Greenby: logging in, webmail and settings"),
      ("/business-email-down-domain-expired/", "Business email stopped because the domain expired"),
      ("/transfer-microsoft-365-when-owner-leaves/", "Transferring Microsoft 365 when the owner leaves"),
      ("/take-over-email-domain-after-buying-business/", "Taking over the email and domain after buying a business"),
