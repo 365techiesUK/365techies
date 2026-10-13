@@ -13,10 +13,8 @@ the install; when the window closes the page fetches the key FastSpring's webhoo
 
 FAQS = [
     ("Who am I paying?",
-     "It depends where you are, and the page tells you before you pay. In some countries you buy from us, 365 Techies Ltd, the "
-     "family IT business in Bournemouth, England that makes 365 PC Manager (UK company 11073501), and PayPal takes the payment. "
-     "Everywhere else you buy through FastSpring, our reseller: it sells you the licence, takes the payment and adds any sales "
-     "tax due where you live. Either way we never see your card or bank details."),
+     "Us: 365 Techies Ltd, the family IT business in Bournemouth, England that makes 365 PC Manager (UK company 11073501). "
+     "PayPal takes the payment, by PayPal or card, so we never see your card or bank details."),
     ("Does it renew?",
      "No. It lasts 12 months and then simply stops. You are never charged again unless you choose to buy another."),
     ("Can I get my money back?",

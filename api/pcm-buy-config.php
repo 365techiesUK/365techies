@@ -53,7 +53,11 @@ $TRIAL_AUTO_UK_FROM = '2026-10-13';
 // The popup checkout: "365techies.test.onfastspring.com/popup-365techies" while TESTING (pretend money - the app offers
 // nothing there yet); take out ".test" to go LIVE, once FastSpring has activated the store (contract, payout, tax details).
 // The products' ids in FastSpring: US$19.99, and US$9.99 where PLUS_LOW_PRICE (pcm-plus-lib.php) applies.
-$FS_STOREFRONT = '365techies.test.onfastspring.com/popup-365techies';
+// ⛔ 13 Oct 2026: FastSpring DECLINED the store ("the product type you are offering is not one that FastSpring is licensed to
+// process transactions for") - like Lemon Squeezy, Paddle and Polar. Disconnected: no storefront, so nothing points at its
+// test checkout and a PC outside $PP_COUNTRIES is offered nothing (the free app). Its code stays, dormant. (Was
+// '365techies.test.onfastspring.com/popup-365techies'.)
+$FS_STOREFRONT = '';
 $FS_PRODUCT = 'unlock-everything';
 $FS_PRODUCT_LOW = 'unlock-everything-low';
 // Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not

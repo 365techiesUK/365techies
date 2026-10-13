@@ -93,7 +93,7 @@ $GI = (string)file_get_contents(__DIR__ . '/../.gitignore');
 foreach (array('api/pcm-paypal-key.php', 'api/pcm-paypal-token.json', 'api/pcm-plus-pp-orders.json', 'api/pcm-plus-pp.log') as $g) check(strpos($GI, $g) !== false, $g . ' is gitignored');
 $shipped = plus_config(__DIR__ . '/pcm-buy-config.php');
 check($shipped['on'], 'shipped: Buy is ON (owner, 12 Oct 2026: "go ahead and put it live")');
-check(plus_fs_mode($shipped) === 'test', 'shipped: FastSpring on its TEST checkout until the store is activated');
+check(plus_fs_mode($shipped) === '', 'shipped: FastSpring disconnected (it declined the store, 13 Oct 2026)');
 check($shipped['provider'] === 'paypal' && $shipped['url'] === 'https://365techies.co.uk/pc-manager-buy/?install={id}', 'shipped: PayPal, through our own buy page');
 $eu = array('AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE');
 check($shipped['pp_countries'] && !array_intersect($shipped['pp_countries'], $eu) && !in_array('GB', $shipped['pp_countries'], true), 'shipped: no EU country and not the UK in $PP_COUNTRIES', implode(',', $shipped['pp_countries']));
