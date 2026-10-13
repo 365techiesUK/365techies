@@ -1,11 +1,11 @@
 {
-  "ver": 38,
-  "version": "1.0.38",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v38.exe",
-  "sha256": "73d328268844c8d2e873c79c2b2ce1709ab5a94a4fa7a9a0c5e1ce93b2dfb369",
-  "notes": "Version 36.2 is a small update for people using 365 PC Manager outside the UK. Our phone, visits, support plans and remote help are for customers in the UK, so on a PC abroad the app no longer offers them anywhere - including in its health report - and its safety advice works wherever you are. The Unlock everything window now links its licence and 30-day refund. In the UK everything works just as before. Signed by 365 Techies Ltd.",
+  "ver": 40,
+  "version": "1.0.40",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v40.exe",
+  "sha256": "efea3fe0eb4713781c38a9e3891b176703c90d11f5a76d9ddb3fa230a19d7204",
+  "notes": "Version 36.3 adds three things to Music & videos. Audiobooks: classic books read aloud, free, which play right here and carry on where you left off. World webcams: beaches, harbours and cities round the world, with a fresh picture every few minutes. Games: our own card games and arcade classics, one click away. Home now has a Service my PC button too. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v38.exe",
-    "sha256": "62b79c0ed2b462ed38de6478abe387f4fa2eac147bf929811741761ba1af85c3"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v40.exe",
+    "sha256": "dd8b42a9450f8893425ff0fb3b22b7fa3e5592dcbf4e356993cfe2e605b7ce96"
   }
 }
