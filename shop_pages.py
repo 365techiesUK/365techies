@@ -10,6 +10,8 @@ From shop_stock.py (one row per machine) this builds:
   api/shop-catalogue.php             what the server may sell and at what price (api/shop-lib.php reads it; the browser
                                      never sends an amount). Written on every build - never edit it by hand.
 build_extra.py calls build(); /dell-hardware/ shows instock_band() above its picker while anything is live.
+14 Oct 2026: a machine with shop_checks/<id>.json (shop_report.py, from its own 365 PC Manager report) shows
+"Checked by 365 PC Manager" - the scores, drives, battery, speed tests and what the service did, on that machine.
 """
 import json
 import os
@@ -80,6 +82,8 @@ def units(dell_machines):
             for p in u["photos"]:
                 if not os.path.isfile(os.path.join(_BASE, "images", "shop", uid, p)):
                     raise bad("photo images/shop/%s/%s is missing" % (uid, p))
+        cf = os.path.join(_BASE, "shop_checks", uid + ".json")
+        u["check"] = json.load(open(cf, encoding="utf-8")) if os.path.isfile(cf) else None
         u["slug"] = HUB + "/" + uid
         u["url"] = "%s/%s/%s/" % (SITE, HUB, uid)
         u["imgs"] = ["/images/shop/%s/%s" % (uid, p) for p in u["photos"]]
@@ -109,6 +113,12 @@ def _feed_desc(u):
         bits.append(u["extras"].rstrip(".") + ".")
     if u.get("marks"):
         bits.append("Marks on this machine: " + u["marks"].rstrip(".") + ".")
+    c = u.get("check")
+    if c and c.get("score") is not None:
+        found = ["health score %s%%" % c["score"]]
+        found += ["drive %s" % d["health"].lower() for d in c.get("drives", [])[:1] if d.get("health")]
+        found += [cat["note"] for cat in c.get("cats", []) if cat["name"] == "Battery" and cat.get("note")]
+        bits.append("Checked by our own 365 PC Manager%s: %s." % ((" on " + c["date"]) if c.get("date") else "", ", ".join(found)))
     bits.append("Comes with %s and 365 PC Manager installed. 12-month guarantee, 5 years on a 365 Techies support plan. "
                 "This exact machine is the one in the photos." % u["charger"])
     return " ".join(bits)[:4900]
@@ -185,6 +195,25 @@ _CSS = r'''
       .shoph__badge{font-size:.78rem;font-weight:700;padding:.2rem .55rem;border-radius:var(--r-pill);background:rgba(123,224,165,.14);color:#7be0a5}
       .shoph__item[data-state="sold"],.shoph__item[data-state="held"]{opacity:.62}
       .shoph__item[data-state="sold"] .shoph__badge,.shoph__item[data-state="held"] .shoph__badge{background:rgba(255,179,164,.14);color:#ffb3a4}
+      .shopc__head{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 1.4rem;margin:0 0 1.2rem}
+      .shopc__ring{--v:0;width:110px;height:110px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--ring) calc(var(--v)*1%),rgba(255,255,255,.08) 0)}
+      .shopc__ring b{width:86px;height:86px;border-radius:50%;background:#0b1626;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-variant-numeric:tabular-nums}
+      .shopc__verdict{font-size:1.25rem;font-weight:700}
+      .shopc__cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.7rem 1.4rem;margin:0 0 1.3rem}
+      .shopc__cat p{margin:0;display:flex;justify-content:space-between;gap:.5rem;font-weight:600}
+      .shopc__bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin:.3rem 0 .25rem}
+      .shopc__bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#1d97e3,#00ce1b)}
+      .shopc__cat small{color:var(--muted);font-size:.84rem;line-height:1.4;display:block}
+      .shopc__tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:.6rem;margin:.2rem 0 1.3rem}
+      .shopc__tile{border:1px solid var(--line);border-radius:12px;padding:.7rem .6rem;text-align:center}
+      .shopc__tile b{display:block;font-size:1.35rem;font-variant-numeric:tabular-nums}
+      .shopc__tile span{display:block;color:var(--muted);font-size:.74rem;letter-spacing:.03em;margin-top:.15rem}
+      .shopc h3{font-size:1rem;margin:1.2rem 0 .5rem}
+      .shopc__drive{border:1px solid var(--line);border-radius:12px;padding:.75rem .9rem;margin:0 0 .6rem;line-height:1.5}
+      .shopc__drive small{color:var(--muted);display:block}
+      .shopc__did li{list-style:none;position:relative;padding-left:1.4rem}
+      .shopc__did li::before{content:"\2713";position:absolute;left:0;color:#7be0a5;font-weight:700}
+      .shopc__did{padding-left:0!important}
 '''
 
 _UNIT_JS = r'''
@@ -337,6 +366,8 @@ def _hub_content(us, task_head, bc, faq_html):
         st = "sold" if u["status"] == "sold" else ""
         specs = "%s &middot; %s RAM &middot; new 1TB SSD" % (_e(re.sub(r"\s*\(.*\)$", "", u["cpu"])), _e(u["ram"]))
         extra = ("Grade %s &middot; battery %s" % (_e(u["grade"]), _e(u["battery"]))) if u["kind"] == "laptop" else "Grade %s" % _e(u["grade"])
+        if u.get("check") and u["check"].get("score") is not None:
+            extra += " &middot; PC Manager score %d%%" % u["check"]["score"]
         cards.append(
             f'          <a class="shoph__item" href="/{HUB}/{u["id"]}/" data-unit="{u["id"]}"' + (f' data-state="{st}"' if st else "") + '>\n'
             f'            <div class="shoph__img">' + (f'<img src="{img}" alt="{_e(u["name"])}" width="400" height="300" loading="lazy" decoding="async">' if img else "") + '</div>\n'
@@ -370,6 +401,52 @@ def _hub_content(us, task_head, bc, faq_html):
     return "\n".join([head, app, faq_html(HUB_FAQS)])
 
 
+def _check_card(u):
+    """'Checked by 365 PC Manager': what our own full service found on this machine (shop_checks/<id>.json)."""
+    c = u.get("check")
+    if not c:
+        return ""
+    score = c.get("score")
+    ring = "#00ce1b" if (score or 0) >= 80 else ("#e0b341" if (score or 0) >= 55 else "#e8637e")
+    when = (" on " + _e(c["date"])) if c.get("date") else ""
+    what = "full service" if c.get("kind") == "service" else "health check"
+    parts = [f'        <div class="shop__card shopc" id="pc-manager-check">',
+             '          <h2>Checked by 365 PC Manager</h2>',
+             f'          <p class="shop__small" style="margin:0 0 1rem">What our own <a href="/free-pc-health-check/">365 PC Manager</a> {what} found on this exact machine{when}, straight from its report.</p>']
+    if score is not None:
+        parts.append(f'          <div class="shopc__head"><div class="shopc__ring" style="--v:{int(score)};--ring:{ring}"><b>{int(score)}%</b></div>'
+                     f'<div><div class="shopc__verdict">{_e(c.get("verdict", ""))}</div><div class="shop__small" style="margin:.2rem 0 0">overall health score</div></div></div>')
+    if c.get("cats"):
+        cats = "".join(f'<div class="shopc__cat"><p><span>{_e(x["name"])}</span><span>{int(x["value"])}</span></p>'
+                       f'<div class="shopc__bar"><i style="width:{max(0, min(100, int(x["value"])))}%"></i></div><small>{_e(x["note"])}</small></div>'
+                       for x in c["cats"])
+        parts.append(f'          <div class="shopc__cats">{cats}</div>')
+    if c.get("bench"):
+        tiles = "".join(f'<div class="shopc__tile"><b>{_e(b["v"])}</b><span>{_e(b["l"])}</span></div>' for b in c["bench"])
+        parts.append(f'          <h3>Speed tests</h3>\n          <div class="shopc__tiles">{tiles}</div>')
+    if c.get("drives"):
+        drv = "".join(f'<div class="shopc__drive"><b>{_e(d["name"])}</b> &middot; {_e(d["type"])} &middot; <span style="color:#7be0a5">{_e(d["health"])}</span>'
+                      f'<small>{_e(d["hours"])} &middot; {_e(d["written"])} written &middot; {_e(d["speed"])}</small>'
+                      + (f'<small>{_e(d["note"])}</small>' if d.get("note") else "") + '</div>' for d in c["drives"])
+        parts.append(f'          <h3>Drives</h3>\n          {drv}')
+    facts = [(r["k"], r["v"]) for r in c.get("rows", [])] + [(r["k"], r["v"]) for r in c.get("net", [])]
+    if facts:
+        fr = "".join(f'<tr><th scope="row">{_e(k)}</th><td>{_e(v)}</td></tr>' for k, v in facts)
+        parts.append(f'          <h3>What it found</h3>\n          <table class="shopu__spec"><tbody>{fr}</tbody></table>')
+    if c.get("suited"):
+        parts.append('          <h3>What this machine is well suited to</h3>\n          <ul class="shop__list">'
+                     + "".join(f"<li>{_e(x)}</li>" for x in c["suited"]) + "</ul>")
+    if c.get("did"):
+        parts.append('          <h3>What the service did</h3>\n          <ul class="shop__list shopc__did">'
+                     + "".join(f'<li><b>{_e(d["name"])}</b>: {_e(d["detail"])}</li>' for d in c["did"]) + "</ul>")
+    if any("backup" in x.get("note", "").lower() for x in c.get("cats", [])):
+        parts.append('          <p class="shop__small">A machine that has just been set up has nothing to back up yet, so the protection '
+                     'score counts &ldquo;no backup&rdquo; against it. Once it&rsquo;s yours, 365 PC Manager helps you set one up, and '
+                     'it&rsquo;s part of every <a href="/home-it-support-plans/">support plan</a>.</p>')
+    parts.append("        </div>")
+    return "\n".join(parts)
+
+
 def _unit_content(u, task_head, bc_sub):
     m = u["m"]
     test = u["status"] == "test"
@@ -396,7 +473,9 @@ def _unit_content(u, task_head, bc_sub):
     spec = "\n".join(f'              <tr><th scope="row">{_e(k)}</th><td>{_e(v)}</td></tr>' for k, v in rows)
     deliv = 0 if test else S.DELIVERY_GBP
     facts = "".join(f"<li>{x}</li>" for x in (["Grade %s" % _e(u.get("grade", ""))] + (["Battery %s" % _e(u.get("battery", ""))] if u["kind"] == "laptop" else [])
-                                                + ["New 1TB Samsung SSD", "12-month guarantee"]))
+                                                + ["New 1TB Samsung SSD", "12-month guarantee"]
+                                                + (['<a href="#pc-manager-check">PC Manager score %d%%</a>' % u["check"]["score"]]
+                                                   if u.get("check") and u["check"].get("score") is not None else [])))
     app = f'''    <section class="shop" aria-label="Buy this machine" id="shopu" data-unit="{u["id"]}" data-test="{"1" if test else "0"}">
       <div class="shop__in">
         <p class="shop__test" id="shoptest"{"" if test else " hidden"}>TEST LISTING: please don&rsquo;t buy this. It is for checking that buying works.</p>
@@ -425,6 +504,7 @@ def _unit_content(u, task_head, bc_sub):
           </table>
           <p class="shop__small">Ports, screen connections and upgrade options for the {_e(m["name"])}: <a href="{m["href"]}#{u["model"]}">full model details</a>.</p>
         </div>
+{_check_card(u)}
         <div class="shop__card">
           <h2>Delivery, returns and your guarantee</h2>
           <ul class="shop__list">
