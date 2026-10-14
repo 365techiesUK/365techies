@@ -343,6 +343,11 @@ api/pcm-plus-pp-orders.json
 api/pcm-plus-pp-orders.json.lock
 api/pcm-plus-pp-orders.json.*.tmp
 api/pcm-plus-pp.log
+# 14 Oct 2026: refurbished Dells bought online - which machine is held or sold, and each buyer's delivery details; the log
+api/shop-state.json
+api/shop-state.json.lock
+api/shop-state.json.*.tmp
+api/shop.log
 # ... and through FastSpring: the owner's webhook signing secret (server-only), the keys the buy page may show for 3 hours, the log
 api/pcm-fs-secret.php
 api/pcm-plus-fs-recent.json

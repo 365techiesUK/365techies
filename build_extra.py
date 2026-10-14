@@ -10043,6 +10043,14 @@ def _dell_hub_machines(ids):
     return "\n".join(rows)
 
 
+# =============================== REFURBISHED DELL IN STOCK - BUY ONLINE (14 Oct 2026) ===============================
+# Owner: "PayPal, £15 delivery, start with 10 laptops". The machines actually on the shelf, one page each with a fixed
+# price and PayPal's buttons, a list page, and the server's catalogue (api/shop-catalogue.php) - all from shop_stock.py
+# (shop_pages.py builds them; api/shop.php sells; api/shop-feed.php is Google Merchant Center's feed).
+import shop_pages as _shop
+_SHOP_UNITS = _shop.build(add, DELL_MACHINES, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub, webpage, faqpage)
+
+
 def dell_hardware():
     slug = "dell-hardware"
     desc = "Refurbished, tested ex-business Dell Latitude laptops & OptiPlex desktops from £510 — supplied, set up & supported across Bournemouth, Poole & Dorset."
@@ -10389,7 +10397,9 @@ def dell_hardware():
         </div>
       </div>
     </section>''',
-      dell_picker_section(),
+      # 14 Oct 2026: the "in stock now" band rides on the picker's block (blocks are counted and reordered below); it is
+      # empty unless machines are on sale online
+      _shop.instock_band(_SHOP_UNITS) + dell_picker_section(),
       '''    <section class="section section--alt" aria-label="Accessories" id="accessories">
       <div class="wrap">
         <div class="section-head">
@@ -16834,6 +16844,16 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>No marketing:</strong> buying a key never puts you on a mailing list. We only email you about your key, unless you separately ask for our tips.</li>
           </ul>
 
+          <h2 id="shop-orders" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Buying a refurbished computer from our website</h2>
+          <p>When you buy one of our <a href="/refurbished-dell-for-sale/">refurbished Dells in stock</a>, <strong>PayPal</strong> takes the payment, by PayPal or card, under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>. Your card or PayPal account details stay with PayPal: we never see them.</p>
+          <ul>
+            <li><strong>What PayPal tells us:</strong> your name, email address, the delivery address you chose, a phone number if you gave PayPal one, the order and payment numbers and the amount you paid.</li>
+            <li><strong>What we use it for:</strong> sending you the computer and its tracking number, your 14-day right to change your mind, your guarantee, refunds, and our accounts. The courier gets your name, address and phone number to deliver it.</li>
+            <li><strong>Our legal basis:</strong> performing our contract with you, and our legal duty to keep financial records.</li>
+            <li><strong>How long we keep it:</strong> the order record for six years, like our other financial records (see below).</li>
+            <li><strong>No marketing:</strong> buying a computer never puts you on a mailing list.</li>
+          </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>
@@ -16935,6 +16955,7 @@ info_page(
           <p>We provide monthly IT support plans and one-off IT services for homes and businesses, as described on our website. We also supply hardware and software. The specifics of your service depend on the plan or work you choose.</p>
           <h2>Buying hardware and software from us</h2>
           <p>We supply refurbished Dell laptops and desktops, new parts and upgrades, and software. Refurbished machines are pre-owned. Each one is professionally checked, cleaned and tested, and we tell you its age, condition and specification before you buy. What you receive is the machine we described &mdash; a good one, honestly sold, not a brand-new one.</p>
+          <p>Machines bought on our website are sent anywhere in the UK by tracked courier for &pound;15, usually within two working days of your order. We deliver to UK addresses only.</p>
           <h2>Plans, payment and Direct Debit</h2>
           <p>Monthly plans are paid in advance by Direct Debit (via GoCardless). One-off work is quoted and agreed before we begin. Prices are shown on our website or in your quote.</p>
           <h2>Cancelling a monthly plan</h2>

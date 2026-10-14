@@ -113,8 +113,9 @@ function lc_lead($m) {
         return array('kind' => 'web', 'label' => 'Report look-over', 'who' => trim($mm[1]), 'number' => lc_number($all));
     }
     // an order from the website (m365-order-lib.php m365_card): a Microsoft 365 order (9 Oct 2026) or, since 10 Oct 2026,
-    // a Business Care order (support + Microsoft 365) - ring them about setting it up
-    if (preg_match('/^(Microsoft 365|Business Care) order from (.+?)\s*\((.+)\)\s*$/m', $plain, $mm)) {
+    // a Business Care order (support + Microsoft 365) - ring them about setting it up. 14 Oct 2026: a refurbished Dell bought
+    // online (shop-lib.php shop_card: "Laptop order from NAME (machine, id)") - a sale to send within 2 working days
+    if (preg_match('/^(Microsoft 365|Business Care|Laptop|Desktop) order from (.+?)\s*\((.+)\)\s*$/m', $plain, $mm)) {
         return array('kind' => 'web', 'label' => $mm[1] . ' order', 'who' => trim($mm[2]), 'number' => lc_number($all));
     }
     if (preg_match('/^Booking started but never finished\s*-\s*(.+)$/m', $plain, $mm)) {
