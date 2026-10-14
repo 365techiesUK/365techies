@@ -7,13 +7,15 @@
  *   - Once an hour (tm-cron.php, every 15 minutes, asks eBay at most hourly) the server asks eBay's Trading API GetOrders
  *     for the orders where WE are the buyer, and keeps each whole Dell computer (a Latitude / OptiPlex / Precision with a
  *     processor in its title; never a part, a charger, a screen, or anything "for parts").
- *   - Each new one: kept in shop-state.json 'bought' (eBay order, date, what it cost with postage, the title, a model guess
- *     - never the seller or anyone else's details: this is our own account's data only, as eBay's "own account use"
- *     exemption from its account-deletion notifications requires), put in QuickBooks as the eBay purchase (shop-books-lib,
- *     the same expense the portal makes, DocNumber EB<order>, never twice) and one line posted to #365-job-tracker.
+ *   - Each new one: kept in shop-state.json 'bought' (eBay order, item number, its SKU = the item number's last six digits,
+ *     date, what it cost with postage, the title, a model guess - never the seller or anyone else's details: this is our own
+ *     account's data only, as eBay's "own account use" exemption from its account-deletion notifications requires), put in
+ *     QuickBooks as its own STOCK ITEM the way the business keeps stock (shop-books-lib shop_qbo_stock_purchase: if a stock
+ *     item with that SKU is already there - made by hand - nothing is posted; otherwise the item, then the eBay purchase that
+ *     brings it into stock, DocNumber EB<order>, never twice) and one line posted to #365-job-tracker.
  *   - ⚠ Only orders made AFTER the connection first worked go into QuickBooks by themselves: an older one may already be
- *     in QuickBooks from the bank feed, so it waits on the Shop tab with a button. And when the payment arrives in the bank
- *     feed, QuickBooks offers to MATCH it to our expense - Match, never Add.
+ *     in QuickBooks, so it waits on the Shop tab with a button. And when the payment arrives in the bank feed, QuickBooks
+ *     offers to MATCH it to our purchase - Match, never Add.
  *   - When the machine is got ready and listed, its shop_stock.py row carries ebay="<order>" (shop_intake.py --order), so
  *     its page, profit and books link to this purchase without anyone typing the cost.
  *
@@ -126,7 +128,7 @@ function shop_ebay_machines($o) {
         if (!shop_ebay_is_machine($i['title'], $i['price'])) continue;
         $post = $sub > 0 ? $o['shipping'] * ($line / $sub) : 0;
         $out[] = array('key' => $o['order'] . '#' . $i['item'], 'order' => $o['order'], 'item' => $i['item'], 'title' => substr($i['title'], 0, 120),
-                       'qty' => $i['qty'], 'cost' => shop_money($line + $post), 'model' => shop_ebay_model($i['title']));
+                       'qty' => $i['qty'], 'cost' => shop_money($line + $post), 'model' => shop_ebay_model($i['title']), 'sku' => shop_sku_from_item($i['item']));
     }
     return $out;
 }
@@ -162,7 +164,7 @@ function shop_ebay_sweep($force = false, $now = null, $get = 'shop_ebay_get_orde
         $tz = new DateTimeZone('Europe/London');
         foreach ($found as $m) {
             if (isset($d['bought'][$m['key']])) continue;
-            $d['bought'][$m['key']] = array('order' => $m['order'], 'item' => $m['item'], 'title' => $m['title'], 'qty' => $m['qty'], 'cost' => $m['cost'],
+            $d['bought'][$m['key']] = array('order' => $m['order'], 'item' => $m['item'], 'sku' => $m['sku'], 'title' => $m['title'], 'qty' => $m['qty'], 'cost' => $m['cost'],
                 'model' => $m['model'], 'date' => (new DateTime('@' . (int)$m['created']))->setTimezone($tz)->format('Y-m-d'), 'created' => (int)$m['created'],
                 'seen' => $now, 'status' => 'waiting');
             $new[] = $m['key'];
@@ -185,28 +187,36 @@ function shop_ebay_sweep($force = false, $now = null, $get = 'shop_ebay_get_orde
     }
     return array(true, count($new) ? count($new) . ' new' : 'nothing new', $new);
 }
-/* Put one eBay purchase into QuickBooks (once). -> array(ok, url|why) */
+/* Put one eBay purchase into QuickBooks (once): its own stock item, or linked to the one already there.
+   -> array(ok, url|why, note) */
 function shop_qbo_bought($c, $key, $api = 'invq_api') {
-    if (empty($c['live'])) return array(false, 'QuickBooks writing is switched off ($QBO_LIVE_ENABLED)');
-    if (($c['only'] ?? '') !== '') return array(false, 'QuickBooks is in one-customer test mode ($QBO_ONLY_KEY)');
+    if (($g = shop_qbo_gate($c)) !== '') return array(false, $g, '');
     $d = shop_read(); $q = shop_qbo_ids($d, $c); $b = $d['bought'][$key] ?? null;
-    if (!$q) return array(false, 'set QuickBooks up for the shop first');
-    if (!$b) return array(false, 'no such eBay purchase');
-    if (!empty($b['qbo_id'])) return array(true, (string)($b['qbo_url'] ?? ''));
-    $r = shop_qbo_expense($c, $q, array('order' => $b['order'], 'date' => $b['date'], 'total' => $b['cost']), 'eBay: ' . $b['title'] . ' - order ' . $b['order'],
-        'Bought on eBay (found by the shop\'s eBay connection): ' . $b['title'] . ', order ' . $b['order'] . '.', $api);
+    if (!$q) return array(false, 'set QuickBooks up for the shop first', '');
+    if (!$b) return array(false, 'no such eBay purchase', '');
+    if (!empty($b['qbo_id']) || !empty($b['qbo_item'])) return array(true, (string)($b['qbo_url'] ?? ''), '');
+    $sku = (string)($b['sku'] ?? '') !== '' ? (string)$b['sku'] : shop_sku_from_item($b['item'] ?? '');
+    // two machines in one eBay order: each purchase is numbered from the order AND its item, so neither hides the other
+    $same = 0; foreach ($d['bought'] as $o) if (($o['order'] ?? '') === $b['order']) $same++;
+    $doc = shop_doc('EB', $same > 1 ? $b['order'] . '-' . substr(preg_replace('/\D/', '', (string)$b['item']), -4) : $b['order']);
+    $r = shop_qbo_stock_purchase($c, $q, array('order' => $b['order'], 'date' => $b['date'], 'total' => $b['cost'], 'qty' => max(1, (int)($b['qty'] ?? 1)),
+        'sku' => $sku, 'title' => 'Dell ' . preg_replace('/^dell\s+/i', '', $b['title']), 'doc' => $doc,
+        'note' => 'Bought on eBay (found by the shop\'s eBay connection): ' . $b['title'] . ', order ' . $b['order'] . ', item ' . $b['item'] . '.'), $api);
     shop_locked(function (&$d) use ($key, $r) {
-        if ($r[0]) { $d['bought'][$key]['qbo_id'] = $r[2]; $d['bought'][$key]['qbo_url'] = $r[1]; unset($d['bought'][$key]['qbo_err']); }
-        else $d['bought'][$key]['qbo_err'] = $r[1];
+        if ($r[0]) {
+            if ($r[2] !== '') { $d['bought'][$key]['qbo_id'] = $r[2]; $d['bought'][$key]['qbo_url'] = $r[1]; }
+            if ($r[3]) $d['bought'][$key]['qbo_item'] = $r[3]['name'];
+            unset($d['bought'][$key]['qbo_err']); $d['stock_at'] = 0;
+        } else $d['bought'][$key]['qbo_err'] = $r[1];
         return true;
     });
-    return array($r[0], $r[1]);
+    return array($r[0], $r[1], $r[4]);
 }
 function shop_ebay_slack($b, $qr) {
     $hook = mm_hook(SHOP_DIR);
     if ($hook === '') return false;
     $text = "\xF0\x9F\x9B\x92 Bought on eBay: " . $b['title'] . ' - ' . chr(194) . chr(163) . $b['cost'] . ' (order ' . $b['order'] . '). '
-        . ($qr[0] ? 'It\'s in QuickBooks. ' : 'Not in QuickBooks yet: ' . $qr[1] . '. ')
+        . ($qr[0] ? 'In QuickBooks: ' . (($qr[2] ?? '') !== '' ? $qr[2] : 'its stock item') . '. ' : 'Not in QuickBooks yet: ' . $qr[1] . '. ')
         . 'On the staff portal\'s Shop tab, waiting to be got ready.';
     return mm_post_slack($hook, array('text' => $text, 'unfurl_links' => false));
 }

@@ -84,6 +84,9 @@ def units(dell_machines):
                 raise bad("a laptop needs its battery health")
             if not u["photos"]:
                 raise bad("a machine on sale needs at least one photo of itself")
+            # 14 Oct 2026: its sale comes off its own QuickBooks stock item, found by this SKU (api/shop-books-lib.php)
+            if not str(u.get("sku", "")).strip():
+                raise bad('a machine on sale needs its QuickBooks SKU (sku="..." - the last six digits of the eBay item number)')
             for p in u["photos"]:
                 if not os.path.isfile(os.path.join(_BASE, "images", "shop", uid, p)):
                     raise bad("photo images/shop/%s/%s is missing" % (uid, p))
@@ -148,6 +151,8 @@ def write_catalogue(us, path=None):
             "ptype": "Refurbished Dell > %ss > %s" % (u["kind"].title(), u["m"]["series"]),
             # its eBay order number (never what it cost): the staff portal links the purchase the eBay connection found
             "ebay": str(u.get("ebay", "")),
+            # its QuickBooks SKU: the sale comes off that stock item
+            "sku": str(u.get("sku", "")).strip(),
         }
     js = json.dumps(cat, ensure_ascii=False, sort_keys=True)
     php = ("<?php\n// WRITTEN BY THE BUILD (shop_pages.py) from shop_stock.py - never edit by hand. The machines api/shop.php may\n"

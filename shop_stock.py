@@ -14,6 +14,9 @@ ONE ROW PER MACHINE. To add one, copy a row and fill it in from the machine itse
   model     the DELL_MACHINES id in build_extra.py (series page, kind, guide price), or a SHOP_MODELS id below
   ebay      its eBay order number, e.g. '20-15135-03052' (never what it cost) - the staff portal's Shop tab links the purchase
             the eBay connection found (api/shop-ebay-lib.php), so its cost and QuickBooks entry need no typing
+  sku       its QuickBooks SKU, exactly as on its QuickBooks stock item without any "SKU" in front: the last six digits of the
+            eBay item number, e.g. '659085' (a unit of a multi-buy: '582117/2'). QuickBooks keeps every machine as its own
+            stock item; an online sale comes off THAT item (api/shop-books-lib.php), so a machine on sale must have one.
   status    'draft'  - being got ready: no page, not for sale
             'live'   - on sale (needs at least one photo of THIS machine)
             'sold'   - sold elsewhere, or the server sold it and the next build should say so for good

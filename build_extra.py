@@ -33784,9 +33784,10 @@ def write_portal_page():
     });
   }
   /* ---------- 14 Oct 2026: the refurbished Dells for sale (api/shop-admin.php). Owner: eBay purchases into QuickBooks, "full
-     per-machine entries". Each machine: its state on the website, its online sale, what it cost (the eBay order + the SSD)
-     and its two QuickBooks entries - the purchase (posted from here) and the sale (posted by itself after PayPal takes the
-     payment; a retry button when that couldn't happen). Profit once both halves are known. ---------- */
+     per-machine entries". Each machine: its state on the website, its own QuickBooks STOCK ITEM (found by the SKU on its
+     listing - the business keeps every machine as one), its online sale (posted by itself off that stock item after PayPal
+     takes the payment; a retry button when that couldn't happen) and what it cost (the eBay order, or the stock item's cost,
+     + the SSD). Profit once both halves are known. ---------- */
   var SHOP = { d: null, busy: false, open: '', acc: null };
   function loadShop(act, extra) {
     var box = document.getElementById('shopbox'); if (!box) return;
@@ -33799,6 +33800,13 @@ def write_portal_page():
   function shopGBP(v) { return (v === null || v === undefined || v === '') ? '' : '&pound;' + esc(String(v)); }
   function shopAgo(t) { var m = Math.round((Date.now() / 1000 - t) / 60); return m < 2 ? 'just now' : (m < 90 ? m + ' minutes ago' : Math.round(m / 60) + ' hours ago'); }
   function shopRow(id) { return ((SHOP.d && SHOP.d.rows) || []).filter(function (r) { return r.id === id; })[0] || null; }
+  function shopOpts(sel) { return (SHOP.acc || []).map(function (a) { return '<option value="' + esc(a.id) + '"' + (a.id === sel ? ' selected' : '') + '>' + esc(a.name) + ' (' + esc(a.type) + ')</option>'; }).join(''); }
+  function shopStock(sku, sk) {   // what QuickBooks says about a machine's own stock item
+    if (!sku) return '<span class="err">No QuickBooks SKU on its listing</span>';
+    if (!sk) return '<span class="quiet">SKU ' + esc(sku) + ' &mdash; not checked with QuickBooks yet</span>';
+    if (sk.err) return '<span class="err">' + esc(sk.err) + '</span>';
+    return 'Stock item: ' + esc(sk.name) + '<br /><span class="quiet">SKU ' + esc(sku) + ' &middot; ' + esc(String(sk.qty)) + ' in stock</span>';
+  }
   function shopCostForm(r, q) {
     var p = r.purchase || {};
     return '<div class="plus-form shop-cost"><div class="plus-row">'
@@ -33814,16 +33822,16 @@ def write_portal_page():
     var d = SHOP.d;
     if (!d || !d.ok) { box.innerHTML = '<p class="quiet">' + (d && d.error === 'auth' ? 'Your staff session has expired &mdash; sign out and in again.' : 'Couldn&rsquo;t load the shop &mdash; refresh to retry.') + '</p>'; return; }
     var q = d.qbo || {};
-    var h = '<p class="quiet" style="margin:0 0 .6rem">The machines on <a href="/refurbished-dell-for-sale/" target="_blank" rel="noopener">the website&rsquo;s shop</a>. Record what each one cost on eBay and it goes into QuickBooks as a purchase; when one sells online, its sale goes into QuickBooks by itself.</p>';
+    var h = '<p class="quiet" style="margin:0 0 .6rem">The machines on <a href="/refurbished-dell-for-sale/" target="_blank" rel="noopener">the website&rsquo;s shop</a>. Each one is its own stock item in QuickBooks, found by the SKU on its listing; when one sells online, its sale comes off that stock item by itself.</p>';
     if (d.note) h += '<p role="status" style="margin:.3rem 0;color:var(--pgood)">' + esc(d.note) + '</p>';
     if (d.err) h += '<p class="err" role="alert">' + esc(d.err) + '</p>';
     if (!q.setup) {
-      h += '<div class="shop-setup"><b>Set QuickBooks up for the shop (once)</b><p class="quiet" style="margin:.2rem 0 .5rem">It makes two accounts (Refurbished computer sales, Refurbished computer stock) and two items (Refurbished computer, Delivery - online orders), and finds or makes the eBay supplier. Nothing else in QuickBooks changes.</p>';
+      h += '<div class="shop-setup"><b>' + (q.was ? 'Set QuickBooks up again &mdash; the shop now uses your stock items' : 'Set QuickBooks up for the shop (once)') + '</b>'
+        + '<p class="quiet" style="margin:.2rem 0 .5rem">QuickBooks keeps every machine as its own stock item (SKU = the last six digits of the eBay item number). A sale online comes off that stock item, so QuickBooks takes it out of stock and counts what it cost. A Dell bought on eBay gets its stock item made the same way &mdash; unless you have already made it, then nothing is added. This finds or makes the eBay supplier and a &ldquo;Delivery - online orders&rdquo; item. Nothing else in QuickBooks changes.</p>';
       if (!SHOP.acc) h += '<button type="button" class="sm" id="shopacc">Choose the accounts</button>';
       else {
-        var opts = SHOP.acc.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + ' (' + esc(a.type) + ')</option>'; }).join('');
-        h += '<label for="shopdep">PayPal pays your online sales into</label><select id="shopdep">' + opts + '</select>'
-          + '<label for="shoppay">You pay for eBay purchases from</label><select id="shoppay">' + opts + '</select>'
+        h += '<label for="shopdep">PayPal pays your online sales into</label><select id="shopdep">' + shopOpts(q.deposit) + '</select>'
+          + '<label for="shoppay">You pay for eBay purchases from</label><select id="shoppay">' + shopOpts(q.pay) + '</select>'
           + '<p style="margin:.6rem 0 0"><button type="button" class="sm" id="shopsetup">Set QuickBooks up</button></p>';
       }
       h += '</div>';
@@ -33832,23 +33840,27 @@ def write_portal_page():
     // the eBay connection (api/shop-ebay-lib.php, hourly by cron) and the Dells it found that aren't listed yet
     var eb = d.ebay || {}, bought = d.bought || [];
     h += '<div class="shop-setup"><b>eBay</b> &mdash; ' + (eb.set
-        ? (eb.error ? '<span class="err">' + esc(eb.error) + '</span>' : 'connected' + (eb.checked ? ', last asked ' + shopAgo(eb.checked) : '') + '. Dells you buy appear below within the hour, and go into QuickBooks by themselves.')
+        ? (eb.error ? '<span class="err">' + esc(eb.error) + '</span>' : 'connected' + (eb.checked ? ', last asked ' + shopAgo(eb.checked) : '') + '. Dells you buy appear below within the hour and get their own stock item in QuickBooks by themselves (unless you have already made it).')
           + ' <button type="button" class="sm ghost" data-shopact="ebaycheck">Check eBay now</button>'
         : 'not connected yet: the eBay key file (api/ebay-key.php) isn&rsquo;t on the server. Until it is, record each machine&rsquo;s cost by hand.') + '</div>';
     if (bought.length) {
       h += '<h3 class="shop-h3">Bought on eBay &mdash; being got ready</h3><div class="tblwrap"><table class="plus-tbl shop-tbl"><tr><th>Bought</th><th>What</th><th>Cost</th><th>QuickBooks</th><th></th></tr>';
       bought.forEach(function (b) {
-        var bq = b.qbo_url ? '<a href="' + esc(b.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>'
+        var bs = b.stock;
+        var bq = b.qbo_url ? '<a href="' + esc(b.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>' + (b.qbo_item ? '<br /><span class="quiet">Stock item: ' + esc(b.qbo_item) + '</span>' : '')
+          : (b.qbo_item ? 'Stock item: ' + esc(b.qbo_item)
+          : (bs && !bs.err ? 'Already a stock item: ' + esc(bs.name) + '<br /><span class="quiet">' + esc(String(bs.qty)) + ' in stock</span>'
           : (b.qbo_err && !b.before ? '<span class="err">' + esc(b.qbo_err) + '</span><br />' : '')
             + (q.setup ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(b.key) + '">' + (b.before ? 'Put in QuickBooks' : 'Try again') + '</button>' : '')
-            + (b.before ? '<br /><span class="quiet">Bought before eBay was connected &mdash; check QuickBooks doesn&rsquo;t already have it from the bank feed.</span>' : '');
-        h += '<tr><td>' + esc(b.date) + '<br /><span class="quiet mono">' + esc(b.order) + '</span></td><td>' + esc(b.title) + (b.model ? '<br /><span class="quiet">looks like ' + esc(b.model) + '</span>' : '') + '</td>'
+            + (b.before ? '<br /><span class="quiet">Bought before eBay was connected. If QuickBooks already has its stock item, this links it and adds nothing.</span>' : '')));
+        h += '<tr><td>' + esc(b.date) + '<br /><span class="quiet mono">' + esc(b.order) + (b.sku ? ' &middot; SKU ' + esc(b.sku) : '') + '</span></td><td>' + esc(b.title) + (b.qty > 1 ? ' <b>&times; ' + b.qty + '</b>' : '') + (b.model ? '<br /><span class="quiet">looks like ' + esc(b.model) + '</span>' : '') + '</td>'
           + '<td>' + shopGBP(b.cost) + '</td><td>' + bq + '</td><td><button type="button" class="sm ghost" data-shopact="dismiss" data-key="' + esc(b.key) + '">Not for the shop</button></td></tr>';
       });
       h += '</table></div><p class="quiet" style="margin:.3rem 0 .9rem">When one is ready, film it and run its service: its listing links back to this purchase, so its cost needs no typing. When the eBay payment arrives in QuickBooks&rsquo; bank feed, choose <b>Match</b>, not Add &mdash; it pairs with this purchase.</p>';
     }
     var rows = d.rows || [];
     if (rows.length || bought.length) h += '<h3 class="shop-h3">In the shop</h3>';
+    if (rows.length && q.setup) h += '<p class="quiet" style="margin:0 0 .4rem">QuickBooks last asked ' + (q.stock_at ? shopAgo(q.stock_at) : 'never') + ' <button type="button" class="sm ghost" data-shopact="stock">Ask QuickBooks again</button></p>';
     if (!rows.length) h += '<p class="quiet">No machines in the shop yet &mdash; each one appears here as soon as it is listed.</p>';
     else {
       h += '<div class="tblwrap"><table class="plus-tbl shop-tbl"><tr><th>Machine</th><th>Price</th><th>Status</th><th>Cost (eBay + SSD)</th><th>Sale</th><th>QuickBooks</th><th>Profit</th></tr>';
@@ -33856,14 +33868,16 @@ def write_portal_page():
         var p = r.purchase, s = r.sale, sq = r.sale_qbo, qb = '';
         var st = r.state === 'sold' ? (s ? (s.status === 'pending' ? 'Sold &mdash; PayPal still checking the payment' : 'Sold online') : 'Sold another way')
           : (r.state === 'held' ? 'Being bought right now' : (r.status === 'live' ? 'For sale' : esc(r.status)));
-        var cost = p ? shopGBP(p.total) + ' + ' + shopGBP(p.ssd) + '<br /><span class="quiet">eBay ' + esc(p.order) + ' &middot; ' + esc(p.date) + '</span>'
+        var cost = p ? shopGBP(p.total) + ' + ' + shopGBP(p.ssd) + '<br /><span class="quiet">' + (p.from === 'qbo' ? 'from its QuickBooks stock item' : 'eBay ' + esc(p.order) + ' &middot; ' + esc(p.date)) + '</span>'
           + (p.qbo_differs ? '<br /><span class="err">Changed after it went into QuickBooks (it was &pound;' + esc(p.qbo_differs) + ') &mdash; correct it there</span>' : '')
           : '<span class="quiet">not recorded yet</span>';
         var sale = s ? shopGBP(s.amt) + '<br /><span class="quiet">' + esc(s.name) + (s.postcode ? ' &middot; ' + esc(s.postcode) : '') + '</span>' : '&mdash;';
-        if (p && p.qbo_url) qb += '<a href="' + esc(p.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>';
-        else if (p && q.setup) qb += p.from === 'ebay'   // found by the eBay connection: post that purchase
-          ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(p.key) + '">Purchase into QuickBooks</button>'
-          : '<button type="button" class="sm ghost" data-shopact="pqbo" data-unit="' + esc(r.id) + '">Purchase into QuickBooks</button>';
+        var sk = r.stock;
+        qb = shopStock(r.sku, sk);
+        if (p && p.qbo_url) qb += '<br /><a href="' + esc(p.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>';
+        else if (p && p.from !== 'qbo' && q.setup && sk && sk.none) qb += '<br />' + (p.from === 'ebay'   // no stock item yet: make it with its purchase
+          ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(p.key) + '">Make its stock item</button>'
+          : '<button type="button" class="sm ghost" data-shopact="pqbo" data-unit="' + esc(r.id) + '">Make its stock item</button>');
         if (s && sq && sq.qbo_url) qb += (qb ? '<br />' : '') + '<a href="' + esc(sq.qbo_url) + '" target="_blank" rel="noopener">Sale &#8599;</a>';
         else if (s) qb += (qb ? '<br />' : '') + (sq && sq.err ? '<span class="err">' + esc(sq.err) + '</span><br />' : '')
           + (q.setup ? '<button type="button" class="sm ghost" data-shopact="saleqbo" data-unit="' + esc(r.id) + '">Sale into QuickBooks</button>' : '');
@@ -33875,20 +33889,21 @@ def write_portal_page():
           + (r.state === 'sold' && !s ? '<button type="button" class="sm ghost" data-shopact="online" data-unit="' + esc(r.id) + '">Back on sale</button>' : '')
           + (SHOP.open === r.id ? shopCostForm(r, q) : '') + '</td></tr>';
       });
-      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; eBay &minus; the SSD &minus; PayPal&rsquo;s fee (the courier isn&rsquo;t in it). Only the eBay cost is posted per machine: the SSDs reach QuickBooks from the bank feed when you buy them.</p>';
+      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; what it cost &minus; the SSD &minus; PayPal&rsquo;s fee (the courier isn&rsquo;t in it). A sale goes into QuickBooks only once its stock item is found by its SKU, so it never leaves a machine &ldquo;in stock&rdquo; that has gone. The SSDs reach QuickBooks from the bank feed when you buy them.</p>';
     }
     box.innerHTML = h;
     var acc = document.getElementById('shopacc');
     if (acc) acc.onclick = function () { acc.disabled = true; loadShop('accounts'); };
     var su = document.getElementById('shopsetup');
     if (su) su.onclick = function () {
-      if (!window.confirm('Set QuickBooks up for the shop? It makes two accounts and two items, and finds or makes the eBay supplier.')) return;
+      if (!window.confirm('Set QuickBooks up for the shop? It links to your stock items, and finds or makes the eBay supplier and a delivery item.')) return;
       su.disabled = true; loadShop('setup', { deposit: document.getElementById('shopdep').value, pay: document.getElementById('shoppay').value });
     };
     Array.prototype.forEach.call(box.querySelectorAll('[data-shopact]'), function (b) {
       b.onclick = function () {
         var act = b.getAttribute('data-shopact'), u = b.getAttribute('data-unit');
         if (act === 'ebaycheck') { b.disabled = true; b.textContent = 'Asking eBay...'; loadShop('ebaycheck'); return; }
+        if (act === 'stock') { b.disabled = true; b.textContent = 'Asking QuickBooks...'; loadShop('stock'); return; }
         if (act === 'boughtqbo' || act === 'dismiss') {
           if (act === 'dismiss' && !window.confirm('Not for the shop (for a customer, a spare, a mistake)? It comes off this list. Anything already in QuickBooks stays there.')) return;
           b.disabled = true; loadShop(act, { key: b.getAttribute('data-key') }); return;

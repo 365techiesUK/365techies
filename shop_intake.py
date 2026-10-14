@@ -6,8 +6,9 @@ Manager full service; the folder with the video and the Service Report goes in D
 Claude reads what it cost from the eBay purchase history, then:
 
     py shop_intake.py latitude-5520-01 "D:/claude/shop-kit/intake/5520 a" --model latitude-5520 --grade A
-        --cost 180.00 --order 20-15135-03052 --bought 2026-09-11 [--ssd 199.99] [--screen "..."] [--form SFF]
-        [--marks "..."] [--extras "..."] [--price 560] [--start 0.8]
+        --cost 180.00 --order 20-15135-03052 --item 336745659085 --bought 2026-09-11 [--ssd 199.99] [--screen "..."]
+        [--form SFF] [--marks "..."] [--extras "..."] [--price 560] [--start 0.8]
+    (--item: the eBay item number - its last six digits are the QuickBooks SKU; or --sku as typed on its stock item)
 
   1. the video  -> images/shop/<id>/ photos + a 360 view (shop_spin.py)
   2. the report -> shop_checks/<id>.json + the processor, memory, Windows and battery (shop_report.py); it STOPS on a
@@ -16,8 +17,9 @@ Claude reads what it cost from the eBay purchase history, then:
                    + the SSD + £150, rounded UP to £5
   4. the row    -> added to shop_stock.py (status 'live', or 'draft' with --draft)
   5. the books  -> what it cost goes in the PRIVATE intake log (D:/claude/shop-kit/intake-log.csv, never the website - this
-                   repository is public); the owner records the same in the staff portal's shop card (Invoices), which
-                   puts the purchase in QuickBooks.
+                   repository is public). QuickBooks keeps every machine as its own stock item (SKU = the last six digits
+                   of the eBay item number): the row carries that SKU, so its online sale comes off that stock item, and
+                   the Shop tab shows it.
 """
 import argparse
 import csv
@@ -64,7 +66,7 @@ def price_for(guide, cost, ssd, labour=LABOUR):
 def row_text(f):
     def q(v):
         return repr(v) if not isinstance(v, str) or "'" not in v else '"%s"' % v.replace('"', '\\"')
-    keys = ["id", "model", "ebay", "status", "edition", "price", "cpu", "ram"] + (["screen"] if f.get("screen") else ["form"]) + \
+    keys = ["id", "model", "ebay", "sku", "status", "edition", "price", "cpu", "ram"] + (["screen"] if f.get("screen") else ["form"]) + \
            ["windows", "grade"] + (["battery"] if f.get("battery") else []) + ["marks", "extras", "charger", "photos"]
     parts = ["%s=%s" % (k, q(f[k])) for k in keys if k in f]
     lines, cur = [], "    dict("
@@ -88,6 +90,19 @@ def add_row(f, path=None):
     open(path, "w", encoding="utf-8", newline="\n").write(s)
 
 
+def sku_for(item, sku):
+    """The QuickBooks SKU: as typed (--sku), else the eBay item number's last six digits (--item) - the business's rule."""
+    if sku:
+        s = re.sub(r"(?i)^[\s:]*(sku|item number)?[\s:]*", "", sku).strip()
+        if not re.match(r"^[0-9A-Za-z][0-9A-Za-z/-]{2,20}$", s):
+            raise SystemExit("*** --sku %r: just the SKU as on the QuickBooks stock item, e.g. 659085 or 582117/2 ***" % sku)
+        return s
+    digits = re.sub(r"\D", "", item or "")
+    if len(digits) < 9:
+        raise SystemExit("*** give --item (the eBay item number, 12 digits) or --sku (as on the QuickBooks stock item) ***")
+    return digits[-6:]
+
+
 def find(folder, exts, words=()):
     hits = [os.path.join(folder, n) for n in os.listdir(folder) if n.lower().endswith(exts) and all(w.lower() in n.lower() for w in words)]
     return max(hits, key=os.path.getsize) if hits else None
@@ -99,6 +114,8 @@ def main(argv=None):
     ap.add_argument("--model", required=True); ap.add_argument("--grade", required=True, choices=["A", "B", "C"])
     ap.add_argument("--cost", required=True, type=float, help="what it cost on eBay, postage included")
     ap.add_argument("--order", required=True); ap.add_argument("--bought", required=True, help="yyyy-mm-dd")
+    ap.add_argument("--item", help="the eBay item number: its last six digits are the QuickBooks SKU")
+    ap.add_argument("--sku", help="the QuickBooks SKU as on its stock item (instead of --item), e.g. 582117/2")
     ap.add_argument("--ssd", type=float, default=199.99); ap.add_argument("--price", type=int)
     ap.add_argument("--screen"); ap.add_argument("--form"); ap.add_argument("--marks", default=""); ap.add_argument("--extras", default="")
     ap.add_argument("--start", type=float, default=0.0); ap.add_argument("--period", type=float)
@@ -106,6 +123,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not re.match(r"^[a-z0-9][a-z0-9-]{1,40}$", a.unit_id):
         raise SystemExit("*** the id must be lower case letters, numbers and dashes ***")
+    sku = sku_for(a.item, a.sku)
     guide, kind = guide_and_kind(a.model)
     stock = open(os.path.join(BASE, "shop_stock.py"), encoding="utf-8").read()
     if 'id="%s"' % a.unit_id in stock or "id='%s'" % a.unit_id in stock:
@@ -140,7 +158,7 @@ def main(argv=None):
     price, floor = price_for(guide, a.cost, a.ssd)
     if a.price:
         price = a.price
-    f = {"id": a.unit_id, "model": a.model, "ebay": a.order, "status": "draft" if a.draft else "live", "edition": 1, "price": price,
+    f = {"id": a.unit_id, "model": a.model, "ebay": a.order, "sku": sku, "status": "draft" if a.draft else "live", "edition": 1, "price": price,
          "cpu": sug["cpu"], "ram": sug["ram"], "windows": sug["windows"], "grade": a.grade, "marks": a.marks, "extras": a.extras,
          "charger": S.CHARGER_DEFAULT[kind], "photos": photos}
     if kind == "laptop":
@@ -158,11 +176,12 @@ def main(argv=None):
     with open(LOG, "a", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         if new:
-            w.writerow(["id", "model", "ebay_order", "bought", "ebay_cost", "ssd", "labour", "guide", "floor", "price"])
-        w.writerow([a.unit_id, a.model, a.order, a.bought, "%.2f" % a.cost, "%.2f" % a.ssd, LABOUR, guide, floor, price])
+            w.writerow(["id", "model", "ebay_order", "bought", "ebay_cost", "ssd", "labour", "guide", "floor", "price", "sku"])
+        w.writerow([a.unit_id, a.model, a.order, a.bought, "%.2f" % a.cost, "%.2f" % a.ssd, LABOUR, guide, floor, price, sku])
     print("\nAdded to shop_stock.py: %s at £%d (guide £%d, floor £%d = £%.2f + £%.2f SSD + £%d)" % (a.unit_id, price, guide, floor, a.cost, a.ssd, LABOUR))
-    print("Its eBay order %s is on the row: the staff portal's Shop tab links the purchase the eBay connection found." % a.order)
-    print("If the eBay connection isn't set up yet, record it by hand there (Record what it cost):")
+    print("Its eBay order %s and QuickBooks SKU %s are on the row: its online sale comes off that stock item." % (a.order, sku))
+    print("The Shop tab shows whether QuickBooks has a stock item with SKU %s. If it hasn't (and the eBay connection" % sku)
+    print("didn't make one), record the cost there (Record what it cost) and it is made:")
     print("  eBay order %s  |  bought %s  |  £%.2f  |  SSD £%.2f" % (a.order, a.bought, a.cost, a.ssd))
     return f
 

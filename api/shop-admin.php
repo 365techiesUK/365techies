@@ -5,9 +5,12 @@
  * POST {stoken, machine, do, ...}:
  *   do=list (default)                       -> {ok, rows: [machine, state, sale, purchase, QuickBooks links, profit], qbo: {...}}
  *   do=accounts                             -> + accounts: the Bank / Credit Card accounts to choose from for the setup
- *   do=setup {deposit, pay}                 -> makes or finds the two accounts, two items and the eBay vendor in QuickBooks
+ *   do=setup {deposit, pay}                 -> links the shop to the stock items' accounts; finds or makes the delivery item
+ *                                              and the eBay vendor in QuickBooks
+ *   do=stock                                -> asks QuickBooks now about each machine's stock item (normally every 10 min)
  *   do=purchase {unit, order, date, total, ssd, qbo: true|false}
- *                                           -> keeps what the machine cost (the eBay order) and, with qbo, posts it
+ *                                           -> keeps what the machine cost (the eBay order) and, with qbo, puts it in
+ *                                              QuickBooks as its stock item (or links the one already there)
  *   do=saleqbo {unit}                       -> posts its online sale to QuickBooks (when that didn't happen by itself)
  *   do=offline {unit} | do=online {unit}    -> sold some other way: the website stops selling it / undo that
  *   do=ebaycheck                            -> ask eBay now for Dells we've bought (shop-ebay-lib.php; normally hourly by cron)
@@ -65,7 +68,7 @@ elseif ($do === 'purchase') {
             if (!empty($in['qbo'])) {
                 $cc = $conn();
                 if (empty($cc['ok'])) $out['err'] = 'Saved here, but QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . ').';
-                else { list($ok, $res) = shop_qbo_purchase($cc, $id, $u); if ($ok) $out['note'] .= ' It\'s in QuickBooks.'; else $out['err'] = 'Saved here, but not in QuickBooks: ' . $res . '.'; }
+                else { list($ok, $res, $nt) = shop_qbo_purchase($cc, $id, $u); if ($ok) $out['note'] .= ' QuickBooks: ' . ($nt !== '' ? $nt : 'done') . '.'; else $out['err'] = 'Saved here, but not in QuickBooks: ' . $res . '.'; }
             }
         }
     }
@@ -88,7 +91,7 @@ elseif ($do === 'boughtqbo') {
     $key = preg_replace('/[^0-9A-Za-z#-]/', '', (string)($in['key'] ?? ''));
     $cc = $conn();
     if (empty($cc['ok'])) $out['err'] = 'QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . ').';
-    else { list($ok, $res) = shop_qbo_bought($cc, $key); if ($ok) $out['note'] = 'That eBay purchase is in QuickBooks.'; else $out['err'] = 'Not in QuickBooks: ' . $res . '.'; }
+    else { list($ok, $res, $nt) = shop_qbo_bought($cc, $key); if ($ok) $out['note'] = 'QuickBooks: ' . ($nt !== '' ? $nt : 'that eBay purchase is in') . '.'; else $out['err'] = 'Not in QuickBooks: ' . $res . '.'; }
 }
 elseif ($do === 'dismiss' || $do === 'undismiss') {
     $key = preg_replace('/[^0-9A-Za-z#-]/', '', (string)($in['key'] ?? ''));
@@ -102,6 +105,17 @@ elseif ($do === 'offline' || $do === 'online') {
     else $out['err'] = ucfirst($r) . '.';
 }
 
+// what QuickBooks says about each machine's stock item: asked again every ten minutes (or now, with do=stock)
+$d = shop_read();
+if (shop_qbo_ids($d, array()) && ($do === 'stock' || (int)($d['stock_at'] ?? 0) < time() - SHOP_STOCK_TTL)) {
+    $cc = $conn();
+    if (!empty($cc['ok'])) {
+        $items = shop_qbo_stock_items($cc);
+        if ($items !== null) { shop_stock_remember($items, shop_stock_skus($cat, $d)); if ($do === 'stock') $out['note'] = 'Asked QuickBooks: ' . count($items) . ' stock items.'; }
+        elseif ($do === 'stock') $out['err'] = 'Couldn\'t read your QuickBooks stock items - try again.';
+    } elseif ($do === 'stock') $out['err'] = 'QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . ').';
+}
+
 // the list, with every answer
 $d = shop_read();
 $out['rows'] = shop_books_rows($cat, $d);
@@ -109,6 +123,8 @@ $out['bought'] = shop_bought_rows($cat, $d);
 $e = $d['ebay'] ?? array();
 $out['ebay'] = array('set' => shop_ebay_creds() !== null, 'checked' => (int)($e['checked'] ?? 0), 'since' => (int)($e['since'] ?? 0), 'error' => (string)($e['error'] ?? ''));
 $q = $d['qbo'] ?? array();
-$out['qbo'] = array('setup' => !empty($q['item']) && !empty($q['deposit']), 'ssd_default' => SHOP_SSD_DEFAULT,
-    'live' => $c !== null ? !empty($c['live']) : null);
+// setup: made for the stock items; was: an older setup (from before the change) - it is made again, with the same accounts
+$out['qbo'] = array('setup' => shop_qbo_ids($d, array()) !== null, 'was' => empty($q['asset']) && !empty($q['deposit']),
+    'deposit' => (string)($q['deposit'] ?? ''), 'pay' => (string)($q['pay'] ?? ''), 'stock_at' => (int)($d['stock_at'] ?? 0),
+    'ssd_default' => SHOP_SSD_DEFAULT, 'live' => $c !== null ? !empty($c['live']) : null);
 sa_out($out);
