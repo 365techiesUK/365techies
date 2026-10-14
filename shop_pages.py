@@ -146,6 +146,8 @@ def write_catalogue(us, path=None):
             "title": _feed_title(u), "desc": _feed_desc(u) if u["status"] != "test" else "", "url": u["url"],
             "images": [SITE + i for i in u["imgs"]], "gpc": GPC[u["kind"]],
             "ptype": "Refurbished Dell > %ss > %s" % (u["kind"].title(), u["m"]["series"]),
+            # its eBay order number (never what it cost): the staff portal links the purchase the eBay connection found
+            "ebay": str(u.get("ebay", "")),
         }
     js = json.dumps(cat, ensure_ascii=False, sort_keys=True)
     php = ("<?php\n// WRITTEN BY THE BUILD (shop_pages.py) from shop_stock.py - never edit by hand. The machines api/shop.php may\n"

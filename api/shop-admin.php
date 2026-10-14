@@ -10,6 +10,9 @@
  *                                           -> keeps what the machine cost (the eBay order) and, with qbo, posts it
  *   do=saleqbo {unit}                       -> posts its online sale to QuickBooks (when that didn't happen by itself)
  *   do=offline {unit} | do=online {unit}    -> sold some other way: the website stops selling it / undo that
+ *   do=ebaycheck                            -> ask eBay now for Dells we've bought (shop-ebay-lib.php; normally hourly by cron)
+ *   do=boughtqbo {key}                      -> put one eBay purchase in QuickBooks (an older one, or a retry)
+ *   do=dismiss {key} | do=undismiss {key}   -> an eBay purchase that isn't for the shop: off the Shop tab / back on it
  * Every answer: {ok, note, err} plus the list. NO closing tag in this file.
  */
 error_reporting(0);
@@ -17,7 +20,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 require_once __DIR__ . '/visitors-tally-lib.php';   // vis_staff_ok(); top-level scope on purpose
-require_once __DIR__ . '/shop-books-lib.php';
+require_once __DIR__ . '/shop-ebay-lib.php';   // + shop-books-lib.php
 
 function sa_out($a, $code = 200) { http_response_code($code); echo json_encode($a, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); exit; }
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') sa_out(array('ok' => false, 'error' => 'method'), 405);
@@ -76,6 +79,23 @@ elseif ($do === 'saleqbo') {
         else { list($ok, $res) = shop_qbo_sale($cc, $sale, $u); if ($ok) $out['note'] = 'The sale is in QuickBooks.'; else $out['err'] = 'Not in QuickBooks: ' . $res . '.'; }
     }
 }
+elseif ($do === 'ebaycheck') {
+    list($ok, $msg, $new) = shop_ebay_sweep(true);
+    if ($ok) $out['note'] = 'Asked eBay: ' . ($new ? count($new) . ' new Dell purchase' . (count($new) === 1 ? '' : 's') . ' found.' : 'nothing new.');
+    else $out['err'] = 'eBay: ' . $msg . '.';
+}
+elseif ($do === 'boughtqbo') {
+    $key = preg_replace('/[^0-9A-Za-z#-]/', '', (string)($in['key'] ?? ''));
+    $cc = $conn();
+    if (empty($cc['ok'])) $out['err'] = 'QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . ').';
+    else { list($ok, $res) = shop_qbo_bought($cc, $key); if ($ok) $out['note'] = 'That eBay purchase is in QuickBooks.'; else $out['err'] = 'Not in QuickBooks: ' . $res . '.'; }
+}
+elseif ($do === 'dismiss' || $do === 'undismiss') {
+    $key = preg_replace('/[^0-9A-Za-z#-]/', '', (string)($in['key'] ?? ''));
+    $r = shop_ebay_dismiss($key, $by, $do === 'undismiss');
+    if ($r === 'ok') $out['note'] = $do === 'dismiss' ? 'Taken off the Shop tab (anything already in QuickBooks stays there).' : 'Back on the Shop tab.';
+    else $out['err'] = ucfirst($r) . '.';
+}
 elseif ($do === 'offline' || $do === 'online') {
     $r = shop_mark_offline($id, $u, $by, $do === 'offline');
     if ($r === 'ok') { $out['note'] = $do === 'offline' ? $u['name'] . ' is marked sold - the website won\'t sell it.' : $u['name'] . ' is for sale on the website again.'; shop_log("$do $id by $by"); }
@@ -85,6 +105,9 @@ elseif ($do === 'offline' || $do === 'online') {
 // the list, with every answer
 $d = shop_read();
 $out['rows'] = shop_books_rows($cat, $d);
+$out['bought'] = shop_bought_rows($cat, $d);
+$e = $d['ebay'] ?? array();
+$out['ebay'] = array('set' => shop_ebay_creds() !== null, 'checked' => (int)($e['checked'] ?? 0), 'since' => (int)($e['since'] ?? 0), 'error' => (string)($e['error'] ?? ''));
 $q = $d['qbo'] ?? array();
 $out['qbo'] = array('setup' => !empty($q['item']) && !empty($q['deposit']), 'ssd_default' => SHOP_SSD_DEFAULT,
     'live' => $c !== null ? !empty($c['live']) : null);

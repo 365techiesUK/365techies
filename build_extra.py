@@ -26034,6 +26034,7 @@ def write_portal_page():
   #p365app .shop-acts .sm { margin:.15rem .3rem .15rem 0; }
   #p365app .shop-cost { margin:.5rem 0 .2rem; }
   #p365app .shop-cost .plus-row input { flex:1 1 9rem; }
+  #p365app .shop-h3 { font-size:.95rem; margin:1rem 0 .4rem; color:var(--pwhite); }
   #p365app .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input { flex:1 1 auto; min-width:0; }
   #p365app .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
@@ -33796,6 +33797,7 @@ def write_portal_page():
       .catch(function () { SHOP.busy = false; SHOP.d = { ok: false }; renderShop(); });
   }
   function shopGBP(v) { return (v === null || v === undefined || v === '') ? '' : '&pound;' + esc(String(v)); }
+  function shopAgo(t) { var m = Math.round((Date.now() / 1000 - t) / 60); return m < 2 ? 'just now' : (m < 90 ? m + ' minutes ago' : Math.round(m / 60) + ' hours ago'); }
   function shopRow(id) { return ((SHOP.d && SHOP.d.rows) || []).filter(function (r) { return r.id === id; })[0] || null; }
   function shopCostForm(r, q) {
     var p = r.purchase || {};
@@ -33826,7 +33828,27 @@ def write_portal_page():
       }
       h += '</div>';
     }
+    // 14 Oct 2026 (owner: "automatically picks up what we've bought ... from eBay ... adds it automatically into QuickBooks"):
+    // the eBay connection (api/shop-ebay-lib.php, hourly by cron) and the Dells it found that aren't listed yet
+    var eb = d.ebay || {}, bought = d.bought || [];
+    h += '<div class="shop-setup"><b>eBay</b> &mdash; ' + (eb.set
+        ? (eb.error ? '<span class="err">' + esc(eb.error) + '</span>' : 'connected' + (eb.checked ? ', last asked ' + shopAgo(eb.checked) : '') + '. Dells you buy appear below within the hour, and go into QuickBooks by themselves.')
+          + ' <button type="button" class="sm ghost" data-shopact="ebaycheck">Check eBay now</button>'
+        : 'not connected yet: the eBay key file (api/ebay-key.php) isn&rsquo;t on the server. Until it is, record each machine&rsquo;s cost by hand.') + '</div>';
+    if (bought.length) {
+      h += '<h3 class="shop-h3">Bought on eBay &mdash; being got ready</h3><div class="tblwrap"><table class="plus-tbl shop-tbl"><tr><th>Bought</th><th>What</th><th>Cost</th><th>QuickBooks</th><th></th></tr>';
+      bought.forEach(function (b) {
+        var bq = b.qbo_url ? '<a href="' + esc(b.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>'
+          : (b.qbo_err && !b.before ? '<span class="err">' + esc(b.qbo_err) + '</span><br />' : '')
+            + (q.setup ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(b.key) + '">' + (b.before ? 'Put in QuickBooks' : 'Try again') + '</button>' : '')
+            + (b.before ? '<br /><span class="quiet">Bought before eBay was connected &mdash; check QuickBooks doesn&rsquo;t already have it from the bank feed.</span>' : '');
+        h += '<tr><td>' + esc(b.date) + '<br /><span class="quiet mono">' + esc(b.order) + '</span></td><td>' + esc(b.title) + (b.model ? '<br /><span class="quiet">looks like ' + esc(b.model) + '</span>' : '') + '</td>'
+          + '<td>' + shopGBP(b.cost) + '</td><td>' + bq + '</td><td><button type="button" class="sm ghost" data-shopact="dismiss" data-key="' + esc(b.key) + '">Not for the shop</button></td></tr>';
+      });
+      h += '</table></div><p class="quiet" style="margin:.3rem 0 .9rem">When one is ready, film it and run its service: its listing links back to this purchase, so its cost needs no typing. When the eBay payment arrives in QuickBooks&rsquo; bank feed, choose <b>Match</b>, not Add &mdash; it pairs with this purchase.</p>';
+    }
     var rows = d.rows || [];
+    if (rows.length || bought.length) h += '<h3 class="shop-h3">In the shop</h3>';
     if (!rows.length) h += '<p class="quiet">No machines in the shop yet &mdash; each one appears here as soon as it is listed.</p>';
     else {
       h += '<div class="tblwrap"><table class="plus-tbl shop-tbl"><tr><th>Machine</th><th>Price</th><th>Status</th><th>Cost (eBay + SSD)</th><th>Sale</th><th>QuickBooks</th><th>Profit</th></tr>';
@@ -33839,7 +33861,9 @@ def write_portal_page():
           : '<span class="quiet">not recorded yet</span>';
         var sale = s ? shopGBP(s.amt) + '<br /><span class="quiet">' + esc(s.name) + (s.postcode ? ' &middot; ' + esc(s.postcode) : '') + '</span>' : '&mdash;';
         if (p && p.qbo_url) qb += '<a href="' + esc(p.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>';
-        else if (p && q.setup) qb += '<button type="button" class="sm ghost" data-shopact="pqbo" data-unit="' + esc(r.id) + '">Purchase into QuickBooks</button>';
+        else if (p && q.setup) qb += p.from === 'ebay'   // found by the eBay connection: post that purchase
+          ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(p.key) + '">Purchase into QuickBooks</button>'
+          : '<button type="button" class="sm ghost" data-shopact="pqbo" data-unit="' + esc(r.id) + '">Purchase into QuickBooks</button>';
         if (s && sq && sq.qbo_url) qb += (qb ? '<br />' : '') + '<a href="' + esc(sq.qbo_url) + '" target="_blank" rel="noopener">Sale &#8599;</a>';
         else if (s) qb += (qb ? '<br />' : '') + (sq && sq.err ? '<span class="err">' + esc(sq.err) + '</span><br />' : '')
           + (q.setup ? '<button type="button" class="sm ghost" data-shopact="saleqbo" data-unit="' + esc(r.id) + '">Sale into QuickBooks</button>' : '');
@@ -33864,6 +33888,11 @@ def write_portal_page():
     Array.prototype.forEach.call(box.querySelectorAll('[data-shopact]'), function (b) {
       b.onclick = function () {
         var act = b.getAttribute('data-shopact'), u = b.getAttribute('data-unit');
+        if (act === 'ebaycheck') { b.disabled = true; b.textContent = 'Asking eBay...'; loadShop('ebaycheck'); return; }
+        if (act === 'boughtqbo' || act === 'dismiss') {
+          if (act === 'dismiss' && !window.confirm('Not for the shop (for a customer, a spare, a mistake)? It comes off this list. Anything already in QuickBooks stays there.')) return;
+          b.disabled = true; loadShop(act, { key: b.getAttribute('data-key') }); return;
+        }
         if (act === 'cost') { SHOP.open = SHOP.open === u ? '' : u; renderShop(); return; }
         if (act === 'save') {
           var body = { unit: u, order: document.getElementById('shopord').value.trim(), date: document.getElementById('shopdate').value,

@@ -115,6 +115,12 @@ try { $lc = lc_sweep(); } catch (Throwable $e) { $lc = array('ok' => false, 'err
 require_once __DIR__ . '/pcm-invq-sweep.php';
 $iq = invq_morning();
 
+/* Dells bought on eBay (14 Oct 2026, shop-ebay-lib.php): at most hourly, asks eBay for the orders we bought, keeps each
+   whole Latitude / OptiPlex / Precision for the staff portal's Shop tab, puts the new ones in QuickBooks and posts a line to
+   #365-job-tracker. A clean no-op until api/ebay-key.php is on the server. Same placement as the sweeps above. */
+require_once __DIR__ . '/shop-ebay-lib.php';
+try { $eb = shop_ebay_sweep(); } catch (Throwable $e) { $eb = array(false, 'exception', array()); }
+
 if (!tm_configured()) {
     $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp, 'paylinks' => $pl);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")
@@ -154,11 +160,13 @@ if ($CLI) {
        . ", comms " . json_encode($cm)
        . ", pay links " . json_encode($pl)
        . ", slack jobs " . json_encode($sj)
-       . ", invoices " . json_encode($iq) . "\n";
+       . ", invoices " . json_encode($iq)
+       . ", ebay " . json_encode($eb[1]) . "\n";
 } else {
     $res['comms'] = $cm;
     $res['paylinks'] = $pl;
     $res['slackjobs'] = $sj;
     $res['invq'] = $iq;
+    $res['ebay'] = $eb[1];
     echo json_encode($res);
 }

@@ -12,6 +12,8 @@ ONE ROW PER MACHINE. To add one, copy a row and fill it in from the machine itse
   id        the page address and PayPal's item code: model + a number, lower case, e.g. 'latitude-5520-01'. Never reuse
             one - a sold machine's page stays up saying "Sold".
   model     the DELL_MACHINES id in build_extra.py (series page, kind, guide price), or a SHOP_MODELS id below
+  ebay      its eBay order number, e.g. '20-15135-03052' (never what it cost) - the staff portal's Shop tab links the purchase
+            the eBay connection found (api/shop-ebay-lib.php), so its cost and QuickBooks entry need no typing
   status    'draft'  - being got ready: no page, not for sale
             'live'   - on sale (needs at least one photo of THIS machine)
             'sold'   - sold elsewhere, or the server sold it and the next build should say so for good

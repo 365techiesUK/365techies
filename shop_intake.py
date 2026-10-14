@@ -64,7 +64,7 @@ def price_for(guide, cost, ssd, labour=LABOUR):
 def row_text(f):
     def q(v):
         return repr(v) if not isinstance(v, str) or "'" not in v else '"%s"' % v.replace('"', '\\"')
-    keys = ["id", "model", "status", "edition", "price", "cpu", "ram"] + (["screen"] if f.get("screen") else ["form"]) + \
+    keys = ["id", "model", "ebay", "status", "edition", "price", "cpu", "ram"] + (["screen"] if f.get("screen") else ["form"]) + \
            ["windows", "grade"] + (["battery"] if f.get("battery") else []) + ["marks", "extras", "charger", "photos"]
     parts = ["%s=%s" % (k, q(f[k])) for k in keys if k in f]
     lines, cur = [], "    dict("
@@ -140,7 +140,7 @@ def main(argv=None):
     price, floor = price_for(guide, a.cost, a.ssd)
     if a.price:
         price = a.price
-    f = {"id": a.unit_id, "model": a.model, "status": "draft" if a.draft else "live", "edition": 1, "price": price,
+    f = {"id": a.unit_id, "model": a.model, "ebay": a.order, "status": "draft" if a.draft else "live", "edition": 1, "price": price,
          "cpu": sug["cpu"], "ram": sug["ram"], "windows": sug["windows"], "grade": a.grade, "marks": a.marks, "extras": a.extras,
          "charger": S.CHARGER_DEFAULT[kind], "photos": photos}
     if kind == "laptop":
@@ -161,7 +161,8 @@ def main(argv=None):
             w.writerow(["id", "model", "ebay_order", "bought", "ebay_cost", "ssd", "labour", "guide", "floor", "price"])
         w.writerow([a.unit_id, a.model, a.order, a.bought, "%.2f" % a.cost, "%.2f" % a.ssd, LABOUR, guide, floor, price])
     print("\nAdded to shop_stock.py: %s at £%d (guide £%d, floor £%d = £%.2f + £%.2f SSD + £%d)" % (a.unit_id, price, guide, floor, a.cost, a.ssd, LABOUR))
-    print("For the staff portal's shop card (Invoices > Refurbished Dells > Record what it cost):")
+    print("Its eBay order %s is on the row: the staff portal's Shop tab links the purchase the eBay connection found." % a.order)
+    print("If the eBay connection isn't set up yet, record it by hand there (Record what it cost):")
     print("  eBay order %s  |  bought %s  |  £%.2f  |  SSD £%.2f" % (a.order, a.bought, a.cost, a.ssd))
     return f
 

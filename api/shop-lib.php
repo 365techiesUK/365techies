@@ -59,7 +59,8 @@ function shop_holder($t) { $t = strtolower((string)$t); return preg_match('/^[a-
 function shop_norm($d) {
     if (!is_array($d)) $d = array();
     // books (14 Oct 2026, shop-books-lib.php): per machine, what it cost and its QuickBooks entries; qbo: the setup's ids
-    foreach (array('u', 'o', 'sales', 'books', 'qbo') as $k) if (!isset($d[$k]) || !is_array($d[$k])) $d[$k] = array();
+    // bought + ebay (14 Oct 2026, shop-ebay-lib.php): Dells bought on eBay, found by the eBay connection, and its last look
+    foreach (array('u', 'o', 'sales', 'books', 'qbo', 'bought', 'ebay') as $k) if (!isset($d[$k]) || !is_array($d[$k])) $d[$k] = array();
     return $d;
 }
 function shop_read() { return shop_norm(@json_decode((string)@file_get_contents(SHOP_STATE), true)); }

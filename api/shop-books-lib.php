@@ -135,15 +135,32 @@ function shop_book_purchase($id, $u, $p, $by, $now = null) {
     });
     return $ok === false ? 'the stock file was busy - try again' : true;
 }
-function shop_purchase_body($id, $u, $p, $q, $tax) {
-    $what = $u['name'] . ' (' . $id . ') - eBay order ' . $p['order'];
-    $line = array('Amount' => (float)$p['total'], 'DetailType' => 'AccountBasedExpenseLineDetail', 'Description' => $what,
+function shop_expense_body($p, $q, $tax, $desc, $note) {
+    $line = array('Amount' => (float)$p['total'], 'DetailType' => 'AccountBasedExpenseLineDetail', 'Description' => substr($desc, 0, 4000),
         'AccountBasedExpenseLineDetail' => array('AccountRef' => array('value' => $q['cogs'])));
     if ($tax !== '') $line['AccountBasedExpenseLineDetail']['TaxCodeRef'] = array('value' => $tax);
     return array('PaymentType' => ($q['pay_type'] ?? '') === 'Credit Card' ? 'CreditCard' : 'Cash',
         'AccountRef' => array('value' => $q['pay']), 'EntityRef' => array('value' => $q['vendor'], 'type' => 'Vendor'),
-        'TxnDate' => $p['date'], 'DocNumber' => shop_doc('EB', $p['order']),
-        'PrivateNote' => 'Refurbished Dell for sale online: ' . $what . '. Recorded from the staff portal.', 'Line' => array($line));
+        'TxnDate' => $p['date'], 'DocNumber' => shop_doc('EB', $p['order']), 'PrivateNote' => substr($note, 0, 4000), 'Line' => array($line));
+}
+function shop_purchase_body($id, $u, $p, $q, $tax) {
+    $what = $u['name'] . ' (' . $id . ') - eBay order ' . $p['order'];
+    return shop_expense_body($p, $q, $tax, $what, 'Refurbished Dell for sale online: ' . $what . '. Recorded from the staff portal.');
+}
+/* One eBay purchase as a QuickBooks expense - the manual button and the eBay connection share it. Asks QuickBooks for the
+   DocNumber (EB<order>) first, so the same order never goes in twice whichever way it came. -> array(ok, url|why, id) */
+function shop_qbo_expense($c, $q, $p, $desc, $note, $api = 'invq_api') {
+    $doc = shop_doc('EB', $p['order']);
+    $found = shop_q($c, $api, "select Id from Purchase where DocNumber = '" . shop_qesc($doc) . "'");
+    if ($found === null) return array(false, 'could not ask QuickBooks', '');
+    $qid = (string)($found['Purchase'][0]['Id'] ?? '');
+    if ($qid === '') {
+        $res = call_user_func($api, $c, 'POST', '/purchase', shop_expense_body($p, $q, (string)($c['tax'] ?? ''), $desc, $note));
+        if (!qbo_lib_ok($res) || empty($res['json']['Purchase']['Id'])) { shop_log('qbo expense FAILED ' . $p['order'] . ' ' . shop_qbo_why($res)); return array(false, 'QuickBooks refused it: ' . shop_qbo_why($res), ''); }
+        $qid = (string)$res['json']['Purchase']['Id'];
+    }
+    shop_log('qbo expense ' . $qid . ' for eBay order ' . $p['order']);
+    return array(true, rtrim((string)($c['host'] ?? 'https://app.qbo.intuit.com'), '/') . '/app/expense?txnId=' . rawurlencode($qid), $qid);
 }
 /* Post a machine's purchase to QuickBooks (once). -> array(ok, url|why) */
 function shop_qbo_purchase($c, $id, $u, $api = 'invq_api') {
@@ -155,18 +172,11 @@ function shop_qbo_purchase($c, $id, $u, $api = 'invq_api') {
     $p = $d['books'][$k]['purchase'] ?? null;
     if (!$p) return array(false, 'no purchase recorded for this machine');
     if (!empty($p['qbo_id'])) return array(true, (string)($p['qbo_url'] ?? ''));
-    $doc = shop_doc('EB', $p['order']);
-    $found = shop_q($c, $api, "select Id from Purchase where DocNumber = '" . shop_qesc($doc) . "'");
-    if ($found === null) return array(false, 'could not ask QuickBooks');
-    $qid = (string)($found['Purchase'][0]['Id'] ?? '');
-    if ($qid === '') {
-        $res = call_user_func($api, $c, 'POST', '/purchase', shop_purchase_body($id, $u, $p, $q, (string)($c['tax'] ?? '')));
-        if (!qbo_lib_ok($res) || empty($res['json']['Purchase']['Id'])) { shop_log('qbo purchase FAILED ' . $id . ' ' . shop_qbo_why($res)); return array(false, 'QuickBooks refused it: ' . shop_qbo_why($res)); }
-        $qid = (string)$res['json']['Purchase']['Id'];
-    }
-    $url = rtrim((string)($c['host'] ?? 'https://app.qbo.intuit.com'), '/') . '/app/expense?txnId=' . rawurlencode($qid);
+    $what = $u['name'] . ' (' . $id . ') - eBay order ' . $p['order'];
+    $r = shop_qbo_expense($c, $q, $p, $what, 'Refurbished Dell for sale online: ' . $what . '. Recorded from the staff portal.', $api);
+    if (!$r[0]) return array(false, $r[1]);
+    list(, $url, $qid) = $r;
     shop_locked(function (&$d) use ($k, $qid, $url) { $d['books'][$k]['purchase']['qbo_id'] = $qid; $d['books'][$k]['purchase']['qbo_url'] = $url; return true; });
-    shop_log('qbo purchase ' . $qid . ' for ' . $id);
     return array(true, $url);
 }
 
@@ -240,6 +250,8 @@ function shop_books_rows($cat = null, $d = null, $now = null) {
         if (($u['status'] ?? '') === 'test') continue;
         $k = shop_key($id, $u);
         $b = $d['books'][$k] ?? array(); $s = $sales[$k] ?? null; $p = $b['purchase'] ?? null;
+        // 14 Oct 2026: no cost typed in, but the listing names its eBay order -> the purchase the eBay connection found
+        if (!$p && !empty($u['ebay'])) $p = shop_bought_purchase($d, (string)$u['ebay']);
         $profit = null;
         if ($s && $p) $profit = shop_money((float)$s['amt'] - (float)$p['total'] - (float)$p['ssd'] - (float)($s['fee'] !== '' ? $s['fee'] : 0));
         $rows[] = array('id' => $id, 'name' => (string)$u['name'], 'status' => (string)$u['status'], 'state' => shop_state_of($d, $id, $u, $now),
@@ -250,6 +262,28 @@ function shop_books_rows($cat = null, $d = null, $now = null) {
             'purchase' => $p, 'sale_qbo' => $b['sale'] ?? null, 'profit' => $profit);
     }
     return array_reverse($rows);
+}
+/* The eBay connection's purchase for an order, shaped like a typed-in one (the SSD at the usual price until someone types
+   the real one). null when the connection hasn't found it. */
+function shop_bought_purchase($d, $order) {
+    foreach ((array)($d['bought'] ?? array()) as $key => $b)
+        if (($b['order'] ?? '') === $order && ($b['status'] ?? '') !== 'dismissed')
+            return array('order' => $b['order'], 'date' => $b['date'], 'total' => $b['cost'], 'ssd' => SHOP_SSD_DEFAULT, 'from' => 'ebay', 'key' => $key,
+                         'qbo_id' => (string)($b['qbo_id'] ?? ''), 'qbo_url' => (string)($b['qbo_url'] ?? ''), 'title' => $b['title']);
+    return null;
+}
+/* Bought on eBay and not listed yet - "being got ready" on the Shop tab, newest first. */
+function shop_bought_rows($cat = null, $d = null) {
+    $cat = $cat ?: shop_catalogue(); $d = $d ?: shop_read();
+    $listed = array(); foreach ($cat['units'] as $u) if (!empty($u['ebay'])) $listed[(string)$u['ebay']] = 1;
+    $since = (int)($d['ebay']['since'] ?? 0); $rows = array();
+    foreach ((array)($d['bought'] ?? array()) as $key => $b) {
+        if (isset($listed[$b['order']]) || ($b['status'] ?? '') === 'dismissed') continue;
+        $rows[] = array('key' => $key, 'order' => $b['order'], 'date' => $b['date'], 'title' => $b['title'], 'cost' => $b['cost'], 'model' => $b['model'],
+                        'qbo_url' => (string)($b['qbo_url'] ?? ''), 'qbo_err' => (string)($b['qbo_err'] ?? ''), 'before' => $since && (int)$b['created'] < $since - 86400);
+    }
+    usort($rows, function ($a, $b) { return strcmp($b['date'], $a['date']); });
+    return $rows;
 }
 /* Sold some other way (on the phone, at a visit): the website stops selling it at once. Undo only for that kind of sale. */
 function shop_mark_offline($id, $u, $by, $sold, $now = null) {
