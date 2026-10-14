@@ -309,8 +309,9 @@ HUB_FAQS = [
     ("How do I pay?",
      "Through PayPal, with a PayPal account or a debit or credit card. PayPal takes the payment, so we never see your card details."),
     ("Can I change my mind?",
-     "Yes. You have 14 days from delivery: tell us, send it back, and we refund the machine and the standard delivery you paid. "
-     "In our service area we collect it free. <a href=\"/terms/\">Our terms</a> have the details."),
+     "Yes. You have 14 days from delivery, and returning it is free: in our service area we collect it, and anywhere else "
+     "in the UK we send you a prepaid returns label. We refund the machine and the standard delivery you paid. "
+     "<a href=\"/terms/\">Our terms</a> have the details."),
     ("What guarantee does it come with?",
      "12 months return-to-base, or 5 years for as long as you&rsquo;re on one of our <a href=\"/home-it-support-plans/\">support plans</a>. "
      "That sits on top of your legal rights, never instead of them. <a href=\"/our-guarantees/\">Our guarantees</a>."),
@@ -329,7 +330,7 @@ def _hub_content(us, task_head, bc, faq_html):
     lede = ("Real refurbished Dell machines on our shelf right now, each with its own photos and a fixed price. A brand-new "
             "1TB Samsung SSD in every one, Windows set up, &pound;%d UK delivery." % S.DELIVERY_GBP)
     head = task_head(bc("Refurbished Dell for sale"), 'Refurbished Dell <em class="grad grad--cyan">in stock now</em>', lede,
-                     trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "14-day returns"])
+                     trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "Free 14-day returns"])
     cards = []
     for u in on + sold:
         img = (u["imgs"][0] if u["imgs"] else "")
@@ -358,7 +359,7 @@ def _hub_content(us, task_head, bc, faq_html):
             <li><b>Windows 11</b> set up and up to date, ready to switch on and use</li>
             <li><b>365 PC Manager</b>, our free app that keeps it healthy, with a real person one click away</li>
             <li>A <b>12-month guarantee</b>, or <b>5 years</b> while you&rsquo;re on a 365 support plan</li>
-            <li><b>&pound;{S.DELIVERY_GBP} UK delivery</b> by tracked courier, and <b>14 days</b> to change your mind</li>
+            <li><b>&pound;{S.DELIVERY_GBP} UK delivery</b> by tracked courier, and <b>free returns</b> within 14 days</li>
           </ul>
           <p class="shop__small">Can&rsquo;t see the one you want? <a href="/dell-hardware/#pick">See every model with guide prices</a> and we&rsquo;ll find it for you.</p>
         </div>
@@ -375,7 +376,7 @@ def _unit_content(u, task_head, bc_sub):
     crumbs = bc_sub("Refurbished Dell for sale", "/%s/" % HUB, _e(u["name"]))
     lede = ("One real machine, photographed here: %s, %s RAM and a brand-new 1TB Samsung SSD. &pound;%d plus &pound;%d UK delivery."
             % (_e(u["cpu"]), _e(u["ram"]), u["price"], 0 if test else S.DELIVERY_GBP)) if not test else "Our own test listing. Please don&rsquo;t buy it."
-    head = task_head(crumbs, _e(u["name"]), lede, trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "14-day returns"])
+    head = task_head(crumbs, _e(u["name"]), lede, trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "Free 14-day returns"])
     if u["imgs"]:
         main = f'<img id="shopmain" src="{u["imgs"][0]}" alt="{_e(u["name"])}, photo 1" width="1200" height="900" decoding="async">'
         thumbs = "".join(
@@ -428,7 +429,7 @@ def _unit_content(u, task_head, bc_sub):
           <h2>Delivery, returns and your guarantee</h2>
           <ul class="shop__list">
             <li><b>Delivery:</b> &pound;{S.DELIVERY_GBP} to anywhere in the UK by tracked courier. We send it within {S.DISPATCH_DAYS[1]} working days and email you the tracking number.</li>
-            <li><b>Changed your mind?</b> You have 14 days from delivery. Tell us, send it back, and we refund the machine and the standard delivery you paid. In our service area we collect it free. <a href="/terms/">Our terms</a>.</li>
+            <li><b>Free returns:</b> changed your mind? You have 14 days from delivery. In our service area we collect it; anywhere else in the UK we send you a prepaid returns label. We refund the machine and the standard delivery you paid. <a href="/terms/">Our terms</a>.</li>
             <li><b>Something wrong?</b> You can reject a faulty machine within 30 days for a full refund, and after that we repair or replace it.</li>
             <li><b>Guarantee:</b> 12 months return-to-base, or 5 years while you&rsquo;re on one of our <a href="/home-it-support-plans/">support plans</a>. <a href="/our-guarantees/">Our guarantees</a>.</li>
           </ul>
@@ -460,7 +461,9 @@ def _unit_schema_nodes(u):
                              "handlingTime": {"@type": "QuantitativeValue", "minValue": S.DISPATCH_DAYS[0], "maxValue": S.DISPATCH_DAYS[1], "unitCode": "DAY"},
                              "transitTime": {"@type": "QuantitativeValue", "minValue": S.TRANSIT_DAYS[0], "maxValue": S.TRANSIT_DAYS[1], "unitCode": "DAY"}}},
         "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "GB",
-                                    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 14},
+                                    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 14,
+                                    # owner 14 Oct 2026: "happy with the free returns" - collected locally, a prepaid label elsewhere
+                                    "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/FreeReturn"},
     }
     return [{"@type": "Product", "@id": u["url"] + "#product", "name": u["name"], "sku": u["id"],
              "description": _feed_desc(u), "brand": {"@type": "Brand", "name": "Dell"},
@@ -474,7 +477,7 @@ def build(add, dell_machines, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub,
     write_catalogue(us)
     on = live(us)
     desc = ("Refurbished Dell laptops and desktops in stock at 365 Techies: each one photographed, with a new 1TB Samsung SSD, "
-            "Windows set up and a fixed price. Pay by PayPal or card, £%d UK delivery, 14-day returns." % S.DELIVERY_GBP)
+            "Windows set up and a fixed price. Pay by PayPal or card, £%d UK delivery, free 14-day returns." % S.DELIVERY_GBP)
 
     def hub_schema(s, _desc=desc):
         return graph([crumb(s, "Refurbished Dell for sale"), webpage(s, "Refurbished Dell in stock now", _desc), faqpage(s, HUB_FAQS)])

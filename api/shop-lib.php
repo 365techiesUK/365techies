@@ -280,7 +280,7 @@ function shop_email($sale, $u, $cat) {
             ? "PayPal is still checking your payment. As soon as it clears, we'll send your computer and email you the tracking number.\n\n"
             : "We'll send it within 2 working days by tracked courier and email you the tracking number.\n\n")
         . "It arrives ready to use: Windows set up, the new Samsung SSD fitted and tested, and 365 PC Manager installed to keep it healthy.\n\n"
-        . "Changed your mind? You have 14 days from delivery: just reply to this email. If anything is wrong with it, tell us and we'll put it right. Your guarantee is 12 months, or 5 years while you're on one of our support plans:\n"
+        . "Changed your mind? You have 14 days from delivery, and returning it is free: just reply to this email. If anything is wrong with it, tell us and we'll put it right. Your guarantee is 12 months, or 5 years while you're on one of our support plans:\n"
         . "https://365techies.co.uk/our-guarantees/\n\n"
         . "Any questions, reply to this email or call 01202 775566 - a real person will answer.\n\n"
         . "365 Techies Ltd\nhttps://365techies.co.uk\n";
