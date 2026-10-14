@@ -26189,9 +26189,17 @@ def write_portal_page():
   #p365app .nx-lvstnote { margin:.9rem 0 0; font-size:.9rem; color:#7f95a8; }
   /* 30 Sep 2026: by country - a chip per country, then what visitors from there read / came from / are on */
   #p365app .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
+  #p365app .nx-lvcc-h span { font-weight:400; font-size:.85rem; color:#7f95a8; }
   #p365app .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
   /* 1 Oct 2026: what they did - the action counts and the pages they acted from */
   #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; grid-template-columns:repeat(5,minmax(0,1fr)); }
+  #p365app .nx-lvtools { margin:.6rem 0 1.1rem; }
+  #p365app .nx-lvtools__scroll { overflow-x:auto; }
+  #p365app .nx-lvtools table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  #p365app .nx-lvtools th, #p365app .nx-lvtools td { padding:.45rem .6rem; border-bottom:1px solid #1f2c4a; text-align:left; white-space:nowrap; }
+  #p365app .nx-lvtools thead th { color:#9fb5d3; font-weight:500; font-size:.8rem; }
+  #p365app .nx-lvtools tbody th { white-space:normal; font-weight:500; min-width:11rem; }
+  #p365app .nx-lvtools .num { text-align:right; }
   #p365app .nx-lvact { margin:0 0 1rem; }
   #p365app .nx-lvact h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; }
   #p365app .nx-lvtag--act { border:1px solid #6b5320; color:#ffc940; font-style:normal; }
@@ -30304,6 +30312,9 @@ def write_portal_page():
   // rough (from each visitor's internet provider); "Dorset & around" = BH, DT, SO and SP postcodes. No names, no cookies.
   var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false,
     st: null, stAt: 0, stBusy: false, per: 'd7', cc: '' };   // 29 Sep 2026: the statistics (where the views come from), the period and the country shown
+  // 14 Oct 2026: every free tool's address + name (TOOLS in build_pages, swapped in by write_portal_page) - the
+  // statistics answer what visitors did next on each (api/visitors-stats.php paths -> tools.d7 / tools.d30)
+  var NXL_TOOLS = __NXLTOOLS__;
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
@@ -30521,7 +30532,7 @@ def write_portal_page():
     if (!document.getElementById('nxLvSt') || NXL.stBusy) return;
     if (!force && NXL.stAt && Date.now() - NXL.stAt < 300000) return;
     NXL.stBusy = true;
-    fetch('/api/visitors-stats.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
+    fetch('/api/visitors-stats.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stoken: S.stoken, machine: mid(), paths: NXL_TOOLS.map(function (t) { return t[0]; }) }) })
       .then(function (r) { return r.json(); })
       .then(function (d) { NXL.st = d; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); })
       .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
@@ -30534,6 +30545,33 @@ def write_portal_page():
     return out.length ? out.join(' \\u00b7 ') : (withNone ? 'No calls, texts, forms or downloads' : '');
   }
   function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
+  // 14 Oct 2026 (AI-brief review, item 2): each free tool - its visitors, then what they did ON that tool's page
+  // (stats answer tools.d7 / tools.d30). "Today" shows 7 days: one day is too few to judge a tool.
+  function nxlToolsHtml(per) {
+    var tt = NXL.st && NXL.st.tools; if (!tt) return '';
+    var key = per === 'd30' ? 'd30' : 'd7';
+    var all = (tt[key] || []).map(function (r) { return { r: r, a: (r.dl || 0) + (r.send || 0) + (r.call || 0) + (r.text || 0) + (r.lead || 0) }; });
+    var used = all.filter(function (x) { return x.r.n > 0 || x.a > 0; }).sort(function (x, y) { return (y.r.n - x.r.n) || (y.a - x.a); });
+    var names = {}; NXL_TOOLS.forEach(function (t) { names[t[0]] = t[1]; });
+    var visits = 0, acts = 0; used.forEach(function (x) { visits += x.r.n; acts += x.a; });
+    var h = '<div class="nx-lvtools"><h3 class="nx-lvcc-h">Free tools: what visitors did next <span>' + (key === 'd30' ? 'the last 30 days' : 'the last 7 days')
+      + ' \\u00b7 each visitor once a day</span></h3>';
+    if (!used.length) return h + '<p class="quiet">No visits to the free tools in that time.</p></div>';
+    var cell = function (n) { return '<td class="num">' + (n ? '<b>' + n + '</b>' : '<span class="quiet">0</span>') + '</td>'; };
+    h += '<div class="nx-lvtools__scroll"><table><thead><tr><th scope="col">Tool</th><th scope="col" class="num">Visitors</th><th scope="col" class="num">Downloads</th>'
+      + '<th scope="col" class="num">Sent to a computer</th><th scope="col" class="num">Calls</th><th scope="col" class="num">Texts</th><th scope="col" class="num">Forms</th>'
+      + '<th scope="col" class="num">Actions per 100 visitors</th></tr></thead><tbody>';
+    used.slice(0, 20).forEach(function (x) {
+      var r = x.r;
+      h += '<tr><th scope="row">' + esc(names[r.k] || r.k) + '</th>' + cell(r.n) + cell(r.dl) + cell(r.send) + cell(r.call) + cell(r.text) + cell(r.lead)
+        + '<td class="num">' + (r.n >= 10 ? '<b>' + Math.round(100 * x.a / r.n) + '</b>' : '<span class="quiet">too few</span>') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    var idle = all.length - used.length;
+    return h + '<p class="quiet" style="margin:.45rem 0 0">All the tools: <b>' + visits + '</b> visits, <b>' + acts + '</b> actions'
+      + (used.length > 20 ? ' \\u00b7 ' + (used.length - 20) + ' more tools had visits' : '') + (idle ? ' \\u00b7 ' + idle + ' tools had none' : '')
+      + '. An action is a download, a link sent to a computer, a Call or Text tap, or an enquiry form on that tool\\u2019s page.</p></div>';
+  }
   function nxlCountry(cc) {   // "GB" -> "United Kingdom"; the tally's "Unknown" -> "Not known"
     if (!cc || cc === 'Unknown') return 'Not known';
     try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
@@ -30576,6 +30614,7 @@ def write_portal_page():
       + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
           return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';
         }) + '</div>' : '');
+    if (site === 'all' || site === 't365') h += nxlToolsHtml(per);
     h += '<div class="nx-lvstg">'
       + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) {
           // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local
@@ -34585,6 +34624,14 @@ def write_portal_page():
     # real values first (they belong in the hash - a changed download URL must roll the
     # id); only the self-referential P365BUILD/P365DATE placeholders stay out of it
     html = html.replace("__SOSDLWIN__", SOS_DL_WIN).replace("__SOSDLAND__", SOS_DL_ANDROID).replace("__SOSDLMAC__", SOS_DL_MAC).replace("__SOSDLIOS__", SOS_DL_IOS).replace("__SOSMOBILE__", "true" if SOS_MOBILE else "false").replace("__SOSMAC__", "true" if SOS_MAC else "false")
+    # 14 Oct 2026: the free tools for the Live view's "what visitors did next" table - from the one TOOLS registry
+    # (build_pages), site addresses only, each once, names as plain text
+    import html as _nxl_html
+    _nxl_tools, _nxl_seen = [], set()
+    for _k, (_n, _h, _b) in bp.TOOLS.items():
+        if _h.startswith('/') and '#' not in _h and _h not in _nxl_seen:
+            _nxl_seen.add(_h); _nxl_tools.append([_h, _nxl_html.unescape(re.sub(r'<[^>]+>', '', _n))])
+    html = html.replace("__NXLTOOLS__", _json_pcm.dumps(_nxl_tools).replace("</", "<\\/"))
     bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
     date_label = _dt.date.today().strftime("%d %b %Y")
     old_path = _os.path.join(d, "index.html")

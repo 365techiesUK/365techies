@@ -378,6 +378,43 @@ function vis_period(array $store, array $days, $site) {
         'dv' => vis_top($sum['dv'], 3), 'br' => vis_top($sum['br'], 8), 'src' => vis_top($sum['src'], 10),
         'known' => array_sum($sum['dv']));   // visitors whose device is known (the share the device lists cover)
 }
+// 14 Oct 2026 (the AI-brief review, item 2: "measure tool -> action"): for each page in $paths (the portal sends the
+// free tools' addresses from the TOOLS registry), on 365techies.co.uk over $days: visitors (each once a day), and what
+// they then did ON that page - downloads (/~dl/<app><page>), links sent to a computer (/~send/<app><page>), Call and
+// Text taps and enquiry forms (/~call<page>, /~text<page>, /~lead<page>). Same daily store; no new tracking. A page
+// a busy day folded into "Other" (500-page cap) counts 0 for that day.
+function vis_path_acts(array $store, array $days, $site, array $paths) {
+    $rows = array();
+    foreach ($paths as $p) $rows[$p] = array('k' => $p, 'n' => 0, 'dl' => 0, 'send' => 0, 'call' => 0, 'text' => 0, 'lead' => 0);
+    foreach ($days as $day) {
+        if (!isset($store['days'][$day][$site]['pages']) || !is_array($store['days'][$day][$site]['pages'])) continue;
+        $pg = $store['days'][$day][$site]['pages'];
+        $get = function ($k) use ($pg) { return isset($pg[$k]) ? (int)$pg[$k] : 0; };
+        foreach ($paths as $p) {
+            $rows[$p]['n'] += $get($p);
+            foreach (array('pcm', 't1') as $app) { $rows[$p]['dl'] += $get('/~dl/' . $app . $p); $rows[$p]['send'] += $get('/~send/' . $app . $p); }
+            $rows[$p]['call'] += $get('/~call' . $p); $rows[$p]['text'] += $get('/~text' . $p); $rows[$p]['lead'] += $get('/~lead' . $p);
+        }
+    }
+    return array_values($rows);
+}
+// the request's list of paths, made safe: site paths only ("/x/y/"), no duplicates, at most 150
+function vis_clean_paths($paths) {
+    $out = array();
+    if (!is_array($paths)) return $out;
+    foreach ($paths as $p) {
+        if (!is_string($p) || !preg_match('#^/[A-Za-z0-9/_\-]{0,150}$#', $p) || isset($out[$p])) continue;
+        $out[$p] = true;
+        if (count($out) >= 150) break;
+    }
+    return array_keys($out);
+}
+// the last 7 and 30 days (today included), as vis_stats counts them
+function vis_path_stats(array $store, $now, array $paths) {
+    $d7 = array(); $d30 = array();
+    for ($i = 0; $i < 30; $i++) { $dk = gmdate('Y-m-d', $now - $i * 86400); $d30[] = $dk; if ($i < 7) $d7[] = $dk; }
+    return array('d7' => vis_path_acts($store, $d7, 't365', $paths), 'd30' => vis_path_acts($store, $d30, 't365', $paths));
+}
 function vis_stats(array $store, $now) {
     $today = gmdate('Y-m-d', $now);
     $per = array('today' => array($today), 'd7' => array(), 'd30' => array());

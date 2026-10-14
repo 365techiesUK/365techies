@@ -202,5 +202,20 @@ $r0 = $sh['sites']['t365']['rows'][0]; $r1 = $sh['sites']['t365']['rows'][1];
 check($r0['dc'] === true && strpos($r0['org'], 'Amazon.com, Inc.script') === 0 && strlen($r0['org']) === 40 && $sh['sites']['t365']['auto'] === 1, 'vis_shape: the flag, a bounded network name and the count ride through', json_encode($r0));
 check($r1['dc'] === false && $r1['org'] === '', 'vis_shape: a person\'s network is never passed on', json_encode($r1));
 
+echo "J  free tools: visitors and what they did next on each (14 Oct 2026)\n";
+$now = time(); $dA = gmdate('Y-m-d', $now); $dB = gmdate('Y-m-d', $now - 10 * 86400); $dC = gmdate('Y-m-d', $now - 40 * 86400);
+$ts = array('days' => array(
+    $dA => array('t365' => array('pages' => array('/computer-spec-checker/' => 5, '/~dl/pcm/computer-spec-checker/' => 2, '/~send/pcm/computer-spec-checker/' => 1,
+        '/~call/computer-spec-checker/' => 1, '/website-checker/' => 3, '/~lead/website-checker/' => 1)),
+        'ccb' => array('pages' => array('/computer-spec-checker/' => 9))),
+    $dB => array('t365' => array('pages' => array('/computer-spec-checker/' => 4, '/~dl/t1/computer-spec-checker/' => 1, '/~text/computer-spec-checker/' => 2))),
+    $dC => array('t365' => array('pages' => array('/computer-spec-checker/' => 50)))));
+$ps = vis_path_stats($ts, $now, array('/computer-spec-checker/', '/website-checker/', '/pc-benchmark/'));
+check($ps['d7'][0] == array('k' => '/computer-spec-checker/', 'n' => 5, 'dl' => 2, 'send' => 1, 'call' => 1, 'text' => 0, 'lead' => 0), '7 days: the spec checker\'s visitors and what they did; another site never counts', json_encode($ps['d7'][0]));
+check($ps['d30'][0]['n'] === 9 && $ps['d30'][0]['dl'] === 3 && $ps['d30'][0]['text'] === 2, '30 days adds the older day (both apps\' downloads) and leaves out day 40', json_encode($ps['d30'][0]));
+check($ps['d7'][1]['n'] === 3 && $ps['d7'][1]['lead'] === 1 && $ps['d7'][2]['n'] === 0, 'a form sent from the website checker; a tool nobody visited reads 0', json_encode($ps['d7']));
+check(vis_clean_paths(array('/a/', '/a/', 'http://e/', '/b c/', 5, '/ok-path_1/', '')) === array('/a/', '/ok-path_1/') && vis_clean_paths(null) === array(), 'the request\'s paths cleaned: site paths only, no duplicates', json_encode(vis_clean_paths(array('/a/', '/a/', 'http://e/', '/b c/', 5, '/ok-path_1/', ''))));
+check(vis_path_stats(array(), $now, array('/x/'))['d30'][0]['n'] === 0, 'no statistics yet: zeros, never an error');
+
 echo "\n" . ($fails ? "visitors-tally-test: $fails FAILED\n" : "visitors-tally-test: all passed\n");
 exit($fails ? 1 : 0);

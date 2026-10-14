@@ -769,9 +769,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 14 Oct 2026 &middot; 6eff47119b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 14 Oct 2026 &middot; b0e468b631</p><script>
 (function () {
-  var P365BUILD = '6eff47119b';
+  var P365BUILD = 'b0e468b631';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -2011,9 +2011,17 @@
   #p365app .nx-lvstnote, .p365ov .nx-lvstnote { margin:.9rem 0 0; font-size:.9rem; color:#7f95a8; }
   
   #p365app .nx-lvcc-h, .p365ov .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
+  #p365app .nx-lvcc-h span, .p365ov .nx-lvcc-h span { font-weight:400; font-size:.85rem; color:#7f95a8; }
   #p365app .nx-lvstg--3, .p365ov .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
   
   #p365app .nx-lvk--acts, .p365ov .nx-lvk--acts { margin:.2rem 0 .8rem; grid-template-columns:repeat(5,minmax(0,1fr)); }
+  #p365app .nx-lvtools, .p365ov .nx-lvtools { margin:.6rem 0 1.1rem; }
+  #p365app .nx-lvtools__scroll, .p365ov .nx-lvtools__scroll { overflow-x:auto; }
+  #p365app .nx-lvtools table, .p365ov .nx-lvtools table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  #p365app .nx-lvtools th, #p365app .nx-lvtools td, .p365ov .nx-lvtools th, .p365ov .nx-lvtools td { padding:.45rem .6rem; border-bottom:1px solid #1f2c4a; text-align:left; white-space:nowrap; }
+  #p365app .nx-lvtools thead th, .p365ov .nx-lvtools thead th { color:#9fb5d3; font-weight:500; font-size:.8rem; }
+  #p365app .nx-lvtools tbody th, .p365ov .nx-lvtools tbody th { white-space:normal; font-weight:500; min-width:11rem; }
+  #p365app .nx-lvtools .num, .p365ov .nx-lvtools .num { text-align:right; }
   #p365app .nx-lvact, .p365ov .nx-lvact { margin:0 0 1rem; }
   #p365app .nx-lvact h3, .p365ov .nx-lvact h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; }
   #p365app .nx-lvtag--act, .p365ov .nx-lvtag--act { border:1px solid #6b5320; color:#ffc940; font-style:normal; }
@@ -6125,6 +6133,9 @@
   // rough (from each visitor's internet provider); "Dorset & around" = BH, DT, SO and SP postcodes. No names, no cookies.
   var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false,
     st: null, stAt: 0, stBusy: false, per: 'd7', cc: '' };   // 29 Sep 2026: the statistics (where the views come from), the period and the country shown
+  // 14 Oct 2026: every free tool's address + name (TOOLS in build_pages, swapped in by write_portal_page) - the
+  // statistics answer what visitors did next on each (api/visitors-stats.php paths -> tools.d7 / tools.d30)
+  var NXL_TOOLS = [["/website-checker/", "Website Checker"], ["/email-security-checker/", "Email Security Checker"], ["/password-breach-checker/", "Password Breach Checker"], ["/password-generator/", "Password Generator"], ["/password-strength-checker/", "Password Strength Checker"], ["/what-websites-know/", "Privacy Checker"], ["/link-safety-checker/", "Link Safety Checker"], ["/spot-the-scam/", "Spot the Scam Quiz"], ["/broadband-speed-checker/", "Live Broadband Speed Test"], ["/wifi-signal-test/", "365 WiFi Optimizer"], ["/van-signal-map/", "Campervan Signal Map"], ["/fuel-prices/", "UK Fuel Prices"], ["/bournemouth/live-map/", "Bournemouth Live Map"], ["/mobile-signal-check/", "Mobile Signal Check"], ["/wifi-qr-code-generator/", "Wi-Fi QR Code Generator"], ["/qr-code-generator/", "QR Code Generator"], ["/email-signature-generator/", "Email Signature Generator"], ["/ssl-checker/", "SSL Certificate Checker"], ["/domain-expiry-checker/", "Domain Expiry Checker"], ["/solar-battery-calculator/", "Battery & Solar Calculator"], ["/webcam-mic-test/", "Webcam & Mic Test"], ["/keyboard-test/", "Keyboard & Mouse Test"], ["/speaker-and-headphone-test/", "Speaker & Headphone Test"], ["/refresh-rate-test/", "Refresh Rate Test"], ["/dead-pixel-test/", "Dead Pixel Test"], ["/visual-timer/", "Visual Timer"], ["/dementia-clock/", "Dementia Clock"], ["/victron-system-builder/", "Victron System Builder"], ["/custom-pc-builder/", "Custom PC Builder"], ["/dns-lookup/", "DNS Lookup"], ["/how-much-does-it-cost-to-run-a-pc-uk/", "PC Running Cost Calculator"], ["/pc-benchmark/", "PC Benchmark"], ["/it-health-check-tool/", "IT Health Check Tool"], ["/free-pc-health-check/", "365 PC Manager app"], ["/computer-fault-checker/", "Computer Fault Checker"], ["/repair-or-replace-advisor/", "Repair or Replace?"], ["/windows-10-end-of-life/", "Windows 10 End of Life"], ["/cost-calculator/", "Cost Calculator"], ["/plan-finder/", "Plan Finder"], ["/quick-quote/", "Quick Quote"], ["/downtime-cost-calculator/", "Downtime Cost Calculator"], ["/which-microsoft-365-plan/", "Which Microsoft 365 Plan?"], ["/coverage-checker/", "Coverage Checker"], ["/broadband-checker/", "Broadband Switch Checker"], ["/what-would-you-lose/", "What Would You Lose?"], ["/ai-roi-calculator/", "AI ROI Calculator"], ["/server-or-cloud-picker/", "Server or Cloud?"], ["/is-it-down/", "Is It Down?"], ["/computer-spec-checker/", "PC Hardware Checker"], ["/graphics-card-benchmark/", "Graphics Card Benchmark"], ["/online-safety-course/", "Free Online Safety Course"], ["/free-courses/", "Free Online Courses (13)"]];
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
@@ -6342,7 +6353,7 @@
     if (!document.getElementById('nxLvSt') || NXL.stBusy) return;
     if (!force && NXL.stAt && Date.now() - NXL.stAt < 300000) return;
     NXL.stBusy = true;
-    fetch('/api/visitors-stats.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
+    fetch('/api/visitors-stats.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stoken: S.stoken, machine: mid(), paths: NXL_TOOLS.map(function (t) { return t[0]; }) }) })
       .then(function (r) { return r.json(); })
       .then(function (d) { NXL.st = d; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); })
       .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
@@ -6355,6 +6366,33 @@
     return out.length ? out.join(' \u00b7 ') : (withNone ? 'No calls, texts, forms or downloads' : '');
   }
   function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
+  // 14 Oct 2026 (AI-brief review, item 2): each free tool - its visitors, then what they did ON that tool's page
+  // (stats answer tools.d7 / tools.d30). "Today" shows 7 days: one day is too few to judge a tool.
+  function nxlToolsHtml(per) {
+    var tt = NXL.st && NXL.st.tools; if (!tt) return '';
+    var key = per === 'd30' ? 'd30' : 'd7';
+    var all = (tt[key] || []).map(function (r) { return { r: r, a: (r.dl || 0) + (r.send || 0) + (r.call || 0) + (r.text || 0) + (r.lead || 0) }; });
+    var used = all.filter(function (x) { return x.r.n > 0 || x.a > 0; }).sort(function (x, y) { return (y.r.n - x.r.n) || (y.a - x.a); });
+    var names = {}; NXL_TOOLS.forEach(function (t) { names[t[0]] = t[1]; });
+    var visits = 0, acts = 0; used.forEach(function (x) { visits += x.r.n; acts += x.a; });
+    var h = '<div class="nx-lvtools"><h3 class="nx-lvcc-h">Free tools: what visitors did next <span>' + (key === 'd30' ? 'the last 30 days' : 'the last 7 days')
+      + ' \u00b7 each visitor once a day</span></h3>';
+    if (!used.length) return h + '<p class="quiet">No visits to the free tools in that time.</p></div>';
+    var cell = function (n) { return '<td class="num">' + (n ? '<b>' + n + '</b>' : '<span class="quiet">0</span>') + '</td>'; };
+    h += '<div class="nx-lvtools__scroll"><table><thead><tr><th scope="col">Tool</th><th scope="col" class="num">Visitors</th><th scope="col" class="num">Downloads</th>'
+      + '<th scope="col" class="num">Sent to a computer</th><th scope="col" class="num">Calls</th><th scope="col" class="num">Texts</th><th scope="col" class="num">Forms</th>'
+      + '<th scope="col" class="num">Actions per 100 visitors</th></tr></thead><tbody>';
+    used.slice(0, 20).forEach(function (x) {
+      var r = x.r;
+      h += '<tr><th scope="row">' + esc(names[r.k] || r.k) + '</th>' + cell(r.n) + cell(r.dl) + cell(r.send) + cell(r.call) + cell(r.text) + cell(r.lead)
+        + '<td class="num">' + (r.n >= 10 ? '<b>' + Math.round(100 * x.a / r.n) + '</b>' : '<span class="quiet">too few</span>') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    var idle = all.length - used.length;
+    return h + '<p class="quiet" style="margin:.45rem 0 0">All the tools: <b>' + visits + '</b> visits, <b>' + acts + '</b> actions'
+      + (used.length > 20 ? ' \u00b7 ' + (used.length - 20) + ' more tools had visits' : '') + (idle ? ' \u00b7 ' + idle + ' tools had none' : '')
+      + '. An action is a download, a link sent to a computer, a Call or Text tap, or an enquiry form on that tool\u2019s page.</p></div>';
+  }
   function nxlCountry(cc) {   // "GB" -> "United Kingdom"; the tally's "Unknown" -> "Not known"
     if (!cc || cc === 'Unknown') return 'Not known';
     try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
@@ -6397,6 +6435,7 @@
       + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
           return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';
         }) + '</div>' : '');
+    if (site === 'all' || site === 't365') h += nxlToolsHtml(per);
     h += '<div class="nx-lvstg">'
       + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) {
           // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local

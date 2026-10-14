@@ -19,4 +19,9 @@ if (!vis_staff_ok($in, __DIR__)) { http_response_code(403); echo json_encode(arr
 
 $store = @json_decode((string)@file_get_contents(__DIR__ . '/visitors-stats.json'), true);
 if (!is_array($store)) $store = array();
-echo json_encode(vis_stats($store, time()));
+$out = vis_stats($store, time());
+// 14 Oct 2026: {paths: [...]} (the portal sends the free tools' addresses) -> tools.d7 / tools.d30: per page, visitors
+// and what they then did there (vis_path_stats). Absent = the answer is exactly as before.
+$paths = vis_clean_paths(isset($in['paths']) ? $in['paths'] : null);
+if ($paths) $out['tools'] = vis_path_stats($store, time(), $paths);
+echo json_encode($out);
