@@ -42,6 +42,8 @@ def _machines(dell_machines):
 def units(dell_machines):
     """shop_stock.UNITS, checked and filled in. A mistake stops the build: a wrong price or a missing photo must never go live."""
     mach = _machines(dell_machines)
+    for k, v in S.SHOP_MODELS.items():   # 14 Oct 2026: models in stock that the site's picker doesn't carry (OptiPlex 3060)
+        mach.setdefault(k, dict(v, shop_only=True))
     seen, out = set(), []
     for raw in S.UNITS:
         u = dict(raw)
@@ -69,8 +71,11 @@ def units(dell_machines):
         u["name"] = "Dell %s (Grade %s)" % (m["name"], u.get("grade", "?"))
         if u["status"] == "test":
             u["name"] = "TEST LISTING - Dell %s" % m["name"]
+        u.setdefault("screen", ""); u.setdefault("form", "")
+        # what you see of it: a laptop's screen, a desktop's case (Micro / SFF / Tower)
+        u["look"] = u["screen"] if u["kind"] == "laptop" else u["form"]
         if u["status"] in ("live", "sold"):
-            for f in ("cpu", "ram", "screen", "windows", "charger"):
+            for f in ("cpu", "ram", "windows", "charger", "screen" if u["kind"] == "laptop" else "form"):
                 if not str(u.get(f, "")).strip():
                     raise bad("%s is empty" % f)
             if u.get("grade") not in S.GRADES:
@@ -82,6 +87,11 @@ def units(dell_machines):
             for p in u["photos"]:
                 if not os.path.isfile(os.path.join(_BASE, "images", "shop", uid, p)):
                     raise bad("photo images/shop/%s/%s is missing" % (uid, p))
+        sd = os.path.join(_BASE, "images", "shop", uid)
+        nspin = 0
+        while os.path.isfile(os.path.join(sd, "spin_%02d.webp" % nspin)):
+            nspin += 1
+        u["spin"] = nspin if nspin >= 12 else 0      # shop_spin.py makes 36; a stray frame or two is not a 360 view
         cf = os.path.join(_BASE, "shop_checks", uid + ".json")
         u["check"] = json.load(open(cf, encoding="utf-8")) if os.path.isfile(cf) else None
         u["slug"] = HUB + "/" + uid
@@ -99,13 +109,14 @@ def live(us):
 def _feed_title(u):
     m = u["m"]
     t = "Refurbished Dell %s %s, %s, %s RAM, New 1TB Samsung SSD, %s - Grade %s" % (
-        m["name"], u["screen"].split(" (")[0], re.sub(r"\s*\(.*\)$", "", u["cpu"]), u["ram"], u["windows"], u.get("grade", ""))
+        m["name"], u["look"].split(" (")[0], re.sub(r"\s*\(.*\)$", "", u["cpu"]), u["ram"], u["windows"], u.get("grade", ""))
     return t[:150]
 
 
 def _feed_desc(u):
     bits = ["Professionally refurbished Dell %s %s, checked, cleaned and tested by 365 Techies in Bournemouth." % (u["m"]["name"], u["kind"])]
-    bits.append("%s, %s RAM, a brand-new 1TB Samsung 990 PRO SSD, %s screen, %s set up and ready to use." % (u["cpu"], u["ram"], u["screen"], u["windows"]))
+    look = ("%s screen" % u["screen"]) if u["kind"] == "laptop" else ("%s case" % u["form"])
+    bits.append("%s, %s RAM, a brand-new 1TB Samsung 990 PRO SSD, %s, %s set up and ready to use." % (u["cpu"], u["ram"], look, u["windows"]))
     bits.append("Grade %s: %s" % (u.get("grade", ""), S.GRADES.get(u.get("grade"), "")))
     if u["kind"] == "laptop":
         bits.append("Battery health %s." % u.get("battery", ""))
@@ -371,7 +382,7 @@ def _hub_content(us, task_head, bc, faq_html):
         cards.append(
             f'          <a class="shoph__item" href="/{HUB}/{u["id"]}/" data-unit="{u["id"]}"' + (f' data-state="{st}"' if st else "") + '>\n'
             f'            <div class="shoph__img">' + (f'<img src="{img}" alt="{_e(u["name"])}" width="400" height="300" loading="lazy" decoding="async">' if img else "") + '</div>\n'
-            f'            <div class="shoph__body"><h3>{_e(u["name"])}</h3><p>{_e(u["screen"])}</p><p>{specs}</p><p>{extra}</p>\n'
+            f'            <div class="shoph__body"><h3>{_e(u["name"])}</h3><p>{_e(u["look"])}</p><p>{specs}</p><p>{extra}</p>\n'
             f'              <div class="shoph__row"><b>&pound;{u["price"]}</b><span class="shoph__badge">' + ("Sold" if st else "In stock") + '</span></div></div>\n'
             '          </a>')
     if on:
@@ -447,9 +458,18 @@ def _check_card(u):
     return "\n".join(parts)
 
 
-def _unit_content(u, task_head, bc_sub):
+def _unit_content(u, task_head, bc_sub, spin_viewer=None, spin_sets=None):
     m = u["m"]
     test = u["status"] == "test"
+    # 14 Oct 2026: a turntable video made a full turn of frames (shop_spin.py) -> the site's own drag-to-turn viewer
+    spin_html = ""
+    if u.get("spin") and spin_viewer and spin_sets is not None:
+        spin_sets[u["id"]] = {"dir": "/images/shop/%s/" % u["id"], "frames": u["spin"], "w": 1400, "h": 787,
+                              "alt": "%s, seen from the front" % u["name"],
+                              "aria": "%s photographed from %d angles around a full turn. Use the left and right arrow keys to turn it." % (u["name"], u["spin"])}
+        spin_html = spin_viewer(u["id"], "// 360&deg; VIEW", "Turn it round",
+                                "This exact machine, filmed all the way round on our turntable. Drag it, or use the arrows.",
+                                "%s, the machine you&rsquo;d receive." % _e(u["name"]), section_class="section") + "\n"
     crumbs = bc_sub("Refurbished Dell for sale", "/%s/" % HUB, _e(u["name"]))
     lede = ("One real machine, photographed here: %s, %s RAM and a brand-new 1TB Samsung SSD. &pound;%d plus &pound;%d UK delivery."
             % (_e(u["cpu"]), _e(u["ram"]), u["price"], 0 if test else S.DELIVERY_GBP)) if not test else "Our own test listing. Please don&rsquo;t buy it."
@@ -462,7 +482,7 @@ def _unit_content(u, task_head, bc_sub):
             for i, p in enumerate(u["imgs"], 1)) if len(u["imgs"]) > 1 else ""
     else:
         main, thumbs = '<div class="shopu__ph">TEST LISTING<br>no photo</div>', ""
-    rows = [("Processor", u["cpu"]), ("Memory", u["ram"]), ("Storage", S.SSD), ("Screen", u["screen"]), ("Windows", u["windows"]),
+    rows = [("Processor", u["cpu"]), ("Memory", u["ram"]), ("Storage", S.SSD), ("Screen" if u["kind"] == "laptop" else "Case", u["look"]), ("Windows", u["windows"]),
             ("Condition", "Grade %s: %s" % (u.get("grade", ""), S.GRADES.get(u.get("grade"), "")))]
     if u["kind"] == "laptop":
         rows.append(("Battery health", u.get("battery", "")))
@@ -495,6 +515,10 @@ def _unit_content(u, task_head, bc_sub):
           </div>
         </div>
         <div class="shop__card shopu__done" id="shopdone" hidden aria-live="polite"></div>
+      </div>
+    </section>
+{spin_html}    <section class="shop" aria-label="About this machine">
+      <div class="shop__in">
         <div class="shop__card">
           <h2>This machine</h2>
           <table class="shopu__spec">
@@ -502,7 +526,7 @@ def _unit_content(u, task_head, bc_sub):
 {spec}
             </tbody>
           </table>
-          <p class="shop__small">Ports, screen connections and upgrade options for the {_e(m["name"])}: <a href="{m["href"]}#{u["model"]}">full model details</a>.</p>
+          <p class="shop__small">Ports, screen connections and upgrade options for the {_e(m["name"])}: <a href="{m["href"]}{"" if m.get("shop_only") else "#" + u["model"]}">{"the " + _e(m["series"]) + " range" if m.get("shop_only") else "full model details"}</a>.</p>
         </div>
 {_check_card(u)}
         <div class="shop__card">
@@ -551,7 +575,7 @@ def _unit_schema_nodes(u):
              "image": [SITE + i for i in u["imgs"]], "offers": offer}]
 
 
-def build(add, dell_machines, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub, webpage, faqpage):
+def build(add, dell_machines, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub, webpage, faqpage, spin_viewer=None, spin_sets=None):
     """Register the pages and write the server's catalogue. Returns the checked machines (for instock_band)."""
     us = units(dell_machines)
     write_catalogue(us)
@@ -577,7 +601,7 @@ def build(add, dell_machines, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub,
         add(slug=u["slug"], title=("%s | 365 Techies" % u["name"])[:70], desc=d, og_title=u["name"],
             og_image=(SITE + u["imgs"][0]) if u["imgs"] else None,
             # one machine sells and is gone: never in search or llms.txt (Google Shopping finds it through the feed)
-            schema=unit_schema, content=_unit_content(u, bp.task_head, bc_sub), robots="noindex,follow", nosearch=True)
+            schema=unit_schema, content=_unit_content(u, bp.task_head, bc_sub, spin_viewer, spin_sets), robots="noindex,follow", nosearch=True)
     return us
 
 

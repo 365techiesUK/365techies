@@ -63,7 +63,17 @@ if ($do === 'capture') {
         $mailed = shop_send_email($info, $u, $cat);
         $posted = shop_slack($info, $u);
         shop_log($state . "\t" . $info['unit'] . "\torder " . $info['order'] . "\t" . ($mailed ? 'emailed' : 'EMAIL FAILED') . "\t" . ($posted ? 'slack' : 'SLACK FAILED'));
-        sho(array('ok' => true, 'state' => $state, 'email' => $info['email'], 'mailed' => $mailed));
+        // 14 Oct 2026: then the sale goes into QuickBooks (shop-books-lib.php) - AFTER the buyer has their answer, so a slow
+        // QuickBooks never keeps them waiting; if it can't go in, the staff portal's shop card says why and offers a retry
+        $body = json_encode(array('ok' => true, 'state' => $state, 'email' => $info['email'], 'mailed' => $mailed), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        http_response_code(200); header('Content-Length: ' . strlen($body)); header('Connection: close');
+        echo $body;
+        if (function_exists('fastcgi_finish_request')) fastcgi_finish_request(); else { @ob_end_flush(); @flush(); }
+        ignore_user_abort(true);
+        require_once __DIR__ . '/shop-books-lib.php';
+        $qr = shop_books_after_sale($info, $u);
+        shop_log("quickbooks\t" . $info['unit'] . "\t" . ($qr[0] ? 'ok ' . $qr[1] : 'not yet: ' . $qr[1]));
+        exit;
     }
     if ($state === 'had') sho(array('ok' => true, 'state' => 'had', 'email' => (string)($info['email'] ?? '')));
     if ($state === 'refused' || $state === 'busy') shop_log("capture\t" . $state . "\t" . (is_string($info) ? $info : ''));

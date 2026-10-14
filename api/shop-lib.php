@@ -58,7 +58,8 @@ function shop_holder($t) { $t = strtolower((string)$t); return preg_match('/^[a-
 /* ---- the server's own file: held, sold, orders, sales ------------------------------------------------------------------- */
 function shop_norm($d) {
     if (!is_array($d)) $d = array();
-    foreach (array('u', 'o', 'sales') as $k) if (!isset($d[$k]) || !is_array($d[$k])) $d[$k] = array();
+    // books (14 Oct 2026, shop-books-lib.php): per machine, what it cost and its QuickBooks entries; qbo: the setup's ids
+    foreach (array('u', 'o', 'sales', 'books', 'qbo') as $k) if (!isset($d[$k]) || !is_array($d[$k])) $d[$k] = array();
     return $d;
 }
 function shop_read() { return shop_norm(@json_decode((string)@file_get_contents(SHOP_STATE), true)); }
@@ -217,6 +218,8 @@ function shop_capture($cr, $orderId, $api = 'pp_api', $now = null, $cat = null) 
         if (!$s2['lines']) $s2['lines'] = $ship['lines'];
         $sale = array('at' => $now, 'unit' => $id, 'ed' => (int)$o['ed'], 'order' => $orderId, 'capture' => (string)($cap['id'] ?? ''),
             'status' => strtolower($cst), 'amt' => $o['amt'], 'price' => $o['price'], 'del' => $o['del'], 'env' => (string)$cr['env'],
+            // PayPal's fee, as PayPal reports it on the capture (for the machine's profit in the staff portal)
+            'fee' => (string)($cap['seller_receivable_breakdown']['paypal_fee']['value'] ?? ''),
             'name' => $s2['name'], 'email' => $s2['email'], 'phone' => $s2['phone'], 'lines' => $s2['lines'], 'postcode' => $s2['postcode']);
         $d['u'][$k] = array('st' => 'sold', 'order' => $orderId, 'at' => $now);
         $d['sales'][] = $sale;

@@ -10048,7 +10048,8 @@ def _dell_hub_machines(ids):
 # price and PayPal's buttons, a list page, and the server's catalogue (api/shop-catalogue.php) - all from shop_stock.py
 # (shop_pages.py builds them; api/shop.php sells; api/shop-feed.php is Google Merchant Center's feed).
 import shop_pages as _shop
-_SHOP_UNITS = _shop.build(add, DELL_MACHINES, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub, webpage, faqpage)
+_SHOP_UNITS = _shop.build(add, DELL_MACHINES, bp, bc, bc_sub, faq_html, graph, crumb, crumb_sub, webpage, faqpage,
+                          spin_viewer=spin_viewer, spin_sets=SPIN_SETS)   # each machine's turntable 360 (shop_spin.py)
 
 
 def dell_hardware():
@@ -26026,6 +26027,13 @@ def write_portal_page():
   #p365app .plus-log summary { cursor:pointer; min-height:44px; display:flex; align-items:center; }
   #p365app .plus-log ul { margin:.2rem 0 0; padding-left:1.1rem; font-size:.9rem; }
   #p365app .plus-log li { margin:.15rem 0; overflow-wrap:anywhere; }
+  /* the refurbished Dells for sale and their QuickBooks entries (14 Oct 2026, api/shop-admin.php) */
+  #p365app .shop-setup { margin:.2rem 0 .8rem; padding:.7rem .85rem; border:1px solid var(--pline); border-radius:10px; }
+  #p365app .shop-tbl td { vertical-align:top; }
+  #p365app .shop-acts td { border-top:0; padding-top:0; }
+  #p365app .shop-acts .sm { margin:.15rem .3rem .15rem 0; }
+  #p365app .shop-cost { margin:.5rem 0 .2rem; }
+  #p365app .shop-cost .plus-row input { flex:1 1 9rem; }
   #p365app .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input { flex:1 1 auto; min-width:0; }
   #p365app .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
@@ -30218,7 +30226,8 @@ def write_portal_page():
         // PC Manager installs card - they were landing at the bottom of Today because this list didn't know them
         appcmp = cardOf('appcmp'), t1inst = cardOf('t1ibox'),
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
-        m365 = cardOf('m365card');   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
+        m365 = cardOf('m365card'),   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
+        shopc = cardOf('shopcard');   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on Invoices
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
     var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
@@ -30258,6 +30267,7 @@ def write_portal_page():
     if (inst) panels.computers.appendChild(inst);
     if (t1inst) panels.computers.appendChild(t1inst);
     if (invq) panels.invoices.appendChild(invq);
+    if (shopc) panels.invoices.appendChild(shopc);
     [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
@@ -30873,6 +30883,8 @@ def write_portal_page():
         + '<div id="geobox"></div></div>';
       // 8 Oct 2026 (owner: "yes do both"): the paid app abroad - its switch (read-only here) and the Unlock keys
       h += '<div class="card" id="pluscard"><h2>\\ud83d\\udd13 Paid app abroad: \\u201cUnlock everything\\u201d</h2><div id="plusbox"><p class="quiet">Loading\\u2026</p></div></div>';
+      // 14 Oct 2026 (owner: eBay purchases into QuickBooks, "full per-machine entries"): the refurbished Dells for sale
+      h += '<div class="card" id="shopcard"><h2>\\ud83d\\udcbb Refurbished Dells for sale</h2><div id="shopbox"><p class="quiet">Loading\\u2026</p></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<button class="sm" id="ncopen">\\u2795 New customer</button>'   // 2 Oct 2026: like Slack's "New job in" (ncOpen)
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
@@ -30905,7 +30917,7 @@ def write_portal_page():
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet(); loadInstalls(); loadT1Installs(); loadPlus(); cmBind(); loadComms('list');
+      loadDiary(); loadFleet(); loadInstalls(); loadT1Installs(); loadPlus(); loadShop(); cmBind(); loadComms('list');
       lookoverFromHash();   // 9 Oct 2026: the Slack card's "Open the report" link
       loadM365(m365FromHash);   // 9 Oct 2026: Microsoft 365 orders (+ the Slack card's "Open the order" link)
       loadSosq();
@@ -33727,6 +33739,103 @@ def write_portal_page():
         if (act === 'revoke' && !window.confirm('Switch this key off? It stops working at its PCs\\u2019 next check-in. You can switch it back on.')) return;
         if (act === 'reissue' && !window.confirm('Make a new key and email it to ' + b.getAttribute('data-plusemail') + '? Their old key stops working (for when a buyer lost the email, or their key got out).')) return;
         b.disabled = true; loadPlus(act, { id: b.getAttribute('data-plusid') });
+      };
+    });
+  }
+  /* ---------- 14 Oct 2026: the refurbished Dells for sale (api/shop-admin.php). Owner: eBay purchases into QuickBooks, "full
+     per-machine entries". Each machine: its state on the website, its online sale, what it cost (the eBay order + the SSD)
+     and its two QuickBooks entries - the purchase (posted from here) and the sale (posted by itself after PayPal takes the
+     payment; a retry button when that couldn't happen). Profit once both halves are known. ---------- */
+  var SHOP = { d: null, busy: false, open: '', acc: null };
+  function loadShop(act, extra) {
+    var box = document.getElementById('shopbox'); if (!box) return;
+    if (SHOP.busy) return; SHOP.busy = !!act;
+    var body = { stoken: S.stoken, machine: mid(), do: act || 'list' }; for (var k in (extra || {})) body[k] = extra[k];
+    post('/api/shop-admin.php', body)
+      .then(function (d) { SHOP.busy = false; if (d && d.accounts) SHOP.acc = d.accounts; SHOP.d = d; renderShop(); })
+      .catch(function () { SHOP.busy = false; SHOP.d = { ok: false }; renderShop(); });
+  }
+  function shopGBP(v) { return (v === null || v === undefined || v === '') ? '' : '&pound;' + esc(String(v)); }
+  function shopRow(id) { return ((SHOP.d && SHOP.d.rows) || []).filter(function (r) { return r.id === id; })[0] || null; }
+  function shopCostForm(r, q) {
+    var p = r.purchase || {};
+    return '<div class="plus-form shop-cost"><div class="plus-row">'
+      + '<input id="shopord" type="text" autocomplete="off" placeholder="eBay order number" aria-label="eBay order number" value="' + esc(p.order || '') + '" />'
+      + '<input id="shopdate" type="date" aria-label="Date bought" value="' + esc(p.date || '') + '" />'
+      + '<input id="shoptot" type="text" inputmode="decimal" autocomplete="off" placeholder="eBay total, &pound;" aria-label="What it cost on eBay, in pounds" value="' + esc(p.total || '') + '" />'
+      + '<input id="shopssd" type="text" inputmode="decimal" autocomplete="off" placeholder="SSD, &pound;" aria-label="What the new SSD cost, in pounds" value="' + esc(p.ssd || q.ssd_default || '') + '" /></div>'
+      + '<p style="margin:.5rem 0 0"><button type="button" class="sm" data-shopact="save" data-unit="' + esc(r.id) + '" data-qbo="' + (q.setup ? '1' : '0') + '">' + (q.setup ? 'Save and put it in QuickBooks' : 'Save') + '</button>'
+      + (q.setup ? ' <button type="button" class="sm ghost" data-shopact="save" data-unit="' + esc(r.id) + '" data-qbo="0">Save here only</button>' : '') + '</p></div>';
+  }
+  function renderShop() {
+    var box = document.getElementById('shopbox'); if (!box) return;
+    var d = SHOP.d;
+    if (!d || !d.ok) { box.innerHTML = '<p class="quiet">' + (d && d.error === 'auth' ? 'Your staff session has expired &mdash; sign out and in again.' : 'Couldn&rsquo;t load the shop &mdash; refresh to retry.') + '</p>'; return; }
+    var q = d.qbo || {};
+    var h = '<p class="quiet" style="margin:0 0 .6rem">The machines on <a href="/refurbished-dell-for-sale/" target="_blank" rel="noopener">the website&rsquo;s shop</a>. Record what each one cost on eBay and it goes into QuickBooks as a purchase; when one sells online, its sale goes into QuickBooks by itself.</p>';
+    if (d.note) h += '<p role="status" style="margin:.3rem 0;color:var(--pgood)">' + esc(d.note) + '</p>';
+    if (d.err) h += '<p class="err" role="alert">' + esc(d.err) + '</p>';
+    if (!q.setup) {
+      h += '<div class="shop-setup"><b>Set QuickBooks up for the shop (once)</b><p class="quiet" style="margin:.2rem 0 .5rem">It makes two accounts (Refurbished computer sales, Refurbished computer stock) and two items (Refurbished computer, Delivery - online orders), and finds or makes the eBay supplier. Nothing else in QuickBooks changes.</p>';
+      if (!SHOP.acc) h += '<button type="button" class="sm" id="shopacc">Choose the accounts</button>';
+      else {
+        var opts = SHOP.acc.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + ' (' + esc(a.type) + ')</option>'; }).join('');
+        h += '<label for="shopdep">PayPal pays your online sales into</label><select id="shopdep">' + opts + '</select>'
+          + '<label for="shoppay">You pay for eBay purchases from</label><select id="shoppay">' + opts + '</select>'
+          + '<p style="margin:.6rem 0 0"><button type="button" class="sm" id="shopsetup">Set QuickBooks up</button></p>';
+      }
+      h += '</div>';
+    }
+    var rows = d.rows || [];
+    if (!rows.length) h += '<p class="quiet">No machines in the shop yet &mdash; each one appears here as soon as it is listed.</p>';
+    else {
+      h += '<div class="tblwrap"><table class="plus-tbl shop-tbl"><tr><th>Machine</th><th>Price</th><th>Status</th><th>Cost (eBay + SSD)</th><th>Sale</th><th>QuickBooks</th><th>Profit</th></tr>';
+      rows.forEach(function (r) {
+        var p = r.purchase, s = r.sale, sq = r.sale_qbo, qb = '';
+        var st = r.state === 'sold' ? (s ? (s.status === 'pending' ? 'Sold &mdash; PayPal still checking the payment' : 'Sold online') : 'Sold another way')
+          : (r.state === 'held' ? 'Being bought right now' : (r.status === 'live' ? 'For sale' : esc(r.status)));
+        var cost = p ? shopGBP(p.total) + ' + ' + shopGBP(p.ssd) + '<br /><span class="quiet">eBay ' + esc(p.order) + ' &middot; ' + esc(p.date) + '</span>'
+          + (p.qbo_differs ? '<br /><span class="err">Changed after it went into QuickBooks (it was &pound;' + esc(p.qbo_differs) + ') &mdash; correct it there</span>' : '')
+          : '<span class="quiet">not recorded yet</span>';
+        var sale = s ? shopGBP(s.amt) + '<br /><span class="quiet">' + esc(s.name) + (s.postcode ? ' &middot; ' + esc(s.postcode) : '') + '</span>' : '&mdash;';
+        if (p && p.qbo_url) qb += '<a href="' + esc(p.qbo_url) + '" target="_blank" rel="noopener">Purchase &#8599;</a>';
+        else if (p && q.setup) qb += '<button type="button" class="sm ghost" data-shopact="pqbo" data-unit="' + esc(r.id) + '">Purchase into QuickBooks</button>';
+        if (s && sq && sq.qbo_url) qb += (qb ? '<br />' : '') + '<a href="' + esc(sq.qbo_url) + '" target="_blank" rel="noopener">Sale &#8599;</a>';
+        else if (s) qb += (qb ? '<br />' : '') + (sq && sq.err ? '<span class="err">' + esc(sq.err) + '</span><br />' : '')
+          + (q.setup ? '<button type="button" class="sm ghost" data-shopact="saleqbo" data-unit="' + esc(r.id) + '">Sale into QuickBooks</button>' : '');
+        h += '<tr><td><a href="/refurbished-dell-for-sale/' + esc(r.id) + '/" target="_blank" rel="noopener"><b>' + esc(r.name) + '</b></a><br /><span class="quiet mono">' + esc(r.id) + (r.edition > 1 ? ' (listing ' + r.edition + ')' : '') + '</span></td>'
+          + '<td>' + shopGBP(r.price) + '</td><td>' + st + '</td><td>' + cost + '</td><td>' + sale + '</td><td>' + (qb || '<span class="quiet">&mdash;</span>') + '</td>'
+          + '<td>' + (r.profit !== null ? '<b>' + shopGBP(r.profit) + '</b>' : '<span class="quiet">&mdash;</span>') + '</td></tr>'
+          + '<tr class="shop-acts"><td colspan="7"><button type="button" class="sm ghost" data-shopact="cost" data-unit="' + esc(r.id) + '">' + (p ? 'Change what it cost' : 'Record what it cost') + '</button>'
+          + (r.state === 'available' ? '<button type="button" class="sm ghost" data-shopact="offline" data-unit="' + esc(r.id) + '">Sold another way</button>' : '')
+          + (r.state === 'sold' && !s ? '<button type="button" class="sm ghost" data-shopact="online" data-unit="' + esc(r.id) + '">Back on sale</button>' : '')
+          + (SHOP.open === r.id ? shopCostForm(r, q) : '') + '</td></tr>';
+      });
+      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; eBay &minus; the SSD &minus; PayPal&rsquo;s fee (the courier isn&rsquo;t in it). Only the eBay cost is posted per machine: the SSDs reach QuickBooks from the bank feed when you buy them.</p>';
+    }
+    box.innerHTML = h;
+    var acc = document.getElementById('shopacc');
+    if (acc) acc.onclick = function () { acc.disabled = true; loadShop('accounts'); };
+    var su = document.getElementById('shopsetup');
+    if (su) su.onclick = function () {
+      if (!window.confirm('Set QuickBooks up for the shop? It makes two accounts and two items, and finds or makes the eBay supplier.')) return;
+      su.disabled = true; loadShop('setup', { deposit: document.getElementById('shopdep').value, pay: document.getElementById('shoppay').value });
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('[data-shopact]'), function (b) {
+      b.onclick = function () {
+        var act = b.getAttribute('data-shopact'), u = b.getAttribute('data-unit');
+        if (act === 'cost') { SHOP.open = SHOP.open === u ? '' : u; renderShop(); return; }
+        if (act === 'save') {
+          var body = { unit: u, order: document.getElementById('shopord').value.trim(), date: document.getElementById('shopdate').value,
+            total: document.getElementById('shoptot').value.trim(), ssd: document.getElementById('shopssd').value.trim(), qbo: b.getAttribute('data-qbo') === '1' };
+          b.disabled = true; SHOP.open = ''; loadShop('purchase', body); return;
+        }
+        if (act === 'pqbo') {
+          var p = (shopRow(u) || {}).purchase || {};
+          b.disabled = true; loadShop('purchase', { unit: u, order: p.order, date: p.date, total: p.total, ssd: p.ssd, qbo: true }); return;
+        }
+        if (act === 'offline' && !window.confirm('Mark it sold? The website stops selling it straight away (for a machine sold on the phone or at a visit).')) return;
+        b.disabled = true; loadShop(act, { unit: u });
       };
     });
   }

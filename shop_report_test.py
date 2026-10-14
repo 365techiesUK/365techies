@@ -106,4 +106,5 @@ check("JANES-LAPTOP" not in hb and "Backup" not in hb and "Uptime" not in hb and
 check(R.row(h, "Windows") == "Windows 11 Pro" and R.row(h, "Make & model") == "Dell Latitude 5520" and R.suggest(h).get("battery") == "91%", "Windows, model and the battery for shop_stock.py")
 
 print("\n" + ("%d FAILED" % fails if fails else "ALL PASSED"))
-raise SystemExit(1 if fails else 0)
+if __name__ == "__main__":   # imported (shop_intake's test borrows SERVICE): report, don't exit
+    raise SystemExit(1 if fails else 0)

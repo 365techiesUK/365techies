@@ -329,10 +329,10 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-paypal-key\.php|pcm-paypal-token\.json|pcm-plus-pp-orders\.json(\..*)?|pcm-plus-pp\.log|pcm-plus-pp-(lib|test)\.php)$">
   Require all denied
 </FilesMatch>
-# Refurbished Dells in stock, bought online (14 Oct 2026): api/shop.php (the pages' buy calls) and api/shop-feed.php (Google
-# Merchant Center's feed) are the URLs. shop-state.json holds which machine is held or sold and each buyer's name, email and
+# Refurbished Dells in stock, bought online (14 Oct 2026): api/shop.php (the pages' buy calls), api/shop-feed.php (Google
+# Merchant Center's feed) and api/shop-admin.php (the staff portal's shop card - staff session, QuickBooks) are the URLs. shop-state.json holds which machine is held or sold and each buyer's name, email and
 # delivery address; shop.log the sales and failures; the library, the build's catalogue and the test are not URLs.
-<FilesMatch "^(shop-state\.json(\..*)?|shop\.log|shop-(lib|catalogue|test)\.php)$">
+<FilesMatch "^(shop-state\.json(\..*)?|shop\.log|shop-(lib|books-lib|catalogue|test|books-test)\.php)$">
   Require all denied
 </FilesMatch>
 # ... and through FastSpring (12 Oct 2026): api/pcm-plus-fs.php is the URL. pcm-fs-secret.php holds the owner's webhook
