@@ -30227,9 +30227,10 @@ def write_portal_page():
         appcmp = cardOf('appcmp'), t1inst = cardOf('t1ibox'),
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
         m365 = cardOf('m365card'),   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
-        shopc = cardOf('shopcard');   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on Invoices
+        shopc = cardOf('shopcard');   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on its own Shop tab
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
-    var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
+    // 14 Oct 2026 (owner: the shop card was "right down the bottom ... you can barely find it"): its own Shop tab
+    var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['shop', 'Shop'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
     bar.innerHTML = '<nav class="nx-stabs" aria-label="Staff sections">' + TABS.map(function (x) { return '<button type="button" class="nx-stab" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav><div class="nx-cons"></div>';
     var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
@@ -30267,7 +30268,7 @@ def write_portal_page():
     if (inst) panels.computers.appendChild(inst);
     if (t1inst) panels.computers.appendChild(t1inst);
     if (invq) panels.invoices.appendChild(invq);
-    if (shopc) panels.invoices.appendChild(shopc);
+    if (shopc) panels.shop.appendChild(shopc);
     [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
