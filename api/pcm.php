@@ -302,6 +302,13 @@ if ($action === 'checkin') {
         if (isset($in['upd'])) $c['machines'][$machine]['upd'] = max(0, min(3650, intval($in['upd'])));
         // app 36.4 (15 Oct 2026): Windows' start-up partition - size in MB, free space in KB. Under 15 MB free the next big
         // Windows update fails ("We couldn't update the system reserved partition"); the portal lists those PCs.
+        // app 36.4: the hottest internal drive (C) against its warning level (its maker's own, else 70 SSD / 55 hard drive),
+        // and whether Windows is slowing the processor for heat. Only an app that read them sends them.
+        if (isset($in['dtemp']) && isset($in['dwarn'])) {
+            $c['machines'][$machine]['dtemp'] = max(0, min(130, intval($in['dtemp'])));
+            $c['machines'][$machine]['dwarn'] = max(30, min(130, intval($in['dwarn'])));
+        }
+        if (isset($in['heatslow'])) $c['machines'][$machine]['heatslow'] = !empty($in['heatslow']) ? 1 : 0;
         if (isset($in['espmb']) && isset($in['espfree'])) {
             $c['machines'][$machine]['espmb'] = max(1, min(100000, intval($in['espmb'])));
             $c['machines'][$machine]['espfree'] = max(0, min(100000000, intval($in['espfree'])));

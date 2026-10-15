@@ -3129,6 +3129,9 @@ if ($action === 'stafffleet') {
                 // next big Windows update will fail before it does
                 'espmb' => isset($m['espmb']) ? (int)$m['espmb'] : -1,
                 'espfree' => isset($m['espfree']) ? (int)$m['espfree'] : -1,
+                'dtemp' => isset($m['dtemp']) ? (int)$m['dtemp'] : -1,
+                'dwarn' => isset($m['dwarn']) ? (int)$m['dwarn'] : -1,
+                'heatslow' => !empty($m['heatslow']),
                 'nn' => isset($pcNotes[$custId . '|' . $mid2]) ? (int)$pcNotes[$custId . '|' . $mid2] : 0,
                 'fresh' => !isset($m['diskpct']));
             if (count($ms) >= 600) break 2;
@@ -3183,6 +3186,8 @@ function staff_pc_detail($db, $k, $pc, $cid2) {
         'wv' => (string)$g('wv', ''), 'sbc' => (string)$g('sbc', ''), 'ofc' => (string)$g('ofc', ''),
         // app 36.4: Windows' start-up partition, size in MB and free space in KB (-1 = not reported)
         'espmb' => isset($m['espmb']) ? (int)$m['espmb'] : -1, 'espfree' => isset($m['espfree']) ? (int)$m['espfree'] : -1,
+        // app 36.4: the hottest drive and its warning level (-1 = not reported), Windows slowing it for heat
+        'dtemp' => isset($m['dtemp']) ? (int)$m['dtemp'] : -1, 'dwarn' => isset($m['dwarn']) ? (int)$m['dwarn'] : -1, 'heatslow' => !empty($m['heatslow']),
         'model' => (string)$g('model', ''), 'drives' => is_array($g('drives', array())) ? $g('drives', array()) : array(),
         'ram' => (int)$g('ram', 0), 'cpu' => (string)$g('cpu', ''), 'dsk' => is_array($g('dsk', array())) ? $g('dsk', array()) : array(), 'upd' => (int)$g('upd', 0),
         'w11' => (string)$g('w11', ''), 'notes' => is_array($g('notes', array())) ? $g('notes', array()) : array(),
@@ -3288,6 +3293,8 @@ if ($action === 'staffpcslack') {
     if ($d['w10']) $warn[] = 'Windows 10';
     if ($d['reboot']) $warn[] = 'restart due';
     if ($d['batt'] > 0 && $d['batt'] < 60) $warn[] = 'battery ' . $d['batt'] . '%';
+    if ($d['dtemp'] > 0 && $d['dwarn'] > 0 && $d['dtemp'] >= $d['dwarn']) $warn[] = 'drive running hot (' . $d['dtemp'] . 'C, limit ' . $d['dwarn'] . 'C)';
+    if ($d['heatslow']) $warn[] = 'slowing down for heat';
     if ($d['espmb'] > 0 && $d['espfree'] >= 0 && $d['espfree'] < 15360) $warn[] = 'start-up partition full (' . ($d['espfree'] < 1024 ? $d['espfree'] . ' KB' : (floor($d['espfree'] / 102.4) / 10) . ' MB') . ' free)';
     $spec = array();
     if ($d['model'] !== '') $spec[] = $d['model'];

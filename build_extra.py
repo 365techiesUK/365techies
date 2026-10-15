@@ -32425,6 +32425,9 @@ def write_portal_page():
     if (m.batt > 0 && m.batt < 60) w.push(['w', 'battery ' + m.batt + '%']);
     // app 36.4: under 15 MB free on Windows' start-up partition the next big Windows update fails (or undoes itself)
     if (espFull(m)) w.push(['w', 'start-up partition full']);
+    // app 36.4: a drive at its warning level, or Windows slowing the processor for heat
+    if (m.dtemp > 0 && m.dwarn > 0 && m.dtemp >= m.dwarn) w.push(['b', 'drive hot ' + m.dtemp + '\\u00b0C']);
+    if (m.heatslow) w.push(['w', 'slowing for heat']);
     if (m.help) w.push(['b', '\\ud83c\\udd98 asked for help ' + seenAgo(m.help)]);
     return w;
   }
@@ -34117,6 +34120,8 @@ def write_portal_page():
     if (d.w10) w.push(['w', 'Windows 10', 'Free security updates ended 14 October 2025' + (d.w11 === 'no' ? ' \\u2014 and this PC can\\u2019t run Windows 11.' : (d.w11 === 'yes' ? ' \\u2014 this PC can run Windows 11.' : '.'))]);
     if (d.reboot) w.push(['w', 'A restart is due', 'Updates are waiting for a restart to finish.']);
     if (d.batt > 0 && d.batt < 60) w.push(['w', 'Battery health ' + d.batt + '%', 'It holds well under its original charge.']);
+    if (d.dtemp > 0 && d.dwarn > 0 && d.dtemp >= d.dwarn) w.push(['b', 'Drive running hot (' + d.dtemp + '\\u00b0C, its limit ' + d.dwarn + '\\u00b0C)', 'A drive this hot wears out sooner: more air (a hard surface, vents clear, a dust clean-out) and an up-to-date backup.']);
+    if (d.heatslow) w.push(['w', 'Windows is slowing it down for heat', 'It needs more air: a hard, flat surface, vents clear, or a dust clean-out.']);
     if (espFull(d)) w.push(['w', 'Start-up partition full (' + espWords(d) + ')', 'The next big Windows update will fail or undo itself until it\\u2019s tidied: remove the foreign-language boot fonts (see /we-couldnt-update-the-system-reserved-partition/).']);
     if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + (d.vn || d.ver) + ')', 'It updates itself when it next restarts.']);
     return w;
@@ -34206,6 +34211,7 @@ def write_portal_page():
       + '<dt>Drives</dt><dd>' + (drives || '<span class="quiet" style="font-size:.85rem">main drive ' + d.disk + '% full</span>') + '</dd>'
       + '<dt>Windows</dt><dd>' + (d.w10 ? 'Windows 10' : 'Windows 11') + (d.wv ? ' ' + esc(d.wv) : '') + (d.w11 === 'no' ? ' \\u00b7 can\\u2019t run 11' : '') + '</dd>'
       + (sbc ? '<dt>Secure Boot</dt><dd>' + sbc + '</dd>' : '')
+      + (d.dtemp > 0 ? '<dt>Temperature</dt><dd>hottest drive ' + d.dtemp + '\\u00b0C (limit ' + d.dwarn + '\\u00b0C)' + (d.heatslow ? ' \\u00b7 <span style="color:var(--pwarn)">Windows slowing it for heat</span>' : '') + '</dd>' : '')
       + (d.espmb > 0 && d.espfree >= 0 ? '<dt>Start-up partition</dt><dd>' + espWords(d) + (espFull(d) ? ' <span style="color:var(--pwarn)">\\u2014 too full for big updates</span>' : '') + '</dd>' : '')
       + (d.ofc ? '<dt>Office</dt><dd>' + pcOfc(d.ofc) + '</dd>' : '')
       + '<dt>Backup</dt><dd>' + esc(bk[1]) + '</dd>'
