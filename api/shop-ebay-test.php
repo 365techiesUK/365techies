@@ -146,6 +146,58 @@ $r = shop_ebay_sweep(true, strtotime('2026-10-20T12:00:00Z'), $get, $connect, $a
 $docs = array_map(function ($p) { return $p['DocNumber']; }, array_slice($QB['Purchase'], $np));
 check(count($r[2]) === 2 && count($docs) === 2 && $docs[0] !== $docs[1] && $docs[0] === 'EB25-15400-22222-0001' && strlen($docs[1]) <= 21, 'each machine gets its own stock item and purchase - neither hides the other behind the order number', $docs);
 
+echo "G  the cost is what the order took from us (15 Oct 2026)\n";
+// eBay's AmountPaid: what we actually paid, eBay's checkout fee included (the first real 5520: 237.74 item + postage, 249.19 paid)
+$paidOrder = function ($id, $created, $total, $paid, $ship, $items) {
+    $tx = ''; $sub = 0;
+    foreach ($items as $i) { $tx .= '<Transaction><Item><ItemID>' . $i[0] . '</ItemID><Title>' . htmlspecialchars($i[1], ENT_XML1) . '</Title></Item><QuantityPurchased>1</QuantityPurchased><TransactionPrice currencyID="GBP">' . $i[2] . '</TransactionPrice></Transaction>'; $sub += (float)$i[2]; }
+    return '<Order><OrderID>' . $id . '</OrderID><OrderStatus>Completed</OrderStatus><Subtotal currencyID="GBP">' . $sub . '</Subtotal><Total currencyID="GBP">' . $total . '</Total>'
+        . ($paid !== '' ? '<AmountPaid currencyID="GBP">' . $paid . '</AmountPaid>' : '')
+        . '<CreatedTime>' . $created . '</CreatedTime><ShippingServiceSelected><ShippingServiceCost currencyID="GBP">' . $ship . '</ShippingServiceCost></ShippingServiceSelected>'
+        . '<TransactionArray>' . $tx . '</TransactionArray></Order>';
+};
+$TOUCH = $paidOrder('23-15132-37787', '2026-09-12T10:00:00.000Z', '237.74', '249.19', '10.55', array(array('336800483290', 'Dell Latitude 5520 15.6" Touchscreen I5-1145G7, 16GB RAM, 512GB NVMe, W11 Pro', '227.19')));
+list($ok, $pp) = shop_ebay_parse($xml($TOUCH));
+check($ok && $pp['orders'][0]['paid'] === 249.19 && $pp['orders'][0]['total'] === 237.74, 'AmountPaid is read beside Total', $pp['orders'][0]);
+$m = shop_ebay_machines($pp['orders'][0]);
+check(count($m) === 1 && $m[0]['cost'] === '249.19', 'one machine: its cost is what we paid (249.19), not item + postage (237.74)', $m);
+list($ok, $pp) = shop_ebay_parse($xml($paidOrder('23-1-1', '2026-10-01T10:00:00.000Z', '237.74', '', '10.55', array(array('1', 'Dell Latitude 5520 i5-1145G7 16GB', '227.19')))));
+check(shop_ebay_machines($pp['orders'][0])[0]['cost'] === '237.74', 'no AmountPaid: the order Total');
+$o3 = array('order' => 'x', 'subtotal' => 0, 'shipping' => 0, 'total' => 0, 'paid' => 0, 'items' => array(array('item' => '9', 'title' => 'Dell Latitude 5520 i5-1145G7 16GB', 'price' => 200.0, 'qty' => 1)));
+check(shop_ebay_machines($o3)[0]['cost'] === '200.00', 'neither: item + postage, as before');
+// three items, a total that doesn't divide evenly: the shares add up to the penny (the bank feed matches the whole order)
+list($ok, $pp) = shop_ebay_parse($xml($paidOrder('26-1-2', '2026-10-21T10:00:00.000Z', '600.00', '631.01', '0.00', array(
+    array('411111111111', 'Dell Latitude 5520 i5-1145G7 16GB 256GB', '200.00'), array('411111111112', 'Dell Latitude 5520 i5-1135G7 16GB 256GB', '200.00'), array('411111111113', 'Dell OptiPlex 7080 SFF i5-10500 16GB', '200.00')))));
+$m = shop_ebay_machines($pp['orders'][0]);
+$sum = array_sum(array_map(function ($x) { return (float)$x['cost']; }, $m));
+check(count($m) === 3 && abs($sum - 631.01) < 0.001 && $m[0]['cost'] === '210.34' && $m[2]['cost'] === '210.33', 'three machines: shared to the penny, adding up to exactly what was paid', $m);
+// a parts line in the order still takes its share - the machine is not charged for the charger
+list($ok, $pp) = shop_ebay_parse($xml($paidOrder('26-1-3', '2026-10-21T10:00:00.000Z', '220.00', '231.00', '0.00', array(
+    array('511111111111', 'Dell Latitude 5520 i5-1145G7 16GB 256GB', '200.00'), array('511111111112', 'Dell 65W USB-C Laptop Charger Adapter', '20.00')))));
+$m = shop_ebay_machines($pp['orders'][0]);
+check(count($m) === 1 && $m[0]['cost'] === '210.00', 'a charger in the same order keeps its own share (210.00 of 231.00)', $m);
+
+// the one-off correction: listed purchases not yet posted to QuickBooks take the right cost; a posted one keeps its own
+$st = shop_read();
+$st['ebay']['ok_at'] = $now; unset($st['ebay']['cost_v']);
+$st['bought']['23-15132-37787#336800483290'] = array('order' => '23-15132-37787', 'item' => '336800483290', 'sku' => '483290', 'title' => 'Dell Latitude 5520 15.6" Touchscreen', 'qty' => 1,
+    'cost' => '237.74', 'model' => 'latitude-5520', 'date' => '2026-09-12', 'created' => strtotime('2026-09-12T10:00:00Z'), 'seen' => $now, 'status' => 'waiting', 'qbo_item' => 'Dell Latitude 5520 Laptop 15.6" Touchscreen');
+$st['bought']['26-1-3#511111111111'] = array('order' => '26-1-3', 'item' => '511111111111', 'sku' => '111111', 'title' => 'Dell Latitude 5520', 'qty' => 1,
+    'cost' => '200.00', 'model' => 'latitude-5520', 'date' => '2026-10-21', 'created' => strtotime('2026-10-21T10:00:00Z'), 'seen' => $now, 'status' => 'waiting', 'qbo_id' => '999');
+file_put_contents(SHOP_STATE, json_encode($st));
+$ANSWER = array(true, shop_ebay_parse($xml($TOUCH . $paidOrder('26-1-3', '2026-10-21T10:00:00.000Z', '220.00', '231.00', '0.00', array(
+    array('511111111111', 'Dell Latitude 5520 i5-1145G7 16GB 256GB', '200.00'), array('511111111112', 'Dell 65W USB-C Laptop Charger Adapter', '20.00')))))[1]);
+$ASKED = array(); $T2 = strtotime('2026-10-22T12:00:00Z');
+$r = shop_ebay_sweep(true, $T2, $get, $connect, $api, $slack);
+check($r[0] && $ASKED[0][0] <= $T2 - 89 * 86400, 'the first look after the fix goes back the full 90 days again', $ASKED);
+$d = shop_read();
+check($d['bought']['23-15132-37787#336800483290']['cost'] === '249.19' && $d['bought']['23-15132-37787#336800483290']['cost_was'] === '237.74', 'the listed 5520 (linked to its stock item, nothing posted) now costs what was paid; the old figure is kept beside it', $d['bought']['23-15132-37787#336800483290']);
+check($d['bought']['26-1-3#511111111111']['cost'] === '200.00' && !isset($d['bought']['26-1-3#511111111111']['cost_was']), 'one already posted to QuickBooks keeps its cost (its purchase says it)');
+check((int)$d['ebay']['cost_v'] === EBAY_COST_V, 'the fix is recorded as done');
+$ASKED = array();
+shop_ebay_sweep(true, $T2 + 600, $get, $connect, $api, $slack);
+check($ASKED[0][0] === $T2 - 2 * 86400, 'after that, looks go back to two days before the last good one', $ASKED);
+
 echo "\n" . ($fails ? "$fails FAILED\n" : "ALL PASSED\n");
 array_map('unlink', glob($TMP . '/*') ?: array()); @rmdir($TMP);
 exit($fails ? 1 : 0);

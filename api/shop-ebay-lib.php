@@ -32,6 +32,11 @@ if (!defined('EBAY_TOKF'))  define('EBAY_TOKF', __DIR__ . '/ebay-token.json');
 define('EBAY_EVERY', 3600);          // ask eBay at most this often (the cron runs every 15 minutes)
 define('EBAY_FIRST_DAYS', 90);       // the first look goes this far back (GetOrders' own limit)
 define('EBAY_COMPAT', '1331');
+// 15 Oct 2026 (owner: "make the change, so the cost of it's right"): a machine's cost is what the order actually took from us
+// - eBay's AmountPaid (else its Total), shared across the order's items to the penny - not item + postage, which left out
+// what eBay adds at checkout (about 5% on the first three: 237.74 vs 249.19 paid). Version 2 re-reads the 90 days ONCE and
+// corrects purchases not yet posted to QuickBooks; a posted one keeps its cost (its QuickBooks purchase says it).
+define('EBAY_COST_V', 2);
 
 function shop_ebay_creds($file = null) {
     $src = preg_replace('/^\xEF\xBB\xBF/', '', (string)@file_get_contents($file !== null ? $file : EBAY_KEYF));
@@ -101,7 +106,7 @@ function shop_ebay_parse($raw) {
         foreach ($o->TransactionArray->Transaction ?? array() as $t)
             $items[] = array('item' => (string)$t->Item->ItemID, 'title' => (string)$t->Item->Title, 'price' => (float)$t->TransactionPrice, 'qty' => max(1, (int)$t->QuantityPurchased));
         $orders[] = array('order' => (string)$o->OrderID, 'created' => strtotime((string)$o->CreatedTime) ?: 0, 'status' => (string)$o->OrderStatus,
-            'total' => (float)$o->Total, 'currency' => (string)($o->Total['currencyID'] ?? 'GBP'), 'subtotal' => (float)$o->Subtotal,
+            'total' => (float)$o->Total, 'paid' => (float)$o->AmountPaid, 'currency' => (string)($o->Total['currencyID'] ?? 'GBP'), 'subtotal' => (float)$o->Subtotal,
             'shipping' => (float)$o->ShippingServiceSelected->ShippingServiceCost, 'items' => $items);
     }
     return array(true, array('orders' => $orders, 'more' => strtolower((string)$x->HasMoreOrders) === 'true'));
@@ -119,16 +124,27 @@ function shop_ebay_is_machine($title, $price) {
 function shop_ebay_model($title) {
     return preg_match('/\b(latitude|optiplex|precision)\s*(\d{4})\b/i', $title, $m) ? strtolower($m[1]) . '-' . $m[2] : '';
 }
-/* An order's machines, each with its share of the postage. */
+/* An order's machines, each with its share of what the order cost us (EBAY_COST_V: what was paid, to the penny). */
 function shop_ebay_machines($o) {
     $out = array();
     $sub = $o['subtotal'] > 0 ? $o['subtotal'] : array_sum(array_map(function ($i) { return $i['price'] * $i['qty']; }, $o['items']));
-    foreach ($o['items'] as $i) {
+    // every item's share of the amount paid, in pennies; the last item takes the rounding so the shares add up exactly
+    $paid = (float)($o['paid'] ?? 0) > 0 ? (float)$o['paid'] : (float)($o['total'] ?? 0);
+    $lines = 0; foreach ($o['items'] as $i) $lines += $i['price'] * $i['qty'];
+    $share = array();
+    if ($paid > 0 && $lines > 0) {
+        $pp = (int)round($paid * 100); $acc = 0; $n = count($o['items']);
+        foreach (array_values($o['items']) as $k => $i) {
+            $s = $k === $n - 1 ? $pp - $acc : (int)round($pp * ($i['price'] * $i['qty']) / $lines);
+            $acc += $s; $share[$k] = $s / 100;
+        }
+    }
+    foreach (array_values($o['items']) as $k => $i) {
         $line = $i['price'] * $i['qty'];
         if (!shop_ebay_is_machine($i['title'], $i['price'])) continue;
-        $post = $sub > 0 ? $o['shipping'] * ($line / $sub) : 0;
+        $post = $sub > 0 ? $o['shipping'] * ($line / $sub) : 0;   // (only when eBay gives no amount paid or total)
         $out[] = array('key' => $o['order'] . '#' . $i['item'], 'order' => $o['order'], 'item' => $i['item'], 'title' => substr($i['title'], 0, 120),
-                       'qty' => $i['qty'], 'cost' => shop_money($line + $post), 'model' => shop_ebay_model($i['title']), 'sku' => shop_sku_from_item($i['item']));
+                       'qty' => $i['qty'], 'cost' => shop_money(isset($share[$k]) ? $share[$k] : $line + $post), 'model' => shop_ebay_model($i['title']), 'sku' => shop_sku_from_item($i['item']));
     }
     return $out;
 }
@@ -141,7 +157,9 @@ function shop_ebay_sweep($force = false, $now = null, $get = 'shop_ebay_get_orde
     if (!$cr) return array(false, 'not set up (api/ebay-key.php)', array());
     $d = shop_read(); $e = $d['ebay'] ?? array();
     if (!$force && (int)($e['checked'] ?? 0) > $now - EBAY_EVERY) return array(true, 'checked recently', array());
-    $from = !empty($e['ok_at']) ? (int)$e['ok_at'] - 2 * 86400 : $now - EBAY_FIRST_DAYS * 86400 + 60;
+    // (EBAY_COST_V: the first look after the cost fix goes back the full 90 days again, once, to correct what is already listed)
+    $recost = (int)($e['cost_v'] ?? 1) < EBAY_COST_V;
+    $from = (!empty($e['ok_at']) && !$recost) ? (int)$e['ok_at'] - 2 * 86400 : $now - EBAY_FIRST_DAYS * 86400 + 60;
     $found = array(); $page = 1; $err = '';
     do {
         list($ok, $res) = call_user_func($get, $cr, $from, $now, $page);
@@ -153,7 +171,7 @@ function shop_ebay_sweep($force = false, $now = null, $get = 'shop_ebay_get_orde
         $page++;
     } while (!empty($res['more']) && $page <= 5);
     $new = array();
-    shop_locked(function (&$d) use ($found, $now, $err, &$new) {
+    shop_locked(function (&$d) use ($found, $now, $err, $recost, &$new) {
         if (!isset($d['ebay']) || !is_array($d['ebay'])) $d['ebay'] = array();
         if (!isset($d['bought']) || !is_array($d['bought'])) $d['bought'] = array();
         $d['ebay']['checked'] = $now;
@@ -161,9 +179,16 @@ function shop_ebay_sweep($force = false, $now = null, $get = 'shop_ebay_get_orde
         $d['ebay']['error'] = '';
         if (empty($d['ebay']['since'])) $d['ebay']['since'] = $now;   // the connection's first good look: auto-QuickBooks from here on
         $d['ebay']['ok_at'] = $now;
+        $d['ebay']['cost_v'] = EBAY_COST_V;   // the full re-read for the cost fix is done
         $tz = new DateTimeZone('Europe/London');
         foreach ($found as $m) {
-            if (isset($d['bought'][$m['key']])) continue;
+            if (isset($d['bought'][$m['key']])) {
+                // the cost fix: a purchase not yet posted to QuickBooks takes the corrected cost; a posted one keeps what its purchase says
+                $ob =& $d['bought'][$m['key']];
+                if ($recost && empty($ob['qbo_id']) && (string)($ob['cost'] ?? '') !== $m['cost']) { $ob['cost_was'] = (string)($ob['cost'] ?? ''); $ob['cost'] = $m['cost']; }
+                unset($ob);
+                continue;
+            }
             $d['bought'][$m['key']] = array('order' => $m['order'], 'item' => $m['item'], 'sku' => $m['sku'], 'title' => $m['title'], 'qty' => $m['qty'], 'cost' => $m['cost'],
                 'model' => $m['model'], 'date' => (new DateTime('@' . (int)$m['created']))->setTimezone($tz)->format('Y-m-d'), 'created' => (int)$m['created'],
                 'seen' => $now, 'status' => 'waiting');
