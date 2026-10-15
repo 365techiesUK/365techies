@@ -405,26 +405,84 @@ function shop_bought_purchase($d, $order) {
 /* 15 Oct 2026 (owner: edit each machine's name "so we can remove the hard drive", since every one gets a new SSD): the eBay
    title with its drive taken out, as the Shop tab's name box suggests it. A size with a drive word either side of it goes, and
    so does any size over 100GB that isn't memory ("16GB/256GB" -> "16GB"); "16GB RAM" / "8GB DDR4" / "4GB" graphics stay. The
-   seller's own "Grade A" goes too: ours is set on the Shop tab. Only a suggestion - nothing is renamed until someone saves. */
+   seller's own "Grade A" goes too: ours is set on the Shop tab. Only a suggestion - nothing is renamed until someone saves.
+   Later the same day (owner: "do the seller phrases and capitals", after a "Read DESC" reached QuickBooks): the seller's sales
+   talk goes as well (shop_bought_unsell) and the capitals are put right (shop_bought_caps). */
 function shop_bought_suggest($title) {
     $drive = '(?:m\.?2|nvme|pcie|sata|ssd|hdd|emmc|storage|hard\s*drive|hard\s*disk|drive)';
     $sep = '[\s,\/|+&]*';
-    $t = ' ' . str_replace(array("\r", "\n", "\t"), ' ', (string)$title) . ' ';
+    $lead = '(?:\b(?:with|w\/|plus|and|including|incl|inc)\s*)?(?:\b(?:brand\s*)?new\s*)?';   // "RAM With (New) 256GB SSD": they go with it
+    $t = shop_bought_unsell(' ' . str_replace(array("\r", "\n", "\t"), ' ', (string)$title) . ' ');
     // a drive word then its size: "SSD 512GB", "NVMe: 1TB"
-    $t = preg_replace('/' . $sep . '\b(?:' . $drive . '[\s\/-]*)+:?\s*\d+(?:\.\d+)?\s?(?:gb|tb)\b/i', ' ', $t);
+    $t = preg_replace('/' . $sep . $lead . '\b(?:' . $drive . '[\s\/-]*)+:?\s*\d+(?:\.\d+)?\s?(?:gb|tb)\b/i', ' ', $t);
     // a size, then any drive words: "512GB NVMe SSD", "1TB", "256 GB" - unless it is memory
-    $t = preg_replace_callback('/' . $sep . '\b(\d+(?:\.\d+)?)\s?(gb|tb)\b((?:[\s\/-]*' . $drive . '\b)*)(?!\s*(?:ram|memory|ddr|of\s+ram|lpddr))/i',
+    $t = preg_replace_callback('/' . $sep . $lead . '\b(\d+(?:\.\d+)?)\s?(gb|tb)\b((?:[\s\/-]*(?:new\s*)?' . $drive . '\b)*)(?!\s*(?:ram|memory|ddr|of\s+ram|lpddr))/i',
         function ($m) { return ($m[3] !== '' || strtolower($m[2]) === 'tb' || (float)$m[1] >= 100) ? ' ' : $m[0]; }, $t);
     $t = preg_replace('/\b(?:nvme|ssd|hdd|m\.2)\b/i', ' ', $t);   // a drive word left on its own
-    $t = preg_replace('/\bgrade\s*[a-d]\b/i', ' ', $t);
-    // tidy: one separator where removals left two, none at the ends, no space before a comma
-    $t = preg_replace('/\s+/', ' ', $t);
-    $t = preg_replace('/(\s[-\x{2013}]\s|[,\/|+&])(?:\s*(?:[-\x{2013}](?=\s)|[,\/|+&]))+/u', '$1', $t);
-    $t = preg_replace(array('/\s+/', '/\s+,/'), array(' ', ','), $t);
-    $t = trim(preg_replace('/^[\s,\/|+&\-\x{2013}]+|[\s,\/|+&\-\x{2013}]+$/u', '', $t));
+    $t = preg_replace(array('/\(\s*grade\s*[a-d]\s*\)|\bgrade\s*[a-d]\b/i', '/\(\s*\)|\[\s*\]/'), ' ', $t);   // + brackets left empty
+    // tidy: one separator where removals left two, none at the ends, no space before a comma, no "with" left dangling
+    $tidy = function ($t) {
+        $t = preg_replace('/\s+/', ' ', $t);
+        $t = preg_replace('/(\s[-\x{2013}]\s|[,\/|+&])(?:\s*(?:[-\x{2013}](?=\s)|[,\/|+&]))+/u', '$1', $t);
+        $t = preg_replace(array('/\s+/', '/\s+,/'), array(' ', ','), $t);
+        return trim(preg_replace('/^[\s,\/|+&\-\x{2013}]+|[\s,\/|+&\-\x{2013}]+$/u', '', $t));
+    };
+    $t = $tidy($t);
+    while (preg_match('/\s(?:with|w\/|plus|and|including|incl|inc)$/i', $t)) $t = $tidy(preg_replace('/\s\S+$/', '', $t));
     if ($t === '') return (string)$title;
+    $t = shop_bought_caps($t);
     if (!preg_match('/^dell\b/i', $t)) $t = 'Dell ' . $t;
     return rtrim(mb_substr($t, 0, 100, 'UTF-8'));
+}
+/* The seller's sales talk in an eBay title - none of it is ours to say: "Read DESC", "L@@K", "FREE P&P", "UK seller", their
+   warranty, their "excellent condition" and "fully tested" (our grade and notes say that), "+ charger", "ready to use", and
+   the shouting symbols. A phrase goes only as whole words ("rare" goes, "rarely" doesn't). */
+function shop_bought_unsell($t) {
+    $p = array(
+        '(?:please\s*)?(?:read|see)\s*(?:the\s*)?(?:full\s*)?(?:desc(?:ription)?|listing|details|pics|pictures|photos)\.?', 'please\s*read',
+        'l[o0@]{2}k',
+        '(?:free|fast|quick|speedy|next[\s-]*day|same[\s-]*day|1st[\s-]*class|tracked)\s*(?:uk\s*)?(?:p\s*&\s*p|p\s*and\s*p|postage|post|delivery|shipping|dispatch)',
+        'uk\s*(?:seller|stock|based|dispatch)',
+        '(?:with\s*)?(?:\d+\s*(?:days?|months?|mths?|years?|yrs?)\s*)?(?:warranty|guaranteed?)',
+        '(?:in\s*)?(?:excellent|mint|immaculate|pristine|superb|perfect|vgc|(?:very\s*)?good|great|fair)\s*(?:working\s*)?(?:condition|cond)',
+        'excellent|mint|immaculate|pristine|vgc',
+        'fully\s*(?:working|tested|functional)|tested\s*(?:&|and)\s*working|tested|working\s*(?:perfectly|great|fine|order)?',
+        'ready\s*to\s*(?:use|go)|plug\s*(?:&|and|n)\s*play|boxed|brand\s*new',
+        '(?:with\s*|w\/\s*|inc(?:l|luding)?\.?\s*)?(?:original\s*|genuine\s*|official\s*)?(?:dell\s*)?(?:charger|ac\s*adapter|power\s*(?:adapter|supply|lead|cable))(?:\s*(?:included|inc))?',
+        'wow|bargain|cheap(?:est)?|must\s*see|rare|stunning|beast|powerful|super\s*fast|fastest|fast|quick|speedy|nice|lovely|great\s*(?:spec|value)|top\s*spec|high\s*spec|best\s*price',
+    );
+    $t = preg_replace('/\b(?:' . implode('|', $p) . ')(?![a-z0-9])/i', ' ', $t);
+    $r = preg_replace('/[!*~#^=_]+|[\x{2190}-\x{2BFF}\x{2700}-\x{27BF}\x{1F000}-\x{1FAFF}\x{FE0F}\x{200D}]/u', ' ', $t);
+    return $r === null ? $t : $r;
+}
+/* Capitals as Dell and the trade write them, not as the seller typed them: "Optiplex ... Pc Intel I5 10th 24gb" ->
+   "OptiPlex ... PC Intel i5 10th 24GB". A title in capitals throughout is put in ordinary case ("CORE I5 11TH GEN" ->
+   "Core i5 11th Gen"); a model code it doesn't know ("RTX A2000", "E7470") is left as typed. */
+function shop_bought_caps($t) {
+    static $known = null;
+    if ($known === null) {
+        $known = array();
+        foreach (explode(' ', 'Dell Latitude OptiPlex Precision Inspiron Vostro XPS Intel Core AMD Ryzen Celeron Pentium Xeon NVIDIA GeForce Quadro RTX GTX'
+            . ' Radeon Laptop Notebook Ultrabook Desktop PC Computer Tower SFF USFF MFF Micro MT AIO Touchscreen Touch Screen RAM GPU CPU FHD HD UHD QHD IPS'
+            . ' OLED LCD LED USB USB-C HDMI WiFi Wi-Fi Bluetooth 4G 5G LTE Webcam Backlit Keyboard Fingerprint Windows Win Pro Home Gen Generation vPro'
+            . ' Thunderbolt Graphics Business Workstation Mobile Rugged Extreme 2-in-1 Office MS UK') as $w) $known[strtolower($w)] = $w;
+    }
+    $words = preg_match_all('/\b[A-Za-z]{2,}\b/', $t, $all) ? $all[0] : array();
+    $caps = count(array_filter($words, function ($w) { return strtoupper($w) === $w; }));
+    $shouting = count($words) >= 3 && $caps / count($words) >= 0.6;
+    return preg_replace_callback('/[A-Za-z0-9](?:[A-Za-z0-9.\-]*[A-Za-z0-9])?/', function ($m) use ($known, $shouting) {
+        $w = $m[0]; $l = strtolower($w);
+        if (isset($known[$l])) return $known[$l];
+        if (preg_match('/^(\d+(?:\.\d+)?)(gb|tb|mb)$/i', $w, $x)) return $x[1] . strtoupper($x[2]);                         // 24gb -> 24GB
+        if (preg_match('/^i([3579])(?:-(\w+))?$/i', $w, $x))   // I5-1145g7 -> i5-1145G7; i5-8TH -> i5-8th
+            return 'i' . $x[1] . (isset($x[2]) ? '-' . (preg_match('/^\d+(?:st|nd|rd|th)$/i', $x[2]) ? strtolower($x[2]) : strtoupper($x[2])) : '');
+        if (preg_match('/^(\d+)(st|nd|rd|th)$/i', $w, $x)) return $x[1] . strtolower($x[2]);                                // 11TH -> 11th
+        if (preg_match('/^(\d+(?:\.\d+)?)(ghz|mhz|hz)$/i', $w, $x)) return $x[1] . array('ghz' => 'GHz', 'mhz' => 'MHz', 'hz' => 'Hz')[strtolower($x[2])];
+        if (preg_match('/^(win|w)(7|8|10|11)$/i', $w, $x)) return (strtolower($x[1]) === 'win' ? 'Win' : 'W') . $x[2];      // win11 -> Win11, w11 -> W11
+        if (preg_match('/^(?:lp)?ddr\d+x?$|^\d+w$|^[ptakm]\d{3,4}$|^e\d{4}$/i', $w)) return strtoupper($w);               // DDR4, 65W, Quadro P620, Latitude E7470
+        if ($shouting && strlen($w) >= 4 && !preg_match('/\d/', $w) && strtoupper($w) === $w) return ucfirst($l);
+        return $w;
+    }, $t);
 }
 function shop_bought_rows($cat = null, $d = null) {
     $cat = $cat ?: shop_catalogue(); $d = $d ?: shop_read();

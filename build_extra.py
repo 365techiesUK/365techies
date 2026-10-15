@@ -33837,7 +33837,8 @@ def write_portal_page():
     Object.keys(SHOP_GRADES).forEach(function (k) { g += '<option value="' + esc(k) + '"' + (b.grade === k ? ' selected' : '') + '>' + esc(k) + ' &mdash; ' + esc(SHOP_GRADES[k]) + '</option>'; });
     return '<div class="plus-form shop-cost">'
       + '<label for="shopbname">Its name</label><input id="shopbname" type="text" maxlength="100" autocomplete="off" value="' + esc(b.name || b.suggest || b.title) + '" />'
-      + (!b.name && b.suggest && b.suggest !== b.title ? '<p class="quiet" style="margin:.25rem 0 0">Suggested: eBay&rsquo;s title without its drive, as a new SSD goes in. Change it to anything; leave it empty for eBay&rsquo;s title.</p>' : '')
+      + (!b.name && b.suggest && b.suggest !== b.title ? '<p class="quiet" style="margin:.25rem 0 0">Suggested: eBay&rsquo;s title without its drive or the seller&rsquo;s sales talk, as a new SSD goes in. Change it to anything; leave it empty for eBay&rsquo;s title.</p>' : '')
+      + (b.name && b.suggest && b.suggest !== b.name ? '<p class="quiet" style="margin:.25rem 0 0">Suggested: &ldquo;' + esc(b.suggest) + '&rdquo; <button type="button" class="sm ghost" id="shopbsug" data-v="' + esc(b.suggest) + '">Use it</button></p>' : '')
       + '<label for="shopbgrade">Grade</label><select id="shopbgrade">' + g + '</select>'
       + '<label for="shopbnotes">Condition notes</label><textarea id="shopbnotes" rows="3" maxlength="1000" placeholder="Marks, and anything fixed or fitted: e.g. light scratch on the lid; new 512GB SSD; new battery">' + esc(b.notes || '') + '</textarea>'
       + (inq ? '<label class="shop-chk"><input id="shopbqbo" type="checkbox" checked /> <span>Also rename its stock item in QuickBooks (its name and sales description; its SKU stays)</span></label>'
@@ -33929,6 +33930,8 @@ def write_portal_page():
     box.innerHTML = h;
     var acc = document.getElementById('shopacc');
     if (acc) acc.onclick = function () { acc.disabled = true; loadShop('accounts'); };
+    var sg = document.getElementById('shopbsug');   // a machine named already: put the suggestion in the name box
+    if (sg) sg.onclick = function () { var nb = document.getElementById('shopbname'); nb.value = sg.getAttribute('data-v'); nb.focus(); };
     var su = document.getElementById('shopsetup');
     if (su) su.onclick = function () {
       if (!window.confirm('Set QuickBooks up for the shop? It links to your stock items, and finds or makes the eBay supplier and a delivery item.')) return;

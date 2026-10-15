@@ -216,6 +216,20 @@ check(shop_bought_suggest('Dell OptiPlex 7070 SFF i5-9500 8GB DDR4 1TB HDD Win 1
     && shop_bought_suggest('Dell Precision 3551 i7 32GB 1TB NVMe Quadro P620 4GB') === 'Dell Precision 3551 i7 32GB Quadro P620 4GB', '... a hard disk goes; a graphics card\'s 4GB stays');
 check(shop_bought_suggest('Dell Latitude 5490 - i5 - 8GB - 256GB SSD - Win 11') === 'Dell Latitude 5490 - i5 - 8GB - Win 11'
     && shop_bought_suggest('Dell Latitude 3420 i5-1135G7 8GB 256GB Win 11') === 'Dell Latitude 3420 i5-1135G7 8GB Win 11', '... dashes tidied; a bare "256GB" after the memory is the drive');
+// later the same day: the seller's sales talk goes too, and the capitals are put right (the three real purchases first)
+foreach (array(
+    'Dell Optiplex 7080 SFF Desktop Pc Intel I5 10th 24gb RAM With GPU Read DESC' => 'Dell OptiPlex 7080 SFF Desktop PC Intel i5 10th 24GB RAM With GPU',
+    'Dell Latitude 5520 15.6" Touchscreen I5-1145G7, 16GB RAM, 512GB NVMe, W11 Pro' => 'Dell Latitude 5520 15.6" Touchscreen i5-1145G7, 16GB RAM, W11 Pro',
+    'Dell Latitude 5520 Laptop Core I5 11th Gen, 16GB RAM, 250GB SSD, Windows 11 Pro' => 'Dell Latitude 5520 Laptop Core i5 11th Gen, 16GB RAM, Windows 11 Pro',
+    'DELL LATITUDE 5420 CORE I5 11TH GEN 16GB RAM 256GB M.2 SSD WINDOWS 11 ** BARGAIN **' => 'Dell Latitude 5420 Core i5 11th Gen 16GB RAM Windows 11',
+    'L@@K!! Dell Latitude 7490 i5-8350u 8GB 256GB SSD Win 11 Pro - FREE P&P - UK SELLER' => 'Dell Latitude 7490 i5-8350U 8GB Win 11 Pro',
+    'Dell Precision 3551 i7 32GB RAM With 1TB SSD Excellent Condition 6 Months Warranty + Charger' => 'Dell Precision 3551 i7 32GB RAM',
+    "Dell OptiPlex 3070 Micro i5-9500T 8GB Quadro p620 Fully Tested Ready To Use \xE2\x9C\x85" => 'Dell OptiPlex 3070 Micro i5-9500T 8GB Quadro P620',
+    'Dell Latitude 5490 (Grade A) i5-8th Gen 16GB New 512GB SSD Fast Laptop' => 'Dell Latitude 5490 i5-8th Gen 16GB Laptop',
+    'Dell Precision 3561 i7-11850H RTX A2000 T1200 32GB' => 'Dell Precision 3561 i7-11850H RTX A2000 T1200 32GB',
+    'Dell Latitude e7470 Core i5 6300U 8GB RAM 256GB SSD Webcam HDMI Wifi Win 10 Pro Fastest' => 'Dell Latitude E7470 Core i5 6300U 8GB RAM Webcam HDMI WiFi Win 10 Pro',
+) as $in => $want) { $got = shop_bought_suggest($in); check($got === $want, 'suggested: ' . $want, $got); }
+check(shop_bought_suggest('Dell Latitude 7490 Rarely Used i5 8GB') === 'Dell Latitude 7490 Rarely Used i5 8GB', 'a seller word goes only as a whole word ("rare" yes, "rarely" no)');
 check(shop_item_name('Dell Latitude 5520 - SKU 659085', '659085') === 'Dell Latitude 5520 - SKU 659085' && shop_item_name('Dell Latitude 5520', '659085') === 'Dell Latitude 5520 - SKU 659085', 'a name that already ends with its SKU doesn\'t get it twice');
 
 $K = '23-15300-11111#147547371220';
