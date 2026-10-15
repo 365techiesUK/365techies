@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>365 Pinball Hero - free, no adverts | 365 Techies</title>
+<!-- 15 Oct 2026: hand-made game page (not built by build_blog.py), modelled on games/invaders/index.html. Our own pinball
+     table and theme (a space hero defending a planet from the invaders of 365 Invaders): our own name, pixel art and
+     sounds. NOT LAUNCHED YET: noindex, and off the sitemap, the menus and games.json until the owner says so. -->
+<meta name="robots" content="noindex" />
+<meta name="description" content="365 Pinball Hero: an 80s-style pinball table where you defend the planet from the invaders - warp ramp, orbits, a hangar to shoot into, and a gentle speed for beginners. No adverts, no sign-in, nothing to install - your best scores stay on your computer." />
+<!-- what WhatsApp, Facebook and email show when someone shares this game (games/common/social.js); no share picture yet -->
+<link rel="canonical" href="https://365techies.co.uk/games/pinball/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="365 Techies" />
+<meta property="og:title" content="365 Pinball Hero &ndash; free, no adverts" />
+<meta property="og:description" content="365 Pinball Hero: an 80s-style pinball table where you defend the planet from the invaders - warp ramp, orbits, a hangar to shoot into, and a gentle speed for beginners. No adverts, no sign-in, nothing to install - your best scores stay on your computer." />
+<meta property="og:url" content="https://365techies.co.uk/games/pinball/" />
+<meta name="twitter:card" content="summary" />
+<meta name="theme-color" content="#000000" />
+<script>/* 365 Games as one app (6 Oct 2026): this game is the one the app opens back into; the manifest for every browser but Samsung Internet (its own app packages trip Google Play Protect) */try{localStorage.setItem("games365:last",location.pathname)}catch(e){}if(!/SamsungBrowser/i.test(navigator.userAgent)){var m365=document.createElement("link");m365.rel="manifest";m365.href="/games/app.webmanifest";document.head.appendChild(m365);}</script>
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="365 Games" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/games/img/app-games-192-v1.png" />
+<link rel="preload" href="/fonts/archivo-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="../common/table.css?v=8" />
+<link rel="stylesheet" href="../common/arcade.css?v=5" />
+</head>
+<body class="arcade-sky">
+<!-- the bar, the game screen and the pop-up sheets are drawn by ../common/arcade.js (the arcade cabinet) -->
+<!-- the table (table.js) and its rules and physics (engine.js); the cabinet's shared parts; then the flat 8-bit picture
+     (flat.js), the sounds (sound.js) and the game itself with its flipper controls (pinball.js) -->
+<script src="table.js?v=1"></script>
+<script src="engine.js?v=1"></script>
+<script src="../common/social.js?v=5"></script>
+<script src="../common/hof.js?v=2"></script>
+<script src="../common/a11y365.js?v=2"></script>
+<script src="../common/looks.js?v=4"></script>
+<script src="../common/keep.js?v=1"></script>
+<script src="../common/arcade.js?v=20"></script>
+<script src="flat.js?v=1"></script>
+<script src="sound.js?v=1"></script>
+<script src="pinball.js?v=2"></script>
+<!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
+<script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
+</body>
+</html>
