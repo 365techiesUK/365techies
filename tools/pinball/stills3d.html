@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>365 Pinball Hero - 3D stills bench</title>
+<!-- 15 Oct 2026 (milestone 2a): a bench for games/pinball/world3d.js, never deployed. It plays the real engine with a
+     simple seeded auto-flipper (so a seed and a frame are always the same moment), draws the 3D table under a strip
+     with the flat look's dot-matrix display (its top 34 rows, 4x, square pixels), so a picture looks exactly like the
+     phone screen. Query: ?tilt=35&fov=34&seed=7&frame=900&speed=2&w=1080&h=1920 (mode=title for the attract show).
+     tools/pinball/stills3d.cjs drives it through window.S3 (step, draw, find a lively moment, check the ball is never
+     hidden, time the frames). window.__ready is true once the first frame is on screen. -->
+<script type="importmap">{ "imports": { "three": "../../games/common/vendor/three-r185/three.module.min.js" } }</script>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #frame { position: relative; background: #000; }
+  #dmd, #gl { display: block; }
+  #dmd { image-rendering: pixelated; image-rendering: crisp-edges; }
+</style>
+</head>
+<body>
+<div id="frame"><canvas id="dmd"></canvas><canvas id="gl"></canvas></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/flat.js"></script>
+<script type="module">
+  const Q = new URLSearchParams(location.search), num = (k, d) => (Q.has(k) ? +Q.get(k) : d);
+  const FW = num('w', 1080), FH = num('h', 1920), STRIP = Math.round(FW * 136 / 1080);
+  const E = window.PinEngine, T = E.TABLE;
+  const frameEl = document.getElementById('frame'), dmd = document.getElementById('dmd'), gl = document.getElementById('gl');
+  frameEl.style.width = FW + 'px'; frameEl.style.height = FH + 'px';
+  dmd.width = FW; dmd.height = STRIP; dmd.style.width = FW + 'px'; dmd.style.height = STRIP + 'px';
+  gl.style.width = FW + 'px'; gl.style.height = (FH - STRIP) + 'px';
+  const flat = document.createElement('canvas'); flat.width = 270; flat.height = 480;
+  const fg = flat.getContext('2d'), dg = dmd.getContext('2d');
+
+  // the art lane's files, if they are there yet (the 3D look falls back without them)
+  function optional(src) { return new Promise((res) => { const s = document.createElement('script'); s.src = src; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s); }); }
+  const have = {}; have.lamps = await optional('../../games/pinball/lamps.js'); have.art = await optional('../../games/pinball/art3d.js');
+  const { create } = await import('../../games/pinball/world3d.js?' + Date.now());
+
+  // ---------------------------------------------------------------- the auto-flipper (the same as tools/pinball/sim.cjs's bot)
+  function lcg(seed) { let s = (seed | 0) || 1; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
+  function bot(seed) {
+    const r = lcg(seed), hold = [0, 0], wait = [-1, -1], cradle = [0, 0]; let plunge = -1;
+    return function (W) {
+      const inp = { left: false, right: false, fire: false };
+      for (let side = 0; side < 2; side++) {
+        const f = W.flippers[side]; let near = null;
+        for (const b of W.balls) {
+          if (b.m !== 'free' || b.x > T.shooter.x0) continue;
+          const dx = b.x - f.x, dy = b.y - f.y;
+          if (dx * f.side > 6 || dx * -f.side > f.len + 14 || dy < -45 || dy > 30) continue;
+          near = b; break;
+        }
+        const key = side ? 'right' : 'left';
+        if (hold[side] > 0) { hold[side]--; inp[key] = true; continue; }
+        if (cradle[side] > 0) { cradle[side]--; inp[key] = true; continue; }
+        if (near && wait[side] < 0 && near.vy > -40) wait[side] = Math.floor(r() * 6);
+        if (wait[side] >= 0 && wait[side]-- === 0) {
+          if (r() < 0.12) cradle[side] = 40 + Math.floor(r() * 120); else hold[side] = 6 + Math.floor(r() * 14);
+          inp[key] = true; wait[side] = -1;
+        }
+      }
+      const inLane = W.balls.some((b) => b.m === 'free' && b.x > T.shooter.x0 && b.y > 400 && Math.abs(b.vy) < 30);
+      if (inLane) { if (plunge < 0) plunge = 1 + Math.floor(r() * 60); if (plunge-- > 0) inp.fire = true; } else plunge = -1;
+      return inp;
+    };
+  }
+
+  // ---------------------------------------------------------------- the game, the picture
+  const speed = num('speed', 2), mode = Q.get('mode') || 'play';
+  let W = null, drive = null, frame = 0;
+  const world = create({ canvas: gl, width: FW, height: FH - STRIP, pixelRatio: 1, preserve: true, tilt: num('tilt', 35), fov: num('fov', 34),
+    reflect: Q.get('reflect') !== '0', samples: num('samples', 4), bloom: Q.has('bloom') ? +Q.get('bloom') : undefined, threshold: Q.has('thr') ? +Q.get('thr') : undefined });
+  function reset(seed) { W = E.newWorld(speed, {}, seed); drive = bot(seed); frame = 0; if (mode === 'title') W.demo = true; }
+  function step() { E.step(W, drive(W)); W.events.length = 0; frame++; }
+  const tOf = (f) => f * 1000 / 60;
+  function render() {
+    world.draw(W, tOf(frame), mode, { best: 0 });
+    window.PinFlat.draw(fg, W, tOf(frame), mode, { best: 0 });
+    dg.imageSmoothingEnabled = false; dg.clearRect(0, 0, FW, STRIP); dg.drawImage(flat, 0, 0, 270, 34, 0, 0, FW, STRIP);
+  }
+  function advance(n, drawEach) { for (let i = 0; i < n; i++) { step(); if (drawEach) render(); } if (!drawEach) render(); }
+  function goTo(f, warm) {   // the moment f, with the bulbs' fades warmed up over the last frames
+    warm = warm == null ? 30 : warm;
+    reset(num('seed', 7));
+    while (frame < f - warm) step();
+    while (frame < f) { step(); render(); }
+    render();
+  }
+
+  // ---------------------------------------------------------------- a lively moment: a ball up on the ramp, lamps lit, play all round it
+  function findMoment(o) {
+    o = Object.assign({ seeds: 40, frames: 7200, lead: 300, tail: 300 }, o || {});
+    let best = null;
+    for (let seed = 1; seed <= o.seeds; seed++) {
+      const Wd = E.newWorld(speed, {}, seed), dr = bot(seed), rec = [];
+      for (let f = 1; f <= o.frames && !Wd.over; f++) {
+        E.step(Wd, dr(Wd)); Wd.events.length = 0;
+        const b = Wd.balls[0], lane = !b || (b.m === 'free' && b.x > T.shooter.x0);
+        const live = (Wd.lanes.filter(Boolean).length) + (Wd.mult - 1) + (Wd.saveT > 0 ? 1 : 0) + (Wd.comboT > 0 ? 1 : 0) + Wd.dropsDown * 0.4 + (Wd.kickback ? 0.5 : 0) + (Wd.dmd ? 0.5 : 0);
+        rec.push({ ok: Wd.state === 'play' && Wd.balls.length > 0, lane, ramp: b && b.m === 'ramp' ? b.s / E.RAMP.L : -1, live, ball: Wd.ball });
+      }
+      for (let f = o.lead; f < rec.length - o.tail; f++) {
+        const r = rec[f]; if (r.ramp < 0.2 || r.ramp > 0.36) continue;
+        let bad = 0, laneN = 0;
+        for (let k = f - o.lead; k < f + o.tail; k++) { if (!rec[k].ok || rec[k].ball !== r.ball) bad++; if (rec[k].lane) laneN++; }
+        if (bad) continue;
+        const score = r.live * 2 - laneN / 30 + (rec[f - o.lead].lane ? -2 : 0);
+        if (!best || score > best.score) best = { seed, frame: f + 1, score, live: r.live, s: r.ramp };
+      }
+    }
+    return best;
+  }
+
+  // ---------------------------------------------------------------- is the ball ever hidden? (rays from the camera to the ball's middle and top)
+  function samplePositions(seeds, frames) {
+    const seen = new Map();
+    for (let seed = 1; seed <= seeds; seed++) {
+      const Wd = E.newWorld(speed, {}, seed * 31), dr = bot(seed * 31);
+      for (let f = 0; f < frames && !Wd.over; f++) {
+        E.step(Wd, dr(Wd)); Wd.events.length = 0;
+        for (const b of Wd.balls) {
+          const z = b.m === 'ramp' ? b.z || 0 : 0, k = Math.round(b.x / 3) + ',' + Math.round(b.y / 3) + ',' + Math.round(z / 6);
+          if (!seen.has(k)) seen.set(k, [b.x, b.y, z, b.m === 'held' ? -4 : 0]);
+        }
+      }
+    }
+    return [...seen.values()];
+  }
+  function visibility(pts) {
+    const D = world.debug, THREE = D.THREE, cam = D.camera, occ = D.occluders(), ray = new THREE.Raycaster(), v = new THREE.Vector3(), dir = new THREE.Vector3();
+    D.table.updateMatrixWorld(true);
+    const hiddenBy = (x, y, h) => {
+      v.set(x - 135, h, y - 223).applyMatrix4(D.table.matrixWorld);
+      dir.copy(v).sub(cam.position); const dist = dir.length(); dir.normalize();
+      ray.set(cam.position, dir); ray.far = dist - 0.8;
+      const hit = ray.intersectObjects(occ, false)[0];
+      return hit ? (hit.object.name || hit.object.type) + '@' + Math.round((hit.point.x + 135)) + ',' + Math.round(hit.point.z + 223) : null;
+    };
+    const out = [];
+    for (const p of pts) {
+      const c = 7 + p[2] + p[3], a = hiddenBy(p[0], p[1], c), b = hiddenBy(p[0], p[1], c + 5.5);
+      if (a && b) out.push({ x: Math.round(p[0]), y: Math.round(p[1]), z: Math.round(p[2]), by: b });
+    }
+    return out;
+  }
+  const SHOTS = () => {
+    const d = E.DROPS, mid = (i) => [(d[i].ax + d[i].bx) / 2 + d[i].fx * 9, (d[i].ay + d[i].by) / 2 + d[i].fy * 9];
+    return {
+      'left orbit mouth': [18, 225], 'right orbit mouth': [232, 225], 'left orbit top': [18, 150], 'right orbit top': [232, 150],
+      'ramp entrance': [120, 214], 'ramp top': [102, 86, 40], 'ramp return': [15, 160, 36],
+      'hangar saucer (held)': [T.saucer.x, T.saucer.y, 0, -4], 'drop target 1': mid(0), 'drop target 3': mid(2), 'drop target 5': mid(4),
+      'top lane 1': [158, 79], 'top lane 2': [182, 79], 'top lane 3': [206, 79], 'spinner': [18, 196],
+      'bumper gap': [180, 138], 'left inlane': [38, 342], 'right inlane': [212, 342], 'left outlane': [16, 392], 'right outlane': [234, 392],
+      'shooter lane (ball on plunger)': [T.shooter.cx, T.shooter.tip - 7], 'between the flippers': [125, 420]
+    };
+  };
+  function shotCheck() {
+    const S = SHOTS(), res = {};
+    for (const k in S) { const p = S[k]; const h = visibility([[p[0], p[1], p[2] || 0, p[3] || 0]]); res[k] = h.length ? 'HIDDEN by ' + h[0].by : 'visible'; }
+    return res;
+  }
+
+  // ---------------------------------------------------------------- frame time (draw + wait for the GPU)
+  function bench(n) {
+    const g2 = world.debug.renderer.getContext(), px = new Uint8Array(4), times = [];
+    for (let i = 0; i < n; i++) {
+      step();
+      const t0 = performance.now();
+      world.draw(W, tOf(frame), mode, {});
+      g2.readPixels(0, 0, 1, 1, g2.RGBA, g2.UNSIGNED_BYTE, px);
+      times.push(performance.now() - t0);
+    }
+    times.sort((a, b) => a - b);
+    const avg = times.reduce((s, x) => s + x, 0) / n;
+    return { avg: +avg.toFixed(2), p50: +times[n >> 1].toFixed(2), p95: +times[Math.floor(n * 0.95)].toFixed(2), calls: world.stats().calls, tris: world.stats().triangles };
+  }
+  function gpu() { const g2 = world.debug.renderer.getContext(), e = g2.getExtension('WEBGL_debug_renderer_info'); return e ? g2.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'unknown'; }
+
+  window.S3 = { get W() { return W; }, world, reset, step, render, advance, goTo, findMoment, samplePositions, visibility, shotCheck, bench, gpu, have, setView: (v) => { world.setView(v); render(); }, get frame() { return frame; } };
+  goTo(num('frame', 900));
+  window.__stats = Object.assign(world.stats(), { have });
+  window.__ready = true;
+</script>
+</body>
+</html>
