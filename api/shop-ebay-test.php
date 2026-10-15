@@ -85,6 +85,16 @@ $api = function ($c, $method, $path, $body = null) use (&$QB, &$NEXT) {
         foreach ($QB['Purchase'] as $r) if ($r['DocNumber'] === $q[1]) return array('code' => 200, 'json' => array('QueryResponse' => array('Purchase' => array(array('Id' => $r['Id'])))));
         return array('code' => 200, 'json' => array('QueryResponse' => new stdClass()));
     }
+    if ($method === 'POST' && $path === '/item' && !empty($body['sparse'])) {   // a rename: QuickBooks' sparse update, refused as QuickBooks would
+        $fault = function ($m) { return array('code' => 400, 'json' => array('Fault' => array('Error' => array(array('Message' => $m))))); };
+        foreach ($QB['Item'] as $o) if ($o['Name'] === $body['Name'] && $o['Id'] !== $body['Id']) return $fault('Duplicate Name Exists Error');
+        foreach ($QB['Item'] as $i => $o) if ($o['Id'] === $body['Id']) {
+            if ((string)($o['SyncToken'] ?? '') !== (string)$body['SyncToken']) return $fault('Stale Object Error');
+            $o['Name'] = $body['Name']; $o['Description'] = $body['Description']; $o['SyncToken'] = (string)((int)($o['SyncToken'] ?? 0) + 1);
+            $QB['Item'][$i] = $o; return array('code' => 200, 'json' => array('Item' => $o));
+        }
+        return $fault('Object Not Found');
+    }
     if ($method === 'POST' && ($path === '/purchase' || $path === '/item')) { $k = $path === '/item' ? 'Item' : 'Purchase'; $row = (array)$body; $row['Id'] = (string)(++$NEXT); $QB[$k][] = $row; return array('code' => 200, 'json' => array($k => $row)); }
     return array('code' => 404, 'json' => null);
 };
@@ -197,6 +207,70 @@ check((int)$d['ebay']['cost_v'] === EBAY_COST_V, 'the fix is recorded as done');
 $ASKED = array();
 shop_ebay_sweep(true, $T2 + 600, $get, $connect, $api, $slack);
 check($ASKED[0][0] === $T2 - 2 * 86400, 'after that, looks go back to two days before the last good one', $ASKED);
+
+echo "H  the Shop tab: each machine's own name, grade and notes - and its stock item renamed to match\n";
+check(shop_bought_suggest('Dell Latitude 5520 15.6" FHD i5-1145G7 16GB RAM 512GB NVMe SSD Windows 11 Pro') === 'Dell Latitude 5520 15.6" FHD i5-1145G7 16GB RAM Windows 11 Pro', 'the suggested name: the drive goes (a new SSD goes in), the memory stays');
+check(shop_bought_suggest('Latitude 5400 i5-8365U, 8GB, 256GB SSD, Windows 11 Pro') === 'Dell Latitude 5400 i5-8365U, 8GB, Windows 11 Pro', '... its comma goes with it, and "Dell" goes in front');
+check(shop_bought_suggest('Dell Latitude 7490 i7 8th Gen 16GB/512GB SSD Win11 Grade A') === 'Dell Latitude 7490 i7 8th Gen 16GB Win11', '... "16GB/512GB": only the drive goes; so does the seller\'s "Grade A" (ours is set here)');
+check(shop_bought_suggest('Dell OptiPlex 7070 SFF i5-9500 8GB DDR4 1TB HDD Win 11') === 'Dell OptiPlex 7070 SFF i5-9500 8GB DDR4 Win 11'
+    && shop_bought_suggest('Dell Precision 3551 i7 32GB 1TB NVMe Quadro P620 4GB') === 'Dell Precision 3551 i7 32GB Quadro P620 4GB', '... a hard disk goes; a graphics card\'s 4GB stays');
+check(shop_bought_suggest('Dell Latitude 5490 - i5 - 8GB - 256GB SSD - Win 11') === 'Dell Latitude 5490 - i5 - 8GB - Win 11'
+    && shop_bought_suggest('Dell Latitude 3420 i5-1135G7 8GB 256GB Win 11') === 'Dell Latitude 3420 i5-1135G7 8GB Win 11', '... dashes tidied; a bare "256GB" after the memory is the drive');
+check(shop_item_name('Dell Latitude 5520 - SKU 659085', '659085') === 'Dell Latitude 5520 - SKU 659085' && shop_item_name('Dell Latitude 5520', '659085') === 'Dell Latitude 5520 - SKU 659085', 'a name that already ends with its SKU doesn\'t get it twice');
+
+$K = '23-15300-11111#147547371220';
+$r = shop_ebay_edit($K, array('name' => str_repeat('x', 150)), 'Steve', $now);
+check($r === 'ok' && strlen(shop_read()['bought'][$K]['name']) === 100, 'a name is 100 characters at most (QuickBooks\' limit)');
+$r = shop_ebay_edit($K, array('name' => "  Dell OptiPlex 7080 SFF i5-10500\t16GB  ", 'grade' => 'b',
+    'notes' => "Light scuff on the top.\r\nNew 512GB SSD fitted.\r\n\r\n\r\n\r\nNew thermal paste."), 'Steve', $now);
+$b = shop_read()['bought'][$K];
+check($r === 'ok' && $b['name'] === 'Dell OptiPlex 7080 SFF i5-10500 16GB' && $b['grade'] === 'B' && $b['notes'] === "Light scuff on the top.\nNew 512GB SSD fitted.\n\nNew thermal paste." && $b['edited_by'] === 'Steve',
+    'saved: the name tidied, the grade, the notes (line breaks kept, runs of blank lines cut)', $b);
+$row = null; foreach (shop_bought_rows($cat, shop_read()) as $x) if ($x['key'] === $K) $row = $x;
+check($row && $row['name'] === $b['name'] && $row['grade'] === 'B' && $row['notes'] === $b['notes'] && $row['title'] === $b['title'] && $row['suggest'] !== '' && $row['edited'] === 'Steve',
+    'the Shop tab shows them, with eBay\'s title kept beside', $row);
+check(shop_ebay_edit($K, array('name' => 'X', 'grade' => 'D'), 'Steve') === 'the grade must be A, B or C' && shop_read()['bought'][$K]['name'] === $b['name'], 'a grade the website doesn\'t use is refused, nothing changed');
+check(strpos(shop_ebay_edit($K, array('name' => 'X', 'notes' => str_repeat('a', 1001)), 'Steve'), 'too long') !== false && shop_read()['bought'][$K]['name'] === $b['name'], 'notes over 1,000 characters are refused');
+check(shop_ebay_edit('nope#1', array('name' => 'X'), 'Steve') === 'no such eBay purchase', 'an unknown purchase is refused');
+
+// its stock item (made here in D, with eBay's title) takes the new name
+shop_stock_remember(shop_qbo_stock_items($C, $api), array('371220'));
+$skuItem = function ($sku) use (&$QB) { foreach ($QB['Item'] as $o) if ($o['Sku'] === $sku) return $o; return null; };
+$was = $skuItem('371220'); $nitems = count($QB['Item']); $C2 = $C; $C2['live'] = false;
+$r = shop_qbo_rename_bought($C2, $K, $api);
+check(!$r[0] && strpos($r[1], 'switched off') !== false && $skuItem('371220')['Name'] === $was['Name'], 'QuickBooks writing switched off: nothing renamed');
+$r = shop_qbo_rename_bought($C, $K, $api); $it = $skuItem('371220');
+check($r[0] && $it['Id'] === $was['Id'] && $it['Name'] === 'Dell OptiPlex 7080 SFF i5-10500 16GB - SKU 371220' && $it['Description'] === 'Dell OptiPlex 7080 SFF i5-10500 16GB' && $it['Sku'] === '371220' && count($QB['Item']) === $nitems,
+    'renamed in QuickBooks: the same stock item (no new one), its SKU on the end of the name, the name as its sales description', array($r, $it));
+check($it['PurchaseDesc'] === $was['PurchaseDesc'] && stripos($it['PurchaseDesc'], 'optiplex 7080') !== false, 'its purchase description still says what was bought on eBay');
+$d = shop_read();
+check($d['bought'][$K]['qbo_item'] === $it['Name'] && $d['stock']['371220']['name'] === $it['Name'] && strpos($r[1], $was['Name']) !== false, 'the Shop tab names it by its new name at once; the note says what it was called', $r);
+
+check(shop_qbo_rename_bought($C, $K, $api)[0] && strpos(shop_qbo_rename_bought($C, $K, $api)[1], 'already called') !== false && $skuItem('371220')['SyncToken'] === '1', 'saved again with the same name: QuickBooks isn\'t touched');
+
+// the September 5520: its stock item was made by hand (SKU typed ": 659085"), and another item already has the name wanted
+$K5 = '20-15135-03052#336745659085';
+$QB['Item'][] = array('Id' => '777', 'Name' => 'Dell Latitude 5520 i5 16GB - SKU 659085', 'Sku' => '000777', 'Type' => 'Inventory', 'QtyOnHand' => 0, 'PurchaseCost' => 1);
+shop_ebay_edit($K5, array('name' => 'Dell Latitude 5520 i5 16GB', 'grade' => 'A'), 'Steve');
+$r = shop_qbo_rename_bought($C, $K5, $api);
+check(!$r[0] && strpos($r[1], 'already has another item called "Dell Latitude 5520 i5 16GB - SKU 659085"') !== false && $skuItem(': 659085')['Name'] === 'Dell Latitude 5520 Laptop Core I5 11th Gen',
+    'a name another item already has: QuickBooks\' refusal explained, nothing renamed', $r);
+shop_ebay_edit($K5, array('name' => 'Dell Latitude 5520 i5-1145G7 16GB RAM', 'grade' => 'A'), 'Steve');
+$r = shop_qbo_rename_bought($C, $K5, $api); $it = $skuItem(': 659085');
+check($r[0] && $it['Id'] === '202' && $it['Name'] === 'Dell Latitude 5520 i5-1145G7 16GB RAM - SKU 659085' && $it['Sku'] === ': 659085', 'a hand-made stock item is renamed too; its SKU as typed is left alone', array($r, $it));
+
+// not in QuickBooks yet: nothing to rename - the stock item is made with the Shop tab's name when it goes in
+$KN = '26-1-9#522222222222'; $st = shop_read();
+$st['bought'][$KN] = array('order' => '26-1-9', 'item' => '522222222222', 'sku' => '222222', 'title' => 'Dell Latitude 5420 i5-1145G7 16GB 256GB NVMe SSD Win 11', 'qty' => 1,
+    'cost' => '210.00', 'model' => 'latitude-5420', 'date' => '2026-10-22', 'created' => $T2, 'seen' => $T2, 'status' => 'waiting');
+file_put_contents(SHOP_STATE, json_encode($st));
+shop_ebay_edit($KN, array('name' => 'Dell Latitude 5420 i5-1145G7 16GB'), 'Steve');
+$r = shop_qbo_rename_bought($C, $KN, $api);
+check($r[0] && strpos($r[1], 'isn\'t in QuickBooks yet') !== false && $skuItem('222222') === null, 'not in QuickBooks yet: nothing made or renamed', $r);
+$r = shop_qbo_bought($C, $KN, $api);
+check($r[0] && $skuItem('222222')['Name'] === 'Dell Latitude 5420 i5-1145G7 16GB - SKU 222222', 'when it goes in, its stock item takes the Shop tab\'s name', $skuItem('222222'));
+shop_ebay_edit($KN, array('name' => ''), 'Steve');
+check(!isset(shop_read()['bought'][$KN]['name']) && shop_bought_name(shop_read()['bought'][$KN]) === 'Dell Latitude 5420 i5-1145G7 16GB 256GB NVMe SSD Win 11', 'an empty name goes back to eBay\'s title');
 
 echo "\n" . ($fails ? "$fails FAILED\n" : "ALL PASSED\n");
 array_map('unlink', glob($TMP . '/*') ?: array()); @rmdir($TMP);

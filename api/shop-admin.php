@@ -16,6 +16,9 @@
  *   do=ebaycheck                            -> ask eBay now for Dells we've bought (shop-ebay-lib.php; normally hourly by cron)
  *   do=boughtqbo {key}                      -> put one eBay purchase in QuickBooks (an older one, or a retry)
  *   do=dismiss {key} | do=undismiss {key}   -> an eBay purchase that isn't for the shop: off the Shop tab / back on it
+ *   do=boughtedit {key, name, grade, notes, qbo: true|false}
+ *                                           -> an eBay purchase's own name (eBay's title without the drive), grade and
+ *                                              condition notes; with qbo, its QuickBooks stock item is renamed to match
  * Every answer: {ok, note, err} plus the list. NO closing tag in this file.
  */
 error_reporting(0);
@@ -98,6 +101,22 @@ elseif ($do === 'dismiss' || $do === 'undismiss') {
     $r = shop_ebay_dismiss($key, $by, $do === 'undismiss');
     if ($r === 'ok') $out['note'] = $do === 'dismiss' ? 'Taken off the Shop tab (anything already in QuickBooks stays there).' : 'Back on the Shop tab.';
     else $out['err'] = ucfirst($r) . '.';
+}
+elseif ($do === 'boughtedit') {
+    $key = preg_replace('/[^0-9A-Za-z#-]/', '', (string)($in['key'] ?? ''));
+    $r = shop_ebay_edit($key, array('name' => $in['name'] ?? '', 'grade' => $in['grade'] ?? '', 'notes' => $in['notes'] ?? ''), $by);
+    if ($r !== 'ok') $out['err'] = ucfirst($r) . '.';
+    else {
+        $out['note'] = 'Saved.'; shop_log("bought $key edited by $by");
+        if (!empty($in['qbo'])) {
+            $cc = $conn();
+            if (empty($cc['ok'])) { $out['note'] = ''; $out['err'] = 'Saved here, but QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . '), so its stock item keeps its old name.'; }
+            else {
+                list($ok, $msg) = shop_qbo_rename_bought($cc, $key);
+                if ($ok) $out['note'] = 'Saved. QuickBooks: ' . $msg . '.'; else { $out['note'] = ''; $out['err'] = 'Saved here, but QuickBooks: ' . $msg . '.'; }
+            }
+        }
+    }
 }
 elseif ($do === 'offline' || $do === 'online') {
     $r = shop_mark_offline($id, $u, $by, $do === 'offline');

@@ -26032,8 +26032,14 @@ def write_portal_page():
   #p365app .shop-tbl td { vertical-align:top; }
   #p365app .shop-acts td { border-top:0; padding-top:0; }
   #p365app .shop-acts .sm { margin:.15rem .3rem .15rem 0; }
-  #p365app .shop-cost { margin:.5rem 0 .2rem; }
+  #p365app .shop-cost { margin:.5rem 0 .2rem; position:sticky; left:0; max-width:calc(100vw - 6rem); }   /* a phone: fits the screen, not the sideways-scrolling table */
   #p365app .shop-cost .plus-row input { flex:1 1 9rem; }
+  #p365app .shop-cost textarea { width:100%; box-sizing:border-box; min-height:5rem; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font:inherit; font-size:1rem; }
+  #p365app .shop-chk { display:flex; align-items:flex-start; gap:.5rem; margin:.7rem 0 0; cursor:pointer; }
+  #p365app .shop-chk input { width:auto; flex:0 0 auto; min-width:20px; min-height:20px; margin:.1rem 0 0; }
+  #p365app .shop-cond { margin:.35rem 0 0; }
+  #p365app .shop-cond .chip { display:inline-block; margin:0 .4rem .2rem 0; }
+  #p365app .shop-notes { display:block; white-space:pre-line; color:var(--pmut); font-size:.9rem; overflow-wrap:anywhere; }
   #p365app .shop-h3 { font-size:.95rem; margin:1rem 0 .4rem; color:var(--pwhite); }
   #p365app .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input { flex:1 1 auto; min-width:0; }
@@ -33789,6 +33795,7 @@ def write_portal_page():
      takes the payment; a retry button when that couldn't happen) and what it cost (the eBay order, or the stock item's cost,
      + the SSD). Profit once both halves are known. ---------- */
   var SHOP = { d: null, busy: false, open: '', acc: null };
+  var SHOP_GRADES = __SHOPGRADES__;   // shop_stock.GRADES: the grades the website's listings use
   function loadShop(act, extra) {
     var box = document.getElementById('shopbox'); if (!box) return;
     if (SHOP.busy) return; SHOP.busy = !!act;
@@ -33816,6 +33823,22 @@ def write_portal_page():
       + '<input id="shopssd" type="text" inputmode="decimal" autocomplete="off" placeholder="SSD, &pound;" aria-label="What the new SSD cost, in pounds" value="' + esc(p.ssd || q.ssd_default || '') + '" /></div>'
       + '<p style="margin:.5rem 0 0"><button type="button" class="sm" data-shopact="save" data-unit="' + esc(r.id) + '" data-qbo="' + (q.setup ? '1' : '0') + '">' + (q.setup ? 'Save and put it in QuickBooks' : 'Save') + '</button>'
       + (q.setup ? ' <button type="button" class="sm ghost" data-shopact="save" data-unit="' + esc(r.id) + '" data-qbo="0">Save here only</button>' : '') + '</p></div>';
+  }
+  // 15 Oct 2026 (owner: change a machine's name - "remove the hard drive", a new SSD goes in - and add its grade and notes):
+  // the form under an eBay purchase. Its video and 365 PC Manager report stay in the intake folder (shop-kit/intake).
+  function shopBoughtForm(b, q) {
+    var inq = !!(b.qbo_item || (b.stock && !b.stock.err && !b.stock.none));
+    var g = '<option value="">Not graded yet</option>';
+    Object.keys(SHOP_GRADES).forEach(function (k) { g += '<option value="' + esc(k) + '"' + (b.grade === k ? ' selected' : '') + '>' + esc(k) + ' &mdash; ' + esc(SHOP_GRADES[k]) + '</option>'; });
+    return '<div class="plus-form shop-cost">'
+      + '<label for="shopbname">Its name</label><input id="shopbname" type="text" maxlength="100" autocomplete="off" value="' + esc(b.name || b.suggest || b.title) + '" />'
+      + (!b.name && b.suggest && b.suggest !== b.title ? '<p class="quiet" style="margin:.25rem 0 0">Suggested: eBay&rsquo;s title without its drive, as a new SSD goes in. Change it to anything; leave it empty for eBay&rsquo;s title.</p>' : '')
+      + '<label for="shopbgrade">Grade</label><select id="shopbgrade">' + g + '</select>'
+      + '<label for="shopbnotes">Condition notes</label><textarea id="shopbnotes" rows="3" maxlength="1000" placeholder="Marks, and anything fixed or fitted: e.g. light scratch on the lid; new 512GB SSD; new battery">' + esc(b.notes || '') + '</textarea>'
+      + (inq ? '<label class="shop-chk"><input id="shopbqbo" type="checkbox" checked /> <span>Also rename its stock item in QuickBooks (its name and sales description; its SKU stays)</span></label>'
+        : (q.setup ? '<p class="quiet" style="margin:.4rem 0 0">Not in QuickBooks yet: its stock item takes this name when it goes in.</p>' : ''))
+      + '<p style="margin:.6rem 0 0"><button type="button" class="sm" data-shopact="bsave" data-key="' + esc(b.key) + '">Save</button> '
+      + '<button type="button" class="sm ghost" data-shopact="bedit" data-key="' + esc(b.key) + '">Cancel</button></p></div>';
   }
   function renderShop() {
     var box = document.getElementById('shopbox'); if (!box) return;
@@ -33853,8 +33876,15 @@ def write_portal_page():
           : (b.qbo_err && !b.before ? '<span class="err">' + esc(b.qbo_err) + '</span><br />' : '')
             + (q.setup ? '<button type="button" class="sm ghost" data-shopact="boughtqbo" data-key="' + esc(b.key) + '">' + (b.before ? 'Put in QuickBooks' : 'Try again') + '</button>' : '')
             + (b.before ? '<br /><span class="quiet">Bought before eBay was connected. If QuickBooks already has its stock item, this links it and adds nothing.</span>' : '')));
-        h += '<tr><td>' + esc(b.date) + '<br /><span class="quiet mono">' + esc(b.order) + (b.sku ? ' &middot; SKU ' + esc(b.sku) : '') + '</span></td><td>' + esc(b.title) + (b.qty > 1 ? ' <b>&times; ' + b.qty + '</b>' : '') + (b.model ? '<br /><span class="quiet">looks like ' + esc(b.model) + '</span>' : '') + '</td>'
-          + '<td>' + shopGBP(b.cost) + '</td><td>' + bq + '</td><td><button type="button" class="sm ghost" data-shopact="dismiss" data-key="' + esc(b.key) + '">Not for the shop</button></td></tr>';
+        var bg = SHOP_GRADES[b.grade] ? '<span class="chip c" title="' + esc(SHOP_GRADES[b.grade]) + '">Grade ' + esc(b.grade) + '</span>' : '';
+        h += '<tr><td>' + esc(b.date) + '<br /><span class="quiet mono">' + esc(b.order) + (b.sku ? ' &middot; SKU ' + esc(b.sku) : '') + '</span></td>'
+          + '<td>' + (b.name ? '<b>' + esc(b.name) + '</b>' : esc(b.title)) + (b.qty > 1 ? ' <b>&times; ' + b.qty + '</b>' : '')
+          + (b.name && b.name !== b.title ? '<br /><span class="quiet">eBay: ' + esc(b.title) + '</span>' : '')
+          + (b.model ? '<br /><span class="quiet">looks like ' + esc(b.model) + '</span>' : '')
+          + (bg || b.notes ? '<div class="shop-cond">' + bg + (b.notes ? '<span class="shop-notes">' + esc(b.notes) + '</span>' : '') + '</div>' : '') + '</td>'
+          + '<td>' + shopGBP(b.cost) + '</td><td>' + bq + '</td><td><button type="button" class="sm ghost" data-shopact="bedit" data-key="' + esc(b.key) + '">' + (b.name || b.grade || b.notes ? 'Change name, grade, notes' : 'Name, grade, notes') + '</button>'
+          + '<button type="button" class="sm ghost" data-shopact="dismiss" data-key="' + esc(b.key) + '">Not for the shop</button></td></tr>'
+          + (SHOP.open === 'b:' + b.key ? '<tr class="shop-acts"><td colspan="5">' + shopBoughtForm(b, q) + '</td></tr>' : '');
       });
       h += '</table></div><p class="quiet" style="margin:.3rem 0 .9rem">When one is ready, film it and run its service: its listing links back to this purchase, so its cost needs no typing. When the eBay payment arrives in QuickBooks&rsquo; bank feed, choose <b>Match</b>, not Add &mdash; it pairs with this purchase.</p>';
     }
@@ -33909,6 +33939,13 @@ def write_portal_page():
           b.disabled = true; loadShop(act, { key: b.getAttribute('data-key') }); return;
         }
         if (act === 'cost') { SHOP.open = SHOP.open === u ? '' : u; renderShop(); return; }
+        if (act === 'bedit') { var bk = 'b:' + b.getAttribute('data-key'); SHOP.open = SHOP.open === bk ? '' : bk; renderShop(); return; }
+        if (act === 'bsave') {
+          var bqc = document.getElementById('shopbqbo');
+          var bbody = { key: b.getAttribute('data-key'), name: document.getElementById('shopbname').value.trim(), grade: document.getElementById('shopbgrade').value,
+            notes: document.getElementById('shopbnotes').value, qbo: !!(bqc && bqc.checked) };
+          b.disabled = true; SHOP.open = ''; loadShop('boughtedit', bbody); return;
+        }
         if (act === 'save') {
           var body = { unit: u, order: document.getElementById('shopord').value.trim(), date: document.getElementById('shopdate').value,
             total: document.getElementById('shoptot').value.trim(), ssd: document.getElementById('shopssd').value.trim(), qbo: b.getAttribute('data-qbo') === '1' };
@@ -34676,6 +34713,9 @@ def write_portal_page():
         if _h.startswith('/') and '#' not in _h and _h not in _nxl_seen:
             _nxl_seen.add(_h); _nxl_tools.append([_h, _nxl_html.unescape(re.sub(r'<[^>]+>', '', _n))])
     html = html.replace("__NXLTOOLS__", _json_pcm.dumps(_nxl_tools).replace("</", "<\\/"))
+    # 15 Oct 2026: the Shop tab's grade picker uses the website's own grades and wording (shop_stock.GRADES)
+    import shop_stock as _shop_stock
+    html = html.replace("__SHOPGRADES__", _json_pcm.dumps(_shop_stock.GRADES).replace("</", "<\\/"))
     bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
     date_label = _dt.date.today().strftime("%d %b %Y")
     old_path = _os.path.join(d, "index.html")

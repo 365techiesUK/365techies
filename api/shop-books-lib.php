@@ -69,7 +69,7 @@ function shop_qbo_stock_items($c, $api = 'invq_api') {
             $out[] = array('id' => (string)($it['Id'] ?? ''), 'name' => (string)($it['Name'] ?? ''), 'sku' => (string)($it['Sku'] ?? ''),
                 'qty' => (float)($it['QtyOnHand'] ?? 0), 'cost' => shop_money($it['PurchaseCost'] ?? 0),
                 'asset' => (string)($it['AssetAccountRef']['value'] ?? ''), 'income' => (string)($it['IncomeAccountRef']['value'] ?? ''),
-                'cogs' => (string)($it['ExpenseAccountRef']['value'] ?? ''));
+                'cogs' => (string)($it['ExpenseAccountRef']['value'] ?? ''), 'sync' => (string)($it['SyncToken'] ?? ''));
         $start += 1000;
     } while (count($got) === 1000 && $start < 20000);
     return $out;
@@ -218,6 +218,8 @@ function shop_book_purchase($id, $u, $p, $by, $now = null) {
 /* A stock item's name, as the business names them: what it is, then the SKU. QuickBooks: 100 characters, no colons. */
 function shop_item_name($title, $sku) {
     $t = trim(preg_replace('/\s+/', ' ', str_replace(array(':', "\t"), ' ', (string)$title)));
+    // a name that already ends with its SKU (typed on the Shop tab) doesn't get it twice
+    if ((string)$sku !== '' && preg_match('/\bSKU\s*' . preg_quote((string)$sku, '/') . '$/i', $t)) return rtrim(mb_substr($t, 0, 100, 'UTF-8'));
     $tail = ' - SKU ' . $sku;
     return rtrim(mb_substr($t, 0, 100 - strlen($tail), 'UTF-8')) . $tail;
 }
@@ -400,6 +402,30 @@ function shop_bought_purchase($d, $order) {
     return null;
 }
 /* Bought on eBay and not listed yet - "being got ready" on the Shop tab, newest first. */
+/* 15 Oct 2026 (owner: edit each machine's name "so we can remove the hard drive", since every one gets a new SSD): the eBay
+   title with its drive taken out, as the Shop tab's name box suggests it. A size with a drive word either side of it goes, and
+   so does any size over 100GB that isn't memory ("16GB/256GB" -> "16GB"); "16GB RAM" / "8GB DDR4" / "4GB" graphics stay. The
+   seller's own "Grade A" goes too: ours is set on the Shop tab. Only a suggestion - nothing is renamed until someone saves. */
+function shop_bought_suggest($title) {
+    $drive = '(?:m\.?2|nvme|pcie|sata|ssd|hdd|emmc|storage|hard\s*drive|hard\s*disk|drive)';
+    $sep = '[\s,\/|+&]*';
+    $t = ' ' . str_replace(array("\r", "\n", "\t"), ' ', (string)$title) . ' ';
+    // a drive word then its size: "SSD 512GB", "NVMe: 1TB"
+    $t = preg_replace('/' . $sep . '\b(?:' . $drive . '[\s\/-]*)+:?\s*\d+(?:\.\d+)?\s?(?:gb|tb)\b/i', ' ', $t);
+    // a size, then any drive words: "512GB NVMe SSD", "1TB", "256 GB" - unless it is memory
+    $t = preg_replace_callback('/' . $sep . '\b(\d+(?:\.\d+)?)\s?(gb|tb)\b((?:[\s\/-]*' . $drive . '\b)*)(?!\s*(?:ram|memory|ddr|of\s+ram|lpddr))/i',
+        function ($m) { return ($m[3] !== '' || strtolower($m[2]) === 'tb' || (float)$m[1] >= 100) ? ' ' : $m[0]; }, $t);
+    $t = preg_replace('/\b(?:nvme|ssd|hdd|m\.2)\b/i', ' ', $t);   // a drive word left on its own
+    $t = preg_replace('/\bgrade\s*[a-d]\b/i', ' ', $t);
+    // tidy: one separator where removals left two, none at the ends, no space before a comma
+    $t = preg_replace('/\s+/', ' ', $t);
+    $t = preg_replace('/(\s[-\x{2013}]\s|[,\/|+&])(?:\s*(?:[-\x{2013}](?=\s)|[,\/|+&]))+/u', '$1', $t);
+    $t = preg_replace(array('/\s+/', '/\s+,/'), array(' ', ','), $t);
+    $t = trim(preg_replace('/^[\s,\/|+&\-\x{2013}]+|[\s,\/|+&\-\x{2013}]+$/u', '', $t));
+    if ($t === '') return (string)$title;
+    if (!preg_match('/^dell\b/i', $t)) $t = 'Dell ' . $t;
+    return rtrim(mb_substr($t, 0, 100, 'UTF-8'));
+}
 function shop_bought_rows($cat = null, $d = null) {
     $cat = $cat ?: shop_catalogue(); $d = $d ?: shop_read();
     $listed = array(); foreach ($cat['units'] as $u) if (!empty($u['ebay'])) $listed[(string)$u['ebay']] = 1;
@@ -408,6 +434,8 @@ function shop_bought_rows($cat = null, $d = null) {
         if (isset($listed[$b['order']]) || ($b['status'] ?? '') === 'dismissed') continue;
         $sku = (string)($b['sku'] ?? '');
         $rows[] = array('key' => $key, 'order' => $b['order'], 'date' => $b['date'], 'title' => $b['title'], 'cost' => $b['cost'], 'model' => $b['model'],
+                        'name' => (string)($b['name'] ?? ''), 'suggest' => shop_bought_suggest($b['title']), 'grade' => (string)($b['grade'] ?? ''),
+                        'notes' => (string)($b['notes'] ?? ''), 'edited' => (string)($b['edited_by'] ?? ''),
                         'qty' => (int)($b['qty'] ?? 1), 'sku' => $sku, 'stock' => shop_stock_of($d, $sku),
                         'qbo_url' => (string)($b['qbo_url'] ?? ''), 'qbo_item' => (string)($b['qbo_item'] ?? ''), 'qbo_err' => (string)($b['qbo_err'] ?? ''),
                         'before' => $since && (int)$b['created'] < $since - 86400);

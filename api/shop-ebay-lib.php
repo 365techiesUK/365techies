@@ -225,7 +225,7 @@ function shop_qbo_bought($c, $key, $api = 'invq_api') {
     $same = 0; foreach ($d['bought'] as $o) if (($o['order'] ?? '') === $b['order']) $same++;
     $doc = shop_doc('EB', $same > 1 ? $b['order'] . '-' . substr(preg_replace('/\D/', '', (string)$b['item']), -4) : $b['order']);
     $r = shop_qbo_stock_purchase($c, $q, array('order' => $b['order'], 'date' => $b['date'], 'total' => $b['cost'], 'qty' => max(1, (int)($b['qty'] ?? 1)),
-        'sku' => $sku, 'title' => 'Dell ' . preg_replace('/^dell\s+/i', '', $b['title']), 'doc' => $doc,
+        'sku' => $sku, 'title' => shop_bought_name($b), 'doc' => $doc,
         'note' => 'Bought on eBay (found by the shop\'s eBay connection): ' . $b['title'] . ', order ' . $b['order'] . ', item ' . $b['item'] . '.'), $api);
     shop_locked(function (&$d) use ($key, $r) {
         if ($r[0]) {
@@ -253,4 +253,61 @@ function shop_ebay_dismiss($key, $by, $undo = false) {
         $d['bought'][$key]['status'] = $undo ? 'waiting' : 'dismissed'; $d['bought'][$key]['by'] = $by; $res = 'ok'; return true;
     });
     return $res;
+}
+/* 15 Oct 2026 (owner: edit each machine's name - "remove the hard drive", new SSDs go in - and give it a grade and condition
+   notes while it's got ready). Kept on the purchase; its listing is written from them (shop_intake.py --grade / --marks),
+   with the video and the 365 PC Manager report from the intake folder. An empty name goes back to eBay's title.
+   Grades as shop_stock.GRADES. -> 'ok' | why */
+function shop_ebay_edit($key, $f, $by, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $name = trim((string)preg_replace('/\s+/u', ' ', (string)($f['name'] ?? '')));
+    $name = rtrim(mb_substr($name, 0, 100, 'UTF-8'));
+    $grade = strtoupper(trim((string)($f['grade'] ?? '')));
+    if ($grade !== '' && !in_array($grade, array('A', 'B', 'C'), true)) return 'the grade must be A, B or C';
+    $notes = str_replace(array("\r\n", "\r"), "\n", (string)($f['notes'] ?? ''));
+    $notes = trim((string)preg_replace(array('/[\x00-\x09\x0B-\x1F\x7F]/u', '/\n{3,}/'), array(' ', "\n\n"), $notes));
+    if (mb_strlen($notes, 'UTF-8') > 1000) return 'the notes are too long (1,000 characters at most)';
+    $res = 'no such eBay purchase';
+    shop_locked(function (&$d) use ($key, $name, $grade, $notes, $by, $now, &$res) {
+        if (!isset($d['bought'][$key])) return false;
+        $b = &$d['bought'][$key];
+        foreach (array('name' => $name, 'grade' => $grade, 'notes' => $notes) as $k => $v) { if ($v === '') unset($b[$k]); else $b[$k] = $v; }
+        $b['edited_by'] = $by; $b['edited_at'] = $now; $res = 'ok'; return true;
+    });
+    return $res;
+}
+/* What a purchase is called: its Shop-tab name, else eBay's title (with "Dell" in front, once). */
+function shop_bought_name($b) {
+    return (string)($b['name'] ?? '') !== '' ? (string)$b['name'] : 'Dell ' . preg_replace('/^dell\s+/i', '', (string)$b['title']);
+}
+/* Its QuickBooks stock item takes that name too (owner: "maybe in the QuickBooks listing"): the item found by its SKU - made
+   here or by hand - gets Name "<name> - SKU <sku>" and the name as its sales description; its purchase description keeps what
+   was bought. Not in QuickBooks yet: nothing to rename, it takes the name when it goes in. -> array(ok, note|why) */
+function shop_qbo_rename_bought($c, $key, $api = 'invq_api') {
+    if (($g = shop_qbo_gate($c)) !== '') return array(false, $g);
+    $d = shop_read(); $b = $d['bought'][$key] ?? null;
+    if (!$b) return array(false, 'no such eBay purchase');
+    $sku = (string)($b['sku'] ?? '') !== '' ? (string)$b['sku'] : shop_sku_from_item($b['item'] ?? '');
+    $items = shop_qbo_stock_items($c, $api);
+    if ($items === null) return array(false, 'could not read your QuickBooks stock items');
+    $f = shop_stock_find($items, $sku);
+    if (($f['err'] ?? '') === 'none') return array(true, 'it isn\'t in QuickBooks yet - its stock item takes this name when it goes in');
+    if (!isset($f['item'])) return array(false, shop_stock_why($f, $sku));
+    $it = $f['item']; $name = shop_bought_name($b); $new = shop_item_name($name, $sku);
+    if ($it['name'] === $new) return array(true, 'its stock item is already called "' . $new . '"');
+    $res = call_user_func($api, $c, 'POST', '/item', array('Id' => $it['id'], 'SyncToken' => $it['sync'], 'sparse' => true,
+        'Name' => $new, 'Description' => mb_substr($name, 0, 4000, 'UTF-8')));
+    if (!qbo_lib_ok($res)) {
+        $why = shop_qbo_why($res);
+        shop_log('qbo stock item ' . $it['id'] . ' rename FAILED: ' . $why);
+        return array(false, strpos($why, 'Duplicate') !== false ? 'QuickBooks already has another item called "' . $new . '" - change the name a little' : 'QuickBooks refused the new name: ' . $why);
+    }
+    $n = shop_sku_norm($sku);
+    shop_locked(function (&$d) use ($key, $n, $new) {
+        if (isset($d['stock'][$n]['id'])) $d['stock'][$n]['name'] = $new;
+        if (!empty($d['bought'][$key]['qbo_item'])) $d['bought'][$key]['qbo_item'] = $new;
+        return true;
+    });
+    shop_log('qbo stock item ' . $it['id'] . ' renamed "' . $it['name'] . '" -> "' . $new . '"');
+    return array(true, 'its stock item "' . $it['name'] . '" is now "' . $new . '"');
 }
