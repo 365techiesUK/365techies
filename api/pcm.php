@@ -400,7 +400,10 @@ if ($action === 'checkin') {
     list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
     // v29: staff have switched the email move (365 Mail Mover) on for this PC - the app shows its page
     $mmOn = ($machine !== '' && !empty($c['machines'][$machine]['mailmove'])) ? 1 : 0;
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+    // app 36.4: when this PC last had a full service - our six-weekly one or one run from the app (pcm-lastsvc-lib.php)
+    require_once __DIR__ . '/pcm-lastsvc-lib.php';
+    list($lastSvc, $lastSvcK) = pcm_last_service(($machine !== '' && isset($c['machines'][$machine])) ? $c['machines'][$machine] : null);
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
