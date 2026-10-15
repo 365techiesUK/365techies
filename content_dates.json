@@ -1600,8 +1600,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "a8820927010d9fba",
-  "last": "2026-10-13"
+  "h": "4601fe6ee10af3c9",
+  "last": "2026-10-15"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -3595,6 +3595,11 @@
   "h": "2952516efea3b90f",
   "last": "2026-10-06"
  },
+ "we-couldnt-update-the-system-reserved-partition": {
+  "first": "2026-10-15",
+  "h": "95a07e54484f0104",
+  "last": "2026-10-15"
+ },
  "web-care": {
   "first": "2026-07-28",
   "h": "6b1bb9ea7e68fcd6",
@@ -3802,8 +3807,8 @@
  },
  "will-i-lose-files-upgrading-to-windows-11": {
   "first": "2026-07-28",
-  "h": "1847db025323de05",
-  "last": "2026-10-06"
+  "h": "3bcc4de9be2fe839",
+  "last": "2026-10-15"
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
@@ -3847,8 +3852,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "6cceea3eab941725",
-  "last": "2026-10-13"
+  "h": "a887145744bffd3d",
+  "last": "2026-10-15"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
@@ -3872,7 +3877,8 @@
  },
  "windows-update-stuck": {
   "first": "2026-10-12",
-  "h": "b5cbe605d0da6a4a"
+  "h": "1cb7d24803ee5269",
+  "last": "2026-10-15"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",

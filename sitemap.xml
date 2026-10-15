@@ -87,7 +87,7 @@
   <url><loc>https://365techies.co.uk/cyber-essentials/</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://365techies.co.uk/custom-pc-builds/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/preventative-maintenance/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://365techies.co.uk/windows-11-support/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/windows-11-support/</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://365techies.co.uk/email-support/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/new-computer-setup/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/printer-support/</loc><lastmod>2026-10-13</lastmod></url>
@@ -429,7 +429,7 @@
   <url><loc>https://365techies.co.uk/cant-send-btinternet-email-new-outlook/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/sage-50-multi-user-cannot-connect/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/printer-wont-connect-to-bt-smart-hub/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://365techies.co.uk/will-i-lose-files-upgrading-to-windows-11/</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://365techies.co.uk/will-i-lose-files-upgrading-to-windows-11/</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://365techies.co.uk/wifi-in-a-granny-annexe/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/will-a-power-cut-damage-my-computer/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/basic-paye-tools-could-not-access-the-database/</loc><lastmod>2026-10-06</lastmod></url>
@@ -666,8 +666,9 @@
   <url><loc>https://365techies.co.uk/laptop-touchpad-not-working/</loc></url>
   <url><loc>https://365techies.co.uk/screen-upside-down-or-sideways/</loc></url>
   <url><loc>https://365techies.co.uk/laptop-plugged-in-not-charging/</loc></url>
-  <url><loc>https://365techies.co.uk/windows-update-stuck/</loc></url>
+  <url><loc>https://365techies.co.uk/windows-update-stuck/</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://365techies.co.uk/forgot-windows-password-or-pin/</loc></url>
+  <url><loc>https://365techies.co.uk/we-couldnt-update-the-system-reserved-partition/</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://365techies.co.uk/home-assistant-victron-cerbo-gx/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/cerbo-gx-not-connecting-to-vrm/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/join/</loc><lastmod>2026-10-06</lastmod></url>
@@ -781,5 +782,5 @@
   <url><loc>https://365techies.co.uk/how-to-block-nuisance-calls-and-texts/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/how-to-set-up-a-second-monitor/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/ps5-emulator-real-or-fake/</loc><lastmod>2026-10-10</lastmod></url>
-  <url><loc>https://365techies.co.uk/it-advice/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/it-advice/</loc><lastmod>2026-10-15</lastmod></url>
 </urlset>

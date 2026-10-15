@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-06"
+      "dateModified": "2026-10-15"
     },
     {
       "@type": "FAQPage",
@@ -323,6 +323,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "<p>If your PC doesn&rsquo;t meet the requirements (mainly TPM 2.0 and a supported processor), the official upgrade simply won&rsquo;t be offered &mdash; nothing changes and no files are touched. You can force it with registry tweaks, but Microsoft warns those machines may not get updates and installs can be unstable, which is where people <em>do</em> lose data. On an older PC it&rsquo;s often wiser to <a href=\"/should-you-upgrade-to-windows-11/\">weigh replacing it</a> instead.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why can I only choose &lsquo;Nothing&rsquo; when I run setup?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Setup greys out the keep options when the download doesn&rsquo;t match your installation: a different edition, an older version, or a different language from the one Windows was originally installed in (a UK display language can sit on top of a US English installation). Close setup and use Windows Update or <strong>Settings &rarr; System &rarr; Recovery &rarr; Fix problems using Windows Update</strong> instead; they choose the right version and keep everything.</p>"
           }
         },
         {
@@ -845,7 +853,7 @@
             <a href="/windows-11-upgrade-service/" class="button secondary button--lg">Book a Windows 11 upgrade</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no fix, no fee</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 6 October 2026</p>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 15 October 2026</p>
         </div>
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
@@ -897,14 +905,14 @@
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; WHEN FILES DO GET WIPED</p>
         <h2 class="section-title" data-title>The only cases that do wipe your files<span class="title-underline"></span></h2>
-<p>There are really only two ways an upgrade erases your files, and both take a deliberate choice on your part.</p><p><strong>1. A clean install (choosing &lsquo;Nothing&rsquo;).</strong> If you upgrade using a downloaded ISO, a USB stick or the Media Creation Tool rather than Windows Update, setup shows a <em>&lsquo;Choose what to keep&rsquo;</em> screen with three options: <strong>Keep personal files and apps</strong>, <strong>Keep personal files only</strong>, or <strong>Nothing</strong>. Picking <strong>Nothing</strong> wipes the whole system drive &mdash; files, apps and settings. Leave it on the top option and your data is safe.</p><p><strong>2. Forcing it onto an unsupported PC.</strong> Windows 11 needs fairly modern hardware (TPM 2.0 and a supported processor). If your PC doesn&rsquo;t qualify, the official route won&rsquo;t offer the upgrade at all. There are registry workarounds to force it, but Microsoft warns these machines aren&rsquo;t entitled to updates and the install can be unstable &mdash; and a botched forced upgrade is where people <em>do</em> lose data. If your PC isn&rsquo;t eligible, it&rsquo;s usually safer to <a href="/should-you-upgrade-to-windows-11/">weigh up your options</a> than to fight it.</p>
+<p>There are really only two ways an upgrade erases your files, and both take a deliberate choice on your part.</p><p><strong>1. A clean install (choosing &lsquo;Nothing&rsquo;).</strong> If you upgrade using a downloaded ISO, a USB stick or the Media Creation Tool rather than Windows Update, setup shows a <em>&lsquo;Choose what to keep&rsquo;</em> screen with three options: <strong>Keep personal files and apps</strong>, <strong>Keep personal files only</strong>, or <strong>Nothing</strong>. Picking <strong>Nothing</strong> wipes the whole system drive &mdash; files, apps and settings. Leave it on the top option and your data is safe.</p><p><strong>If setup only offers &lsquo;Nothing&rsquo;</strong>, with the other two options greyed out, don&rsquo;t continue: close it. Setup can only keep your files and programs when what you&rsquo;re installing matches what&rsquo;s already there: the same edition, a newer version, and the same language Windows was <em>originally installed</em> in. That last one catches people out. A PC that shows UK English everywhere can still have been installed in US English with a UK language pack added on top, so the &ldquo;English International&rdquo; download doesn&rsquo;t match it (and in October 2026 Microsoft&rsquo;s UK download page was missing English International from its list anyway; the US page still had it). Rather than guessing at downloads, use <strong>Windows Update</strong>, or on Windows 11 <strong>Settings &rarr; System &rarr; Recovery &rarr; Fix problems using Windows Update</strong>: both pick the right version themselves and keep everything. If setup instead says it <em>couldn&rsquo;t update the system reserved partition</em>, that&rsquo;s a different, fixable problem: see <a href="/we-couldnt-update-the-system-reserved-partition/">we couldn&rsquo;t update the system reserved partition</a>.</p><p><strong>2. Forcing it onto an unsupported PC.</strong> Windows 11 needs fairly modern hardware (TPM 2.0 and a supported processor). If your PC doesn&rsquo;t qualify, the official route won&rsquo;t offer the upgrade at all. There are registry workarounds to force it, but Microsoft warns these machines aren&rsquo;t entitled to updates and the install can be unstable &mdash; and a botched forced upgrade is where people <em>do</em> lose data. If your PC isn&rsquo;t eligible, it&rsquo;s usually safer to <a href="/should-you-upgrade-to-windows-11/">weigh up your options</a> than to fight it.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="How to upgrade without losing anything">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/05 &mdash; HOW TO UPGRADE SAFELY</p>
         <h2 class="section-title" data-title>How to upgrade without losing anything<span class="title-underline"></span></h2>
-<p>For most people the safest route is the simplest one. Here&rsquo;s how the two paths differ:</p><ul><li><strong>Windows Update (recommended).</strong> Go to <strong>Settings &rarr; Update &amp; Security &rarr; Windows Update</strong>. If your PC is eligible, you&rsquo;ll see the Windows 11 upgrade offered with a <em>Download and install</em> button. This route keeps your files, apps and settings automatically &mdash; there&rsquo;s no &lsquo;Nothing&rsquo; option to trip over.</li><li><strong>Installation Assistant or media.</strong> Handy if the upgrade isn&rsquo;t showing yet. Just make sure you leave it on <strong>Keep personal files and apps</strong>.</li></ul><p>A reassuring safety valve: after upgrading, Windows keeps your old Windows 10 for <strong>10 days</strong>. If you don&rsquo;t get on with 11, you can <em>Go back</em> (Settings &rarr; System &rarr; Recovery) and return to 10 with your files intact &mdash; after 10 days those old files are cleared to free up space, so it&rsquo;s a one-time window. Our guide to <a href="/how-to-update-windows-safely/">updating Windows safely</a> covers the sensible pre-flight checks: back up, plug in, and don&rsquo;t rush it.</p>
+<p>For most people the safest route is the simplest one. Here&rsquo;s how the two paths differ:</p><ul><li><strong>Windows Update (recommended).</strong> Go to <strong>Settings &rarr; Update &amp; Security &rarr; Windows Update</strong>. If your PC is eligible, you&rsquo;ll see the Windows 11 upgrade offered with a <em>Download and install</em> button. This route keeps your files, apps and settings automatically &mdash; there&rsquo;s no &lsquo;Nothing&rsquo; option to trip over.</li><li><strong>Installation Assistant or media.</strong> Handy if the upgrade isn&rsquo;t showing yet. Just make sure you leave it on <strong>Keep personal files and apps</strong>. The Installation Assistant matches your PC&rsquo;s language by itself; with a downloaded ISO you have to pick the language Windows was originally installed in, and if &lsquo;Keep personal files and apps&rsquo; is greyed out, that&rsquo;s the usual reason.</li></ul><p>A reassuring safety valve: after upgrading, Windows keeps your old Windows 10 for <strong>10 days</strong>. If you don&rsquo;t get on with 11, you can <em>Go back</em> (Settings &rarr; System &rarr; Recovery) and return to 10 with your files intact &mdash; after 10 days those old files are cleared to free up space, so it&rsquo;s a one-time window. Our guide to <a href="/how-to-update-windows-safely/">updating Windows safely</a> covers the sensible pre-flight checks: back up, plug in, and don&rsquo;t rush it.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Why not to leave it too long">
@@ -950,6 +958,10 @@
         <details class="faq" data-reveal>
           <summary>What happens to my files if my PC isn&rsquo;t compatible with Windows 11?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>If your PC doesn&rsquo;t meet the requirements (mainly TPM 2.0 and a supported processor), the official upgrade simply won&rsquo;t be offered &mdash; nothing changes and no files are touched. You can force it with registry tweaks, but Microsoft warns those machines may not get updates and installs can be unstable, which is where people <em>do</em> lose data. On an older PC it&rsquo;s often wiser to <a href="/should-you-upgrade-to-windows-11/">weigh replacing it</a> instead.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why can I only choose &lsquo;Nothing&rsquo; when I run setup?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Setup greys out the keep options when the download doesn&rsquo;t match your installation: a different edition, an older version, or a different language from the one Windows was originally installed in (a UK display language can sit on top of a US English installation). Close setup and use Windows Update or <strong>Settings &rarr; System &rarr; Recovery &rarr; Fix problems using Windows Update</strong> instead; they choose the right version and keep everything.</p></p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Can I go back to Windows 10 if I don&rsquo;t like Windows 11?<span class="faq__icon" aria-hidden="true"></span></summary>

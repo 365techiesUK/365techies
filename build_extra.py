@@ -117,6 +117,7 @@ SPECIALIST = [
      ("/printer-wont-scan-to-computer-windows-11/", "The printer will not scan to the computer"),
      ("/restrict-staff-access-to-shared-folders-windows-11/", "Restrict which staff can open a shared folder"),
      ("/windows-update-stuck/", "Windows Update is stuck, or keeps failing"),
+     ("/we-couldnt-update-the-system-reserved-partition/", "The yearly update says it couldn&rsquo;t update the system reserved partition"),
      ("/why-does-my-pc-keep-crashing/", "The PC keeps crashing or restarting"),
      ("/forgot-windows-password-or-pin/", "Forgot the Windows password or PIN"),
      ("/computer-asking-for-bitlocker-recovery-key/", "It is asking for a BitLocker recovery key"),

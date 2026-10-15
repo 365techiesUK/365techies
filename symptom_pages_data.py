@@ -381,6 +381,7 @@ UPDATES = {
                  '<li><strong>Back up your important files</strong> to a USB drive or OneDrive first.</li>'
                  '<li><strong>Use Windows 11&rsquo;s own repair:</strong> Settings, System, Recovery, <strong>Fix problems using Windows Update</strong>, then <strong>Reinstall now</strong>. It reinstalls the version of Windows you already have, repairs Windows&rsquo; own files, and keeps your files, apps and settings (<a href="https://support.microsoft.com/en-us/windows/deployment/install-upgrade/fix-issues-by-reinstalling-the-current-version-of-windows" rel="noopener" target="_blank">Microsoft</a>). Keep the PC plugged in and online until it finishes. It may not appear on PCs managed by a work or school.</li>'
                  '</ol>'
+                 '<p><strong>The big yearly update keeps undoing itself?</strong> If it restarts, says &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop, or Microsoft&rsquo;s installer says &ldquo;We couldn&rsquo;t update the system reserved partition&rdquo;, the usual cause is a full start-up partition, not a broken PC. We fixed exactly that on a customer&rsquo;s Dell in October 2026 (5 KB free, 15 MB needed): <a href="/we-couldnt-update-the-system-reserved-partition/">how to check it and free the space safely</a>.</p>'
                  '<p>Why updates sometimes cause trouble in the first place: <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</p>'},
         {'eyebrow': '/04 &mdash; STUCK ON THE BLUE SCREEN', 'h2': 'Stuck on &ldquo;Working on updates&rdquo; for hours',
          'html': '<p>Only if nothing has changed for several hours: hold the power button for about 10 seconds until the PC switches off, wait a moment, then switch it on again. Windows usually carries on, or says it couldn&rsquo;t complete the updates and undoes them, which is safe.</p>'
@@ -399,12 +400,12 @@ UPDATES = {
     'faqs': [
         {'q': 'How long should a Windows update take?', 'a': '<p>Monthly updates usually take minutes. The big yearly updates can take an hour or more, and the percentage can stay still for a long time.</p>'},
         {'q': 'Is it safe to switch off during an update?', 'a': '<p>Avoid it. On the &ldquo;Working on updates&rdquo; screen, wait at least an hour or two. Only if nothing changes for several hours, hold the power button to switch off; Windows usually carries on or undoes the update.</p>'},
-        {'q': 'Why does Windows Update keep failing?', 'a': '<p>Common causes are too little free space, a damaged update download or Windows file, or a device or driver the update doesn&rsquo;t like. Update history shows the error code.</p>'},
+        {'q': 'Why does Windows Update keep failing?', 'a': '<p>Common causes are too little free space, a damaged update download or Windows file, or a device or driver the update doesn&rsquo;t like. Update history shows the error code. If it&rsquo;s the big yearly update that keeps undoing itself, check the hidden start-up partition: <a href="/we-couldnt-update-the-system-reserved-partition/">we couldn&rsquo;t update the system reserved partition</a>.</p>'},
         {'q': 'What does Fix problems using Windows Update do?', 'a': '<p>It reinstalls the version of Windows 11 you already have, repairing Windows&rsquo; own files, and keeps your files, apps and settings. Back up first anyway.</p>'},
         {'q': 'Will I lose my files?', 'a': '<p>Not from the steps on this page. Back up before any repair, just in case.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC and get the updates through while you watch.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
 }
 
 # ============================================================ 6. Forgot Windows password or PIN (12 Oct 2026, round 2)
@@ -497,6 +498,102 @@ PASSWORD = {
 }
 
 
+# ============================================================ 7. We couldn't update the system reserved partition (15 Oct 2026)
+# Owner, 15 Oct 2026: "do it all ... make it awesome", after we fixed this remotely on a customer's Dell Latitude 3520 the
+# same day (26H2 failed with 0x80242016 and undid itself; EFI partition 96 MB with 5 KB free; removing the non-English boot
+# fonts from BOTH font folders freed 25.1 MB; Windows Update then installed 26H2). Bing, 15 Jul - 12 Oct 2026: "we couldn't
+# update system reserved partition" 885 (UK 71), "system reserved partition" 354, 0x800f0922 2.4K. Top 10 = Microsoft Q&A and
+# partition-tool sellers pushing "extend the partition". Facts from our own runs (Judith Kent's PC, Aug 2026, and the Dell):
+# Setup wants about 15 MB free there; the CJK fonts are 3-4 MB each; Dell keeps a second font set under EFI\Dell\SOS (its
+# SupportAssist OS Recovery) and two BIOS recovery images of ~15 MB each. Commands are ONE LINE each with full paths and no
+# variables carried between lines (15 Oct lesson: a two-line paste glued onto an unrun line deleted the English fonts too).
+# Deliberately NOT told to the public: deleting the Dell BIOS images, bcdboot, resizing. Never Microsoft's `del *.*` recipe.
+_PRE = ('<pre style="white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto;padding:.9rem 1rem;border-radius:10px;background:rgba(0,0,0,.35);'
+        'border:1px solid rgba(125,170,220,.22)"><code>')
+RESERVED = {
+    'slug': 'we-couldnt-update-the-system-reserved-partition',
+    'title': 'We Couldn\'t Update the System Reserved Partition? Fix It',
+    'metaDesc': '"This PC doesn\'t currently meet Windows 11 system requirements: we couldn\'t update the system reserved partition." What it really means, and the safe fix.',
+    'ogTitle': 'We couldn\'t update the system reserved partition: the safe fix',
+    'crumbName': 'System Reserved Partition Error',
+    'eyebrow': '// WINDOWS UPDATE ERROR',
+    'h1': 'We couldn&rsquo;t update the <em class="grad grad--cyan">system reserved partition</em>',
+    'lede': 'The big yearly Windows update refuses to start, saying your PC &ldquo;doesn&rsquo;t currently meet Windows 11 system requirements&rdquo;, or it restarts, says it&rsquo;s undoing changes and gives up. Your PC is almost always fine. A tiny hidden partition Windows uses to start up has run out of room. Here&rsquo;s how to check, the safe way to free it, and the &ldquo;fixes&rdquo; to avoid.',
+    'chips': ['Your files are safe', 'About 15 minutes', 'Fixed remotely'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Check it first', '#s3'],
+    'ctaHead': 'Rather we did it?',
+    'ctaSub': 'With your permission we connect to your Windows PC, free the space safely and get the update installed while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it means', 'Windows&rsquo; small start-up partition (the EFI partition) is nearly full. The update needs about 15 MB free there.'),
+        ('Is my PC too old?', 'No. On a PC that already runs Windows 11 this is the only &ldquo;requirement&rdquo; it is failing.'),
+        ('What fills it', 'Start-up screen fonts in a dozen languages, and on Dell laptops a second set of fonts and two BIOS backup files.'),
+        ('The safe fix', 'Remove the Chinese, Japanese and Korean start-up fonts, keep the four English ones, then run Windows Update again.'),
+        ('Avoid', 'The old <code>del *.*</code> instructions, and partition tools that promise to enlarge it.'),
+        ('Your files', 'Not touched. The fix only removes font files from the hidden partition.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT MEANS', 'h2': 'What the message really means',
+         'html': '<p>You see it in one of two ways:</p>'
+                 '<ul>'
+                 '<li><strong>Windows 11 Setup or the Installation Assistant</strong> stops with &ldquo;This PC doesn&rsquo;t currently meet Windows 11 system requirements. Here&rsquo;s why: <strong>We couldn&rsquo;t update the system reserved partition.</strong>&rdquo;</li>'
+                 '<li><strong>Windows Update</strong> downloads the yearly update, restarts, shows &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop. Settings, Windows Update, Update history then lists it as <em>Failed to install</em> with an error code.</li>'
+                 '</ul>'
+                 '<p>Despite the wording, your PC isn&rsquo;t too old. On a modern PC the &ldquo;system reserved partition&rdquo; is the <strong>EFI system partition</strong>: a small hidden part of the drive, often only about 100 MB, that holds the files Windows needs to start. A version upgrade has to write new start-up files there and wants roughly <strong>15 MB free</strong>. When it hasn&rsquo;t got that, the upgrade either refuses to start or undoes itself after the restart.</p>'
+                 '<p>Older PCs that were upgraded from Windows 10, and many laptops that came with a 100 MB partition from the factory, hit it most, and they hit it again at each yearly update.</p>'},
+        {'eyebrow': '/02 &mdash; A REAL ONE', 'h2': 'What it looked like on a customer&rsquo;s Dell',
+         'html': '<p>In October 2026 a customer&rsquo;s Dell Latitude 3520 kept failing the Windows 11 26H2 update: it restarted, undid the changes and went back to the desktop (Update history showed error 0x80242016). Running Microsoft&rsquo;s installer by hand then gave the &ldquo;couldn&rsquo;t update the system reserved partition&rdquo; message.</p>'
+                 '<p>Its EFI partition was <strong>96 MB with 5 KB free</strong>. Inside: two Dell BIOS recovery files of about 15 MB each, Dell&rsquo;s own recovery tool with a full second set of start-up fonts, and Windows&rsquo; start-up fonts in a dozen languages, the Chinese, Japanese and Korean ones 3 to 4 MB each. Removing those foreign-language fonts from both font folders, and keeping the four English ones, left <strong>25 MB free</strong>. Windows Update then installed 26H2 at the next attempt, with every file and program still there. It took about fifteen minutes, done remotely.</p>'},
+        {'eyebrow': '/03 &mdash; CHECK IT FIRST', 'h2': 'Check how full it is (changes nothing)',
+         'html': '<p>Right-click <strong>Start</strong> and choose <strong>Terminal (Admin)</strong> (on Windows 10, <strong>Windows PowerShell (Admin)</strong>), say Yes, then paste these lines one at a time, pressing Enter after each:</p>'
+                 + _PRE + 'mountvol Y: /s\nfsutil volume diskfree Y:\nGet-ChildItem Y:\\ -Recurse -Force -File | Sort-Object Length -Descending | Select-Object -First 12 FullName, Length</code></pre>'
+                 '<p>The first line gives the hidden partition the letter Y: for now (if Y: is already in use, use another spare letter such as S: in every line). The second shows its size and free space: under about 15 MB free is your problem. The third lists the biggest files on it, so you can see what&rsquo;s filling it.</p>'
+                 '<p>If <code>mountvol</code> gives an error instead, the PC may start the old (BIOS) way, where the partition is a visible &ldquo;System Reserved&rdquo; one instead; that&rsquo;s a job for us rather than a paste.</p>'},
+        {'eyebrow': '/04 &mdash; THE SAFE FIX', 'h2': 'Free the space safely',
+         'html': '<p>In the same window, paste this as <strong>one line</strong>. It removes only the foreign-language start-up fonts, from Windows&rsquo; font folder and, on a Dell, the recovery tool&rsquo;s font folder too, and keeps the four English fonts the start-up screens use:</p>'
+                 + _PRE + 'Get-ChildItem \'Y:\\EFI\\Microsoft\\Boot\\Fonts\\*.ttf\',\'Y:\\EFI\\Dell\\SOS\\Fonts\\*.ttf\' -Force -ErrorAction SilentlyContinue | Where-Object { \'wgl4_boot.ttf\',\'segoe_slboot.ttf\',\'segoen_slboot.ttf\',\'segmono_boot.ttf\' -notcontains $_.Name } | Remove-Item -Force -Verbose</code></pre>'
+                 '<p>Then check the space again and remove the letter:</p>'
+                 + _PRE + 'fsutil volume diskfree Y:\nmountvol Y: /d</code></pre>'
+                 '<ul>'
+                 '<li><strong>Paste one line at a time.</strong> If a line sits unrun at the prompt when you paste the next, they join together and do something you didn&rsquo;t intend. Press Esc first to clear anything half-typed.</li>'
+                 '<li><strong>Nothing else on that partition should be deleted.</strong> The fonts are only the lettering for the start-up and recovery screens; Windows keeps its own copies in C:\\Windows\\Boot\\Fonts.</li>'
+                 '<li><strong>Restart, then run Windows Update again</strong> (Settings, Windows Update, Check for updates), or run the installer again. On a PC already on Windows 11 25H2, the 26H2 update is a small one that arrives through Windows Update, so you don&rsquo;t need to download Windows at all.</li>'
+                 '</ul>'
+                 '<p>Still under 15 MB free afterwards? Don&rsquo;t start deleting other files: on a Dell the big ones are the BIOS recovery images, and on any PC the rest are the files it needs to start. That&rsquo;s the point to ring us.</p>'},
+        {'eyebrow': '/05 &mdash; WHAT NOT TO DO', 'h2': 'The &ldquo;fixes&rdquo; to avoid',
+         'html': '<ul>'
+                 '<li><strong>The old <code>del *.*</code> instructions.</strong> Many websites repeat an old Microsoft recipe: type <code>Y:</code>, then <code>cd EFI\\Microsoft\\Boot\\Fonts</code>, then <code>del *.*</code>. If the <code>cd</code> fails, or the window remembers a different folder on Y:, <code>del *.*</code> runs in the wrong place, and in the folder above the fonts that deletes the files your PC needs to start. It also skips hidden files, so it can free nothing while looking as though it worked. Use the full-path line above instead.</li>'
+                 '<li><strong>Enlarging the partition with a partition tool.</strong> The top search results sell software that promises to make it bigger. To do it, the tool has to move your whole C: drive in a special start-up mode; if that is interrupted or goes wrong, the PC won&rsquo;t start, and nothing remote can reach it. Only ever with a full backup image first, ideally on a workbench. We do this in our workshop when a partition is genuinely too small to ever be enough.</li>'
+                 '<li><strong>A clean install to &ldquo;get past it&rdquo;.</strong> It wipes your programs and settings for a problem that 15 minutes of tidying fixes.</li>'
+                 '</ul>'
+                 '<p>BitLocker: removing font files doesn&rsquo;t need BitLocker turning off, but before any work on the start-up side of a PC it&rsquo;s worth knowing where your recovery key is: see <a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a>.</p>'},
+        {'eyebrow': '/06 &mdash; WILL IT COME BACK?', 'h2': 'Will it happen again?',
+         'html': '<p>It can. Yearly updates may copy the full set of fonts back, and a 100 MB partition is always tight. Check the free space again after the update has finished, and before next year&rsquo;s. Some makers&rsquo; update tools also write to this partition: on a Dell, put off installing <em>SupportAssist OS Recovery</em> updates until the Windows update is done, because that recovery tool keeps its files on the same partition.</p>'
+                 '<p>If the upgrade gets past this but then only offers to keep <em>Nothing</em>, stop and don&rsquo;t continue: see <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a> for why, and the safe way round it.</p>'},
+        {'eyebrow': '/07 &mdash; THE QUICK WAY', 'h2': 'Let our free app watch the updates', 'html': '__APP_BOX_UPDATES__'},
+        {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' If the partition is simply too small to ever be enough, we can collect the PC and enlarge it safely on the bench, with a full backup first.')},
+    ],
+    'howToName': 'How to fix "We couldn\'t update the system reserved partition"',
+    'howToSteps': [
+        {'name': 'Open an admin terminal', 'text': 'Right-click Start and choose Terminal (Admin), or Windows PowerShell (Admin) on Windows 10.'},
+        {'name': 'Check the free space', 'text': 'Run mountvol Y: /s, then fsutil volume diskfree Y:. Under about 15 MB free is the problem.'},
+        {'name': 'Remove the foreign-language start-up fonts', 'text': 'Paste the one-line command that removes every .ttf in Y:\\EFI\\Microsoft\\Boot\\Fonts (and Y:\\EFI\\Dell\\SOS\\Fonts on a Dell) except wgl4_boot, segoe_slboot, segoen_slboot and segmono_boot.'},
+        {'name': 'Check again and remove the letter', 'text': 'Run fsutil volume diskfree Y: to confirm 15 MB or more is free, then mountvol Y: /d.'},
+        {'name': 'Restart and update', 'text': 'Restart, then Settings, Windows Update, Check for updates, or run the installer again.'},
+    ],
+    'faqs': [
+        {'q': 'What is the system reserved partition?', 'a': '<p>A small hidden part of the drive that holds the files Windows needs to start. On older PCs it&rsquo;s labelled &ldquo;System Reserved&rdquo;; on modern ones it&rsquo;s the EFI system partition. The error message still uses the old name.</p>'},
+        {'q': 'Why does it say my PC doesn&rsquo;t meet the requirements?', 'a': '<p>Windows Setup lists this space check on its requirements screen. If your PC already runs Windows 11, free space on that partition is the only requirement it is failing.</p>'},
+        {'q': 'Is it safe to delete the boot fonts?', 'a': '<p>The foreign-language ones, yes: they only draw the start-up and recovery screens in Chinese, Japanese and Korean, and Windows keeps its own copies on C:. Keep the four English ones so those screens still show their text.</p>'},
+        {'q': 'Will I lose my files?', 'a': '<p>No. The fix only removes font files from the hidden partition, and the yearly update itself keeps your files, apps and settings.</p>'},
+        {'q': 'Can I just make the partition bigger?', 'a': '<p>It can be done, but it means moving the whole C: drive in a special start-up mode, and if that fails the PC won&rsquo;t start. Only with a full backup first, ideally on a workbench.</p>'},
+        {'q': 'Will it come back next year?', 'a': '<p>It can, because yearly updates may restore the fonts and a 100 MB partition is always tight. Check the free space after each big update.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC, free the space safely and get the update installed while you watch. Enlarging a partition that is simply too small is a workshop job, and we can collect.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck or failing</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a>, <a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -512,7 +609,7 @@ def symptom_pages(setup_url):
             'It never installs, removes or changes anything.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -540,4 +637,7 @@ SYMPTOM_FLOWS = {
     PASSWORD['slug']: {'h2': 'Get back in, step by step', 'ask': 'Are you back in?',
                        'tip': 'Write the new password somewhere safe, or keep it in a password manager.',
                        'h3s': 'Still locked out? Ring us before you reset anything.'},
+    RESERVED['slug']: {'h2': 'Free the space, step by step', 'ask': 'Did the update install?',
+                       'tip': 'Check the free space again after the update, and before next year&rsquo;s.',
+                       'h3s': 'Still under 15 MB free, or still failing? That is a remote job.'},
 }
