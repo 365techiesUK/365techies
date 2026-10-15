@@ -17,10 +17,18 @@
  * window.PinLamps.list, drawn as one batch of glowing quads from PinArt.lampSprite(), brightness PinLamps.level() with a
  * bulb's fade (a quick warm-up, a slower and slightly orange cool-down).
  *
- * create({ canvas, width, height, pixelRatio?, samples?, preserve?, reflect?, reflectEvery?, reflectSize? }) -> { draw(W, t, mode, info), setView({ tilt, fov }),
- * resize(w, h), dispose(), stats() }. tilt: the camera's angle from straight down onto the playfield, looking up the
- * table from the player's end; the camera always fits the whole cabinet (arch to lockdown bar, both sides) in the
- * portrait view, and any room left over is space sky above the far end. */
+ * create({ canvas, width, height, pixelRatio?, samples?, preserve?, reflect?, reflectEvery?, reflectSize?, fill?, tilt?, fov? })
+ * -> { draw(W, t, mode, info), setView({ tilt, fov, fill }), resize(w, h), dispose(), stats() }. tilt: the camera's angle
+ * from straight down onto the playfield, looking up the table from the player's end.
+ *  - fill (the default, owner 15 Oct 2026: "the table fills the phone screen"): a close camera at FILL_TILT that puts the
+ *    top of the arch at the top of the picture and the front rail at the bottom, keeps both outlanes, the flippers, the
+ *    shooter lane and the plunger in view and crops only the outer wood. (At this picture's shape - the table's own,
+ *    270 x 446 - a tilted table is too wide to fill top to bottom, so the few units left above the arch show the
+ *    cabinet's back rail and the backbox's lit speaker panel - never sky.)
+ *  - fill: false - the old framings: the whole cabinet (arch to lockdown bar, both sides) fitted in the portrait view,
+ *    any room left over is space sky above the far end. setView({ tilt }) keeps whichever framing is on.
+ * Effects: window.PinFX.state (fx.js) is drawn when it is there - gi, flash, shake, score pop-ups, sparks, extra lamp
+ * brightness - and PinFX.update(W, t, mode) is called once per drawn frame. A short trail follows a fast ball. */
 import * as THREE from 'three';
 import { EffectComposer } from '../common/vendor/three-r185/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/RenderPass.js';
@@ -37,8 +45,17 @@ const KEY = new THREE.Vector3(-60, 400, 230).normalize();
 const SHX = -KEY.x / KEY.y, SHY = -KEY.z / KEY.y;    // where a point's shadow lands, per unit of its height (table x, y)
 const COL = { orb: '#ff5cc8', moth: '#3fe0ff', bot: '#ffd84a' };   // 365 Invaders' own colours
 const BUMP = [{ c: COL.orb, art: 'orb' }, { c: COL.moth, art: 'moth' }, { c: COL.bot, art: 'bot' }];
-// heights (table units)
-const H = { rail: 15, guide: 10, arch: 17, wood: 24, bumpCap: 21, drop: 13, apron: 6, sling: 13, rampWall: 12 };
+// heights (table units) - everything stands up (owner 15 Oct 2026: "everything has height")
+const H = { rail: 18, guide: 13, arch: 21, wood: 30, front: 22, bumpCap: 26, drop: 17, apron: 6, sling: 16, rampWall: 16, post: 19 };
+// the wood sides reach out this far (cropped by the fill camera; wide enough that no sky shows past them at the far end)
+const WOOD_L = -36, WOOD_R = 308;
+// the fill camera: its tilt and lens, and what must be in the picture (table x, y, height)
+const FILL_TILT = 28, FILL_FOV = 32;
+const FILL = {
+  top: [[136, 2.5, H.arch + 0.5]],                                     // the top of the arch: at the top edge
+  bot: [[136, 448, H.front + 0.5]],                                     // the front rail's top edge: at the bottom edge
+  side: [[8, 440, 0], [264, 442, 0], [8, 380, 0], [264, 380, 0], [266, 300, 0]]   // outlanes, shooter lane
+};
 // 365 Invaders' pixel invaders (ours) for the bumper caps, the drop targets and the stand-in art
 const ART = {
   orb: ['....####....', '..########..', '.##..##..##.', '.##########.', '..########..', '...#....#...', '..#..##..#..', '.#........#.'],
@@ -266,6 +283,52 @@ function cometCanvas() {
   g.strokeStyle = '#2a1a08'; g.lineWidth = 4; g.strokeRect(2, 2, 124, 60);
   return c;
 }
+function speakerCanvas() {   // the backbox's speaker panel, x WOOD_L..WOOD_R, 0..60 units up, 4 px a unit: the bit above the back rail
+  const k = 4, w = (WOOD_R - WOOD_L) * k, h = 60 * k, c = cv(w, h), g = c.getContext('2d'), X = (x) => (x - WOOD_L) * k;
+  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#16121f'); q.addColorStop(1, '#0a0812');
+  g.fillStyle = q; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(255,255,255,0.035)'; for (let y = 0; y < h; y += 6) g.fillRect(0, y, w, 2);   // brushed metal
+  // two speaker grilles with lit rings, pink left and cyan right
+  [[40, COL.orb], [232, COL.moth]].forEach(([x, col]) => {
+    const cx = X(x), cy = h * 0.5, r = 21 * k;
+    g.save(); g.shadowColor = col; g.shadowBlur = 26; g.strokeStyle = col; g.lineWidth = 9; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke(); g.restore();
+    g.fillStyle = '#05040a'; g.beginPath(); g.arc(cx, cy, r - 6, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(160,170,200,0.35)';
+    for (let yy = -r; yy < r; yy += 9) for (let xx = -r; xx < r; xx += 9) if (xx * xx + yy * yy < (r - 12) * (r - 12)) g.fillRect(cx + xx, cy + yy, 4, 4);
+  });
+  // our name between them, glowing
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.save(); g.shadowColor = '#ffb030'; g.shadowBlur = 30; g.fillStyle = '#ffd84a'; g.font = 'bold ' + (30 * k) + 'px "Arial Black", Arial, sans-serif';
+  g.fillText('365', X(136), h * 0.36); g.restore();
+  g.save(); g.shadowColor = COL.orb; g.shadowBlur = 22; g.fillStyle = '#ffe6f6'; g.font = 'bold ' + (13 * k) + 'px "Arial Black", Arial, sans-serif';
+  g.fillText('PINBALL HERO', X(136), h * 0.77); g.restore();
+  invader(g, ART.orb, X(76) - 24, h * 0.5 - 16, 4, COL.orb); invader(g, ART.bot, X(196) - 24, h * 0.5 - 16, 4, COL.bot);
+  return c;
+}
+function plasticCanvas(col, art, x0, y0, x1, y1, poly) {   // a slingshot plastic's glowing print, over its box (8 px a unit)
+  const k = 8, c = cv(Math.ceil((x1 - x0) * k), Math.ceil((y1 - y0) * k)), g = c.getContext('2d'), P = (p) => [(p[0] - x0) * k, (p[1] - y0) * k];
+  const cx = poly.reduce((s, p) => s + p[0], 0) / poly.length, cy = poly.reduce((s, p) => s + p[1], 0) / poly.length;
+  g.beginPath(); poly.forEach((p, i) => { const q = P(p); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.closePath();
+  g.save(); g.clip();
+  const q = g.createRadialGradient((cx - x0) * k, (cy - y0) * k, 2, (cx - x0) * k, (cy - y0) * k, Math.max(c.width, c.height) * 0.7);
+  q.addColorStop(0, '#ffffff'); q.addColorStop(0.18, col); q.addColorStop(1, rgba(col, 0.55));
+  g.fillStyle = q; g.fillRect(0, 0, c.width, c.height);
+  g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 3; for (let i = -c.height; i < c.width; i += 22) { g.beginPath(); g.moveTo(i, c.height); g.lineTo(i + c.height, 0); g.stroke(); }
+  invader(g, ART[art], (cx - x0) * k - 24, (cy - y0) * k - 16, 4, '#14082a');
+  g.restore();
+  g.save(); g.shadowColor = '#ffffff'; g.shadowBlur = 14; g.strokeStyle = '#ffffff'; g.lineWidth = 6;
+  g.beginPath(); poly.forEach((p, i) => { const r = P(p); i ? g.lineTo(r[0], r[1]) : g.moveTo(r[0], r[1]); }); g.closePath(); g.stroke(); g.restore();
+  return c;
+}
+function popCanvas(text, col) {   // a score pop-up: bold, outlined, crisp
+  const fs = 72, c0 = cv(8, 8), g0 = c0.getContext('2d'); g0.font = '900 ' + fs + 'px "Arial Black", Arial, sans-serif';
+  const w = Math.ceil(g0.measureText(text).width + 28), h = fs + 28, c = cv(w, h), g = c.getContext('2d');
+  g.font = g0.font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  g.strokeStyle = '#0a0418'; g.lineWidth = 12; g.strokeText(text, w / 2, h / 2 + 3);
+  g.fillStyle = col; g.fillText(text, w / 2, h / 2 + 3);
+  g.fillStyle = 'rgba(255,255,255,0.55)'; g.save(); g.beginPath(); g.rect(0, 0, w, h * 0.46); g.clip(); g.fillText(text, w / 2, h / 2 + 3); g.restore();
+  return c;
+}
 function apronCanvas() {   // the apron's print: x 0..270, y 370..446 at 4 px a unit
   const c = cv(1080, 304), g = c.getContext('2d');
   const q = g.createLinearGradient(0, 0, 0, 304); q.addColorStop(0, '#1d1840'); q.addColorStop(1, '#0c0a1e');
@@ -362,7 +425,8 @@ export function create(opts) {
   const renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: false, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: !!opts.preserve });
   const PR = opts.pixelRatio || Math.min(2, window.devicePixelRatio || 1);
   renderer.setPixelRatio(PR);
-  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = opts.exposure || 1.0;
+  const EXPOSURE = opts.exposure || 1.12;   // high-key (owner 15 Oct 2026: "brightly lit, everything readable at a glance")
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = EXPOSURE;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.info.autoReset = false;
   const ANISO = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -378,7 +442,7 @@ export function create(opts) {
   const parts = [];   // what casts a shadow on the playfield: {seg: [ax, ay, bx, by], r, h} | {circle: [x, y, r], h} | {poly, h}
   T.walls.forEach((w) => parts.push({ seg: [w[0], w[1], w[2], w[3]], r: w[4] + (w[6] === 'post' ? 0.3 : 0.6), h: w[6] === 'post' ? H.guide : cabinetSide(w) ? H.wood : H.rail }));
   (function () { const A = T.arch, pts = []; for (let k = 0; k <= 48; k++) { const a = Math.PI + Math.PI * k / 48; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } for (let k = 0; k < 48; k++) parts.push({ seg: [pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1]], r: 2.2, h: H.arch }); })();
-  E.POSTS.forEach((p) => parts.push({ circle: [p.x, p.y, p.r + 0.4], h: 14 }));
+  E.POSTS.forEach((p) => parts.push({ circle: [p.x, p.y, p.r + 0.4], h: H.post }));
   E.BUMPERS.forEach((B) => parts.push({ circle: [B.x, B.y, B.r + 1], h: H.bumpCap }));
   T.slings.forEach((s) => parts.push({ poly: offsetPoly([s.a, s.b, s.c], 3, 6), h: H.sling }));
   E.DROPS.forEach((d) => parts.push({ seg: [d.ax, d.ay, d.bx, d.by], r: 2.2, h: H.drop * 0.5 }));
@@ -391,8 +455,15 @@ export function create(opts) {
   if (!artBase) artBase = standInArt(ART_SCALE);
   const pfTex = keep(tex(bakePlayfield(artBase, parts, artSource !== 'PinArt'), { aniso: ANISO }));
   pfTex.generateMipmaps = true; pfTex.minFilter = THREE.LinearMipmapLinearFilter;
-  const pfMat = keep(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: 0.5, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 0.32 }));
-  if (artGlow) { pfMat.emissiveMap = keep(tex(artGlow, { aniso: ANISO })); pfMat.emissive = new THREE.Color(0xffffff); pfMat.emissiveIntensity = 0.9; }
+  // a thin, sharp clear coat (strong highlights, no milky haze) and the print lit from within a little, so it reads at a
+  // glance and keeps its colour (uLift: the print's own colour added as light; it follows the GI)
+  const pfMat = keep(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: 0.62, metalness: 0, clearcoat: 0.45, clearcoatRoughness: 0.05, envMapIntensity: 0.1 }));
+  if (artGlow) { pfMat.emissiveMap = keep(tex(artGlow, { aniso: ANISO })); pfMat.emissive = new THREE.Color(0xffffff); pfMat.emissiveIntensity = 1.1; }
+  const LIFT = opts.lift != null ? opts.lift : 0.34, liftU = { value: LIFT };
+  pfMat.onBeforeCompile = (sh) => {
+    sh.uniforms.uLift = liftU;
+    sh.fragmentShader = 'uniform float uLift;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * uLift;');
+  };
   const pfGeo = keep(new THREE.PlaneGeometry(TW, TH)); pfGeo.rotateX(-Math.PI / 2);
   const playfield = R1(new THREE.Mesh(pfGeo, pfMat)); table.add(playfield);
 
@@ -436,8 +507,8 @@ export function create(opts) {
     sweep(chrome, pts, A.r + 0.2, H.arch, { arc: 8 });
   })();
   // the cabinet's chrome trims along the inside top edge of the wood
-  sweep(chrome, [[7.2, -14], [7.2, 460]], 1.4, 2.6, { base: H.wood - 1 });
-  sweep(chrome, [[264.8, -14], [264.8, 460]], 1.4, 2.6, { base: H.wood - 1 });
+  sweep(chrome, [[7.2, -14], [7.2, 446]], 1.4, 2.6, { base: H.wood - 1 });
+  sweep(chrome, [[264.8, -14], [264.8, 446]], 1.4, 2.6, { base: H.wood - 1 });
 
   // ---------------------------------------------------------------- the warp ramp: a clear ribbon with walls, chrome wires, LED edges, supports
   // (drawn along a smooth curve through the physics path's points; the ball still follows the path itself, never more
@@ -448,7 +519,7 @@ export function create(opts) {
     RP.push([v.x, v.z, Math.max(0.35, v.y + 0.35), tg.x / l, tg.z / l]);
   }
   const rampHW = T.ramp.width / 2;
-  const clear = new Geo(), led = new Geo();
+  const clear = new Geo(), led = new Geo(), walls = new Geo();
   (function () {
     const n = RP.length, A = [];
     for (let i = 0; i < n; i++) {
@@ -457,10 +528,13 @@ export function create(opts) {
     }
     for (let i = 0; i < n - 1; i++) clear.quad(A[i][0], A[i + 1][0], A[i + 1][1], A[i][1]);
     const P3 = RP.map((p) => [p[0], p[1], p[2]]);
-    ribbon(clear, P3, rampHW + 0.3, 0, H.rampWall); ribbon(clear, P3, -(rampHW + 0.3), 0, H.rampWall);
-    // the wires along the walls' tops, and the LED strips along the floor's edges (not on the flat start)
-    const top = (off) => RP.map((p) => [p[0] - p[4] * off, p[1] + p[3] * off, p[2] + H.rampWall - 0.4]);
-    sweep(chrome, top(rampHW + 0.3), 0.75, 1.5, { bottom: -0.4 }); sweep(chrome, top(-(rampHW + 0.3)), 0.75, 1.5, { bottom: -0.4 });
+    // chunky tinted side walls, inner and outer faces (a thick sheet of coloured plastic)
+    ribbon(walls, P3, rampHW + 0.3, 0, H.rampWall); ribbon(walls, P3, -(rampHW + 0.3), 0, H.rampWall);
+    ribbon(walls, P3, rampHW + 2.1, -0.5, H.rampWall); ribbon(walls, P3, -(rampHW + 2.1), -0.5, H.rampWall);
+    // the wires along the walls' tops (two rails each side), and the LED strips along the floor's edges
+    const top = (off, h) => RP.map((p) => [p[0] - p[4] * off, p[1] + p[3] * off, p[2] + h]);
+    sweep(chrome, top(rampHW + 1.2, H.rampWall - 0.6), 0.95, 1.9, { bottom: -0.4 }); sweep(chrome, top(-(rampHW + 1.2), H.rampWall - 0.6), 0.95, 1.9, { bottom: -0.4 });
+    sweep(chrome, top(rampHW + 1.2, H.rampWall * 0.5), 0.45, 0.9, { bottom: -0.45 }); sweep(chrome, top(-(rampHW + 1.2), H.rampWall * 0.5), 0.45, 0.9, { bottom: -0.45 });
     const edge = (off) => RP.map((p) => [p[0] - p[4] * off, p[1] + p[3] * off, p[2] + 0.15]);
     sweep(led, edge(rampHW - 0.6), 0.55, 1.1, { bottom: 0 }); sweep(led, edge(-(rampHW - 0.6)), 0.55, 1.1, { bottom: 0 });
     // the entrance lip
@@ -477,8 +551,10 @@ export function create(opts) {
       }
     }
   })();
-  const clearMat = keep(new THREE.MeshPhysicalMaterial({ color: 0x6f90a8, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.14, depthWrite: false, side: THREE.FrontSide, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.9 }));
+  const clearMat = keep(new THREE.MeshPhysicalMaterial({ color: 0x8fd8ff, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.9 }));
   const rampClear = new THREE.Mesh(keep(clear.geometry()), clearMat); rampClear.renderOrder = 3; table.add(rampClear);
+  const wallMat = keep(new THREE.MeshStandardMaterial({ color: 0x3fe0ff, emissive: new THREE.Color(COL.moth), emissiveIntensity: 0.22, roughness: 0.12, metalness: 0, transparent: true, opacity: 0.36, depthWrite: false, side: THREE.DoubleSide }));
+  const rampWalls = new THREE.Mesh(keep(walls.geometry()), wallMat); rampWalls.renderOrder = 4; table.add(rampWalls);
   const ledMat = keep(new THREE.MeshBasicMaterial({ color: new THREE.Color(COL.moth).multiplyScalar(1.4) }));
   const rampLed = R1(new THREE.Mesh(keep(led.geometry()), ledMat)); table.add(rampLed);
 
@@ -486,10 +562,20 @@ export function create(opts) {
 
   // ---------------------------------------------------------------- the cabinet: wood sides and back, the corners outside the arch, the front and lockdown bar
   const wood = new Geo();
-  box(wood, -14, 8, 0, H.wood, -18, 462); box(wood, 264, 286, 0, H.wood, -18, 462);
-  box(wood, -14, 286, 0, H.wood, -18, 3);
-  box(wood, -14, 286, 0, H.wood - 4, 446.5, 470);
+  box(wood, WOOD_L, 8, 0, H.wood, -18, 446.5); box(wood, 264, WOOD_R, 0, H.wood, -18, 446.5);
+  box(wood, WOOD_L, WOOD_R, 0, H.wood, -18, 3);
+  box(wood, WOOD_L, WOOD_R, 0, H.front, 446.5, 470);
   const woodMesh = R1(new THREE.Mesh(keep(wood.geometry()), M.wood)); table.add(woodMesh);
+  // the backbox behind the far end: only its lit speaker panel shows, in the strip the fill camera has above the arch
+  const backbox = new THREE.Group(); table.add(backbox);
+  (function () {
+    const bw = WOOD_R - WOOD_L, sp = keep(tex(speakerCanvas(), { aniso: ANISO }));
+    const pg = keep(new THREE.PlaneGeometry(bw, 60));
+    const panel = new THREE.Mesh(pg, keep(new THREE.MeshStandardMaterial({ map: sp, emissiveMap: sp, emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.4, metalness: 0.3 })));
+    panel.position.set(wx((WOOD_L + WOOD_R) / 2), H.wood + 30, wz(-18.3)); backbox.add(panel);
+    const sides = new Geo(); box(sides, WOOD_L - 6, WOOD_R + 6, 0, H.wood + 64, -46, -18.4);
+    backbox.add(new THREE.Mesh(keep(sides.geometry()), M.wood));
+  })();
   (function () {   // the dark plates filling the corners outside the arch
     const A = T.arch, Ro = A.R + A.r + 0.5, corner = (side) => {
       const pts = [], xs = side < 0 ? 8 : 264;
@@ -504,7 +590,7 @@ export function create(opts) {
     [-1, 1].forEach((s) => { const g = keep(extrude(corner(s), 0, 4, 0)); g.translate(-135, 0, -223); const m = R1(new THREE.Mesh(g, M.black)); table.add(m); });
   })();
   const lockGeo = keep(new THREE.CylinderGeometry(4.5, 4.5, 300, 24)); lockGeo.rotateZ(Math.PI / 2);
-  const lock = R1(new THREE.Mesh(lockGeo, keep(new THREE.MeshStandardMaterial({ color: 0x2a2e36, metalness: 1, roughness: 0.42, envMapIntensity: 0.5 })))); lock.position.set(wx(136), H.wood - 1, wz(458)); table.add(lock);
+  const lock = R1(new THREE.Mesh(lockGeo, keep(new THREE.MeshStandardMaterial({ color: 0x2a2e36, metalness: 1, roughness: 0.42, envMapIntensity: 0.5 })))); lock.position.set(wx(136), H.front + 3, wz(458)); table.add(lock);
 
   // ---------------------------------------------------------------- the apron (from the flat look's outline: under the inlanes, to the drain)
   (function () {
@@ -530,8 +616,17 @@ export function create(opts) {
     const col = i ? COL.moth : COL.orb, tri = [s.a, s.b, s.c];
     const rub = new Geo(); sweep(rub, offsetPoly(tri, 1.5, 8), 1.0, 6, { closed: true, base: 3 });
     const rubber = R1(new THREE.Mesh(keep(rub.geometry()), M.rubberW)); table.add(rubber);
-    const mat = keep(new THREE.MeshStandardMaterial({ color: col, emissive: new THREE.Color(col), emissiveIntensity: 0.35, roughness: 0.18, metalness: 0, transparent: true, opacity: 0.78 }));
-    const g = keep(extrude(offsetPoly(tri, 3.8, 6), H.sling, 1.0, 0.4)); g.translate(-135, 0, -223);
+    // the plastic's glowing print: the art lane's (PinArt.plastic('slingL' | 'slingR', scale) -> a canvas over the table
+    // rectangle canvas.x0, y0, qw x qh), else our own: the invader on a lit gradient
+    const outline = offsetPoly(tri, 3.8, 6), xs = outline.map((p) => p[0]), ys = outline.map((p) => p[1]);
+    let bx = [Math.min(...xs) - 1, Math.min(...ys) - 1, Math.max(...xs) + 1, Math.max(...ys) + 1], art = null;
+    if (window.PinArt && typeof PinArt.plastic === 'function') {
+      try { const c = PinArt.plastic(i ? 'slingR' : 'slingL', ART_SCALE); if (c && c.width && c.x0 != null) { art = c; bx = [c.x0, c.y0, c.x0 + c.qw, c.y0 + c.qh]; } } catch (e) { art = null; }
+    }
+    if (!art) art = plasticCanvas(col, i ? 'moth' : 'orb', bx[0], bx[1], bx[2], bx[3], outline);
+    const at = keep(tex(art, { aniso: ANISO }));
+    const mat = keep(new THREE.MeshStandardMaterial({ map: at, emissiveMap: at, emissive: 0xffffff, emissiveIntensity: 0.55, roughness: 0.16, metalness: 0, transparent: true, opacity: 0.9 }));
+    const g = keep(extrude(outline, H.sling, 1.2, 0.4)); g.translate(-135, 0, -223); planarUV(g, bx[0], bx[1], bx[2], bx[3]);
     const plastic = R1(new THREE.Mesh(g, mat)); plastic.renderOrder = 2; table.add(plastic);
     return { mat, rubber, flash: 0 };
   });
@@ -540,15 +635,24 @@ export function create(opts) {
   const cylinder = (rt, rb, h, seg, open) => keep(new THREE.CylinderGeometry(rt, rb, h, seg || 32, 1, !!open));
   const bumpers = E.BUMPERS.map((B, i) => {
     const col = new THREE.Color(BUMP[i].c), grp = new THREE.Group(); grp.position.set(wx(B.x), 0, wz(B.y)); table.add(grp);
-    const base = R1(new THREE.Mesh(cylinder(B.r + 1.4, B.r + 1.8, 1.2), M.black)); base.position.y = 0.6; grp.add(base);
-    const skirtMat = keep(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8, roughness: 0.25, transparent: true, opacity: 0.88 }));
-    const skirt = R1(new THREE.Mesh(cylinder(B.r - 0.6, B.r + 0.6, 6), skirtMat)); skirt.position.y = 4.2; grp.add(skirt);
-    const body = R1(new THREE.Mesh(cylinder(B.r - 3.5, B.r - 3, 9), M.batW)); body.position.y = 11.5; grp.add(body);
-    const ring = R1(new THREE.Mesh(cylinder(B.r + 0.5, B.r + 0.5, 1.4), M.chrome)); ring.position.y = 8.2; grp.add(ring);
+    // a mushroom on a post: a flared chrome skirt on the playfield, the lit collar the ball strikes, the chrome ring that
+    // snaps down, a white post, and a wide domed cap with the invader on top, standing well above the ball
+    const v2 = (a) => a.map((q) => new THREE.Vector2(q[0], q[1]));
+    const base = R1(new THREE.Mesh(cylinder(B.r + 2.6, B.r + 2.9, 0.8), M.black)); base.position.y = 0.4; grp.add(base);
+    const flare = R1(new THREE.Mesh(keep(new THREE.LatheGeometry(v2([[B.r + 2.6, 0.2], [B.r + 2.3, 0.9], [B.r + 1.0, 2.0], [B.r + 0.1, 3.1], [B.r - 0.3, 3.8]]), 40)), M.chrome)); grp.add(flare);
+    const skirtMat = keep(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8, roughness: 0.25, transparent: true, opacity: 0.9 }));
+    const skirt = R1(new THREE.Mesh(cylinder(B.r - 0.3, B.r - 0.1, 6.4), skirtMat)); skirt.position.y = 7; grp.add(skirt);
+    const body = R1(new THREE.Mesh(cylinder(B.r - 6, B.r - 5.4, 10), M.batW)); body.position.y = 15; grp.add(body);
+    const ring = R1(new THREE.Mesh(cylinder(B.r + 0.6, B.r + 0.6, 1.6, 40), M.chrome)); ring.position.y = 11; grp.add(ring);
     const capTex = keep(tex(capCanvas(BUMP[i].c, BUMP[i].art), { aniso: ANISO }));
-    const sideMat = keep(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.9, roughness: 0.2, transparent: true, opacity: 0.92 }));
+    const sideMat = keep(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.9, roughness: 0.2, transparent: true, opacity: 0.94 }));
     const topMat = keep(new THREE.MeshPhysicalMaterial({ map: capTex, emissiveMap: capTex, emissive: 0xffffff, emissiveIntensity: 0.4, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.05 }));
-    const cap = R1(new THREE.Mesh(cylinder(B.r - 0.2, B.r + 0.3, 4.2, 40), [sideMat, topMat, sideMat])); cap.position.y = H.bumpCap - 2.1; grp.add(cap);
+    const CR = B.r + 1.2, rimY = H.bumpCap - 5.8;
+    const rim = R1(new THREE.Mesh(cylinder(CR, CR - 0.8, 2.6, 40, true), sideMat)); rim.position.y = rimY + 1.3; grp.add(rim);
+    const under = R1(new THREE.Mesh(keep(new THREE.RingGeometry(B.r - 5.6, CR - 0.8, 40).rotateX(Math.PI / 2)), sideMat)); under.position.y = rimY; grp.add(under);
+    const domeG = keep(new THREE.SphereGeometry(CR, 40, 10, 0, Math.PI * 2, 0, Math.PI / 2)); domeG.scale(1, 3.2 / CR, 1);
+    { const P = domeG.attributes.position, uv = domeG.attributes.uv; for (let k = 0; k < P.count; k++) uv.setXY(k, P.getX(k) / (2 * CR) + 0.5, 0.5 - P.getZ(k) / (2 * CR)); }
+    const cap = R1(new THREE.Mesh(domeG, topMat)); cap.position.y = rimY + 2.6; grp.add(cap);
     return { grp, ring, skirtMat, sideMat, topMat, col, hit: 0 };
   });
 
@@ -645,8 +749,8 @@ export function create(opts) {
 
   // ---------------------------------------------------------------- posts (chrome, instanced) and the rubber rings on the rubber posts
   const postGeo = keep(new THREE.LatheGeometry([[0, 0], [1, 0], [1, 0.86], [0.8, 0.95], [0.45, 1], [0, 1.02]].map((q) => new THREE.Vector2(q[0], q[1])), 16));
-  T.slings.forEach((s) => [s.a, s.b, s.c].forEach((p) => posts.push([p[0], p[1], 15, 1.5])));
-  E.POSTS.forEach((p) => posts.push([p.x, p.y, 15, 1.2]));
+  T.slings.forEach((s) => [s.a, s.b, s.c].forEach((p) => posts.push([p[0], p[1], H.post, 1.6])));
+  E.POSTS.forEach((p) => posts.push([p.x, p.y, H.post, 1.3]));
   const postMesh = R1(new THREE.InstancedMesh(postGeo, M.chrome, posts.length));
   { const m = new THREE.Matrix4(); posts.forEach((p, i) => { m.makeScale(p[3], p[2], p[3]); m.setPosition(wx(p[0]), 0, wz(p[1])); postMesh.setMatrixAt(i, m); }); }
   table.add(postMesh);
@@ -671,12 +775,13 @@ export function create(opts) {
     balls.push({ m, s, s2 });
   }
 
-  // ---------------------------------------------------------------- lights: low ambient, a key light, warm GI along the sides, one flash
-  const hemi = R1(new THREE.HemisphereLight(0x8c9cff, 0x1a0c1e, 0.35)); scene.add(hemi);
-  const key = R1(new THREE.DirectionalLight(0xfff0dc, 1.7)); key.position.copy(KEY).multiplyScalar(600); table.add(key); table.add(key.target);
+  // ---------------------------------------------------------------- lights: high-key - a bright fill, a strong key light, warm GI along the sides, one flash
+  const HEMI = 1.05;
+  const hemi = R1(new THREE.HemisphereLight(0xe8ecff, 0x40304a, HEMI)); scene.add(hemi);
+  const key = R1(new THREE.DirectionalLight(0xfff4e6, 2.6)); key.position.copy(KEY).multiplyScalar(600); table.add(key); table.add(key.target);
   const GI = [];
-  [[14, 120], [14, 330], [256, 120], [256, 330], [135, 20]].forEach((p, i) => {
-    const l = R1(new THREE.PointLight(i === 4 ? 0xbfd4ff : 0xffc690, i === 4 ? 1400 : 1350, 260, 2)); l.position.set(wx(p[0]), 17, wz(p[1])); table.add(l); GI.push({ l, base: l.intensity });
+  [[14, 120], [14, 330], [256, 120], [256, 330], [135, 20], [135, 250]].forEach((p, i) => {
+    const l = R1(new THREE.PointLight(i >= 4 ? 0xdde8ff : 0xffcf9a, i === 5 ? 1500 : i === 4 ? 2000 : 2100, 280, 2)); l.position.set(wx(p[0]), i === 5 ? 60 : 19, wz(p[1])); table.add(l); GI.push({ l, base: l.intensity });
   });
   const rim = R1(new THREE.DirectionalLight(0xff8ad8, 0.9)); rim.position.set(0, 90, -420); table.add(rim); table.add(rim.target);
   const flash = R1(new THREE.PointLight(0xffffff, 0, 140, 2)); flash.position.set(0, 18, 0); table.add(flash);
@@ -716,17 +821,19 @@ export function create(opts) {
     const at = keep(tex(atlas, { aniso: ANISO }));
     const mat = keep(new THREE.MeshBasicMaterial({ map: at, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
     const mesh = R1(new THREE.Mesh(geo, mat)); mesh.renderOrder = 1; mesh.frustumCulled = false; table.add(mesh);
-    return { list, mesh, ca, cur: new Float32Array(n), cool: new Float32Array(n), level: PL.level };
+    return { list, mesh, ca, cur: new Float32Array(n), cool: new Float32Array(n), tg: new Float32Array(n), level: PL.level, byId: PL.byId || null };
   }
   lamps = buildLamps();
   const LAMP_GAIN = opts.lampGain || 2.4;
-  function updateLamps(W, t, mode, dt) {
+  function updateLamps(W, t, mode, dt, extra) {
     if (!lamps) { if (window.PinLamps && window.PinArt) lamps = buildLamps(); if (!lamps) return; }
-    let tgt = null; try { tgt = lamps.level(W, t, mode); } catch (e) { tgt = null; }
-    const n = lamps.list.length, C = lamps.ca.array, snap = dt <= 0 || dt > 0.5;
+    let lv = null; try { lv = lamps.level(W, t, mode); } catch (e) { lv = null; }
+    const n = lamps.list.length, C = lamps.ca.array, snap = dt <= 0 || dt > 0.5, tgt = lamps.tg;
+    for (let i = 0; i < n; i++) tgt[i] = lv ? lv[i] || 0 : 0;
+    if (extra && lamps.byId) for (const id in extra) { const i = lamps.byId[id]; if (i != null) tgt[i] += +extra[id] || 0; }   // fx.js: on top
     const up = 1 - Math.exp(-dt / 0.028), dn = 1 - Math.exp(-dt / 0.11);
     for (let i = 0; i < n; i++) {
-      const v = tgt ? clamp(tgt[i] || 0, 0, 1) : 0; let c = lamps.cur[i];
+      const v = clamp(tgt[i], 0, 1.25); let c = lamps.cur[i];
       if (snap) { c = v; lamps.cool[i] = 0; }
       else if (v > c) { c += (v - c) * up; lamps.cool[i] = Math.max(0, lamps.cool[i] - dt * 8); }
       else { c += (v - c) * dn; lamps.cool[i] = Math.min(1, lamps.cool[i] + dt * 10); }
@@ -738,16 +845,86 @@ export function create(opts) {
     lamps.ca.needsUpdate = true;
   }
 
+  // ---------------------------------------------------------------- effects (fx.js): score pop-ups, sparks, the ball trail
+  const POP_N = 16, pops = [], popTex = new Map();
+  for (let i = 0; i < POP_N; i++) {
+    const mat = keep(new THREE.SpriteMaterial({ transparent: true, depthTest: false, depthWrite: false }));
+    const sp = new THREE.Sprite(mat); sp.visible = false; sp.renderOrder = 20; table.add(sp); pops.push(sp);
+  }
+  function popTexture(text, col) {   // crisp text, cached (the most recent last; the oldest go)
+    const k = text + '|' + col; let e = popTex.get(k);
+    if (e) { popTex.delete(k); popTex.set(k, e); return e; }
+    const c = popCanvas(text, col); e = { t: tex(c, { aniso: ANISO }), aspect: c.width / c.height };
+    popTex.set(k, e);
+    if (popTex.size > 40) { const old = popTex.keys().next().value; popTex.get(old).t.dispose(); popTex.delete(old); }
+    return e;
+  }
+  const PT_N = 640, ptPos = new Float32Array(PT_N * 3), ptCol = new Float32Array(PT_N * 3), ptSize = new Float32Array(PT_N);
+  const ptGeo = keep(new THREE.BufferGeometry());
+  [['position', ptPos, 3], ['acol', ptCol, 3], ['size', ptSize, 1]].forEach(([k, a, n]) => { const b = new THREE.BufferAttribute(a, n); b.setUsage(THREE.DynamicDrawUsage); ptGeo.setAttribute(k, b); });
+  ptGeo.setDrawRange(0, 0);
+  const ptMat = keep(new THREE.ShaderMaterial({   // soft round glowing points, sized in table units, added on
+    uniforms: { uScale: { value: 1 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'attribute float size; attribute vec3 acol; uniform float uScale; varying vec3 vC;\n'
+      + 'void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = max(1.5, size * uScale / -mv.z); gl_Position = projectionMatrix * mv; vC = acol; }',
+    fragmentShader: 'varying vec3 vC;\n'
+      + 'void main() { vec2 d = gl_PointCoord - 0.5; float r = dot(d, d) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC * exp(-r * 3.0) * (1.0 - r), 1.0); }'
+  }));
+  const points = new THREE.Points(ptGeo, ptMat); points.frustumCulled = false; points.renderOrder = 15; table.add(points);
+  const trails = new Map(), tmpC = new THREE.Color();
+  function drawFx(W, st) {
+    let n = 0;
+    const put = (x, y, z, col, a, size) => {
+      if (n >= PT_N || !(a > 0.004)) return;
+      tmpC.set(col); ptPos[n * 3] = wx(x); ptPos[n * 3 + 1] = z; ptPos[n * 3 + 2] = wz(y);
+      ptCol[n * 3] = tmpC.r * a; ptCol[n * 3 + 1] = tmpC.g * a; ptCol[n * 3 + 2] = tmpC.b * a; ptSize[n] = size; n++;
+    };
+    // a short trail behind a fast ball (where it was over the last few frames)
+    const seen = new Set();
+    (W.balls || []).forEach((b) => {
+      const z = (b.m === 'ramp' ? (b.z || 0) : 0) + BR + (b.m === 'held' ? -4 : 0);
+      let h = trails.get(b.id); if (!h) { h = []; trails.set(b.id, h); } seen.add(b.id);
+      h.unshift([b.x, b.y, z]); if (h.length > 8) h.length = 8;
+      const sp = b.m === 'ramp' ? Math.abs(b.vs || 0) : Math.hypot(b.vx || 0, b.vy || 0), k = clamp((sp - 430) / 420, 0, 1);
+      if (k <= 0 || b.m === 'held') return;
+      for (let i = 0; i < h.length - 1; i++) for (let j = 0; j < 3; j++) {
+        const A = h[i], B = h[i + 1], u = j / 3, x = A[0] + (B[0] - A[0]) * u, y = A[1] + (B[1] - A[1]) * u;
+        if (Math.hypot(x - b.x, y - b.y) < BR * 1.1) continue;   // (not over the ball itself)
+        const f = 1 - (i + u) / (h.length - 1);
+        put(x, y, A[2] + (B[2] - A[2]) * u, '#a8ecff', 1.1 * k * f * f, BR * (0.7 + 1.3 * f));
+      }
+    });
+    for (const id of trails.keys()) if (!seen.has(id)) trails.delete(id);
+    // sparks: glowing points, bright enough to bloom
+    if (st && st.sparks) for (let i = 0; i < st.sparks.length; i++) { const q = st.sparks[i]; if (q) put(q.x, q.y, q.z || 0, q.color || '#ffffff', (q.a == null ? 1 : q.a) * 2.4, q.size || 3); }
+    ptGeo.setDrawRange(0, n);
+    if (n) { ['position', 'acol', 'size'].forEach((k) => { ptGeo.attributes[k].needsUpdate = true; }); }
+    ptMat.uniforms.uScale.value = RH * PR / (2 * Math.tan(camera.fov * DEG / 2));
+    // score pop-ups: billboards over the table, never hidden
+    let pi = 0;
+    if (st && st.pops) for (let i = 0; i < st.pops.length && pi < POP_N; i++) {
+      const p = st.pops[i]; if (!p || p.text == null || p.text === '' || (p.a != null && p.a <= 0.01)) continue;
+      const sp = pops[pi++], e = popTexture(String(p.text), p.color || COL.bot);
+      if (sp.material.map !== e.t) { if (!sp.material.map) sp.material.needsUpdate = true; sp.material.map = e.t; }
+      sp.material.opacity = p.a == null ? 1 : clamp(p.a, 0, 1);
+      const hh = 13 * (p.s == null ? 1 : p.s);
+      sp.scale.set(hh * e.aspect, hh, 1); sp.position.set(wx(p.x), (p.z || 0) + 16, wz(p.y)); sp.visible = true;
+    }
+    for (; pi < POP_N; pi++) pops[pi].visible = false;
+    return n;
+  }
+
   // ---------------------------------------------------------------- the glow (bloom on the bright parts only), the size
   const samples = opts.samples != null ? opts.samples : 4;
   let RW = 0, RH = 0;
   const rt = new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples });
   const composer = new EffectComposer(renderer, rt); composer.setPixelRatio(PR);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), opts.bloom != null ? opts.bloom : 0.75, 0.32, opts.threshold != null ? opts.threshold : 1.4);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), opts.bloom != null ? opts.bloom : 0.62, 0.3, opts.threshold != null ? opts.threshold : 1.75);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  let view = { tilt: 35, fov: 34 };
+  let view = { tilt: FILL_TILT, fov: FILL_FOV, fill: true };
+  const camBase = new THREE.Vector3(), camR = new THREE.Vector3(1, 0, 0), camU = new THREE.Vector3(0, 1, 0), fillBg = new THREE.Color(0x07060c);
   function resize(w, h) {
     RW = Math.max(16, w | 0); RH = Math.max(16, h | 0);
     renderer.setSize(RW, RH, false); composer.setSize(RW, RH);
@@ -773,43 +950,73 @@ export function create(opts) {
     const gV = (t) => { let m = Infinity; for (const p of P) m = Math.min(m, p[2] - Math.abs(p[1] - t) / tV); return m; };
     const tern = (f, a, b) => { for (let k = 0; k < 80; k++) { const m1 = a + (b - a) / 3, m2 = b - (b - a) / 3; if (f(m1) < f(m2)) a = m1; else b = m2; } return (a + b) / 2; };
     const xs = P.map((p) => p[0]), ys = P.map((p) => p[1]);
-    let s = tern(fH, Math.min(...xs), Math.max(...xs)), t = tern(gV, Math.min(...ys), Math.max(...ys));
-    const w = Math.min(fH(s), gV(t));
-    // room to spare up and down: keep the table at the bottom (the sky beyond goes above it)
-    if (gV(t) > w + 1e-6) { let a = t, b = t + 5000; for (let k = 0; k < 80; k++) { const m = (a + b) / 2; if (gV(m) >= w) a = m; else b = m; } t = a; }
-    if (fH(s) > w + 1e-6) {   // spare room at the sides: centre it
-      let a = s, b = s + 5000; for (let k = 0; k < 60; k++) { const m = (a + b) / 2; if (fH(m) >= w) a = m; else b = m; }
-      let c = s, d = s - 5000; for (let k = 0; k < 60; k++) { const m = (c + d) / 2; if (fH(m) >= w) c = m; else d = m; }
-      s = (a + c) / 2;
+    let s, t, w, Pn = P;
+    if (view.fill) {
+      // the fill framing: the top points on the top edge and the bottom points on the bottom edge (two straight-line
+      // conditions on the camera's height t and depth w); then, if the must-see sides don't fit, back off until they
+      // do, keeping the bottom edge where it is (the spare room goes above the arch)
+      const B = (a) => a.map((p) => { const v = new THREE.Vector3(wx(p[0]), p[2], wz(p[1])).applyMatrix4(table.matrixWorld); return [v.dot(Rv), v.dot(U), v.dot(F)]; });
+      const top = B(FILL.top), bot = B(FILL.bot), side = B(FILL.side); Pn = top.concat(bot, side);
+      const tTop = (d) => Math.max(...top.map((p) => p[1] - tV * (p[2] - d))), tBot = (d) => Math.min(...bot.map((p) => p[1] + tV * (p[2] - d)));
+      const sOf = (d) => { let lo = -2000, hi = 2000; for (let k = 0; k < 70; k++) { const m = (lo + hi) / 2, l = Math.max(...side.map((p) => (m - p[0]) / (p[2] - d))), r = Math.max(...side.map((p) => (p[0] - m) / (p[2] - d))); if (l > r) hi = m; else lo = m; } return (lo + hi) / 2; };
+      const need = (d) => { const c = sOf(d); return Math.max(...side.map((p) => Math.abs(p[0] - c) / (p[2] - d))) / tH; };
+      const wn = Math.min(...Pn.map((p) => p[2])) - 4;
+      let a = wn - 8000, b = wn; for (let k = 0; k < 90; k++) { const m = (a + b) / 2; if (tTop(m) > tBot(m)) b = m; else a = m; } w = a;
+      if (need(w) > 1) { let c = w - 8000, d = w; for (let k = 0; k < 90; k++) { const m = (c + d) / 2; if (need(m) > 1) d = m; else c = m; } w = c; }
+      t = tBot(w); s = sOf(w);
+    } else {
+      s = tern(fH, Math.min(...xs), Math.max(...xs)); t = tern(gV, Math.min(...ys), Math.max(...ys));
+      w = Math.min(fH(s), gV(t));
+      // room to spare up and down: keep the table at the bottom (the sky beyond goes above it)
+      if (gV(t) > w + 1e-6) { let a = t, b = t + 5000; for (let k = 0; k < 80; k++) { const m = (a + b) / 2; if (gV(m) >= w) a = m; else b = m; } t = a; }
+      if (fH(s) > w + 1e-6) {   // spare room at the sides: centre it
+        let a = s, b = s + 5000; for (let k = 0; k < 60; k++) { const m = (a + b) / 2; if (fH(m) >= w) a = m; else b = m; }
+        let c = s, d = s - 5000; for (let k = 0; k < 60; k++) { const m = (c + d) / 2; if (fH(m) >= w) c = m; else d = m; }
+        s = (a + c) / 2;
+      }
     }
     const pos = new THREE.Vector3().addScaledVector(Rv, s).addScaledVector(U, t).addScaledVector(F, w);
     camera.position.copy(pos); camera.up.copy(U); camera.lookAt(pos.clone().add(F));
-    camera.near = Math.max(1, (Math.min(...P.map((p) => p[2])) - w) * 0.5); camera.far = (Math.max(...P.map((p) => p[2])) - w) * 3 + 3000;
+    camBase.copy(pos); camR.copy(Rv); camU.copy(U);
+    camera.near = Math.max(1, (Math.min(...Pn.map((p) => p[2])) - w) * 0.5); camera.far = (Math.max(...Pn.map((p) => p[2])) - w) * 3 + 3000;
     camera.updateProjectionMatrix();
-    paintSky();
+    backbox.visible = !!view.fill;
+    if (view.fill) { if (skyTex) { skyTex.dispose(); skyTex = null; skyKey = ''; } scene.background = fillBg; }   // (nothing of the sky shows: just in case, the cabinet's dark)
+    else paintSky();
   }
-  function setView(v) { view = Object.assign({}, view, v || {}); fit(); }
+  function setView(v) { view = Object.assign({}, view, v || {}); view.fill = !!view.fill; fit(); }
 
   // ---------------------------------------------------------------- every frame
-  let lastT = null, reflectN = 0;
-  const tmpV = new THREE.Vector3();
+  let lastT = null, reflectN = 0, giNow = 1, fxPts = 0;
+  const tmpV = new THREE.Vector3(), KEY_I = key.intensity;
   function draw(W, t, mode, info) {
     if (!W) return;
     const dt = lastT == null ? 0 : clamp((t - lastT) / 1000, 0, 1); lastT = t;
     const play = mode !== 'title', dark = !!(W.tilted || W.over), lit = W.lit || {};
+    // the effects lane (fx.js): its state for this frame
+    let st = null;
+    if (window.PinFX) { try { if (typeof PinFX.update === 'function') PinFX.update(W, t, mode); st = PinFX.state || null; } catch (e) { st = null; } }
     renderer.info.reset();
     // flippers
     for (let i = 0; i < flippers.length && i < W.flippers.length; i++) flippers[i].grp.rotation.y = -W.flippers[i].a;
-    // GI: down when the table is tilted, like a real machine
-    const gi = dark && play ? 0.25 : 1;
-    GI.forEach((g) => { g.l.intensity += (g.base * gi - g.l.intensity) * (dt > 0 ? 1 - Math.exp(-dt / 0.15) : 1); });
+    // GI: down when the table is tilted, like a real machine, and as fx.js says (a light show dims it so its flashes
+    // stand out); the whole-table flash lifts the fill light and the exposure
+    const giT = (dark && play ? 0.25 : 1) * clamp(st && st.gi != null ? +st.gi : 1, 0, 1.5);
+    giNow += (giT - giNow) * (dt > 0 ? 1 - Math.exp(-dt / 0.07) : 1);
+    GI.forEach((g) => { g.l.intensity = g.base * giNow; });
+    const fl = clamp(st && st.flash ? +st.flash : 0, 0, 1);
+    hemi.intensity = HEMI * (0.3 + 0.7 * giNow) + 2.4 * fl; key.intensity = KEY_I * (0.4 + 0.6 * giNow);
+    liftU.value = LIFT * (0.3 + 0.7 * giNow); renderer.toneMappingExposure = EXPOSURE * (1 + 0.3 * fl);
+    // a small shake: the camera moves, never the table
+    const sk = st && st.shake, sx = sk ? clamp(+sk.x || 0, -1.5, 1.5) : 0, sy = sk ? clamp(+sk.y || 0, -1.5, 1.5) : 0;
+    camera.position.copy(camBase).addScaledVector(camR, sx).addScaledVector(camU, sy);
     // pop bumpers: the ring snaps down, the skirt and cap flash
     E.BUMPERS.forEach((B, i) => {
       const bp = bumpers[i], v = lit.bump ? lit.bump[i] : 0;
       if (v >= 7 && bp.hit < 0.5) { flashK = 1; flash.color.copy(bp.col); flash.position.set(wx(B.x), 24, wz(B.y)); }
       bp.hit = v > 0 ? 1 : Math.max(0, bp.hit - dt * 7);
       const idle = play ? (dark ? 0.15 : 0.75 + 0.25 * Math.sin(t / 300 + i * 2.1)) : 0.6 + 0.6 * Math.max(0, Math.sin(t / 240 - i * 2.1));
-      bp.ring.position.y = 8.2 - 4.6 * (v > 0 ? 1 : bp.hit);
+      bp.ring.position.y = 11 - 4.4 * (v > 0 ? 1 : bp.hit);
       bp.skirtMat.emissiveIntensity = idle * 0.9 + bp.hit * 5;
       bp.sideMat.emissiveIntensity = idle + bp.hit * 4;
       bp.topMat.emissiveIntensity = 0.45 * idle + bp.hit * 2.2;
@@ -819,7 +1026,7 @@ export function create(opts) {
       const v = lit.sling ? lit.sling[i] : 0;
       if (v >= 9 && s.flash < 0.5) { flashK = Math.max(flashK, 0.8); flash.color.set(i ? COL.moth : COL.orb); const sl = T.slings[i]; flash.position.set(wx((sl.a[0] + sl.c[0]) / 2), 18, wz((sl.a[1] + sl.c[1]) / 2)); }
       s.flash = v > 0 ? 1 : Math.max(0, s.flash - dt * 6);
-      s.mat.emissiveIntensity = (dark ? 0.1 : 0.35) + s.flash * 3.2;
+      s.mat.emissiveIntensity = (dark ? 0.12 : 0.55) + s.flash * 2.6;
       s.rubber.scale.setScalar(1);
     });
     flashK = Math.max(0, flashK - dt * 5); flash.intensity = flashK * 9000;
@@ -852,7 +1059,8 @@ export function create(opts) {
       if (z > 2) { B.s2.position.set(wx(b.x + SHX * cy), 0.1, wz(b.y + SHY * cy)); B.s2.scale.set(18 + z * 0.3, 1, 18 + z * 0.3); B.s2.material = M.shadow; B.s2.visible = true; } else B.s2.visible = false;
       if (!first) first = B.m;
     }
-    updateLamps(W, t, mode, dt);
+    updateLamps(W, t, mode, dt, st && st.lamps);
+    fxPts = drawFx(W, st);
     // the ball's reflection: the table round it, from where it is
     if (first && opts.reflect !== false && (reflectN++ % Math.max(1, opts.reflectEvery || 1)) === 0) {   // (reflectEvery 2-3 on phones: the costliest pass)
       first.getWorldPosition(tmpV); cubeCam.position.copy(tmpV);
@@ -867,12 +1075,12 @@ export function create(opts) {
 
   // ---------------------------------------------------------------- set up, compile, measure
   resize(opts.width || canvasEl.width || 360, opts.height || canvasEl.height || 640);
-  setView({ tilt: opts.tilt != null ? opts.tilt : 35, fov: opts.fov || 34 });
+  { const fill = opts.fill !== false; setView({ fill, tilt: opts.tilt != null ? opts.tilt : fill ? FILL_TILT : 35, fov: opts.fov || (fill ? FILL_FOV : 34) }); }
   renderer.compile(scene, camera);
   const buildMs = Math.round(performance.now() - t0);
 
   function stats() {
-    return { buildMs, artMs, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, art: artSource, lamps: lamps ? lamps.list.length : 0, size: [RW * PR, RH * PR], view };
+    return { buildMs, artMs, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, art: artSource, lamps: lamps ? lamps.list.length : 0, size: [RW * PR, RH * PR], view, fx: !!window.PinFX, fxPoints: fxPts, pops: pops.filter((p) => p.visible).length };
   }
   function dispose() {
     disposables.forEach((d) => { try { d.dispose(); } catch (e) {} }); if (skyTex) skyTex.dispose();

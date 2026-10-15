@@ -1,14 +1,19 @@
-/* 365 Pinball Hero - the printed playfield for the 3D look (15 Oct 2026, milestone 2a). Painted once, at load, from the
- * table data - nothing to download, our own art only, no AI pictures:
- *  - deep space: a rich gradient, nebula clouds (fractal noise worked out small and scaled up smoothly), thousands of
- *    stars and a few bright ones with soft spikes;
+/* 365 Pinball Hero - the printed playfield for the 3D look (15 Oct 2026, milestone 2a; v2 the same day: high-key and
+ * saturated, so it reads at a glance in a brightly lit 3D view). Painted once, at load, from the table data - nothing to
+ * download, our own art only, no AI pictures:
+ *  - deep space, but bright: a saturated blue-violet gradient, nebula clouds (fractal noise worked out small and scaled
+ *    up smoothly), thousands of stars and a few bright ones with soft spikes;
+ *  - printed colour over it, as a real playfield's art: a magenta and violet sunburst from the middle of the inserts, an
+ *    energy burst behind the pop bumpers, green at the hangar's mouth;
  *  - the planet the hero defends, big and low behind the flippers: a sunrise on its rim, atmosphere, clouds, the night
  *    side's city lights and the hero's shield over it; a moon (seen through the warp ramp) and a ringed planet;
- *  - 365 Invaders' own pixel art: the Mothership as a faint print under the arch, invaders in the hangar;
- *  - the printed lanes and borders under every wall, the walls' contact shadows and soft pools of light round the bumpers,
- *    slings and posts (blurred with shadowBlur - the canvas filter property does nothing on iPhones);
- *  - every insert in PinLamps.list printed UNLIT, as dark tinted glass with a thin bright rim, so the table reads with
- *    every lamp off; the apron with 365 and HERO; our name.
+ *  - 365 Invaders' own pixel art: the Mothership printed over the loop at the top, invaders in the hangar;
+ *  - the lanes as clean printed panels with bright edges (one loop lane from orbit to orbit, gold inlanes, red outlanes,
+ *    the pink ramp lane), the printed bands under every wall, the walls' contact shadows and soft pools of light round
+ *    the bumpers, slings and posts (blurred with shadowBlur - the canvas filter property does nothing on iPhones);
+ *  - every insert in PinLamps.list printed UNLIT as tinted glass in a white printed ring, so the table reads with every
+ *    lamp off; PinLamps.tags printed beside them (WARP RAMP, SPINNER, ORBIT, KICKBACK, BALL SAVE, BONUS); the apron
+ *    with 365 and HERO; our name.
  * window.PinArt:
  *  - paint({ scale }) -> { color, glow, scale, ms }. color: the printed playfield, scale px per table unit (4 by default:
  *    1080 x 1784), its top left corner the table's (0, 0). glow: the parts that give off light themselves (city lights,
@@ -17,6 +22,9 @@
  *  - lampSprite(lamp, scale) -> a canvas: that insert LIT (a saturated core, white-hot centre, its own soft glow) on
  *    transparent. Lay it as a quad CENTRED on (lamp.x, lamp.y), square to the table (the insert's turn is already drawn
  *    in), canvas.qw x canvas.qh table units (= its size / scale). PinArt.quad(lamp) gives that size without painting.
+ *  - plastic('slingL' | 'slingR'[, scale]) -> a canvas: that slingshot's plastic as a glowing energy shield in 365
+ *    Invaders' colours (hexagons, an energy arc along the kicking face, an invader), transparent outside it; it covers
+ *    the table rectangle canvas.x0, y0, qw, qh (see the function). For a colour and an emissive map.
  * Needs engine.js and lamps.js first. Plain ES5. */
 (function (root) {
   'use strict';
@@ -87,6 +95,9 @@
     } else if (l.shape === 'triangle') { g.moveTo(0, -h / 2); g.lineTo(w / 2, h / 2); g.lineTo(-w / 2, h / 2); g.closePath(); }
     else if (l.shape === 'arrow') {   // a dart with a notched tail
       g.moveTo(0, -h / 2); g.lineTo(w / 2, h / 2); g.lineTo(0, h / 2 - h * 0.34); g.lineTo(-w / 2, h / 2); g.closePath();
+    } else if (l.shape === 'chevron') {   // a V pointing along the insert, its arms a little over half its length thick
+      var k = h * 0.58;
+      g.moveTo(0, -h / 2); g.lineTo(w / 2, h / 2 - k); g.lineTo(w / 2, h / 2); g.lineTo(0, -h / 2 + k); g.lineTo(-w / 2, h / 2); g.lineTo(-w / 2, h / 2 - k); g.closePath();
     } else { g.rect(-w / 2, -h / 2, w, h); }
   }
   function glyphFont(l) { return '900 ' + (l.h * 1.08).toFixed(2) + 'px ' + FONT; }
@@ -109,32 +120,48 @@
     g.restore();
   }
 
-  // ---------------------------------------------------------------- an insert, unlit: dark tinted glass, a thin bright rim
+  // ---------------------------------------------------------------- an insert, unlit: tinted glass in a printed ring
+  // (clearly coloured, so the table reads with every lamp off, but well short of lit)
   function insertUnlit(g, l) {
-    var c = rgb(l.color), big = Math.max(l.w, l.h);
+    var c = rgb(l.color), big = Math.max(l.w, l.h), NAVY = [10, 8, 40];
     g.save(); g.translate(l.x, l.y); g.rotate(l.rot || 0);
     if (l.shape === 'text') {
-      glyph(g, l, null, 'rgba(0,0,0,0.75)', 1.6);
+      glyph(g, l, null, 'rgba(255,255,255,0.55)', 1.2);
+      glyph(g, l, null, 'rgba(0,0,0,0.9)', 0.7);
       var gr0 = g.createLinearGradient(0, -l.h / 2, 0, l.h / 2);
-      gr0.addColorStop(0, css(mixc(c, [0, 0, 0], 0.55))); gr0.addColorStop(1, css(mixc(c, [0, 0, 0], 0.8)));
-      glyph(g, l, gr0, css(mixc(c, [255, 255, 255], 0.3), 0.8), 0.35);
+      gr0.addColorStop(0, css(mixc(c, [0, 0, 0], 0.38))); gr0.addColorStop(1, css(mixc(c, NAVY, 0.68)));
+      glyph(g, l, gr0, css(mixc(c, [255, 255, 255], 0.35), 0.9), 0.25);
       g.restore(); return;
     }
-    // a dark seat round it, then the glass
     g.lineJoin = 'round';
-    shapePath(g, l); g.lineWidth = 1.3; g.strokeStyle = 'rgba(0,0,0,0.7)'; g.stroke();
+    // the printed ring: white, then a black hairline against the glass
+    shapePath(g, l); g.lineWidth = 1.9; g.strokeStyle = 'rgba(255,255,255,0.62)'; g.stroke();
+    g.lineWidth = 0.9; g.strokeStyle = 'rgba(0,0,0,0.85)'; g.stroke();
     var gr = g.createRadialGradient(-big * 0.12, -big * 0.15, 0, 0, 0, big * 0.62);
-    gr.addColorStop(0, css(mixc(c, [0, 0, 0], 0.5))); gr.addColorStop(0.6, css(mixc(c, [0, 0, 0], 0.72))); gr.addColorStop(1, css(mixc(c, [4, 2, 14], 0.84)));
+    gr.addColorStop(0, css(mixc(c, [0, 0, 0], 0.22))); gr.addColorStop(0.6, css(mixc(c, [0, 0, 0], 0.45))); gr.addColorStop(1, css(mixc(c, NAVY, 0.68)));
     g.fillStyle = gr; g.fill();
     // a reflection across the top of the glass
     g.save(); g.clip();
     var gl = g.createLinearGradient(-big * 0.4, -big * 0.5, big * 0.15, big * 0.1);
-    gl.addColorStop(0, 'rgba(255,255,255,0.26)'); gl.addColorStop(0.45, 'rgba(255,255,255,0.06)'); gl.addColorStop(0.5, 'rgba(255,255,255,0)');
+    gl.addColorStop(0, 'rgba(255,255,255,0.32)'); gl.addColorStop(0.45, 'rgba(255,255,255,0.08)'); gl.addColorStop(0.5, 'rgba(255,255,255,0)');
     g.fillStyle = gl; g.fillRect(-big, -big, big * 2, big * 2);
-    insertText(g, l, css(mixc(c, [255, 255, 255], 0.2), 0.62));
+    insertText(g, l, 'rgba(255,255,255,0.88)');
     g.restore();
-    shapePath(g, l); g.lineWidth = 0.42; g.strokeStyle = css(mixc(c, [255, 255, 255], 0.35), 0.85); g.stroke();
+    shapePath(g, l); g.lineWidth = 0.35; g.strokeStyle = css(mixc(c, [255, 255, 255], 0.55), 0.9); g.stroke();
     g.restore();
+  }
+  // a printed label beside an insert (PinLamps.tags): bold capitals with a dark edge, so they read on bright art
+  function paintTags(g, S) {
+    unitT(g, S);
+    (LA.tags || []).forEach(function (t) {
+      g.save(); g.translate(t.x, t.y); g.rotate(t.rot || 0);
+      g.font = '900 ' + t.size + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle';
+      var wm = g.measureText(t.text).width, max = t.text.length * t.size * 0.78, k = Math.min(1, max / (wm || 1));
+      g.scale(k, 1);
+      g.lineJoin = 'round'; g.lineWidth = t.size * 0.32 / k; g.strokeStyle = 'rgba(6,4,24,0.9)'; g.strokeText(t.text, 0, t.size * 0.04);
+      g.fillStyle = t.color || '#ffffff'; g.fillText(t.text, 0, t.size * 0.04);
+      g.restore();
+    });
   }
 
   // ---------------------------------------------------------------- an insert, lit (for the renderer's quads)
@@ -183,16 +210,18 @@
 
     step('space', function () { paintSpace(g, S); });
     step('nebula', function () { paintNebula(g, S); });
+    step('zones', function () { paintZones(g, S); });
     step('stars', function () { paintStars(g, gg, S, GS); });
-    step('mothership', function () { paintMothership(g, S); });
     step('moons', function () { paintMoon(g, S); paintRinged(g, S); });
     step('planet', function () { paintPlanet(g, gg, S, GS, P, SUN, sunrise); });
     step('lanes', function () { paintLanes(g, S); });
+    step('mothership', function () { paintMothership(g, S); });
     step('hangar', function () { paintHangar(g, S); });
     step('light', function () { paintLight(g, S); });
     step('guides', function () { paintGuides(g, S); });
     step('words', function () { paintWords(g, S); });
     step('inserts', function () { unitT(g, S); LA.list.forEach(function (l) { insertUnlit(g, l); }); });
+    step('tags', function () { paintTags(g, S); });
     step('apron', function () { paintApron(g, S); });
     step('edge', function () { paintEdge(g, S); });
     var out = { color: C, glow: GC, scale: S, ms: ms, total: Math.round((now() - t0) * 10) / 10 };
@@ -204,10 +233,10 @@
   function paintSpace(g, S) {
     unitT(g, S);
     var gr = g.createLinearGradient(0, 0, 0, TH);
-    gr.addColorStop(0, '#0a0524'); gr.addColorStop(0.3, '#0c0a33'); gr.addColorStop(0.55, '#0b1440'); gr.addColorStop(0.78, '#0a1a46'); gr.addColorStop(1, '#050b22');
+    gr.addColorStop(0, '#22106a'); gr.addColorStop(0.3, '#2a1a8c'); gr.addColorStop(0.55, '#1d3aa8'); gr.addColorStop(0.78, '#1a4cb4'); gr.addColorStop(1, '#122f7a');
     g.fillStyle = gr; g.fillRect(0, 0, TW, TH);
-    var v = g.createRadialGradient(M, 210, 60, M, 230, 300);
-    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(2,0,10,0.55)');
+    var v = g.createRadialGradient(M, 210, 90, M, 230, 320);
+    v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(8,0,30,0.28)');
     g.fillStyle = v; g.fillRect(0, 0, TW, TH);
   }
 
@@ -220,18 +249,18 @@
   function paintNebula(g, S) {
     var k = 2, w = Math.ceil(TW / k), h = Math.ceil(TH / k), c = canvas(w, h), cg = c.getContext('2d'), id = cg.createImageData(w, h), p = id.data;
     var dens = new Float32Array(w * h);
-    var MAG = [196, 48, 170], VIO = [92, 52, 220], TEAL = [22, 150, 190], ROSE = [255, 92, 140];
+    var MAG = [230, 30, 190], VIO = [110, 40, 255], TEAL = [0, 170, 235], ROSE = [255, 70, 150];
     for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
       var x = (i + 0.5) * k, y = (j + 0.5) * k;
       var qx = fbm(x * 0.011, y * 0.011, 4, 11), qy = fbm(x * 0.011 + 5.2, y * 0.011 + 1.3, 4, 12);
       var d = fbm(x * 0.0085 + 2.4 * qx, y * 0.0085 + 2.4 * qy, 5, 13);
-      var b = band(x, y), dn = sstep(0.42, 0.74, d) * (0.28 + 0.72 * b);
+      var b = band(x, y), dn = sstep(0.36, 0.72, d) * (0.38 + 0.62 * b);
       var dust = sstep(0.52, 0.7, fbm(x * 0.026 + 3, y * 0.026 + 8, 4, 14));
       dn *= 1 - 0.55 * dust;
       var hue = fbm(x * 0.006 + 9, y * 0.006 + 3, 3, 15), col;
       col = hue < 0.5 ? mixc(TEAL, VIO, sstep(0.36, 0.5, hue)) : mixc(VIO, MAG, sstep(0.5, 0.64, hue));
       col = mixc(col, ROSE, sstep(0.7, 0.95, d) * 0.5);
-      var e = dn * 1.35, o = (j * w + i) * 4;
+      var e = dn * 1.65, o = (j * w + i) * 4;
       dens[j * w + i] = dn;
       p[o] = Math.min(255, col[0] * e); p[o + 1] = Math.min(255, col[1] * e); p[o + 2] = Math.min(255, col[2] * e); p[o + 3] = 255;
     }
@@ -247,12 +276,43 @@
       var o2 = (y2 * w2 + x2) * 4;
       if (dd < 0.04) { p2[o2 + 3] = 255; continue; }
       var f = fbm(x2 * 0.06, y2 * 0.06, 4, 21), ww = sstep(0.5, 0.78, f) * dd;
-      p2[o2] = 150 * ww; p2[o2 + 1] = 120 * ww; p2[o2 + 2] = 255 * ww; p2[o2 + 3] = 255;
+      p2[o2] = 170 * ww; p2[o2 + 1] = 90 * ww; p2[o2 + 2] = 255 * ww; p2[o2 + 3] = 255;
     }
     cg2.putImageData(id2, 0, 0);
-    g.globalAlpha = 0.55;
+    g.globalAlpha = 0.45;
     g.drawImage(c2, 0, 0, w2 * S, h2_ * S);
     g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  }
+
+  // ---- printed colour: big saturated shapes under everything, as a real playfield's art (the space shows through)
+  function paintZones(g, S) {
+    unitT(g, S);
+    g.save();
+    g.beginPath(); g.moveTo(6, TH); g.lineTo(6, A.y); g.arc(A.x, A.y, A.R, Math.PI, 2 * Math.PI); g.lineTo(266, TH); g.closePath(); g.clip();
+    var B = T.bumpers, bx = (B[0][0] + B[1][0] + B[2][0]) / 3, by = (B[0][1] + B[1][1] + B[2][1]) / 3;
+    function disc(x, y, r0, r1, stops) {
+      var z = g.createRadialGradient(x, y, r0, x, y, r1);
+      stops.forEach(function (st) { z.addColorStop(st[0], st[1]); });
+      g.fillStyle = z; g.fillRect(x - r1, y - r1, r1 * 2, r1 * 2);
+    }
+    // a sunburst from the middle of the inserts: magenta and violet rays, alternately, fading out
+    var ra = LA.list[LA.byId.ramp], cx = ra.x, cy = ra.y + 30, n = 40;
+    for (var i = 0; i < n; i++) {
+      var a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2, rg = g.createRadialGradient(cx, cy, 4, cx, cy, 160);
+      if (i & 1) { rg.addColorStop(0, 'rgba(255,40,170,0.42)'); rg.addColorStop(0.55, 'rgba(255,40,170,0.16)'); rg.addColorStop(1, 'rgba(255,40,170,0)'); }
+      else { rg.addColorStop(0, 'rgba(70,20,200,0.34)'); rg.addColorStop(0.55, 'rgba(70,20,200,0.12)'); rg.addColorStop(1, 'rgba(70,20,200,0)'); }
+      g.fillStyle = rg; g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, 160, a0, a1 + 0.002); g.closePath(); g.fill();
+    }
+    // an energy burst behind the pop bumpers: magenta into violet
+    disc(bx, by, 6, 80, [[0, 'rgba(255,40,190,0.6)'], [0.5, 'rgba(140,30,255,0.38)'], [1, 'rgba(140,30,255,0)']]);
+    // green round the hangar's mouth, cyan up the right of the table
+    disc(70, 208, 4, 50, [[0, 'rgba(30,230,110,0.42)'], [1, 'rgba(30,230,110,0)']]);
+    disc(200, 225, 4, 55, [[0, 'rgba(0,200,255,0.3)'], [1, 'rgba(0,200,255,0)']]);
+    // and a little light added at the hearts (the bright, high-key bits)
+    g.globalCompositeOperation = 'lighter';
+    disc(cx, cy, 0, 46, [[0, 'rgba(255,200,90,0.42)'], [0.5, 'rgba(255,120,80,0.14)'], [1, 'rgba(255,90,90,0)']]);
+    disc(bx, by, 0, 40, [[0, 'rgba(255,120,230,0.3)'], [1, 'rgba(255,120,230,0)']]);
+    g.restore();
   }
 
   // ---- stars: thousands of small ones (more along the galaxy's band), some with a glow, a few with spikes
@@ -334,11 +394,11 @@
   // ---- the Mothership, a faint print high under the arch (it lives in the sky beyond the table; this is its shadow)
   function paintMothership(g, S) {
     unitT(g, S);
-    var rows = PIX.boss, k = 2.15, w = rows[0].length * k, h = rows.length * k, x0 = A.x - w / 2, y0 = 13;
+    var rows = PIX.boss, k = 2.15, w = rows[0].length * k, h = rows.length * k, x0 = A.x - w / 2 - 8, y0 = 13;
     softly(g, S, 'rgba(140,90,255,0.4)', 9, 0, 0, function (c) { pixelArt(c, rows, { a: '#7b4dff', b: '#7b4dff', c: '#7b4dff', e: '#7b4dff', l: '#7b4dff' }, x0, y0, k, 1, 0); });
-    pixelArt(g, rows, PAL.boss, x0, y0, k, 0.1, k * 0.3);
+    pixelArt(g, rows, PAL.boss, x0, y0, k, 0.3, k * 0.3);
     g.globalCompositeOperation = 'lighter';
-    pixelArt(g, rows, { e: '#ff3fd2', l: '#ffe14a' }, x0, y0, k, 0.35);
+    pixelArt(g, rows, { e: '#ff3fd2', l: '#ffe14a' }, x0, y0, k, 0.6);
     g.globalCompositeOperation = 'source-over';
   }
 
@@ -402,7 +462,7 @@
   function paintPlanet(g, gg, S, GS, P, SUN, sunrise) {
     var top = Math.floor(P.cy - P.R) - 1, k = 2, w = TW * k, h = (TH - top) * k;
     var c = canvas(w, h), cg = c.getContext('2d'), id = cg.createImageData(w, h), p = id.data;
-    var OCEAN0 = [6, 28, 70], OCEAN1 = [26, 112, 186], LAND0 = [34, 92, 70], LAND1 = [178, 160, 98], NIGHT = [2, 6, 22], TWI = [255, 96, 120], NIGHT2 = [8, 16, 40], CLOUD = [235, 242, 255], ATM = [70, 170, 255];
+    var OCEAN0 = [6, 28, 70], OCEAN1 = [26, 112, 186], LAND0 = [34, 92, 70], LAND1 = [178, 160, 98], NIGHT = [12, 20, 62], TWI = [255, 96, 120], NIGHT2 = [26, 40, 96], CLOUD = [235, 242, 255], ATM = [70, 170, 255];
     // the land, desert and cloud noise on a coarser grid (1 per unit; they are soft anyway), read back smoothly below
     var w1 = TW + 2, h1 = TH - top + 2, LF = new Float32Array(w1 * h1), DF = new Float32Array(w1 * h1), CF = new Float32Array(w1 * h1);
     for (var j1 = 0; j1 < h1; j1++) for (var i1 = 0; i1 < w1; i1++) {
@@ -537,40 +597,41 @@
   function lanePanel(g, pts, width, c1, c2) {
     g.lineCap = 'round'; g.lineJoin = 'round';
     g.beginPath(); pts.forEach(function (p, i) { if (i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); });
-    if (c1) { g.lineWidth = width; g.strokeStyle = c1; g.stroke(); }
-    g.lineWidth = width - 3; g.strokeStyle = c2; g.stroke();
+    if (c1) { g.lineWidth = width + 1.6; g.strokeStyle = c1; g.stroke(); }
+    g.lineWidth = width; g.strokeStyle = c2; g.stroke();
   }
+  // (the lanes' own lamps - chevrons, rollover lamps - are inserts now, so the printed chevrons stay clear of them)
   function paintLanes(g, S) {
     unitT(g, S);
     var mx = function (p) { return [2 * M - p[0], p[1]]; };
-    // the loop round the top of the arch (both orbits join here)
+    // the loop round the top of the arch (both orbits join here): a saturated blue lane with bright edges
     var arcPts = [];
     for (var a = Math.PI; a <= 2 * Math.PI + 1e-6; a += Math.PI / 40) arcPts.push([A.x + Math.cos(a) * (A.R - 12), A.y + Math.sin(a) * (A.R - 12)]);
-    var leftOrbit = [[18, 262], [18, A.y]].concat(arcPts.slice(1, 9));
-    var rightOrbit = [[232, 262]].concat(arcPts.slice(24, 33).reverse());   // (the right orbit meets the arch higher up)
-    [leftOrbit, rightOrbit].forEach(function (pts) { lanePanel(g, pts, 21, 'rgba(63,224,255,0.16)', 'rgba(4,10,30,0.42)'); });
+    // one lane from the foot of the left orbit, round the top and down the right orbit (which meets the arch higher up)
+    var loopLane = [[18, 262], [18, A.y]].concat(arcPts.slice(1, 33), [[232, 262]]);
+    lanePanel(g, loopLane, 21, 'rgba(120,235,255,0.95)', 'rgba(8,40,175,0.8)');
     g.lineWidth = 0.9; g.lineCap = 'round';
-    chevrons(g, leftOrbit.slice(0, 2), 12, 'rgba(63,224,255,0.4)', 1, 3.6);
-    chevrons(g, [rightOrbit[0], [232, 150]], 12, 'rgba(63,224,255,0.4)', 1, 3.6);
-    chevrons(g, arcPts.slice(10, -10), 15, 'rgba(63,224,255,0.22)', 1, 3.2);
-    // the inlanes and outlanes
-    var inL = [[38, 300], [38, 364], [62, 384]], outL = [[16.5, 300], [16.5, 446]];
-    [inL, inL.map(mx)].forEach(function (pts) { lanePanel(g, pts, 15, null, 'rgba(6,8,26,0.3)'); g.lineWidth = 0.8; chevrons(g, pts, 13, 'rgba(255,214,120,0.4)', 1, 3); });
-    [outL, outL.map(mx)].forEach(function (pts) { lanePanel(g, pts, 16, null, 'rgba(6,8,26,0.3)'); g.lineWidth = 0.8; chevrons(g, [pts[0], [pts[0][0], 350]], 13, 'rgba(255,110,110,0.38)', 1, 3); });
-    // the shooter lane: a dark steel channel with chevrons up it
+    chevrons(g, arcPts.slice(10, 24), 15, 'rgba(160,240,255,0.55)', 1, 3.2);
+    // the inlanes (gold) and outlanes (red): tinted panels, chevrons only below their lamps
+    var inL = [[38, 296], [38, 364], [62, 384]], outL = [[16.5, 300], [16.5, 446]];
+    [inL, inL.map(mx)].forEach(function (pts) {
+      lanePanel(g, pts, 15, 'rgba(255,214,90,0.85)', 'rgba(70,20,150,0.78)');
+      g.lineWidth = 0.8; chevrons(g, [[pts[1][0], 334], pts[1], pts[2]], 13, 'rgba(255,224,140,0.6)', 1, 3);
+    });
+    [outL, outL.map(mx)].forEach(function (pts) { lanePanel(g, pts, 16, 'rgba(255,110,110,0.8)', 'rgba(120,10,70,0.78)'); });
+    // the shooter lane: a steel channel with chevrons up it
     var sh = T.shooter, sx = sh.cx;
     var gr = g.createLinearGradient(sh.x0, 0, sh.x1, 0);
-    gr.addColorStop(0, '#05060f'); gr.addColorStop(0.5, '#141a33'); gr.addColorStop(1, '#05060f');
+    gr.addColorStop(0, '#0d1430'); gr.addColorStop(0.5, '#2a3770'); gr.addColorStop(1, '#0d1430');
     g.fillStyle = gr; g.fillRect(sh.x0, 146, sh.x1 - sh.x0, TH - 146);
     g.lineWidth = 1.1;
     for (var y = TH - 40; y > 160; y -= 13) {
-      var f = (y - 160) / (TH - 200), al = 0.18 + 0.4 * (1 - f);
+      var f = (y - 160) / (TH - 200), al = 0.3 + 0.5 * (1 - f);
       g.strokeStyle = 'rgba(92,255,107,' + al.toFixed(2) + ')';
       g.beginPath(); g.moveTo(sx - 5, y + 3); g.lineTo(sx, y - 1.5); g.lineTo(sx + 5, y + 3); g.stroke();
     }
-    // the warp ramp's entrance lane
-    lanePanel(g, [[120, 216], [120, 152]], 26, 'rgba(255,79,200,0.18)', 'rgba(8,4,26,0.5)');
-    g.lineWidth = 0.9; chevrons(g, [[120, 214], [120, 150]], 12, 'rgba(255,120,220,0.45)', 1, 4);
+    // the warp ramp's entrance lane (its chevrons are lamps)
+    lanePanel(g, [[120, 216], [120, 152]], 26, 'rgba(255,150,230,0.95)', 'rgba(130,0,120,0.8)');
   }
 
   // ---- the hangar: a steel deck behind the drop targets, hazard stripes, its invaders and its name
@@ -580,10 +641,10 @@
     g.save();
     g.beginPath(); poly.forEach(function (p, i) { if (i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.closePath();
     var gr = g.createLinearGradient(30, 130, 90, 200);
-    gr.addColorStop(0, '#1b2140'); gr.addColorStop(0.6, '#0d1128'); gr.addColorStop(1, '#070916');
+    gr.addColorStop(0, '#3a4688'); gr.addColorStop(0.6, '#232c62'); gr.addColorStop(1, '#161c46');
     g.fillStyle = gr; g.fill(); g.clip();
     // deck plates
-    g.lineWidth = 0.35; g.strokeStyle = 'rgba(140,160,220,0.18)';
+    g.lineWidth = 0.35; g.strokeStyle = 'rgba(170,190,255,0.3)';
     for (var i = -10; i < 20; i++) { g.beginPath(); g.moveTo(20 + i * 9, 120); g.lineTo(20 + i * 9 + 60 * fx, 120 + 60 * fy * 1.6); g.stroke(); }
     for (var j = 0; j < 12; j++) { g.beginPath(); g.moveTo(20, 128 + j * 8); g.lineTo(120, 105 + j * 8); g.stroke(); }
     // hazard stripes along the target line (inside)
@@ -603,9 +664,9 @@
     g.lineWidth = 0.6; g.strokeStyle = 'rgba(160,255,170,0.7)';
     g.setLineDash([2.2, 1.6]); g.beginPath(); g.arc(sau.x, sau.y, 12.5, 0, Math.PI * 2); g.stroke(); g.setLineDash([]);
     // invaders parked in the hangar (365 Invaders' own)
-    pixelArt(g, PIX.moth, PAL.moth, 78, 139, 0.95, 0.85);
-    pixelArt(g, PIX.orb, PAL.orb, 91.5, 136, 0.95, 0.85);
-    pixelArt(g, PIX.bot, PAL.bot, 88, 149, 0.95, 0.85);
+    pixelArt(g, PIX.orb, PAL.orb, 93.2, 137.6, 0.95, 0.9);
+    pixelArt(g, PIX.moth, PAL.moth, 93.2, 146.6, 0.95, 0.9);
+    pixelArt(g, PIX.bot, PAL.bot, 93.2, 155.6, 0.95, 0.9);
     g.restore();
     // a printed invader behind each target (which kind it is)
     var KIND = ['bot', 'moth', 'orb', 'moth', 'bot'];
@@ -663,7 +724,7 @@
       T.bumpers.forEach(function (b) { c.beginPath(); c.arc(b[0], b[1], b[2] - 1, 0, Math.PI * 2); c.fillStyle = '#000'; c.fill(); });
     });
     // the band: gold edge, dark core (the metal guide stands on the core)
-    var GOLD = 'rgba(232,186,92,0.95)', CORE = '#0b0c22';
+    var GOLD = 'rgba(255,224,150,1)', CORE = '#171b52';
     g.strokeStyle = GOLD; strokeSegs(g, segs, 3.9, function (w) { return w[5] !== 'sling'; });
     archPath(g, A.R); g.lineWidth = 2 * A.r + 3.9; g.stroke();
     g.strokeStyle = CORE; strokeSegs(g, segs, 2.6, function (w) { return w[5] !== 'sling'; });
@@ -683,8 +744,8 @@
     // the bumpers' printed rings
     var BC = ['#ff5cc8', '#3fe0ff', '#ffd84a'];
     T.bumpers.forEach(function (b, i) {
-      g.beginPath(); g.arc(b[0], b[1], b[2] + 4.5, 0, Math.PI * 2); g.lineWidth = 1; g.strokeStyle = BC[i]; g.globalAlpha = 0.75; g.stroke();
-      g.beginPath(); g.arc(b[0], b[1], b[2] + 7, 0, Math.PI * 2); g.lineWidth = 0.4; g.setLineDash([1.2, 1.6]); g.stroke(); g.setLineDash([]);
+      g.beginPath(); g.arc(b[0], b[1], b[2] + 3.4, 0, Math.PI * 2); g.lineWidth = 0.9; g.strokeStyle = BC[i]; g.globalAlpha = 0.9; g.stroke();
+      g.beginPath(); g.arc(b[0], b[1], b[2] + 9.2, 0, Math.PI * 2); g.lineWidth = 0.35; g.strokeStyle = 'rgba(255,255,255,0.5)'; g.stroke();
       g.globalAlpha = 1;
     });
     // the drop targets' bank: a dark slot with a gold edge
@@ -714,15 +775,6 @@
   function paintWords(g, S) {
     unitT(g, S);
     var by = LA.byId, L = LA.list;
-    // the ramp's name beside its lamps (reading up the table), the orbits' names in their lanes, KICKBACK
-    var rp = L[by['ramp.p1']];
-    label(g, 'WARP RAMP', rp.x + 9, rp.y + 3, 4.4, -Math.PI / 2, '#ff9ae0');
-    label(g, 'SPINNER', 18, 232, 4.6, -Math.PI / 2, '#8ff0ff');
-    label(g, 'ORBIT', 232, 236, 4.6, -Math.PI / 2, '#8ff0ff');
-    var kk = L[by.kick];
-    label(g, 'KICKBACK', kk.x, kk.y + 30, 3.9, -Math.PI / 2, '#ff9a8a');
-    var m2 = L[by.mult2];
-    label(g, 'BONUS', m2.x - m2.w / 2 - 2.5, m2.y + 0.2, 3.9, 0, '#ffc27a', 'right');
     // H-E-R-O-!: a printed bracket under the letters
     var h0 = L[by.hero0], h4 = L[by.hero4];
     g.lineWidth = 0.6; g.strokeStyle = 'rgba(89,180,255,0.6)'; g.lineCap = 'round';
@@ -768,7 +820,7 @@
       softly(g, S, 'rgba(0,0,0,0.9)', 3, 0, -1, function (c) { c.beginPath(); poly.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.closePath(); c.fillStyle = '#000'; c.fill(); });
       g.beginPath(); poly.forEach(function (p, i) { if (i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); }); g.closePath();
       var gr = g.createLinearGradient(0, 380, 0, TH);
-      gr.addColorStop(0, '#2a2350'); gr.addColorStop(0.25, '#171331'); gr.addColorStop(1, '#0a0818');
+      gr.addColorStop(0, '#463a92'); gr.addColorStop(0.25, '#2c2366'); gr.addColorStop(1, '#17113a');
       g.fillStyle = gr; g.fill();
       g.lineWidth = 0.9; g.strokeStyle = 'rgba(232,186,92,0.9)'; g.lineJoin = 'round'; g.stroke();
       g.clip();
@@ -798,5 +850,70 @@
     g.restore();
   }
 
-  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, version: 1 };
+  // ---------------------------------------------------------------- the slingshot plastics: glowing energy shields
+  // plastic('slingL' | 'slingR'[, scale]) -> a canvas, transparent outside the plastic, seen from above. It covers the
+  // table rectangle canvas.x0, canvas.y0 (top left, table units) by canvas.qw x canvas.qh, so a top face maps with
+  // u = (x - x0) / qw, v = (y - y0) / qh (v down the table). The plastic's outline is the sling's triangle grown by
+  // canvas.grow units with round corners (as world3d's offsetPoly(tri, 3.8)). Good as a colour and an emissive map.
+  var plastics = {};
+  function plastic(kind, scale) {
+    scale = scale || 4;
+    var key = kind + '@' + scale; if (plastics[key]) return plastics[key];
+    var right = kind === 'slingR', s = T.slings[right ? 1 : 0], tri = [s.a, s.b, s.c], grow = 3.8, pad = 6;
+    var xs = tri.map(function (p) { return p[0]; }), ys = tri.map(function (p) { return p[1]; });
+    var x0 = Math.min.apply(null, xs) - grow - pad, y0 = Math.min.apply(null, ys) - grow - pad;
+    var qw = Math.max.apply(null, xs) + grow + pad - x0, qh = Math.max.apply(null, ys) + grow + pad - y0;
+    var c = canvas(qw * scale, qh * scale), g = c.getContext('2d'), c2 = canvas(c.width, c.height), h = c2.getContext('2d');
+    var main = rgb(right ? '#3fe0ff' : '#ff5cc8'), other = rgb(right ? '#ff5cc8' : '#3fe0ff'), YEL = rgb('#ffd84a');
+    g.setTransform(scale, 0, 0, scale, -x0 * scale, -y0 * scale); h.setTransform(scale, 0, 0, scale, -x0 * scale, -y0 * scale);
+    function outline(ctx) { ctx.beginPath(); ctx.moveTo(tri[0][0], tri[0][1]); ctx.lineTo(tri[1][0], tri[1][1]); ctx.lineTo(tri[2][0], tri[2][1]); ctx.closePath(); }
+    function body(ctx, fill, extra) { outline(ctx); ctx.lineJoin = 'round'; ctx.lineWidth = grow * 2 + (extra || 0); ctx.strokeStyle = fill; ctx.stroke(); ctx.fillStyle = fill; ctx.fill(); }
+    var cx = (s.a[0] + s.b[0] + s.c[0]) / 3, cy = (s.a[1] + s.b[1] + s.c[1]) / 3;
+    var fdx = s.c[0] - s.a[0], fdy = s.c[1] - s.a[1], fl = Math.sqrt(fdx * fdx + fdy * fdy), nx = -fdy / fl, ny = fdx / fl;
+    if ((cx - s.a[0]) * nx + (cy - s.a[1]) * ny > 0) { nx = -nx; ny = -ny; }   // the kicking face's normal, out of the triangle
+    var fmx = (s.a[0] + s.c[0]) / 2, fmy = (s.a[1] + s.c[1]) / 2;
+    // the inside, on its own canvas: deep colour, bright towards the kicking face, the shield's hexagons, an energy arc
+    body(h, '#000'); h.globalCompositeOperation = 'source-atop';
+    var lg = h.createLinearGradient(fmx + nx * 3, fmy + ny * 3, cx - nx * 10, cy - ny * 10);
+    lg.addColorStop(0, css(mixc(main, [255, 255, 255], 0.35), 0.95)); lg.addColorStop(0.35, css(main, 0.9)); lg.addColorStop(1, css(mixc(main, [40, 0, 110], 0.62), 0.88));
+    h.fillStyle = lg; h.fillRect(x0, y0, qw, qh);
+    var hs = 2.6, hw = hs * Math.sqrt(3);
+    h.lineWidth = 0.28;
+    for (var row = 0; row * hs * 1.5 < qh + hs * 2; row++) for (var col = -1; col * hw < qw + hw; col++) {
+      var hx = x0 + col * hw + (row & 1 ? hw / 2 : 0), hy = y0 + row * hs * 1.5, d = (hx - fmx) * nx + (hy - fmy) * ny;
+      h.strokeStyle = css(mixc(main, [255, 255, 255], 0.6), clamp(0.75 + d * 0.05, 0.14, 0.75));
+      h.beginPath();
+      for (var v = 0; v < 6; v++) { var an = Math.PI / 6 + v * Math.PI / 3, px = hx + Math.cos(an) * hs * 0.92, py = hy + Math.sin(an) * hs * 0.92; if (v) h.lineTo(px, py); else h.moveTo(px, py); }
+      h.closePath(); h.stroke();
+    }
+    h.globalCompositeOperation = 'lighter';
+    var rr = rng(right ? 11 : 7);
+    h.lineJoin = 'round'; h.lineCap = 'round';
+    for (var pass = 0; pass < 2; pass++) {
+      h.beginPath();
+      for (var k = 0; k <= 14; k++) {
+        var t = k / 14, off = 1.6 + (rr() - 0.5) * 2.2 + pass * 1.2, px2 = s.a[0] + fdx * t - nx * off, py2 = s.a[1] + fdy * t - ny * off;
+        if (k) h.lineTo(px2, py2); else h.moveTo(px2, py2);
+      }
+      h.lineWidth = pass ? 0.35 : 0.6; h.strokeStyle = css(pass ? YEL : other, 0.9);
+      h.shadowColor = css(pass ? YEL : other, 1); h.shadowBlur = 1.8 * scale; h.stroke();
+    }
+    h.beginPath(); h.moveTo(s.a[0] - nx * 0.4, s.a[1] - ny * 0.4); h.lineTo(s.c[0] - nx * 0.4, s.c[1] - ny * 0.4);
+    h.lineWidth = 0.9; h.strokeStyle = 'rgba(255,255,255,0.95)'; h.shadowColor = css(main, 1); h.shadowBlur = 2.5 * scale; h.stroke();
+    h.globalCompositeOperation = 'source-over'; h.shadowBlur = 0;
+    // 365 Invaders' own invader in the middle, glowing white
+    var art = PIX[right ? 'moth' : 'orb'], ps = 0.95, iw = art[0].length * ps, ih = art.length * ps;
+    h.save(); h.shadowColor = css(main, 1); h.shadowBlur = 2 * scale;
+    pixelArt(h, art, { a: '#ffffff', b: '#ffffff', c: css(mixc(main, [255, 255, 255], 0.5)), e: css(YEL) }, cx - iw / 2 - nx * 1.5, cy - ih / 2 - ny * 1.5, ps, 0.95, 0.08);
+    h.restore();
+    // on the plastic's own canvas: a soft glow just past the edge, a bright rim, then the inside over it
+    g.save(); g.shadowColor = css(main, 0.9); g.shadowBlur = 3.5 * scale; body(g, css(main, 0.6), 0.9); g.restore();
+    body(g, css(mixc(main, [255, 255, 255], 0.55), 1), 0.9);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(c2, 0, 0);
+    c.x0 = x0; c.y0 = y0; c.qw = qw; c.qh = qh; c.scale = scale; c.grow = grow; c.kind = kind;
+    plastics[key] = c;
+    return c;
+  }
+
+  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, plastic: plastic, version: 2 };
 })(typeof self !== 'undefined' ? self : this);

@@ -7,7 +7,9 @@
 <!-- 15 Oct 2026 (milestone 2a): a bench for games/pinball/world3d.js, never deployed. It plays the real engine with a
      simple seeded auto-flipper (so a seed and a frame are always the same moment), draws the 3D table under a strip
      with the flat look's dot-matrix display (its top 34 rows, 4x, square pixels), so a picture looks exactly like the
-     phone screen. Query: ?tilt=35&fov=34&seed=7&frame=900&speed=2&w=1080&h=1920 (mode=title for the attract show).
+     phone screen. Query: ?tilt=35&fov=34&seed=7&frame=900&speed=2&w=1080&h=1920 (mode=title for the attract show);
+     fill=1 is the game's own close "fill" framing (its tilt and lens unless tilt / fov are given). fx.js's effects are
+     drawn when it is there.
      tools/pinball/stills3d.cjs drives it through window.S3 (step, draw, find a lively moment, check the ball is never
      hidden, time the frames). window.__ready is true once the first frame is on screen. -->
 <script type="importmap">{ "imports": { "three": "../../games/common/vendor/three-r185/three.module.min.js" } }</script>
@@ -36,7 +38,7 @@
 
   // the art lane's files, if they are there yet (the 3D look falls back without them)
   function optional(src) { return new Promise((res) => { const s = document.createElement('script'); s.src = src; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s); }); }
-  const have = {}; have.lamps = await optional('../../games/pinball/lamps.js'); have.art = await optional('../../games/pinball/art3d.js');
+  const have = {}; have.lamps = await optional('../../games/pinball/lamps.js'); have.art = await optional('../../games/pinball/art3d.js'); have.fx = await optional('../../games/pinball/fx.js');
   const { create } = await import('../../games/pinball/world3d.js?' + Date.now());
 
   // ---------------------------------------------------------------- the auto-flipper (the same as tools/pinball/sim.cjs's bot)
@@ -71,10 +73,12 @@
   // ---------------------------------------------------------------- the game, the picture
   const speed = num('speed', 2), mode = Q.get('mode') || 'play';
   let W = null, drive = null, frame = 0;
-  const world = create({ canvas: gl, width: FW, height: FH - STRIP, pixelRatio: 1, preserve: true, tilt: num('tilt', 35), fov: num('fov', 34),
+  const FILLV = Q.get('fill') === '1';
+  const world = create({ canvas: gl, width: FW, height: FH - STRIP, pixelRatio: 1, preserve: true, fill: FILLV,
+    tilt: Q.has('tilt') ? num('tilt') : FILLV ? undefined : 35, fov: Q.has('fov') ? num('fov') : FILLV ? undefined : 34,
     reflect: Q.get('reflect') !== '0', samples: num('samples', 4), bloom: Q.has('bloom') ? +Q.get('bloom') : undefined, threshold: Q.has('thr') ? +Q.get('thr') : undefined });
   function reset(seed) { W = E.newWorld(speed, {}, seed); drive = bot(seed); frame = 0; if (mode === 'title') W.demo = true; }
-  function step() { E.step(W, drive(W)); W.events.length = 0; frame++; }
+  function step() { E.step(W, drive(W)); if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} } W.events.length = 0; frame++; }
   const tOf = (f) => f * 1000 / 60;
   function render() {
     world.draw(W, tOf(frame), mode, { best: 0 });

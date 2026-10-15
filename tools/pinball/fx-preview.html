@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pinball effects sheet</title>
+<!-- 15 Oct 2026, M2a: a test bench for games/pinball/fx.js, pilot.js and demo.js, never deployed. The pilot plays a real
+     game (fixed seed, pretend 60 fps clock) and the first time each big moment happens the frame a little later is drawn
+     into a cell: the flat look (flat.js) with the effects state drawn on top the way a renderer would use it - the GI as
+     darkness, extra lamp brightness as glows at the lamps, sparks, score pops lifted by their height, the flash, the
+     shake. The last cell is the title screen's attract mode. ?speed=1&seed=7&scale=1.25. Opened by fx-shots.cjs. -->
+<style>
+  html, body { margin: 0; background: #0b0b12; color: #ddd; font: 12px system-ui, sans-serif; }
+  #sheet { display: grid; grid-template-columns: repeat(4, auto); gap: 6px; padding: 6px; width: max-content; }
+  figure { margin: 0; } figcaption { padding: 2px 0 0; font: 11px ui-monospace, monospace; color: #9fb; }
+  canvas { display: block; background: #000; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<div id="sheet"></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/lamps.js"></script>
+<script src="../../games/pinball/flat.js"></script>
+<script src="../../games/pinball/fx.js"></script>
+<script src="../../games/pinball/pilot.js"></script>
+<script src="../../games/pinball/demo.js"></script>
+<script>
+(function () {
+  'use strict';
+  var Q = new URLSearchParams(location.search), SC = +(Q.get('scale') || 1.25), SPEED = +(Q.get('speed') || 1), SEED = +(Q.get('seed') || 7);
+  var E = PinEngine, FX = PinFX, OY = 34, FR = 1000 / 60;
+  var buf = document.createElement('canvas'); buf.width = 270; buf.height = 480;
+  var bg = buf.getContext('2d');
+  // the moments to catch: event -> ms after it to draw
+  var WANT = [['bumper', 90], ['sling', 120], ['drop', 140], ['ramp', 260], ['drops', 380], ['jackpot', 240], ['skill', 300], ['save', 420], ['drain', 160], ['orbit', 200], ['mult', 300]];
+  if (Q.get('want')) { var only = Q.get('want').split(','); WANT = WANT.filter(function (w) { return only.indexOf(w[0]) >= 0; }); }
+  var MAX = +(Q.get('cells') || 7);
+  var pending = [], got = {}, cells = 0;
+
+  function cell(W, t, mode, label) {
+    var st = FX.update(W, t, mode);
+    PinFlat.draw(bg, W, t, mode, { best: 0 });
+    var c = document.createElement('canvas'); c.width = Math.round(270 * SC); c.height = Math.round(480 * SC);
+    var g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.save(); g.scale(SC, SC);
+    g.translate(st.shake.x, st.shake.y);
+    g.drawImage(buf, 0, 0);
+    // the background light: darkness over the playfield
+    if (st.gi < 1) { g.fillStyle = 'rgba(0,0,8,' + ((1 - st.gi) * 0.72).toFixed(3) + ')'; g.fillRect(0, OY, 270, 446); }
+    // the base lamps (dipped by state.base) and the effects' extra brightness, as glows
+    var base = PinLamps.level(W, t, mode);
+    g.globalCompositeOperation = 'lighter';
+    PinLamps.list.forEach(function (l, i) {
+      var v = Math.min(1, base[i] * st.base * 0.5 + (st.lamps[l.id] || 0));
+      if (v <= 0.02) return;
+      var r = Math.max(l.w, l.h) * 0.9 + 3, gr = g.createRadialGradient(l.x, l.y + OY, 0, l.x, l.y + OY, r);
+      gr.addColorStop(0, l.color); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      g.globalAlpha = v; g.fillStyle = gr; g.fillRect(l.x - r, l.y + OY - r, r * 2, r * 2);
+    });
+    // sparks (height lifts them up the picture)
+    st.sparks.forEach(function (s) { g.globalAlpha = s.a; g.fillStyle = s.color; g.fillRect(s.x - s.size / 2, s.y - s.z * 0.6 + OY - s.size / 2, s.size, s.size); });
+    g.globalCompositeOperation = 'source-over';
+    // pops
+    st.pops.forEach(function (p) {
+      g.globalAlpha = p.a; g.font = '900 ' + (8 * p.s).toFixed(1) + 'px system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.lineWidth = 2.2; g.strokeStyle = 'rgba(0,0,0,0.85)'; g.strokeText(p.text, p.x, p.y - p.z * 0.6 + OY);
+      g.fillStyle = p.color; g.fillText(p.text, p.x, p.y - p.z * 0.6 + OY);
+    });
+    g.globalAlpha = 1;
+    if (st.flash > 0) { g.globalAlpha = st.flash * 0.45; g.fillStyle = st.flashColor; g.fillRect(-4, -4, 278, 488); g.globalAlpha = 1; }
+    g.restore();
+    var f = document.createElement('figure'), cap = document.createElement('figcaption');
+    cap.textContent = label + '  gi ' + st.gi.toFixed(2) + '  pops ' + st.pops.length + '  sparks ' + st.sparks.length + '  lamps+ ' + Object.keys(st.lamps).filter(function (k) { return st.lamps[k] > 0.05; }).length;
+    f.appendChild(c); f.appendChild(cap); document.getElementById('sheet').appendChild(f);
+    cells++;
+  }
+
+  // ---- a real game, the pilot at the flippers
+  FX.reset(); FX.reduce = false;
+  var W = E.newWorld(SPEED, 0, SEED), t = 1000, n = 0;
+  while (!W.over && n < 60 * 60 * 20 && cells < MAX - 1) {
+    E.step(W, PinPilot.input(W)); n++;
+    var ev = W.events;
+    for (var i = 0; i < ev.length; i++) {
+      var nm = typeof ev[i] === 'string' ? ev[i] : ev[i] && ev[i].sfx;
+      if (nm === 'drain' && (W.balls.length || ev.some(function (x) { return x === 'save'; }))) continue;
+      WANT.forEach(function (w) { if (w[0] === nm && !got[nm] && n > 30) { got[nm] = 1; pending.push({ at: t + w[1], label: nm + ' +' + w[1] + 'ms (step ' + n + ')' }); } });
+    }
+    if (ev.length) FX.events(W, ev);
+    ev.length = 0;
+    t += FR;
+    var due = pending.filter(function (p) { return p.at <= t; });
+    if (due.length) { pending = pending.filter(function (p) { return p.at > t; }); due.forEach(function (p) { if (cells < MAX - 1) cell(W, t, 'play', p.label); }); }
+    else FX.update(W, t, 'play');
+  }
+  // ---- the title screen: the attract mode
+  var Wt = E.newWorld(SPEED, 0, SEED + 1); Wt.demo = true; FX.reset();
+  for (var k = 0; k < 60 * 14; k++) { t += FR; PinDemo.frame(Wt, t, 'title'); if (k < 60 * 14 - 1) FX.update(Wt, t, 'title'); }
+  cell(Wt, t, 'title', 'attract, 14 s');
+  window.done = { cells: cells, steps: n, score: W.score };
+})();
+</script>
+</body>
+</html>

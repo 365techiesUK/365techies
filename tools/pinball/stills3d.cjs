@@ -4,6 +4,8 @@
  * and a phone copy under 6 MB), a side-by-side compare.jpg, and a check that the ball is never hidden at that angle.
  *
  *   node tools/pinball/stills3d.cjs [--out DIR] [--tilts 20,35,50] [--seed N --frame F] [--quick] [--no-check] [--port 8491]
+ *   node tools/pinball/stills3d.cjs --fill [--tilts 28] ...   the game's own close "fill" framing (the default view on the
+ *     page): files fill-still-28.png, fill-clip-28.mp4 ...; --tilts defaults to 28, the game's own (FILL_TILT).
  *
  * --quick: stills only (no clips). Without --seed/--frame it searches seeds for the moment first. It serves the repository
  * itself (py -m http.server, stopped by its PID at the end). Run from the repository root. Needs ffmpeg on the PATH;
@@ -19,7 +21,8 @@ const ROOT = path.resolve(__dirname, '../..');
 
 const A = process.argv.slice(2), arg = (k, d) => { const i = A.indexOf('--' + k); return i >= 0 ? A[i + 1] : d; }, flag = (k) => A.includes('--' + k);
 const OUT = path.resolve(arg('out', 'D:/claude/retro-rebooted/pinball-m2a'));
-const TILTS = arg('tilts', '20,35,50').split(',').map(Number);
+const FILLV = flag('fill'), PRE = FILLV ? 'fill-' : '';
+const TILTS = arg('tilts', FILLV ? '28' : '20,35,50').split(',').map(Number);
 const PORT = +arg('port', 8491), FOV = arg('fov', '');
 const LETTER = { 20: 'A', 35: 'B', 50: 'C' };
 const CLIP_HALF = 300;   // sim steps either side of the moment (60 a second): 10 seconds in all
@@ -72,13 +75,13 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 
     const tmp = process.env.STILLS_TMP || path.join(OUT, '_frames');
     for (const tilt of TILTS) {
-      const q = `tilt=${tilt}&seed=${seed}&frame=${frame}` + (FOV ? `&fov=${FOV}` : '');
+      const q = `tilt=${tilt}&seed=${seed}&frame=${frame}` + (FOV ? `&fov=${FOV}` : '') + (FILLV ? '&fill=1' : '');
       const R = report.tilts[tilt] = {};
       R.loadMs = await open(q);
-      const still = path.join(OUT, `still-${tilt}.png`);
+      const still = path.join(OUT, `${PRE}still-${tilt}.png`);
       await page.locator('#frame').screenshot({ path: still });
       R.stats = await page.evaluate(() => S3.world.stats());
-      console.log(`still-${tilt}.png  (load ${R.loadMs} ms, ${R.stats.calls} draw calls, ${R.stats.triangles} triangles)`);
+      console.log(`${PRE}still-${tilt}.png  (load ${R.loadMs} ms, ${R.stats.calls} draw calls, ${R.stats.triangles} triangles)`);
 
       if (!flag('no-check')) {
         R.bench = await page.evaluate(() => S3.bench(180));
@@ -102,18 +105,18 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
           await page.locator('#frame').screenshot({ path: path.join(dir, 'f' + String(i).padStart(4, '0') + '.jpg'), type: 'jpeg', quality: 93 });
         }
         R.captureSec = Math.round((Date.now() - t0) / 1000);
-        const full = path.join(OUT, `clip-${tilt}.mp4`), phone = path.join(OUT, `clip-${tilt}-phone.mp4`);
+        const full = path.join(OUT, `${PRE}clip-${tilt}.mp4`), phone = path.join(OUT, `${PRE}clip-${tilt}-phone.mp4`);
         execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '30', '-i', path.join(dir, 'f%04d.jpg'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-maxrate', '14M', '-bufsize', '28M', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', full]);
         execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '30', '-i', path.join(dir, 'f%04d.jpg'), '-vf', 'scale=720:1280:flags=lanczos', '-c:v', 'libx264', '-preset', 'slow', '-crf', '21', '-maxrate', '4M', '-bufsize', '8M', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', phone]);
         R.clipMB = +(fs.statSync(full).size / 1048576).toFixed(1); R.phoneMB = +(fs.statSync(phone).size / 1048576).toFixed(1);
         fs.rmSync(dir, { recursive: true, force: true });
-        console.log(`  clip-${tilt}.mp4 ${R.clipMB} MB, clip-${tilt}-phone.mp4 ${R.phoneMB} MB (captured in ${R.captureSec} s)`);
+        console.log(`  ${PRE}clip-${tilt}.mp4 ${R.clipMB} MB, ${PRE}clip-${tilt}-phone.mp4 ${R.phoneMB} MB (captured in ${R.captureSec} s)`);
       }
     }
     try { fs.rmdirSync(tmp); } catch (e) {}
 
     // 2. the three side by side
-    const imgs = TILTS.map((t) => 'data:image/png;base64,' + fs.readFileSync(path.join(OUT, `still-${t}.png`)).toString('base64'));
+    const imgs = TILTS.map((t) => 'data:image/png;base64,' + fs.readFileSync(path.join(OUT, `${PRE}still-${t}.png`)).toString('base64'));
     const labels = TILTS.map((t) => (LETTER[t] || '') + ' ' + t + '\u00b0');
     const jpg = await page.evaluate(async ([imgs, labels]) => {
       const W = 540, Hh = 960, BAND = 70, GAP = 12, c = document.createElement('canvas');
@@ -127,12 +130,12 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
       for (const q of [0.88, 0.8, 0.7, 0.6]) { const d = c.toDataURL('image/jpeg', q); if (d.length * 0.75 < 1.45 * 1048576) return d; }
       return c.toDataURL('image/jpeg', 0.5);
     }, [imgs, labels]);
-    fs.writeFileSync(path.join(OUT, 'compare.jpg'), Buffer.from(jpg.split(',')[1], 'base64'));
-    report.compareKB = Math.round(fs.statSync(path.join(OUT, 'compare.jpg')).size / 1024);
+    fs.writeFileSync(path.join(OUT, PRE + 'compare.jpg'), Buffer.from(jpg.split(',')[1], 'base64'));
+    report.compareKB = Math.round(fs.statSync(path.join(OUT, PRE + 'compare.jpg')).size / 1024);
     report.errors = errors.slice(0, 20);
     if (errors.length) console.log('page messages:', errors.slice(0, 8).join(' | '));
-    fs.writeFileSync(path.join(OUT, 'stills3d-report.json'), JSON.stringify(report, null, 1));
-    console.log('compare.jpg', report.compareKB, 'KB; report in', path.join(OUT, 'stills3d-report.json'));
+    fs.writeFileSync(path.join(OUT, PRE + 'stills3d-report.json'), JSON.stringify(report, null, 1));
+    console.log('compare.jpg', report.compareKB, 'KB; report in', path.join(OUT, PRE + 'stills3d-report.json'));
   } finally {
     await browser.close();
     stop(srv);

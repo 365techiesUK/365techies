@@ -116,6 +116,100 @@
   window.addEventListener('blur', letGo);
   document.addEventListener('visibilitychange', function () { if (document.hidden) letGo(); });
 
+  // ---------------------------------------------------------------- the 3D look (world3d.js, window.Pin3D; milestone 2a)
+  // The 3D table is a WebGL canvas in #screenwrap, BEHIND the game screen; the game screen (the cabinet's hires drawing,
+  // full sharpness) is cleared and keeps only the dot-matrix display - the flat look's top 34 rows, drawn crisp. Settings
+  // 'Look' (3D / Flat, 3D first) and the R key switch it at once. No WebGL2, world3d.js not arriving, or the graphics
+  // card giving up: the flat look, as before.
+  var STRIP = 34, COARSE = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+  var G3 = { world: null, failed: !gl2(), cv: null, cssW: 0, cssH: 0, deadline: 0, set: null, ms: [] };
+  function gl2() {
+    try { var c = document.createElement('canvas'), x = c.getContext('webgl2'); if (!x) return false; var l = x.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); return true; } catch (e) { return false; }
+  }
+  var flatCv = document.createElement('canvas'); flatCv.width = 270; flatCv.height = 480;
+  var flatG = flatCv.getContext('2d'), midCv = document.createElement('canvas'), midG = midCv.getContext('2d');
+  (function () {
+    var st = document.createElement('style');
+    st.textContent = '.pin3dgl{position:absolute;left:0;top:0;z-index:0;display:block;pointer-events:none;background:#07060c;border-radius:0 0 6px 6px}'
+      + 'body.pin3d #screen{position:relative;z-index:1;background:transparent}';
+    document.head.appendChild(st);
+  })();
+  function want3d(set) { return !G3.failed && !(set && set.look === 'flat'); }
+  function fail3d(why) {
+    if (G3.failed) return; G3.failed = true;
+    if (window.console) console.info('365 Pinball Hero: the flat look (' + why + ')');
+    if (G3.world) { try { G3.world.dispose(); } catch (e) {} G3.world = null; }
+    if (G3.cv && G3.cv.parentNode) G3.cv.parentNode.removeChild(G3.cv);
+    document.body.classList.remove('pin3d');
+  }
+  function hide3d() { if (G3.cv && G3.cv.style.display !== 'none') { G3.cv.style.display = 'none'; document.body.classList.remove('pin3d'); } }
+  function world3d() {   // made the first time it's wanted; null while world3d.js is still on its way
+    if (G3.world || G3.failed) return G3.world;
+    if (!window.Pin3D || typeof Pin3D.create !== 'function') {
+      var now = performance.now();
+      if (!G3.deadline) G3.deadline = now + 15000;
+      if (document.readyState === 'complete') G3.deadline = Math.min(G3.deadline, now + 6000);
+      if (now > G3.deadline) fail3d('world3d.js did not arrive');
+      return null;
+    }
+    try {
+      var cv = G3.cv = document.createElement('canvas'); cv.className = 'pin3dgl'; cv.setAttribute('aria-hidden', 'true');
+      cv.addEventListener('webglcontextlost', function (e) { e.preventDefault(); fail3d('the graphics card reset'); });
+      var wrap = document.getElementById('screenwrap'); wrap.insertBefore(cv, wrap.firstChild);
+      // phones: at most 2 screen pixels a CSS pixel, and the ball's reflection every other frame, small
+      G3.world = Pin3D.create({ canvas: cv, width: 270, height: 446, pixelRatio: Math.min(2, window.devicePixelRatio || 1), reflectEvery: COARSE ? 2 : 1, reflectSize: COARSE ? 64 : 128 });
+    } catch (e) { fail3d((e && e.message) || 'no WebGL'); }
+    return G3.world;
+  }
+  function flatFrame(W, t, mode, info) {   // the flat look's whole frame, at its own size, off screen
+    flatG.setTransform(1, 0, 0, 1, 0, 0); flatG.save();
+    if (window.PinFlat && typeof PinFlat.draw === 'function') PinFlat.draw(flatG, W, t, mode, { best: info.best, set: info.set });
+    else { flatG.fillStyle = '#000'; flatG.fillRect(0, 0, 270, 480); }
+    flatG.restore();
+  }
+  function crisp(g, rows, dw, dh) {   // the flat frame's top rows onto the screen: square pixels, no column thinner than the next
+    var dev = dw / 270;
+    g.imageSmoothingEnabled = false;
+    if (Math.abs(dev - Math.round(dev)) < 0.02 || dev < 1) { g.drawImage(flatCv, 0, 0, 270, rows, 0, 0, dw, dh); return; }
+    var k = Math.ceil(dev);
+    if (midCv.width !== 270 * k || midCv.height !== rows * k) { midCv.width = 270 * k; midCv.height = rows * k; }
+    midG.imageSmoothingEnabled = false; midG.drawImage(flatCv, 0, 0, 270, rows, 0, 0, midCv.width, midCv.height);
+    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(midCv, 0, 0, dw, dh);
+  }
+  function draw3d(g, W, t, mode, info) {   // (the cabinet's hires drawing: g is the screen itself, info.dw x info.dh)
+    var wd = world3d(), dw = info.dw, dh = info.dh;
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1;
+    flatFrame(W, t, mode, info);
+    if (!wd) {
+      if (G3.failed) { crisp(g, 480, dw, dh); return; }   // (it just gave up: this frame flat, the cabinet's own from the next)
+      g.fillStyle = '#07060c'; g.fillRect(0, 0, dw, dh);   // still on its way: the display over a dark table
+    } else {
+      var sc = screenEl || document.getElementById('screen'), cssW = parseFloat(sc.style.width) || sc.clientWidth, cssH = parseFloat(sc.style.height) || sc.clientHeight;
+      if (cssW !== G3.cssW || cssH !== G3.cssH) {
+        var top = Math.floor(cssH * STRIP / 480);
+        G3.cssW = cssW; G3.cssH = cssH; G3.cv.style.top = top + 'px'; G3.cv.style.width = cssW + 'px'; G3.cv.style.height = (cssH - top) + 'px';
+        wd.resize(cssW, cssH - top);
+      }
+      if (G3.cv.style.display === 'none') G3.cv.style.display = '';
+      document.body.classList.add('pin3d');
+      var t0 = performance.now();
+      try { wd.draw(W, t, mode, info); } catch (e) { fail3d((e && e.message) || 'draw failed'); crisp(g, 480, dw, dh); return; }
+      G3.ms.push(performance.now() - t0); if (G3.ms.length > 240) G3.ms.shift();
+      g.clearRect(0, 0, dw, dh);
+    }
+    crisp(g, STRIP, dw, Math.ceil(dh * STRIP / 480) + 1);   // the dot-matrix display (a row over the 3D's top edge: no gap)
+  }
+  function setLook(v) {   // R: flat <-> 3D at once, saved as the Settings sheet would
+    var s = G3.set; if (!s) return;
+    s.look = v;
+    try { localStorage.setItem('pin365:settings', JSON.stringify(s)); } catch (e) {}
+    [].forEach.call(document.querySelectorAll('[data-opt="look"]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-val') === v)); });
+  }
+  document.addEventListener('keydown', function (e) {
+    if ((e.key || '').toLowerCase() !== 'r' || e.repeat || busy(e) || !G3.set) return;
+    setLook(G3.set.look === 'flat' ? '3d' : 'flat'); e.preventDefault();
+  });
+
   // ---------------------------------------------------------------- the words
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
   function extraList(n) {
@@ -151,10 +245,19 @@
       if (input.ppTap) input.pp = true; if (input.plTap) input.pl = true; if (input.prTap) input.pr = true;
       E.step(W, input);
       input.pp = pp; input.pl = pl; input.pr = pr; input.ppTap = input.plTap = input.prTap = false;
+      // the effects (fx.js) see this step's events before the cabinet plays their sounds and clears them
+      if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} }
     },
     hud: E.hud,
+    // the look: 3D (the default) or the flat 8-bit table. The 3D look draws on the screen at full sharpness (hires).
+    settings: [{ key: 'look', type: 'seg', label: 'Look', small: G3.failed ? 'This browser can only show the flat table' : 'The 3D table or the flat 8-bit one (R)', options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' }],
+    hires: function (set) { G3.set = set; return want3d(set); },
     draw: function (g, W, t, mode, info) {
+      // the title screen: the table plays itself behind the card (demo.js); it may step the title world itself
+      if (window.PinDemo) { try { mode = PinDemo.frame(W, t, mode) || mode; } catch (e) {} }
       if (mode !== 'play') letGo();   // paused, game over: nothing stays held
+      if (info.dw && want3d(info.set)) return draw3d(g, W, t, mode, info);
+      hide3d();
       if (window.PinFlat && typeof PinFlat.draw === 'function') return PinFlat.draw(g, W, t, mode, info);
       g.fillStyle = '#000'; g.fillRect(0, 0, 270, 480);   // (the picture hasn't loaded: a black screen, never an error)
     },
@@ -187,5 +290,7 @@
   });
 
   // for the tests (tools/pinball): the pieces of the controls that can be checked on their own
+  // and the look (3D or flat; the last 240 3D draw times in ms, CPU side)
+  window.PinLook = { get on() { return !!G3.world && document.body.classList.contains('pin3d'); }, get failed() { return G3.failed; }, get world() { return G3.world; }, ms: G3.ms, set: setLook };
   window.PinControls = { sideOf: sideOf, waiting: waiting, letGo: letGo, held: function () { return { pointers: held, left: keysL, right: keysR }; } };
 })();

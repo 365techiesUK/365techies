@@ -48,7 +48,7 @@
     W.lanes = [true, false, true]; W.skillOpen = true; W.skill = 1;
     W.drops = [false, false, true, false, true]; W.lit.drop = [0, 0, 0, 12, 0];
     W.saucerLit = true; W.comboT = 100; W.combo = 2; W.orbitFrom = 'L'; W.orbitT = 100; W.kickback = true;
-    W.saveT = 400; W.mult = 3; W.lit.bump = [5, 0, 0];
+    W.saveT = 400; W.mult = 3; W.lit.bump = [5, 0, 0]; W.lit.lane = [0, 0, 0];
   }
   function setLevels(state, t) {
     if (state === 'off') { levels.fill(0); return; }
@@ -85,6 +85,14 @@
   }
   function lampGrid() {
     var box = document.getElementById('lamps'), K = 6;
+    if (ART.plastic) ['slingL', 'slingR'].forEach(function (k) {   // the sling plastics, on the playfield and on black
+      var pc = ART.plastic(k, K), f = document.createElement('figure'), a = document.createElement('canvas'), b = document.createElement('canvas');
+      [a, b].forEach(function (c) { c.width = pc.width; c.height = pc.height; });
+      a.getContext('2d').drawImage(art.color, pc.x0 * S, pc.y0 * S, pc.qw * S, pc.qh * S, 0, 0, a.width, a.height);
+      a.getContext('2d').drawImage(pc, 0, 0); b.getContext('2d').drawImage(pc, 0, 0);
+      var cap = document.createElement('div'); cap.textContent = k;
+      f.appendChild(a); f.appendChild(b); f.appendChild(cap); box.appendChild(f);
+    });
     LA.list.forEach(function (l, i) {
       var sp = ART.lampSprite(l, K), f = document.createElement('figure');
       var a = document.createElement('canvas'), b = document.createElement('canvas');
