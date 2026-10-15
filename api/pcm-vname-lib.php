@@ -7,7 +7,7 @@
 function pcm_vname($ver, $vn = '')
 {
     if (is_string($vn) && preg_match('/^\d{1,3}(\.\d{1,3}){0,2}$/', $vn)) return $vn;
-    static $names = array(37 => '36.1', 38 => '36.2', 40 => '36.3');   // (build 39 was never released: its changes went out in 40)
+    static $names = array(37 => '36.1', 38 => '36.2', 40 => '36.3', 41 => '36.4');   // (build 39 was never released: its changes went out in 40)
     $v = (int)$ver;
     if ($v <= 0) return '';
     return isset($names[$v]) ? $names[$v] : (string)$v;

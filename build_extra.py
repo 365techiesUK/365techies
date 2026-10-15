@@ -32423,9 +32423,13 @@ def write_portal_page():
     if (m.reboot) w.push(['w', 'restart due']);
     if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + (m.vn || m.ver)]);
     if (m.batt > 0 && m.batt < 60) w.push(['w', 'battery ' + m.batt + '%']);
+    // app 36.4: under 15 MB free on Windows' start-up partition the next big Windows update fails (or undoes itself)
+    if (espFull(m)) w.push(['w', 'start-up partition full']);
     if (m.help) w.push(['b', '\\ud83c\\udd98 asked for help ' + seenAgo(m.help)]);
     return w;
   }
+  function espFull(m) { return m && m.espmb > 0 && m.espfree >= 0 && m.espfree < 15360; }
+  function espWords(m) { return (m.espfree < 1024 ? m.espfree + ' KB' : (Math.floor(m.espfree / 102.4) / 10) + ' MB') + ' free of ' + m.espmb + ' MB'; }
   // 9 Oct 2026: the app says WHY there is no backup (bstate) - a backup that ran but didn't finish is not "no backup"
   function bkWords(m) {
     var s = m.bstate || '';
@@ -34110,6 +34114,7 @@ def write_portal_page():
     if (d.w10) w.push(['w', 'Windows 10', 'Free security updates ended 14 October 2025' + (d.w11 === 'no' ? ' \\u2014 and this PC can\\u2019t run Windows 11.' : (d.w11 === 'yes' ? ' \\u2014 this PC can run Windows 11.' : '.'))]);
     if (d.reboot) w.push(['w', 'A restart is due', 'Updates are waiting for a restart to finish.']);
     if (d.batt > 0 && d.batt < 60) w.push(['w', 'Battery health ' + d.batt + '%', 'It holds well under its original charge.']);
+    if (espFull(d)) w.push(['w', 'Start-up partition full (' + espWords(d) + ')', 'The next big Windows update will fail or undo itself until it\\u2019s tidied: remove the foreign-language boot fonts (see /we-couldnt-update-the-system-reserved-partition/).']);
     if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + (d.vn || d.ver) + ')', 'It updates itself when it next restarts.']);
     return w;
   }
@@ -34198,6 +34203,7 @@ def write_portal_page():
       + '<dt>Drives</dt><dd>' + (drives || '<span class="quiet" style="font-size:.85rem">main drive ' + d.disk + '% full</span>') + '</dd>'
       + '<dt>Windows</dt><dd>' + (d.w10 ? 'Windows 10' : 'Windows 11') + (d.wv ? ' ' + esc(d.wv) : '') + (d.w11 === 'no' ? ' \\u00b7 can\\u2019t run 11' : '') + '</dd>'
       + (sbc ? '<dt>Secure Boot</dt><dd>' + sbc + '</dd>' : '')
+      + (d.espmb > 0 && d.espfree >= 0 ? '<dt>Start-up partition</dt><dd>' + espWords(d) + (espFull(d) ? ' <span style="color:var(--pwarn)">\\u2014 too full for big updates</span>' : '') + '</dd>' : '')
       + (d.ofc ? '<dt>Office</dt><dd>' + pcOfc(d.ofc) + '</dd>' : '')
       + '<dt>Backup</dt><dd>' + esc(bk[1]) + '</dd>'
       + (d.batt ? '<dt>Battery</dt><dd>' + d.batt + '% health</dd>' : '')

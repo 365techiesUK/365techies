@@ -3125,6 +3125,10 @@ if ($action === 'stafffleet') {
                 // and how many staff notes the PC has (pcm-pcnotes.json), for the list's chips
                 'bstate' => (string)(isset($m['bstate']) ? $m['bstate'] : ''),
                 'bwhen' => (string)(isset($m['bwhen']) ? $m['bwhen'] : ''),
+                // app 36.4: the start-up partition's free space in KB (-1 = not reported), so the list can flag PCs whose
+                // next big Windows update will fail before it does
+                'espmb' => isset($m['espmb']) ? (int)$m['espmb'] : -1,
+                'espfree' => isset($m['espfree']) ? (int)$m['espfree'] : -1,
                 'nn' => isset($pcNotes[$custId . '|' . $mid2]) ? (int)$pcNotes[$custId . '|' . $mid2] : 0,
                 'fresh' => !isset($m['diskpct']));
             if (count($ms) >= 600) break 2;
@@ -3177,6 +3181,8 @@ function staff_pc_detail($db, $k, $pc, $cid2) {
         'help_done' => (isset($m['help_done']) && is_array($m['help_done'])) ? $m['help_done'] : null, 'shot' => (string)$g('shot', ''),
         'backup' => !empty($m['backup']), 'bstate' => (string)$g('bstate', ''), 'bwhen' => (string)$g('bwhen', ''), 'bkind' => (string)$g('bkind', ''), 'bnote' => (string)$g('bnote', ''),
         'wv' => (string)$g('wv', ''), 'sbc' => (string)$g('sbc', ''), 'ofc' => (string)$g('ofc', ''),
+        // app 36.4: Windows' start-up partition, size in MB and free space in KB (-1 = not reported)
+        'espmb' => isset($m['espmb']) ? (int)$m['espmb'] : -1, 'espfree' => isset($m['espfree']) ? (int)$m['espfree'] : -1,
         'model' => (string)$g('model', ''), 'drives' => is_array($g('drives', array())) ? $g('drives', array()) : array(),
         'ram' => (int)$g('ram', 0), 'cpu' => (string)$g('cpu', ''), 'dsk' => is_array($g('dsk', array())) ? $g('dsk', array()) : array(), 'upd' => (int)$g('upd', 0),
         'w11' => (string)$g('w11', ''), 'notes' => is_array($g('notes', array())) ? $g('notes', array()) : array(),
@@ -3282,6 +3288,7 @@ if ($action === 'staffpcslack') {
     if ($d['w10']) $warn[] = 'Windows 10';
     if ($d['reboot']) $warn[] = 'restart due';
     if ($d['batt'] > 0 && $d['batt'] < 60) $warn[] = 'battery ' . $d['batt'] . '%';
+    if ($d['espmb'] > 0 && $d['espfree'] >= 0 && $d['espfree'] < 15360) $warn[] = 'start-up partition full (' . ($d['espfree'] < 1024 ? $d['espfree'] . ' KB' : (floor($d['espfree'] / 102.4) / 10) . ' MB') . ' free)';
     $spec = array();
     if ($d['model'] !== '') $spec[] = $d['model'];
     if ($d['cpu'] !== '') $spec[] = $d['cpu'];

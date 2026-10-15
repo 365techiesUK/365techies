@@ -300,6 +300,12 @@ if ($action === 'checkin') {
         if (isset($in['cpu'])) $c['machines'][$machine]['cpu'] = pcm_txt($in['cpu'], 80);
         if (isset($in['pcmodel'])) { $pm = pcm_txt($in['pcmodel'], 80); if ($pm !== '') $c['machines'][$machine]['model'] = $pm; }
         if (isset($in['upd'])) $c['machines'][$machine]['upd'] = max(0, min(3650, intval($in['upd'])));
+        // app 36.4 (15 Oct 2026): Windows' start-up partition - size in MB, free space in KB. Under 15 MB free the next big
+        // Windows update fails ("We couldn't update the system reserved partition"); the portal lists those PCs.
+        if (isset($in['espmb']) && isset($in['espfree'])) {
+            $c['machines'][$machine]['espmb'] = max(1, min(100000, intval($in['espmb'])));
+            $c['machines'][$machine]['espfree'] = max(0, min(100000000, intval($in['espfree'])));
+        }
         if (isset($in['w11'])) { $w11 = (string)$in['w11']; $c['machines'][$machine]['w11'] = in_array($w11, array('yes', 'no', ''), true) ? $w11 : ''; }
         if (isset($in['dsk']) && is_array($in['dsk'])) {
             $dl = array();
