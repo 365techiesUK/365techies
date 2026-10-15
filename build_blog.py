@@ -28,6 +28,7 @@ import pcm_problem_boxes   # 365 PC Manager boxes on 12 existing problem pages (
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)
 import video_watch_pages   # /videos/ + one watch page per film (13 Oct 2026: GSC "Video isn't on a watch page")
 import email_lives_video    # the 'Where does your email actually live?' explainer film on its six pages (11 Oct 2026; a write_all page filter)
+import howto_videos         # the YouTube how-tos (scam email, free up space) on the pages they answer (15 Oct 2026; a write_all page filter)
 import ai_pages             # /ai/ section (9 pages, copy in ai_pages_data.py) - GATED: AI_LAUNCH=False means it registers NOTHING until the owner-authorised release commit
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
