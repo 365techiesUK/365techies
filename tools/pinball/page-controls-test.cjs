@@ -1,17 +1,21 @@
-/* 365 Pinball Hero - a test of the page, its controls and its sounds (15 Oct 2026; not deployed: tools/ only).
+/* 365 Pinball Hero - a test of the page, its controls and its sounds (15 Oct 2026; Ember Peak, the camera settings and
+ * slow motion, 16 Oct 2026; not deployed: tools/ only).
  * Opens games/pinball/ in headless Edge (playwright-core), checks the page loads without errors, takes screenshots of
  * the title card (desktop and phone), and drives the controls with real mouse, touch and key presses: which half of the
  * screen works which flipper, several fingers at once, the plunger from a press while the ball waits, the extra keys,
  * and that nothing stays held through a pause or the window losing focus. Every sound name is played through a
- * recording kit to check its numbers (an exponential ramp to 0 would silently kill a sound).
+ * recording kit to check its numbers (an exponential ramp to 0 would silently kill a sound), Ember Peak's sounds with
+ * an Ember world. Ember Peak (16 Oct 2026): the page plays it; each button works BOTH storeys' flippers; the Camera
+ * and Look settings; slow motion steps the engine proportionally less (and a quick tap during a skipped step is still
+ * seen); the attract mode's flythrough and the director; the flat look draws Ember Peak and scrolls with the ball.
  *
- *   py -m http.server 8463   (from the repo root, in another window)
- *   node tools/pinball/page-controls-test.cjs [http://127.0.0.1:8463] [out folder for screenshots]
- * playwright-core: PW_CORE (a path) or D:\claude\tools\playwright-check\node_modules\playwright-core. */
+ *   py -m http.server 8481 --bind 127.0.0.1   (from the repo root, in another window)
+ *   node tools/pinball/page-controls-test.cjs [http://127.0.0.1:8481] [out folder for screenshots]
+ * playwright-core: PW_CORE (a path) or D:\claude\365-techies-website-launch-reel\node_modules\playwright-core. */
 'use strict';
 var path = require('path');
-var pw = require(process.env.PW_CORE || 'D:/claude/tools/playwright-check/node_modules/playwright-core');
-var BASE = (process.argv[2] || 'http://127.0.0.1:8463').replace(/\/$/, '');
+var pw = require(process.env.PW_CORE || 'D:/claude/365-techies-website-launch-reel/node_modules/playwright-core');
+var BASE = (process.argv[2] || 'http://127.0.0.1:8481').replace(/\/$/, '');
 var OUT = process.argv[3] || path.join(__dirname, 'shots');
 var EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 var fails = 0, passes = 0;
@@ -29,7 +33,7 @@ async function open(browser, opts) {
   });
   var page = await ctx.newPage(), errors = [], bad = [];
   page.on('pageerror', function (e) { errors.push('pageerror: ' + e.message); });
-  page.on('console', function (m) { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+  page.on('console', function (m) { if (m.type() === 'error') errors.push('console: ' + m.text()); else if (m.type() === 'warning' && /PinCam|PinParticles|PinPost|failed/i.test(m.text())) errors.push('warning: ' + m.text()); });
   page.on('response', function (r) { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()); });
   page.on('requestfailed', function (r) { if (!/visitors-live|workers\.dev/.test(r.url())) bad.push('failed ' + r.url()); });
   await page.goto(BASE + '/games/pinball/', { waitUntil: 'load' });
@@ -40,10 +44,13 @@ async function open(browser, opts) {
 function realErrors(list) {   // the Hall of Fame's server isn't here (a plain file server): those are expected
   return list.filter(function (e) { return !/games-hof\.php|status of (404|501)|Failed to load resource/.test(e); });
 }
+function missing(list) {   // the spectacle add-ons may not be written yet: said, but not a failure of this page
+  return list.filter(function (u) { return /\/(particles|post)\.js/.test(u); });
+}
 
 (async function main() {
   require('fs').mkdirSync(OUT, { recursive: true });
-  var browser = await pw.chromium.launch({ executablePath: EDGE, headless: true });
+  var browser = await pw.chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11'] });
   try {
     // ------------------------------------------------------------ desktop: load, title card, the parts present
     console.log('desktop 1280 x 900');
@@ -51,7 +58,9 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     var p = d.page;
     var parts = await p.evaluate(function () {
       return { engine: !!window.PinEngine, sound: !!(window.PinSound && PinSound.sound), controls: !!window.PinControls, flat: !!(window.PinFlat && PinFlat.draw),
-        mode: ARCADE365.mode, title: document.title, robots: (document.querySelector('meta[name=robots]') || {}).content,
+        mode: ARCADE365.mode, title: document.title, table: ARCADE365.world.tableId, flippers: ARCADE365.world.flippers.length,
+        cam: [].map.call(document.querySelectorAll('[data-opt="cam"]'), function (b) { return b.getAttribute('data-val'); }).join(','), look: [].map.call(document.querySelectorAll('[data-opt="look"]'), function (b) { return b.getAttribute('data-val'); }).join(','),
+        camMode: window.PinLook && PinLook.camMode(), titleText: (document.querySelector('#ov_title') || {}).textContent || '', pilot: !!window.PinPilot, demo: !!window.PinDemo, pincam: !!window.PinCam, robots: (document.querySelector('meta[name=robots]') || {}).content,
         canvas: [document.getElementById('screen').width, document.getElementById('screen').height], h1: (document.querySelector('#ov_title h1') || {}).textContent,
         help: document.querySelectorAll('#dHelp .how li').length, pad: [].map.call(document.querySelectorAll('#pad [data-pad]'), function (b) { return b.getAttribute('data-pad') + ':' + b.getAttribute('aria-label'); }) };
     });
@@ -60,6 +69,13 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     ok(parts.mode === 'title' && parts.h1 === '365 Pinball Hero', 'the title card shows 365 Pinball Hero');
     ok(parts.robots === 'noindex', 'the page is noindex');
     ok(parts.help >= 15, 'How to play has the full list (' + parts.help + ' items)');
+    ok(parts.table === 'ember' && parts.flippers === 4, 'the page plays Ember Peak (four flippers on two storeys)');
+    ok(/volcano/i.test(parts.titleText) && /crater/i.test(parts.titleText), 'the title card speaks of Ember Peak (the volcano, the crater)');
+    ok(parts.cam === 'arcade,classic,calm' && parts.look === '3d,flat', 'Settings has Camera (Arcade / Classic / Calm) and Look (3D / Flat)');
+    ok(parts.camMode === 'calm', 'the camera starts Calm (' + parts.camMode + ')');
+    var helpText = await p.evaluate(function () { return document.getElementById('dHelp').textContent; });
+    ok(/crater/.test(helpText) && /wire rail/.test(helpText) && /geyser/i.test(helpText) && /pressure/i.test(helpText) && /eruption/i.test(helpText) && /quake/i.test(helpText), 'How to play explains the crater, wire rail, geyser, pressure, eruption and quake');
+    ok(!/\b(fault|the big one|cash it|bank it)\b/i.test(helpText + parts.titleText), 'none of the banned words in the help or the title card');
     ok(parts.pad.length === 3 && /left:Left flipper/.test(parts.pad[0]), 'the pad buttons say which flipper is which');
     await p.screenshot({ path: path.join(OUT, 'title-desktop.png') });
 
@@ -101,10 +117,10 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     await sleep(500);
     await p.mouse.up();
     await sleep(150);
-    var s2 = await p.evaluate(function () { var i = ARCADE365.input, W = ARCADE365.world, b = W.balls[0]; return { pl: i.pl, pp: i.pp, y: b && Math.round(b.y), vy: b && Math.round(b.vy), launched: b && b.launched, on: W.flippers[0].on }; });
+    var s2 = await p.evaluate(function () { var i = ARCADE365.input, W = ARCADE365.world, b = W.balls[0], tip = PinEngine.table(W.tableId).T.shooter.tip; return { pl: i.pl, pp: i.pp, y: b && Math.round(b.y), tip: tip, vy: b && Math.round(b.vy), launched: b && b.launched, on: W.flippers[0].on }; });
     console.log('  ' + JSON.stringify(s2));
     ok(!s2.pl && !s2.pp && !s2.on, 'letting go drops the flipper and lets the plunger go');
-    ok(s2.y < 420 || s2.launched, 'and the ball is fired up the lane (y ' + s2.y + ', vy ' + s2.vy + ')');
+    ok(s2.y < s2.tip - 40 || s2.launched, 'and the ball is fired up the lane (y ' + s2.y + ', vy ' + s2.vy + ')');
     await sleep(600);
     // the right half, now the ball is in play: a flipper only
     await p.mouse.move(midX + 60, y); await p.mouse.down(); await sleep(80);
@@ -127,6 +143,13 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     await p.keyboard.up('ShiftRight'); await sleep(40);
     var k4 = await p.evaluate(function () { var i = ARCADE365.input; return [i.pl, i.pr]; });
     ok(k1.join() === 'true,false' && k2.join() === 'true,true' && k3.join() === 'false,true' && k4.join() === 'false,false', 'Z and Right Shift: each flipper, together, let go one at a time');
+    // each button works both storeys' flippers: the shore's (0, 1) and the summit's (2, 3)
+    await p.keyboard.down('ArrowLeft'); await sleep(60);
+    var st1 = await p.evaluate(function () { return ARCADE365.world.flippers.map(function (f) { return f.on; }).join(); });
+    await p.keyboard.up('ArrowLeft'); await p.keyboard.down('ArrowRight'); await sleep(60);
+    var st2 = await p.evaluate(function () { return ARCADE365.world.flippers.map(function (f) { return f.on; }).join(); });
+    await p.keyboard.up('ArrowRight'); await sleep(60);
+    ok(st1 === 'true,false,true,false' && st2 === 'false,true,false,true', 'the left button raises both left flippers (shore and summit), the right both right ones (' + st1 + ' / ' + st2 + ')');
     await p.keyboard.down('ShiftLeft'); await p.keyboard.down('m'); await sleep(40);
     var k5 = await p.evaluate(function () { var i = ARCADE365.input; return [i.pl, i.pr]; });
     await p.keyboard.up('m'); await p.keyboard.up('ShiftLeft');
@@ -162,9 +185,75 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     var h4 = await p.evaluate(function () { return { mode: ARCADE365.mode, pl: ARCADE365.input.pl }; });
     await p.keyboard.up('z'); await p.keyboard.press('Escape'); await sleep(80);
     ok(h4.mode === 'paused' && !h4.pl, 'with How to play open, Z works no flipper');
+
+    // ------------------------------------------------------------ slow motion: the engine stepped proportionally less
+    await p.click('#pGo').catch(function () {}); await sleep(150);
+    var sl = await p.evaluate(function () {
+      var E = PinEngine, out = {};
+      // on a world of its own (one evaluate: the page's own loop can't step in between)
+      var W = E.newWorld(2, null, 9), inp = {};
+      PinSlow.force(0.35);
+      var f0 = W.frame;
+      for (var i = 0; i < 2; i++) PinSlow.step(W, inp);
+      out.skippedTwo = W.frame === f0;
+      inp.plTap = true; PinSlow.step(W, inp);   // the third call: 1.05, a real step, which sees the tap
+      out.tapSeen = W.flippers[0].on && W.flippers[2].on && W.frame === f0 + 1 && !inp.plTap;
+      f0 = W.frame; for (i = 0; i < 600; i++) PinSlow.step(W, {});
+      out.per600 = W.frame - f0;
+      // the same engine steps either way: a copy stepped plainly the same number of times is identical
+      var A = E.newWorld(2, null, 11), Bw = E.newWorld(2, null, 11);
+      PinSlow.force(1); for (i = 0; i < 30; i++) { E.step(A, { fire: true }); PinSlow.step(Bw, { fire: true }); }
+      PinSlow.force(0.35);
+      var n = 0; while (Bw.frame < 400) { PinSlow.step(Bw, {}); n++; }
+      while (A.frame < 400) E.step(A, {});
+      out.same = JSON.stringify(A.balls.map(function (b) { return [b.x, b.y]; })) === JSON.stringify(Bw.balls.map(function (b) { return [b.x, b.y]; })) && A.score === Bw.score;
+      out.calls = n;
+      PinSlow.force(null);
+      return out;
+    });
+    console.log('  ' + JSON.stringify(sl));
+    ok(sl.skippedTwo && sl.tapSeen, 'slow motion 0.35: two calls skip the engine, the third steps it - and a quick tap made meanwhile is still seen');
+    ok(sl.per600 >= 208 && sl.per600 <= 212, 'slow motion 0.35: 600 of the cabinet\'s steps step the engine ' + sl.per600 + ' times (210)');
+    ok(sl.same, 'slow motion changes only the pace: the same engine steps give exactly the same game (' + sl.calls + ' calls for 370 steps)');
+    // and in the real loop, for a second each way
+    var pace = await p.evaluate(async function () {
+      var W = ARCADE365.world, w8 = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+      PinSlow.force(0.35); var a = W.frame; await w8(1000); var slow = W.frame - a;
+      PinSlow.force(1); a = W.frame; await w8(1000); var full = W.frame - a; PinSlow.force(null);
+      return { slow: slow, full: full, mode: ARCADE365.mode };
+    });
+    console.log('  ' + JSON.stringify(pace));
+    ok(pace.mode === 'play' && pace.full > 40 && pace.slow / pace.full > 0.25 && pace.slow / pace.full < 0.45, 'in the game, slow motion 0.35 runs the table at about a third of the pace (' + pace.slow + ' vs ' + pace.full + ' steps a second)');
+
+    // ------------------------------------------------------------ the settings: the camera's mode and the look
+    var cams = await p.evaluate(async function () {
+      var w8 = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); }, out = {};
+      function pick(k, v) { document.querySelector('[data-opt="' + k + '"][data-val="' + v + '"]').click(); }
+      if (!window.PinCam) return { none: true };
+      pick('cam', 'arcade'); await w8(150); out.arcade = PinCam.info().mode;
+      pick('cam', 'classic'); await w8(150); out.classic = PinCam.info().mode;
+      pick('cam', 'calm'); await w8(150); out.calm = PinCam.info().mode;
+      out.saved = (JSON.parse(localStorage.getItem('pin365:settings') || '{}') || {}).cam;
+      out.shot = !!PinLook.shot && typeof PinLook.shot.timeScale === 'number'; out.aspect = Math.round(PinLook.aspect * 1000) / 1000;
+      pick('look', 'flat'); await w8(250); out.flatOn = !PinLook.on && typeof PinFlat.view === 'function' && PinFlat.view() >= 0;
+      return out;
+    });
+    console.log('  ' + JSON.stringify(cams));
+    if (cams.none) console.log('  (no camera.js on the page: camera checks skipped)');
+    else {
+      ok(cams.arcade === 'arcade' && cams.classic === 'classic' && cams.calm === 'calm' && cams.saved === 'calm', 'Settings > Camera sets the director\'s mode (Arcade, Classic, Calm) and is saved');
+      ok(cams.shot && cams.aspect > 0.4 && cams.aspect < 0.8, 'the page keeps the camera\'s shot and gives it the 3D canvas\'s shape (' + cams.aspect + ')');
+    }
+    ok(cams.none || cams.flatOn, 'Settings > Look: Flat draws Ember Peak flat (scrolling with the ball)');
+    await p.screenshot({ path: path.join(OUT, 'play-flat-desktop.png') });
+    await p.evaluate(function () { document.querySelector('[data-opt="look"][data-val="3d"]').click(); });
+    await sleep(300);
+    ok(await p.evaluate(function () { return PinLook.on || PinLook.failed; }), 'and back to 3D');
+    await p.screenshot({ path: path.join(OUT, 'play-desktop.png') });
     var errs = realErrors(d.errors);
     ok(errs.length === 0, 'desktop: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
     console.log('  (requests that failed, expected without the PHP server: ' + d.bad.length + ') ' + d.bad.slice(0, 4).join(', '));
+    if (missing(d.bad).length) console.log('  NOTE: not on the server yet: ' + missing(d.bad).join(', '));
     await d.ctx.close();
 
     // ------------------------------------------------------------ a phone: title card, full screen, two fingers
@@ -184,7 +273,7 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     var vw = 412, cx = box.x + box.width / 2, ty = box.y + box.height * 0.75;
     // finger 1 on the left with the ball waiting: left flipper + plunger
     await touch('touchStart', [{ x: cx - 80, y: ty, id: 1 }]); await sleep(80);
-    var t1 = await p.evaluate(function () { var i = ARCADE365.input; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire }; });
+    var t1 = await p.evaluate(function () { var i = ARCADE365.input, F = ARCADE365.world.flippers; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire, both: F[0].on && F[2].on && !F[1].on && !F[3].on }; });
     // finger 2 on the right
     await touch('touchStart', [{ x: cx - 80, y: ty, id: 1 }, { x: cx + 80, y: ty, id: 2 }]); await sleep(80);
     var t2 = await p.evaluate(function () { var i = ARCADE365.input; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire }; });
@@ -195,6 +284,7 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     var t4 = await p.evaluate(function () { var i = ARCADE365.input; return { pl: i.pl, pr: i.pr, pp: i.pp }; });
     console.log('  ' + JSON.stringify([t1, t2, t3, t4]));
     ok(t1.pl && !t1.pr && t1.pp && !t1.fire, 'touch: one finger on the left = left flipper (+ plunger while the ball waits), never Fire');
+    ok(t1.both, 'touch: the left finger raises the shore\'s AND the summit\'s left flippers');
     ok(t2.pl && t2.pr && t2.pp, 'touch: two fingers = both flippers (the first still pulling the plunger)');
     ok(!t3.pl && t3.pr && !t3.pp, 'touch: lifting the first finger fires the ball and keeps the second flipper up (y ' + t3.y + ')');
     ok(!t4.pl && !t4.pr && !t4.pp, 'touch: all fingers up, nothing held');
@@ -207,7 +297,11 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
       await touch('touchEnd', []); await sleep(50);
       ok(!t5.pl && t5.pr, 'full screen: a finger under the picture on the right works the right flipper');
     } else console.log('  (no room under the picture at this size to test a press off the picture)');
+    await sleep(1500);
     await p.screenshot({ path: path.join(OUT, 'play-phone.png') });
+    var ph = await p.evaluate(function () { return { on: PinLook.on, failed: PinLook.failed, dpr: window.devicePixelRatio, shot: PinLook.shot && PinLook.shot.state }; });
+    console.log('  ' + JSON.stringify(ph));
+    ok(ph.on || ph.failed, 'phone: the 3D look is showing (or fell back to flat cleanly)');
     errs = realErrors(m.errors);
     ok(errs.length === 0, 'phone: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
     await m.ctx.close();
@@ -249,8 +343,21 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
       var spinCalls = calls - t0;
       await new Promise(function (r) { setTimeout(r, 120); });
       t0 = calls; PinSound.sound('rubber', kit('rubber'), { sfx: 'rubber', v: 380 }); var softCalls = calls - t0;
-      var unknown = calls; PinSound.sound('no-such-sound', kit('x')); PinSound.sound('flip', null);
-      return { drainAlone: drainAlone, drainSaved: drainSaved, bad: bad, silent: silent, wallCalls: wallCalls, spinCalls: spinCalls, softCalls: softCalls, unknown: calls - unknown, n: names.length + objs.length };
+      var unknown = calls; PinSound.sound('no-such-sound', kit('x')); PinSound.sound('flip', null); unknown = calls - unknown;
+      // Ember Peak's own sounds, with an Ember world (the cabinet passes the world as the fourth argument)
+      await new Promise(function (r) { setTimeout(r, 900); });
+      var EW = PinEngine.newWorld(2, null, 5, 'ember'), esil = [], en = 0;
+      function eplay(name, e) { var before = calls; PinSound.sound(name, kit('ember ' + name), e, EW); en++; if (calls === before) esil.push(name); }
+      ['crater', 'lavaopen', 'erupt', 'rail', 'railout', 'puff', 'geyser', 'lava', 'lavaclose', 'quake', 'overload', 'ramp', 'drops', 'orbit', 'loop', 'skill', 'drain', 'save'].forEach(function (n2) { eplay(n2); });
+      [{ sfx: 'crab', i: 0 }, { sfx: 'pressure', level: 'full' }, { sfx: 'pressure', level: 'warn' }, { sfx: 'bumper', i: 0 }, { sfx: 'bumper', i: 2 }, { sfx: 'drop', i: 3 }, { sfx: 'flip', side: -1 }, { sfx: 'launch', p: 0.5 }].forEach(function (o) { eplay(o.sfx, o); });
+      var qe = calls; PinSound.sound('quakeend', kit('quakeend'), null, EW); var quakeEnd = calls - qe;
+      // the rumble: how loud it wants to be, and its frame hook with a kit that has no audio (nothing, no throw)
+      var V = EW.toys.volcano, want = [];
+      [0, 0.5, 1, 1.4].forEach(function (pr) { V.pressure = pr; want.push(Math.round(PinSound.want(EW, 'play', { sound: true }) * 1000) / 1000); });
+      var paused = PinSound.want(EW, 'paused', { sound: true }), off = PinSound.want(EW, 'play', { sound: false }), threw = false;
+      try { PinSound.frame(EW, kit('frame'), 'play', { sound: true }); PinSound.frame(EW, null, 'play', {}); } catch (e) { threw = true; }
+      return { drainAlone: drainAlone, drainSaved: drainSaved, bad: bad, silent: silent, wallCalls: wallCalls, spinCalls: spinCalls, softCalls: softCalls, unknown: unknown, n: names.length + objs.length,
+        emberSilent: esil, emberN: en, quakeEnd: quakeEnd, want: want, paused: paused, off: off, threw: threw };
     });
     console.log('  ' + JSON.stringify(snd));
     ok(snd.bad.length === 0, 'every sound\'s numbers are good (no zero or negative ramps, gains and pans in range)');
@@ -261,6 +368,25 @@ function realErrors(list) {   // the Hall of Fame's server isn't here (a plain f
     ok(snd.softCalls === 2, 'a gentle rubber knock still plays, quietly');
     ok(snd.drainAlone === 3 && snd.drainSaved === 0, 'a drain sounds, but not when ball save brings the ball straight back');
     ok(snd.unknown === 0, 'an unknown name, or no kit, plays nothing and throws nothing');
+    ok(snd.emberSilent.filter(function (n) { return n !== 'drain'; }).length === 0 && snd.quakeEnd === 0, 'Ember Peak: every one of its ' + snd.emberN + ' sounds plays (the quake\'s end is the rumble fading)' + (snd.emberSilent.length ? ' silent: ' + snd.emberSilent.join(',') : ''));
+    ok(snd.want[0] === 0 && snd.want[1] > 0 && snd.want[2] > snd.want[1] && snd.want[3] > snd.want[2] && snd.want[3] <= 0.45, 'the rumble grows with the pressure (' + snd.want.join(', ') + ')');
+    ok(snd.paused === 0 && snd.off === 0 && !snd.threw, 'the rumble is silent when paused or with sound off, and its frame hook never throws');
+
+    // ------------------------------------------------------------ the attract mode: a flythrough, then the bot under the director
+    var at0 = await s.page.evaluate(function () { return { mode: ARCADE365.mode, cam: !!window.PinCam, flying: PinDemo.flying, shot: PinLook.shot && PinLook.shot.state, on: PinLook.on }; });
+    await sleep(7600);
+    var at1 = await s.page.evaluate(async function () {
+      var W = ARCADE365.world, f = W.frame; await new Promise(function (r) { setTimeout(r, 1000); });
+      return { flying: PinDemo.flying, shot: PinLook.shot && PinLook.shot.state, steps: W.frame - f, tid: W.tableId, demo: W.demo, pilot: PinPilot.version };
+    });
+    console.log('  ' + JSON.stringify([at0, at1]));
+    if (at0.cam && at0.on) {
+      ok(at0.flying && at0.shot === 'fly', 'attract: the title screen opens with a flythrough of the table');
+      ok(!at1.flying && at1.shot === 'director' && at1.steps > 40, 'attract: then the bot plays Ember Peak under the camera director (' + at1.steps + ' steps a second)');
+    } else ok(at1.steps > 40, 'attract: the bot plays the table (' + at1.steps + ' steps a second)');
+    await s.page.screenshot({ path: path.join(OUT, 'attract-desktop.png') });
+    errs = realErrors(s.errors);
+    ok(errs.length === 0, 'sounds and attract: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
     await s.ctx.close();
   } finally {
     await browser.close();

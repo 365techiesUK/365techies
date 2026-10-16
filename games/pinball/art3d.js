@@ -30,6 +30,7 @@
   'use strict';
   var E = root.PinEngine, LA = root.PinLamps;
   if (!E || !LA) throw new Error('art3d.js needs engine.js and lamps.js loaded first');
+  function LAT(id) { return LA.forTable ? LA.forTable(id) : LA; }   // lamps.js's set for a table (PinLamps.list is the game's table's)
   var T = E.TABLE, TW = T.W, TH = T.H, M = T.MID, A = T.arch;
   var FONT = '"Arial Black", "Segoe UI Black", "Helvetica Neue", Helvetica, Arial, sans-serif';
   var cache = {};
@@ -153,7 +154,7 @@
   // a printed label beside an insert (PinLamps.tags): bold capitals with a dark edge, so they read on bright art
   function paintTags(g, S) {
     unitT(g, S);
-    (LA.tags || []).forEach(function (t) {
+    (LAT('orbit').tags || []).forEach(function (t) {
       g.save(); g.translate(t.x, t.y); g.rotate(t.rot || 0);
       g.font = '900 ' + t.size + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle';
       var wm = g.measureText(t.text).width, max = t.text.length * t.size * 0.78, k = Math.min(1, max / (wm || 1));
@@ -196,6 +197,7 @@
   // ---------------------------------------------------------------- the painting
   function paint(opts) {
     opts = opts || {};
+    if (opts.table && opts.table !== 'orbit') return opts.table === 'ember' ? paintEmber(opts.scale || 4) : null;
     var S = opts.scale || 4, key = String(S);
     if (cache[key]) return cache[key];
     var ms = {}, t0 = now();
@@ -220,11 +222,11 @@
     step('light', function () { paintLight(g, S); });
     step('guides', function () { paintGuides(g, S); });
     step('words', function () { paintWords(g, S); });
-    step('inserts', function () { unitT(g, S); LA.list.forEach(function (l) { insertUnlit(g, l); }); });
+    step('inserts', function () { unitT(g, S); LAT('orbit').list.forEach(function (l) { insertUnlit(g, l); }); });
     step('tags', function () { paintTags(g, S); });
     step('apron', function () { paintApron(g, S); });
     step('edge', function () { paintEdge(g, S); });
-    var out = { color: C, glow: GC, scale: S, ms: ms, total: Math.round((now() - t0) * 10) / 10 };
+    var out = { color: C, glow: GC, scale: S, ms: ms, total: Math.round((now() - t0) * 10) / 10, table: 'orbit' };
     cache[key] = out;
     return out;
   }
@@ -296,7 +298,7 @@
       g.fillStyle = z; g.fillRect(x - r1, y - r1, r1 * 2, r1 * 2);
     }
     // a sunburst from the middle of the inserts: magenta and violet rays, alternately, fading out
-    var ra = LA.list[LA.byId.ramp], cx = ra.x, cy = ra.y + 30, n = 40;
+    var LO = LAT('orbit'), ra = LO.list[LO.byId.ramp], cx = ra.x, cy = ra.y + 30, n = 40;
     for (var i = 0; i < n; i++) {
       var a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2, rg = g.createRadialGradient(cx, cy, 4, cx, cy, 160);
       if (i & 1) { rg.addColorStop(0, 'rgba(255,40,170,0.42)'); rg.addColorStop(0.55, 'rgba(255,40,170,0.16)'); rg.addColorStop(1, 'rgba(255,40,170,0)'); }
@@ -774,7 +776,7 @@
   }
   function paintWords(g, S) {
     unitT(g, S);
-    var by = LA.byId, L = LA.list;
+    var LO = LAT('orbit'), by = LO.byId, L = LO.list;
     // H-E-R-O-!: a printed bracket under the letters
     var h0 = L[by.hero0], h4 = L[by.hero4];
     g.lineWidth = 0.6; g.strokeStyle = 'rgba(89,180,255,0.6)'; g.lineCap = 'round';
@@ -856,15 +858,17 @@
   // u = (x - x0) / qw, v = (y - y0) / qh (v down the table). The plastic's outline is the sling's triangle grown by
   // canvas.grow units with round corners (as world3d's offsetPoly(tri, 3.8)). Good as a colour and an emissive map.
   var plastics = {};
-  function plastic(kind, scale) {
+  function plastic(kind, scale, table) {
     scale = scale || 4;
-    var key = kind + '@' + scale; if (plastics[key]) return plastics[key];
-    var right = kind === 'slingR', s = T.slings[right ? 1 : 0], tri = [s.a, s.b, s.c], grow = 3.8, pad = 6;
+    var EMB = table === 'ember', TT = EMB ? emberT() : T;
+    if (!TT) return null;
+    var key = kind + '@' + scale + (EMB ? '@ember' : ''); if (plastics[key]) return plastics[key];
+    var right = kind === 'slingR', s = TT.slings[right ? 1 : 0], tri = [s.a, s.b, s.c], grow = 3.8, pad = 6;
     var xs = tri.map(function (p) { return p[0]; }), ys = tri.map(function (p) { return p[1]; });
     var x0 = Math.min.apply(null, xs) - grow - pad, y0 = Math.min.apply(null, ys) - grow - pad;
     var qw = Math.max.apply(null, xs) + grow + pad - x0, qh = Math.max.apply(null, ys) + grow + pad - y0;
     var c = canvas(qw * scale, qh * scale), g = c.getContext('2d'), c2 = canvas(c.width, c.height), h = c2.getContext('2d');
-    var main = rgb(right ? '#3fe0ff' : '#ff5cc8'), other = rgb(right ? '#ff5cc8' : '#3fe0ff'), YEL = rgb('#ffd84a');
+    var main = rgb(EMB ? '#ff7a1a' : right ? '#3fe0ff' : '#ff5cc8'), other = rgb(EMB ? '#3fe0ff' : right ? '#ff5cc8' : '#3fe0ff'), YEL = rgb('#ffd84a');
     g.setTransform(scale, 0, 0, scale, -x0 * scale, -y0 * scale); h.setTransform(scale, 0, 0, scale, -x0 * scale, -y0 * scale);
     function outline(ctx) { ctx.beginPath(); ctx.moveTo(tri[0][0], tri[0][1]); ctx.lineTo(tri[1][0], tri[1][1]); ctx.lineTo(tri[2][0], tri[2][1]); ctx.closePath(); }
     function body(ctx, fill, extra) { outline(ctx); ctx.lineJoin = 'round'; ctx.lineWidth = grow * 2 + (extra || 0); ctx.strokeStyle = fill; ctx.stroke(); ctx.fillStyle = fill; ctx.fill(); }
@@ -875,7 +879,7 @@
     // the inside, on its own canvas: deep colour, bright towards the kicking face, the shield's hexagons, an energy arc
     body(h, '#000'); h.globalCompositeOperation = 'source-atop';
     var lg = h.createLinearGradient(fmx + nx * 3, fmy + ny * 3, cx - nx * 10, cy - ny * 10);
-    lg.addColorStop(0, css(mixc(main, [255, 255, 255], 0.35), 0.95)); lg.addColorStop(0.35, css(main, 0.9)); lg.addColorStop(1, css(mixc(main, [40, 0, 110], 0.62), 0.88));
+    lg.addColorStop(0, css(mixc(main, [255, 255, 255], 0.35), 0.95)); lg.addColorStop(0.35, css(main, 0.9)); lg.addColorStop(1, css(mixc(main, EMB ? [90, 10, 0] : [40, 0, 110], 0.62), 0.88));
     h.fillStyle = lg; h.fillRect(x0, y0, qw, qh);
     var hs = 2.6, hw = hs * Math.sqrt(3);
     h.lineWidth = 0.28;
@@ -902,10 +906,19 @@
     h.lineWidth = 0.9; h.strokeStyle = 'rgba(255,255,255,0.95)'; h.shadowColor = css(main, 1); h.shadowBlur = 2.5 * scale; h.stroke();
     h.globalCompositeOperation = 'source-over'; h.shadowBlur = 0;
     // 365 Invaders' own invader in the middle, glowing white
-    var art = PIX[right ? 'moth' : 'orb'], ps = 0.95, iw = art[0].length * ps, ih = art.length * ps;
-    h.save(); h.shadowColor = css(main, 1); h.shadowBlur = 2 * scale;
-    pixelArt(h, art, { a: '#ffffff', b: '#ffffff', c: css(mixc(main, [255, 255, 255], 0.5)), e: css(YEL) }, cx - iw / 2 - nx * 1.5, cy - ih / 2 - ny * 1.5, ps, 0.95, 0.08);
-    h.restore();
+    if (EMB) {   // Ember Peak: our island's own mark - a peak with a glowing crater under a rising sun
+      var ix = cx - nx * 1.5, iy = cy - ny * 1.5;
+      h.save(); h.shadowColor = css(YEL, 1); h.shadowBlur = 2 * scale;
+      h.fillStyle = '#fff6d0'; h.beginPath(); h.arc(ix, iy - 3.2, 2.6, 0, Math.PI * 2); h.fill();
+      h.fillStyle = '#ffffff'; h.beginPath(); h.moveTo(ix - 6, iy + 3.5); h.lineTo(ix - 1.6, iy - 2); h.lineTo(ix + 1.6, iy - 2); h.lineTo(ix + 6, iy + 3.5); h.closePath(); h.fill();
+      h.fillStyle = css(YEL); h.fillRect(ix - 1.4, iy - 2.2, 2.8, 1.1);
+      h.restore();
+    } else {
+      var art = PIX[right ? 'moth' : 'orb'], ps = 0.95, iw = art[0].length * ps, ih = art.length * ps;
+      h.save(); h.shadowColor = css(main, 1); h.shadowBlur = 2 * scale;
+      pixelArt(h, art, { a: '#ffffff', b: '#ffffff', c: css(mixc(main, [255, 255, 255], 0.5)), e: css(YEL) }, cx - iw / 2 - nx * 1.5, cy - ih / 2 - ny * 1.5, ps, 0.95, 0.08);
+      h.restore();
+    }
     // on the plastic's own canvas: a soft glow just past the edge, a bright rim, then the inside over it
     g.save(); g.shadowColor = css(main, 0.9); g.shadowBlur = 3.5 * scale; body(g, css(main, 0.6), 0.9); g.restore();
     body(g, css(mixc(main, [255, 255, 255], 0.55), 1), 0.9);
@@ -915,5 +928,309 @@
     return c;
   }
 
-  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, plastic: plastic, version: 2 };
+  // ================================================================ EMBER PEAK (16 Oct 2026, the next-gen fast track)
+  // A sunny volcano island seen from above, bright and saturated: black volcanic rock round the summit, glowing lava
+  // veins running down from the crater, molten lava lanes, a turquoise hot spring round the geyser and sulphur crusts
+  // round the fumaroles; down the table the rock gives way to a golden beach, a turquoise lagoon round the flippers (the
+  // drain is the open sea), the right orbit a channel of clear water, the shooter lane deep water. Our own insert labels
+  // and our own mark; nothing from any real table. paint({ scale, table: 'ember' }), plastic(kind, scale, 'ember'),
+  // inserts('ember') (the inserts as lamp data: world3d lights them until lamps.js covers this table).
+  var emberCache = {}, emberList = null, emberTags = null;
+  function emberB() { return E.table && E.TABLES && E.TABLES.ember ? E.table('ember') : null; }
+  function emberT() { var B = emberB(); return B ? B.T : null; }
+  function inserts(table) {
+    if (table !== 'ember') return table === 'orbit' || !table ? LAT('orbit').list : [];
+    var own = LA.forTable ? LA.forTable('ember') : null;
+    if (own && own.list && own.list.length) return own.list;
+    if (emberList) return emberList;
+    var B = emberB(); if (!B) return [];
+    var ET = B.T, L = [], MI = ET.MID, V = ET.volcano, k;
+    function add(o) { o.i = L.length; L.push(o); return o; }
+    [0, 1, 2].forEach(function (i) { var c = ET.sensors.circles[i]; add({ id: 'lane' + i, group: 'lanes', shape: 'circle', x: c[1], y: c[2] + 18, w: 8, h: 8, rot: 0, color: '#ffd84a', step: i }); });
+    var PC = ['#ffe14a', '#ffcc3a', '#ffb02a', '#ff9a22', '#ff8a1a', '#ff7414', '#ff5e14', '#ff4a1a'];
+    for (k = 0; k < 8; k++) {
+      var a = (15 + k * 10) * Math.PI / 180;
+      add({ id: 'press' + k, group: 'pressure', shape: 'triangle', x: V.x + Math.cos(a) * 36, y: V.y + Math.sin(a) * 36, w: 6.5, h: 7.5, rot: Math.atan2(Math.cos(a), -Math.sin(a)), color: PC[k], step: k });
+    }
+    add({ id: 'crater', group: 'crater', shape: 'arrow', x: V.x, y: V.y + V.r + 28, w: 12, h: 18, rot: 0, color: '#ff9a2e' });
+    ET.lava.gates.forEach(function (g, i) {
+      var left = g[5] > g[0];
+      add({ id: i ? 'lavaR' : 'lavaL', group: 'lava', shape: 'arrow', x: g[0] + (left ? 14 : -14), y: (g[1] + g[3]) / 2 + 8, w: 10, h: 15, rot: Math.atan2(left ? -1 : 1, 0.35), color: '#ff5a1a' });
+    });
+    add({ id: 'geyser', group: 'geyser', shape: 'rect', x: ET.geyser.x, y: ET.geyser.y + 22, w: 24, h: 7, rot: 0, color: '#7ff0ff', text: 'GEYSER' });
+    var re = ET.ramp.entry;
+    add({ id: 'ramp', group: 'ramp', shape: 'arrow', x: (re.x0 + re.x1) / 2, y: re.y + 30, w: 13, h: 20, rot: 0, color: '#ff9a2e' });
+    add({ id: 'orbitL', group: 'orbits', shape: 'arrow', x: 18, y: 468, w: 10, h: 15, rot: 0, color: '#ffd84a' });
+    add({ id: 'orbitR', group: 'orbits', shape: 'arrow', x: 2 * MI - 18, y: 468, w: 10, h: 15, rot: 0, color: '#3fe0ff' });
+    B.DROPS.forEach(function (d, i) {
+      add({ id: 'drop' + i, group: 'drops', shape: 'rect', x: (d.ax + d.bx) / 2 + d.fx * 9, y: (d.ay + d.by) / 2 + d.fy * 9, w: 7, h: 4, rot: Math.atan2(d.fx, -d.fy), color: '#ff7a1a' });
+    });
+    add({ id: 'kick', group: 'kick', shape: 'arrow', x: 16, y: 606, w: 9, h: 14, rot: 0, color: '#ff4a3a' });
+    var F0 = ET.flippers[0];
+    add({ id: 'save', group: 'save', shape: 'rect', x: MI, y: F0.y + 8, w: 27, h: 13, rot: 0, color: '#ff3b4a', text: 'SHOOT|AGAIN' });
+    var d0 = B.DROPS[2], dr = Math.atan2(B.DROPS[4].by - B.DROPS[0].ay, B.DROPS[4].bx - B.DROPS[0].ax);
+    emberTags = [
+      { text: 'CRATER', x: V.x, y: V.y + V.r + 45, rot: 0, size: 4.4, color: '#ffd27a' },
+      { text: 'LAVA', x: L[12].x, y: L[12].y + 17, rot: 0, size: 3.8, color: '#ffb02a' },
+      { text: 'LAVA', x: L[13].x, y: L[13].y + 17, rot: 0, size: 3.8, color: '#ffb02a' },
+      { text: 'SUMMIT RAMP', x: (re.x0 + re.x1) / 2, y: re.y + 50, rot: 0, size: 4, color: '#ffd27a' },
+      { text: 'ORBIT', x: 18, y: 396, rot: -Math.PI / 2, size: 4, color: '#3a1606' },
+      { text: 'ORBIT', x: 2 * MI - 18, y: 396, rot: -Math.PI / 2, size: 4, color: '#ffffff' },
+      { text: 'OBSIDIAN', x: (d0.ax + d0.bx) / 2 + d0.fx * 20, y: (d0.ay + d0.by) / 2 + d0.fy * 20, rot: dr, size: 4, color: '#ffb02a' },
+      { text: 'KICKBACK', x: 16, y: 576, rot: -Math.PI / 2, size: 3.2, color: '#ff7a5a' }
+    ];
+    emberList = L;
+    return L;
+  }
+
+  function emberTagsOf(t) {
+    if (t !== 'ember') return LAT('orbit').tags || [];
+    var own = LA.forTable ? LA.forTable('ember') : null;
+    if (own && own.list && own.list.length) return own.tags || [];
+    inserts('ember'); return emberTags || [];
+  }
+  function paintEmber(S) {
+    var key = String(S);
+    if (emberCache[key]) return emberCache[key];
+    var B = emberB(); if (!B) return null;
+    var ET = B.T, W0 = ET.W, H0 = ET.H, MI = ET.MID, AR = ET.arch, V = ET.volcano, t0 = now(), ms = {};
+    var C = canvas(W0 * S, H0 * S), g = C.getContext('2d'), GS = S / 2, GC = canvas(W0 * GS, H0 * GS), gg = GC.getContext('2d');
+    gg.fillStyle = '#000'; gg.fillRect(0, 0, GC.width, GC.height);
+    var r = rng(365);
+    function step(name, fn) { var c0 = now(); g.save(); gg.save(); fn(); g.restore(); gg.restore(); ms[name] = Math.round((now() - c0) * 10) / 10; }
+    function both(fn) { unitT(g, S); unitT(gg, GS); fn(g, false); fn(gg, true); }
+    function poly(c, P) { c.beginPath(); P.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.closePath(); }
+    function coastY(x) { return 478 + 9 * Math.sin(x / 21 + 1) + 5 * Math.sin(x / 7.3); }
+    function lagoon() {   // the lagoon round the flippers: widening down to the open sea
+      var L = [], R = [], y;
+      for (y = 584; y <= H0 + 2; y += 4) {
+        var hw = 14 + (y - 584) * 0.62 + 3 * Math.sin(y / 9);
+        L.push([MI - hw, y]); R.unshift([MI + hw + 2 * Math.sin(y / 7), y]);
+      }
+      return L.concat(R);
+    }
+    var veins = [];   // the lava veins: from the volcano's foot, meandering down across the summit (shared by both canvases)
+    (function () {
+      var rv = rng(77);
+      [[0.35, 120], [0.75, 150], [1.15, 110], [1.6, 90], [2.15, 70], [0.05, 80]].forEach(function (v) {
+        var a = v[0], x = V.x + Math.cos(a) * (V.r + 3), y = V.y + Math.sin(a) * (V.r + 3), pts = [[x, y]], dir = a, n = Math.round(v[1] / 5);
+        for (var k = 0; k < n; k++) {
+          dir += (rv() - 0.5) * 0.7; dir = dir * 0.85 + (Math.PI / 2) * 0.15;
+          x += Math.cos(dir) * 5; y += Math.sin(dir) * 5;
+          if (x < 58 || x > 192 || y > 270) break;
+          if (Math.hypot(x - ET.geyser.x, y - ET.geyser.y) < 22) { dir += 0.9; continue; }
+          pts.push([x, y]);
+        }
+        veins.push({ pts: pts, w: 2.4 - veins.length * 0.18 });
+      });
+    })();
+
+    step('rock', function () {   // black volcanic rock: smooth noise worked out small and scaled up, speckles, cracks
+      var w = Math.ceil(W0 / 2), h = Math.ceil(H0 / 2), c = canvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h);
+      for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
+        var n = fbm(i / 16, j / 16, 4, 11), m = fbm(i / 4.5, j / 4.5, 2, 23), ox = fbm(i / 30 + 9, j / 30, 3, 5), k = (j * w + i) * 4, v = 0.6 * n + 0.4 * m;
+        var red = sstep(0.55, 0.75, ox);   // oxidised patches: rust red-brown in the black
+        d.data[k] = 26 + v * 52 + red * 60; d.data[k + 1] = 23 + v * 44 + red * 14; d.data[k + 2] = 34 + v * 54 - red * 10; d.data[k + 3] = 255;
+      }
+      x.putImageData(d, 0, 0);
+      g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
+      unitT(g, S);
+      for (var q = 0; q < 7000; q++) { g.fillStyle = r() < 0.55 ? 'rgba(150,140,160,' + (0.08 + r() * 0.2) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * 500, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
+      g.lineCap = 'round';
+      for (q = 0; q < 46; q++) {
+        var cx = r() * W0, cy = r() * 480, a = r() * Math.PI * 2; g.beginPath(); g.moveTo(cx, cy);
+        for (var s2 = 0; s2 < 6; s2++) { a += (r() - 0.5) * 1.2; cx += Math.cos(a) * 4; cy += Math.sin(a) * 4; g.lineTo(cx, cy); }
+        g.lineWidth = 0.25 + r() * 0.35; g.strokeStyle = 'rgba(0,0,0,0.55)'; g.stroke();
+      }
+    });
+    step('beach', function () {   // the golden beach below the rock, with ripples and a scatter of black pebbles
+      unitT(g, S);
+      var P = [[0, H0 + 2]]; for (var x = 0; x <= W0; x += 3) P.push([x, coastY(x)]); P.push([W0, H0 + 2]);
+      softly(g, S, 'rgba(0,0,0,0.75)', 4, 0, -2, function (c) { poly(c, P); c.fillStyle = '#000'; c.fill(); });
+      g.save(); poly(g, P);
+      var gr = g.createLinearGradient(0, 470, 0, H0); gr.addColorStop(0, '#ffd986'); gr.addColorStop(0.5, '#f7c766'); gr.addColorStop(1, '#eeb456');
+      g.fillStyle = gr; g.fill(); g.clip();
+      for (var i = 0; i < 9000; i++) { g.fillStyle = r() < 0.5 ? 'rgba(255,248,220,0.35)' : 'rgba(170,110,40,0.28)'; g.fillRect(r() * W0, 460 + r() * 222, 0.3, 0.3); }
+      g.lineWidth = 0.35;
+      for (var y = 468; y < H0; y += 5.5) {
+        g.strokeStyle = 'rgba(190,130,50,0.35)'; g.beginPath();
+        for (x = 0; x <= W0; x += 4) { var yy = y + Math.sin(x / 13 + y) * 1.4 + Math.sin(x / 5 + y * 0.3) * 0.4; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); }
+        g.stroke();
+      }
+      for (i = 0; i < 140; i++) { var px = r() * W0, py = coastY(px) + Math.pow(r(), 2) * 40; g.fillStyle = 'rgba(30,24,30,0.85)'; g.beginPath(); g.ellipse(px, py, 0.6 + r() * 1.4, 0.5 + r() * 0.9, r() * 3, 0, Math.PI * 2); g.fill(); }
+      g.restore();
+    });
+    step('water', function () {   // the lagoon (the drain is the open sea), the right orbit's channel, the shooter lane's deep water
+      unitT(g, S); unitT(gg, GS);
+      function water(P, top, bottom, deep) {
+        g.save(); poly(g, P);
+        var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#6ff0e4'); gr.addColorStop(0.35, '#22cfd8'); gr.addColorStop(1, deep);
+        g.fillStyle = gr; g.fill(); g.clip();
+        g.globalCompositeOperation = 'lighter'; g.lineWidth = 0.3;
+        for (var i = 0; i < 260; i++) { var x = r() * W0, y = top + r() * (bottom - top), l = 1.5 + r() * 4; g.strokeStyle = 'rgba(210,255,255,' + (0.12 + r() * 0.25) + ')'; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 0.8, x + l, y); g.stroke(); }
+        g.restore();
+        softly(g, S, 'rgba(255,255,255,0.9)', 1.6, 0, 0, function (c) { poly(c, P); c.lineWidth = 1.2; c.strokeStyle = '#fff'; c.stroke(); });
+        g.save(); poly(g, P); g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,255,255,0.95)'; g.lineJoin = 'round'; g.stroke(); g.restore();
+      }
+      water(lagoon(), 584, H0, '#0a5fa8');
+      var ch = [[221, 150], [243, 150], [243, 496], [221, 496]];
+      water(ch, 150, 496, '#0e86c4');
+      var sh = [[245, 150], [265, 150], [265, H0 + 2], [245, H0 + 2]];
+      g.save(); poly(g, sh); var sg = g.createLinearGradient(0, 150, 0, H0); sg.addColorStop(0, '#1b78d8'); sg.addColorStop(1, '#0b3f8e'); g.fillStyle = sg; g.fill(); g.restore();
+      g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
+      chevrons(g, [[255, H0 - 40], [255, 170]], 22, 'rgba(255,214,90,0.9)', 1, 3.4);
+      // the hot spring round the geyser: silica terraces, a turquoise pool
+      var G = ET.geyser;
+      for (var k = 5; k >= 0; k--) { g.beginPath(); for (var a = 0; a <= 40; a++) { var an = a / 40 * Math.PI * 2, rr = G.r + 2 + k * 1.6 + Math.sin(an * 5 + k) * 0.8; if (a) g.lineTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); else g.moveTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); } g.closePath(); g.fillStyle = k % 2 ? '#e9e2c8' : '#f8f4e6'; g.fill(); }
+      var pg = g.createRadialGradient(G.x, G.y, 1, G.x, G.y, G.r + 2); pg.addColorStop(0, '#c8fbff'); pg.addColorStop(0.45, '#33d6e0'); pg.addColorStop(1, '#0b8fb8');
+      g.fillStyle = pg; g.beginPath(); g.arc(G.x, G.y, G.r + 2, 0, Math.PI * 2); g.fill();
+      pool(gg, G.x, G.y, G.r * 2.4, [60, 220, 240], 0.35);
+    });
+    step('summit', function () {   // the scorched ring round the volcano, lava veins, the lava lanes, the fumaroles' crusts
+      unitT(g, S); unitT(gg, GS);
+      var sr = g.createRadialGradient(V.x, V.y, V.r, V.x, V.y, V.r + 26); sr.addColorStop(0, 'rgba(10,4,4,0.95)'); sr.addColorStop(0.5, 'rgba(60,14,6,0.6)'); sr.addColorStop(1, 'rgba(60,14,6,0)');
+      g.fillStyle = sr; g.fillRect(V.x - 60, V.y - 60, 120, 120);
+      both(function (c, glow) {
+        c.lineCap = 'round'; c.lineJoin = 'round';
+        // cracks round the volcano's foot
+        var rc = rng(5);
+        for (var k = 0; k < 16; k++) { var a = k / 16 * Math.PI * 2 + rc() * 0.3, x = V.x + Math.cos(a) * (V.r + 1), y = V.y + Math.sin(a) * (V.r + 1); c.beginPath(); c.moveTo(x, y); for (var j = 0; j < 3; j++) { a += (rc() - 0.5) * 0.5; x += Math.cos(a) * 4; y += Math.sin(a) * 4; c.lineTo(x, y); } c.lineWidth = glow ? 1.6 : 0.9; c.strokeStyle = glow ? '#ff8a1a' : '#ff6a1a'; c.stroke(); }
+        // the veins: a dark crust, a hot orange core, a yellow heart
+        veins.forEach(function (v) {
+          [[v.w * 2.2, glow ? 'rgba(255,80,10,0.5)' : 'rgba(30,6,2,0.85)'], [v.w, glow ? '#ff8a1a' : '#ff6a10'], [v.w * 0.4, glow ? '#ffe08a' : '#ffd060']].forEach(function (st) {
+            c.beginPath(); v.pts.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.lineWidth = st[0]; c.strokeStyle = st[1]; c.stroke();
+          });
+        });
+        // the lava lanes, molten
+        ET.lava.gates.forEach(function (gt) {
+          var left = gt[5] > gt[0], x0 = left ? 30 : gt[0], x1 = left ? gt[0] : 2 * MI - 30, y0 = 140, y1 = Math.max(gt[1], gt[3]);
+          var lg = c.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, glow ? '#a02a06' : '#6a1606'); lg.addColorStop(0.5, glow ? '#ff7a10' : '#ff6a10'); lg.addColorStop(1, glow ? '#a02a06' : '#6a1606');
+          c.fillStyle = lg; c.fillRect(x0, y0, x1 - x0, y1 - y0);
+          var rl = rng(left ? 3 : 4);
+          for (var q = 0; q < 26; q++) { var xx = x0 + 3 + rl() * (x1 - x0 - 6), yy = y0 + rl() * (y1 - y0); c.beginPath(); c.moveTo(xx, yy); c.lineTo(xx + (rl() - 0.5) * 3, yy + 6 + rl() * 12); c.lineWidth = 0.6 + rl() * 1.2; c.strokeStyle = glow ? '#ffe08a' : 'rgba(255,214,96,0.9)'; c.stroke(); }
+          if (!glow) for (q = 0; q < 14; q++) { c.fillStyle = 'rgba(30,8,4,0.75)'; c.beginPath(); c.ellipse(x0 + 3 + rl() * (x1 - x0 - 6), y0 + rl() * (y1 - y0), 1 + rl() * 2, 2 + rl() * 3.5, 0, 0, Math.PI * 2); c.fill(); }
+        });
+      });
+      // the fumaroles: sulphur crusts round each one, a warm glow
+      ET.bumpers.forEach(function (b) {
+        var cr = g.createRadialGradient(b[0], b[1], b[2], b[0], b[1], b[2] + 13); cr.addColorStop(0, 'rgba(240,214,70,0.8)'); cr.addColorStop(0.6, 'rgba(220,170,40,0.35)'); cr.addColorStop(1, 'rgba(200,140,30,0)');
+        g.fillStyle = cr; g.beginPath(); g.arc(b[0], b[1], b[2] + 13, 0, Math.PI * 2); g.fill();
+        pool(gg, b[0], b[1], b[2] * 2.6, [255, 120, 30], 0.3);
+      });
+      // the skill lanes: three slots under the arch, dark with a gold edge
+      for (var i = 0; i < 3; i++) { var sx = 146 + i * 24; g.fillStyle = 'rgba(14,8,10,0.85)'; g.fillRect(sx + 2.5, 62, 19, 30); g.strokeStyle = 'rgba(255,207,106,0.8)'; g.lineWidth = 0.6; g.strokeRect(sx + 2.5, 62, 19, 30); }
+    });
+    step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes
+      unitT(g, S);
+      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#d49a3a'); lg.addColorStop(0.5, '#ffd27a'); lg.addColorStop(1, '#d49a3a');
+      g.fillStyle = lg; g.fillRect(7, 150, 22, 346); g.restore();
+      g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
+      var re = ET.ramp.entry;
+      g.save(); var rg = g.createLinearGradient(0, 400, 0, 456); rg.addColorStop(0, '#ff8a1a'); rg.addColorStop(1, '#c84a0a');
+      g.fillStyle = rg; g.fillRect(re.x0 - 1, 404, re.x1 - re.x0 + 2, 50); g.restore();
+      // the shore's lanes: outlanes shallow water (danger), inlanes gold
+      lanePanel(g, [[16, 504], [16, 640]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
+      lanePanel(g, [[2 * MI - 16, 504], [2 * MI - 16, 640]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
+      lanePanel(g, [[37.5, 520], [37.5, 604], [52, 618]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+      lanePanel(g, [[2 * MI - 37.5, 520], [2 * MI - 37.5, 604], [2 * MI - 52, 618]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+    });
+    step('guides', function () {   // contact shadows under the walls, then a printed band: gold edge, dark core
+      unitT(g, S);
+      var segs = [];
+      ET.walls.forEach(function (w) { if (w[6] !== 'apron') segs.push([w[0], w[1], w[2], w[3], w[4], w[6]]); });
+      ET.slings.forEach(function (s) { segs.push([s.a[0], s.a[1], s.b[0], s.b[1], 2.5, 'rubber'], [s.b[0], s.b[1], s.c[0], s.c[1], 2.5, 'rubber'], [s.a[0], s.a[1], s.c[0], s.c[1], 2.5, 'sling']); });
+      softly(g, S, 'rgba(0,0,10,0.9)', 3.2, 0.4, 1.3, function (c) {
+        c.strokeStyle = '#000'; c.lineCap = 'round'; strokeSegs(c, segs, 3);
+        c.beginPath(); c.arc(AR.x, AR.y, AR.R, Math.PI, 2 * Math.PI); c.lineWidth = 2 * AR.r + 3; c.stroke();
+        ET.posts.forEach(function (p) { c.beginPath(); c.arc(p[0], p[1], p[2] + 2, 0, Math.PI * 2); c.fillStyle = '#000'; c.fill(); });
+        ET.bumpers.forEach(function (b) { c.beginPath(); c.arc(b[0], b[1], b[2] - 1, 0, Math.PI * 2); c.fillStyle = '#000'; c.fill(); });
+        c.beginPath(); c.arc(V.x, V.y, V.r + 1, 0, Math.PI * 2); c.fillStyle = '#000'; c.fill();
+      });
+      var GOLD = 'rgba(255,214,120,1)', CORE = '#24140e';
+      g.lineCap = 'round';
+      g.strokeStyle = GOLD; strokeSegs(g, segs, 3.9, function (w) { return w[5] !== 'sling'; });
+      g.beginPath(); g.arc(AR.x, AR.y, AR.R, Math.PI, 2 * Math.PI); g.lineWidth = 2 * AR.r + 3.9; g.stroke();
+      g.strokeStyle = CORE; strokeSegs(g, segs, 2.6, function (w) { return w[5] !== 'sling'; });
+      g.beginPath(); g.arc(AR.x, AR.y, AR.R, Math.PI, 2 * Math.PI); g.lineWidth = 2 * AR.r + 2.6; g.stroke();
+      g.lineJoin = 'round';
+      ET.slings.forEach(function (s) {
+        g.beginPath(); g.moveTo(s.a[0], s.a[1]); g.lineTo(s.b[0], s.b[1]); g.lineTo(s.c[0], s.c[1]); g.closePath();
+        g.fillStyle = 'rgba(30,10,4,0.85)'; g.fill(); g.lineWidth = 6.6; g.strokeStyle = 'rgba(255,120,30,0.95)'; g.stroke(); g.lineWidth = 5.2; g.strokeStyle = CORE; g.stroke();
+      });
+      ET.posts.forEach(function (p) {
+        g.beginPath(); g.arc(p[0], p[1], p[2] + 3.2, 0, Math.PI * 2); g.fillStyle = GOLD; g.fill();
+        g.beginPath(); g.arc(p[0], p[1], p[2] + 2.4, 0, Math.PI * 2); g.fillStyle = CORE; g.fill();
+      });
+      ET.bumpers.forEach(function (b) { g.beginPath(); g.arc(b[0], b[1], b[2] + 3.4, 0, Math.PI * 2); g.lineWidth = 0.9; g.strokeStyle = '#ffb02a'; g.stroke(); });
+      var D = B.DROPS, a0 = D[0], b0 = D[D.length - 1];
+      g.beginPath(); g.moveTo(a0.ax, a0.ay); g.lineTo(b0.bx, b0.by); g.lineWidth = 9; g.strokeStyle = 'rgba(255,140,40,0.95)'; g.stroke(); g.lineWidth = 7.4; g.strokeStyle = '#08060c'; g.stroke();
+      ET.sensors.lines.forEach(function (l) { g.beginPath(); g.moveTo(l[1], l[2]); g.lineTo(l[3], l[4]); g.lineWidth = 3.4; g.strokeStyle = 'rgba(0,0,0,0.5)'; g.stroke(); g.lineWidth = 0.8; g.strokeStyle = 'rgba(255,240,200,0.8)'; g.stroke(); });
+      // the closed spaces (the summit deck, the obsidian block): dark under the rock blocks the 3D look raises there
+      (ET.voids || []).forEach(function (v) { poly(g, v); g.fillStyle = '#120e14'; g.fill(); });
+    });
+    step('words', function () {   // our island's name on the beach right of the ramp lane, the sun rising behind it
+      unitT(g, S);
+      var cx = 177, cy = 436;
+      for (var k = 0; k < 13; k++) { var a = Math.PI + k / 12 * Math.PI; g.beginPath(); g.moveTo(cx, cy - 4); g.lineTo(cx + Math.cos(a - 0.08) * 34, cy - 4 + Math.sin(a - 0.08) * 34); g.lineTo(cx + Math.cos(a + 0.08) * 34, cy - 4 + Math.sin(a + 0.08) * 34); g.closePath(); g.fillStyle = 'rgba(255,240,170,0.35)'; g.fill(); }
+      var sg = g.createRadialGradient(cx, cy - 4, 2, cx, cy - 4, 14); sg.addColorStop(0, '#fff6c8'); sg.addColorStop(1, 'rgba(255,190,70,0.95)');
+      g.fillStyle = sg; g.beginPath(); g.arc(cx, cy - 4, 13, Math.PI, 0); g.fill();
+      [['EMBER', cy - 6, 12], ['PEAK', cy + 8, 12]].forEach(function (w) {
+        g.save(); g.font = 'italic 900 ' + w[2] + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
+        var wm = g.measureText(w[0]).width, kx = Math.min(1, 54 / wm);
+        g.translate(cx, w[1]); g.scale(kx, 1);
+        g.lineWidth = 2.4 / kx; g.strokeStyle = '#3a1206'; g.strokeText(w[0], 0, 0);
+        var tg = g.createLinearGradient(0, -10, 0, 0); tg.addColorStop(0, '#fff6c0'); tg.addColorStop(0.45, '#ffc23a'); tg.addColorStop(0.55, '#ff8a1a'); tg.addColorStop(1, '#e8501a');
+        g.fillStyle = tg; g.fillText(w[0], 0, 0); g.restore();
+      });
+    });
+    step('inserts', function () {
+      unitT(g, S); inserts('ember').forEach(function (l) { insertUnlit(g, l); });
+      emberTagsOf('ember').forEach(function (t) {
+        g.save(); g.translate(t.x, t.y); g.rotate(t.rot || 0);
+        g.font = '900 ' + t.size + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle';
+        var wm = g.measureText(t.text).width, max = t.text.length * t.size * 0.78, k = Math.min(1, max / (wm || 1));
+        g.scale(k, 1); g.lineJoin = 'round';
+        var dark = t.color === '#3a1606';
+        g.lineWidth = t.size * 0.32 / k; g.strokeStyle = dark ? 'rgba(255,240,200,0.8)' : 'rgba(20,6,2,0.9)'; g.strokeText(t.text, 0, t.size * 0.04);
+        g.fillStyle = t.color; g.fillText(t.text, 0, t.size * 0.04);
+        g.restore();
+      });
+    });
+    step('apron', function () {   // the apron: ocean-blue enamel with a gold edge, 365 on the left, our island's name on the right
+      unitT(g, S);
+      var F = ET.flippers[0], fl = null;
+      ET.walls.forEach(function (w) { if (w[6] !== 'apron' && w[1] < w[3] && w[0] < w[2] && w[2] < MI && w[3] > F.y - 44 && w[3] < F.y && Math.abs(w[2] - F.x) < 20) fl = w; });
+      if (!fl) fl = [27, F.y - 24, 76, F.y - 5];
+      var gap = 15, tipY = F.y + Math.sin(F.rest) * F.len + 7;
+      var left = [[fl[0], fl[1] + 3], [fl[2], fl[3] + 3], [F.x + 2, F.y + 8], [MI - gap - 6, tipY + 3], [MI - gap, tipY + 6], [MI - gap, H0 + 2], [fl[0] - 2, H0 + 2], [fl[0] - 2, fl[1] + 3]];
+      var right = left.map(function (p) { return [2 * MI - p[0], p[1]]; });
+      [left, right].forEach(function (P, side) {
+        softly(g, S, 'rgba(0,0,0,0.85)', 3, 0, -1, function (c) { poly(c, P); c.fillStyle = '#000'; c.fill(); });
+        g.save(); poly(g, P);
+        var gr = g.createLinearGradient(0, fl[1], 0, H0); gr.addColorStop(0, '#2a7fe0'); gr.addColorStop(0.3, '#145cc0'); gr.addColorStop(1, '#0a3482');
+        g.fillStyle = gr; g.fill(); g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,214,120,0.95)'; g.lineJoin = 'round'; g.stroke(); g.clip();
+        g.lineWidth = 0.5;
+        for (var y = fl[1]; y < H0; y += 3.2) { g.strokeStyle = 'rgba(160,220,255,0.12)'; g.beginPath(); for (var x = 0; x <= W0; x += 4) { var yy = y + Math.sin(x / 9 + y) * 0.8; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.stroke(); }
+        g.restore();
+        var cx = side ? 2 * MI - ((fl[0] + MI - gap) / 2 - 3) : (fl[0] + MI - gap) / 2 - 3, word = side ? 'EMBER PEAK' : '365';
+        g.save(); g.font = 'italic 900 ' + (side ? 7 : 11) + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+        var wm = g.measureText(word).width, k = Math.min(1, 44 / wm);
+        g.translate(cx, H0 - 5); g.scale(k, 1);
+        g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillText(word, 0.6, 0.8);
+        var gg2 = g.createLinearGradient(0, -9, 0, 0); gg2.addColorStop(0, '#fff3c4'); gg2.addColorStop(0.5, '#ffc23a'); gg2.addColorStop(0.56, '#c47a10'); gg2.addColorStop(1, '#ffd870');
+        g.fillStyle = gg2; g.fillText(word, 0, 0); g.restore();
+      });
+    });
+    step('edge', function () {   // outside the arch and the side walls: the cabinet's own dark edge
+      unitT(g, S);
+      g.save(); g.beginPath(); g.rect(0, 0, W0, H0);
+      g.moveTo(4, H0 + 2); g.lineTo(4, AR.y); g.arc(AR.x, AR.y, AR.R + 2, Math.PI, 2 * Math.PI); g.lineTo(W0 - 2, H0 + 2); g.closePath();
+      g.fillStyle = '#0a0810'; g.fill('evenodd'); g.restore();
+    });
+    var out = { color: C, glow: GC, scale: S, ms: ms, total: Math.round((now() - t0) * 10) / 10, table: 'ember' };
+    emberCache[key] = out;
+    return out;
+  }
+
+  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, plastic: plastic, inserts: inserts, tags: emberTagsOf, version: 3 };
 })(typeof self !== 'undefined' ? self : this);

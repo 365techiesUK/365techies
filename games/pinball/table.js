@@ -9,10 +9,13 @@
  * Kinds: walls (capsules: a line with a radius), the top arch (the upper half of a circle, the ball inside it), posts,
  * pop bumpers, slingshots (the face towards the playfield kicks), flippers, a one-way gate at the top of the shooter
  * lane, five drop targets in front of the hangar (a saucer that holds the ball), the warp ramp (a path with a height:
- * the ball leaves the playfield and follows it), and sensors (rollovers the ball crosses). */
+ * the ball leaves the playfield and follows it), and sensors (rollovers the ball crosses).
+ *
+ * 16 Oct 2026: tables are data files now (the engine plays any of them: E.table(id)). This one is "orbit", kept as it
+ * was; Ember Peak is tables/ember.js. In the browser this file sets window.PinTable and window.PinTables.orbit. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
-  else root.PinTable = factory();
+  else { root.PinTable = factory(); root.PinTables = root.PinTables || {}; root.PinTables.orbit = root.PinTable; }
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
   var W = 270, H = 446, BALL = 7, MID = 125;
@@ -131,7 +134,11 @@
     ]
   };
 
+  // one storey: its flippers, its area and its approach line (a ball below it can soon reach the flippers)
+  var storeys = [{ id: 'main', name: 'TABLE', flippers: [0, 1], x0: 0, x1: 244, y0: 0, y1: H, approach: 300 }];
+
   return {
+    id: 'orbit', name: 'Orbit', rules: 'orbit', storeys: storeys,
     W: W, H: H, BALL: BALL, MID: MID,
     walls: walls, posts: posts, arch: arch, bumpers: bumpers, slings: slings, flippers: flippers,
     shooter: shooter, gates: gates, drops: drops, saucer: saucer, pocket: pocket, ramp: ramp, sensors: sensors

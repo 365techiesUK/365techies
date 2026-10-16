@@ -26,7 +26,7 @@ function first(W) {   // what this step's events say the ball reached
 }
 
 function plunge(speed, frames) {
-  var W = E.newWorld(speed, 0, 5), res = null, n;
+  var W = E.newWorld(speed, 0, 5, 'orbit'), res = null, n;
   W.skill = 0; W.skillOpen = true;
   for (n = 0; n < frames; n++) { E.step(W, { fire: true }); W.events.length = 0; }
   for (n = 0; n < 60 * 5 && !res; n++) {

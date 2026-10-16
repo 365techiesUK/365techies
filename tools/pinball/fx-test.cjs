@@ -12,13 +12,13 @@ var E = require(G + 'engine.js'), Lm = require(G + 'lamps.js'), FX = require(G +
 var fails = 0, passes = 0;
 function ok(cond, what) { if (cond) passes++; else { fails++; console.log('FAIL: ' + what); } }
 var FRAME = 1000 / 60, ids = {};
-Lm.list.forEach(function (l) { ids[l.id] = l; });
+Lm.forTable('orbit').list.forEach(function (l) { ids[l.id] = l; });
 function red(c) { var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(c); if (!m) return false; var r = parseInt(m[1], 16), g = parseInt(m[2], 16), b = parseInt(m[3], 16); return r > 150 && g < 140 && b < 200; }
 
 // ------------------------------------------------------------ whole bot games through the effects
 function playGame(speed, seed, maxSteps, watch) {
   FX.reset(); FX.reduce = false;
-  var W = E.newWorld(speed, 0, seed), t = (playGame.t || 0) + 5000, n = 0;
+  var W = E.newWorld(speed, 0, seed, 'orbit'), t = (playGame.t || 0) + 5000, n = 0;
   while (!W.over && n < maxSteps) {
     E.step(W, Pilot.input(W)); n++;
     var ev = W.events.slice();
@@ -63,7 +63,7 @@ ok(stats.maxShake <= 1.5, 'shake within 1.5 units');
 ok(stats.badLamp === 0, 'lamp extras are real lamp ids, 0..1');
 
 // ------------------------------------------------------------ single events, on a quiet world
-function quietWorld() { FX.reset(); FX.reduce = false; var W = E.newWorld(2, 0, 9); return W; }
+function quietWorld() { FX.reset(); FX.reduce = false; var W = E.newWorld(2, 0, 9, 'orbit'); return W; }
 function frames(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.update(W, t0 + i * FRAME, mode || 'play'); return st; }
 (function bumper() {
   var W = quietWorld(); FX.update(W, 0, 'play');
@@ -140,7 +140,7 @@ function frames(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.u
   ok(m2 > 0.5 && m2 <= 1.5, 'a nudge shakes the table (' + m2.toFixed(2) + ' units)');
 })();
 (function readOnly() {
-  var W = E.newWorld(1, 0, 77); FX.reset();
+  var W = E.newWorld(1, 0, 77, 'orbit'); FX.reset();
   for (var i = 0; i < 600; i++) { E.step(W, Pilot.input(W)); if (W.events.length) FX.events(W, W.events); W.events.length = 0; }
   var before = JSON.stringify(W);
   for (i = 0; i < 120; i++) FX.update(W, i * FRAME, i % 2 ? 'play' : 'title');
@@ -155,11 +155,11 @@ function frames(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.u
 
 // ------------------------------------------------------------ the pilot
 (function pilot() {
-  function run(seed) { var W = E.newWorld(2, 0, seed), n = 0; while (!W.over && n < 60 * 60 * 6) { E.step(W, Pilot.input(W)); W.events.length = 0; n++; } return { n: n, score: W.score, s: JSON.stringify(W.stats) }; }
+  function run(seed) { var W = E.newWorld(2, 0, seed, 'orbit'), n = 0; while (!W.over && n < 60 * 60 * 6) { E.step(W, Pilot.input(W)); W.events.length = 0; n++; } return { n: n, score: W.score, s: JSON.stringify(W.stats) }; }
   var a = run(31), b = run(31);
   ok(a.n === b.n && a.score === b.score && a.s === b.s, 'the pilot is deterministic for a given world');
   var tot = 0, balls = 0, ramps = 0, hang = 0;
-  for (var g = 0; g < 6; g++) { var W = E.newWorld(1, 0, 500 + g), n = 0; while (!W.over && n < 60 * 60 * 15) { E.step(W, Pilot.input(W)); W.events.length = 0; n++; } tot += n / 60; balls += W.total; ramps += W.stats.ramps; hang += W.stats.saucers; }
+  for (var g = 0; g < 6; g++) { var W = E.newWorld(1, 0, 500 + g, 'orbit'), n = 0; while (!W.over && n < 60 * 60 * 15) { E.step(W, Pilot.input(W)); W.events.length = 0; n++; } tot += n / 60; balls += W.total; ramps += W.stats.ramps; hang += W.stats.saucers; }
   console.log('pilot on Gentle: ' + (tot / balls).toFixed(0) + ' s a ball, ' + (ramps / 6).toFixed(1) + ' ramps and ' + (hang / 6).toFixed(1) + ' hangars a game');
   ok(tot / balls > 25, 'the pilot keeps a ball alive for more than 25 s on average');
   ok(ramps > 6 && hang > 6, 'the pilot makes ramps and hangars');
@@ -169,7 +169,7 @@ function frames(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.u
 (function attract() {
   global.window = { PinEngine: E, PinPilot: Pilot, PinFX: FX };
   require(G + 'demo.js');
-  var D = global.window.PinDemo, W = E.newWorld(1, 0, 5); W.demo = true;
+  var D = global.window.PinDemo, W = E.newWorld(1, 0, 5, 'orbit'); W.demo = true;
   var ref = W, t = 1000, evSeen = 0, real = FX.events;
   FX.events = function (w, l) { evSeen += l.length; return real(w, l); };
   ok(D.frame(W, t, 'play') === null, 'outside the title it does nothing');
@@ -185,6 +185,201 @@ function frames(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.u
   t += 5000; var f0 = W.frame; D.frame(W, t, 'title');
   ok(W.frame - f0 <= 4, 'a long gap never runs a burst of steps');
   FX.events = real;
+})();
+
+// ============================================================ Ember Peak (16 Oct 2026, the next-gen spectacle)
+var LE = Lm.forTable('ember'), idsE = {};
+LE.list.forEach(function (l) { idsE[l.id] = l; });
+var BE = E.table('ember');
+function emberWorld(seed) { FX.reset(); FX.reduce = false; FX.quiet = null; return E.newWorld(2, 0, seed || 9, 'ember'); }
+function frameRun(W, t0, n, mode) { var st; for (var i = 1; i <= n; i++) st = FX.update(W, t0 + i * FRAME, mode || 'play'); return st; }
+function moveOf(st) { return Math.max(Math.abs(st.table.pitch), Math.abs(st.table.dy), Math.abs(st.table.roll)); }
+function hasKind(st, kind, min) { return st.bursts.some(function (b) { return b.kind === kind && b.n >= (min || 1); }); }
+
+// whole bot games on Ember Peak: caps, flash rate, never red, table movement within its limits and ONLY while quiet
+(function emberGames() {
+  var es = { pops: 0, maxPops: 0, maxSparks: 0, maxBursts: 0, maxShocks: 0, flashes: [], red: 0, badLamp: 0, maxShake: 0, maxMove: { pitch: 0, dy: 0, roll: 0 },
+    movedInApproach: 0, shookInApproach: 0, giMin: 1, giMax: 0, kinds: {}, seen: {}, moved: 0 };
+  var lastF = 0, seen = new Set(), t = 100000;
+  [1, 3].forEach(function (speed) {
+    FX.reset(); FX.reduce = false; FX.quiet = null;
+    var W = E.newWorld(speed, 0, 777 + speed, 'ember'), n = 0, nudgeT = -1e9;
+    while (!W.over && n < 60 * 60 * 5) {
+      E.step(W, Pilot.input(W)); n++;
+      if (W.events.length) {
+        W.events.forEach(function (e) { var nm = typeof e === 'string' ? e : e && e.sfx; if (nm) es.seen[nm] = (es.seen[nm] || 0) + 1; if (nm === 'nudge') nudgeT = t; });
+        FX.events(W, W.events);
+      }
+      W.events.length = 0;
+      t += FRAME;
+      var st = FX.update(W, t, 'play');
+      st.bursts.forEach(function (b) { es.kinds[b.kind] = (es.kinds[b.kind] || 0) + b.n; });
+      es.maxBursts = Math.max(es.maxBursts, st.bursts.length); es.maxShocks = Math.max(es.maxShocks, st.shocks.length);
+      st.bursts.length = 0; st.shocks.length = 0;   // (what the renderer does each frame)
+      es.maxPops = Math.max(es.maxPops, st.pops.length); es.maxSparks = Math.max(es.maxSparks, st.sparks.length);
+      es.maxShake = Math.max(es.maxShake, Math.abs(st.shake.x), Math.abs(st.shake.y));
+      ['pitch', 'dy', 'roll'].forEach(function (k) { es.maxMove[k] = Math.max(es.maxMove[k], Math.abs(st.table[k])); });
+      if (moveOf(st) > 0.05) es.moved++;
+      es.giMin = Math.min(es.giMin, st.gi); es.giMax = Math.max(es.giMax, st.gi);
+      if (st.flash > lastF + 0.05) { es.flashes.push(t); if (red(st.flashColor)) es.red++; }
+      lastF = st.flash;
+      var appr = W.balls.some(function (b) { return E.inApproach(W, b) >= 0; });
+      if (appr && moveOf(st) > 0.05) es.movedInApproach++;
+      if (appr && t - nudgeT > 400 && (Math.abs(st.shake.x) > 0.01 || Math.abs(st.shake.y) > 0.01)) es.shookInApproach++;
+      for (var id in st.lamps) { var v = st.lamps[id]; if (!idsE[id] || !(v >= 0 && v <= 1)) es.badLamp++; }
+      st.pops.forEach(function (p) { if (!seen.has(p)) { seen.add(p); es.pops++; } });
+    }
+  });
+  var worst = 0;
+  es.flashes.forEach(function (a, i) { var c = 0; for (var j = i; j < es.flashes.length && es.flashes[j] < a + 1000; j++) c++; worst = Math.max(worst, c); });
+  console.log('Ember bot games: events ' + JSON.stringify(es.seen));
+  console.log('  ' + es.pops + ' pops, max ' + es.maxSparks + ' sparks, ' + es.flashes.length + ' flashes (worst second ' + worst + '), max shake ' + es.maxShake.toFixed(2) +
+    ', GI ' + es.giMin.toFixed(2) + '-' + es.giMax.toFixed(2) + ', table moved in ' + es.moved + ' frames (max pitch ' + es.maxMove.pitch.toFixed(2) + ', dy ' + es.maxMove.dy.toFixed(2) + ', roll ' + es.maxMove.roll.toFixed(2) + '), particles ' + JSON.stringify(es.kinds));
+  ok(es.pops > 30, 'Ember: score pops appear (' + es.pops + ')');
+  ok(es.maxPops <= 14 && es.maxSparks <= 240 && es.maxBursts <= 48 && es.maxShocks <= 6, 'Ember: pops, sparks, bursts and shocks stay within their caps');
+  ok(worst <= 3 && es.red === 0, 'Ember: at most 3 flashes a second (worst ' + worst + '), never red');
+  ok(es.maxShake <= 1.5, 'Ember: shake within 1.5 units');
+  ok(es.maxMove.pitch < 2 && es.maxMove.dy < 3 && es.maxMove.roll < 1, 'Ember: table movement within pitch 2, dy 3, roll 1');
+  ok(es.movedInApproach === 0, 'Ember: the table never moves while a ball is in a flipper approach zone (' + es.movedInApproach + ' frames)');
+  ok(es.shookInApproach === 0, 'Ember: hits never shake the camera while a ball is in an approach zone (' + es.shookInApproach + ' frames)');
+  ok(es.badLamp === 0, 'Ember: lamp extras are Ember lamp ids, 0..1');
+  ok(es.kinds.sparks > 0 && es.kinds.steam > 0, 'Ember: bot games make particle bursts');
+})();
+
+// a full eruption, step by step: the ash cloud (GI down, ash rising, the table swelling), then the flood
+(function eruption() {
+  var W = emberWorld(), V = W.toys.volcano, b = W.balls[0];
+  FX.update(W, 0, 'play');
+  b.m = 'held'; b.at = 'crater'; b.x = V.x = BE.T.volcano.x; b.y = BE.T.volcano.y;
+  V.busy = true; V.release = W.frame + 165; V.land = V.release + 205;
+  FX.events(W, ['crater', 'lavaopen']);
+  var st = frameRun(W, 0, 6), sawAsh = hasKind(st, 'ash');
+  ok(FX.debug().shows.indexOf('ash') >= 0, 'full crater: the ash cloud show runs');
+  var giLow = 1, dyMax = 0, ash = 0;
+  for (var i = 6; i < 160; i++) { st = FX.update(W, (i + 1) * FRAME, 'play'); giLow = Math.min(giLow, st.gi); dyMax = Math.max(dyMax, st.table.dy); if (hasKind(st, 'ash')) ash++; st.bursts.length = 0; }
+  ok(giLow < 0.25, 'the ash cloud blacks the table out (GI ' + giLow.toFixed(2) + ')');
+  ok(st.base < 0.3, 'the base lamps dip under the ash (' + st.base.toFixed(2) + ')');
+  ok(sawAsh || ash > 5, 'ash keeps rising from the crater (' + ash + ' bursts)');
+  ok(dyMax > 0.5 && dyMax <= 3, 'the table swells while quiet (dy ' + dyMax.toFixed(2) + ')');
+  ok(st.post.vignette > 0.4 && st.post.sat < 0.8, 'the ash darkens the edges and greys the picture');
+  var gauge = LE.groups.gauge.map(function (k) { return LE.list[k].id; });
+  ok(gauge.some(function (id) { return st.lamps[id] > 0.5; }), 'the gauge pulses through the ash');
+  // release: the eruption
+  b.m = 'ramp'; b.carry = 'sky'; b.ct = 0; b.at = null; V.busy = false;
+  st.shocks.length = 0; st.bursts.length = 0; FX.events(W, ['erupt']);
+  var t0 = 161 * FRAME, giHi = 0, pitchHi = 0, fr = 0, shocks = 0, lava = 0, debris = 0, flashC = null, words = [];
+  for (i = 0; i < 60; i++) {
+    st = FX.update(W, t0 + i * FRAME, 'play');
+    giHi = Math.max(giHi, st.gi); pitchHi = Math.max(pitchHi, st.table.pitch); fr = Math.max(fr, st.post.fringe);
+    shocks += st.shocks.length; st.shocks.length = 0;
+    st.bursts.forEach(function (q) { if (q.kind === 'lava') lava += q.n; if (q.kind === 'debris') debris += q.n; }); st.bursts.length = 0;
+    if (st.flash > 0.3) flashC = st.flashColor;
+    st.pops.forEach(function (p) { if (p.word && words.indexOf(p.text) < 0) words.push(p.text); });
+  }
+  ok(giHi > 1.25, 'the eruption floods the table with light (GI ' + giHi.toFixed(2) + ')');
+  ok(lava >= 1000 && debris >= 200, 'a lava fountain and rock debris (' + lava + ' lava, ' + debris + ' debris)');
+  ok(shocks >= 2, 'two shockwaves (' + shocks + ')');
+  ok(pitchHi > 1 && pitchHi <= 2, 'the table bucks (pitch ' + pitchHi.toFixed(2) + ' degrees)');
+  ok(fr > 0.5, 'a colour-fringe spike (' + fr.toFixed(2) + ')');
+  ok(flashC && !red(flashC), 'the eruption flash is not red (' + flashC + ')');
+  ok(words.indexOf('ERUPTION!') >= 0, 'an ERUPTION! pop');
+  st = frameRun(W, t0 + 60 * FRAME, 150);
+  ok(st.gi <= 1.02 && st.post.fringe === 0, 'and it settles (GI ' + st.gi.toFixed(2) + ')');
+  // the ball nears a flipper: the table settles to level at once
+  b.m = 'ramp'; b.ct = 205 * E.SUB; FX.events(W, ['rail']); kickNow();
+  function kickNow() { FX.quiet = function () { return true; }; FX.events(W, ['erupt']); }
+  st = frameRun(W, t0 + 210 * FRAME, 8);
+  var moving = moveOf(st);
+  FX.quiet = null; b.m = 'free'; b.carry = null; b.x = 35; b.y = 545; b.vx = 0; b.vy = 100;
+  st = frameRun(W, t0 + 218 * FRAME, 12);
+  ok(moving > 0.3 && moveOf(st) < 0.05, 'a ball in the approach zone settles the table within 0.2 s (' + moving.toFixed(2) + ' -> ' + moveOf(st).toFixed(3) + ')');
+})();
+
+// every new event gets a reaction: lamps, particles or both, in the right place
+(function emberEvents() {
+  var list = ['crater', 'erupt', 'rail', 'railout', 'puff', 'geyser', { sfx: 'crab', i: 0 }, 'lava', 'lavaopen', 'lavaclose', 'quake', 'overload', { sfx: 'pressure', level: 'full' }, { sfx: 'pressure', level: 'warn' }];
+  var none = [];
+  list.forEach(function (e) {
+    var W = emberWorld(); FX.update(W, 0, 'play');
+    FX.events(W, [e]);
+    var st = frameRun(W, 0, 4), lit = Object.keys(st.lamps).filter(function (id) { return st.lamps[id] > 0; });
+    if (!lit.length && !st.bursts.length) none.push(typeof e === 'string' ? e : e.sfx + (e.level || ''));
+  });
+  ok(none.length === 0, 'every Ember event lights lamps or throws particles (none: ' + none.join(' ') + ')');
+  var W = emberWorld(); FX.update(W, 0, 'play'); FX.events(W, ['geyser']);
+  var st = frameRun(W, 0, 20);
+  ok(hasKind(st, 'steam', 200), 'the geyser throws a steam column');
+  W = emberWorld(); FX.update(W, 0, 'play'); W.lit.lava = [0, 40]; FX.events(W, ['lava']);
+  st = frameRun(W, 0, 3);
+  var lb = st.bursts.filter(function (q) { return q.kind === 'lava'; })[0];
+  ok(lb && lb.x > BE.T.MID, 'a right lava lane shot erupts on the right (' + (lb && lb.x.toFixed(0)) + ')');
+  W = emberWorld(); FX.update(W, 0, 'play'); FX.events(W, ['lavaopen']);
+  st = frameRun(W, 0, 3);
+  ok(st.bursts.filter(function (q) { return q.kind === 'lava'; }).length === 2, 'the lava gates rising: lava at both gates');
+  W = emberWorld(); FX.update(W, 0, 'play'); FX.events(W, [{ sfx: 'drop', i: 2 }]);
+  st = frameRun(W, 0, 2);
+  ok(hasKind(st, 'debris'), 'an obsidian target bursts into rock');
+})();
+
+// the quake: a rumble, and the table leaning with the pull only while quiet
+(function quake() {
+  var W = emberWorld(), Q = W.toys.quake, b = W.balls[0];
+  b.x = 120; b.y = 120; b.m = 'free';   // high on the summit, out of every approach zone
+  FX.update(W, 0, 'play'); FX.quiet = function () { return true; };
+  Q.t = 30; Q.gx = 0.16 * W.g;
+  FX.events(W, ['quake']);
+  var roll = 0, sh = 0;
+  for (var i = 1; i < 30; i++) { var st = FX.update(W, i * FRAME, 'play'); roll = Math.max(roll, Math.abs(st.table.roll)); sh = Math.max(sh, Math.abs(st.shake.x)); }
+  ok(roll > 0.3 && roll <= 1, 'quiet quake: the table leans (' + roll.toFixed(2) + ' degrees)');
+  ok(sh > 0.2, 'quake: a rumble (' + sh.toFixed(2) + ')');
+  W = emberWorld(); Q = W.toys.quake; FX.update(W, 0, 'play'); FX.quiet = function () { return false; };
+  Q.t = 30; Q.gx = 0.16 * W.g; FX.events(W, ['quake']);
+  roll = 0; for (i = 1; i < 30; i++) roll = Math.max(roll, moveOf(FX.update(W, i * FRAME, 'play')));
+  ok(roll === 0, 'a quake that is not quiet never moves the table');
+  FX.quiet = null;
+})();
+
+// reduced motion: no shake, no table movement, no flash, no shockwave, no fringe (and half the particles)
+(function emberReduced() {
+  var W = emberWorld(); FX.reduce = true; FX.quiet = function () { return true; };
+  FX.update(W, 0, 'play');
+  var mv = 0, fl = 0, sh = 0, shocks = 0, fr = 0, lava = 0;
+  for (var i = 0; i < 90; i++) {
+    FX.events(W, i % 30 ? ['nudge'] : ['erupt', 'quake', 'geyser', 'lava']);
+    var st = FX.update(W, (i + 1) * FRAME, 'play');
+    mv = Math.max(mv, moveOf(st)); fl = Math.max(fl, st.flash); sh = Math.max(sh, Math.abs(st.shake.x), Math.abs(st.shake.y)); fr = Math.max(fr, st.post.fringe);
+    shocks += st.shocks.length; st.shocks.length = 0;
+    st.bursts.forEach(function (q) { if (q.kind === 'lava') lava += q.n; }); st.bursts.length = 0;
+  }
+  ok(mv === 0 && fl === 0 && sh === 0 && shocks === 0 && fr === 0 && FX.state.reduced === true, 'Ember reduced motion: nothing moves, flashes or ripples');
+  ok(lava > 0, 'reduced motion still shows the lava (fewer particles)');
+  FX.reduce = false; FX.quiet = null;
+})();
+
+// spam: the flash limit holds, nothing red, and the queues stay bounded when nobody takes them
+(function emberSpam() {
+  var W = emberWorld(); FX.update(W, 0, 'play'); FX.quiet = function () { return true; };
+  var starts = [], last = 0, redF = 0, t = 0;
+  for (var i = 0; i < 180; i++) {
+    FX.events(W, ['erupt', 'lava', { sfx: 'pressure', level: 'full' }, 'crater', 'lavaopen', 'geyser']);
+    t += FRAME; var st = FX.update(W, t, 'play');
+    if (st.flash > last + 0.05) { starts.push(t); if (red(st.flashColor)) redF++; } last = st.flash;
+  }
+  var w = 0; starts.forEach(function (a, i) { var c = 0; for (var j = i; j < starts.length && starts[j] < a + 1000; j++) c++; w = Math.max(w, c); });
+  ok(w <= 3 && redF === 0, 'Ember spam: at most 3 flashes a second (worst ' + w + '), none red');
+  ok(FX.state.bursts.length <= 48 && FX.state.shocks.length <= 6, 'queues bounded (' + FX.state.bursts.length + ' bursts, ' + FX.state.shocks.length + ' shocks)');
+  ok(Math.abs(FX.state.table.pitch) <= 2 && Math.abs(FX.state.table.dy) <= 3, 'table movement clamped under spam');
+  FX.quiet = null;
+})();
+
+// the old table is untouched by Ember's effects: no bursts of lava, no table movement
+(function orbitStill() {
+  FX.reset(); FX.reduce = false; FX.quiet = function () { return true; };
+  var W = E.newWorld(2, 0, 9, 'orbit'); FX.update(W, 0, 'play');
+  FX.events(W, ['erupt', 'lava', 'geyser', 'crater']);
+  var st = frameRun(W, 0, 10);
+  ok(st.bursts.length === 0 && moveOf(st) === 0, 'Ember events on the old table do nothing');
+  FX.quiet = null;
 })();
 
 console.log(passes + ' passed, ' + fails + ' failed');

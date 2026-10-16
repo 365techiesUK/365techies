@@ -688,7 +688,7 @@
     var reveal = 99;
     if (mode === 'title') {
       var alt = Math.floor(t / 2600) % 2;
-      put('365 PINBALL HERO', F5, 1, 1, 4); put(alt ? 'DEFEND THE PLANET' : 'BEST ' + fmt(info && info.best || 0), F3, 1, 10, 2);
+      put('365 PINBALL HERO', F5, 1, 1, 4); put(alt ? (W.tableId && W.tableId !== 'orbit' ? theme(W.tableId).word : 'DEFEND THE PLANET') : 'BEST ' + fmt(info && info.best || 0), F3, 1, 10, 2);
       key = 't' + alt + (info && info.best);
     } else if (mode === 'over' || W.over) {
       var ph = Math.floor(t / 2200) % 2;
@@ -737,6 +737,7 @@
   // ================================================================ every frame
   function blink(t, ms) { return Math.floor(t / ms) % 2 === 0; }
   function draw(g, W, t, mode, info) {
+    if (W && W.tableId && W.tableId !== 'orbit') return drawAny(g, W, t, mode, info);   // any other table: generated
     if (!made) make();
     g.imageSmoothingEnabled = false;
     var lit = W.lit || {}, i, play = mode !== 'title', dark = W.tilted || W.over;
@@ -839,6 +840,200 @@
     g.fillStyle = '#ffa0a0'; g.fillRect(cx - 5, tip + OY, 11, 1);
   }
 
+  // ================================================================ any other table (16 Oct 2026): a clean flat look made from its data
+  // Ember Peak and the tables after it are drawn straight from the table data with canvas shapes: everything that
+  // never moves once into two layers (under the ball, and the ramp and wire rail over it), the moving parts every
+  // frame. A table taller than the screen (Ember Peak is 680 units, the screen shows 446) scrolls smoothly to follow
+  // the lowest ball. Colours come from the table's theme (THEMES; a table without one gets a neutral one). Nothing
+  // here may throw on a table it has never seen: every part is drawn only if the table has it.
+  var THEMES = {
+    ember: { sky: ['#4fb6f0', '#a6e4ff'], rock: ['#3b302b', '#211a17'], sand: '#d8b46e', sea: ['#3ad6cf', '#1aa3bf'], bands: [120, 340, 470],
+      steel: '#f1ede6', steel2: '#8b8f96', rubber: '#ff6a2a', cab: '#120d0b', lane: '#1e130f', lava: '#ff7a1a', lava2: '#ffd04a', glow: 'rgba(255,122,26,0.35)',
+      insert: '#ffb21e', insOff: '#5a3a1a', bump: '#4a3c35', crab: '#ff5a1f', obs: '#20182a', obs2: '#8c6ad8', word: 'WAKE THE VOLCANO' },
+    any: { sky: ['#20305a', '#2c4a7a'], rock: ['#28304a', '#1a2036'], sand: '#3a4a6a', sea: ['#2a3a64', '#1c2850'], bands: [120, 340, 470],
+      steel: '#e8ecf4', steel2: '#7c8496', rubber: '#e0204e', cab: '#0b0d16', lane: '#11152a', lava: '#ff7a1a', lava2: '#ffd04a', glow: 'rgba(255,200,80,0.3)',
+      insert: '#ffd84a', insOff: '#3a3a50', bump: '#3c4466', crab: '#ff5a1f', obs: '#20182a', obs2: '#8c6ad8', word: 'PLAY THE TABLE' }
+  };
+  function theme(id) { return THEMES[id] || THEMES.any; }
+  var AL = { id: '', under: null, over: null, view: -1, lastT: -1, W: null };
+  function canvas(w, h) { var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+  function strokePath(x, P, w, col) { x.lineWidth = w; x.strokeStyle = col; x.beginPath(); P.forEach(function (p, i) { if (i) x.lineTo(p[0], p[1]); else x.moveTo(p[0], p[1]); }); x.stroke(); }
+  function buildAny(id) {
+    var B = E.table(id), T = B.T, th = theme(id), Wd = T.W, Hd = T.H, A = T.arch;
+    var u = canvas(Wd, Hd), x = u.getContext('2d'), b = th.bands;
+    // the playfield: sky under the arch, black rock across the summit, then sand and the sea down to the flippers
+    var gr = x.createLinearGradient(0, 0, 0, Hd);
+    gr.addColorStop(0, th.sky[0]); gr.addColorStop(b[0] / Hd * 0.8, th.sky[1]); gr.addColorStop(b[0] / Hd, th.rock[0]);
+    gr.addColorStop(b[1] / Hd, th.rock[1]); gr.addColorStop((b[1] + 30) / Hd, th.sand); gr.addColorStop(b[2] / Hd, th.sea[0]); gr.addColorStop(1, th.sea[1]);
+    x.fillStyle = gr; x.fillRect(0, 0, Wd, Hd);
+    // a little texture: dots of a darker shade, the same every time
+    var r = rnd(9001 + id.length);
+    for (var i = 0; i < 900; i++) { var px_ = r() * Wd, py = r() * Hd; x.fillStyle = 'rgba(0,0,0,' + (0.05 + r() * 0.08).toFixed(3) + ')'; x.fillRect(px_ | 0, py | 0, 1 + (r() * 2 | 0), 1); }
+    // the closed spaces (no ball goes there): solid rock
+    (T.voids || []).forEach(function (poly) {
+      x.fillStyle = th.rock[1]; x.beginPath(); poly.forEach(function (p, k) { if (k) x.lineTo(p[0], p[1]); else x.moveTo(p[0], p[1]); }); x.closePath(); x.fill();
+      x.strokeStyle = 'rgba(255,140,60,0.35)'; x.lineWidth = 1; x.stroke();
+    });
+    // the lava lanes' floors glow faintly (they are hot even with the gates down)
+    (T.lava ? T.lava.gates : []).forEach(function (gt) {
+      var gx = gt[0] < T.MID ? Math.min(gt[0], gt[5]) - 26 : Math.max(gt[0], gt[5]) - 2;
+      var lg = x.createLinearGradient(0, Math.min(gt[1], gt[3]), 0, Math.max(gt[1], gt[3]));
+      lg.addColorStop(0, 'rgba(255,90,20,0.0)'); lg.addColorStop(0.5, 'rgba(255,110,30,0.45)'); lg.addColorStop(1, 'rgba(255,90,20,0.0)');
+      x.fillStyle = lg; x.fillRect(gx, Math.min(gt[1], gt[3]) - 80, 28, Math.abs(gt[3] - gt[1]) + 80);
+    });
+    // the cabinet round the arch and beside the field
+    x.fillStyle = th.cab; x.beginPath(); x.rect(0, 0, Wd, A.y); x.moveTo(A.x + A.R, A.y); x.arc(A.x, A.y, A.R, 0, Math.PI, true); x.closePath(); x.fill('evenodd');
+    // the shooter lane
+    var SH = T.shooter; x.fillStyle = th.lane; x.fillRect(SH.x0, A.y, SH.x1 - SH.x0, Hd - A.y);
+    // the walls, posts, the arch and the one-way gates
+    x.lineCap = 'round'; x.lineJoin = 'round';
+    B.WALLS.forEach(function (s) {
+      if (s.kind === 'apron' || s.kind === 'sling' || s.kind === 'rubber') return;
+      x.lineWidth = 2 * s.r + 1.6; x.strokeStyle = 'rgba(0,0,0,0.45)'; x.beginPath(); x.moveTo(s.ax + 1, s.ay + 1.5); x.lineTo(s.bx + 1, s.by + 1.5); x.stroke();
+      x.lineWidth = 2 * s.r + 0.8; x.strokeStyle = s.kind === 'post' ? th.rubber : th.steel; x.beginPath(); x.moveTo(s.ax, s.ay); x.lineTo(s.bx, s.by); x.stroke();
+    });
+    B.POSTS.forEach(function (p) { x.fillStyle = th.rubber; x.beginPath(); x.arc(p.x, p.y, p.r + 0.6, 0, 6.2832); x.fill(); });
+    x.lineWidth = 2 * A.r + 1; x.strokeStyle = th.steel; x.beginPath(); x.arc(A.x, A.y, A.R - 0.5, Math.PI, 2 * Math.PI); x.stroke();
+    B.GATES.forEach(function (s) { x.lineWidth = 1.5; x.strokeStyle = th.steel2; x.beginPath(); x.moveTo(s.ax, s.ay); x.lineTo(s.bx, s.by); x.stroke(); });
+    // over the ball: the ramp (a clear lane with rails) and the wire rail
+    var o = canvas(Wd, Hd), y = o.getContext('2d');
+    y.lineCap = 'round'; y.lineJoin = 'round';
+    if (B.RAMP) {
+      var P = B.RAMP.P, w = (T.ramp && T.ramp.width) || 20;
+      strokePath(y, P, w + 3, 'rgba(20,10,8,0.55)'); strokePath(y, P, w - 1, 'rgba(255,255,255,0.16)');
+      [-1, 1].forEach(function (sd) {
+        var Q = P.map(function (p, k) { var q = P[Math.min(P.length - 1, k + 1)], pp = P[Math.max(0, k - 1)], dx = q[0] - pp[0], dy = q[1] - pp[1], l = Math.sqrt(dx * dx + dy * dy) || 1; return [p[0] - dy / l * sd * w / 2, p[1] + dx / l * sd * w / 2]; });
+        strokePath(y, Q, 2.2, th.steel);
+      });
+    }
+    Object.keys(B.CARRY || {}).forEach(function (k) {
+      var C = B.CARRY[k]; if (C.railAt < 0) return;
+      var R = C.P.filter(function (p) { return p[3] >= C.railAt; }).map(function (p) { return [p[0], p[1]]; });
+      [-2.5, 2.5].forEach(function (d) { strokePath(y, R.map(function (p) { return [p[0] + d, p[1]]; }), 1.2, th.steel); });
+    });
+    return { under: u, over: o, T: T, B: B, th: th };
+  }
+  function lowest(W, T) {   // the ball the view follows: the lowest one on the playfield (else any)
+    var best = null;
+    (W.balls || []).forEach(function (b) { if (!best || b.y > best.y) best = b; });
+    return best;
+  }
+  function flipperPath(x, f) {
+    var a = f.a, c = Math.cos(a), s = Math.sin(a), tx = f.x + c * f.len, ty = f.y + s * f.len;
+    x.beginPath(); x.arc(tx, ty, f.r1, a + Math.PI / 2, a - Math.PI / 2, true); x.arc(f.x, f.y, f.r0, a - Math.PI / 2, a + Math.PI / 2, true); x.closePath();
+  }
+  function drawAny(g, W, t, mode, info) {
+    E = window.PinEngine;
+    var id = W.tableId;
+    if (AL.id !== id) { var L2 = buildAny(id); AL.id = id; AL.under = L2.under; AL.over = L2.over; AL.T = L2.T; AL.B = L2.B; AL.th = L2.th; AL.view = -1; }
+    var T = AL.T, B = AL.B, th = AL.th, lit = W.lit || {}, play = mode !== 'title', dark = W.tilted || W.over, i;
+    // the view: follow the lowest ball, smoothly; snap on a new world
+    var maxTop = Math.max(0, T.H - TH), b0 = lowest(W, T), target = b0 ? Math.max(0, Math.min(maxTop, b0.y - TH * 0.45)) : maxTop;
+    var dt = AL.lastT < 0 ? 1 : Math.max(0, Math.min(0.1, (t - AL.lastT) / 1000)); AL.lastT = t;
+    if (AL.view < 0 || AL.W !== W) AL.view = target; else AL.view += (target - AL.view) * (1 - Math.exp(-dt * 7));
+    AL.W = W;
+    var vy = Math.round(AL.view);
+    g.save();
+    g.beginPath(); g.rect(0, OY, TW, TH); g.clip();
+    g.translate(0, OY - vy);
+    g.imageSmoothingEnabled = false;
+    g.drawImage(AL.under, 0, 0);
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    function dot(cx, cy, r, col) { g.fillStyle = col; g.beginPath(); g.arc(cx, cy, r, 0, 6.2832); g.fill(); }
+    var bl = function (ms) { return blink(t, ms); };
+    // the inserts: the top lanes (lit / the skill lane flashing), the kickback, the orbits, the ramp
+    var SC = {}; T.sensors.circles.forEach(function (c) { SC[c[0]] = c; });
+    for (i = 0; i < 3; i++) {
+      var Ls = SC['lane' + i]; if (!Ls) continue;
+      var on = !play ? (Math.floor(t / 160) + i) % 3 === 0 : !dark && ((lit.lane && lit.lane[i] > 0 && bl(70)) || (W.lanes && W.lanes[i]) || (W.skillOpen && W.skill === i && bl(160)));
+      dot(Ls[1], Ls[2] + 14, 3.5, on ? th.insert : th.insOff);
+    }
+    if (SC.kick) dot(SC.kick[1], SC.kick[2] + 12, 3, (play ? W.kickback && !dark : bl(600)) ? '#ff4a4a' : th.insOff);
+    if (B.RAMP && B.RAMP.entry) { var en = B.RAMP.entry, ron = play && !dark && (lit.ramp > 0 ? bl(80) : W.comboT > 0 && bl(180)); g.fillStyle = ron ? th.insert : th.insOff; g.beginPath(); g.moveTo((en.x0 + en.x1) / 2, en.y + 8); g.lineTo(en.x0 + 4, en.y + 18); g.lineTo(en.x1 - 4, en.y + 18); g.closePath(); g.fill(); }
+    // the bumpers (fumaroles on Ember Peak): a vent that flares when hit
+    B.BUMPERS.forEach(function (Bm, k) {
+      var hot = lit.bump && lit.bump[k] > 0;
+      dot(Bm.x, Bm.y, Bm.r, th.bump); dot(Bm.x, Bm.y, Bm.r - 3, hot ? th.lava2 : dark ? '#2a2220' : th.lava);
+      dot(Bm.x, Bm.y, Bm.r * 0.35, hot ? '#ffffff' : th.lava2);
+      g.lineWidth = 1.5; g.strokeStyle = th.steel; g.beginPath(); g.arc(Bm.x, Bm.y, Bm.r - 0.5, 0, 6.2832); g.stroke();
+    });
+    // the slingshots
+    T.slings.forEach(function (S, k) {
+      var hot = lit.sling && lit.sling[k] > 0;
+      g.fillStyle = th.rock[0]; g.beginPath(); g.moveTo(S.a[0], S.a[1]); g.lineTo(S.b[0], S.b[1]); g.lineTo(S.c[0], S.c[1]); g.closePath(); g.fill();
+      g.lineWidth = 4; g.strokeStyle = hot ? '#ffffff' : th.rubber; g.stroke();
+    });
+    // the drop targets (obsidian on Ember Peak)
+    B.DROPS.forEach(function (s, k) {
+      var up = !W.drops || W.drops[k];
+      g.lineWidth = up ? 5 : 2; g.strokeStyle = up ? th.obs : 'rgba(0,0,0,0.5)'; g.beginPath(); g.moveTo(s.ax, s.ay); g.lineTo(s.bx, s.by); g.stroke();
+      if (up) { g.lineWidth = 1.5; g.strokeStyle = lit.drop && lit.drop[k] > 0 ? '#ffffff' : th.obs2; g.beginPath(); g.moveTo(s.ax, s.ay - 1); g.lineTo(s.bx, s.by - 1); g.stroke(); }
+    });
+    var toys = W.toys || {};
+    // the lava gates: dark when down, glowing as they rise
+    (B.LAVA || []).forEach(function (s, k) {
+      var gs = toys.lava && toys.lava.gates[k], h = gs ? gs.h : 0;
+      if (h > 0.02) {
+        g.lineWidth = 6; g.strokeStyle = th.glow; g.beginPath(); g.moveTo(s.ax, s.ay); g.lineTo(s.bx, s.by); g.stroke();
+        g.lineWidth = 2; g.strokeStyle = th.lava2; g.globalAlpha = 0.4 + 0.6 * (1 - h); g.beginPath(); g.moveTo(s.ax, s.ay); g.lineTo(s.bx, s.by); g.stroke(); g.globalAlpha = 1;
+      } else { g.lineWidth = 3; g.strokeStyle = '#7a1e08'; g.beginPath(); g.moveTo(s.ax, s.ay); g.lineTo(s.bx, s.by); g.stroke(); }
+      if (lit.lava && lit.lava[k] > 0 && bl(80)) dot((s.ax + s.bx) / 2 + (s.ax < T.MID ? -12 : 12), (s.ay + s.by) / 2, 4, th.lava2);
+    });
+    // the geyser: a vent; puffing, a white plume; resting, dim
+    if (T.geyser) {
+      var Gy = T.geyser, gst = toys.geyser ? toys.geyser.st : 'ready';
+      dot(Gy.x, Gy.y, Gy.r + 2, th.rock[0]); dot(Gy.x, Gy.y, Gy.r - 2, gst === 'cool' ? '#2b5560' : '#5ad8e6');
+      if (gst === 'puff' || (lit.geyser > 0 && bl(60))) for (i = 0; i < 4; i++) dot(Gy.x + (i % 2 ? 4 : -4), Gy.y - 6 - i * 6 - (t / 40 % 6), 5 - i, 'rgba(255,255,255,' + (0.8 - i * 0.15) + ')');
+    }
+    // the volcano: a cone whose crater glows with the pressure (and flickers while it holds the ball)
+    if (T.volcano) {
+      var Vd = T.volcano, Vs = toys.volcano || { pressure: 0 }, pr = Math.min(1.5, Vs.pressure || 0), fl = Vs.busy ? 0.5 + 0.5 * Math.sin(t / 60) : 0;
+      dot(Vd.x + 2, Vd.y + 3, Vd.r + 2, 'rgba(0,0,0,0.45)');
+      var cg = g.createRadialGradient(Vd.x - 6, Vd.y - 6, 2, Vd.x, Vd.y, Vd.r); cg.addColorStop(0, '#6a5850'); cg.addColorStop(1, th.rock[1]);
+      g.fillStyle = cg; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r, 0, 6.2832); g.fill();
+      dot(Vd.x, Vd.y + 3, Vd.r * 0.55, pr >= 1 || Vs.busy ? (bl(120) || fl > 0.5 ? th.lava2 : th.lava) : pr > 0.5 ? th.lava : '#7a2a0a');
+      g.lineWidth = 3; g.strokeStyle = Vs.red ? '#ff2a2a' : th.lava2; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r + 4, -Math.PI / 2, -Math.PI / 2 + 6.2832 * Math.min(1, pr / 1.5)); g.stroke();
+    }
+    // the crabs: little orange crabs walking (stunned: blinking)
+    (toys.crabs || []).forEach(function (c, k) {
+      var r0 = (T.crabs[k] && T.crabs[k].r) || 7, hot = lit.crab && lit.crab[k] > 0;
+      if (c.stun > 0 && !bl(100)) return;
+      g.strokeStyle = th.crab; g.lineWidth = 1.5;
+      for (var lg = -1; lg <= 1; lg += 2) { var kx = Math.sin(t / 90 + k) * 1.5; g.beginPath(); g.moveTo(c.x + lg * 3, c.y + 2); g.lineTo(c.x + lg * (r0 + 2), c.y + 4 + kx); g.moveTo(c.x + lg * 3, c.y - 1); g.lineTo(c.x + lg * (r0 + 2), c.y - 3 - kx); g.stroke(); }
+      dot(c.x, c.y, r0 - 1, hot ? '#ffffff' : th.crab);
+      dot(c.x - 2.5, c.y - 3, 1.3, '#000'); dot(c.x + 2.5, c.y - 3, 1.3, '#000');
+    });
+    // the plunger
+    var SH = T.shooter, Pl = W.plunger || { pull: 0 }, tip = SH.tip + Pl.pull * SH.travel;
+    g.fillStyle = th.steel2; g.fillRect(SH.cx - 1, tip + 3, 3, T.H - tip);
+    g.fillStyle = '#ff4a4a'; g.fillRect(SH.cx - 6, tip, 13, 3);
+    for (i = 0; i < 6; i++) { g.fillStyle = Pl.pull > i / 6 + 0.01 ? ['#2fd04a', '#7fe03a', '#d8e030', '#ffb21e', '#ff6a2a', '#ff2a3a'][i] : '#1d1512'; g.fillRect(SH.cx - 4, SH.tip - 22 - i * 6, 8, 3); }
+    // the flippers
+    (W.flippers || []).forEach(function (f) {
+      flipperPath(g, f); g.fillStyle = th.steel; g.fill(); g.lineWidth = 1.5; g.strokeStyle = th.rubber; g.stroke();
+      dot(f.x, f.y, 1.8, th.steel2);
+    });
+    // the balls on the playfield, then the ramp and rail, then any ball up on them (bigger, with a shadow)
+    var up = [], BRd = T.BALL;
+    function ball(bx, by, rr) {
+      var bg = g.createRadialGradient(bx - rr * 0.35, by - rr * 0.4, rr * 0.15, bx, by, rr);
+      bg.addColorStop(0, '#ffffff'); bg.addColorStop(0.45, '#c9d0da'); bg.addColorStop(1, '#5d6672');
+      g.fillStyle = bg; g.beginPath(); g.arc(bx, by, rr, 0, 6.2832); g.fill();
+    }
+    (W.balls || []).forEach(function (b) { if (b.m === 'ramp' || (b.z || 0) > 2) up.push(b); else ball(b.x, b.y, BRd); });
+    up.forEach(function (b) { var z = b.z || 0; dot(b.x + z * 0.2, b.y + z * 0.28, BRd, 'rgba(0,0,0,0.35)'); });
+    g.drawImage(AL.over, 0, 0);
+    up.forEach(function (b) { ball(b.x, b.y, BRd + Math.min(4, (b.z || 0) / 13)); });
+    // tilted or over: the table dims
+    if (dark && play) { g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(0, vy, TW, TH); }
+    g.restore();
+    // the scroll position, as a slim bar down the right edge (the table is taller than the screen)
+    if (maxTop > 0) { var bh = Math.round(TH * TH / T.H); g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(TW - 2, OY + Math.round(vy / T.H * TH), 2, bh); }
+    drawDmd(g, W, t, mode, info);
+  }
+  // the dot-matrix display alone (the 3D look draws only this: no need to draw the whole flat table under it)
+  function drawDmdOnly(g, W, t, mode, info) { if (!E) E = window.PinEngine; drawDmd(g, W, t, mode, info); }
+
   // prepare(): build the layers now (say while the page is idle) rather than on the first frame
-  window.PinFlat = { draw: draw, prepare: function () { if (!made && window.PinEngine) make(); }, version: 1 };
+  window.PinFlat = { draw: draw, dmd: drawDmdOnly, prepare: function () { if (!made && window.PinEngine) make(); }, view: function () { return AL.view; }, version: 2 };
 })();

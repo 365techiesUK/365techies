@@ -7,6 +7,12 @@
  *   node tools/pinball/stills3d.cjs --fill [--tilts 28] ...   the game's own close "fill" framing (the default view on the
  *     page): files fill-still-28.png, fill-clip-28.mp4 ...; --tilts defaults to 28, the game's own (FILL_TILT).
  *
+ *   node tools/pinball/stills3d.cjs --ember [--out DIR] [--port 8491] [--no-clip] [--no-check] [--only stills]   EMBER
+ *     PEAK (16 Oct 2026): still-home.png (world3d's whole-table home), still-crater.png (camera.js in arcade mode, mid-way
+ *     through the crater's hold), still-rail.png (the ball on the wire rail), the sight-line check at home (world3d's and
+ *     camera.js's) per storey, frame times per tier (high / medium / low, 1080 x 1920 on this PC) with draw calls and
+ *     triangles, and clip-phone.mp4: 15 s at 720 x 1280, 30 fps, the pilot playing with camera.js running (its slow
+ *     motion honoured), the medium tier (the phone default). Default out: D:/claude/retro-rebooted/pinball-ember.
  * --quick: stills only (no clips). Without --seed/--frame it searches seeds for the moment first. It serves the repository
  * itself (py -m http.server, stopped by its PID at the end). Run from the repository root. Needs ffmpeg on the PATH;
  * Playwright is borrowed from another project on this PC (PLAYWRIGHT env var to point elsewhere). */
@@ -20,7 +26,8 @@ const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 const ROOT = path.resolve(__dirname, '../..');
 
 const A = process.argv.slice(2), arg = (k, d) => { const i = A.indexOf('--' + k); return i >= 0 ? A[i + 1] : d; }, flag = (k) => A.includes('--' + k);
-const OUT = path.resolve(arg('out', 'D:/claude/retro-rebooted/pinball-m2a'));
+const EMBER = flag('ember');
+const OUT = path.resolve(arg('out', EMBER ? 'D:/claude/retro-rebooted/pinball-ember' : 'D:/claude/retro-rebooted/pinball-m2a'));
 const FILLV = flag('fill'), PRE = FILLV ? 'fill-' : '';
 const TILTS = arg('tilts', FILLV ? '28' : '20,35,50').split(',').map(Number);
 const PORT = +arg('port', 8491), FOV = arg('fov', '');
@@ -41,6 +48,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const srv = await serve();
+  if (EMBER) { try { await ember(); } finally { stop(srv); } return; }
   const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), tilts: {} };
   try {
@@ -141,3 +149,85 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
     stop(srv);
   }
 })().catch((e) => { console.error(e); process.exit(1); });
+
+// ---------------------------------------------------------------- Ember Peak
+async function ember() {
+  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const report = { when: new Date().toISOString(), table: 'ember' };
+  const t0 = Date.now(), log = (...a) => console.log('[' + Math.round((Date.now() - t0) / 1000) + 's]', ...a);
+  try {
+    const errors = [];
+    const mk = async (w, h) => {
+      const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+      page.on('pageerror', (e) => errors.push(String(e)));
+      page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.type() + ': ' + m.text()); });
+      return page;
+    };
+    const open = async (page, q) => {
+      await page.goto('http://127.0.0.1:' + PORT + '/tools/pinball/stills3d.html?table=ember&' + q);
+      try { await page.waitForFunction(() => window.__ready === true, null, { timeout: +(process.env.READY_MS || 120000) }); }
+      catch (e) { console.error('page never got ready:', errors.join(' | ')); throw e; }
+    };
+    const page = await mk(1080, 1920);
+    // 1. the moments (the pilot playing, engine only)
+    await open(page, 'cam=arcade&frame=2');
+    report.gpu = await page.evaluate(() => S3.gpu()); report.have = await page.evaluate(() => S3.have); report.stats = await page.evaluate(() => window.__stats);
+    log('gpu:', report.gpu, '| art:', report.stats.art, '| lamps:', report.stats.lamps, '| build ms:', report.stats.buildMs, '| bot:', report.stats.bot, '| have:', JSON.stringify(report.have));
+    const M = report.moments = {};
+    const only = arg('only', '');
+    for (const k of ['lively', 'crater', 'rail']) { M[k] = await page.evaluate((k) => S3.findMoment(k), k); log('moment', k, JSON.stringify(M[k])); }
+    // 2. the stills
+    const shot = async (name, q, m, warm) => {
+      await open(page, q + '&frame=2');
+      await page.evaluate(([f, s, w]) => S3.goTo(f, w, s), [m.frame, m.seed, warm || 40]);
+      await page.locator('#frame').screenshot({ path: path.join(OUT, name) });
+      const st = await page.evaluate(() => S3.world.stats());
+      log(name, 'cam ' + st.cam + ', ' + st.calls + ' draw calls, ' + st.triangles + ' triangles');
+      return st;
+    };
+    report.stills = {};
+    if (M.lively) report.stills.home = await shot('still-home.png', 'cam=home', M.lively);
+    if (M.crater) report.stills.crater = await shot('still-crater.png', 'cam=arcade', M.crater, 60);
+    if (M.rail) report.stills.rail = await shot('still-rail.png', 'cam=arcade', M.rail, 60);
+    if (only === 'stills') { fs.writeFileSync(path.join(OUT, 'ember-report.json'), JSON.stringify(report, null, 1)); if (errors.length) console.log('page messages:', errors.slice(0, 10).join(' | ')); return; }
+    // 3. the sight lines at home, per storey (world3d's whole-table home and camera.js's home)
+    if (!flag('no-check')) {
+      await open(page, 'cam=arcade&frame=600');
+      const n = await page.evaluate(() => { window.__pts = S3.samplePositions(6, 5400); return window.__pts.length; });
+      report.hidden = await page.evaluate(() => S3.checkHidden(window.__pts)); report.positions = n;
+      for (const k in report.hidden) log('ball hidden at home (' + k + '):', JSON.stringify(report.hidden[k].byStorey), report.hidden[k].hidden.slice(0, 6).map((h) => '(' + h.x + ',' + h.y + ',z' + h.z + ') by ' + h.by).join('; '));
+      // 4. frame time per tier (this PC), at a lively moment with the camera running
+      report.bench = {};
+      for (const tier of ['high', 'medium', 'low']) {
+        await open(page, 'cam=arcade&tier=' + tier + '&frame=2');
+        await page.evaluate(([f, s]) => S3.goTo(f, 30, s), [M.lively.frame, M.lively.seed]);
+        report.bench[tier] = await page.evaluate(() => S3.bench(240));
+        log('tier', tier, JSON.stringify(report.bench[tier]));
+      }
+    }
+    // 5. the phone clip: 15 s, 720 x 1280, the medium tier, camera.js running, starting 4 s before a crater catch
+    if (!flag('no-clip')) {
+      const cp = await mk(720, 1280), dir = path.join(OUT, '_frames'); fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
+      await open(cp, 'cam=arcade&tier=medium&w=720&h=1280&frame=2');
+      const cm = await cp.evaluate(() => S3.findMoment('craterclip')) || M.lively;
+      report.clipMoment = cm;
+      await cp.evaluate(([f, s]) => S3.goTo(f, 30, s), [Math.max(60, cm.frame - 240), cm.seed]);
+      const states = {};
+      for (let i = 0; i < 450; i++) {
+        const r = await cp.evaluate(() => S3.clipFrame());
+        states[r.state] = (states[r.state] || 0) + 1;
+        await cp.locator('#frame').screenshot({ path: path.join(dir, 'f' + String(i).padStart(4, '0') + '.jpg'), type: 'jpeg', quality: 92 });
+      }
+      report.clipStates = states;
+      const out = path.join(OUT, 'clip-phone.mp4');
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '30', '-i', path.join(dir, 'f%04d.jpg'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '22', '-maxrate', '3.6M', '-bufsize', '7M', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', out]);
+      report.clipMB = +(fs.statSync(out).size / 1048576).toFixed(2);
+      fs.rmSync(dir, { recursive: true, force: true });
+      log('clip-phone.mp4', report.clipMB, 'MB; camera states (frames):', JSON.stringify(states));
+    }
+    report.errors = errors.slice(0, 30);
+    if (errors.length) console.log('page messages:', errors.slice(0, 10).join(' | '));
+    fs.writeFileSync(path.join(OUT, 'ember-report.json'), JSON.stringify(report, null, 1));
+    log('report in', path.join(OUT, 'ember-report.json'));
+  } finally { await browser.close(); }
+}

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Preview</title>
+<style>
+  :root { --bg: #0d1016; --ink: #e8edf5; --dim: #8a94a6; --line: #2a3140; --ok: #3ddc84; --bad: #ff5a5a; --lava: #ff8a2a; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.4 system-ui, sans-serif; }
+  #wrap { display: flex; gap: 16px; padding: 16px; align-items: flex-start; flex-wrap: wrap; }
+  canvas { background: #11151d; border: 1px solid var(--line); }
+  #info { white-space: pre; font: 12px/1.45 ui-monospace, Consolas, monospace; color: var(--dim); }
+  #info b { color: var(--ink); }
+  h1 { font-size: 15px; margin: 16px 16px 0; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>Ember Peak: the arcade camera (2D preview)</h1>
+<div id="wrap">
+  <canvas id="top" width="330" height="760" aria-label="The table from above with the camera's view"></canvas>
+  <canvas id="cam" width="380" height="760" aria-label="What the camera sees"></canvas>
+  <div id="info"></div>
+</div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/tables/ember.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/camera.js"></script>
+<script src="messybot.cjs"></script>
+<script>
+/* What the camera director (camera.js) does on Ember Peak, without the 3D picture. Left: the table from above with the
+ * camera's view on the playfield (the trapezoid), the flipper boxes (green: fully on screen; red: not) and the ball's
+ * look-ahead. Right: the camera's own view through PinCam.project, at the phone's shape. Below: the director's states
+ * over the last 12 s. The messy-human bot plays.
+ * ?seed=3&mode=calm|arcade|classic&aspect=0.5&speed=2&at=<game step>&find=<state>[&after=<steps>]&live=1 */
+'use strict';
+const Q = new URLSearchParams(location.search), E = window.PinEngine, C = window.PinCam;
+const seed = +(Q.get('seed') || 3), mode = Q.get('mode') || 'calm', aspect = +(Q.get('aspect') || 0.5), speed = +(Q.get('speed') || 2);
+const at = Q.get('at') != null ? +Q.get('at') : null, find = Q.get('find'), after = +(Q.get('after') || 0), live = Q.get('live') === '1';
+const useWorker = Q.get('worker') === '1', secs = +(Q.get('secs') || 6);
+C.configure(useWorker ? { forecaster: 'auto', latency: 0 } : { forecaster: 'sync', latency: 2 }); C.setMode(mode); C.setAspect(aspect); C.reset();
+const W = E.newWorld(speed, null, seed, 'ember'), bot = MessyBot.create(seed), Bt = E.table('ember'), T = Bt.T;
+const COL = { home: '#6b7a90', follow: '#4fb3ff', launch: '#c58bff', launch2: '#a46bff', closeup: '#ff8a2a', rail: '#ffd24a', drain: '#ff5a5a', back: '#3ddc84', director: '#ffffff' };
+let shot = null, t = 0, acc = 0, hist = [], found = -1, done = false;
+function frameOnce() {
+  acc += shot ? shot.timeScale : 1;
+  while (acc >= 1 - 1e-9 && !W.over) { acc -= 1; E.step(W, bot(W)); W.events.length = 0; }
+  shot = C.update(W, t, 'play', aspect); t += 1000 / 60;
+  hist.push({ s: shot.state, ts: shot.timeScale, cut: shot.cut });
+  if (hist.length > 720) hist.shift();
+}
+// ---------------------------------------------------------------- drawing helpers
+function basisOf(s) {
+  const F = C.frame(s, aspect), e = F.eye, g = F.target, f = norm([g[0] - e[0], g[1] - e[1], g[2] - e[2]]), u = F.up;
+  const r = norm(cross(u, f)), tV = Math.tan(F.fov * Math.PI / 360);
+  return { e, f, u, r, tV, tH: tV * aspect };
+}
+function cross(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+function norm(a) { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; }
+function ground(B, sx, sy) {   // where the ray through screen point (sx, sy) meets the playfield
+  const a = (2 * sx - 1) * B.tH, b = (1 - 2 * sy) * B.tV;
+  const d = [B.f[0] + a * B.r[0] + b * B.u[0], B.f[1] + a * B.r[1] + b * B.u[1], B.f[2] + a * B.r[2] + b * B.u[2]];
+  if (d[2] >= -1e-6) return null;
+  const k = -B.e[2] / d[2];
+  return [B.e[0] + d[0] * k, B.e[1] + d[1] * k];
+}
+function segs() {   // every line of the table, [ax, ay, bx, by, kind]
+  const out = [];
+  Bt.WALLS.forEach((w) => { if (w.kind !== 'apron') out.push([w.ax, w.ay, w.bx, w.by, w.kind]); });
+  Bt.GATES.forEach((g) => out.push([g.ax, g.ay, g.bx, g.by, 'gate']));
+  Bt.DROPS.forEach((d, i) => { if (W.drops[i]) out.push([d.ax, d.ay, d.bx, d.by, 'drop']); });
+  Bt.LAVA.forEach((g, i) => { if (W.toys.lava.gates[i].solid) out.push([g.ax, g.ay, g.bx, g.by, 'lava']); });
+  const A = T.arch; for (let i = 0; i < 24; i++) { const a0 = Math.PI + Math.PI * i / 24, a1 = Math.PI + Math.PI * (i + 1) / 24; out.push([A.x + A.R * Math.cos(a0), A.y + A.R * Math.sin(a0), A.x + A.R * Math.cos(a1), A.y + A.R * Math.sin(a1), 'wall']); }
+  const P = T.ramp.path; for (let i = 1; i < P.length; i++) out.push([P[i - 1][0], P[i - 1][1], P[i][0], P[i][1], 'ramp']);
+  return out;
+}
+function circles() {
+  const out = [];
+  Bt.BUMPERS.forEach((b) => out.push([b.x, b.y, b.r, 'bumper']));
+  Bt.POSTS.forEach((p) => out.push([p.x, p.y, p.r, 'post']));
+  out.push([T.volcano.x, T.volcano.y, T.volcano.r, 'volcano']);
+  out.push([T.geyser.x, T.geyser.y, T.geyser.r, 'geyser']);
+  W.toys.crabs.forEach((c, i) => out.push([c.x, c.y, T.crabs[i].r, 'crab']));
+  return out;
+}
+const STROKE = { wall: '#5b6578', rubber: '#c9d3e3', sling: '#7fe0ff', post: '#c9d3e3', gate: '#8a94a6', drop: '#e0e6f0', lava: '#ff8a2a', ramp: '#3c86c8', bumper: '#ffd24a', volcano: '#ff8a2a', geyser: '#7fe0ff', crab: '#ff6b4a' };
+function drawTop(g, B, onOk) {
+  const s = 1.08, ox = 18, oy = 8;
+  g.clearRect(0, 0, 330, 760); g.save(); g.translate(ox, oy); g.scale(s, s); g.lineCap = 'round';
+  // storeys' approach zones (the flipper boxes): green if fully on screen
+  C.boxes('ember').forEach((bx, i) => {
+    const st = T.storeys[i]; g.fillStyle = onOk[i] ? 'rgba(61,220,132,0.10)' : 'rgba(255,90,90,0.18)';
+    g.fillRect(Math.max(st.x0, 8), st.approach, Math.min(st.x1, T.W - 8) - Math.max(st.x0, 8), st.y1 - st.approach);
+    g.strokeStyle = onOk[i] ? '#3ddc84' : '#ff5a5a'; g.setLineDash([4, 3]); g.lineWidth = 1 / s;
+    g.beginPath(); g.moveTo(Math.max(st.x0, 8), st.approach); g.lineTo(Math.min(st.x1, T.W - 8), st.approach); g.stroke(); g.setLineDash([]);
+  });
+  segs().forEach((q) => { g.strokeStyle = STROKE[q[4]] || '#5b6578'; g.lineWidth = q[4] === 'ramp' ? 1 : 2; g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q[2], q[3]); g.stroke(); });
+  circles().forEach((c) => { g.strokeStyle = STROKE[c[3]]; g.lineWidth = 1.5; g.beginPath(); g.arc(c[0], c[1], c[2], 0, Math.PI * 2); g.stroke(); });
+  W.flippers.forEach((f) => { g.strokeStyle = '#ffffff'; g.lineWidth = f.r0 * 2; g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.x + Math.cos(f.a) * f.len, f.y + Math.sin(f.a) * f.len); g.stroke(); });
+  // the look-ahead path
+  const info = C.info(), fc = info.forecast;
+  if (fc && fc.path) Object.keys(fc.path).forEach((id) => { g.strokeStyle = 'rgba(79,179,255,0.8)'; g.lineWidth = 1.2; g.beginPath(); fc.path[id].forEach((p, k) => (k ? g.lineTo(p[1], p[2]) : g.moveTo(p[1], p[2]))); g.stroke(); });
+  W.balls.forEach((b) => { g.fillStyle = '#ffffff'; g.beginPath(); g.arc(b.x, b.y, T.BALL, 0, Math.PI * 2); g.fill(); });
+  // the camera's view on the playfield
+  const c = [[0, 0], [1, 0], [1, 1], [0, 1]].map((p) => ground(B, p[0], p[1]));
+  if (c.every(Boolean)) {
+    g.strokeStyle = COL[shot.state] || '#fff'; g.lineWidth = 2.2 / s; g.fillStyle = 'rgba(255,255,255,0.04)';
+    g.beginPath(); c.forEach((p, k) => (k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.closePath(); g.fill(); g.stroke();
+  }
+  g.fillStyle = COL[shot.state]; g.beginPath(); g.arc(shot.cx, shot.cy, 3.5, 0, Math.PI * 2); g.fill();
+  g.restore();
+}
+function drawCam(g) {
+  const Wd = 360, Hd = Math.round(Wd / aspect), ox = 10, oy = 8, sc = Math.min(1, 740 / Hd), w = Wd * sc, h = Hd * sc;
+  g.clearRect(0, 0, 380, 760); g.fillStyle = '#0a0d12'; g.fillRect(ox, oy, w, h);
+  g.save(); g.beginPath(); g.rect(ox, oy, w, h); g.clip();
+  const P = (x, y, z) => { const v = C.project(shot, aspect, x, y, z || 0); return [ox + v[0] * w, oy + v[1] * h]; };
+  g.lineCap = 'round';
+  // the playfield's floor
+  g.fillStyle = '#16314a'; g.beginPath(); [[6, 6], [266, 6], [266, T.H], [6, T.H]].forEach((p, k) => { const q = P(p[0], p[1]); k ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.fill();
+  segs().forEach((q) => {
+    const z = q[4] === 'ramp' ? 20 : 0, a = P(q[0], q[1], z), b = P(q[2], q[3], z);
+    g.strokeStyle = STROKE[q[4]] || '#5b6578'; g.lineWidth = q[4] === 'ramp' ? 1.2 : 2; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+  });
+  circles().forEach((c) => { g.strokeStyle = STROKE[c[3]]; g.lineWidth = 1.5; g.beginPath(); for (let k = 0; k <= 16; k++) { const an = k / 16 * Math.PI * 2, p = P(c[0] + Math.cos(an) * c[2], c[1] + Math.sin(an) * c[2]); k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); } g.stroke(); });
+  W.flippers.forEach((f) => { const a = P(f.x, f.y, 6), b = P(f.x + Math.cos(f.a) * f.len, f.y + Math.sin(f.a) * f.len, 6), r = Math.hypot(P(f.x + 6, f.y, 6)[0] - a[0], 0); g.strokeStyle = '#fff'; g.lineWidth = Math.max(2, r * 2); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+  W.balls.forEach((b) => { const p = P(b.x, b.y, (b.z || 0) + T.BALL), r = Math.abs(P(b.x + T.BALL, b.y, (b.z || 0) + T.BALL)[0] - p[0]); g.fillStyle = '#ffffff'; g.beginPath(); g.arc(p[0], p[1], Math.max(2, r), 0, Math.PI * 2); g.fill(); });
+  g.restore();
+  g.strokeStyle = COL[shot.state]; g.lineWidth = 2; g.strokeRect(ox, oy, w, h);
+  // the states, last 12 s
+  const y0 = oy + h + 10;
+  if (y0 + 18 < 760) hist.forEach((hh, i) => { g.fillStyle = COL[hh.s] || '#fff'; g.fillRect(ox + i / 720 * w, y0, w / 720 + 0.5, 12); if (hh.ts < 1) { g.fillStyle = '#fff'; g.fillRect(ox + i / 720 * w, y0 + 13, w / 720 + 0.5, 4); } });
+}
+function render() {
+  const B = basisOf(shot), on = C.boxes('ember').map((bx) => bx.pts.every((q) => { const v = C.project(shot, aspect, q[0], q[1], q[2]); return v[0] >= 0 && v[0] <= 1 && v[1] >= 0 && v[1] <= 1; }));
+  drawTop(document.getElementById('top').getContext('2d'), B, on);
+  drawCam(document.getElementById('cam').getContext('2d'));
+  const st = C.stats(), b = W.balls[0];
+  document.getElementById('info').innerHTML =
+    '<b>' + shot.state.toUpperCase() + '</b>   mode ' + mode + '   aspect ' + aspect + '\n' +
+    'game step ' + W.frame + '   ball ' + W.ball + '   score ' + E.fmt(W.score) + '\n' +
+    'zoom ' + shot.zoom.toFixed(2) + '   tilt ' + shot.tilt.toFixed(1) + '   yaw ' + shot.yaw.toFixed(1) + '\n' +
+    'game speed ' + shot.timeScale.toFixed(2) + '\n' +
+    'next arrival ' + (shot.A < 0 ? 'asking...' : shot.A > 1e8 ? 'none' : (shot.A / 60).toFixed(2) + ' s') + '\n' +
+    'flipper boxes on screen: ' + on.map((o, i) => T.storeys[i].name + ' ' + (o ? 'yes' : 'NO')).join(', ') + '\n' +
+    (b ? 'ball ' + b.x.toFixed(0) + ', ' + b.y.toFixed(0) + (b.z ? ' z ' + b.z.toFixed(0) : '') + '  ' + b.m + '\n' : '\n') +
+    '\npush-ins ' + st.pushIns + '   cuts ' + st.cuts + '   look-aheads ' + st.asks + '   in a worker: ' + (C.info().worker ? 'yes' : 'no') + '   matched ' + st.checked + ', differed ' + st.mismatch + '\n\n' +
+    Object.keys(COL).map((k) => '<span style="color:' + COL[k] + '">■</span> ' + k).join('  ');
+  document.title = 'Camera Preview';
+}
+function run() {
+  if (live || useWorker) {   // (the worker's answers arrive between frames, so this runs at the screen's own pace)
+    const t0 = performance.now();
+    const tick = () => {
+      if (!W.over) { frameOnce(); render(); }
+      if (useWorker && performance.now() - t0 > secs * 1000) { window.READY = true; return; }
+      requestAnimationFrame(tick);
+    };
+    frameOnce(); render(); requestAnimationFrame(tick); return;
+  }
+  let n = 0, hit = -1;
+  while (!W.over && n < 200000) {
+    frameOnce(); n++;
+    if (at != null && W.frame >= at) break;
+    if (find && hit < 0 && shot.state === find) hit = W.frame;
+    if (hit >= 0 && W.frame >= hit + after) break;
+  }
+  render();
+  window.READY = true;
+}
+run();
+</script>
+</body>
+</html>
