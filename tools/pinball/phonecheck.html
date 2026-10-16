@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>365 Pinball Hero - phone check</title>
+<!-- 16 Oct 2026 (NG0, the owner: "start the fast track now"). Never deployed: served to phones on the home Wi-Fi by
+     tools/pinball/bench_server.py. It plays the 3D table by itself at the phone's own screen size with the game's own
+     phone settings, times every frame, then adds the next-gen effects a step at a time (thousands of particles and a
+     whole-screen effects pass) to see where the phone runs out of breath. A 4-minute warm-up first, so a warm phone is
+     what gets measured (a phone slows down as it heats up). Every phase's numbers are sent back to the PC as it ends. -->
+<script type="importmap">{ "imports": { "three": "../../games/common/vendor/three-r185/three.module.min.js" } }</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #05070d; color: #eef3ff; font: 17px/1.45 system-ui, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #intro, #done { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; z-index: 5; background: #05070d; overflow: auto; }
+  .card { max-width: 440px; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 28px; line-height: 1.1; color: #ffb33d; }
+  button { font: 700 22px/1 system-ui, sans-serif; padding: 18px 20px; border-radius: 14px; border: 0; background: #ff7a1a; color: #fff; }
+  #stage { position: fixed; inset: 0; display: grid; place-items: center; }
+  #hud { position: fixed; left: 8px; right: 8px; top: 8px; z-index: 4; font: 600 15px/1.3 ui-monospace, monospace; color: #ffd27a; text-shadow: 0 1px 2px #000; pointer-events: none; }
+  table { border-collapse: collapse; font-size: 14px; }
+  td, th { padding: 4px 6px; border-bottom: 1px solid #2a3350; text-align: right; }
+  td:first-child, th:first-child { text-align: left; }
+  .soft { color: #a9b6d6; font-size: 15px; }
+  [hidden] { display: none !important; }   /* (the display: grid above would otherwise keep a hidden card on top of the Start button) */
+</style>
+</head>
+<body>
+<div id="intro"><div class="card">
+  <h1>365 Pinball Hero: phone check</h1>
+  <p>This plays the 3D table by itself for about <b>10 minutes</b> and times every frame, then tries the bigger effects. The numbers go straight back to the PC.</p>
+  <p><b>Before you start:</b> plug the phone in, set it down, and leave it alone until it says it's done. The screen stays on by itself.</p>
+  <button id="go" type="button">Start the phone check</button>
+  <p class="soft" id="note"></p>
+</div></div>
+<div id="stage"></div>
+<div id="hud"></div>
+<div id="done" hidden><div class="card"><h1>Done, thank you!</h1><p id="sent"></p><div id="tbl"></div></div></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/lamps.js"></script>
+<script src="../../games/pinball/art3d.js"></script>
+<script src="../../games/pinball/fx.js"></script>
+<script type="module">
+  const Q = new URLSearchParams(location.search);
+  const QUICK = Q.has('quick');                   // ?quick: 6 s phases, for checking the page itself
+  const WARM = QUICK ? 6 : 240, PHASE = QUICK ? 6 : 60;
+  const E = window.PinEngine, T = E.TABLE, $ = (id) => document.getElementById(id);
+  const RUN = Date.now().toString(36);
+  const { create } = await import('../../games/pinball/world3d.js');
+
+  // ---------------------------------------------------------------- the phases: the game as shipped, then without its two costliest
+  // parts, then with the next-gen effects at three sizes (the game's phone settings: pixel ratio up to 2, the ball's
+  // reflection every other frame at 64 px, 4x smoothing)
+  const SHIP = { samples: 4, reflect: true };
+  const PHASES = [
+    { id: 'warmup', label: 'Warming up', secs: WARM, opts: SHIP, n: 0, pass: false, chunks: 30 },
+    { id: 'A-shipped', label: 'The game as it is', secs: PHASE, opts: SHIP, n: 0, pass: false },
+    { id: 'B-no-smoothing', label: 'Without edge smoothing', secs: PHASE, opts: { samples: 0, reflect: true }, n: 0, pass: false },
+    { id: 'C-no-reflection', label: 'Without the ball reflection', secs: PHASE, opts: { samples: 4, reflect: false }, n: 0, pass: false },
+    { id: 'D-fx-2k', label: 'Effects: 2,000 particles', secs: PHASE, opts: SHIP, n: 2000, pass: true },
+    { id: 'E-fx-8k', label: 'Effects: 8,000 particles', secs: PHASE, opts: SHIP, n: 8000, pass: true },
+    { id: 'F-fx-40k', label: 'Effects: 40,000 particles', secs: PHASE, opts: SHIP, n: 40000, pass: true }
+  ];
+
+  // ---------------------------------------------------------------- the size the game itself would draw at (270:480, the top 34 rows the display)
+  const PR = Math.min(2, window.devicePixelRatio || 1);
+  function area() {
+    const vw = window.innerWidth, vh = window.innerHeight, s = Math.min(vw / 270, vh / 480);
+    const w = Math.floor(270 * s), h = Math.floor(446 * s);
+    return { w, h, top: Math.floor((vh - 480 * s) / 2 + 34 * s), left: Math.floor((vw - w) / 2) };
+  }
+
+  // ---------------------------------------------------------------- the auto-flipper (tools/pinball/sim.cjs's bot)
+  function lcg(seed) { let s = (seed | 0) || 1; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
+  function bot(seed) {
+    const r = lcg(seed), hold = [0, 0], wait = [-1, -1], cradle = [0, 0]; let plunge = -1;
+    return function (W) {
+      const inp = { left: false, right: false, fire: false };
+      for (let side = 0; side < 2; side++) {
+        const f = W.flippers[side]; let near = null;
+        for (const b of W.balls) {
+          if (b.m !== 'free' || b.x > T.shooter.x0) continue;
+          const dx = b.x - f.x, dy = b.y - f.y;
+          if (dx * f.side > 6 || dx * -f.side > f.len + 14 || dy < -45 || dy > 30) continue;
+          near = b; break;
+        }
+        const key = side ? 'right' : 'left';
+        if (hold[side] > 0) { hold[side]--; inp[key] = true; continue; }
+        if (cradle[side] > 0) { cradle[side]--; inp[key] = true; continue; }
+        if (near && wait[side] < 0 && near.vy > -40) wait[side] = Math.floor(r() * 6);
+        if (wait[side] >= 0 && wait[side]-- === 0) {
+          if (r() < 0.12) cradle[side] = 40 + Math.floor(r() * 120); else hold[side] = 6 + Math.floor(r() * 14);
+          inp[key] = true; wait[side] = -1;
+        }
+      }
+      const inLane = W.balls.some((b) => b.m === 'free' && b.x > T.shooter.x0 && b.y > 400 && Math.abs(b.vy) < 30);
+      if (inLane) { if (plunge < 0) plunge = 1 + Math.floor(r() * 60); if (plunge-- > 0) inp.fire = true; } else plunge = -1;
+      return inp;
+    };
+  }
+
+  // ---------------------------------------------------------------- the next-gen stress layer: GPU particles + one whole-screen pass
+  function stressLayer(THREE, world, n, pass) {
+    const group = new THREE.Group(), table = world.debug.table, cam = world.debug.camera;
+    if (n > 0) {
+      const g = new THREE.BufferGeometry(), seed = new Float32Array(n * 4), pos = new Float32Array(n * 3);
+      const SRC = [[156, 124], [202, 118], [180, 160], [56, 172], [120, 205], [60, 350], [190, 350], [125, 260]];
+      const r = lcg(n);
+      for (let i = 0; i < n; i++) {
+        const s = SRC[i % SRC.length];
+        seed[i * 4] = s[0] - 135; seed[i * 4 + 1] = s[1] - 223; seed[i * 4 + 2] = r(); seed[i * 4 + 3] = 0.4 + r() * 1.2;
+      }
+      g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      g.setAttribute('seed', new THREE.BufferAttribute(seed, 4));
+      const m = new THREE.ShaderMaterial({
+        uniforms: { t: { value: 0 }, px: { value: PR * area().h / 446 } },
+        vertexShader: `attribute vec4 seed; uniform float t; uniform float px; varying float vL; varying vec3 vC;
+          void main() {
+            float life = fract(t * seed.w * 0.35 + seed.z);
+            float a = seed.z * 6.2831 * 7.0, sp = 20.0 + 60.0 * fract(seed.z * 13.7);
+            vec3 p = vec3(seed.x + cos(a) * sp * life, 4.0 + sin(life * 3.1416) * (14.0 + 30.0 * fract(seed.z * 5.3)), seed.y + sin(a) * sp * life);
+            vec4 mv = modelViewMatrix * vec4(p, 1.0);
+            gl_Position = projectionMatrix * mv;
+            gl_PointSize = px * (1.0 - life) * 2.6 * (300.0 / max(30.0, -mv.z));
+            vL = life; vC = mix(vec3(1.0, 0.6, 0.15), vec3(1.0, 0.95, 0.7), fract(seed.z * 3.1));
+          }`,
+        fragmentShader: `varying float vL; varying vec3 vC;
+          void main() { vec2 d = gl_PointCoord - 0.5; float f = smoothstep(0.5, 0.0, length(d)); gl_FragColor = vec4(vC * f * (1.0 - vL) * 1.6, 1.0); }`,
+        blending: THREE.AdditiveBlending, depthWrite: false, transparent: true
+      });
+      const pts = new THREE.Points(g, m); pts.frustumCulled = false; group.add(pts); group.userData.pm = m;
+      table.add(group);
+    }
+    let quad = null;
+    if (pass) {   // a whole-screen effects pass: two shockwave rings, a vignette and a colour fringe, drawn over everything
+      const qm = new THREE.ShaderMaterial({
+        uniforms: { t: { value: 0 } },
+        vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+        fragmentShader: `uniform float t; varying vec2 vUv;
+          void main() {
+            vec2 c1 = vec2(0.5 + 0.25 * sin(t * 0.7), 0.4), c2 = vec2(0.3, 0.6 + 0.2 * cos(t * 0.9));
+            float r1 = fract(t * 0.5) * 0.9, r2 = fract(t * 0.37 + 0.5) * 0.9;
+            float w = smoothstep(0.03, 0.0, abs(distance(vUv, c1) - r1)) * (1.0 - r1) + smoothstep(0.03, 0.0, abs(distance(vUv, c2) - r2)) * (1.0 - r2);
+            float v = smoothstep(0.35, 0.95, distance(vUv, vec2(0.5)));
+            vec3 fringe = vec3(sin(vUv.x * 40.0 + t) * 0.5 + 0.5, 0.2, cos(vUv.y * 40.0 - t) * 0.5 + 0.5);
+            gl_FragColor = vec4(mix(fringe * w, vec3(0.0), v * 0.6), 0.12 + w * 0.25 + v * 0.25);
+          }`,
+        transparent: true, depthTest: false, depthWrite: false
+      });
+      quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), qm); quad.frustumCulled = false; quad.renderOrder = 9999;
+      world.debug.scene.add(quad);
+    }
+    return {
+      tick(t) { if (group.userData.pm) group.userData.pm.uniforms.t.value = t / 1000; if (quad) quad.material.uniforms.t.value = t / 1000; },
+      remove() { table.remove(group); if (quad) world.debug.scene.remove(quad); }
+    };
+  }
+
+  // ---------------------------------------------------------------- the device
+  async function device(gl) {
+    const d = { ua: navigator.userAgent, screen: [screen.width, screen.height], inner: [innerWidth, innerHeight], dpr: devicePixelRatio, pr: PR,
+      cores: navigator.hardwareConcurrency || null, memory: navigator.deviceMemory || null, area: area() };
+    try { const e = gl.getExtension('WEBGL_debug_renderer_info'); d.gpu = e ? gl.getParameter(e.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); } catch (er) {}
+    try { if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) d.uad = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion']); } catch (er) {}
+    try { if (navigator.getBattery) { const b = await navigator.getBattery(); d.battery = { level: b.level, charging: b.charging }; } } catch (er) {}
+    return d;
+  }
+  function stats(times, cpu) {
+    if (!times.length) return null;
+    const s = times.slice().sort((a, b) => a - b), n = s.length, avg = s.reduce((a, b) => a + b, 0) / n, c = cpu.slice().sort((a, b) => a - b);
+    const pct = (lim) => +(100 * s.filter((x) => x > lim).length / n).toFixed(1);
+    return { frames: n, fps: +(1000 / avg).toFixed(1), avg: +avg.toFixed(2), p50: +s[n >> 1].toFixed(2), p95: +s[Math.floor(n * 0.95)].toFixed(2),
+      p99: +s[Math.floor(n * 0.99)].toFixed(2), over17: pct(17.5), over20: pct(20.5), over34: pct(34),
+      cpuAvg: c.length ? +(c.reduce((a, b) => a + b, 0) / c.length).toFixed(2) : null, cpuP95: c.length ? +c[Math.floor(c.length * 0.95)].toFixed(2) : null };
+  }
+  function send(o) {
+    return fetch('/bench-result', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ run: RUN }, o)) })
+      .then((r) => r.ok).catch(() => false);
+  }
+
+  // ---------------------------------------------------------------- the run
+  let world = null, canvas = null, layer = null, W = null, drive = null, acc = 0, last = 0, hidden = false;
+  const stage = $('stage'), hud = $('hud');
+  function build(opts) {
+    if (world) { try { world.debug.renderer.forceContextLoss(); world.dispose(); } catch (e) {} canvas.remove(); }
+    const a = area();
+    canvas = document.createElement('canvas'); canvas.style.cssText = 'position:fixed;left:' + a.left + 'px;top:' + a.top + 'px;width:' + a.w + 'px;height:' + a.h + 'px';
+    stage.appendChild(canvas);
+    world = create({ canvas, width: a.w, height: a.h, pixelRatio: PR, reflectEvery: 2, reflectSize: 64, samples: opts.samples, reflect: opts.reflect });
+  }
+  function newGame(seed) { W = E.newWorld(2, {}, seed); drive = bot(seed); }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) hidden = true; else reLock(); });
+  let lock = null;
+  async function reLock() { try { if ('wakeLock' in navigator) lock = await navigator.wakeLock.request('screen'); } catch (e) {} }
+
+  async function run() {
+    $('intro').hidden = true;
+    try { await document.documentElement.requestFullscreen({ navigationUI: 'hide' }); } catch (e) {}
+    await reLock();
+    await new Promise((r) => setTimeout(r, 400));
+    build(SHIP); newGame(7);
+    const dev = await device(world.debug.renderer.getContext());
+    send({ phase: 'device', device: dev });
+    const results = [];
+    let seed = 7;
+    for (const P of PHASES) {
+      const same = P.opts.samples === (world.__opts || SHIP).samples && P.opts.reflect === (world.__opts || SHIP).reflect;
+      if (!same) { build(P.opts); }
+      world.__opts = P.opts;
+      if (layer) { layer.remove(); layer = null; }
+      layer = stressLayer(world.debug.THREE, world, P.n, P.pass);
+      const r = await measure(P, () => { if (W.over) newGame(++seed); });
+      results.push(r);
+      hud.textContent = P.label + ': ' + (r.all ? r.all.fps + ' fps' : '-');
+      await send({ phase: P.id, label: P.label, device: dev, result: r });
+    }
+    if (layer) layer.remove();
+    try { world.debug.renderer.forceContextLoss(); } catch (e) {}
+    const ok = await send({ phase: 'summary', device: dev, results });
+    $('done').hidden = false; stage.innerHTML = ''; hud.textContent = '';
+    $('sent').textContent = ok ? 'The numbers are back on the PC. You can close this page.' : 'The PC did not answer - leave this page open and tell Claude.';
+    $('tbl').innerHTML = '<table><tr><th>Test</th><th>fps</th><th>slow frames</th></tr>' + results.filter((r) => r.all).map((r) =>
+      '<tr><td>' + r.label + '</td><td>' + r.all.fps + '</td><td>' + r.all.over17 + '%</td></tr>').join('') + '</table>';
+    try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+  }
+
+  function measure(P, onTick) {
+    return new Promise((resolve) => {
+      const times = [], cpu = [], chunks = [];
+      let chunkT = [], chunkC = [], start = 0, prev = 0, chunkStart = 0;
+      hidden = false; last = 0; acc = 0;
+      function frame(now) {
+        if (!start) { start = now; prev = now; chunkStart = now; requestAnimationFrame(frame); return; }
+        const dt = now - prev; prev = now;
+        if (hidden) { hidden = false; requestAnimationFrame(frame); return; }   // (the page was away: that frame doesn't count)
+        acc += Math.min(100, dt);
+        for (let k = 0; acc >= 1000 / 60 && k < 4; k++) {
+          acc -= 1000 / 60; E.step(W, drive(W));
+          if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} }
+          W.events.length = 0; onTick();
+        }
+        if (acc > 1000 / 15) acc = 0;
+        const t0 = performance.now();
+        world.draw(W, now, 'play', {}); layer.tick(now);
+        const c = performance.now() - t0;
+        times.push(dt); cpu.push(c); chunkT.push(dt); chunkC.push(c);
+        const el = (now - start) / 1000;
+        if (P.chunks && now - chunkStart >= P.chunks * 1000) { chunks.push(stats(chunkT, chunkC)); chunkT = []; chunkC = []; chunkStart = now; }
+        if ((times.length & 15) === 0) hud.textContent = P.label + ' · ' + Math.max(0, Math.ceil(P.secs - el)) + ' s · ' + (1000 / (times.slice(-30).reduce((a, b) => a + b, 0) / Math.min(30, times.length))).toFixed(0) + ' fps';
+        if (el >= P.secs) { resolve({ id: P.id, label: P.label, particles: P.n, pass: P.pass, opts: P.opts, all: stats(times, cpu), chunks: chunks.length ? chunks : undefined }); return; }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  $('note').textContent = 'Phases: ' + PHASES.map((p) => p.label).join(' · ') + '. About ' + Math.round(PHASES.reduce((a, p) => a + p.secs, 0) / 60) + ' minutes.';
+  $('go').onclick = () => { run().catch((e) => { hud.textContent = 'Error: ' + e.message; send({ phase: 'error', error: String(e && e.stack || e) }); }); };
+  window.__ready = true;
+</script>
+</body>
+</html>
