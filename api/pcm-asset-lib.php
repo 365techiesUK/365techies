@@ -91,6 +91,69 @@ function pcm_asset_line_is_drive($lineNorm) {
 }
 
 /**
+ * Does this (normalised) invoice line read as SELLING the PC? (17 Oct 2026, owner chose "automatic from invoice wording"
+ * so 365 PC Manager can say "Bought from 365 Techies" + the guarantee.) ONLY wording a sale uses and an upgrade or repair
+ * doesn't: refurbished / refurb / reconditioned / ex-lease / ex-corporate (and the shop's QuickBooks item "Refurbished
+ * computer"). An adversarial review showed specs and price can't tell a sale from work on the customer's OWN PC -
+ * "Dell Latitude 3520, 16GB, new 1TB SSD fitted" is just how an SSD upgrade is written - so neither counts any more.
+ * Vetoed when the line is service on an existing machine (repair, labour, clone, data transfer, recovery...) or the
+ * refurbished word describes a PART ("refurbished SSD"). A sale worded only as specs is missed: the app then keeps its
+ * processor-age wording - the safe way round (never a guarantee we didn't give). $amount is kept for the record only.
+ */
+function pcm_asset_line_is_sale($lineNorm, $amount = null) {
+    $n = ' ' . $lineNorm . ' ';
+    if (!preg_match('/ (refurb|refurbs|refurbished|reconditioned|recon|ex lease|ex corporate|ex business) /', $n)) return false;   // not "refurbishment": usually a SERVICE on the customer's own PC
+    // a PART anywhere in the line ("Replacement battery for Dell Latitude 3520 (refurbished)", "Ex-lease 8GB RAM for ...") is not
+    // the PC - unless the line also calls it a laptop/desktop/PC ("Refurbished Dell Latitude 3520 laptop with new battery")
+    if (preg_match('/ (ssd|ssds|hdd|hard drive|drive|battery|screen|lcd|display|keyboard|charger|adapter|psu|ram|memory|motherboard|part|parts|dock|docking station|monitor|hinge|fan|webcam|camera|trackpad|touchpad|speaker|cable|lid|bezel) /', $n)
+        && !preg_match('/ (laptop|desktop|pc|computer|tower|sff|notebook|workstation|ultrabook) /', $n)) return false;
+    if (preg_match('/ (repair|repairs|repaired|repairing|labour|labor|diagnos[a-z]*|clone|cloned|cloning|transfer|transferred|migrat[a-z]*|recovery|recovered|callout|call out|collection|virus|viruses|malware|clean|cleaned|cleaning|thermal|paste|repaste|your|existing|own|service|serviced|servicing|replace|replaced|replacing|replacement|upgrade|upgraded|upgrading|fit|fitted|fitting) /', $n)) return false;
+    return true;
+}
+
+/** Is this drive line a drive FITTED to a PC - not an external/backup drive, a recovery job or an old drive? (review, 17 Oct) */
+function pcm_asset_drive_line_fitted($lineNorm) {
+    return !preg_match('/\b(external|portable|usb|backup|back up|recovery|recover|recovered|old|failed|faulty|dead|caddy|enclosure|wipe|wiped|destroy|destruction|customer to fit|for you to fit|self fit|diy)\b/', $lineNorm);
+}
+/** ...and on an invoice other than the PC's own sale, it must SAY it was fitted (a loose drive could be for another PC). */
+function pcm_asset_drive_line_says_fit($lineNorm) {
+    return (bool)preg_match('/\b(fit|fitted|fitting|install|installed|upgrade|upgraded|swap|swapped|replace|replaced|replacement)\b/', $lineNorm);
+}
+
+/**
+ * What the 365 PC Manager app is told in its check-in (flat strings - the app reads simple fields): when we sold this
+ * PC and the guarantee by the customer's support status TODAY (only when the register was worked out with the sale rule
+ * - v2 - and found a sale); and per drive the last service's running hours, with its purchase date when an invoice line
+ * matched it. bought/gt_to = YYYY-MM-DD; drv = "model~date~hours|..." (~ and | taken out of the parts).
+ */
+function pcm_asset_app_out($mrec, $onSupport) {
+    $o = array('bought' => '', 'gt_to' => '', 'gt_y' => '', 'drv' => '');
+    if (!is_array($mrec)) return $o;
+    $a = (isset($mrec['asset']) && is_array($mrec['asset'])) ? $mrec['asset'] : null;
+    $v2 = $a && (int)(isset($a['v']) ? $a['v'] : 0) >= 2;
+    if ($v2 && !empty($a['pc']['date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$a['pc']['date'])) {
+        $o['bought'] = (string)$a['pc']['date'];
+        $g = pcm_asset_pc_guarantee($o['bought'], (string)(isset($mrec['model']) ? $mrec['model'] : ''), $onSupport);
+        if ($g) { $o['gt_to'] = (string)$g['to']; $o['gt_y'] = (string)(int)$g['years']; }
+    }
+    $dates = array();
+    if ($v2) foreach ((array)(isset($a['drives']) ? $a['drives'] : array()) as $d)
+        if (is_array($d) && !empty($d['model']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)(isset($d['date']) ? $d['date'] : ''))) $dates[(string)$d['model']] = (string)$d['date'];
+    $parts = array();
+    foreach ((array)(isset($mrec['drives']) ? $mrec['drives'] : array()) as $d) {
+        if (!is_array($d) || empty($d['model'])) continue;
+        $m = (string)$d['model'];
+        $hr = (isset($d['hours']) && is_numeric($d['hours'])) ? (string)(int)$d['hours'] : '';
+        $dt = isset($dates[$m]) ? $dates[$m] : '';
+        if ($hr === '' && $dt === '') continue;
+        $parts[] = trim(str_replace(array('~', '|', ',', '"', '\\'), ' ', substr($m, 0, 60))) . '~' . $dt . '~' . $hr;   // the app's field reader stops at , and "
+        if (count($parts) >= 4) break;
+    }
+    $o['drv'] = implode('|', $parts);
+    return $o;
+}
+
+/**
  * The pure matcher.
  * @param array  $invoices        [ ['date'=>'YYYY-MM-DD', 'num'=>'1187', 'lines'=>['Dell Latitude 3520 ...', ...]], ... ]
  * @param string $model           the machine's make + model as the report saw it
@@ -104,19 +167,27 @@ function pcm_asset_match($invoices, $model, $drives, $machineCount, $sameModelCo
     $keys = pcm_asset_model_keys($model);
     usort($invoices, function ($a, $b) { return strcmp((string)(isset($b['date']) ? $b['date'] : ''), (string)(isset($a['date']) ? $a['date'] : '')); });
     $unambiguous = ((int)$machineCount <= 1) || ((int)$sameModelCount === 1);
-    $hit = null;
+    $hit = null; $notSale = false; $saleInvs = array();
     if ($keys) {
         foreach ($invoices as $inv) {
-            foreach ((array)(isset($inv['lines']) ? $inv['lines'] : array()) as $ln) {
-                if (pcm_asset_line_has_pc(pcm_asset_norm($ln), $keys)) { $hit = array('date' => (string)$inv['date'], 'num' => (string)$inv['num'], 'line' => trim((string)$ln)); break 2; }
+            $amts = (isset($inv['amts']) && is_array($inv['amts'])) ? $inv['amts'] : array();
+            foreach ((array)(isset($inv['lines']) ? $inv['lines'] : array()) as $li => $ln) {
+                $nl = pcm_asset_norm($ln);
+                if (!pcm_asset_line_has_pc($nl, $keys)) continue;
+                // v2 (17 Oct 2026): only a line that reads as SELLING the PC is its purchase - a repair or upgrade invoice
+                // naming the model is skipped (newest first, so work after the sale doesn't hide the sale)
+                if (!pcm_asset_line_is_sale($nl, array_key_exists($li, $amts) ? $amts[$li] : null)) { $notSale = true; continue; }
+                if (!$hit) $hit = array('date' => (string)$inv['date'], 'num' => (string)$inv['num'], 'line' => trim((string)$ln));
+                $saleInvs[(string)$inv['num']] = true;
             }
         }
     }
     if ($hit) {
-        if ($unambiguous) $out['pc'] = $hit + array('age' => pcm_asset_age($hit['date'], $nowTs));
+        // v2: two sales of this model on the account - we can't tell which one this PC is (review, 17 Oct)
+        if ($unambiguous && count($saleInvs) === 1) $out['pc'] = $hit + array('age' => pcm_asset_age($hit['date'], $nowTs));
         else $out['why'] = 'ambiguous_pc';
     } else {
-        $out['why'] = $keys ? 'no_pc_line' : 'no_model';
+        $out['why'] = $keys ? ($notSale ? 'not_a_sale' : 'no_pc_line') : 'no_model';
     }
     foreach ((array)$drives as $d) {
         if (!is_array($d)) continue;
@@ -126,6 +197,12 @@ function pcm_asset_match($invoices, $model, $drives, $machineCount, $sameModelCo
             foreach ((array)(isset($inv['lines']) ? $inv['lines'] : array()) as $ln) {
                 $n = pcm_asset_norm($ln);
                 if (!pcm_asset_line_is_drive($n)) continue;
+                // v2 (review, 17 Oct): not an external/backup drive, a recovery job or an old drive; and away from the PC's
+                // own sale invoice the line must say it was fitted (a loose drive could be for another PC)
+                if (!pcm_asset_drive_line_fitted($n)) continue;
+                if ($keys && preg_match('/\b(latitude|optiplex|precision|inspiron|vostro|xps|thinkpad|thinkcentre|ideapad|elitebook|probook|elitedesk|prodesk|pavilion|envy|spectre|aspire|swift|vivobook|zenbook|surface)\b/', $n) && !pcm_asset_line_has_pc($n, $keys)) continue;   // names another PC (review, 17 Oct)
+                $onSale = $out['pc'] && (string)$inv['num'] === (string)$out['pc']['num'];
+                if (!$onSale && !pcm_asset_drive_line_says_fit($n)) continue;
                 foreach ($labels as $lb) {
                     if (strpos(' ' . $n . ' ', ' ' . $lb . ' ') !== false || strpos($n, $lb) !== false) { $dh = array('date' => (string)$inv['date'], 'num' => (string)$inv['num'], 'line' => trim((string)$ln)); break 3; }
                 }
@@ -158,6 +235,8 @@ function pcm_asset_invoices($email, $ttl = 86400) {
     $ck = sha1($email);
     $all = @json_decode((string)@file_get_contents($CACHEF), true); if (!is_array($all)) $all = array();
     $hit = isset($all[$ck]) && is_array($all[$ck]) ? $all[$ck] : null;
+    // v2: a cached copy from before line prices were kept (no 'amts') is read again, so the sale rule has the prices
+    if ($hit && !empty($hit['rows']) && is_array($hit['rows']) && !array_key_exists('amts', (array)reset($hit['rows']))) $hit['ts'] = 0;
     if ($hit && (time() - (int)(isset($hit['ts']) ? $hit['ts'] : 0)) < (int)$ttl) return array('ok' => true, 'invoices' => (array)$hit['rows'], 'cached' => true, 'why' => (string)(isset($hit['why']) ? $hit['why'] : ''));
     if (!is_readable($CFG)) return array('ok' => false, 'why' => 'not_configured', 'invoices' => array());
     require_once $BASE . '/pcm-qbo-lib.php';
@@ -178,6 +257,8 @@ function pcm_asset_invoices($email, $ttl = 86400) {
         $q = "select Id from Customer where PrimaryEmailAddr = '" . qbo_lib_qesc($email) . "'";
         $res = qbo_lib_api('GET', '/query?query=' . rawurlencode($q), null, $access, $API_BASE, $QBO_REALM_ID, $MINORVERSION);
         if (qbo_lib_ok($res) && !empty($res['json']['QueryResponse']['Customer'][0]['Id'])) $qboId = (string)$res['json']['QueryResponse']['Customer'][0]['Id'];
+        // v2 (review, 17 Oct): a FAILED look-up is an error, not "no such customer" (that was cached a day as an answer)
+        elseif (!qbo_lib_ok($res)) return array('ok' => false, 'why' => 'qbo_error', 'invoices' => $hit ? (array)$hit['rows'] : array());
     }
     $rows = array(); $why = '';
     if ($qboId === '' || !preg_match('/^\d+$/', $qboId)) {
@@ -190,13 +271,18 @@ function pcm_asset_invoices($email, $ttl = 86400) {
         foreach ($list as $inv) {
             if (!is_array($inv) || (string)(isset($inv['CustomerRef']['value']) ? $inv['CustomerRef']['value'] : '') !== $qboId) continue;
             if (!qbo_lib_invoice_ready($inv)) continue;   // a half-finished draft is not a sale yet
-            $lines = array();
+            $lines = array(); $amts = array();
             foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $L) {
                 if (!is_array($L)) continue;
+                if ((string)(isset($L['DetailType']) ? $L['DetailType'] : '') === 'SubTotalLineDetail') continue;   // QuickBooks' own subtotal row
                 $t = trim((string)(isset($L['Description']) ? $L['Description'] : '') . ' ' . (string)(isset($L['SalesItemLineDetail']['ItemRef']['name']) ? $L['SalesItemLineDetail']['ItemRef']['name'] : ''));
-                if ($t !== '') $lines[] = substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', $t), 0, 200);
+                if ($t !== '') {
+                    $lines[] = substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', $t), 0, 200);
+                    // v2: the line's price, for the sale rule (a description-only line has none: 0)
+                    $amts[] = (isset($L['Amount']) && is_numeric($L['Amount'])) ? round((float)$L['Amount'], 2) : 0;
+                }
             }
-            $rows[] = array('date' => (string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : ''), 'num' => (string)(isset($inv['DocNumber']) ? $inv['DocNumber'] : ''), 'lines' => $lines);
+            $rows[] = array('date' => (string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : ''), 'num' => (string)(isset($inv['DocNumber']) ? $inv['DocNumber'] : ''), 'lines' => $lines, 'amts' => $amts);
         }
     }
     $all[$ck] = array('ts' => time(), 'rows' => $rows, 'why' => $why);
@@ -347,6 +433,10 @@ function pcm_asset_for_machine($cust, $machineId, $model, $drives) {
                               'text' => pcm_asset_drive_terms_text($terms, $bought, isset($d['tbw']) ? $d['tbw'] : null));
     }
     $m['computed'] = time();
+    // 17 Oct 2026: 'ok' = a real answer from the books (or no email to look up by); only those carry v2 - the sale rule's
+    // stamp. A failed look-up (busy, no token, an error) is ok=false: callers keep the register they had, retry later.
+    $m['ok'] = in_array($m['source'], array('quickbooks', 'no_qbo_customer', 'no_email'), true);
+    if ($m['ok']) $m['v'] = 2;
     return $m;
 }
 

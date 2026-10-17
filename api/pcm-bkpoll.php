@@ -72,6 +72,12 @@ if (!$CLI) {
 }
 // single runner - never pile up
 $lk = @fopen($LOCK, 'c'); if (!$lk || !@flock($lk, LOCK_EX | LOCK_NB)) jout(array('ok' => false, 'error' => 'busy'));
+// 17 Oct 2026: asset registers (bought from us + the guarantee, for 365 PC Manager's This PC) - two PCs a poll, the
+// QuickBooks look-up with NO lock on the customer file (pcm-asset-backfill.php). HERE - after the token check and the
+// single-runner lock, before every SimplyBook early exit (the welcome-email lesson above). Best-effort: never fails the poll.
+$assetB = array('picked' => 0, 'stored' => 0);
+try { require_once __DIR__ . '/pcm-asset-backfill.php'; $assetB = pcm_asset_backfill($DATA, 2); } catch (Throwable $e) { $assetB = array('error' => 'exception'); }
+$GLOBALS['assetB'] = $assetB;
 
 // --- SimplyBook admin JSON-RPC (self-contained) ---
 function sbrpc($url, $method, $params, $headers = array()) {
@@ -285,4 +291,4 @@ $mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($D
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
            'review_asks_queued' => $rvQueued,
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW'])));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));

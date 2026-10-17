@@ -64,6 +64,7 @@ function pcm_drives_in($v) {
         $row = array('model' => $m, 'sizeGB' => $g);
         if (isset($d['tbw']) && is_numeric($d['tbw']) && (float)$d['tbw'] >= 0 && (float)$d['tbw'] < 100000) $row['tbw'] = round((float)$d['tbw'], 2);   // TB written so far
         if (isset($d['wear']) && is_numeric($d['wear'])) $row['wear'] = max(0, min(255, (int)$d['wear']));
+        if (isset($d['hours']) && is_numeric($d['hours']) && (float)$d['hours'] >= 0) $row['hours'] = min(1000000, (int)$d['hours']);   // Service Pass 4.39: power-on hours (the app's This PC)
         $o[] = $row;
         if (count($o) >= 6) break;
     }
@@ -431,7 +432,12 @@ if ($action === 'checkin') {
     // app 36.4: when this PC last had a full service - our six-weekly one or one run from the app (pcm-lastsvc-lib.php)
     require_once __DIR__ . '/pcm-lastsvc-lib.php';
     list($lastSvc, $lastSvcK) = pcm_last_service(($machine !== '' && isset($c['machines'][$machine])) ? $c['machines'][$machine] : null);
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+    // 17 Oct 2026 (owner: a refurb bought from us a year ago showed as "5-6 years old"): when we sold this PC, its
+    // guarantee and its drives' purchase dates + running hours - READ ONLY from what the register already holds (the
+    // QuickBooks look-up runs in the 5-minute poll, pcm-asset-backfill.php, never under this request's lock).
+    require_once __DIR__ . '/pcm-asset-lib.php';
+    $assetOut = pcm_asset_app_out(($machine !== '' && isset($c['machines'][$machine])) ? $c['machines'][$machine] : null, $tier === 'pro');
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $assetOut + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
 }
 
 // 17 Oct 2026 (app 36.4.2, build 43): a PC that was linked to a customer but has lost its link ON THE PC (36.4 froze some
@@ -931,12 +937,20 @@ if ($action === 'asset') {
     if ($drivesIn) $mrec['drives'] = $drivesIn;
     $model = $modelIn !== '' ? $modelIn : (string)($mrec['model'] ?? '');
     $drives = $drivesIn ? $drivesIn : (array)($mrec['drives'] ?? array());
-    $fresh = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 86400 && empty($in['refresh']);
+    // 17 Oct 2026 (review): this request holds the whole customer file's lock, so QuickBooks is asked here only for a PC's
+    // FIRST register (or on request); after that pcm-asset-backfill.php (the 5-minute poll, no lock held) keeps it current.
+    // A failed look-up never replaces a register we had.
+    $cur = (isset($mrec['asset']) && is_array($mrec['asset'])) ? $mrec['asset'] : null;
+    $fresh = $cur && (int)($cur['v'] ?? 0) >= 2 && empty($in['refresh']);   // a pre-rule (v1) register is worked out again once, here, like none (review)
     if (!$fresh) {
         require_once __DIR__ . '/pcm-asset-lib.php';
-        $mrec['asset'] = pcm_asset_for_machine($db['customers'][$key], $machine, $model, $drives);
+        $new = pcm_asset_for_machine($db['customers'][$key], $machine, $model, $drives);
+        if (!$cur || !empty($new['ok'])) $mrec['asset'] = $new;
     }
     $asset = $mrec['asset'];
+    // a register worked out before the sale rule (v1) may name a repair as the purchase: no purchase or drive dates from
+    // it until the poll redoes it
+    if ((int)($asset['v'] ?? 0) < 2) { $asset['pc'] = null; $asset['drives'] = array(); $asset['terms'] = array(); }   // terms carried v1 purchase dates in their text
     unset($mrec);
     save($DATA,$db);
     out(array('ok'=>true, 'asset'=>$asset, 'cached'=>$fresh));
@@ -1045,13 +1059,16 @@ if ($action === 'reportup') {
         if (isset($sumr['software']) && is_array($sumr['software']) && pcm_prog_rules())
             $sumr['progs'] = pcm_prog_eval(pcm_prog_from_software($sumr['software']), pcm_prog_av_in($sumr['av'] ?? null));
         // the tool normally asked (action=asset) minutes ago; only look now if nobody has this week
-        $have = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 7 * 86400;
+        // 17 Oct 2026 (review): only a PC with NO register is looked up here (this request holds the customer file's lock);
+        // the 5-minute poll keeps existing ones current, and a failed look-up never replaces one
+        $have = isset($mrec['asset']) && is_array($mrec['asset']);
         if (!$have && ($modelIn !== '' || $drivesIn)) {
             require_once __DIR__ . '/pcm-asset-lib.php';
             $mrec['asset'] = pcm_asset_for_machine($db['customers'][$key], $machine, $modelIn !== '' ? $modelIn : (string)($mrec['model'] ?? ''), $drivesIn ? $drivesIn : (array)($mrec['drives'] ?? array()));
         }
     }
     $assetNow = isset($mrec['asset']) ? $mrec['asset'] : null;
+    if (is_array($assetNow) && (int)($assetNow['v'] ?? 0) < 2) { $assetNow['pc'] = null; $assetNow['drives'] = array(); $assetNow['terms'] = array(); }   // v1: no purchase claims in the email
     unset($mrec);
     save($DATA,$db);
     // a service report is also the team's cue: post it to Slack with the file attached...
