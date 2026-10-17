@@ -239,6 +239,22 @@ function pcm_slack_prog_lines($summary) {
     return $t . pcm_slack_net_lines($summary);
 }
 
+// Drive encryption for the team (17 Oct 2026, owner: "yes do all three"): BitLocker on/paused/off, the recovery Key ID(s)
+// - what the BitLocker screen and the Microsoft account's recovery-key list name each key by - and where the key is. $bl is
+// the CLEANED shape (pcm.php pcm_bitlocker_in, or the PC card's 'bl'): 8-hex IDs and closed values only. '' when absent.
+function pcm_slack_bl_line($bl) {
+    if (!is_array($bl)) return '';
+    if (empty($bl['on']) && empty($bl['enc'])) return 'Drive encryption: off';
+    $ids = array_values(array_filter((array)($bl['ids'] ?? array()), function ($x) { return is_string($x) && preg_match('/^[0-9A-F]{8}$/', $x); }));
+    $t = 'Drive encryption: ' . (!empty($bl['on']) ? 'BitLocker on' : 'encrypted, protection paused');
+    if ($ids) $t .= ' - Key ID' . (count($ids) > 1 ? 's ' : ' ') . implode(', ', $ids);
+    elseif (empty($bl['key'])) $t .= ' - no recovery key found';
+    $home = (string)($bl['home'] ?? '');
+    if ($home === 'setup') $t .= ' - no Microsoft account on it: the key is most likely in the account used at set-up (ours, if we set it up)';
+    elseif ($home === 'online') $t .= ' - a Microsoft or work account is on it (the key may be in theirs)';
+    return $t;
+}
+
 // Network safety detail for the team (PC Service Professional v4.12 summary.net): what listens on the network and
 // every router forward. The customer's email carries only the one Network row.
 function pcm_slack_net_lines($summary) {
@@ -281,6 +297,7 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
           . ($pc !== '' ? 'PC: ' . slk_plain(substr($pc, 0, 80)) . "\n" : '')
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
+          . (($blLine = pcm_slack_bl_line(function_exists('pcm_bitlocker_in') ? pcm_bitlocker_in($summary['bitlocker'] ?? null) : null)) !== '' ? $blLine . "\n" : '')
           . ($notes ? "Top notes:\n- " . implode("\n- ", $notes) . "\n" : '')
           . pcm_slack_prog_lines($summary)
           // ServicePass "Resend last report" (17 Sep 2026): the service ran earlier and its first upload failed

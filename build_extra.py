@@ -34157,7 +34157,12 @@ def write_portal_page():
     var h = b.on ? 'BitLocker on' : 'Encrypted, protection paused';
     if (ids.length) h += ' \\u00b7 Key ID' + (ids.length > 1 ? 's ' : ' ') + ids.map(function (x) { return '<b style="font-family:ui-monospace,Consolas,monospace;letter-spacing:.05em">' + esc(x) + '</b>'; }).join(', ');
     else if (!b.key) h += ' \\u00b7 <span style="color:var(--pwarn)">no recovery key found</span>';
-    return h + when + (ids.length ? '<div class="s">The key itself is in the Microsoft account signed in when the PC was set up (aka.ms/myrecoverykey) \\u2014 match it by this ID, not the PC\\u2019s name.</div>' : '');
+    // Service Pass 4.35: where the key most likely is - the set-up account (no Microsoft account on the PC) or theirs. A hint:
+    // check it against our account's list by this ID
+    var where = b.home === 'setup' ? 'No Microsoft account on this PC, so the key is most likely in the account used to set it up \\u2014 ours, if we did'
+      : b.home === 'online' ? 'A Microsoft or work account is on this PC \\u2014 the key may be in theirs (and in ours, if we set it up)'
+      : 'The key itself is in the Microsoft account signed in when the PC was set up';
+    return h + when + (ids.length ? '<div class="s">' + where + ' (aka.ms/myrecoverykey) \\u2014 match it by this ID, not the PC\\u2019s name.</div>' : '');
   }
   function pcNoteText(t) {
     return esc(t).replace(/(https:\\/\\/[^\\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\\n/g, '<br />');

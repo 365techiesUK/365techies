@@ -81,7 +81,11 @@ function pcm_bitlocker_in($v) {
         if (preg_match('/^[0-9A-F]{8}$/', $id) && !in_array($id, $ids, true)) $ids[] = $id;
         if (count($ids) >= 4) break;
     }
-    return array('on' => !empty($v['on']), 'enc' => !empty($v['enc']) || !empty($v['on']), 'key' => !empty($v['key']) || count($ids) > 0, 'ids' => $ids);
+    // Service Pass 4.35: where the key most likely went - 'online' (a Microsoft/work account is on the PC), 'setup' (none is:
+    // the account used at set-up - ours, for the PCs we set up), '' unknown. A hint for the team, never proof; closed values only
+    $home = isset($v['home']) && is_string($v['home']) && in_array($v['home'], array('online', 'setup'), true) ? $v['home'] : '';
+    return array('on' => !empty($v['on']), 'enc' => !empty($v['enc']) || !empty($v['on']), 'key' => !empty($v['key']) || count($ids) > 0, 'ids' => $ids,
+                 'home' => $home);
 }
 
 /* software inventory (P0): the snapshot the six-weekly service uploads in summary.software.

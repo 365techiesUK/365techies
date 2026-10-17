@@ -3308,6 +3308,8 @@ if ($action === 'staffpcslack') {
     $lines[] = 'Health ' . ($d['fresh'] ? 'not checked yet' : $d['score'] . '%' . ($d['verdict'] !== '' ? ' - ' . $esc($d['verdict']) : '')) . ', seen ' . $esc($d['seen'] !== '' ? $d['seen'] . ' UTC' : 'never') . ', app v' . ($d['vn'] !== '' ? $d['vn'] : $d['ver']);
     if ($warn) $lines[] = 'Warnings: ' . $esc(implode(', ', $warn));
     if ($spec) $lines[] = $esc(implode(' | ', $spec));
+    require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap); needed here for the line below
+    if (($blLine = pcm_slack_bl_line($d['bl'])) !== '') $lines[] = $esc($blLine);   // drive encryption + the Key ID, from the last service
     if ($line !== '') $lines[] = '>' . str_replace("\n", "\n>", $esc($line));
     $lines[] = '_Posted from the portal by ' . $esc($who) . ' - https://365techies.co.uk/portal/_';
     require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap)
