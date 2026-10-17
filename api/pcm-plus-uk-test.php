@@ -115,7 +115,8 @@ $src = (string)file_get_contents(__DIR__ . '/pcm-buy-config.php');
 // live order was created by PayPal (the owner's own account was refused as the merchant itself); a real purchase + refund is
 // still to be made, by card as a guest, when convenient.
 check(preg_match("/^\\\$BUY_UK = 'on';/m", $src) === 1, "shipped: \$BUY_UK = 'on' (owner's go, 18 Oct 2026)");
-check(preg_match("/^\\\$UK_GBP = '19\\.99';/m", $src) === 1 && preg_match("/^\\\$UK_PRICE = '\x{00A3}19\\.99 for 1 year - does not renew';/mu", $src) === 1, 'shipped: GBP 19.99, and the line the app shows (34 characters, under 40)');
+// 18 Oct 2026 (owner: "you don't say that it's 19.99 ... for three PCs for one year"): the line names the 3 PCs
+check(preg_match("/^\\\$UK_GBP = '19\\.99';/m", $src) === 1 && preg_match("/^\\\$UK_PRICE = '\x{00A3}19\\.99 for 1 year, 3 PCs, no renewal';/mu", $src) === 1, 'shipped: GBP 19.99, and the line the app shows (36 characters, under 40)');
 check(preg_match("/^\\\$TRIAL_AUTO_UK_FROM = '2026-10-13';/m", $src) === 1, 'shipped: the automatic free month from 13 Oct 2026');
 $pcm = (string)file_get_contents(__DIR__ . '/pcm.php');
 check(strpos($pcm, 'plus_trial_auto_uk($auId, $auCc, (int)$in[\'ver\'], $auD[\'m\'][$auId])') !== false && strpos($pcm, 'plus_trial_auto_uk') < strpos($pcm, '$trHand = '), 'pcm.php gives the month on a keyless check-in, before handing any over');

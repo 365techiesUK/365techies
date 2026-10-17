@@ -194,10 +194,13 @@ $iC = strpos($P, "if (\$action === 'checkin') {"); $iPC = strpos($P, 'plus_check
 check($iC !== false && $iPC !== false && $iK !== false && $iPC < $iK && strpos(substr($P, $iK, 700), 'plus_offer_out(') !== false, 'check-in: an Unlock key is checked; only a KEYLESS answer carries the offer');   // (700: 9 Oct 2026 the free-month hand-over sits in that answer too)
 check(substr_count($P, "!isset(\$db['customers'][\$key]) && function_exists('plus_is_key') && plus_is_key(\$key)") === 4, 'a customer key always wins over an Unlock key (activate, check-in, report, report notice)');
 check(strpos($P, "if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';") !== false && strpos($P, "function_exists('plus_offer_out') ? plus_offer_out(") !== false, 'guarded: a missing library can never stop a check-in');
-check(strpos($P, "\$offer = \$pr['ok'] ? array() : plus_offer_out(") !== false && strpos($P, "array('plus_error'=>\$pr['error']) + \$offer") !== false, 'a key that has run out is offered Unlock again (to renew)');
+// 18 Oct 2026: a free month still running is sent the offer too (its last-days reminder names the key and price); a bought
+// key that is still good is not, and the app never sells while a key is good (Buy.Offered needs !IsPlus)
+check(strpos($P, "\$offer = (\$pr['ok'] && !\$tri) ? array() : plus_offer_out(") !== false && strpos($P, "array('plus_error'=>\$pr['error']) + \$offer") !== false, 'a key that has run out is offered Unlock again (to renew); a running free month is sent the offer for its reminder');
 // 9 Oct 2026: a free month that has ended - UK PCs are offered our plans even while the paid app is switched off
 check(strpos($P, "if (\$tri && !\$pr['ok'] && !isset(\$offer['offer']) && \$trOut['region'] === 'uk') \$offer = array('offer'=>'plan');") !== false, 'a free month over, in the UK: our plans are offered (even with the paid app off)');
-check(strpos($P, "\$trHand = (\$key === '' && function_exists('plus_trial_handover'))") !== false && strpos($P, "array('trial_key'=>\$trHand['key']") !== false, 'a keyless check-in hands over a waiting free month');
+// (17 Oct 2026, 36.4.2: never while the PC is being handed its customer key back - pcm_relink_key, $rk)
+check(strpos($P, "\$trHand = (\$key === '' && \$rk === '' && function_exists('plus_trial_handover'))") !== false && strpos($P, "array('trial_key'=>\$trHand['key']") !== false, 'a keyless check-in hands over a waiting free month (not while it is re-linked)');
 foreach (array('reportup' => "out(array('ok'=>true,'kept'=>false))", 'reportnote' => "out(array('ok'=>true,'posted'=>false))") as $act => $ans) {
     $i0 = strpos($P, "if (\$action === '" . $act . "') {"); $iP = strpos($P, $ans, $i0); $iU = strpos($P, "out(array('ok'=>false,'error'=>'unknown_key'))", $i0);
     check($i0 !== false && $iP !== false && $iU !== false && $iP < $iU, $act . ': an Unlock key\'s report is taken and NOT kept or posted (stays on the PC; stops the Slack fallback)');

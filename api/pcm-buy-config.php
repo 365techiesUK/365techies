@@ -43,7 +43,7 @@ $PP_COUNTRIES = 'US,CA,AU,NZ,NO,JP,SG,HK';
 // $UK_GBP is the price in pounds; $UK_PRICE is how it reads beside the button (40 characters at most).
 $BUY_UK = 'on';
 $UK_GBP = '19.99';
-$UK_PRICE = '£19.99 for 1 year - does not renew';
+$UK_PRICE = '£19.99 for 1 year, 3 PCs, no renewal';   // 18 Oct 2026 (owner): say it covers 3 PCs
 // 13 Oct 2026 (owner: "Yes, automatic"): every NEW UK install that isn't linked to a customer gets the free month once -
 // first seen by its check-ins on or after this date (installs already counted before it are left to staff, as before).
 // '' = off. Our own PCs are never given one.

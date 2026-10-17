@@ -254,9 +254,12 @@ if ($action === 'checkin') {
         $trOut = $tri ? array('trial'=>1, 'trial_until'=>(int)$tri['until'], 'region'=>($cc === '' || in_array($cc, array('GB','IM','JE','GG'), true)) ? 'uk' : 'abroad') : array();
         if ($tri && !$pr['ok'] && $pr['error'] === 'expired') $trOut['trial_ended'] = 1;
         // (a key that has run out is offered "Unlock everything" again - to renew - where the paid app is offered at all)
-        $offer = $pr['ok'] ? array() : plus_offer_out($cc, plus_mhash($machine));
+        // 18 Oct 2026 (owner: the free month's last-days reminders should mention the key too): a free month that is still
+        // running is sent the offer as well, so the app knows the key and its price for that reminder. The app never sells
+        // while a key is good (Buy.Offered needs !IsPlus), so nothing on screen changes until the month is over.
+        $offer = ($pr['ok'] && !$tri) ? array() : plus_offer_out($cc, plus_mhash($machine));
         if ($tri && !$pr['ok'] && !isset($offer['offer']) && $trOut['region'] === 'uk') $offer = array('offer'=>'plan');
-        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires'])
+        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires']) + $offer
                 : array('plus_error'=>$pr['error']) + $offer) + $trOut
             + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
     }
