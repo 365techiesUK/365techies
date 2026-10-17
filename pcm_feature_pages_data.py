@@ -132,6 +132,8 @@ SHOTS['drivehealth'] = ('/images/pcm-feat-drivehealth-v41.webp', 720, 388, 'This
 SHOTS['gputemps'] = ('/images/pcm-feat-gputemps-v41.webp', 720, 385, 'Temperatures in 365 PC Manager: two NVIDIA GeForce RTX 3090 graphics cards at 47&deg;C and 52&deg;C, each with a bar for its hottest temperature on each of the last 30 days, under the white line at 93&deg;C where it starts slowing itself down (sample history)', ('My PC', 'Temperatures'))
 CAPS['drivehealth'] = 'The real app, on our office PC.'
 CAPS['gputemps'] = 'The real app (a sample temperature history).'
+SHOTS['lightshow'] = ('/images/pcm-feat-lightshow-v41.webp', 870, 530, 'The light show in 365 PC Manager&rsquo;s music window: the Dream scene, a glowing rose-window shape in pink and gold, beside the Adjust the light show panel showing Dream and the mood Follow the music, under the Picture, Dream, Mix, Scenes, Adjust and Full screen buttons', ('Music &amp; games', 'Music, then Big view, then Now playing'))
+CAPS['lightshow'] = 'The real app, with the Adjust panel open (a sample tune).'
 
 
 # 13 Oct 2026: clip = a 9-second silent clip of the same screen (images/pcm-clip-<clip>.mp4 + .jpg poster, made in
@@ -572,7 +574,7 @@ RD = {
         {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/music-visualiser-for-windows/">a music visualiser that moves to the radio</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # ============================================================ 6. CDs on Windows 11 (v36's CDs)
@@ -643,7 +645,7 @@ CD = {
         {'q': 'Will my copied songs have their names?', 'a': '<p>Media Player and Windows Media Player Legacy look the names up online when they can. Our free app looks the album, artist and song names up on MusicBrainz, the free online music encyclopaedia, and lets you correct them.</p>'},
         {'q': 'Can you copy all my CDs for me?', 'a': '<p>Yes. We can set it up remotely so copying each CD is one click, or do the whole shelf for you. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving to a new computer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/music-visualiser-for-windows/">a free music visualiser</a>, <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving to a new computer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # ============================================================ 7. A house that looks and sounds lived-in (v36's timer)
@@ -2002,6 +2004,135 @@ SH = {
 }
 
 
+# ============================================================ 22. A free music visualiser for Windows (17 Oct 2026; owner: "do the music
+# visualiser page as well"). Bing 17 Jul - 14 Oct 2026, exact match (seo-research/pcm-364-keywords-2026-10-17/FINDINGS.md): "audio
+# visualizer" 4K world / 291 UK, "music visualizer" 2.6K / 194, "sound visualizer" 467, "music visualizer free" 456, "spotify
+# visualizer" 270; no page on the site (sitemap checked). Results are brand-heavy, so the page answers the questions round them:
+# does Windows have one, why Spotify/YouTube don't, then ours.
+# Sources, read 17 Oct 2026: Spotify for Developers blog 27 Nov 2024 (Audio Features + Audio Analysis closed to new apps);
+# Windows Media Player Legacy's visualisations (Alchemy, Bars and Waves, Battery: Now Playing, right-click; Optional features on
+# Windows 11); VLC Audio > Visualizations; WCAG 2.3.1; Epilepsy Society (photosensitive epilepsy).
+# The app, 36.4 source: Loopback.cs (listens to what goes OUT to the default speakers - not the microphone, nothing recorded,
+# kept or sent; only while the light show is on screen), GlVisual.cs + VizScenes1-3.cs + GlFluid.cs (12 scenes offered - Coral
+# and Scope are Built = false; Mix changes on a new song, a drop, a phrase or a quiet passage; quality steps on a slow PC; Remote
+# Desktop / basic display driver -> the simple Aurora), VizContract.cs (moods: Follow the music, Calm, Classical, Late night,
+# Rock, 80s, Party), VizControls.cs (Adjust: colours, Speed, Bounce, Trails, Detail, the scene's own settings, Flashing Gentle /
+# None / Bigger, Surprise me, Put back as it was), VizBrain.cs (the flash guard: Gentle caps every pulse well under WCAG's 10%
+# general-flash swing; Bigger = edges >= 0.36 s apart and a 2 s rest after 5 s; Windows' Animation effects off -> None),
+# VizFullScreen.cs (the bar, the keys; another app's song and play/pause through Windows' media controls - Elsewhere.cs).
+# Path: Music & games > Music > Big view > Now playing. Free: no IsPro gate anywhere in the music window or the light show.
+# Pictures: the SIGNED 36.4 exe's own render (PCM_SNAPSHOT, PCM_SNAPTABS=music, PCM_SNAPMODES=manager, PCM_SNAPVIZONLY=1), cropped
+# to the light show and its Adjust panel (no sample song title, no app logos); the twelve scenes = docs\lightshow-2026-10-16\
+# twelve-scenes-qa27.jpg (the app's own QA stills from a made-up tune) at 1600 px.
+_SPOTIFY_API = '<a href="https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api" rel="noopener" target="_blank">Spotify for Developers</a>'
+_SCENES_FIG = ('<figure style="margin:1.2rem 0 0"><img src="/images/pcm-lightshow-scenes-v41.webp" width="1600" height="747" '
+               'alt="The twelve light show scenes in 365 PC Manager: Dream, Spectrum, Ridgelines, Sunset Drive, Hyperspace, Liquid, Aurora, Orbits, Silk, Mandala, Moonlit Sea and Neon Tunnel" '
+               'loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
+               '<figcaption style="font-size:.78rem;color:var(--muted);margin-top:.45rem">All twelve scenes as the app draws them: stills the app made itself from a sample tune.</figcaption></figure>')
+MV = {
+    'slug': 'music-visualiser-for-windows',
+    'title': 'Free Music Visualiser for Windows: Works With Any Music',
+    'metaDesc': 'Free music visualiser for Windows 11 and 10 that moves to anything your PC plays, Spotify and YouTube too. Twelve scenes, full screen, gentle on flashing.',
+    'ogTitle': 'A free music visualiser for Windows that follows any music',
+    'crumbName': 'Music Visualiser for Windows',
+    'eyebrow': '// MUSIC VISUALISER FOR WINDOWS',
+    'h1': 'A free <em class="grad grad--cyan">music visualiser</em> for your Windows PC',
+    'lede': 'Want lights that move to your music on a Windows PC? Windows&rsquo; newer apps dropped their visualisers, and Spotify and YouTube never had one. Here&rsquo;s what Windows still has, why most visualisers can&rsquo;t see Spotify, and our free one that follows anything your PC plays, with twelve scenes, full screen and the TV.',
+    'chips': ['Free, no sign-up', 'Follows any app', 'Gentle on flashing'],
+    'primaryCta': ['Download it free', '__PCM_SETUP__'], 'secondaryCta': ['See the twelve scenes', '#s5'],
+    'ctaHead': 'Want it on the big screen?', 'ctaSub': 'We can set it up with you over a remote connection and help get the PC showing on your TV. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Moving pictures that follow the beat, the bass and the build of whatever is playing.'),
+        ('Windows&rsquo; own', 'Windows Media Player Legacy still has a few old ones, but only for songs it plays itself.'),
+        ('Spotify and YouTube', 'Neither has one. A visualiser that listens to the PC&rsquo;s sound follows both, and everything else.'),
+        ('Ours', 'The free 365 PC Manager app: twelve scenes and a Mix that changes with the music, for anything the PC plays.'),
+        ('Full screen and TV', 'Full screen fills the monitor. Press Windows + P and choose Duplicate to show it on a TV as well.'),
+        ('Flashing', 'Gentle is the default, and None turns flashing off completely.'),
+        ('Cost', 'Free on Windows 11 and 10, with nothing to sign up for.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'What a music visualiser does',
+         'html': '<p>A music visualiser turns sound into moving pictures. It listens to the music, splits it into bass, middle and treble, finds the beat, and moves light, shapes and colour in time with it. The good ones notice the shape of a song too: building before a chorus, landing on the drop, settling in a quiet passage.</p>'
+                 '<p>They were everywhere in the days of Winamp and Windows Media Player. Most of today&rsquo;s music apps dropped them, which is why so many people go looking for one.</p>'},
+        {'eyebrow': '/02 &mdash; WINDOWS&rsquo; OWN', 'h2': 'Does Windows have a music visualiser?',
+         'html': '<ul>'
+                 '<li><strong>Windows Media Player Legacy</strong> still has its old visualisations, Alchemy, Bars and Waves and Battery: play a song, switch to the <strong>Now Playing</strong> view and right-click it. On Windows 11 you may need to add it first: Settings, System, <strong>Optional features</strong>, then Windows Media Player Legacy. They only follow songs Windows Media Player itself is playing.</li>'
+                 '<li><strong>The newer Media Player</strong> that comes with Windows 11 shows the album cover rather than a visualiser.</li>'
+                 '<li><strong>VLC</strong>, the free video player, has a handful (Audio, then Visualizations), again only for what VLC itself plays.</li>'
+                 '</ul>'},
+        {'eyebrow': '/03 &mdash; SPOTIFY AND YOUTUBE', 'h2': 'Spotify, YouTube and the radio: why most visualisers can&rsquo;t see them',
+         'html': '<p>Spotify&rsquo;s app has no visualiser, and nor do YouTube or the radio station players. Visualiser websites that show Spotify relied on Spotify&rsquo;s own analysis of each song &mdash; its beats and loudness &mdash; and Spotify stopped giving that to new apps in November 2024 (' + _SPOTIFY_API + ').</p>'
+                 '<p>The way round it is a visualiser that listens to the sound itself on its way to your speakers or headphones. Windows lets a program do that without using the microphone, so it can follow anything the PC plays: Spotify, YouTube in the browser, iPlayer, the radio, even a game.</p>'},
+        {'eyebrow': '/04 &mdash; THE FREE ONE', 'h2': 'A free visualiser that follows anything your PC plays',
+         'html': '__APP_BOX_LIGHTSHOW__'},
+        {'eyebrow': '/05 &mdash; THE SCENES', 'h2': 'Twelve scenes, and a Mix that follows the song',
+         'html': '<ul>'
+                 '<li><strong>Dream:</strong> light swirling round a shape made of the music.</li>'
+                 '<li><strong>Spectrum:</strong> a hi-fi graphic equaliser.</li>'
+                 '<li><strong>Ridgelines:</strong> lines of music rolling away like hills.</li>'
+                 '<li><strong>Sunset Drive:</strong> a neon drive into the sunset.</li>'
+                 '<li><strong>Hyperspace:</strong> flying through stars and coloured clouds.</li>'
+                 '<li><strong>Liquid:</strong> ink in water &mdash; stir it with the mouse.</li>'
+                 '<li><strong>Aurora:</strong> northern lights over a still lake.</li>'
+                 '<li><strong>Orbits:</strong> thousands of glowing motes round bright cores.</li>'
+                 '<li><strong>Silk:</strong> threads of light flowing like silk.</li>'
+                 '<li><strong>Mandala:</strong> a living kaleidoscope, turning to the beat.</li>'
+                 '<li><strong>Moonlit Sea:</strong> a calm night sea under a big moon.</li>'
+                 '<li><strong>Neon Tunnel:</strong> flying down an endless neon tunnel.</li>'
+                 '</ul>'
+                 '<p><strong>Mix</strong> moves between them on the music&rsquo;s big moments &mdash; a new song, a drop, the start of a phrase, a quiet passage &mdash; choosing a scene whose energy suits what&rsquo;s playing. The scenes are drawn by your graphics card at the screen&rsquo;s own pace, and there&rsquo;s nothing else to install.</p>'
+                 + _SCENES_FIG},
+        {'eyebrow': '/06 &mdash; MAKE IT YOURS', 'h2': 'Moods, colours and settings',
+         'html': '<ul>'
+                 '<li><strong>Mood</strong> sets the colours, speed and liveliness for every scene: <em>Follow the music</em> (it changes with what&rsquo;s playing), Calm, Classical, Late night, Rock, 80s or Party.</li>'
+                 '<li><strong>Adjust</strong> changes the colours, how fast it moves, how strongly it bounces to the beat, the trails it leaves and the detail, plus each scene&rsquo;s own settings. Changes show straight away and save themselves.</li>'
+                 '<li><strong>Surprise me</strong> picks a new look, and <strong>Put back as it was</strong> undoes the lot.</li>'
+                 '<li>On talk radio and podcasts it notices the speech, calms down and stops changing scene.</li>'
+                 '</ul>'},
+        {'eyebrow': '/07 &mdash; FULL SCREEN', 'h2': 'Full screen, and on the TV',
+         'html': '<ul>'
+                 '<li><strong>Full screen</strong> fills the monitor. Move the mouse or press a key for the bar along the bottom: the scene, play and pause, Mood, Colours and Adjust. It hides itself again after a few seconds.</li>'
+                 '<li><strong>Keys:</strong> Space plays and pauses, Left and Right change the scene, Up and Down make it faster or slower, C changes the colours, M the mood, 1 to 9 picks a scene and 0 is Mix. Esc comes back.</li>'
+                 '<li><strong>Whatever is playing:</strong> the song&rsquo;s name comes up as each new song starts, and Space pauses it, even in Spotify or a YouTube tab, through Windows&rsquo; own media controls.</li>'
+                 '<li><strong>On the TV:</strong> connect the PC with an HDMI lead, press <strong>Windows + P</strong>, choose <strong>Duplicate</strong>, then click Full screen.</li>'
+                 '</ul>'},
+        {'eyebrow': '/08 &mdash; FLASHING LIGHT', 'h2': 'Gentle on flashing light, from the start',
+         'html': '<p>Flashing light can trigger seizures in people with photosensitive epilepsy, and plenty of visualisers strobe on every beat. This one starts on <strong>Gentle</strong>: every pulse of light is kept small and soft, designed to stay well below the size the web accessibility guidelines count as a flash (<a href="https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold.html" rel="noopener" target="_blank">WCAG</a>).</p>'
+                 '<ul>'
+                 '<li><strong>None</strong> turns the pulses off completely, while the scenes still move with the music. If Windows&rsquo; <em>Animation effects</em> setting is off, None is what it uses unless you choose otherwise.</li>'
+                 '<li><strong>Bigger</strong> has to be chosen on purpose in Adjust, and even then flashes are kept to about three a second, with a rest after five seconds of them.</li>'
+                 '</ul>'
+                 '<p>If flashing light affects you or anyone watching, keep Gentle or None, and see the <a href="https://epilepsysociety.org.uk/about-epilepsy/epileptic-seizures/seizure-triggers/photosensitive-epilepsy" rel="noopener" target="_blank">Epilepsy Society&rsquo;s advice on screens</a>.</p>'},
+        {'eyebrow': '/09 &mdash; NOT MOVING?', 'h2': 'If it doesn&rsquo;t move with the music',
+         'html': '<ul>'
+                 '<li><strong>Check the sound comes out of Windows&rsquo; default speakers or headphones</strong> (Settings, System, Sound, Output). The light show listens to the default output, so a program sending its sound somewhere else can&rsquo;t be heard.</li>'
+                 '<li><strong>Nothing playing?</strong> The scenes drift slowly and wait. In Adjust, a made-up tune plays so you can see your changes.</li>'
+                 '<li><strong>A plain light show instead of the scenes?</strong> Over Remote Desktop, or on a PC with only Windows&rsquo; basic display driver, the graphics card isn&rsquo;t available, so it shows a simple Aurora. Install the graphics driver from your PC&rsquo;s maker.</li>'
+                 '<li><strong>Jerky on an older PC?</strong> It lowers its own detail to keep up. Closing other programs helps, and so does a lower Detail in Adjust. On a laptop, plug it in for a long session.</li>'
+                 '</ul>'},
+    ],
+    'howToName': 'How to get a free music visualiser on a Windows PC',
+    'howToSteps': [
+        {'name': 'Download 365 PC Manager', 'text': 'Download the free app from 365techies.co.uk and install it on Windows 11 or 10.'},
+        {'name': 'Open the music window', 'text': 'In the app, choose Music &amp; games, then Music, then Big view.'},
+        {'name': 'Choose Now playing', 'text': 'Click Now playing, then a scene, or Mix to let it change with the music.'},
+        {'name': 'Play some music anywhere', 'text': 'Play a song in the app, Spotify, YouTube or any other app. The light show follows whatever the PC plays.'},
+        {'name': 'Go full screen', 'text': 'Click Full screen. Press Esc to come back.'},
+    ],
+    'faqs': [
+        {'q': 'Is there a free music visualiser for Windows 11?', 'a': '<p>Yes. Our free 365 PC Manager app has a light show with twelve scenes that move to anything the PC plays. Windows Media Player Legacy also still has a few old visualisations, but only for songs it plays itself.</p>'},
+        {'q': 'Is there a music visualizer for Spotify on Windows?', 'a': '<p>Spotify&rsquo;s app has none. A visualiser that listens to the PC&rsquo;s sound, like the light show in our free app, follows Spotify along with everything else, and in full screen it shows the song&rsquo;s name and Space pauses it.</p>'},
+        {'q': 'Does it use my microphone?', 'a': '<p>No. It listens to the sound going out to your speakers or headphones, which Windows allows without the microphone, so the microphone light stays off. Nothing is recorded, kept or sent anywhere.</p>'},
+        {'q': 'Can I show it on my TV?', 'a': '<p>Yes. Connect the PC to the TV with an HDMI lead, press Windows + P, choose Duplicate, then click Full screen in the app.</p>'},
+        {'q': 'What if flashing light affects me?', 'a': '<p>It starts on Gentle, which keeps every pulse of light soft and small, and None turns flashing off completely. Bigger flashes have to be chosen on purpose. If flashing light affects you or anyone watching, keep Gentle or None.</p>'},
+        {'q': 'Will it slow my PC down?', 'a': '<p>It uses the graphics card and only runs while it&rsquo;s on screen. On a slower PC it lowers its own detail to stay smooth. On a laptop, plug it in for a long session.</p>'},
+        {'q': 'Does it cost anything?', 'a': '<p>No. The light show is part of the free app, on Windows 11 and 10, with nothing to sign up for.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/how-to-set-an-alarm-on-your-computer/">waking up to music on your computer</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/graphics-card-benchmark/">graphics card benchmark</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
                  'h3s': 'Still muffled after every step? That is a remote job.'},
@@ -2037,6 +2168,8 @@ FLOWS = {
                  'h3s': 'Still hot after every step? That is a job for us.'},
     SH['slug']: {'h2': 'Check your drive, step by step', 'ask': 'Is that step done?', 'tip': 'Write down the wear and the hours, so you can compare them in six months.',
                  'h3s': 'Drive showing a warning? Back up, then that is a job for us.'},
+    MV['slug']: {'h2': 'Get the light show going, step by step', 'ask': 'Is it moving with the music?', 'tip': 'Play a song you know well: it catches the beat within a few seconds.',
+                 'h3s': 'Still not moving after every step? That is a remote job.'},
 }
 
 
@@ -2111,8 +2244,11 @@ def pages(setup_url):
     boxes['__APP_BOX_DRIVEHEALTH__'] = _app_box('drivehealth', 'Drive health and temperature, in plain words',
         '<p style="margin:0">Its <strong>This PC</strong> page shows Windows&rsquo; own drive self-check in plain words &mdash; <strong>healthy</strong>, or worth a look &mdash; and its health report adds the SSD&rsquo;s <strong>wear</strong> and the drive&rsquo;s <strong>hours of use</strong> (Windows asks your permission for those, as in the steps above). Its <strong>Temperatures</strong> page shows each internal drive against its maker&rsquo;s own warning level. '
         'If Windows ever says a drive may be failing, the app&rsquo;s Home page tells you to copy your photos and documents somewhere safe that day. It only reads what the drive reports.</p>', setup_url)
+    boxes['__APP_BOX_LIGHTSHOW__'] = _app_box('lightshow', 'A light show that moves with anything your PC plays',
+        '<p style="margin:0">Its music window has a <strong>light show</strong> drawn by your graphics card: twelve scenes, from northern lights over a lake to a neon drive into the sunset, and <strong>Mix</strong>, which changes scene on the music&rsquo;s big moments. It listens to the sound going to your speakers, so it follows Spotify, YouTube, iPlayer and the radio as well as the app&rsquo;s own music, and finds the beat, the bass and the build. '
+        'Moods, colours, speed and each scene&rsquo;s own settings are in <strong>Adjust</strong>, and <strong>Full screen</strong> fills the monitor or the TV. It isn&rsquo;t the microphone: nothing is recorded, kept or sent.</p>', setup_url)
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU, RM, LO, SH):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU, RM, LO, SH, MV):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")

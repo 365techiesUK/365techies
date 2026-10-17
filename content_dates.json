@@ -1215,7 +1215,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "f6e0b94b53bdd9e0",
+  "h": "633fa1c56851b43e",
   "last": "2026-10-17"
  },
  "free-tools": {
@@ -1421,8 +1421,8 @@
  },
  "how-to-listen-to-the-radio-on-your-computer": {
   "first": "2026-10-08",
-  "h": "d46b5a0568c9205f",
-  "last": "2026-10-08"
+  "h": "14e00b75568c716c",
+  "last": "2026-10-17"
  },
  "how-to-make-a-google-app-password": {
   "first": "2026-09-29",
@@ -1436,7 +1436,8 @@
  },
  "how-to-play-a-cd-on-windows-11": {
   "first": "2026-10-08",
-  "h": "eeef567956a0d52f"
+  "h": "a739286ac04b88a8",
+  "last": "2026-10-17"
  },
  "how-to-prepare-business-for-windows-11": {
   "first": "2026-06-16",
@@ -1604,7 +1605,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "695f5ba3e9badad0",
+  "h": "d95319264cf0f42d",
   "last": "2026-10-17"
  },
  "it-health-check-tool": {
@@ -2297,6 +2298,11 @@
   "first": "2026-07-28",
   "h": "41ce78cb1c93f816",
   "last": "2026-10-11"
+ },
+ "music-visualiser-for-windows": {
+  "first": "2026-10-17",
+  "h": "7ea07f13c22bdb23",
+  "last": "2026-10-17"
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
