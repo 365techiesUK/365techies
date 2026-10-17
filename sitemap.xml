@@ -87,7 +87,7 @@
   <url><loc>https://365techies.co.uk/cyber-essentials/</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://365techies.co.uk/custom-pc-builds/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/preventative-maintenance/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://365techies.co.uk/windows-11-support/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://365techies.co.uk/windows-11-support/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/email-support/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/new-computer-setup/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/printer-support/</loc><lastmod>2026-10-13</lastmod></url>
@@ -153,7 +153,7 @@
   <url><loc>https://365techies.co.uk/computer-spec-checker/</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://365techies.co.uk/dns-lookup/</loc><lastmod>2026-09-28</lastmod></url>
   <url><loc>https://365techies.co.uk/pc-benchmark/</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://365techies.co.uk/graphics-card-benchmark/</loc><lastmod>2026-09-28</lastmod></url>
+  <url><loc>https://365techies.co.uk/graphics-card-benchmark/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/free-tools/</loc><lastmod>2026-10-12</lastmod></url>
   <url><loc>https://365techies.co.uk/ai-roi-calculator/</loc><lastmod>2026-09-28</lastmod></url>
   <url><loc>https://365techies.co.uk/broadband-checker/</loc><lastmod>2026-09-28</lastmod></url>
@@ -289,7 +289,7 @@
   <url><loc>https://365techies.co.uk/managed-it-support/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/it-jargon-buster/the-cloud/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/it-jargon-buster/ram/</loc><lastmod>2026-09-26</lastmod></url>
-  <url><loc>https://365techies.co.uk/it-jargon-buster/ssd/</loc><lastmod>2026-09-26</lastmod></url>
+  <url><loc>https://365techies.co.uk/it-jargon-buster/ssd/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/it-jargon-buster/hard-drive/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/it-jargon-buster/cache/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/it-jargon-buster/cookies/</loc><lastmod>2026-08-31</lastmod></url>
@@ -440,7 +440,7 @@
   <url><loc>https://365techies.co.uk/move-virgin-media-email-to-gmail/</loc><lastmod>2026-10-11</lastmod></url>
   <url><loc>https://365techies.co.uk/printer-wont-connect-after-moving-house/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/who-has-a-file-open-on-shared-drive/</loc><lastmod>2026-09-26</lastmod></url>
-  <url><loc>https://365techies.co.uk/laptop-clicking-noise-wont-turn-on/</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://365techies.co.uk/laptop-clicking-noise-wont-turn-on/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/sky-email-wont-add-to-new-outlook/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/cctv-in-detached-garage-connect-to-house/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/employee-left-dont-know-computer-password/</loc><lastmod>2026-10-13</lastmod></url>
@@ -528,10 +528,13 @@
   <url><loc>https://365techies.co.uk/virus-threat-protection-managed-by-your-organization/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/heic-photos-wont-open-on-windows/</loc></url>
   <url><loc>https://365techies.co.uk/mcafee-or-norton-expired-do-i-need-to-renew/</loc></url>
-  <url><loc>https://365techies.co.uk/why-does-my-pc-keep-crashing/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/why-does-my-pc-keep-crashing/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/dementia-clock/</loc><lastmod>2026-10-12</lastmod></url>
-  <url><loc>https://365techies.co.uk/how-to-check-laptop-battery-health/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/how-to-check-laptop-battery-health/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/stop-programs-starting-with-windows/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/reliability-monitor/</loc></url>
+  <url><loc>https://365techies.co.uk/laptop-overheating/</loc></url>
+  <url><loc>https://365techies.co.uk/how-to-check-ssd-health/</loc></url>
   <url><loc>https://365techies.co.uk/parents-guide-online-safety/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/youtube-parental-controls/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/xbox-parental-controls-uk/</loc><lastmod>2026-10-06</lastmod></url>
@@ -566,7 +569,7 @@
   <url><loc>https://365techies.co.uk/dell-laptop-hinge-repair/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/dell-xps-swollen-battery/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/dell-docking-station-not-working/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://365techies.co.uk/dell-g15-overheating/</loc><lastmod>2026-10-06</lastmod></url>
+  <url><loc>https://365techies.co.uk/dell-g15-overheating/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/dell-killer-wifi-problems/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/onedrive-problems/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/onedrive-moved-my-desktop-and-documents/</loc><lastmod>2026-10-06</lastmod></url>
@@ -646,7 +649,7 @@
   <url><loc>https://365techies.co.uk/scam-recovery/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/youve-been-hacked-email-bitcoin-scam/</loc><lastmod>2026-10-11</lastmod></url>
   <url><loc>https://365techies.co.uk/gaming-pc-tune-up/</loc><lastmod>2026-10-06</lastmod></url>
-  <url><loc>https://365techies.co.uk/gaming-pc-slow-wont-load-games/</loc><lastmod>2026-10-13</lastmod></url>
+  <url><loc>https://365techies.co.uk/gaming-pc-slow-wont-load-games/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/ferrari-sd2-laptop-windows-xp/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/cnc-machine-needs-windows-xp/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/office-2021-end-of-support/</loc></url>
@@ -666,9 +669,9 @@
   <url><loc>https://365techies.co.uk/laptop-touchpad-not-working/</loc></url>
   <url><loc>https://365techies.co.uk/screen-upside-down-or-sideways/</loc></url>
   <url><loc>https://365techies.co.uk/laptop-plugged-in-not-charging/</loc></url>
-  <url><loc>https://365techies.co.uk/windows-update-stuck/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://365techies.co.uk/windows-update-stuck/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/forgot-windows-password-or-pin/</loc></url>
-  <url><loc>https://365techies.co.uk/we-couldnt-update-the-system-reserved-partition/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://365techies.co.uk/we-couldnt-update-the-system-reserved-partition/</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://365techies.co.uk/home-assistant-victron-cerbo-gx/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/cerbo-gx-not-connecting-to-vrm/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/join/</loc><lastmod>2026-10-06</lastmod></url>
@@ -782,5 +785,5 @@
   <url><loc>https://365techies.co.uk/how-to-block-nuisance-calls-and-texts/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/how-to-set-up-a-second-monitor/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/ps5-emulator-real-or-fake/</loc><lastmod>2026-10-10</lastmod></url>
-  <url><loc>https://365techies.co.uk/it-advice/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://365techies.co.uk/it-advice/</loc><lastmod>2026-10-17</lastmod></url>
 </urlset>

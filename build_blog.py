@@ -570,7 +570,7 @@ def hub():
         ("Websites", _words("website websites wordpress wix squarespace web")),
     ]
     _other = "Everything else"
-    _pin = {"the-set-of-folders-cannot-be-opened": "Email"}   # an Outlook error whose slug names no topic
+    _pin = {"the-set-of-folders-cannot-be-opened": "Email", "how-to-check-ssd-health": "Windows &amp; PC problems"}   # an Outlook error whose slug names no topic
     _by_topic = {}
     for _s, _label in build_extra.GUIDE_REGISTRY:
         if (_s in _post_slugs or "noindex" in _robots.get(_s, "noindex") or _local.search(_s) or _tool.search(_s)

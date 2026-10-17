@@ -355,6 +355,7 @@ UPDATES = {
         ('&ldquo;Working on updates, don&rsquo;t turn off&rdquo;', 'Leave it plugged in, and give it at least an hour or two before doing anything.'),
         ('Stuck downloading', 'Restart, check the internet and free space, pause and resume, and run the troubleshooter.'),
         ('Fails again and again', 'Note the error code in Update history, then try Fix problems using Windows Update.'),
+        ('Repair Windows&rsquo; own files', 'In Terminal (Admin): DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow.'),
         ('Fix problems using Windows Update', 'Settings, System, Recovery: reinstalls Windows 11 and keeps your files, apps and settings.'),
         ('Back up first', 'Before any repair, copy your important files somewhere safe.'),
         ('Don&rsquo;t force it', 'Switching off mid-update is the last resort, not the first.'),
@@ -379,9 +380,11 @@ UPDATES = {
          'html': '<ol>'
                  '<li><strong>Find the error code:</strong> Settings, Windows Update, <strong>Update history</strong> shows each failed update with a code such as 0x800f0922. Microsoft&rsquo;s help pages explain most codes.</li>'
                  '<li><strong>Back up your important files</strong> to a USB drive or OneDrive first.</li>'
+                 '<li><strong>Repair Windows&rsquo; own files:</strong> right-click Start, choose <strong>Terminal (Admin)</strong> and say Yes. Run <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong>, which fetches good copies of damaged Windows files from Windows Update (stay online), then <strong>sfc /scannow</strong>, which checks every Windows file and puts back any that are damaged. Each can take a while, often 10 to 30 minutes; let them finish. Microsoft suggests this order (<a href="https://support.microsoft.com/en-us/topic/use-the-system-file-checker-tool-to-repair-missing-or-corrupted-system-files-79aa86cb-ca52-166a-92a3-966e85d4094e" rel="noopener" target="_blank">Microsoft</a>). If SFC still says it &ldquo;found corrupt files but was unable to fix some of them&rdquo;, go on to the next step.</li>'
                  '<li><strong>Use Windows 11&rsquo;s own repair:</strong> Settings, System, Recovery, <strong>Fix problems using Windows Update</strong>, then <strong>Reinstall now</strong>. It reinstalls the version of Windows you already have, repairs Windows&rsquo; own files, and keeps your files, apps and settings (<a href="https://support.microsoft.com/en-us/windows/deployment/install-upgrade/fix-issues-by-reinstalling-the-current-version-of-windows" rel="noopener" target="_blank">Microsoft</a>). Keep the PC plugged in and online until it finishes. It may not appear on PCs managed by a work or school.</li>'
                  '</ol>'
                  '<p><strong>The big yearly update keeps undoing itself?</strong> If it restarts, says &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop, or Microsoft&rsquo;s installer says &ldquo;We couldn&rsquo;t update the system reserved partition&rdquo;, the usual cause is a full start-up partition, not a broken PC. We fixed exactly that on a customer&rsquo;s Dell in October 2026 (5 KB free, 15 MB needed): <a href="/we-couldnt-update-the-system-reserved-partition/">how to check it and free the space safely</a>.</p>'
+                 '<p>365 PC Manager&rsquo;s full service runs the system file check itself: SFC first, DISM when SFC finds damage it can&rsquo;t fix, then SFC again, and it says in plain words when Windows needs the repair above (<a href="/free-pc-health-check/">the app</a>). Windows&rsquo; own record of every failed update, day by day, is in <a href="/reliability-monitor/">Reliability Monitor</a>.</p>'
                  '<p>Why updates sometimes cause trouble in the first place: <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</p>'},
         {'eyebrow': '/04 &mdash; STUCK ON THE BLUE SCREEN', 'h2': 'Stuck on &ldquo;Working on updates&rdquo; for hours',
          'html': '<p>Only if nothing has changed for several hours: hold the power button for about 10 seconds until the PC switches off, wait a moment, then switch it on again. Windows usually carries on, or says it couldn&rsquo;t complete the updates and undoes them, which is safe.</p>'
@@ -395,6 +398,7 @@ UPDATES = {
         {'name': 'Restart and check again', 'text': 'Restart the PC (Restart, not Shut down), then Check for updates.'},
         {'name': 'Free space and pause', 'text': 'Free up space in Settings, System, Storage, then pause updates for a week and resume them.'},
         {'name': 'Run the troubleshooter', 'text': 'Settings, System, Troubleshoot, Other troubleshooters, Windows Update.'},
+        {'name': 'Repair system files', 'text': 'In Terminal (Admin), run DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow, and let each finish.'},
         {'name': 'Repair Windows', 'text': 'Back up first, then Settings, System, Recovery, Fix problems using Windows Update, Reinstall now.'},
     ],
     'faqs': [
@@ -402,10 +406,12 @@ UPDATES = {
         {'q': 'Is it safe to switch off during an update?', 'a': '<p>Avoid it. On the &ldquo;Working on updates&rdquo; screen, wait at least an hour or two. Only if nothing changes for several hours, hold the power button to switch off; Windows usually carries on or undoes the update.</p>'},
         {'q': 'Why does Windows Update keep failing?', 'a': '<p>Common causes are too little free space, a damaged update download or Windows file, or a device or driver the update doesn&rsquo;t like. Update history shows the error code. If it&rsquo;s the big yearly update that keeps undoing itself, check the hidden start-up partition: <a href="/we-couldnt-update-the-system-reserved-partition/">we couldn&rsquo;t update the system reserved partition</a>.</p>'},
         {'q': 'What does Fix problems using Windows Update do?', 'a': '<p>It reinstalls the version of Windows 11 you already have, repairing Windows&rsquo; own files, and keeps your files, apps and settings. Back up first anyway.</p>'},
+        {'q': 'What does sfc /scannow do?', 'a': '<p>System File Checker checks every Windows file against a good copy and puts back any that are damaged or missing. Run it in Terminal (Admin), after DISM /Online /Cleanup-Image /RestoreHealth. It doesn&rsquo;t touch your own files or programs.</p>'},
+        {'q': 'SFC found corrupt files but was unable to fix some of them. What now?', 'a': '<p>Run <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong> with the PC online, which fetches good copies from Windows Update, then <strong>sfc /scannow</strong> again. If it still can&rsquo;t fix them, Fix problems using Windows Update (Settings, System, Recovery) reinstalls Windows and keeps your files, apps and settings.</p>'},
         {'q': 'Will I lose my files?', 'a': '<p>Not from the steps on this page. Back up before any repair, just in case.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC and get the updates through while you watch.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/reliability-monitor/">Reliability Monitor</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
 }
 
 # ============================================================ 6. Forgot Windows password or PIN (12 Oct 2026, round 2)
@@ -526,6 +532,7 @@ RESERVED = {
     'schemaKind': 'howto',
     'atAGlance': [
         ('What it means', 'Windows&rsquo; small start-up partition (the EFI partition) is nearly full. The update needs about 15 MB free there.'),
+        ('The error codes', 'Often 0x800F0922 in Update history, or 0xC1900104 from Windows Setup.'),
         ('Is my PC too old?', 'No. On a PC that already runs Windows 11 this is the only &ldquo;requirement&rdquo; it is failing.'),
         ('What fills it', 'Start-up screen fonts in a dozen languages, and on Dell laptops a second set of fonts and two BIOS backup files.'),
         ('The safe fix', 'Remove the Chinese, Japanese and Korean start-up fonts, keep the four English ones, then run Windows Update again.'),
@@ -540,7 +547,8 @@ RESERVED = {
                  '<li><strong>Windows Update</strong> downloads the yearly update, restarts, shows &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop. Settings, Windows Update, Update history then lists it as <em>Failed to install</em> with an error code.</li>'
                  '</ul>'
                  '<p>Despite the wording, your PC isn&rsquo;t too old. On a modern PC the &ldquo;system reserved partition&rdquo; is the <strong>EFI system partition</strong>: a small hidden part of the drive, often only about 100 MB, that holds the files Windows needs to start. A version upgrade has to write new start-up files there and wants roughly <strong>15 MB free</strong>. When it hasn&rsquo;t got that, the upgrade either refuses to start or undoes itself after the restart.</p>'
-                 '<p>Older PCs that were upgraded from Windows 10, and many laptops that came with a 100 MB partition from the factory, hit it most, and they hit it again at each yearly update.</p>'},
+                 '<p>Older PCs that were upgraded from Windows 10, and many laptops that came with a 100 MB partition from the factory, hit it most, and they hit it again at each yearly update.</p>'
+                 '<p><strong>The error codes you may see:</strong> <strong>0x800F0922</strong> in Update history, which Microsoft says means either the PC couldn&rsquo;t reach Windows Update (a VPN can block it) or there isn&rsquo;t enough free space in the System Reserved partition (<a href="https://support.microsoft.com/en-us/windows/get-help-with-windows-upgrade-and-installation-errors-ea144c24-513d-a60e-40df-31ff78b3158a" rel="noopener" target="_blank">Microsoft</a>), and <strong>0xC1900104</strong> from Windows Setup. A yearly update that undoes itself can show a more general code too: on the Dell below it was 0x80242016. Whichever you have, the check in step 3 settles it in a minute.</p>'},
         {'eyebrow': '/02 &mdash; A REAL ONE', 'h2': 'What it looked like on a customer&rsquo;s Dell',
          'html': '<p>In October 2026 a customer&rsquo;s Dell Latitude 3520 kept failing the Windows 11 26H2 update: it restarted, undid the changes and went back to the desktop (Update history showed error 0x80242016). Running Microsoft&rsquo;s installer by hand then gave the &ldquo;couldn&rsquo;t update the system reserved partition&rdquo; message.</p>'
                  '<p>Its EFI partition was <strong>96 MB with 5 KB free</strong>. Inside: two Dell BIOS recovery files of about 15 MB each, Dell&rsquo;s own recovery tool with a full second set of start-up fonts, and Windows&rsquo; start-up fonts in a dozen languages, the Chinese, Japanese and Korean ones 3 to 4 MB each. Removing those foreign-language fonts from both font folders, and keeping the four English ones, left <strong>25 MB free</strong>. Windows Update then installed 26H2 at the next attempt, with every file and program still there. It took about fifteen minutes, done remotely.</p>'},
@@ -570,7 +578,8 @@ RESERVED = {
         {'eyebrow': '/06 &mdash; WILL IT COME BACK?', 'h2': 'Will it happen again?',
          'html': '<p>It can. Yearly updates may copy the full set of fonts back, and a 100 MB partition is always tight. Check the free space again after the update has finished, and before next year&rsquo;s. Some makers&rsquo; update tools also write to this partition: on a Dell, put off installing <em>SupportAssist OS Recovery</em> updates until the Windows update is done, because that recovery tool keeps its files on the same partition.</p>'
                  '<p>If the upgrade gets past this but then only offers to keep <em>Nothing</em>, stop and don&rsquo;t continue: see <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a> for why, and the safe way round it.</p>'},
-        {'eyebrow': '/07 &mdash; THE QUICK WAY', 'h2': 'Let our free app watch the updates', 'html': '__APP_BOX_UPDATES__'},
+        {'eyebrow': '/07 &mdash; THE QUICK WAY', 'h2': 'Let our app check it, and tidy it',
+         'html': '<p>Version 36.4 of our free 365 PC Manager app checks this partition on its <strong>Windows Update</strong> page and says plainly when it&rsquo;s too full for the next update. Its <strong>full service</strong> now tidies it safely, taking out the start-up fonts for languages the PC doesn&rsquo;t use, and repairs damaged system files with Windows&rsquo; own tool. The Windows Update page itself only reads; the tidy happens when you run the full service.</p>__APP_BOX_UPDATES__'},
         {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' If the partition is simply too small to ever be enough, we can collect the PC and enlarge it safely on the bench, with a full backup first.')},
     ],
     'howToName': 'How to fix "We couldn\'t update the system reserved partition"',
@@ -583,6 +592,7 @@ RESERVED = {
     ],
     'faqs': [
         {'q': 'What is the system reserved partition?', 'a': '<p>A small hidden part of the drive that holds the files Windows needs to start. On older PCs it&rsquo;s labelled &ldquo;System Reserved&rdquo;; on modern ones it&rsquo;s the EFI system partition. The error message still uses the old name.</p>'},
+        {'q': 'What do 0x800F0922 and 0xC1900104 mean?', 'a': '<p>Both can mean the system reserved (EFI) partition hasn&rsquo;t enough free space for the update. 0x800F0922 can also mean the PC couldn&rsquo;t reach Windows Update, for example because a VPN is on, so switch any VPN off and check the partition&rsquo;s free space as in step 3.</p>'},
         {'q': 'Why does it say my PC doesn&rsquo;t meet the requirements?', 'a': '<p>Windows Setup lists this space check on its requirements screen. If your PC already runs Windows 11, free space on that partition is the only requirement it is failing.</p>'},
         {'q': 'Is it safe to delete the boot fonts?', 'a': '<p>The foreign-language ones, yes: they only draw the start-up and recovery screens in Chinese, Japanese and Korean, and Windows keeps its own copies on C:. Keep the four English ones so those screens still show their text.</p>'},
         {'q': 'Will I lose my files?', 'a': '<p>No. The fix only removes font files from the hidden partition, and the yearly update itself keeps your files, apps and settings.</p>'},

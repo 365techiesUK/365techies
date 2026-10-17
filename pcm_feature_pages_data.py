@@ -125,6 +125,13 @@ CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, o
 # wave 2 (13 Oct 2026, owner: "yes start with number 1"): Devices on your network, for the EE-hub printer and CCTV pages
 SHOTS['devices'] = ('/images/pcm-feat-devices-v40.webp', 1272, 1334, 'Devices on your network in 365 PC Manager: 4 devices found in 9 seconds on a cable connection - the router (Linksys, 192.168.1.1), a phone hiding its identity with a private Wi-Fi address and an ASUS device - and the network printer this PC has set up, an HP ENVY Photo 6200', ('Internet &amp; email', 'Devices on your network'))
 CAPS['devices'] = 'The real app, on our office network.'
+# 17 Oct 2026 (36.4 keyword wave): cropped from the SIGNED 36.4 exe's renders at 1x (scratchpad sp433 make_feat.py)
+SHOTS['reliability'] = ('/images/pcm-feat-reliability-v41.webp', 720, 538, 'What keeps going wrong in 365 PC Manager on a sample PC: Windows rates it 4.2 out of 10, Microsoft Outlook crashed 9 times and froze 4 times in the last 30 days, Microsoft Edge froze twice and HP Smart crashed once, with 3 blue screens, one unexpected shutdown and one update that failed to install', ('My PC', 'What keeps going wrong'))
+SHOTS['laptopheat'] = ('/images/pcm-feat-laptopheat-v41.webp', 720, 504, 'Temperatures in 365 PC Manager on a sample laptop: something is running hot - its hard drive is at 61&deg;C, too hot, while its Samsung SSD is fine at 58&deg;C against its maker&rsquo;s warning level of 82&deg;C, and inside the laptop Windows is limiting the processor to 72% of its speed to cool it down', ('My PC', 'Temperatures'))
+SHOTS['drivehealth'] = ('/images/pcm-feat-drivehealth-v41.webp', 720, 388, 'This PC and Temperatures in 365 PC Manager on our office PC: two Samsung NVMe SSDs, both healthy, at 59&deg;C and 51&deg;C, each against its maker&rsquo;s own warning level of 86&deg;C and 82&deg;C', ('My PC', 'This PC, and Temperatures'))
+SHOTS['gputemps'] = ('/images/pcm-feat-gputemps-v41.webp', 720, 385, 'Temperatures in 365 PC Manager: two NVIDIA GeForce RTX 3090 graphics cards at 47&deg;C and 52&deg;C, each with a bar for its hottest temperature on each of the last 30 days, under the white line at 93&deg;C where it starts slowing itself down (sample history)', ('My PC', 'Temperatures'))
+CAPS['drivehealth'] = 'The real app, on our office PC.'
+CAPS['gputemps'] = 'The real app (a sample temperature history).'
 
 
 # 13 Oct 2026: clip = a 9-second silent clip of the same screen (images/pcm-clip-<clip>.mp4 + .jpg poster, made in
@@ -1294,7 +1301,8 @@ CR = {
                  '<li><strong>Look along the graph:</strong> each column is a day. A red circle with a cross is a crash or failure, a yellow triangle is a warning, and a blue <em>i</em> is information, such as an update that installed.</li>'
                  '<li><strong>Click a day with a red cross</strong> and read the list underneath: the program&rsquo;s name and what happened &mdash; &ldquo;Stopped working&rdquo;, &ldquo;Stopped responding&rdquo;, or &ldquo;Windows was not properly shut down&rdquo;.</li>'
                  '<li><strong>Look for the pattern.</strong> One program appearing again and again is your answer. Problems that started on one day often line up with an update or a new program installed that day.</li>'
-                 '</ol>'},
+                 '</ol>'
+                 '<p>Every row, icon and number explained, and how to read a blue screen&rsquo;s stop code: <a href="/reliability-monitor/">how to open and read Reliability Monitor</a>.</p>'},
         {'eyebrow': '/03 &mdash; WHAT IT MEANS', 'h2': 'What each kind of problem usually means',
          'html': '<ul>'
                  '<li><strong>One program keeps crashing or freezing.</strong> The fault is almost always in that program. Update it, or uninstall it and install it fresh. For Outlook or another Office app, Office&rsquo;s own Repair (Settings, Apps, Microsoft 365, Modify) often sorts it.</li>'
@@ -1335,7 +1343,7 @@ CR = {
         {'q': 'Why is my blue screen black now?', 'a': '<p>From Windows 11 version 24H2, Microsoft shows the stop screen in black rather than blue. It means the same thing.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Software causes, yes: with your permission we connect to your Windows PC and sort it while you watch. If it turns out to be hardware, we collect it free across Bournemouth, Christchurch, Poole and Dorset, repair it and bring it back.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/windows-update-stuck/">Windows Update stuck or failing</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a>, <a href="/reliability-monitor/">how to read Reliability Monitor</a>, <a href="/laptop-overheating/">laptop overheating</a> and <a href="/windows-update-stuck/">Windows Update stuck or failing</a>.</p>',
 }
 
 # ============================================================ 16. A dementia clock: the page's own clock + v36's Day and date screensaver
@@ -1616,7 +1624,7 @@ BH = {
         {'q': 'Why does my laptop shut off when the battery says 30%?', 'a': '<p>A worn battery can&rsquo;t deliver the power the laptop needs, so the voltage drops and the laptop switches off even though the gauge shows charge left. Check the battery&rsquo;s health first; see <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30%</a>.</p>'},
         {'q': 'Can you replace my laptop battery?', 'a': '<p>Yes. We check the battery and fit the right replacement for your model, with a clear price before we start. Call 01202 775566 or text 07520 615332.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/laptop-turns-off-when-unplugged/">laptop turns off when unplugged</a>, <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30% battery</a>, <a href="/laptop-shuts-off-when-moved/">laptop shuts off when moved</a>, <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>, <a href="/dell-laptop-battery-replacement-dorset/">Dell laptop battery replacement</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/laptop-turns-off-when-unplugged/">laptop turns off when unplugged</a>, <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30% battery</a>, <a href="/laptop-shuts-off-when-moved/">laptop shuts off when moved</a>, <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>, <a href="/dell-laptop-battery-replacement-dorset/">Dell laptop battery replacement</a>, <a href="/laptop-overheating/">laptop overheating</a> (heat wears a battery faster) and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
 }
 
 # ============================================================ 18. Stop programs starting with Windows (13 Oct 2026)
@@ -1710,6 +1718,290 @@ SU = {
 }
 
 
+# ============================================================ 19-21. 36.4 keyword wave (17 Oct 2026; owner: "do them all now, all three pages
+# and the extras ... AI SEO ... in the sitemap ... what groups you're gonna link them into"). Bing 17 Jul - 14 Oct 2026, exact
+# match (seo-research/pcm-364-keywords-2026-10-17/FINDINGS.md): "reliability monitor" 41.9K world / 3.5K UK, "perfmon /rel" 2.4K;
+# "ssd health check" 20.3K / 491 UK; laptop overheating phrases ~6.4K together. None had a page (sitemap + H2s checked).
+# Sources, read 17 Oct 2026: Microsoft Learn (Reliability Monitor: stability index 1-10, weighted, recent failures count more);
+# Microsoft's archived Reliability Monitor guide (up to a year of history); Microsoft Learn Get-PhysicalDisk /
+# Get-StorageReliabilityCounter; Windows 11 Settings > System > Storage > Advanced storage settings > Disks & volumes > Properties
+# > Drive health (NVMe only: estimated remaining life, available spare, temperature; warns when a drive may be at risk).
+# The app, 36.4 source (D:\claude\365-pc-manager-v41\src): Reliability.cs + Ui.cs (What keeps going wrong, Start a fresh list -
+# only the app's list, Windows' record untouched, "Show everything again"); Temps.cs (each internal drive against its maker's own
+# warning level, else 70 C SSD / 55 C hard drive; laptops: Windows' thermal zones and % passive limit = Windows slowing the
+# processor; the processor's own temperature is NOT read); GpuWatch.cs (every card each minute, 90 days, its own slow-down point
+# on NVIDIA desktops, flags 2+ close days in a fortnight); Program.cs PcInfo (Windows' drive self-check; exact wear and hours
+# from the health report's admin read). Pictures: the signed 36.4 exe's renders (scratchpad sp433 make_feat.py).
+RM = {
+    'slug': 'reliability-monitor',
+    'title': 'Reliability Monitor: How to Open and Read It in Windows 11',
+    'metaDesc': 'Open Windows&rsquo; Reliability Monitor in seconds with perfmon /rel, read the 1-10 stability score and every red cross, and find what keeps crashing your PC.',
+    'ogTitle': 'Reliability Monitor: what Windows has written down about your PC',
+    'crumbName': 'Reliability Monitor',
+    'eyebrow': '// WINDOWS RELIABILITY MONITOR',
+    'h1': 'Reliability Monitor: <em class="grad grad--cyan">how to open and read it</em>',
+    'lede': 'Reliability Monitor is the record Windows keeps of every crash, freeze, blue screen and failed update, day by day, with a stability score from 1 to 10. It has been part of Windows since Vista, it&rsquo;s free, and most people have never opened it. Here&rsquo;s how to open it, what every icon and number means, and what to do about what it shows.',
+    'chips': ['Built into Windows 11 and 10', 'Free crash history app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Open it now', '#s1'],
+    'ctaHead': 'Can&rsquo;t make sense of it?', 'ctaSub': 'We read the record with you, fix what&rsquo;s behind the red crosses, and tell you straight if it&rsquo;s hardware. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Open it', 'Press Windows + R, type perfmon /rel and press Enter. Or type reliability in the Start menu and choose View reliability history.'),
+        ('The score', 'A stability index from 1 (least stable) to 10 (most stable). Recent problems count more than older ones.'),
+        ('The icons', 'A red circle with a cross is a failure, a yellow triangle a warning, and a blue i information, such as an update that installed.'),
+        ('The rows', 'Application failures, Windows failures, Miscellaneous failures, Warnings and Information.'),
+        ('How far back', 'Up to a year of history, by day or by week.'),
+        ('Clear it?', 'There&rsquo;s no clear button, and you don&rsquo;t need one: fix the cause and the score climbs back by itself.'),
+        ('Free check', 'What keeps going wrong in our free 365 PC Manager app reads the same record in plain words.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; OPEN IT', 'h2': 'Three ways to open Reliability Monitor',
+         'html': '<ol>'
+                 '<li><strong>The quickest:</strong> press <strong>Windows + R</strong>, type <strong>perfmon /rel</strong> and press <strong>Enter</strong>.</li>'
+                 '<li><strong>From Start:</strong> click Start, type <strong>reliability</strong> and choose <strong>View reliability history</strong>.</li>'
+                 '<li><strong>From Control Panel:</strong> System and Security, then <strong>Security and Maintenance</strong>, open <strong>Maintenance</strong> and choose <strong>View reliability history</strong>.</li>'
+                 '</ol>'
+                 '<p>It works the same way on Windows 11 and Windows 10, needs no administrator password, and changes nothing: it only shows what Windows has already written down. It can take a few seconds to open while it gathers the record.</p>'},
+        {'eyebrow': '/02 &mdash; THE GRAPH', 'h2': 'What the graph and the stability index mean',
+         'html': '<p>Across the top is a graph. Each column is a day (choose <strong>Weeks</strong> at the top left to see further back, up to a year), and the blue line is Windows&rsquo; <strong>stability index</strong>, from 1, the least stable, to 10, the most stable.</p>'
+                 '<p>The index is worked out from the failures Windows has seen recently, and recent ones count more than older ones (<a href="https://learn.microsoft.com/en-us/training/modules/monitor-windows-server-performance/4-review-reliability-with-reliability-monitor" rel="noopener" target="_blank">Microsoft Learn</a>). So a crash yesterday pulls it down further than one three weeks ago, and once the cause is fixed the line climbs back up by itself, a little each day without problems.</p>'
+                 '<p>Under the line are five rows of icons:</p>'
+                 '<ul>'
+                 '<li><strong>Application failures:</strong> a program crashed (&ldquo;Stopped working&rdquo;) or froze (&ldquo;Stopped responding&rdquo;).</li>'
+                 '<li><strong>Windows failures:</strong> Windows itself stopped, such as a blue (now black) screen, or a part of Windows failed.</li>'
+                 '<li><strong>Miscellaneous failures:</strong> usually &ldquo;Windows was not properly shut down&rdquo;: a power cut, the power button held in, or the PC switching itself off.</li>'
+                 '<li><strong>Warnings:</strong> something that didn&rsquo;t go to plan, most often an update or program that failed to install.</li>'
+                 '<li><strong>Information:</strong> things that went right, such as updates and programs that installed. Handy for spotting what changed on the day the trouble began.</li>'
+                 '</ul>'
+                 '<p>A <strong>red circle with a cross</strong> is a failure, a <strong>yellow triangle</strong> is a warning, and a <strong>blue <em>i</em></strong> is information.</p>'},
+        {'eyebrow': '/03 &mdash; THE DETAIL', 'h2': 'Find out exactly what happened',
+         'html': '<ol>'
+                 '<li><strong>Click a column</strong> with a red cross. The list underneath shows everything recorded that day: the program or part of Windows (the <em>Source</em>), a <em>Summary</em> such as &ldquo;Stopped working&rdquo;, and the time.</li>'
+                 '<li><strong>Double-click an entry</strong>, or choose <strong>View technical details</strong>, for Windows&rsquo; full report.</li>'
+                 '<li>In a program crash, look for <strong>Fault Module Name</strong>: the file that actually failed. If it&rsquo;s the program&rsquo;s own file, the fault is in that program. If the same driver or Windows file turns up under several different programs, that file is the one to look at.</li>'
+                 '<li>In a blue screen (&ldquo;Shut down unexpectedly&rdquo;, problem event name BlueScreen), the <strong>BCCode</strong> is the stop code. Searching for it with your PC&rsquo;s make and model often points to the driver involved.</li>'
+                 '</ol>'
+                 '<p>At the bottom, <strong>View all problem reports</strong> lists every report in one place, and <strong>Save reliability history</strong> saves the lot as a file you can send to whoever is helping you.</p>'},
+        {'eyebrow': '/04 &mdash; WHAT IT MEANS', 'h2': 'What the pattern usually tells you',
+         'html': '<ul>'
+                 '<li><strong>One program, again and again:</strong> the fault is in that program. Update it, or uninstall it and install it fresh; for Outlook and other Office apps, Office&rsquo;s own Repair often sorts it. More in <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a></li>'
+                 '<li><strong>Lots of different programs:</strong> something underneath them all, such as a driver, a nearly full drive, memory or heat.</li>'
+                 '<li><strong>Trouble that starts on one day:</strong> click that day&rsquo;s blue <em>i</em> icons to see what was installed, then update it or undo it.</li>'
+                 '<li><strong>Several blue screens in a few weeks:</strong> usually a driver or a hardware fault, and worth sorting before it becomes a failure.</li>'
+                 '<li><strong>&ldquo;Windows was not properly shut down&rdquo; when nobody switched it off:</strong> it can mean overheating or a power fault. See <a href="/laptop-overheating/">laptop overheating</a>.</li>'
+                 '<li><strong>The same update failing over and over:</strong> see <a href="/windows-update-stuck/">Windows Update stuck or failing</a>.</li>'
+                 '</ul>'
+                 '<p>A single red cross is nothing to worry about. Every PC has the odd crash; it&rsquo;s the pattern that matters.</p>'},
+        {'eyebrow': '/05 &mdash; CLEAR IT?', 'h2': 'Can you clear or reset Reliability Monitor?',
+         'html': '<p>There&rsquo;s no button to clear it, and you don&rsquo;t need one. Once you&rsquo;ve fixed the cause, the stability index climbs back by itself, because recent days count the most, and old entries drop off the record over time.</p>'
+                 '<p>Guides that tell you to delete Windows&rsquo; record files to &ldquo;reset&rdquo; it only throw away the history you would need if the problem comes back. Leave them alone. To see whether something has come back since you fixed it, our free app&rsquo;s <strong>Start a fresh list</strong>, below, does exactly that without deleting anything.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app read it for you',
+         'html': '__APP_BOX_RELIABILITY__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the red crosses keep coming, or blue screens are getting more frequent, we&rsquo;ll go through the record with you and fix what&rsquo;s behind it.')},
+    ],
+    'howToName': 'How to open and read Reliability Monitor in Windows',
+    'howToSteps': [
+        {'name': 'Open Reliability Monitor', 'text': 'Press Windows + R, type perfmon /rel and press Enter, or type reliability in the Start menu and choose View reliability history.'},
+        {'name': 'Read the stability index', 'text': 'The blue line runs from 1 to 10. Dips show the days things went wrong.'},
+        {'name': 'Click a day with a red cross', 'text': 'The list underneath shows which program or part of Windows failed, and what happened.'},
+        {'name': 'Open the technical details', 'text': 'Double-click an entry to see the Fault Module Name or, for a blue screen, the BCCode stop code.'},
+        {'name': 'Look for the pattern', 'text': 'One program again and again points to that program; trouble starting on one day points to what was installed that day.'},
+    ],
+    'faqs': [
+        {'q': 'What is Reliability Monitor?', 'a': '<p>A part of Windows 11 and 10 that records every program crash, freeze, blue screen, unexpected shutdown and failed update, day by day, and turns them into a stability index from 1 to 10.</p>'},
+        {'q': 'How do I open Reliability Monitor?', 'a': '<p>Press Windows + R, type <strong>perfmon /rel</strong> and press Enter. Or click Start, type reliability and choose View reliability history.</p>'},
+        {'q': 'Is Reliability Monitor in Windows 11?', 'a': '<p>Yes. It&rsquo;s in Windows 11 and Windows 10 and works the same way in both. Nothing needs installing.</p>'},
+        {'q': 'What is a good stability index?', 'a': '<p>10 is the most stable. There&rsquo;s no official pass mark, and a busy PC often sits below 10. What matters is the trend and what&rsquo;s behind the dips: a falling line with the same program crashing again and again is worth fixing.</p>'},
+        {'q': 'How do I clear Reliability Monitor?', 'a': '<p>There&rsquo;s no clear button. Fix the cause and the index climbs back by itself, because recent problems count the most. Deleting Windows&rsquo; record files only throws away history you may need later.</p>'},
+        {'q': 'What does BCCode mean in Reliability Monitor?', 'a': '<p>It&rsquo;s the stop code of a blue (or black) screen, shown in the technical details. It points to the kind of fault, and searching for it with your PC&rsquo;s make often points to the driver involved.</p>'},
+        {'q': 'Can you read it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through the record with you and fix what&rsquo;s behind it: remote help from &pound;20, and no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/windows-update-stuck/">Windows Update stuck or failing</a>, <a href="/laptop-overheating/">laptop overheating</a>, <a href="/how-to-check-ssd-health/">how to check SSD health</a>, <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+}
+
+LO = {
+    'slug': 'laptop-overheating',
+    'title': 'Laptop Overheating? Why It Gets Hot and How to Cool It Down',
+    'metaDesc': 'Laptop hot, fan roaring or slowing down? Why laptops overheat, the free fixes in order, how to clean the vents safely, and when it needs a proper clean.',
+    'ogTitle': 'Laptop overheating? How to cool it down, free fixes first',
+    'crumbName': 'Laptop Overheating',
+    'eyebrow': '// LAPTOP OVERHEATING',
+    'h1': 'Laptop <em class="grad grad--cyan">overheating</em>? How to cool it down',
+    'lede': 'The fan roars, the underside is too hot for your lap, it slows to a crawl or switches itself off. Laptops are built to run warm, and most overheating comes down to air that can&rsquo;t get through: where it sits, dust in the vents, or a program working it flat out. Here are the free fixes in order, and when it needs opening up.',
+    'chips': ['Free fixes first', 'Free temperature check app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['The free fixes', '#s2'],
+    'ctaHead': 'Still running hot?', 'ctaSub': 'We clean it out properly, replace the dried-out thermal paste and check the fan, with a clear price first, and collect free across Bournemouth, Christchurch, Poole and Dorset. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Normal or too hot?', 'Warm under load and a busy fan are normal. Too hot to touch, a fan that never quietens, slowing down or switching off are not.'),
+        ('Fix 1: the surface', 'Use it on a hard, flat surface. Beds, sofas, cushions and laps block the vents underneath.'),
+        ('Fix 2: what&rsquo;s working it', 'Task Manager (Ctrl + Shift + Esc), Processes, sort by CPU. Close or update anything stuck near the top.'),
+        ('Fix 3: the power mode', 'Settings, System, Power &amp; battery: Balanced or Best power efficiency runs cooler.'),
+        ('Fix 4: the vents', 'Switched off and unplugged, short bursts of compressed air through the vents, holding the fan still.'),
+        ('When it needs opening', 'Still hot after all that, usually after two to four years: dust packed on the heatsink and dried-out thermal paste.'),
+        ('Free check', 'Our free 365 PC Manager app shows whether Windows is slowing the processor to cool it, and how hot the drives and graphics chip run.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; IS IT TOO HOT?', 'h2': 'How hot is too hot for a laptop?',
+         'html': '<p>Laptops run warm. Under a heavy load, such as a game, a video call or a big update, the processor can run in the 80s or 90s &deg;C and the fan spins up: that&rsquo;s what it&rsquo;s designed to do. Processors protect themselves. As they near their limit, around 100&deg;C for most laptop chips, they slow down, and if that isn&rsquo;t enough the laptop switches off.</p>'
+                 '<p>Signs it&rsquo;s running hotter than it should:</p>'
+                 '<ul>'
+                 '<li>The <strong>fan is loud all the time</strong>, even when you&rsquo;re only reading email.</li>'
+                 '<li>It&rsquo;s <strong>too hot to touch</strong> near the vents or underneath.</li>'
+                 '<li>It <strong>slows down</strong> or stutters after a few minutes of work, then speeds up again once it cools: that&rsquo;s the processor slowing itself down.</li>'
+                 '<li>It <strong>switches off by itself</strong> under load, with no warning. Windows records it as &ldquo;Windows was not properly shut down&rdquo; in <a href="/reliability-monitor/">Reliability Monitor</a>.</li>'
+                 '</ul>'
+                 '<p>Windows doesn&rsquo;t show the processor&rsquo;s own temperature. Your laptop maker&rsquo;s app sometimes does, or a free monitoring tool such as HWiNFO.</p>'},
+        {'eyebrow': '/02 &mdash; THE FREE FIXES', 'h2': 'The free fixes, in order',
+         'html': '<ol>'
+                 '<li><strong>Give it air.</strong> Use it on a table, a desk or a laptop stand. Most laptops breathe in through the underside, so a bed, sofa, cushion or your lap smothers them. A cooling pad helps a little; a hard surface helps most.</li>'
+                 '<li><strong>See what&rsquo;s working it hard.</strong> Press <strong>Ctrl + Shift + Esc</strong> for Task Manager, choose <strong>Processes</strong> and click the <strong>CPU</strong> column. A program near the top that you aren&rsquo;t using, such as a browser tab, a game launcher or a stuck update, keeps the fan going. Close it, update it, or restart.</li>'
+                 '<li><strong>Choose a cooler power mode.</strong> On Windows 11: Settings, System, <strong>Power &amp; battery</strong>, Power mode, then <strong>Balanced</strong> or <strong>Best power efficiency</strong>. On Windows 10, click the battery icon and move the slider left. Your laptop maker&rsquo;s own app may have a quiet or cool mode too.</li>'
+                 '<li><strong>Update it.</strong> Install Windows updates, then your laptop maker&rsquo;s BIOS and driver updates from its support app or website. Makers often improve fan control in BIOS updates. Keep it plugged in while a BIOS update runs.</li>'
+                 '<li><strong>Clear the vents</strong>, as below.</li>'
+                 '<li><strong>Keep it out of the sun</strong> and away from radiators, and never leave it running in a bag with the lid shut.</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; CLEAN THE VENTS', 'h2': 'How to clean the vents safely',
+         'html': '<ol>'
+                 '<li><strong>Shut it down</strong> (not sleep) and <strong>unplug the charger</strong>.</li>'
+                 '<li>Find the vents: usually underneath, and at the side or back where the warm air comes out.</li>'
+                 '<li>Use a can of <strong>compressed air</strong> in <strong>short bursts</strong>, held upright, from a few centimetres away. Blow in through the outlet vents at an angle, so the dust comes out rather than going further in.</li>'
+                 '<li>If you can see the fan through a vent, <strong>hold it still</strong> with a cotton bud, so the air doesn&rsquo;t spin it faster than it&rsquo;s made to go.</li>'
+                 '</ol>'
+                 '<p>Don&rsquo;t use a vacuum cleaner on the vents, or poke anything inside. If it still runs hot afterwards, the dust is usually packed between the fan and the heatsink, where air from outside can&rsquo;t shift it.</p>'},
+        {'eyebrow': '/04 &mdash; WHEN IT NEEDS OPENING', 'h2': 'When a laptop needs opening up',
+         'html': '<p>After two to four years, most laptops that run hot have the same two problems inside:</p>'
+                 '<ul>'
+                 '<li><strong>Dust packed on the heatsink</strong>, the metal fins the fan blows through. A felt-like layer forms there that blowing through the vents won&rsquo;t move.</li>'
+                 '<li><strong>Dried-out thermal paste</strong> between the processor and its heatsink. It carries the heat away from the chip; once it dries, the chip runs hotter for the same work.</li>'
+                 '</ul>'
+                 '<p>The fix is to open the laptop, clean the fan and heatsink properly, and replace the thermal paste (and the thermal pads, where it has them). A fan that rattles or whines gets replaced. It&rsquo;s fiddly on most laptops, the clips and ribbon cables break easily, and opening it can affect a warranty, so unless you&rsquo;ve done it before, it&rsquo;s worth having done.</p>'
+                 '<p>Gaming laptops need it soonest, because they push the most heat through the smallest space: see <a href="/dell-g15-overheating/">Dell G15 overheating</a> for one we see a lot.</p>'},
+        {'eyebrow': '/05 &mdash; WHAT HEAT DOES', 'h2': 'What heat does to the rest of the laptop',
+         'html': '<ul>'
+                 '<li><strong>The battery</strong> wears faster when it&rsquo;s kept hot. If the case bulges or the touchpad lifts, stop using it straight away. <a href="/how-to-check-laptop-battery-health/">How to check your battery&rsquo;s health</a>.</li>'
+                 '<li><strong>The drive:</strong> solid-state drives slow themselves down when they get too hot, and an old spinning hard drive wears out sooner. <a href="/how-to-check-ssd-health/">How to check your drive&rsquo;s health</a>.</li>'
+                 '<li><strong>Crashes:</strong> a laptop that freezes or switches off only when it&rsquo;s working hard often has a heat problem rather than a software one. See <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a></li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'See what&rsquo;s running hot with our free app',
+         'html': '__APP_BOX_LAPTOPHEAT__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': '<p>Still running hot after the free fixes? It needs opening up. We clean the fan and heatsink, replace the thermal paste, fit a new fan if the old one is worn, and check the BIOS and power settings, with a clear price before we start. We collect free across Bournemouth, Christchurch, Poole and Dorset, and bring it back. Not sure it&rsquo;s heat? With your permission we can look remotely first at what&rsquo;s working it hard.</p>'
+                 '<p>Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. More on our <a href="/laptop-repair/">laptop repair</a> page.</p>'},
+    ],
+    'howToName': 'How to stop a laptop overheating',
+    'howToSteps': [
+        {'name': 'Put it on a hard surface', 'text': 'Use it on a table, desk or laptop stand so the vents underneath can breathe.'},
+        {'name': 'Find what&rsquo;s working it hard', 'text': 'Open Task Manager (Ctrl + Shift + Esc), sort Processes by CPU, and close or update anything stuck near the top.'},
+        {'name': 'Choose a cooler power mode', 'text': 'Settings, System, Power &amp; battery, Power mode: Balanced or Best power efficiency.'},
+        {'name': 'Update Windows, the BIOS and drivers', 'text': 'Install Windows updates, then the laptop maker&rsquo;s BIOS and driver updates.'},
+        {'name': 'Clean the vents', 'text': 'Shut it down and unplug it, then use short bursts of compressed air through the vents, holding the fan still.'},
+        {'name': 'Have it cleaned inside', 'text': 'If it still runs hot, the heatsink needs cleaning and the thermal paste replacing.'},
+    ],
+    'faqs': [
+        {'q': 'Why is my laptop overheating?', 'a': '<p>Usually because air can&rsquo;t get through: a soft surface under it, dust in the vents and on the heatsink, or a program keeping the processor busy. After a few years, dried-out thermal paste adds to it.</p>'},
+        {'q': 'How do I cool down my laptop quickly?', 'a': '<p>Move it to a hard, flat surface, close programs you aren&rsquo;t using, and switch the power mode to Balanced or Best power efficiency. If it&rsquo;s too hot to touch, shut it down and let it cool.</p>'},
+        {'q': 'How hot is too hot for a laptop?', 'a': '<p>Processors can run in the 80s and 90s &deg;C under heavy load, and slow themselves down at their limit, around 100&deg;C on most laptop chips. Too hot to touch, a fan that never quietens, slowing down or switching off are the signs it&rsquo;s running hotter than it should.</p>'},
+        {'q': 'Can overheating damage a laptop?', 'a': '<p>Processors protect themselves by slowing down and switching off, so sudden damage is rare. Running hot for months does wear the battery faster and shortens the life of the fan and the drive.</p>'},
+        {'q': 'Why is my laptop fan so loud?', 'a': '<p>It&rsquo;s working hard to move heat: a busy program, a warm room or dust slowing the air. If it&rsquo;s loud even when the laptop is doing very little, clean the vents, and if that doesn&rsquo;t help, it needs cleaning inside.</p>'},
+        {'q': 'Does a laptop cooling pad work?', 'a': '<p>It helps a little, mostly by lifting the laptop off soft surfaces and moving more air underneath. It won&rsquo;t fix a heatsink packed with dust.</p>'},
+        {'q': 'Can you clean my laptop for me?', 'a': '<p>Yes. We clean the fan and heatsink, replace the thermal paste and check the fan, with a clear price first, and collect free across Bournemouth, Christchurch, Poole and Dorset. Call 01202 775566 or text 07520 615332.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/dell-g15-overheating/">Dell G15 overheating</a>, <a href="/how-to-check-laptop-battery-health/">how to check laptop battery health</a>, <a href="/how-to-check-ssd-health/">how to check SSD health</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, <a href="/laptop-repair/">laptop repair</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+}
+
+_PRE_SH = ('<pre style="white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto;padding:.9rem 1rem;border-radius:10px;background:rgba(0,0,0,.35);'
+           'border:1px solid rgba(125,170,220,.22)"><code>')
+SH = {
+    'slug': 'how-to-check-ssd-health',
+    'title': 'How to Check SSD Health on Windows 11 and 10',
+    'metaDesc': 'Check your SSD&rsquo;s health with Windows&rsquo; own tools: Drive health in Settings, two PowerShell commands, what each number means and when to replace it.',
+    'ogTitle': 'How to check your SSD&rsquo;s health with what&rsquo;s already in Windows',
+    'crumbName': 'How to Check SSD Health',
+    'eyebrow': '// SSD AND HARD DRIVE HEALTH',
+    'h1': 'How to check your <em class="grad grad--cyan">SSD&rsquo;s health</em>',
+    'lede': 'Windows keeps an eye on your drive already. Windows 11 shows an NVMe SSD&rsquo;s estimated remaining life in Settings, and one PowerShell command shows the health of every drive, SSD or hard drive, on Windows 11 and 10. Here&rsquo;s where to look, what the numbers mean, and when it&rsquo;s time to back up and replace it.',
+    'chips': ['Windows&rsquo; own tools', 'Free drive check app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Check it in Settings', '#s1'],
+    'ctaHead': 'Drive showing a warning?', 'ctaSub': 'Back up first. Then we fit a new SSD, copy everything across and get you running again. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Windows 11, NVMe SSDs', 'Settings, System, Storage, Advanced storage settings, Disks &amp; volumes, then Properties on the drive: Drive health.'),
+        ('Any drive, Windows 11 and 10', 'In Terminal, Get-PhysicalDisk shows each drive&rsquo;s HealthStatus: Healthy, Warning or Unhealthy.'),
+        ('Wear and hours', 'In Terminal (Admin), Get-PhysicalDisk | Get-StorageReliabilityCounter shows wear, temperature and power-on hours.'),
+        ('Wear', '0% is new. 100% means the SSD has used its rated life; most keep working past it, but plan a replacement.'),
+        ('Warning or Unhealthy', 'Back up today, then replace the drive. Don&rsquo;t wait for it to fail.'),
+        ('Clicking or grinding', 'A hard drive making noises: switch it off and leave it off. Don&rsquo;t keep trying it.'),
+        ('Free check', 'Our free 365 PC Manager app shows the drive&rsquo;s health and temperature, and its health report adds wear and hours.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WINDOWS 11', 'h2': 'Check SSD health in Windows 11 Settings',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>System</strong>, then <strong>Storage</strong>.</li>'
+                 '<li>Scroll down to <strong>Advanced storage settings</strong> and choose <strong>Disks &amp; volumes</strong>.</li>'
+                 '<li>Choose the drive (usually <em>Disk 0</em>) and click <strong>Properties</strong>.</li>'
+                 '<li>Look at <strong>Drive health</strong>: the estimated remaining life, the available spare and the temperature.</li>'
+                 '</ol>'
+                 '<p><strong>Estimated remaining life</strong> counts down from 100% as the SSD wears. <strong>Available spare</strong> is the drive&rsquo;s reserve of fresh memory, swapped in for worn-out cells; it should stay high. If the drive reports a problem, Windows shows a warning there, and can pop up a notification that a drive may be at risk of failing.</p>'
+                 '<p>Drive health only appears for <strong>NVMe SSDs</strong>, the small stick-shaped drives in most PCs and laptops from the last several years. An older SATA SSD or a hard drive won&rsquo;t show it: use the next step instead.</p>'},
+        {'eyebrow': '/02 &mdash; ANY DRIVE', 'h2': 'Check any drive with PowerShell (Windows 11 and 10)',
+         'html': '<p>Right-click <strong>Start</strong> and choose <strong>Terminal</strong> (on Windows 10, <strong>Windows PowerShell</strong>), then paste this line and press Enter:</p>'
+                 + _PRE_SH + 'Get-PhysicalDisk | Select-Object FriendlyName, MediaType, HealthStatus, OperationalStatus, Size</code></pre>'
+                 '<p>Each drive is listed with its name, whether it&rsquo;s an <strong>SSD</strong> or an <strong>HDD</strong>, and its <strong>HealthStatus</strong>: <strong>Healthy</strong>, <strong>Warning</strong> or <strong>Unhealthy</strong>, the drive&rsquo;s own self-check as Windows reads it (<a href="https://learn.microsoft.com/en-us/powershell/module/storage/get-physicaldisk" rel="noopener" target="_blank">Microsoft</a>).</p>'
+                 '<p>For the detail, right-click Start, choose <strong>Terminal (Admin)</strong>, say Yes, and paste:</p>'
+                 + _PRE_SH + 'Get-PhysicalDisk | Get-StorageReliabilityCounter | Select-Object DeviceId, Wear, Temperature, PowerOnHours, ReadErrorsUncorrected</code></pre>'
+                 '<p>Not every drive fills in every column. A blank means the drive doesn&rsquo;t report it, not that it&rsquo;s zero (<a href="https://learn.microsoft.com/en-us/powershell/module/storage/get-storagereliabilitycounter" rel="noopener" target="_blank">Microsoft</a>).</p>'},
+        {'eyebrow': '/03 &mdash; WHAT THE NUMBERS MEAN', 'h2': 'What each number means',
+         'html': '<ul>'
+                 '<li><strong>HealthStatus:</strong> Healthy is what you want. <strong>Warning</strong> or <strong>Unhealthy</strong> means the drive itself is reporting a problem: back up today.</li>'
+                 '<li><strong>Wear</strong> (SSDs): how much of its rated life the SSD has used, from 0% when new. At 100% it has done what its maker promised; most keep working past it, but plan the replacement. Windows 11&rsquo;s <em>estimated remaining life</em> is the same figure the other way round.</li>'
+                 '<li><strong>PowerOnHours:</strong> how long the drive has been switched on in total. 8,760 hours is a year running day and night; a home PC used a few hours a day takes several years to get there.</li>'
+                 '<li><strong>Temperature</strong>, in &deg;C. NVMe SSDs often run at 40 to 60&deg;C when busy and slow themselves down when they reach their limit; an old spinning hard drive is happiest below about 50&deg;C.</li>'
+                 '<li><strong>ReadErrorsUncorrected:</strong> data the drive couldn&rsquo;t read back. Anything above zero is a reason to back up and have it checked.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; WARNING SIGNS', 'h2': 'Signs a drive is failing, whatever the numbers say',
+         'html': '<ul>'
+                 '<li><strong>Clicking, grinding or buzzing</strong> from a hard drive. <strong>Switch it off and leave it off</strong>: every restart can scrape away more of the data. See <a href="/laptop-clicking-noise-wont-turn-on/">laptop clicking noise</a> and <a href="/data-recovery/">data recovery</a>.</li>'
+                 '<li>Files or folders that <strong>won&rsquo;t open</strong>, copy very slowly or come back damaged.</li>'
+                 '<li>The PC <strong>freezing for seconds at a time</strong> while the drive light stays on.</li>'
+                 '<li>Windows offering to <strong>scan and repair</strong> the drive at start-up, again and again.</li>'
+                 '<li>Blue screens that point at the drive, such as <em>KERNEL_DATA_INPAGE_ERROR</em> or <em>UNMOUNTABLE_BOOT_VOLUME</em>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; WHAT TO DO', 'h2': 'Health warning? What to do, in order',
+         'html': '<ol>'
+                 '<li><strong>Back up today:</strong> photos, documents and anything you can&rsquo;t replace, to an external drive or OneDrive. A drive giving warnings can stop without notice. <a href="/how-to-back-up-your-photos/">How to back up your photos</a>.</li>'
+                 '<li><strong>Don&rsquo;t run repair tools or &ldquo;drive booster&rdquo; programs</strong> on a drive that&rsquo;s failing: they work it hard at the worst moment.</li>'
+                 '<li><strong>Replace it.</strong> A new SSD with everything copied from the old drive, Windows and programs included, gets you back exactly as you were. On a PC that still has a spinning hard drive, it&rsquo;s also the biggest speed-up there is: see <a href="/hard-drive-upgrade/">hard drive upgrade</a> and <a href="/laptop-ssd-upgrade-bournemouth/">laptop SSD upgrade</a>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/06 &mdash; THE MAKER&rsquo;S TOOL', 'h2': 'Your drive maker&rsquo;s own tool',
+         'html': '<p>Most SSD makers have a free app that reads the same figures and updates the drive&rsquo;s own software (its firmware): <strong>Samsung Magician</strong>, <strong>Crucial Storage Executive</strong>, <strong>WD Dashboard</strong> and <strong>Kingston SSD Manager</strong>, for example. <strong>CrystalDiskInfo</strong> is a popular free tool that shows the full self-check table for any drive. They all read the same self-check as Windows, so use whichever you find clearest.</p>'},
+        {'eyebrow': '/07 &mdash; THE QUICK WAY', 'h2': 'Let our free app keep an eye on it',
+         'html': '__APP_BOX_DRIVEHEALTH__'},
+        {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': '<p>Drive showing a warning, or making noises? Back up first if it still works. Then ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. We fit a new SSD and copy everything across, and if the drive has already stopped, we can try to get your files back. We collect free across Bournemouth, Christchurch, Poole and Dorset.</p>'},
+    ],
+    'howToName': 'How to check SSD health on Windows',
+    'howToSteps': [
+        {'name': 'Open Disks &amp; volumes', 'text': 'On Windows 11: Settings, System, Storage, Advanced storage settings, Disks &amp; volumes.'},
+        {'name': 'Open the drive&rsquo;s properties', 'text': 'Choose the drive and click Properties. Drive health shows the estimated remaining life, available spare and temperature of an NVMe SSD.'},
+        {'name': 'Check any drive in Terminal', 'text': 'Right-click Start, open Terminal and run Get-PhysicalDisk. HealthStatus should say Healthy.'},
+        {'name': 'See wear and hours', 'text': 'In Terminal (Admin), run Get-PhysicalDisk | Get-StorageReliabilityCounter to see wear, temperature and power-on hours.'},
+        {'name': 'Back up if it warns', 'text': 'If anything says Warning or Unhealthy, back up your files today and replace the drive.'},
+    ],
+    'faqs': [
+        {'q': 'How do I check my SSD health in Windows 11?', 'a': '<p>Open Settings, System, Storage, Advanced storage settings, Disks &amp; volumes, choose the drive and click Properties. Drive health shows the estimated remaining life, available spare and temperature of an NVMe SSD.</p>'},
+        {'q': 'How do I check SSD health without installing anything?', 'a': '<p>Right-click Start, open Terminal and run <strong>Get-PhysicalDisk</strong>. HealthStatus shows Healthy, Warning or Unhealthy for every drive. In Terminal (Admin), <strong>Get-PhysicalDisk | Get-StorageReliabilityCounter</strong> adds wear, temperature and power-on hours.</p>'},
+        {'q': 'What is a good SSD health percentage?', 'a': '<p>There&rsquo;s no official pass mark. The figure counts down from 100% as the SSD wears, and everyday home use usually takes only a few percent a year. A warning matters more than the number: if Windows says Warning or Unhealthy, or tells you to back up, act on it whatever the percentage.</p>'},
+        {'q': 'How long do SSDs last?', 'a': '<p>Usually many years in a home PC. SSDs are rated by how much data can be written to them, and everyday use rarely comes close. They&rsquo;re more often replaced for space or speed than worn out, but any drive can fail without warning, so keep a backup.</p>'},
+        {'q': 'Can I check a hard drive the same way?', 'a': '<p>Yes. Get-PhysicalDisk shows the health of hard drives too, and Get-StorageReliabilityCounter their hours and temperature. Hard drives don&rsquo;t report wear like SSDs, and one that&rsquo;s clicking should be switched off, not tested.</p>'},
+        {'q': 'Does Windows warn me if my SSD is failing?', 'a': '<p>Windows 11 can show a notification when an NVMe SSD reports a problem, and Drive health in Settings shows the warning. Older SSDs and hard drives may give no warning at all, which is why a backup matters.</p>'},
+        {'q': 'My drive says Warning. What now?', 'a': '<p>Back up your photos and documents today, then have the drive replaced. We fit a new SSD and copy everything across: call 01202 775566 or text 07520 615332.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/laptop-clicking-noise-wont-turn-on/">laptop clicking noise</a>, <a href="/data-recovery/">data recovery</a>, <a href="/hard-drive-upgrade/">hard drive upgrade</a>, <a href="/laptop-ssd-upgrade-bournemouth/">laptop SSD upgrade</a>, <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/laptop-overheating/">laptop overheating</a>, <a href="/reliability-monitor/">Reliability Monitor</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
+}
+
+
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
                  'h3s': 'Still muffled after every step? That is a remote job.'},
@@ -1739,6 +2031,12 @@ FLOWS = {
                  'h3s': 'Still slow to start after every step? That is a remote job.'},
     CD['slug']: {'h2': 'Get your CD playing, step by step', 'ask': 'Is it playing now?', 'tip': 'Set Audio CD to play in AutoPlay, so next time it starts by itself.',
                  'h3s': 'Still won&rsquo;t play after every step? That is a remote job.'},
+    RM['slug']: {'h2': 'Read the record, step by step', 'ask': 'Is that step done?', 'tip': 'Fix one thing at a time, then look at the record again in a few days.',
+                 'h3s': 'Can&rsquo;t make sense of it? That is a remote job.'},
+    LO['slug']: {'h2': 'Cool it down, step by step', 'ask': 'Is it running cooler?', 'tip': 'Give it ten minutes of normal use after each step, then feel the underside again.',
+                 'h3s': 'Still hot after every step? That is a job for us.'},
+    SH['slug']: {'h2': 'Check your drive, step by step', 'ask': 'Is that step done?', 'tip': 'Write down the wear and the hours, so you can compare them in six months.',
+                 'h3s': 'Drive showing a warning? Back up, then that is a job for us.'},
 }
 
 
@@ -1804,8 +2102,17 @@ def pages(setup_url):
     boxes['__APP_BOX_STARTUP__'] = _app_box('startup', 'Startup: everything that starts with your PC, by its real name',
         '<p style="margin:0">Our free app lists every program that starts with Windows, including the ones set up for every user of the PC, by a name you&rsquo;ll recognise. '
         'In the free version the list is to look at, and you switch things off in Settings as above, which is free. Switching them off from inside the app comes with the paid version.</p>', setup_url, clip='startup')
+    boxes['__APP_BOX_RELIABILITY__'] = _app_box('reliability', 'What keeps going wrong: Reliability Monitor, in plain words',
+        '<p style="margin:0">It reads the same record as Reliability Monitor and puts it in plain words: Windows&rsquo; stability score, which programs crashed or froze in the last 30 days and how often, blue screens and unexpected shutdowns in the last 90 days, and updates that failed to install. '
+        'Fixed something? <strong>Start a fresh list</strong> counts from now, so you can see whether it comes back. Nothing is deleted: Windows keeps its full record, and <strong>Show everything again</strong> brings the old list back. A button opens Windows&rsquo; own Reliability Monitor.</p>', setup_url)
+    boxes['__APP_BOX_LAPTOPHEAT__'] = _app_box('laptopheat', 'Temperatures: is anything running hot?',
+        '<p style="margin:0">Its <strong>Temperatures</strong> page shows, on most laptops, whether <strong>Windows is slowing the processor down to cool it</strong>, each internal drive&rsquo;s temperature against <strong>its maker&rsquo;s own warning level</strong>, and a graphics chip&rsquo;s temperature where Windows reports one, with tips for a laptop or a desktop, whichever yours is. '
+        'It doesn&rsquo;t show the processor&rsquo;s own temperature, because Windows doesn&rsquo;t share it without extra driver software, and it never guesses. It only reads: it never touches the fan or a setting.</p>', setup_url)
+    boxes['__APP_BOX_DRIVEHEALTH__'] = _app_box('drivehealth', 'Drive health and temperature, in plain words',
+        '<p style="margin:0">Its <strong>This PC</strong> page shows Windows&rsquo; own drive self-check in plain words &mdash; <strong>healthy</strong>, or worth a look &mdash; and its health report adds the SSD&rsquo;s <strong>wear</strong> and the drive&rsquo;s <strong>hours of use</strong> (Windows asks your permission for those, as in the steps above). Its <strong>Temperatures</strong> page shows each internal drive against its maker&rsquo;s own warning level. '
+        'If Windows ever says a drive may be failing, the app&rsquo;s Home page tells you to copy your photos and documents somewhere safe that day. It only reads what the drive reports.</p>', setup_url)
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU, RM, LO, SH):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
@@ -1917,10 +2224,19 @@ def tool_boxes(setup_url):
         'repair-or-replace-advisor': _app_box('keepreplace', 'Keep it, upgrade it or replace it?',   # 11 Oct 2026
             '<p style="margin:0">Instead of four questions, our free app reads the facts from Windows: whether the PC runs Windows 11 or its processor can take it, whether the drive is an SSD or an old hard drive and what Windows&rsquo; own drive check says, the memory, the battery&rsquo;s wear and roughly how old the processor is. '
             'Then it gives a plain verdict &mdash; keep it, upgrade a part or replace it &mdash; and a drive that&rsquo;s failing always comes first: back up. No prices and no pressure.</p>', setup_url),
+        # 17 Oct 2026 (36.4 keyword wave: "gpu temp" 3.8K, "normal gpu temp" 426 a quarter on Bing): how hot a card should get,
+        # then 36.4's GpuWatch (GpuWatch.cs: every card each minute, 90 days, its own slow-down point on NVIDIA desktops)
+        'graphics-card-benchmark': '<div class="prose" style="margin:0 0 1.4rem"><p>Under a heavy load, such as a game or the benchmark above, most graphics cards run at about 60 to 85&deg;C, and 30 to 50&deg;C when the PC is idle. Each card has its own limit, where it starts slowing itself down to protect itself: NVIDIA lists it as the <strong>maximum GPU temperature</strong> on each card&rsquo;s specification page &mdash; 93&deg;C for an RTX 3090, for example. AMD cards also report a &ldquo;hotspot&rdquo; reading, which normally runs well above the main one.</p>'
+            '<p><strong>Check yours while it works:</strong> press <strong>Ctrl + Shift + Esc</strong>, choose <strong>Performance</strong> and click <strong>GPU</strong>. Windows shows a separate graphics card&rsquo;s temperature there (built-in graphics usually has none). Run the benchmark in another window and watch it climb.</p>'
+            '<p><strong>Running close to its limit</strong>, fans loud and the frame rate dipping after a few minutes? The usual causes are dust in the card&rsquo;s fans and heatsink, poor airflow through the case, or old thermal paste and pads on a card a few years old. Clear the dust first (PC off and unplugged, short bursts of compressed air, holding the fans still); the rest is in <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, and for a laptop, <a href="/laptop-overheating/">laptop overheating</a>.</p></div>'
+            + _app_box('gputemps', 'Graphics cards: watched every minute, with 90 days of history',
+            '<p style="margin:0">A card can be fine the day you check it and too hot every evening you play. Our free app reads every graphics card&rsquo;s temperature once a minute while it runs &mdash; the same reading Task Manager shows, so not just NVIDIA &mdash; and keeps the hottest it got each day for 90 days. On NVIDIA desktop cards it also shows where that card starts slowing itself down. If a card runs close to its limit on two or more days in a fortnight, the app says so on Home, with the usual cause. '
+            'It only reads: it never touches a fan, a speed or a setting. It sees the main chip&rsquo;s temperature, not the card&rsquo;s memory chips, and says so.</p>', setup_url),
     }
-    heads = {'webcam-mic-test': 'Who has used your camera?', 'repair-or-replace-advisor': 'Let your PC answer for itself'}
+    heads = {'webcam-mic-test': 'Who has used your camera?', 'repair-or-replace-advisor': 'Let your PC answer for itself', 'graphics-card-benchmark': 'How hot should your graphics card get?'}
+    eyebrows = {'graphics-card-benchmark': '// GRAPHICS CARD TEMPERATURES'}
     return {slug: ('    <section class="section" aria-label="In our free app" id="in-the-app">\n      <div class="wrap">\n'
-                   '        <p class="eyebrow mono">// ALSO IN OUR FREE WINDOWS APP</p>\n'
+                   '        <p class="eyebrow mono">' + eyebrows.get(slug, '// ALSO IN OUR FREE WINDOWS APP') + '</p>\n'
                    '        <h2 class="section-title" data-title>' + heads.get(slug, 'Prefer it on your PC?') + '<span class="title-underline"></span></h2>\n'
                    '        ' + box + '\n      </div>\n    </section>\n') for slug, box in boxes.items()}
 

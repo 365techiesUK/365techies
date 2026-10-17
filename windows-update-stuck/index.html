@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-15"
+      "dateModified": "2026-10-17"
     },
     {
       "@type": "HowTo",
@@ -321,6 +321,12 @@
         {
           "@type": "HowToStep",
           "position": 5,
+          "name": "Repair system files",
+          "text": "In Terminal (Admin), run DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow, and let each finish."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
           "name": "Repair Windows",
           "text": "Back up first, then Settings, System, Recovery, Fix problems using Windows Update, Reinstall now."
         }
@@ -360,6 +366,22 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "<p>It reinstalls the version of Windows 11 you already have, repairing Windows&rsquo; own files, and keeps your files, apps and settings. Back up first anyway.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does sfc /scannow do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>System File Checker checks every Windows file against a good copy and puts back any that are damaged or missing. Run it in Terminal (Admin), after DISM /Online /Cleanup-Image /RestoreHealth. It doesn&rsquo;t touch your own files or programs.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "SFC found corrupt files but was unable to fix some of them. What now?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Run <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong> with the PC online, which fetches good copies from Windows Update, then <strong>sfc /scannow</strong> again. If it still can&rsquo;t fix them, Fix problems using Windows Update (Settings, System, Recovery) reinstalls Windows and keeps your files, apps and settings.</p>"
           }
         },
         {
@@ -865,7 +887,7 @@
           <a href="#s1" class="button secondary button--lg">How long to wait</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; How long to wait</li><li>&#9679; Safe fixes first</li><li>&#9679; Keeps your files</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 15 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 17 October 2026</p>
       </div>
     </section>
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; HOW LONG TO WAIT</a><a href="#s2">02 &mdash; STUCK IN SETTINGS</a><a href="#s3">03 &mdash; FAILS AGAIN AND AGAIN</a><a href="#s4">04 &mdash; STUCK ON THE BLUE SCREEN</a><a href="#s5">05 &mdash; THE QUICK WAY</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
@@ -929,10 +951,10 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Get the updates through, step by step<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 15 October 2026</span></p>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 17 October 2026</span></p>
         </div>
         <div class="ff" id="ff">
-          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF 5</span></div>
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF 6</span></div>
           <ol class="ff-steps" id="ff-steps">
             <li class="ff-step is-on" data-step="1">
               <div class="ff-head"><span class="ff-num">01</span>Give it time</div>
@@ -955,7 +977,12 @@
               </div>
             </li>
             <li class="ff-step" data-step="5" hidden>
-              <div class="ff-head"><span class="ff-num">05</span>Repair Windows</div>
+              <div class="ff-head"><span class="ff-num">05</span>Repair system files</div>
+              <div class="ff-body"><p>In Terminal (Admin), run DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow, and let each finish.</p><div class="ff-ask"><b>Has it got going?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="6">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="6" hidden>
+              <div class="ff-head"><span class="ff-num">06</span>Repair Windows</div>
               <div class="ff-body"><p>Back up first, then Settings, System, Recovery, Fix problems using Windows Update, Reinstall now.</p><div class="ff-ask"><b>Has it got going?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="stuck">Not yet</button></div>
               </div>
             </li>
@@ -963,13 +990,14 @@
           <div class="ff-end" id="ff-end" hidden></div>
           <p class="ff-areas">Rather have it done for you? Remote help from &pound;20, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.</p>
           <template id="ff-tpl-fixed"><h3>Sorted{mins}. Nice work.</h3><p>Check for updates once more afterwards: there may be another waiting.</p><div class="ff-plan"><b>Rather have it looked after?</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
-          <template id="ff-tpl-stuck"><h3>Still stuck after all five steps? That is a remote job.</h3><p>With your permission we connect to your screen and sort it in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still stuck after all six steps? That is a remote job.</h3><p>With your permission we connect to your screen and sort it in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
           <template id="ff-tpl-text">Windows Update stuck? - the fix order (365techies.co.uk/windows-update-stuck/)
 1. Give it time: Big updates can take an hour or more. Leave a laptop plugged in.
 2. Restart and check again: Restart the PC (Restart, not Shut down), then Check for updates.
 3. Free space and pause: Free up space in Settings, System, Storage, then pause updates for a week and resume them.
 4. Run the troubleshooter: Settings, System, Troubleshoot, Other troubleshooters, Windows Update.
-5. Repair Windows: Back up first, then Settings, System, Recovery, Fix problems using Windows Update, Reinstall now.
+5. Repair system files: In Terminal (Admin), run DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow, and let each finish.
+6. Repair Windows: Back up first, then Settings, System, Recovery, Fix problems using Windows Update, Reinstall now.
 Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/</template>
         </div>
       </div>
@@ -1027,6 +1055,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
               <tr><th scope="row">&ldquo;Working on updates, don&rsquo;t turn off&rdquo;</th><td>Leave it plugged in, and give it at least an hour or two before doing anything.</td></tr>
               <tr><th scope="row">Stuck downloading</th><td>Restart, check the internet and free space, pause and resume, and run the troubleshooter.</td></tr>
               <tr><th scope="row">Fails again and again</th><td>Note the error code in Update history, then try Fix problems using Windows Update.</td></tr>
+              <tr><th scope="row">Repair Windows&rsquo; own files</th><td>In Terminal (Admin): DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow.</td></tr>
               <tr><th scope="row">Fix problems using Windows Update</th><td>Settings, System, Recovery: reinstalls Windows 11 and keeps your files, apps and settings.</td></tr>
               <tr><th scope="row">Back up first</th><td>Before any repair, copy your important files somewhere safe.</td></tr>
               <tr><th scope="row">Don&rsquo;t force it</th><td>Switching off mid-update is the last resort, not the first.</td></tr>
@@ -1056,7 +1085,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/03 &mdash; FAILS AGAIN AND AGAIN</p>
         <h2 class="section-title" data-title>An update fails again and again<span class="title-underline"></span></h2>
-<ol><li><strong>Find the error code:</strong> Settings, Windows Update, <strong>Update history</strong> shows each failed update with a code such as 0x800f0922. Microsoft&rsquo;s help pages explain most codes.</li><li><strong>Back up your important files</strong> to a USB drive or OneDrive first.</li><li><strong>Use Windows 11&rsquo;s own repair:</strong> Settings, System, Recovery, <strong>Fix problems using Windows Update</strong>, then <strong>Reinstall now</strong>. It reinstalls the version of Windows you already have, repairs Windows&rsquo; own files, and keeps your files, apps and settings (<a href="https://support.microsoft.com/en-us/windows/deployment/install-upgrade/fix-issues-by-reinstalling-the-current-version-of-windows" rel="noopener" target="_blank">Microsoft</a>). Keep the PC plugged in and online until it finishes. It may not appear on PCs managed by a work or school.</li></ol><p><strong>The big yearly update keeps undoing itself?</strong> If it restarts, says &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop, or Microsoft&rsquo;s installer says &ldquo;We couldn&rsquo;t update the system reserved partition&rdquo;, the usual cause is a full start-up partition, not a broken PC. We fixed exactly that on a customer&rsquo;s Dell in October 2026 (5 KB free, 15 MB needed): <a href="/we-couldnt-update-the-system-reserved-partition/">how to check it and free the space safely</a>.</p><p>Why updates sometimes cause trouble in the first place: <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</p>
+<ol><li><strong>Find the error code:</strong> Settings, Windows Update, <strong>Update history</strong> shows each failed update with a code such as 0x800f0922. Microsoft&rsquo;s help pages explain most codes.</li><li><strong>Back up your important files</strong> to a USB drive or OneDrive first.</li><li><strong>Repair Windows&rsquo; own files:</strong> right-click Start, choose <strong>Terminal (Admin)</strong> and say Yes. Run <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong>, which fetches good copies of damaged Windows files from Windows Update (stay online), then <strong>sfc /scannow</strong>, which checks every Windows file and puts back any that are damaged. Each can take a while, often 10 to 30 minutes; let them finish. Microsoft suggests this order (<a href="https://support.microsoft.com/en-us/topic/use-the-system-file-checker-tool-to-repair-missing-or-corrupted-system-files-79aa86cb-ca52-166a-92a3-966e85d4094e" rel="noopener" target="_blank">Microsoft</a>). If SFC still says it &ldquo;found corrupt files but was unable to fix some of them&rdquo;, go on to the next step.</li><li><strong>Use Windows 11&rsquo;s own repair:</strong> Settings, System, Recovery, <strong>Fix problems using Windows Update</strong>, then <strong>Reinstall now</strong>. It reinstalls the version of Windows you already have, repairs Windows&rsquo; own files, and keeps your files, apps and settings (<a href="https://support.microsoft.com/en-us/windows/deployment/install-upgrade/fix-issues-by-reinstalling-the-current-version-of-windows" rel="noopener" target="_blank">Microsoft</a>). Keep the PC plugged in and online until it finishes. It may not appear on PCs managed by a work or school.</li></ol><p><strong>The big yearly update keeps undoing itself?</strong> If it restarts, says &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop, or Microsoft&rsquo;s installer says &ldquo;We couldn&rsquo;t update the system reserved partition&rdquo;, the usual cause is a full start-up partition, not a broken PC. We fixed exactly that on a customer&rsquo;s Dell in October 2026 (5 KB free, 15 MB needed): <a href="/we-couldnt-update-the-system-reserved-partition/">how to check it and free the space safely</a>.</p><p>365 PC Manager&rsquo;s full service runs the system file check itself: SFC first, DISM when SFC finds damage it can&rsquo;t fix, then SFC again, and it says in plain words when Windows needs the repair above (<a href="/free-pc-health-check/">the app</a>). Windows&rsquo; own record of every failed update, day by day, is in <a href="/reliability-monitor/">Reliability Monitor</a>.</p><p>Why updates sometimes cause trouble in the first place: <a href="/why-windows-updates-break-things/">why Windows updates break things</a>.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Stuck on &ldquo;Working on updates&rdquo; for hours">
@@ -1084,7 +1113,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
       <div class="wrap">
         <div class="related" data-reveal>
           <p class="related__head">// KEEP GOING</p>
-          <div class="related__links"><a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a><a href="/why-windows-updates-break-things/">why Windows updates break things</a><a href="/is-my-windows-still-supported/">is my Windows still supported?</a><a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a><a href="/windows-11-support/">Windows 11 help</a></div>
+          <div class="related__links"><a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a><a href="/why-windows-updates-break-things/">why Windows updates break things</a><a href="/is-my-windows-still-supported/">is my Windows still supported?</a><a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a><a href="/reliability-monitor/">Reliability Monitor</a><a href="/windows-11-support/">Windows 11 help</a></div>
         </div>
       </div>
     </section>
@@ -1109,6 +1138,14 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
         <details class="faq" data-reveal>
           <summary>What does Fix problems using Windows Update do?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>It reinstalls the version of Windows 11 you already have, repairing Windows&rsquo; own files, and keeps your files, apps and settings. Back up first anyway.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What does sfc /scannow do?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>System File Checker checks every Windows file against a good copy and puts back any that are damaged or missing. Run it in Terminal (Admin), after DISM /Online /Cleanup-Image /RestoreHealth. It doesn&rsquo;t touch your own files or programs.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>SFC found corrupt files but was unable to fix some of them. What now?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Run <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong> with the PC online, which fetches good copies from Windows Update, then <strong>sfc /scannow</strong> again. If it still can&rsquo;t fix them, Fix problems using Windows Update (Settings, System, Recovery) reinstalls Windows and keeps your files, apps and settings.</p></p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Will I lose my files?<span class="faq__icon" aria-hidden="true"></span></summary>

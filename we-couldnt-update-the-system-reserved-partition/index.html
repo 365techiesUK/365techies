@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-15"
+      "dateModified": "2026-10-17"
     },
     {
       "@type": "HowTo",
@@ -336,6 +336,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "<p>A small hidden part of the drive that holds the files Windows needs to start. On older PCs it&rsquo;s labelled &ldquo;System Reserved&rdquo;; on modern ones it&rsquo;s the EFI system partition. The error message still uses the old name.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What do 0x800F0922 and 0xC1900104 mean?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Both can mean the system reserved (EFI) partition hasn&rsquo;t enough free space for the update. 0x800F0922 can also mean the PC couldn&rsquo;t reach Windows Update, for example because a VPN is on, so switch any VPN off and check the partition&rsquo;s free space as in step 3.</p>"
           }
         },
         {
@@ -873,7 +881,7 @@
           <a href="#s3" class="button secondary button--lg">Check it first</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Your files are safe</li><li>&#9679; About 15 minutes</li><li>&#9679; Fixed remotely</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 15 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 17 October 2026</p>
       </div>
     </section>
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT IT MEANS</a><a href="#s2">02 &mdash; A REAL ONE</a><a href="#s3">03 &mdash; CHECK IT FIRST</a><a href="#s4">04 &mdash; THE SAFE FIX</a><a href="#s5">05 &mdash; WHAT NOT TO DO</a><a href="#s6">06 &mdash; WILL IT COME BACK?</a><a href="#s7">07 &mdash; THE QUICK WAY</a><a href="#s8">08 &mdash; WHEN TO CALL US</a></nav>
@@ -881,7 +889,7 @@
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/01 &mdash; WHAT IT MEANS</p>
         <h2 class="section-title" data-title>What the message really means<span class="title-underline"></span></h2>
-<p>You see it in one of two ways:</p><ul><li><strong>Windows 11 Setup or the Installation Assistant</strong> stops with &ldquo;This PC doesn&rsquo;t currently meet Windows 11 system requirements. Here&rsquo;s why: <strong>We couldn&rsquo;t update the system reserved partition.</strong>&rdquo;</li><li><strong>Windows Update</strong> downloads the yearly update, restarts, shows &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop. Settings, Windows Update, Update history then lists it as <em>Failed to install</em> with an error code.</li></ul><p>Despite the wording, your PC isn&rsquo;t too old. On a modern PC the &ldquo;system reserved partition&rdquo; is the <strong>EFI system partition</strong>: a small hidden part of the drive, often only about 100 MB, that holds the files Windows needs to start. A version upgrade has to write new start-up files there and wants roughly <strong>15 MB free</strong>. When it hasn&rsquo;t got that, the upgrade either refuses to start or undoes itself after the restart.</p><p>Older PCs that were upgraded from Windows 10, and many laptops that came with a 100 MB partition from the factory, hit it most, and they hit it again at each yearly update.</p>
+<p>You see it in one of two ways:</p><ul><li><strong>Windows 11 Setup or the Installation Assistant</strong> stops with &ldquo;This PC doesn&rsquo;t currently meet Windows 11 system requirements. Here&rsquo;s why: <strong>We couldn&rsquo;t update the system reserved partition.</strong>&rdquo;</li><li><strong>Windows Update</strong> downloads the yearly update, restarts, shows &ldquo;Undoing changes made to your computer&rdquo; and goes back to the desktop. Settings, Windows Update, Update history then lists it as <em>Failed to install</em> with an error code.</li></ul><p>Despite the wording, your PC isn&rsquo;t too old. On a modern PC the &ldquo;system reserved partition&rdquo; is the <strong>EFI system partition</strong>: a small hidden part of the drive, often only about 100 MB, that holds the files Windows needs to start. A version upgrade has to write new start-up files there and wants roughly <strong>15 MB free</strong>. When it hasn&rsquo;t got that, the upgrade either refuses to start or undoes itself after the restart.</p><p>Older PCs that were upgraded from Windows 10, and many laptops that came with a 100 MB partition from the factory, hit it most, and they hit it again at each yearly update.</p><p><strong>The error codes you may see:</strong> <strong>0x800F0922</strong> in Update history, which Microsoft says means either the PC couldn&rsquo;t reach Windows Update (a VPN can block it) or there isn&rsquo;t enough free space in the System Reserved partition (<a href="https://support.microsoft.com/en-us/windows/get-help-with-windows-upgrade-and-installation-errors-ea144c24-513d-a60e-40df-31ff78b3158a" rel="noopener" target="_blank">Microsoft</a>), and <strong>0xC1900104</strong> from Windows Setup. A yearly update that undoes itself can show a more general code too: on the Dell below it was 0x80242016. Whichever you have, the check in step 3 settles it in a minute.</p>
       </div>
     </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
@@ -937,7 +945,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Free the space, step by step<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 15 October 2026</span></p>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 17 October 2026</span></p>
         </div>
         <div class="ff" id="ff">
           <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF 5</span></div>
@@ -1033,6 +1041,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
         <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
         <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><tbody>
               <tr><th scope="row">What it means</th><td>Windows&rsquo; small start-up partition (the EFI partition) is nearly full. The update needs about 15 MB free there.</td></tr>
+              <tr><th scope="row">The error codes</th><td>Often 0x800F0922 in Update history, or 0xC1900104 from Windows Setup.</td></tr>
               <tr><th scope="row">Is my PC too old?</th><td>No. On a PC that already runs Windows 11 this is the only &ldquo;requirement&rdquo; it is failing.</td></tr>
               <tr><th scope="row">What fills it</th><td>Start-up screen fonts in a dozen languages, and on Dell laptops a second set of fonts and two BIOS backup files.</td></tr>
               <tr><th scope="row">The safe fix</th><td>Remove the Chinese, Japanese and Korean start-up fonts, keep the four English ones, then run Windows Update again.</td></tr>
@@ -1079,11 +1088,11 @@ mountvol Y: /d</code></pre><ul><li><strong>Paste one line at a time.</strong> If
 <p>It can. Yearly updates may copy the full set of fonts back, and a 100 MB partition is always tight. Check the free space again after the update has finished, and before next year&rsquo;s. Some makers&rsquo; update tools also write to this partition: on a Dell, put off installing <em>SupportAssist OS Recovery</em> updates until the Windows update is done, because that recovery tool keeps its files on the same partition.</p><p>If the upgrade gets past this but then only offers to keep <em>Nothing</em>, stop and don&rsquo;t continue: see <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a> for why, and the safe way round it.</p>
       </div>
     </section>
-    <section id="s7" class="section" aria-label="Let our free app watch the updates">
+    <section id="s7" class="section" aria-label="Let our app check it, and tidy it">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/07 &mdash; THE QUICK WAY</p>
-        <h2 class="section-title" data-title>Let our free app watch the updates<span class="title-underline"></span></h2>
-<div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Windows Update: is it really getting updates?</h3><p style="margin:0">It reads Windows&rsquo; own update history &mdash; the same list as Settings, Windows Update, Update history &mdash; and says in plain words when the monthly update last installed, whether one update is failing over and over, and whether an update is waiting for a restart. It never installs, removes or changes anything.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Windows Update</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v41.exe" download data-pfa-dl="updates" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-updates-v36.webp" width="1272" height="1072" alt="Windows Update in 365 PC Manager: Windows is getting its monthly updates, the last monthly update installed on 24 Sep 2026, and the most recent updates, starting with Windows 11, version 26H2, each marked Installed" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app, on our office PC.</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
+        <h2 class="section-title" data-title>Let our app check it, and tidy it<span class="title-underline"></span></h2>
+<p>Version 36.4 of our free 365 PC Manager app checks this partition on its <strong>Windows Update</strong> page and says plainly when it&rsquo;s too full for the next update. Its <strong>full service</strong> now tidies it safely, taking out the start-up fonts for languages the PC doesn&rsquo;t use, and repairs damaged system files with Windows&rsquo; own tool. The Windows Update page itself only reads; the tidy happens when you run the full service.</p><div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Windows Update: is it really getting updates?</h3><p style="margin:0">It reads Windows&rsquo; own update history &mdash; the same list as Settings, Windows Update, Update history &mdash; and says in plain words when the monthly update last installed, whether one update is failing over and over, and whether an update is waiting for a restart. It never installs, removes or changes anything.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Windows Update</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v41.exe" download data-pfa-dl="updates" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-updates-v36.webp" width="1272" height="1072" alt="Windows Update in 365 PC Manager: Windows is getting its monthly updates, the last monthly update installed on 24 Sep 2026, and the most recent updates, starting with Windows 11, version 26H2, each marked Installed" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app, on our office PC.</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
     </section>
     <section id="s8" class="section section--alt" aria-label="When to call us">
@@ -1110,6 +1119,10 @@ mountvol Y: /d</code></pre><ul><li><strong>Paste one line at a time.</strong> If
         <details class="faq" data-reveal>
           <summary>What is the system reserved partition?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p><p>A small hidden part of the drive that holds the files Windows needs to start. On older PCs it&rsquo;s labelled &ldquo;System Reserved&rdquo;; on modern ones it&rsquo;s the EFI system partition. The error message still uses the old name.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What do 0x800F0922 and 0xC1900104 mean?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Both can mean the system reserved (EFI) partition hasn&rsquo;t enough free space for the update. 0x800F0922 can also mean the PC couldn&rsquo;t reach Windows Update, for example because a VPN is on, so switch any VPN off and check the partition&rsquo;s free space as in step 3.</p></p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Why does it say my PC doesn&rsquo;t meet the requirements?<span class="faq__icon" aria-hidden="true"></span></summary>

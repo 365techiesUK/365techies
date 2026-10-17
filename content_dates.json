@@ -781,8 +781,8 @@
  },
  "dell-g15-overheating": {
   "first": "2026-07-28",
-  "h": "54f619ae9978114b",
-  "last": "2026-10-06"
+  "h": "2143065a5808f602",
+  "last": "2026-10-17"
  },
  "dell-hardware": {
   "first": "2026-07-28",
@@ -1235,8 +1235,8 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "835e4099e3fd0436",
-  "last": "2026-10-13"
+  "h": "f332a1992f57aada",
+  "last": "2026-10-17"
  },
  "gaming-pc-tune-up": {
   "first": "2026-09-05",
@@ -1275,8 +1275,8 @@
  },
  "graphics-card-benchmark": {
   "first": "2026-07-28",
-  "h": "dba12bc98b437cb6",
-  "last": "2026-09-28"
+  "h": "74a1694e970a4603",
+  "last": "2026-10-17"
  },
  "greenby-email-login": {
   "first": "2026-10-13",
@@ -1369,8 +1369,12 @@
  },
  "how-to-check-laptop-battery-health": {
   "first": "2026-10-13",
-  "h": "c37a83024fb5adac",
-  "last": "2026-10-13"
+  "h": "c46d85502db88813",
+  "last": "2026-10-17"
+ },
+ "how-to-check-ssd-health": {
+  "first": "2026-10-17",
+  "h": "87ef5d6b17b108f0"
  },
  "how-to-choose-a-laptop": {
   "first": "2026-07-28",
@@ -1600,8 +1604,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "4601fe6ee10af3c9",
-  "last": "2026-10-15"
+  "h": "695f5ba3e9badad0",
+  "last": "2026-10-17"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -1700,8 +1704,8 @@
  },
  "it-jargon-buster/ssd": {
   "first": "2026-07-28",
-  "h": "b1bb1468fece9364",
-  "last": "2026-09-26"
+  "h": "1a9cb35a037e0d13",
+  "last": "2026-10-17"
  },
  "it-jargon-buster/the-cloud": {
   "first": "2026-07-28",
@@ -2075,8 +2079,12 @@
  },
  "laptop-clicking-noise-wont-turn-on": {
   "first": "2026-07-28",
-  "h": "33e90a11caca53df",
-  "last": "2026-10-06"
+  "h": "94b8336d051a5409",
+  "last": "2026-10-17"
+ },
+ "laptop-overheating": {
+  "first": "2026-10-17",
+  "h": "462a07121b7ec4b4"
  },
  "laptop-plugged-in-not-charging": {
   "first": "2026-10-12",
@@ -3104,6 +3112,10 @@
   "h": "b091e34b33f15678",
   "last": "2026-09-26"
  },
+ "reliability-monitor": {
+  "first": "2026-10-17",
+  "h": "c352adedc54e2aea"
+ },
  "remote-access": {
   "first": "2026-07-28",
   "h": "94ca3530fe792ebd",
@@ -3597,8 +3609,8 @@
  },
  "we-couldnt-update-the-system-reserved-partition": {
   "first": "2026-10-15",
-  "h": "95a07e54484f0104",
-  "last": "2026-10-15"
+  "h": "b29bcbb7686bfb7b",
+  "last": "2026-10-17"
  },
  "web-care": {
   "first": "2026-07-28",
@@ -3717,8 +3729,8 @@
  },
  "why-does-my-pc-keep-crashing": {
   "first": "2026-10-11",
-  "h": "7e0637ae3a0eb4cc",
-  "last": "2026-10-13"
+  "h": "4fcd3b750064aff1",
+  "last": "2026-10-17"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
@@ -3852,8 +3864,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "a887145744bffd3d",
-  "last": "2026-10-15"
+  "h": "85da8d23e6c7e11b",
+  "last": "2026-10-17"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
@@ -3877,8 +3889,8 @@
  },
  "windows-update-stuck": {
   "first": "2026-10-12",
-  "h": "1cb7d24803ee5269",
-  "last": "2026-10-15"
+  "h": "39184ef183e0c54e",
+  "last": "2026-10-17"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",
