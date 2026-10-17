@@ -1,9 +1,9 @@
 {
-  "ver": 40,
-  "version": "1.0.40",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v40.exe",
-  "sha256": "efea3fe0eb4713781c38a9e3891b176703c90d11f5a76d9ddb3fa230a19d7204",
-  "notes": "Version 36.3 adds three things to Music & videos. Audiobooks: classic books read aloud, free, which play right here and carry on where you left off. World webcams: beaches, harbours and cities round the world, with a fresh picture every few minutes. Games: our own card games and arcade classics, one click away. Home now has a Service my PC button too. Signed by 365 Techies Ltd.",
+  "ver": 42,
+  "version": "1.0.42",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v42.exe",
+  "sha256": "6df44a4aae5343a618636e7e1c04a13d50c33a7f9fc1d06a721bd7e8846d0749",
+  "notes": "Version 36.4.1 fixes some PCs that stopped responding moments after 36.4 started. Temperature readings are paused while we put them right, and the other checks run when you open them, as they did before 36.4. Signed by 365 Techies Ltd.",
   "installer": {
     "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v40.exe",
     "sha256": "dd8b42a9450f8893425ff0fb3b22b7fa3e5592dcbf4e356993cfe2e605b7ce96"
