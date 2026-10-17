@@ -111,8 +111,10 @@ check(plus_trial_auto_uk('4444444444444444', 'GB', 39, $row, $T) === null, 'no s
 echo "G  the shipped config and wiring\n";
 $src = (string)file_get_contents(__DIR__ . '/pcm-buy-config.php');
 // 17 Oct 2026 (owner: "keep £19.99 and do step 1"): 'page' - the buy page sells it so the owner can buy one and refund it.
-// 'on' (the app offers it) only after that test purchase and the owner's go.
-check(preg_match("/^\\\$BUY_UK = 'page';/m", $src) === 1, "shipped: \$BUY_UK = 'page' (owner's test purchase) - not 'on' until the owner says go");
+// 18 Oct 2026 (owner: "put it so they get the option in the PC Manager app"): 'on' - the app offers it beside the plans. The
+// live order was created by PayPal (the owner's own account was refused as the merchant itself); a real purchase + refund is
+// still to be made, by card as a guest, when convenient.
+check(preg_match("/^\\\$BUY_UK = 'on';/m", $src) === 1, "shipped: \$BUY_UK = 'on' (owner's go, 18 Oct 2026)");
 check(preg_match("/^\\\$UK_GBP = '19\\.99';/m", $src) === 1 && preg_match("/^\\\$UK_PRICE = '\x{00A3}19\\.99 for 1 year - does not renew';/mu", $src) === 1, 'shipped: GBP 19.99, and the line the app shows (34 characters, under 40)');
 check(preg_match("/^\\\$TRIAL_AUTO_UK_FROM = '2026-10-13';/m", $src) === 1, 'shipped: the automatic free month from 13 Oct 2026');
 $pcm = (string)file_get_contents(__DIR__ . '/pcm.php');
