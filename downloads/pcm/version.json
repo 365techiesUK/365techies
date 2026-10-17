@@ -1,11 +1,11 @@
 {
-  "ver": 41,
-  "version": "1.0.41",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v41.exe",
-  "sha256": "ce0703e32f0e0c8e092c6cedecd927e79bfe645bc46849fbda7c0f4284c68f59",
-  "notes": "Version 36.4 puts your PC's service on the Home screen, adds a Temperatures page that watches your graphics cards all the time, and checks Windows' start-up partition before the next big update - the full service now tidies it when it's too full. Home now lists what needs doing most urgently first, and a healthy PC simply says All good. Bigger text works on every screen, Get help shows when we answer the phone, turning off start-up programs is free, and Clear junk files & report no longer empties the Recycle Bin. Techies One - email, letters, sums and files - has its own place on the menu, the music light show is rebuilt - twelve scenes that move in time with the music, with moods, colours and settings you can change, including Liquid, which you can stir with the mouse - and it moves to anything your PC plays, and the text is a little bigger and clearer throughout. There's an About page too - who makes the app, how it's tested and what's new in each version. Signed by 365 Techies Ltd.",
+  "ver": 40,
+  "version": "1.0.40",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v40.exe",
+  "sha256": "efea3fe0eb4713781c38a9e3891b176703c90d11f5a76d9ddb3fa230a19d7204",
+  "notes": "Version 36.3 adds three things to Music & videos. Audiobooks: classic books read aloud, free, which play right here and carry on where you left off. World webcams: beaches, harbours and cities round the world, with a fresh picture every few minutes. Games: our own card games and arcade classics, one click away. Home now has a Service my PC button too. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v41.exe",
-    "sha256": "58e5491bb8ec20ab25e388d664b57d1fe97d9f906cbf8b348303e50acdfffbc2"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v40.exe",
+    "sha256": "dd8b42a9450f8893425ff0fb3b22b7fa3e5592dcbf4e356993cfe2e605b7ce96"
   }
 }
