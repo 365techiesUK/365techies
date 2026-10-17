@@ -241,11 +241,13 @@ if ($action === 'checkin') {
                 : array('plus_error'=>$pr['error']) + $offer) + $trOut
             + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
     }
+    // 17 Oct 2026: a PC that lost its link on the PC gets its key back (pcm_relink_key) - and no free month in its place
+    $rk = ($key === '' && (int)($in['ver'] ?? 0) >= 43) ? pcm_relink_key($db, $machine) : '';
     // 9 Oct 2026: a free month waiting for this PC (staff gave it in the portal's installs card) is handed over here - to
     // build 37 ("36.1") on, the first that knows what to do with it; an older copy gets it once it has updated itself
     // 13 Oct 2026 (owner: "Yes, automatic"): a NEW UK install, not linked to a customer, is given its free month by itself
     // (pcm-plus-lib.php plus_trial_auto_uk - first seen from $TRIAL_AUTO_UK_FROM on, one per PC ever) and handed it below
-    if ($key === '' && function_exists('plus_trial_auto_uk') && (int)($in['ver'] ?? 0) >= PLUS_TRIAL_MIN_VER) {
+    if ($key === '' && $rk === '' && function_exists('plus_trial_auto_uk') && (int)($in['ver'] ?? 0) >= PLUS_TRIAL_MIN_VER) {
         try {
             $auCc = geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? ''));
             if (plus_is_uk($auCc)) {
@@ -255,9 +257,10 @@ if ($action === 'checkin') {
             }
         } catch (Throwable $e) { }
     }
-    $trHand = ($key === '' && function_exists('plus_trial_handover')) ? plus_trial_handover(plus_mhash($machine), (int)($in['ver'] ?? 0)) : null;
+    $trHand = ($key === '' && $rk === '' && function_exists('plus_trial_handover')) ? plus_trial_handover(plus_mhash($machine), (int)($in['ver'] ?? 0)) : null;
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
         + ($trHand ? array('trial_key'=>$trHand['key'], 'trial_until'=>$trHand['until'], 'trial_days'=>$trHand['days']) : array())
+        + ($rk !== '' ? array('relink_key'=>$rk) : array())
         // 8 Oct 2026: abroad, with the paid app switched on: "Unlock everything" in place of our UK plans (nothing while off)
         + (function_exists('plus_offer_out') ? plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)) : array())); // key gone => downgrade
     $c =& $db['customers'][$key];
@@ -411,6 +414,22 @@ if ($action === 'checkin') {
     require_once __DIR__ . '/pcm-lastsvc-lib.php';
     list($lastSvc, $lastSvcK) = pcm_last_service(($machine !== '' && isset($c['machines'][$machine])) ? $c['machines'][$machine] : null);
     out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+}
+
+// 17 Oct 2026 (app 36.4.2, build 43): a PC that was linked to a customer but has lost its link ON THE PC (36.4 froze some
+// Dell OptiPlexes; switching them off at the wall could empty the app's licence.txt) checks in with no key. If its machine
+// id is on a customer record that saw it in the last 60 days, that record's key is handed back for the app to adopt - it
+// then activates exactly as "Link this PC" does. The newest such record wins (a PC that moved between records). Read only.
+function pcm_relink_key($db, $machine) {
+    if (!is_string($machine) || !preg_match('/^[0-9a-f]{12}$/', $machine)) return '';
+    $best = ''; $bestSeen = 0; $cut = time() - 60 * 86400;
+    foreach ((isset($db['customers']) && is_array($db['customers']) ? $db['customers'] : array()) as $k => $c) {
+        if (!is_array($c) || !empty($c['merged_into']) || !isset($c['machines'][$machine]) || !is_array($c['machines'][$machine])) continue;
+        $seen = strtotime((string)($c['machines'][$machine]['seen'] ?? '') . ' UTC');
+        if ($seen === false || $seen < $cut) continue;
+        if ($seen > $bestSeen) { $best = (string)$k; $bestSeen = $seen; }
+    }
+    return $best;
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
