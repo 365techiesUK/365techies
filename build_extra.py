@@ -34148,6 +34148,17 @@ def write_portal_page():
       + '<div class="quiet" style="font-size:.85rem;margin:0">' + n + ' days: ' + h[0][1] + '% \\u2192 ' + h[n - 1][1] + '%</div>';
   }
   function pcWhen(ts) { if (!ts) return ''; var d = new Date(ts * 1000); return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear(); }
+  // drive encryption from the last service report (Service Pass 4.34, 17 Oct 2026; owner: "add the key ID to the service
+  // pass"). The Key ID is what the blue BitLocker screen shows (Esc) and what the Microsoft account's recovery-key list
+  // names each key by - an ID to find the right key, never the key itself.
+  function pcBl(b) {
+    var ids = b.ids || [], when = b.ts ? ' <span class="s">(service ' + esc(pcWhen(b.ts)) + ')</span>' : '';
+    if (!b.on && !b.enc) return 'Off \\u2014 not encrypted' + when;
+    var h = b.on ? 'BitLocker on' : 'Encrypted, protection paused';
+    if (ids.length) h += ' \\u00b7 Key ID' + (ids.length > 1 ? 's ' : ' ') + ids.map(function (x) { return '<b style="font-family:ui-monospace,Consolas,monospace;letter-spacing:.05em">' + esc(x) + '</b>'; }).join(', ');
+    else if (!b.key) h += ' \\u00b7 <span style="color:var(--pwarn)">no recovery key found</span>';
+    return h + when + (ids.length ? '<div class="s">The key itself is in the Microsoft account signed in when the PC was set up (aka.ms/myrecoverykey) \\u2014 match it by this ID, not the PC\\u2019s name.</div>' : '');
+  }
   function pcNoteText(t) {
     return esc(t).replace(/(https:\\/\\/[^\\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\\n/g, '<br />');
   }
@@ -34215,6 +34226,7 @@ def write_portal_page():
       + '<dt>Drives</dt><dd>' + (drives || '<span class="quiet" style="font-size:.85rem">main drive ' + d.disk + '% full</span>') + '</dd>'
       + '<dt>Windows</dt><dd>' + (d.w10 ? 'Windows 10' : 'Windows 11') + (d.wv ? ' ' + esc(d.wv) : '') + (d.w11 === 'no' ? ' \\u00b7 can\\u2019t run 11' : '') + '</dd>'
       + (sbc ? '<dt>Secure Boot</dt><dd>' + sbc + '</dd>' : '')
+      + (d.bl ? '<dt>Drive encryption</dt><dd>' + pcBl(d.bl) + '</dd>' : '')
       + (d.dtemp > 0 ? '<dt>Temperature</dt><dd>hottest drive ' + d.dtemp + '\\u00b0C (limit ' + d.dwarn + '\\u00b0C)' + (d.heatslow ? ' \\u00b7 <span style="color:var(--pwarn)">Windows slowing it for heat</span>' : '') + '</dd>' : '')
       + (d.espmb > 0 && d.espfree >= 0 ? '<dt>Start-up partition</dt><dd>' + espWords(d) + (espFull(d) ? ' <span style="color:var(--pwarn)">\\u2014 too full for big updates</span>' : '') + '</dd>' : '')
       + (d.ofc ? '<dt>Office</dt><dd>' + pcOfc(d.ofc) + '</dd>' : '')

@@ -3189,6 +3189,8 @@ function staff_pc_detail($db, $k, $pc, $cid2) {
         // app 36.4: the hottest drive and its warning level (-1 = not reported), Windows slowing it for heat
         'dtemp' => isset($m['dtemp']) ? (int)$m['dtemp'] : -1, 'dwarn' => isset($m['dwarn']) ? (int)$m['dwarn'] : -1, 'heatslow' => !empty($m['heatslow']),
         'model' => (string)$g('model', ''), 'drives' => is_array($g('drives', array())) ? $g('drives', array()) : array(),
+        // Service Pass 4.34: drive encryption and the recovery Key IDs from the last service that could read them (pcm.php reportup)
+        'bl' => (isset($m['bl']) && is_array($m['bl'])) ? $m['bl'] : null,
         'ram' => (int)$g('ram', 0), 'cpu' => (string)$g('cpu', ''), 'dsk' => is_array($g('dsk', array())) ? $g('dsk', array()) : array(), 'upd' => (int)$g('upd', 0),
         'w11' => (string)$g('w11', ''), 'notes' => is_array($g('notes', array())) ? $g('notes', array()) : array(),
         'pcage' => ($asset && !empty($asset['pc']['date'])) ? array('date' => (string)$asset['pc']['date'], 'age' => (string)(isset($asset['pc']['age']) ? $asset['pc']['age'] : ''),

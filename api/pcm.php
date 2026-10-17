@@ -69,6 +69,20 @@ function pcm_drives_in($v) {
     }
     return $o;
 }
+/* drive encryption from a service report (Service Pass 4.34, 17 Oct 2026; owner: "add the key ID to the service pass"):
+   on / encrypted / a recovery key exists / the recovery Key IDs - 8 hex characters each, exactly as the BitLocker screen
+   and the Microsoft account's recovery-key list show them. IDs only: anything that is not 8 hex characters is dropped, so
+   a 48-digit key can never be stored here. null = the report could not read it (the last one stands). */
+function pcm_bitlocker_in($v) {
+    if (!is_array($v)) return null;
+    $ids = array();
+    foreach (array_slice(isset($v['ids']) && is_array($v['ids']) ? array_values($v['ids']) : array(), 0, 8) as $id) {
+        $id = is_string($id) ? strtoupper(trim($id)) : '';
+        if (preg_match('/^[0-9A-F]{8}$/', $id) && !in_array($id, $ids, true)) $ids[] = $id;
+        if (count($ids) >= 4) break;
+    }
+    return array('on' => !empty($v['on']), 'enc' => !empty($v['enc']) || !empty($v['on']), 'key' => !empty($v['key']) || count($ids) > 0, 'ids' => $ids);
+}
 
 /* software inventory (P0): the snapshot the six-weekly service uploads in summary.software.
    Every field is untrusted text - capped and stripped, exactly like pcm_drives_in. Returns null
@@ -1015,6 +1029,9 @@ if ($action === 'reportup') {
         if ($modelIn !== '') $mrec['model'] = $modelIn;
         $drivesIn = pcm_drives_in($sumr['drives'] ?? null);
         if ($drivesIn) $mrec['drives'] = $drivesIn;
+        // drive encryption + recovery Key IDs, for the staff PC card (a report that couldn't read it leaves the last one)
+        $blIn = pcm_bitlocker_in($sumr['bitlocker'] ?? null);
+        if ($blIn !== null) $mrec['bl'] = $blIn + array('ts' => $rts);
         // software inventory (P0): store the snapshot, capped + sanitised
         $swIn = pcm_software_in(isset($sumr['software']) ? $sumr['software'] : null);
         if ($swIn !== null) $mrec['sw'] = $swIn;
