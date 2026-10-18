@@ -33,6 +33,8 @@ app's own release notes (D:\\claude\\techies-one\\RELEASE-0.15.0.md to RELEASE-0
 The download, version and size come from downloads/t1/version.json through techies_one_boxes.release(), the same reader
 the fix-page boxes use, and the build stops if the installer is missing.
 """
+import html
+
 import build_pages as bp
 from techies_one_boxes import release
 
@@ -168,6 +170,19 @@ CSS = """    <style>
       .t1p-card h3{margin:0 0 .5rem;font-size:1.15rem}
       .t1p-tm{font-size:.78rem;color:var(--muted);max-width:60rem;margin:1.6rem auto 0;text-align:center;line-height:1.5}
       @media (max-width:860px){.t1p-feat,.t1p-intro{grid-template-columns:1fr}.t1p-feat:nth-child(even) .t1p-feat__txt{order:0}}
+      .t1p-clip{display:inline-flex;align-items:center;gap:.8rem;max-width:100%;box-sizing:border-box;margin:.35rem 0 0;padding:.45rem 1rem .45rem .45rem;border:1px solid var(--t1edge);border-radius:12px;background:var(--t1fill);color:inherit;text-decoration:none;transition:border-color .2s ease,background .2s ease}
+      .t1p-clip:hover,.t1p-clip:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}
+      .t1p-clip__pic{position:relative;flex:none;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#0b1430}
+      .t1p-clip__pic img{display:block;width:100%;height:100%;object-fit:cover}
+      .t1p-clip__pic svg{position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+      .t1p-clip b{display:block;font-size:1rem}
+      .t1p-clip small{display:block;color:var(--muted);font-size:.85rem;line-height:1.35}
+      .t1p-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}
+      .t1p-dlg::backdrop{background:rgba(2,6,16,.84)}
+      .t1p-dlg video{display:block;width:min(92vw,calc(86vh * 9 / 16),506px);height:auto;aspect-ratio:9/16;border-radius:16px;background:#060c1c}
+      .t1p-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
+      .t1p-dlg__x:hover,.t1p-dlg__x:focus-visible{background:#1d97e3}
+      .t1p-dlg__says{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     </style>
 """
 
@@ -296,6 +311,67 @@ def overview():
     </section>"""
 
 
+# The 0.22 Shorts (18 Oct 2026, reels/techies-one-022-shorts: the released 0.22 demo, Lily's voice, captions burned in),
+# each on its matching feature, keyed by that feature's picture name. They play in one pop-up player (CLIP_DIALOG), so the
+# page keeps its layout; without the script the link opens the video itself. Cached for a year like the films, so each file
+# carries the reel's own version (a new cut = a new name). SAYS = Lily's lines exactly, for the schema's transcript.
+SHORTS_UPLOADED = "2026-10-18"
+SHORTS = {
+    "albums": ("photos-by-date-v2", 26, "All your photos, by date",
+               "What were you doing on this day, years ago? Techies One Albums puts your photos in order, by the date they were "
+               "taken. Jump to any year, or any month. Looking back finds your old memories. It asks you first. Then sit back, "
+               "and enjoy the slideshow."),
+    "picasa": ("picasa-v2", 23, "Your Picasa stars, captions and albums, brought across",
+               "Spent years putting your photos in albums? Techies One Albums brings across the stars, captions and albums you "
+               "made in Picasa. Your favourites come back, with the words under each photo. And your photos themselves aren't "
+               "changed."),
+    "film": ("make-a-film-v2", 24, "Make a film of your photos",
+             "Make a film of your family photos. For the family, for the TV, or for a memorial service. Add a title, and a few "
+             "words at the end. Techies One makes it right here on your PC, with our own music. Then watch it together, or send "
+             "it to the family."),
+    "folders": ("new-email-folders-v3", 21, "New email by the clock, and your own folders",
+                "Know the moment a new email arrives. A notice pops up down by the clock, saying who it's from. Scams are never "
+                "announced. They go straight to Scams. And make your own folders, for family, the club, anything you like."),
+    "bring-in": ("old-emails-v2", 21, "Old emails from Outlook, brought with you",
+                 "Moving from Outlook? Bring your old emails with you. Choose your Outlook file, and Techies One shows what's in "
+                 "it. Your emails come into a mailbox on this PC, folders and all. And your Outlook file is never changed."),
+    "backup": ("backup-v2", 21, "Back up your email to a USB stick",
+               "If your computer broke tomorrow, would your emails be safe? Techies One backs up your email and contacts to a USB "
+               "stick. Check the backup, and bring it back whenever you need it. And backups never contain your passwords."),
+    "envelopes": ("envelopes-v2", 24, "Christmas cards: the envelopes",
+                  "Christmas cards to send? Let Techies One do the envelopes. Tick the people you're sending to, and choose "
+                  "Envelopes. Test one on folded paper first, so you know which way they go in. Or print address labels "
+                  "instead. And keep this year's card list, too."),
+}
+SHORT_END = " Free, from 365 Techies."
+
+
+def short_link(name):
+    if name not in SHORTS:
+        return ""
+    f, secs, title, says = SHORTS[name]
+    base = f"/images/t1-short-{f}"
+    return (f'\n              <a class="t1p-clip" id="short-{f[:f.rindex("-v")]}" href="{base}.mp4" data-poster="{base}-poster.webp" '
+            f'data-label="{title}: {secs} seconds, with a spoken guide and captions" data-says="{html.escape(says + SHORT_END)}">'
+            f'<span class="t1p-clip__pic"><img src="{base}-thumb.webp" width="72" height="72" alt="" loading="lazy" decoding="async">{PLAY_SVG}</span>'
+            f'<span><b>Watch it in {secs} seconds</b><small>The real program, with a spoken guide and captions</small></span></a>')
+
+
+# One player for every Short: a modal dialog (Esc, the X or a click outside closes it and stops the video)
+CLIP_DIALOG = ('    <dialog class="t1p-dlg" id="t1clip" aria-label="Techies One video" aria-describedby="t1clip-says">'
+               '<button class="t1p-dlg__x" type="button" aria-label="Close the video">&times;</button>'
+               '<video controls playsinline preload="none" width="1080" height="1920"></video>'
+               '<p class="t1p-dlg__says" id="t1clip-says"></p></dialog>\n'
+               '    <script>(function(){var d=document.getElementById("t1clip");if(!d||!d.showModal)return;'
+               'var v=d.querySelector("video"),s=document.getElementById("t1clip-says");'
+               'document.querySelectorAll("a.t1p-clip").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();'
+               'v.poster=a.getAttribute("data-poster");v.src=a.getAttribute("href");v.setAttribute("aria-label",a.getAttribute("data-label"));'
+               's.textContent=a.getAttribute("data-says");d.showModal();var p=v.play();if(p&&p.catch)p.catch(function(){});});});'
+               'd.addEventListener("close",function(){v.pause();v.removeAttribute("src");v.load();});'
+               'd.querySelector(".t1p-dlg__x").addEventListener("click",function(){d.close();});'
+               'd.addEventListener("click",function(e){if(e.target===d)d.close();});})();</script>')
+
+
 def feat_blocks(feats):
     blocks = []
     for f in feats:
@@ -306,7 +382,7 @@ def feat_blocks(feats):
             <div class="t1p-feat__txt">
               <p class="t1p-prob mono">{prob}</p>
               <h3>{h}</h3>
-              <p>{body}</p>
+              <p>{body}</p>{short_link(name)}
             </div>
             <figure style="margin:0"><div class="t1p-shot{art}">{shot(name, alt, tag)}</div></figure>
           </div>""")
@@ -797,7 +873,7 @@ def build():
         growing(), WHO, bp.faq_html(FAQS),
         bp.cta("Rather we set it up for you?", "We can install Techies One, add your email addresses and show you round, over the phone or on a visit. It&rsquo;s a paid job, from &pound;20 remotely, and we agree the price before we start.",
                primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Send us a message", "/contact/")),
-        TRADEMARK,
+        TRADEMARK, CLIP_DIALOG,
     ])
 
     def schema(s, _d=DESC):
@@ -855,9 +931,18 @@ def build():
                       "thumbnailUrl": [bp.SITE + FILM_POSTER], "uploadDate": FILM_UPLOADED,
                       "duration": "PT%dM%dS" % (FILM_SECS // 60, FILM_SECS % 60), "contentUrl": bp.SITE + FILM,
                       "embedUrl": f"{bp.SITE}/{s}/#mail", "inLanguage": "en-GB", "publisher": {"@id": bp.SITE + "/#business"}}
-        app["subjectOf"] = [{"@id": f"{bp.SITE}/{s}/#video"}, {"@id": f"{bp.SITE}/{s}/#mail-video"}]
+        shorts = [{"@type": "VideoObject", "@id": f"{bp.SITE}/{s}/#short-{f[:f.rindex('-v')]}",
+                   "name": f"Techies One: {title}", "description": f"{title}, in Techies One for Windows 10 and 11: the real program, "
+                   "with a spoken guide and captions. From 365 Techies in Dorset; the people, photos and emails shown are made up.",
+                   "thumbnailUrl": [f"{bp.SITE}/images/t1-short-{f}-poster.webp"], "uploadDate": SHORTS_UPLOADED,
+                   "duration": "PT%dS" % secs, "contentUrl": f"{bp.SITE}/images/t1-short-{f}.mp4",
+                   "embedUrl": f"{bp.SITE}/{s}/#short-{f[:f.rindex('-v')]}", "transcript": says + SHORT_END,
+                   "inLanguage": "en-GB", "publisher": {"@id": bp.SITE + "/#business"}}
+                  for f, secs, title, says in SHORTS.values()]
+        app["subjectOf"] = ([{"@id": f"{bp.SITE}/{s}/#video"}, {"@id": f"{bp.SITE}/{s}/#mail-video"}]
+                            + [{"@id": v["@id"]} for v in shorts])
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", NAME),
-                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app, suite_video, mail_video,
+                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app, suite_video, mail_video, *shorts,
                          bp.howto_node(s, "How to install Techies One", STEPS),
                          bp.faqpage(s, FAQS)])
 
