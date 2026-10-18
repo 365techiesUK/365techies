@@ -174,6 +174,16 @@ function shop_qbo_setup($c, $deposit, $pay, $api = 'invq_api') {
     shop_stock_remember($items, shop_stock_skus(shop_catalogue(), shop_read()));
     return array(true, 'Linked to your ' . count($items) . ' stock items.' . ($made ? ' Made ' . implode(', ', $made) . '.' : ''), $made);
 }
+/* Where Stripe pays the shop's CARD sales in (18 Oct 2026): chosen in the portal once the shop is set up. -> array(ok, note|why) */
+function shop_qbo_card_account($c, $acct, $api = 'invq_api') {
+    $money = shop_qbo_money_accounts($c, $api);
+    if ($money === null) return array(false, 'could not read your QuickBooks accounts');
+    $name = ''; foreach ($money as $a) if ($a['id'] === (string)$acct) $name = $a['name'];
+    if ($name === '') return array(false, 'choose the account Stripe pays your card sales into');
+    $saved = shop_locked(function (&$d) use ($acct) { if (empty($d['qbo']['deposit'])) return false; $d['qbo']['deposit_card'] = (string)$acct; return true; });
+    if ($saved === false) return array(false, 'set QuickBooks up for the shop first');
+    return array(true, 'Card sales through Stripe will go into ' . $name . '.');
+}
 /* The setup, if it was made for THIS QuickBooks company - and for stock items (an older setup, from before the change,
    doesn't count: it is made again from the portal). */
 function shop_qbo_ids($d, $c) {
@@ -308,10 +318,13 @@ function shop_sale_body($sale, $u, $q, $cid, $tax, $item) {
         if ($tax !== '') $l['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $tax);
         $lines[] = $l;
     }
-    return array('CustomerRef' => array('value' => $cid), 'TxnDate' => $day, 'DepositToAccountRef' => array('value' => $q['deposit']),
-        'DocNumber' => shop_doc('WEB-', $sale['order']), 'Line' => $lines,
-        'PrivateNote' => 'Bought online at 365techies.co.uk: PayPal order ' . $sale['order'] . ', payment ' . $sale['capture']
-            . ($sale['status'] === 'pending' ? ' (PayPal was still checking it)' : '') . '.');
+    $card = shop_by_card($sale);   // 18 Oct 2026: a card sale through Stripe goes into the account Stripe pays into
+    return array('CustomerRef' => array('value' => $cid), 'TxnDate' => $day, 'DepositToAccountRef' => array('value' => $card ? $q['deposit_card'] : $q['deposit']),
+        'DocNumber' => shop_doc('WEB-', $card ? $sale['capture'] : $sale['order']), 'Line' => $lines,
+        'PrivateNote' => $card
+            ? 'Bought online at 365techies.co.uk, paid by card through Stripe: payment ' . $sale['capture'] . '.'
+            : 'Bought online at 365techies.co.uk: PayPal order ' . $sale['order'] . ', payment ' . $sale['capture']
+                . ($sale['status'] === 'pending' ? ' (PayPal was still checking it)' : '') . '.');
 }
 /* Post a sale to QuickBooks (once), on the machine's own stock item. $ensure: invq_ensure_customer (tests pass their own).
    -> array(ok, url|why) */
@@ -321,9 +334,10 @@ function shop_qbo_sale($c, $sale, $u, $api = 'invq_api', $ensure = 'invq_ensure_
     $d = shop_read(); $k = $sale['unit'] . '#' . (int)$sale['ed'];
     $q = shop_qbo_ids($d, $c);
     if (!$q) return array(false, 'set QuickBooks up for the shop first');
+    if (shop_by_card($sale) && empty($q['deposit_card'])) return array(false, 'choose the account Stripe pays your card sales into (QuickBooks, on this card)');
     $had = $d['books'][$k]['sale'] ?? array();
     if (!empty($had['qbo_id']) && ($had['order'] ?? '') === $sale['order']) return array(true, (string)($had['qbo_url'] ?? ''));
-    $doc = shop_doc('WEB-', $sale['order']);
+    $doc = shop_doc('WEB-', shop_by_card($sale) ? $sale['capture'] : $sale['order']);
     $found = shop_q($c, $api, "select Id from SalesReceipt where DocNumber = '" . shop_qesc($doc) . "'");
     if ($found === null) return array(false, 'could not ask QuickBooks');
     $qid = (string)($found['SalesReceipt'][0]['Id'] ?? '');

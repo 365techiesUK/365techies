@@ -7,6 +7,7 @@
  *   do=accounts                             -> + accounts: the Bank / Credit Card accounts to choose from for the setup
  *   do=setup {deposit, pay}                 -> links the shop to the stock items' accounts; finds or makes the delivery item
  *                                              and the eBay vendor in QuickBooks
+ *   do=cardacc {card}                       -> the account Stripe pays the CARD sales into (18 Oct 2026)
  *   do=stock                                -> asks QuickBooks now about each machine's stock item (normally every 10 min)
  *   do=purchase {unit, order, date, total, ssd, qbo: true|false}
  *                                           -> keeps what the machine cost (the eBay order) and, with qbo, puts it in
@@ -51,10 +52,14 @@ $c = null;
 $conn = function () use (&$c) { if ($c === null) $c = invq_connect(); return $c; };
 
 if (in_array($do, array('purchase', 'saleqbo', 'offline', 'online'), true) && !$u) $out['err'] = 'That machine isn\'t in the stock list.';
-elseif ($do === 'accounts' || $do === 'setup') {
+elseif ($do === 'accounts' || $do === 'setup' || $do === 'cardacc') {
     $cc = $conn();
     if (empty($cc['ok'])) $out['err'] = 'QuickBooks isn\'t connected (' . (string)($cc['why'] ?? '') . ').';
     elseif ($do === 'accounts') { $a = shop_qbo_money_accounts($cc); if ($a === null) $out['err'] = 'Couldn\'t read your QuickBooks accounts - try again.'; else $out['accounts'] = $a; }
+    elseif ($do === 'cardacc') {
+        list($ok, $msg) = shop_qbo_card_account($cc, (string)($in['card'] ?? ''));
+        if ($ok) { $out['note'] = $msg; shop_log("qbo card account by $by: $msg"); } else $out['err'] = ucfirst($msg) . '.';
+    }
     else {
         list($ok, $msg) = shop_qbo_setup($cc, (string)($in['deposit'] ?? ''), (string)($in['pay'] ?? ''));
         if ($ok) { $out['note'] = 'QuickBooks is set up for the shop. ' . $msg; shop_log("qbo setup by $by: $msg"); } else $out['err'] = ucfirst($msg) . '.';
@@ -145,5 +150,7 @@ $q = $d['qbo'] ?? array();
 // setup: made for the stock items; was: an older setup (from before the change) - it is made again, with the same accounts
 $out['qbo'] = array('setup' => shop_qbo_ids($d, array()) !== null, 'was' => empty($q['asset']) && !empty($q['deposit']),
     'deposit' => (string)($q['deposit'] ?? ''), 'pay' => (string)($q['pay'] ?? ''), 'stock_at' => (int)($d['stock_at'] ?? 0),
+    // card sales through Stripe (18 Oct 2026): the account they go into, and whether the Stripe key file is on the server
+    'card' => (string)($q['deposit_card'] ?? ''), 'card_on' => st_creds() !== null, 'clash' => count($d['clash']),
     'ssd_default' => SHOP_SSD_DEFAULT, 'live' => $c !== null ? !empty($c['live']) : null);
 sa_out($out);

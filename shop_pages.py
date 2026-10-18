@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The refurbished Dells IN STOCK, bought online with PayPal (14 Oct 2026) - the pages and the server's catalogue.
+"""The refurbished Dells IN STOCK, bought online with PayPal (14 Oct 2026) or by card through Stripe (18 Oct 2026) - the pages and the server's catalogue.
 
 From shop_stock.py (one row per machine) this builds:
   /refurbished-dell-for-sale/        the list of machines in stock. noindex while nothing is on sale (a page with nothing
@@ -193,6 +193,11 @@ _CSS = r'''
       .shopu__facts{display:flex;flex-wrap:wrap;gap:.4rem .5rem;margin:.75rem 0 0;padding:0;list-style:none}
       .shopu__facts li{font-size:.84rem;padding:.3rem .65rem;border:1px solid var(--line);border-radius:var(--r-pill)}
       .shopu__btns{max-width:420px;margin:1rem 0 0}
+      .shopu__card{max-width:420px;margin:1rem 0 0}
+      .shopu__cardbtn{width:100%;justify-content:center;min-height:50px;font-size:1.05rem}
+      .shopu__cardnote{color:var(--muted);font-size:.85rem;margin:.45rem 0 0;line-height:1.45}
+      .shopu__or{display:flex;align-items:center;gap:.6rem;color:var(--muted);font-size:.8rem;margin:1rem 0 -.2rem;max-width:420px}
+      .shopu__or::before,.shopu__or::after{content:"";flex:1;border-top:1px solid var(--line)}
       .shopu__status{min-height:1.4em;margin:.6rem 0 0;line-height:1.5}
       .shopu__status--bad{color:#ffb3a4}
       .shopu__spec{width:100%;border-collapse:collapse;font-size:.95rem}
@@ -267,7 +272,7 @@ _UNIT_JS = r'''
     var d = el('shopdone'), h;
     if (r.state === 'pending') h = '<h2>Thank you. PayPal is still checking the payment.</h2><p>The machine is yours. As soon as PayPal clears the payment we&rsquo;ll send it and email you the tracking number.</p>';
     else h = '<h2>Thank you &mdash; it&rsquo;s yours.</h2><p>We&rsquo;ll send it within 2 working days by tracked courier and email you the tracking number.</p>';
-    h += '<p>' + (r.email ? 'Your order confirmation is on its way to <b>' + esc(r.email) + '</b>. ' : '') + 'PayPal emails you a receipt as well. Any questions, reply to our email or call <a href="tel:+441202775566">01202 775566</a>.</p>';
+    h += '<p>' + (r.email ? 'Your order confirmation is on its way to <b>' + esc(r.email) + '</b>. ' : '') + (r.prov === 'card' ? '' : 'PayPal emails you a receipt as well. ') + 'Any questions, reply to our email or call <a href="tel:+441202775566">01202 775566</a>.</p>';
     d.innerHTML = h; d.hidden = false;
     avail('Sold', false);
     try { d.scrollIntoView({ block: 'start' }); } catch (e) {}
@@ -278,8 +283,41 @@ _UNIT_JS = r'''
     not_uk: 'We can only deliver in the UK. Nothing was charged - choose a UK address in PayPal to buy it.',
     held: 'Someone else is buying this machine right now. If they don&rsquo;t finish, it comes back in about 20 minutes.',
     rate: 'Too many tries from here today - please call 01202 775566.',
-    not_set_up: 'Buying online isn&rsquo;t open just now. Please call 01202 775566.'
+    not_set_up: 'Buying online isn&rsquo;t open just now. Please call 01202 775566.',
+    card_failed: 'We couldn&rsquo;t open the card payment page. Please try again, or call 01202 775566.',
+    clash: 'Your payment went through, but this machine had just gone. We&rsquo;ll refund you in full and be in touch today - or call 01202 775566.'
   };
+  // 18 Oct 2026: card payments on Stripe's own page (shop.php do=card / carddone)
+  function card(cfg) {
+    var box = el('shopcard'), btn = el('shopcardbtn');
+    box.hidden = false; if (cfg.client_id) el('shopor').hidden = false;
+    btn.addEventListener('click', function () {
+      btn.disabled = true; status('Opening the secure card page…');
+      post({ 'do': 'card', unit: unit, hold: hold }).then(function (r) {
+        if (r && r.ok && r.url) { try { sessionStorage.setItem('shopCard:' + unit, r.id); } catch (e) {} location.href = r.url; return; }
+        btn.disabled = false;
+        if (r && (r.error === 'sold' || r.error === 'held')) avail(r.error === 'sold' ? 'Sold' : 'Someone is buying this right now', false);
+        var w = r && WHY[r.error];
+        status(w ? w.replace(/&rsquo;/g, '’') : 'We couldn’t open the card payment page. Please try again, or call 01202 775566.', true);
+      }).catch(function () { btn.disabled = false; status('We couldn’t reach our server. Please try again in a minute.', true); });
+    });
+  }
+  // back from Stripe's page: ?paid=<session> (the payment is checked with Stripe by our server) or ?cancelled=1
+  function cardBack(sid) {
+    var tries = 0;
+    status('Checking your payment with Stripe…');
+    (function check() {
+      post({ 'do': 'carddone', session: sid }).then(function (r) {
+        r = r || {};
+        if (r.state === 'sold' || r.state === 'had') { status(''); done({ state: 'sold', email: r.email, prov: 'card' }); return; }
+        if (r.state === 'clash') { avail('Sold', false); status(WHY.clash.replace(/&rsquo;/g, '’'), true); return; }
+        if ((r.state === 'unpaid' || r.state === 'busy' || r.error === 'busy') && ++tries < 6) { setTimeout(check, 2500); return; }
+        status(r.state === 'unpaid'
+          ? 'Stripe hasn’t confirmed a payment. If your card was charged, we’ll email you as soon as it comes through; otherwise you can try again.'
+          : 'We couldn’t confirm the payment just now. If your card was charged, we have your order and will email you. Any worries, call 01202 775566.', true);
+      }).catch(function () { if (++tries < 6) setTimeout(check, 3000); else status('We couldn’t reach our server. If your card was charged, we have your order and will email you.', true); });
+    })();
+  }
   function buttons(cfg) {
     var s = document.createElement('script');
     s.src = 'https://www.paypal.com/sdk/js?client-id=' + encodeURIComponent(cfg.client_id) + '&currency=GBP&intent=capture&components=buttons&locale=en_GB';
@@ -321,14 +359,23 @@ _UNIT_JS = r'''
     };
     document.head.appendChild(s);
   }
+  var qs = location.search, paid = (qs.match(/[?&]paid=(cs_(?:live|test)_[A-Za-z0-9]+)/) || [])[1], cancelled = /[?&]cancelled=1/.test(qs);
+  if (paid || cancelled) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+  if (paid) { cardBack(paid); return; }
+  if (cancelled) {
+    var was = ''; try { was = sessionStorage.getItem('shopCard:' + unit) || ''; sessionStorage.removeItem('shopCard:' + unit); } catch (e) {}
+    if (was) post({ 'do': 'release', order: was, hold: hold });
+  }
   post({ 'do': 'config', unit: unit, hold: hold }).then(function (c) {
     if (!c || !c.ok) { status('We couldn’t reach our server. Refresh the page in a minute.', true); return; }
     if (c.state === 'sold' || c.state === 'off') { avail(c.state === 'sold' ? 'Sold' : 'Not on sale just now', false); el('shopgone').hidden = false; return; }
     if (c.state === 'held') { avail('Someone is buying this right now', false); status('If they don’t finish, it comes back in about 20 minutes - refresh the page then.'); return; }
-    if (!c.client_id) { status(WHY.not_set_up.replace(/&rsquo;/g, '’'), true); return; }
-    if (c.env === 'sandbox' || root.getAttribute('data-test') === '1') el('shoptest').hidden = false;
+    if (!c.client_id && !c.card) { status(WHY.not_set_up.replace(/&rsquo;/g, '’'), true); return; }
+    if (c.env === 'sandbox' || c.card_env === 'test' || root.getAttribute('data-test') === '1') el('shoptest').hidden = false;
     avail('In stock: this exact machine', true);
-    buttons(c);
+    if (cancelled) status('Payment cancelled. Nothing was taken.');
+    if (c.card) card(c);
+    if (c.client_id) buttons(c);
   }).catch(function () { status('We couldn’t reach our server. Refresh the page in a minute.', true); });
 })();
 '''
@@ -354,7 +401,8 @@ HUB_FAQS = [
      "&pound;%d to anywhere in the UK, by tracked courier. We send it within %d working days of your order and email you the "
      "tracking number." % (S.DELIVERY_GBP, S.DISPATCH_DAYS[1])),
     ("How do I pay?",
-     "Through PayPal, with a PayPal account or a debit or credit card. PayPal takes the payment, so we never see your card details."),
+     "By debit or credit card (Apple Pay and Google Pay too) or with PayPal. The payment is taken on Stripe&rsquo;s or PayPal&rsquo;s "
+     "own secure page, so we never see your card details."),
     ("Can I change my mind?",
      "Yes. You have 14 days from delivery, and returning it is free: in our service area we collect it, and anywhere else "
      "in the UK we send you a prepaid returns label. We refund the machine and the standard delivery you paid. "
@@ -515,10 +563,15 @@ def _unit_content(u, task_head, bc_sub, spin_viewer=None, spin_sets=None):
             <p class="shopu__price"><b>&pound;{u["price"]}</b><span>+ &pound;{deliv} UK delivery</span></p>
             <p class="shopu__avail" id="shopavail">{"Sold" if u["status"] == "sold" else "In stock: this exact machine"}</p>
             <ul class="shopu__facts">{facts}</ul>
+            <div class="shopu__card" id="shopcard" hidden>
+              <button type="button" class="button primary shopu__cardbtn" id="shopcardbtn">Pay by card &#8594;</button>
+              <p class="shopu__cardnote">Debit or credit card, Apple&nbsp;Pay or Google&nbsp;Pay, on Stripe&rsquo;s secure page.</p>
+            </div>
+            <p class="shopu__or" id="shopor" hidden>or</p>
             <div class="shopu__btns" id="shopbtns"></div>
             <p class="shopu__status" id="shopstatus" role="status" aria-live="polite"></p>
             <p class="shop__note" id="shopgone" hidden>This one has gone, but we can usually find you another. <a href="/{HUB}/">See what&rsquo;s in stock</a> or <a href="/dell-hardware/#pick">every model with guide prices</a>.</p>
-            <p class="shop__small">You&rsquo;re buying from <b>365 Techies Ltd</b>, the family IT business in Bournemouth. Pay with PayPal or a debit or credit card through PayPal, so we never see your card. UK delivery only. <a href="/terms/">Terms</a> &middot; <a href="/privacy-policy/#shop-orders">Privacy</a>.</p>
+            <p class="shop__small">You&rsquo;re buying from <b>365 Techies Ltd</b>, the family IT business in Bournemouth. Pay by debit or credit card or with PayPal, on their own secure pages, so we never see your card. UK delivery only. <a href="/terms/">Terms</a> &middot; <a href="/privacy-policy/#shop-orders">Privacy</a>.</p>
           </div>
         </div>
         <div class="shop__card shopu__done" id="shopdone" hidden aria-live="polite"></div>

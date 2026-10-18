@@ -16871,9 +16871,9 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           </ul>
 
           <h2 id="shop-orders" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Buying a refurbished computer from our website</h2>
-          <p>When you buy one of our <a href="/refurbished-dell-for-sale/">refurbished Dells in stock</a>, <strong>PayPal</strong> takes the payment, by PayPal or card, under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>. Your card or PayPal account details stay with PayPal: we never see them.</p>
+          <p>When you buy one of our <a href="/refurbished-dell-for-sale/">refurbished Dells in stock</a>, the payment is taken by <strong>PayPal</strong> (by PayPal or card), under its own <a href="https://www.paypal.com/uk/legalhub/paypal/privacy-full" rel="noopener">privacy statement</a>, or by <strong>Stripe</strong> (by card, Apple Pay or Google Pay), under its own <a href="https://stripe.com/gb/privacy" rel="noopener">privacy policy</a>. Your card or PayPal account details stay with them: we never see them.</p>
           <ul>
-            <li><strong>What PayPal tells us:</strong> your name, email address, the delivery address you chose, a phone number if you gave PayPal one, the order and payment numbers and the amount you paid.</li>
+            <li><strong>What PayPal or Stripe tells us:</strong> your name, email address, the delivery address you chose, a phone number if you gave one, the order and payment numbers and the amount you paid.</li>
             <li><strong>What we use it for:</strong> sending you the computer and its tracking number, your 14-day right to change your mind, your guarantee, refunds, and our accounts. The courier gets your name, address and phone number to deliver it.</li>
             <li><strong>Our legal basis:</strong> performing our contract with you, and our legal duty to keep financial records.</li>
             <li><strong>How long we keep it:</strong> the order record for six years, like our other financial records (see below).</li>
@@ -33892,6 +33892,19 @@ def write_portal_page():
       }
       h += '</div>';
     }
+    // 18 Oct 2026: card sales through Stripe go into the QuickBooks account Stripe pays into - chosen here once
+    if (q.setup) {
+      var cardName = ''; (SHOP.acc || []).forEach(function (a) { if (a.id === q.card) cardName = a.name; });
+      h += '<div class="shop-setup"><b>Card sales (Stripe)</b> &mdash; '
+        + (q.card ? 'go into ' + (cardName ? '<b>' + esc(cardName) + '</b>' : 'the account you chose') + ' in QuickBooks.'
+          : (q.card_on ? '<span class="err">choose the QuickBooks account Stripe pays them into, or they won&rsquo;t go into QuickBooks.</span>'
+            : 'not switched on yet: the Stripe key file isn&rsquo;t on the server.'))
+        + (q.clash ? ' <span class="err">' + q.clash + ' card payment' + (q.clash > 1 ? 's' : '') + ' for a machine that had gone &mdash; see #365-job-tracker and refund in Stripe.</span>' : '');
+      if (!SHOP.acc) h += ' <button type="button" class="sm ghost" id="shopacc2">' + (q.card ? 'Change' : 'Choose the account') + '</button>';
+      else h += '<label for="shopcardacc">Stripe pays your card sales into</label><select id="shopcardacc">' + shopOpts(q.card) + '</select>'
+        + '<p style="margin:.6rem 0 0"><button type="button" class="sm" id="shopcardset">Save</button></p>';
+      h += '</div>';
+    }
     // 14 Oct 2026 (owner: "automatically picks up what we've bought ... from eBay ... adds it automatically into QuickBooks"):
     // the eBay connection (api/shop-ebay-lib.php, hourly by cron) and the Dells it found that aren't listed yet
     var eb = d.ebay || {}, bought = d.bought || [];
@@ -33952,11 +33965,15 @@ def write_portal_page():
           + (r.state === 'sold' && !s ? '<button type="button" class="sm ghost" data-shopact="online" data-unit="' + esc(r.id) + '">Back on sale</button>' : '')
           + (SHOP.open === r.id ? shopCostForm(r, q) : '') + '</td></tr>';
       });
-      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; what it cost &minus; the SSD &minus; PayPal&rsquo;s fee (the courier isn&rsquo;t in it). A sale goes into QuickBooks only once its stock item is found by its SKU, so it never leaves a machine &ldquo;in stock&rdquo; that has gone. The SSDs reach QuickBooks from the bank feed when you buy them.</p>';
+      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; what it cost &minus; the SSD &minus; the PayPal or Stripe fee (the courier isn&rsquo;t in it). A sale goes into QuickBooks only once its stock item is found by its SKU, so it never leaves a machine &ldquo;in stock&rdquo; that has gone. The SSDs reach QuickBooks from the bank feed when you buy them.</p>';
     }
     box.innerHTML = h;
     var acc = document.getElementById('shopacc');
     if (acc) acc.onclick = function () { acc.disabled = true; loadShop('accounts'); };
+    var acc2 = document.getElementById('shopacc2');
+    if (acc2) acc2.onclick = function () { acc2.disabled = true; loadShop('accounts'); };
+    var cs = document.getElementById('shopcardset');
+    if (cs) cs.onclick = function () { cs.disabled = true; loadShop('cardacc', { card: document.getElementById('shopcardacc').value }); };
     var sg = document.getElementById('shopbsug');   // a machine named already: put the suggestion in the name box
     if (sg) sg.onclick = function () { var nb = document.getElementById('shopbname'); nb.value = sg.getAttribute('data-v'); nb.focus(); };
     var su = document.getElementById('shopsetup');

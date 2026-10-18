@@ -350,6 +350,7 @@ api/shop-state.json.*.tmp
 api/shop.log
 # ... and the owner's eBay developer keys + token (server-only), and the access token cache made from them
 api/ebay-key.php
+api/shop-stripe-key.php
 api/ebay-token.json
 # ... and through FastSpring: the owner's webhook signing secret (server-only), the keys the buy page may show for 3 hours, the log
 api/pcm-fs-secret.php

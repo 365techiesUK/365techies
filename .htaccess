@@ -334,7 +334,9 @@ ErrorDocument 404 /404.html
 # delivery address; shop.log the sales and failures; the library, the build's catalogue and the test are not URLs.
 # ebay-key.php (14 Oct 2026) is the owner's eBay developer keys + user token (server-only, never in git); ebay-token.json the
 # 2-hour access token made from it; shop-ebay-lib.php include-only, its test CLI-only.
-<FilesMatch "^(shop-state\.json(\..*)?|shop\.log|shop-(lib|books-lib|ebay-lib|catalogue|test|books-test|ebay-test)\.php|ebay-key\.php|ebay-token\.json)$">
+# Card payments through Stripe (18 Oct 2026): api/shop-stripe.php (Stripe's webhook) is the URL; shop-stripe-key.php holds the
+# owner's restricted key and webhook secret (server-only, never in git); shop-stripe-lib.php include-only.
+<FilesMatch "^(shop-state\.json(\..*)?|shop\.log|shop-(lib|books-lib|ebay-lib|stripe-lib|catalogue|test|books-test|ebay-test)\.php|ebay-key\.php|ebay-token\.json|shop-stripe-key\.php)$">
   Require all denied
 </FilesMatch>
 # ... and through FastSpring (12 Oct 2026): api/pcm-plus-fs.php is the URL. pcm-fs-secret.php holds the owner's webhook
