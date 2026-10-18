@@ -392,7 +392,7 @@ function vis_path_acts(array $store, array $days, $site, array $paths) {
         $get = function ($k) use ($pg) { return isset($pg[$k]) ? (int)$pg[$k] : 0; };
         foreach ($paths as $p) {
             $rows[$p]['n'] += $get($p);
-            foreach (array('pcm', 't1') as $app) { $rows[$p]['dl'] += $get('/~dl/' . $app . $p); $rows[$p]['send'] += $get('/~send/' . $app . $p); }
+            foreach (array('pcm', 't1', 'tpdf') as $app) { $rows[$p]['dl'] += $get('/~dl/' . $app . $p); $rows[$p]['send'] += $get('/~send/' . $app . $p); }
             $rows[$p]['call'] += $get('/~call' . $p); $rows[$p]['text'] += $get('/~text' . $p); $rows[$p]['lead'] += $get('/~lead' . $p);
         }
     }
