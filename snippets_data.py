@@ -921,10 +921,13 @@ SNIPPETS = {
     "meet-the-team": {
         "desc": "Meet the team behind 365 Techies, a family-run IT support business in Bournemouth looking after Dorset homes and businesses with patience since 1995.",
     },
-    # 10 Oct 2026: the Techies One Mail product page (techies_one_page.py) - its title/desc are also its llms.txt line
+    # 10 Oct 2026: the Techies One Mail product page (techies_one_page.py) - its title/desc are also its llms.txt line.
+    # 16 Oct 2026: the page became Techies One (Mail, Letters, Sums, Files); the Windows Mail replacement words stay in
+    # front, because that is what this page is found for.
+    # 18 Oct 2026 (0.22): Albums joined (photos, Picasa), so "Photos" goes in the title.
     "techies-one-mail": {
-        "title": "Techies One Mail | Free Replacement for Windows Mail",
-        "desc": "Techies One Mail: a free email program for Windows 10 and 11 that replaces Windows Mail and Outlook Express. BT, Sky and Gmail ready, with scam warnings.",
+        "title": "Techies One | Free Windows Mail Replacement, Photos &amp; More",
+        "desc": "Techies One, free for Windows 10 and 11: email that replaces Windows Mail and Outlook Express, with scam warnings, plus photo albums, letters and sums.",
     },
     "free-pc-health-check": {   # 11 Oct 2026: 1,723 impressions / 3 clicks in 28 days - say what it checks, drop the "must-have"
         "title": "Free PC Health Check for Windows 10 &amp; 11 | 365 PC Manager",
