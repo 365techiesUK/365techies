@@ -1062,8 +1062,8 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "7ce72f5f3fc27311",
-  "last": "2026-10-13"
+  "h": "d160abb2234b8efb",
+  "last": "2026-10-18"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1600,8 +1600,8 @@
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "bef2dacf0b836b3d",
-  "last": "2026-10-13"
+  "h": "e9efc70bf35cf794",
+  "last": "2026-10-18"
  },
  "it-advice": {
   "first": "2026-07-28",
@@ -3407,8 +3407,8 @@
  },
  "stop-programs-starting-with-windows": {
   "first": "2026-10-13",
-  "h": "8bbf41c9021bbca8",
-  "last": "2026-10-13"
+  "h": "dd7c9a92cb87baa0",
+  "last": "2026-10-18"
  },
  "stop-using-onedrive-without-losing-files": {
   "first": "2026-07-28",
