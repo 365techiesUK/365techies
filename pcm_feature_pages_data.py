@@ -134,6 +134,11 @@ CAPS['drivehealth'] = 'The real app, on our office PC.'
 CAPS['gputemps'] = 'The real app (a sample temperature history).'
 SHOTS['lightshow'] = ('/images/pcm-feat-lightshow-v41.webp', 870, 530, 'The light show in 365 PC Manager&rsquo;s music window: the Dream scene, a glowing rose-window shape in pink and gold, beside the Adjust the light show panel showing Dream and the mood Follow the music, under the Picture, Dream, Mix, Scenes, Adjust and Full screen buttons', ('Music &amp; games', 'Music, then Big view, then Now playing'))
 CAPS['lightshow'] = 'The real app, with the Adjust panel open (a sample tune).'
+# 18 Oct 2026: the 36.3 cards from /free-pc-health-check/'s What's new (real screens from the signed build 40)
+SHOTS['webcams'] = ('/images/pcm-new-webcams-v40.webp', 684, 345, 'World webcams in 365 PC Manager: cameras near Bournemouth - Salterns Marina in Poole, Swanage Bay, the Swanage lifeboat station and the Needles - each with the time it last sent a picture. Webcams provided by windy.com', ('Music &amp; games', 'Music, then Big view, then World webcams'))
+CAPS['webcams'] = 'The real app. Webcam pictures from windy.com.'
+SHOTS['books'] = ('/images/pcm-new-books-v40.webp', 684, 345, 'Audiobooks in 365 PC Manager: the most listened-to LibriVox books - The Art of War, Alice&rsquo;s Adventures in Wonderland, The Adventures of Tom Sawyer, Sherlock Holmes and Moby Dick - with their covers, how long each is and a My books button', ('Music &amp; games', 'Music, then Big view, then Audiobooks'))
+CAPS['books'] = 'The real app. LibriVox recordings, from the Internet Archive.'
 
 
 # 13 Oct 2026: clip = a 9-second silent clip of the same screen (images/pcm-clip-<clip>.mp4 + .jpg poster, made in
@@ -515,8 +520,10 @@ PC = {
 # ============================================================ 5. The radio on a computer (v36's Radio)
 RD = {
     'slug': 'how-to-listen-to-the-radio-on-your-computer',
-    'title': 'Listen to the Radio on Your Computer (UK) | 365 Techies',
-    'metaDesc': 'Listen to BBC, Heart and your local radio free on a Windows PC or laptop: BBC Sounds, Global Player, Radioplayer or our free app. Plus fixes for no sound.',
+    # 18 Oct 2026: Bing UK, 3 months - "internet radio" 31,009, "listen to radio online" 1,130, "uk radio stations online" 501
+    # (seo-research/bing-vs-gsc-2026-10-18); the page already sits ~3-4 on Google for "radio on pc"-type phrasings.
+    'title': 'Listen to UK Radio Online on Your Computer, Free',
+    'metaDesc': 'Internet radio, free: listen to BBC, Heart and local UK stations online on a Windows PC or laptop with BBC Sounds, Global Player, Radioplayer or our app.',
     'ogTitle': 'How to listen to the radio on your computer',
     'crumbName': 'Listen to the Radio on Your Computer',
     'eyebrow': '// THE RADIO ON YOUR COMPUTER',
@@ -565,6 +572,8 @@ RD = {
         {'name': 'No sound? Check the output', 'text': 'Click the speaker icon by the clock, make sure it isn&rsquo;t muted, and pick your speakers or headphones. Right-click the browser tab and choose Unmute site if it is muted.'},
     ],
     'faqs': [
+        {'q': 'What is internet radio?', 'a': '<p>It&rsquo;s ordinary radio stations, and some that only exist online, played over your broadband instead of through an aerial. Every UK station you can hear on a radio set plays this way too, along with stations from round the world.</p>'},
+        {'q': 'Which UK radio stations can I listen to online?', 'a': '<p>Nearly all of them: every BBC national and local station on BBC Sounds, Global&rsquo;s stations (Heart, Capital, Classic FM, Smooth, LBC) on Global Player, and most others, from Greatest Hits Radio to small community stations, on Radioplayer or their own websites.</p>'},
         {'q': 'Is listening to the radio on a computer free?', 'a': '<p>Yes. The stations are free to listen to and you don&rsquo;t need a TV licence for radio. It uses some of your broadband: roughly 30 to 150 MB an hour, depending on the station&rsquo;s sound quality, which home broadband handles easily.</p>'},
         {'q': 'Why do I have to sign in to BBC Sounds?', 'a': '<p>The BBC asks everyone to sign in with a free BBC account to listen on BBC Sounds. If you watch BBC iPlayer, you already have one: use the same email and password.</p>'},
         {'q': 'Why can&rsquo;t I find Heart or Classic FM on other radio apps?', 'a': '<p>Global, which owns Heart, Capital, Classic FM, Smooth, LBC, Gold and Radio X, plays them on its own Global Player (globalplayer.com) rather than other apps. The BBC does the same with BBC Sounds.</p>'},
@@ -574,7 +583,7 @@ RD = {
         {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/music-visualiser-for-windows/">a music visualiser that moves to the radio</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/music-visualiser-for-windows/">a music visualiser that moves to the radio</a>, <a href="/free-audiobooks/">free audiobooks</a>, <a href="/live-webcams/">live webcams</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # ============================================================ 6. CDs on Windows 11 (v36's CDs)
@@ -2133,6 +2142,199 @@ MV = {
 }
 
 
+# ============================================================ 23-25. Bing wave (18 Oct 2026; owner: "do all of them, ignore the
+# 25th of October new page pause ... get all the pages done"). Bing Keyword Research, 18 Jul - 15 Oct 2026, exact match, UK /
+# world (seo-research/bing-vs-gsc-2026-10-18/FINDINGS.md): "wifi analyzer" 526 / 7,763, "network scanner" 445 / 3,102, "who is on
+# my wifi" 11 / 148; "free audiobooks" 361 / 2,661; "live webcams" 1,077 / 3,071 (UK broad 4,820). No page on the site for any
+# (sitemap checked 18 Oct). Each answers the search first (what Windows or the free sources already give you), then the app.
+# What the app does is pinned to the 36.5 source (365-pc-manager-v41/src): NetCheck.cs + Ui.cs (Wi-Fi name, signal %, 2.4/5 GHz,
+# Wi-Fi 4-7, link speed, the 2.4 GHz and old-standard advice, lag test), NetDevices.cs (Scan: ping + ARP, SSDP/WS-Discovery/mDNS/
+# NetBIOS names, shared folders; never on a Public network, no port scan, no log-ins), Audiobooks.cs (LibriVox via the Internet
+# Archive, Popular + Find by title or author, streamed, chapters in order, where you got to; Clear speech + sleep timer),
+# Webcams.cs + MusicMedia.cs (Windy's free plan: an updated picture every few minutes, never called live; favourites on the PC;
+# "See it in daylight"; live video and timelapses on Windy; the windy.com credit). All free (no paid gate in Nav/Panes).
+WA = {
+    'slug': 'wifi-analyzer-for-windows',
+    'title': 'Free WiFi Analyzer for Windows: Signal, Band and Devices',
+    'metaDesc': 'See your Wi-Fi signal, 2.4 or 5 GHz band, Wi-Fi 5, 6 or 7 and every device on your network, free on Windows 11 and 10. What the numbers mean, too.',
+    'ogTitle': 'A free WiFi analyzer for Windows: signal, band and who is connected',
+    'crumbName': 'WiFi Analyzer for Windows',
+    'eyebrow': '// WIFI ANALYZER FOR WINDOWS',
+    'h1': 'A free <em class="grad grad--cyan">WiFi analyzer</em> for Windows, and who&rsquo;s on your Wi-Fi',
+    'lede': 'Want to know how good your Wi-Fi really is on your PC &mdash; the signal, whether you&rsquo;re on 2.4 or 5 GHz, which Wi-Fi standard &mdash; and which devices are connected? Windows can tell you most of it without installing anything. Here&rsquo;s where to look, what the numbers mean, and our free app that shows it all on one page.',
+    'chips': ['Free, no adverts', 'Windows 11 and 10', 'It only reads'],
+    'primaryCta': ['Download it free', '__PCM_SETUP__'], 'secondaryCta': ['Test your Wi-Fi in the browser', '/wifi-signal-test/'],
+    'ctaHead': 'Wi-Fi still poor?', 'ctaSub': 'We can check your PC and Wi-Fi over a remote connection and tell you honestly whether it&rsquo;s the PC, the router or the house. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Signal, band and standard', 'Windows 11: Settings, Network &amp; internet, Wi-Fi, then your network&rsquo;s properties.'),
+        ('All of it at once', 'Type <strong>netsh wlan show interfaces</strong> in Command Prompt or Terminal.'),
+        ('A weak signal', 'Under about 50% is weak: video calls and films can start to stutter.'),
+        ('2.4 or 5 GHz', '5 GHz is faster but reaches less far; 2.4 GHz reaches further but is slower and more crowded.'),
+        ('Who&rsquo;s connected', 'Your router&rsquo;s app or settings page lists every device; our free app finds them from your PC.'),
+        ('Easiest of all', 'Our free 365 PC Manager shows the signal, band, standard and every device in plain English.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; NOTHING TO INSTALL', 'h2': 'Where Windows shows your Wi-Fi&rsquo;s details',
+         'html': '<p><strong>Windows 11:</strong> open <strong>Settings</strong>, choose <strong>Network &amp; internet</strong>, then <strong>Wi-Fi</strong>, and click your network&rsquo;s properties (or <strong>Hardware properties</strong>). You&rsquo;ll see the <strong>Protocol</strong> (for example Wi-Fi 6 (802.11ax)), the <strong>Network band</strong> (2.4 GHz or 5 GHz) and the <strong>Network channel</strong>.</p>'
+                 '<p><strong>Windows 10:</strong> open <strong>Settings</strong>, <strong>Network &amp; Internet</strong>, <strong>Wi-Fi</strong>, click the network you&rsquo;re connected to, and scroll to <strong>Properties</strong> for the protocol, band and channel.</p>'
+                 '<p>The signal itself is the bars on the Wi-Fi symbol by the clock: four bars is strong, one is weak.</p>'},
+        {'eyebrow': '/02 &mdash; THE ONE COMMAND', 'h2': 'Everything at once: netsh wlan show interfaces',
+         'html': '<p>Press the <strong>Windows key</strong>, type <strong>cmd</strong> and press Enter (or open <strong>Terminal</strong>), then type <strong>netsh wlan show interfaces</strong> and press Enter. It lists, for the Wi-Fi you&rsquo;re on:</p>'
+                 '<ul><li><strong>SSID</strong>: your Wi-Fi&rsquo;s name.</li>'
+                 '<li><strong>Radio type</strong>: the Wi-Fi standard. 802.11be is Wi-Fi 7, 802.11ax Wi-Fi 6, 802.11ac Wi-Fi 5 and 802.11n Wi-Fi 4; anything older (802.11a, b or g) is very old.</li>'
+                 '<li><strong>Band</strong> (on Windows 11) and <strong>Channel</strong>: on most home Wi-Fi, channels 1 to 13 are 2.4 GHz and 36 and above are 5 GHz. Newer Wi-Fi 6E and 7 routers can also use a 6 GHz band, which Windows 11 names.</li>'
+                 '<li><strong>Receive rate</strong> and <strong>Transmit rate</strong>: the speed between your PC and the router, in Mbps.</li>'
+                 '<li><strong>Signal</strong>: the strength, as a percentage.</li></ul>'
+                 '<p>It only reads: nothing is changed.</p>'},
+        {'eyebrow': '/03 &mdash; WHAT IT MEANS', 'h2': 'What the numbers mean, and what to do',
+         'html': '<ul><li><strong>Signal under about 50%:</strong> move the PC closer to the router, or the router somewhere more open and higher up; thick walls, mirrors and fish tanks all get in the way. If it&rsquo;s weak in whole rooms, a <a href="/mesh-wifi-systems-uk/">mesh Wi-Fi system</a> is usually the answer.</li>'
+                 '<li><strong>On 2.4 GHz:</strong> it&rsquo;s the slower, more crowded band. If your router offers a separate 5 GHz network, connect to that when you&rsquo;re near the router.</li>'
+                 '<li><strong>Wi-Fi 4 or older:</strong> an older standard caps the speed. It can be the router or the PC&rsquo;s own Wi-Fi: a newer router, or a USB Wi-Fi adapter for an old PC, can lift it.</li>'
+                 '<li><strong>Receive rate is not your broadband speed.</strong> It&rsquo;s the speed between your PC and the router. Your broadband can still be slower than that; the <a href="/wifi-signal-test/">Wi-Fi signal test</a> measures what you actually get.</li></ul>'},
+        {'eyebrow': '/04 &mdash; WHO&rsquo;S CONNECTED', 'h2': 'How to see who&rsquo;s on your Wi-Fi',
+         'html': '<p>Your router keeps the full list. Open your broadband provider&rsquo;s app, or the router&rsquo;s settings page (the address and admin password are usually on a sticker on the router), and look for a list called something like <strong>connected devices</strong> or <strong>my devices</strong>.</p>'
+                 '<p>From a Windows PC, the command <strong>arp -a</strong> lists the devices your PC has heard from recently, by address only. It&rsquo;s rarely the whole list, because devices that haven&rsquo;t talked to your PC don&rsquo;t appear.</p>'
+                 '<p>Don&rsquo;t be alarmed by a device with a strange name or no name: phones, tablets and laptops now hide behind a <strong>private Wi-Fi address</strong> that changes, so they rarely show a maker. Count your own devices first. If there&rsquo;s still one you can&rsquo;t place, change your Wi-Fi password on the router, then reconnect your own devices with the new one.</p>'},
+        {'eyebrow': '/05 &mdash; THE EASY WAY', 'h2': 'Or let our free app show it all',
+         'html': '__APP_BOX_NETCHECK____APP_BOX_DEVICES__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the Wi-Fi is poor all over the house, a device on the list worries you, or you&rsquo;d just like it looked at properly, we&rsquo;re happy to help.')},
+    ],
+    'howToName': 'How to check your Wi-Fi signal, band and standard on Windows',
+    'howToSteps': [
+        {'name': 'Open the network properties', 'text': 'Windows 11: Settings, Network and internet, Wi-Fi, then your network properties. Windows 10: Settings, Network and Internet, Wi-Fi, then the network you are connected to.'},
+        {'name': 'Read the protocol, band and channel', 'text': 'Protocol is the Wi-Fi standard, Network band is 2.4 GHz or 5 GHz, and Network channel is the channel the router uses.'},
+        {'name': 'Or run one command', 'text': 'Open Command Prompt or Terminal, type netsh wlan show interfaces and press Enter: it lists the name, radio type, band, channel, speed and signal.'},
+        {'name': 'Act on what it shows', 'text': 'Under about 50% signal, move closer or move the router; on 2.4 GHz, join the 5 GHz network if your router has one near the router.'},
+    ],
+    'faqs': [
+        {'q': 'Is there a free WiFi analyzer for Windows?', 'a': '<p>Yes. Windows itself shows the signal, band, standard and channel, in Settings or with the command netsh wlan show interfaces. Our free 365 PC Manager shows the same in plain English, adds a lag test and lists every device on your network.</p>'},
+        {'q': 'Why can&rsquo;t a website show my Wi-Fi&rsquo;s name or band?', 'a': '<p>Browsers deliberately keep a web page from seeing your network name, band or standard, because your network name can help identify where you live. Only a program on the PC, such as Windows&rsquo; own settings or our app, can read them. A website can still measure how well your connection works, as our <a href="/wifi-signal-test/">Wi-Fi signal test</a> does.</p>'},
+        {'q': 'What is a good Wi-Fi signal strength?', 'a': '<p>On the percentage Windows shows, above about 70% is good and under about 50% is weak, where video calls and films can stutter. The bars by the clock tell the same story more roughly.</p>'},
+        {'q': 'Should I use 2.4 GHz or 5 GHz?', 'a': '<p>5 GHz when you&rsquo;re reasonably near the router: it&rsquo;s faster and less crowded. 2.4 GHz reaches further through walls, so it can be better at the far end of the house. Many routers give both the same name and choose for you.</p>'},
+        {'q': 'How do I see who is on my Wi-Fi?', 'a': '<p>Your router&rsquo;s app or settings page lists every connected device. From a Windows PC, our free app&rsquo;s Devices on your network finds them for you, by name and maker where the device says.</p>'},
+        {'q': 'There&rsquo;s a device I don&rsquo;t recognise. What should I do?', 'a': '<p>Count your own first: phones, tablets, TVs, speakers, the printer and smart plugs all count, and phones often hide behind a private address with no name. If one is still unexplained, change the Wi-Fi password on the router and reconnect your own devices with the new password.</p>'},
+        {'q': 'Is the app safe to use on my network?', 'a': '<p>Yes. It only looks when you tap Scan, never on a public network such as a caf&eacute;&rsquo;s, never logs in to anything and never changes a setting. It&rsquo;s digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995.</p>'},
+        {'q': 'Does it work on Windows 10?', 'a': '<p>Yes, on Windows 10 and 11. The Band line in netsh appears on Windows 11; on Windows 10 the channel usually tells you (on most home Wi-Fi, 1 to 13 is 2.4 GHz and 36 and above is 5 GHz).</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/wifi-keeps-dropping/">Wi-Fi keeps dropping</a>, <a href="/wifi-troubleshooting/">Wi-Fi troubleshooting</a>, <a href="/mesh-wifi-systems-uk/">mesh Wi-Fi systems</a>, <a href="/wifi-heatmap-online/">online Wi-Fi heatmaps</a>, <a href="/windows-11-cant-see-network-computers/">Windows 11 can&rsquo;t see network computers</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+AB = {
+    'slug': 'free-audiobooks',
+    'title': 'Free Audiobooks: Listen on Your Computer, UK Guide',
+    'metaDesc': 'Free audiobooks on your Windows PC or laptop in the UK: classics read by LibriVox volunteers, new books from your library, and our free app.',
+    'ogTitle': 'Free audiobooks on your computer: where to find them in the UK',
+    'crumbName': 'Free Audiobooks',
+    'eyebrow': '// FREE AUDIOBOOKS',
+    'h1': 'Free <em class="grad grad--cyan">audiobooks</em> on your computer',
+    'lede': 'You don&rsquo;t need a subscription to listen to books on a PC or laptop. Thousands of classics are free for good, read aloud by volunteers; most UK libraries lend newer audiobooks free with a library card; and our free app plays the classics with big, simple buttons. Here&rsquo;s where to find each.',
+    'chips': ['Free, no subscription', 'Classics and new books', 'Windows PC or laptop'],
+    'primaryCta': ['Download it free', '__PCM_SETUP__'], 'secondaryCta': ['Where to find them', '#s1'],
+    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We connect to your Windows PC and set up the library app or ours with you, so a book is one click away. Usually the same day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Classics, free for good', 'LibriVox: Austen, Dickens, Conan Doyle and thousands more, read by volunteers. No account needed.'),
+        ('Newer books, free', 'Your library: most UK library services lend audiobooks through apps such as BorrowBox or Libby, with your library card.'),
+        ('Sight loss', 'RNIB&rsquo;s Talking Books service is free for people with sight loss in the UK.'),
+        ('What it costs', 'Nothing. It uses some broadband: roughly 30 to 60 MB an hour.'),
+        ('Easiest of all', 'Our free 365 PC Manager plays the LibriVox classics and remembers where you got to.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE CLASSICS', 'h2': 'Classic books, free for good: LibriVox',
+         'html': '<p><strong>LibriVox</strong> is a project of volunteers who read books whose copyright has run out and give the recordings away. There are thousands: Jane Austen, Charles Dickens, Arthur Conan Doyle, Mark Twain, Lewis Carroll and many more, from novels to poetry and history.</p>'
+                 '<p>Go to <strong>librivox.org</strong>, search for a title or an author, and play a chapter in your browser, or download the files to keep. There&rsquo;s nothing to pay and no account to make. Readers vary &mdash; some books have more than one version, so if a voice doesn&rsquo;t suit you, look for another.</p>'},
+        {'eyebrow': '/02 &mdash; NEWER BOOKS', 'h2': 'New and popular books, free from your library',
+         'html': '<p>Most UK library services lend <strong>eAudiobooks</strong> free with your library card, through apps such as <strong>BorrowBox</strong> or <strong>Libby</strong>; your council library&rsquo;s website says which it uses. You borrow a book for a few weeks and it returns itself, so there are no fines. Popular titles can have a waiting list, just like the shelves.</p>'
+                 '<p>No library card? Most councils let you join online. The apps are made for phones and tablets; on a Windows PC, the library&rsquo;s website or the app&rsquo;s own website usually plays the book in your browser.</p>'
+                 '<p>If you have sight loss, <strong>RNIB&rsquo;s Talking Books</strong> service lends audiobooks free in the UK.</p>'},
+        {'eyebrow': '/03 &mdash; THE EASY WAY', 'h2': 'Or play the classics in our free app',
+         'html': '__APP_BOX_BOOKS__'},
+        {'eyebrow': '/04 &mdash; LISTENING TIPS', 'h2': 'Making it easy to listen',
+         'html': '<ul><li><strong>Clear voices:</strong> recordings by volunteers vary in loudness and tone. Our app&rsquo;s <strong>Clear speech</strong> brings voices forward, and good headphones help in a busy room.</li>'
+                 '<li><strong>Falling asleep to a book?</strong> Use a sleep timer, so it stops by itself and you can find your place in the morning.</li>'
+                 '<li><strong>On a TV or a speaker:</strong> plug the PC into the TV or a speaker, or use Bluetooth. If Bluetooth headphones sound muffled, see our <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones fix</a>.</li>'
+                 '<li><strong>Stops and starts?</strong> That&rsquo;s the internet connection. Move nearer the router, or download the book first if the site lets you.</li></ul>'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If you&rsquo;d like the library app or ours set up so a book is one click away, or there&rsquo;s no sound at all, we&rsquo;re happy to help.')},
+    ],
+    'howToName': 'How to listen to free audiobooks on a Windows computer',
+    'howToSteps': [
+        {'name': 'Choose where the book comes from', 'text': 'Classics: LibriVox at librivox.org, free with no account. Newer books: your library, through BorrowBox or Libby, with a library card.'},
+        {'name': 'Find the book', 'text': 'Search for a title or an author. On LibriVox, try another version if a reader does not suit you.'},
+        {'name': 'Press play', 'text': 'Play a chapter in your browser, or in the library app. Our free 365 PC Manager plays LibriVox books and remembers where you got to.'},
+        {'name': 'Set a sleep timer if you need one', 'text': 'So it stops by itself if you fall asleep, and you can find your place next time.'},
+    ],
+    'faqs': [
+        {'q': 'Are LibriVox audiobooks really free and legal?', 'a': '<p>Yes. LibriVox records books whose copyright has run out, and puts its recordings in the public domain, so anyone can listen free. LibriVox goes by copyright in the USA; the classics most people look for, such as Austen, Dickens and Conan Doyle, are out of copyright in the UK too.</p>'},
+        {'q': 'Can I get new books free, not just old ones?', 'a': '<p>Yes, from your library. Most UK library services lend eAudiobooks free through apps such as BorrowBox or Libby with your library card. Popular new titles can have a waiting list.</p>'},
+        {'q': 'Do I need an account?', 'a': '<p>Not for LibriVox, or for our app. The library apps need your library card number and PIN.</p>'},
+        {'q': 'How much internet does it use?', 'a': '<p>Roughly 30 to 60 MB an hour, depending on the recording&rsquo;s sound quality, which home broadband handles easily. On a phone&rsquo;s mobile data, download over Wi-Fi first.</p>'},
+        {'q': 'Will it remember where I stopped?', 'a': '<p>Our free app does: it keeps your place in each book you start, on your PC. In a browser, note the chapter number, or download the files and play them in order.</p>'},
+        {'q': 'Is there help for people with sight loss?', 'a': '<p>Yes. RNIB&rsquo;s Talking Books service lends audiobooks free in the UK to people with sight loss, and Windows&rsquo; own accessibility settings can make everything on screen bigger and clearer: see our <a href="/windows-accessibility-features-guide/">guide to Windows accessibility features</a>.</p>'},
+        {'q': 'Is your app safe to install?', 'a': '<p>Yes. 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts. The books stream from the Internet Archive; nothing but small covers is saved on your PC.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/windows-accessibility-features-guide/">Windows accessibility features</a>, <a href="/computer-help-for-seniors/">computer help for seniors</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+WC = {
+    'slug': 'live-webcams',
+    'title': 'Live Webcams: Watch Beaches and Harbours Free on Your PC',
+    'metaDesc': 'Watch webcams of beaches, harbours and cities free on your computer, from Poole, Swanage and the Needles to the world. Where to find them, and our app.',
+    'ogTitle': 'Live webcams on your computer: the coast near us and the world, free',
+    'crumbName': 'Live Webcams',
+    'eyebrow': '// LIVE WEBCAMS',
+    'h1': 'Watch <em class="grad grad--cyan">live webcams</em> on your computer, free',
+    'lede': 'Cameras on beaches, harbours, piers, cities and mountains send their view online, free to watch. Here&rsquo;s where to find them, how to see the ones near you, and our free app that keeps your favourites one click away.',
+    'chips': ['Free, no sign-up', 'The coast near us, and the world', 'Windows PC or laptop'],
+    'primaryCta': ['Download it free', '__PCM_SETUP__'], 'secondaryCta': ['Webcams near us', '#s2'],
+    'ctaHead': 'Want it on the big screen?', 'ctaSub': 'We can set it up with you over a remote connection, favourites and all, and help get the PC showing on your TV. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Where to find them', 'Windy, at windy.com/webcams: cameras from round the world, on a map.'),
+        ('Near us', 'Salterns Marina in Poole, Swanage Bay, the Swanage lifeboat station and the Needles, among others.'),
+        ('Live video or a picture?', 'Many cameras play live video or a timelapse on Windy&rsquo;s site; others send a fresh picture every few minutes.'),
+        ('What it costs', 'Nothing. Live video uses some broadband; pictures very little.'),
+        ('Easiest of all', 'Our free 365 PC Manager keeps your favourite cameras one click away.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'The quickest way: in your web browser',
+         'html': '<p>Open your browser and go to <strong>windy.com/webcams</strong>. Windy gathers webcams from round the world: search for a place, or move the map and click a camera to see its view. Many play <strong>live video</strong> or a <strong>timelapse</strong> of the day; others show the latest picture the camera has sent.</p>'
+                 '<p>Many harbours, piers, beaches, ski resorts and lifeboat stations also run cameras on their own websites: search for the place&rsquo;s name and &ldquo;webcam&rdquo;, and check you&rsquo;ve landed on the place&rsquo;s own site.</p>'},
+        {'eyebrow': '/02 &mdash; NEAR US', 'h2': 'Webcams around Poole, Swanage and the Isle of Wight',
+         'html': '<p>On Windy&rsquo;s list near us there are cameras at <strong>Salterns Marina in Poole</strong>, on <strong>Swanage Bay</strong>, at the <strong>Swanage lifeboat station</strong> and looking at <strong>the Needles</strong> off the Isle of Wight, among others. Cameras come and go as their owners change them, so if one has gone, look on the map for another nearby.</p>'
+                 '<p>They&rsquo;re a lovely way to check the sea and the weather before a walk, or to see home from somewhere else.</p>'},
+        {'eyebrow': '/03 &mdash; THE EASY WAY', 'h2': 'Or keep your favourites in our free app',
+         'html': '__APP_BOX_WEBCAMS__'},
+        {'eyebrow': '/04 &mdash; TIPS', 'h2': 'Getting the best from webcams',
+         'html': '<ul><li><strong>Black at night?</strong> Most cameras can&rsquo;t see in the dark. Our app&rsquo;s <strong>See it in daylight</strong> shows the camera&rsquo;s daytime view instead.</li>'
+                 '<li><strong>On the TV:</strong> connect the PC to the TV with an HDMI lead, or cast the browser tab, for a big window on the coast.</li>'
+                 '<li><strong>Stuck on an old picture?</strong> The camera may be switched off for a while. Look at the time it last sent a picture.</li>'
+                 '<li><strong>Video stops and starts?</strong> That&rsquo;s the internet connection. Move nearer the router, or our <a href="/wifi-signal-test/">Wi-Fi signal test</a> shows how good the signal is.</li></ul>'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If you&rsquo;d like webcams on the TV, favourites set up, or the PC just won&rsquo;t play video smoothly, we&rsquo;re happy to help.')},
+    ],
+    'howToName': 'How to watch live webcams on a Windows computer',
+    'howToSteps': [
+        {'name': 'Open the webcam map', 'text': 'Go to windy.com/webcams in your web browser.'},
+        {'name': 'Find a place', 'text': 'Search for a town or beach, or move the map and click a camera.'},
+        {'name': 'Watch', 'text': 'Many cameras play live video or a timelapse; others show the latest picture they have sent.'},
+        {'name': 'Keep your favourites', 'text': 'Bookmark the page, or keep the cameras in our free 365 PC Manager, one click each.'},
+    ],
+    'faqs': [
+        {'q': 'Are the webcams really live?', 'a': '<p>Many are: on Windy&rsquo;s site they play live video or a timelapse. Others send a fresh picture every few minutes. Our app shows the latest picture, says when it was sent, and opens the live video on Windy with one click.</p>'},
+        {'q': 'Is it free?', 'a': '<p>Yes. Watching costs nothing and needs no account. Live video uses some broadband; pictures use very little.</p>'},
+        {'q': 'Why is a camera black?', 'a': '<p>It&rsquo;s probably night there, or the camera is off for a while. In our app, See it in daylight shows its daytime view.</p>'},
+        {'q': 'Can I watch them on my TV?', 'a': '<p>Yes: connect the PC to the TV with an HDMI lead, or cast the browser tab. We can set it up with you.</p>'},
+        {'q': 'Can I keep my favourite cameras?', 'a': '<p>In a browser, bookmark them. In our app, keep them as favourites: the list stays on your PC and isn&rsquo;t sent anywhere.</p>'},
+        {'q': 'Where do your app&rsquo;s webcams come from?', 'a': '<p>From Windy&rsquo;s webcam list. Webcams provided by <a href="https://www.windy.com/" rel="noopener" target="_blank">windy.com</a>; camera owners can add theirs at <a href="https://www.windy.com/webcams/add" rel="noopener" target="_blank">windy.com/webcams/add</a>.</p>'},
+        {'q': 'Is your app safe to install?', 'a': '<p>Yes. 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts. Webcam pictures are kept in memory while the window is open and never saved to your PC.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/bournemouth/sea-today/">the sea today</a>, <a href="/how-to-listen-to-the-radio-on-your-computer/">the radio on your computer</a>, <a href="/free-audiobooks/">free audiobooks</a>, <a href="/music-visualiser-for-windows/">a free music visualiser</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+}
+
+
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
                  'h3s': 'Still muffled after every step? That is a remote job.'},
@@ -2247,8 +2449,21 @@ def pages(setup_url):
     boxes['__APP_BOX_LIGHTSHOW__'] = _app_box('lightshow', 'A light show that moves with anything your PC plays',
         '<p style="margin:0">Its music window has a <strong>light show</strong> drawn by your graphics card: twelve scenes, from northern lights over a lake to a neon drive into the sunset, and <strong>Mix</strong>, which changes scene on the music&rsquo;s big moments. It listens to the sound going to your speakers, so it follows Spotify, YouTube, iPlayer and the radio as well as the app&rsquo;s own music, and finds the beat, the bass and the build. '
         'Moods, colours, speed and each scene&rsquo;s own settings are in <strong>Adjust</strong>, and <strong>Full screen</strong> fills the monitor or the TV. It isn&rsquo;t the microphone: nothing is recorded, kept or sent.</p>', setup_url)
+    # 18 Oct 2026: the Bing wave's three pages (WA, AB, WC)
+    boxes['__APP_BOX_NETCHECK__'] = _app_box('netcheck', 'Network check: your Wi-Fi from the inside',
+        '<p style="margin:0">It reads from Windows itself the Wi-Fi&rsquo;s name, the signal, <strong>2.4 or 5&nbsp;GHz</strong>, <strong>Wi-Fi 4, 5, 6 or 7</strong> and the link speed, and says plainly when the slower 2.4&nbsp;GHz band or an older standard is holding it back. '
+        'Its lag test shows whether games and video calls will stutter when the line is busy. It only reads.</p>', setup_url)
+    boxes['__APP_BOX_DEVICES__'] = '<div style="height:1rem"></div>' + _app_box('devices', 'Devices on your network: everything connected, and what it shares',
+        '<p style="margin:0">Tap <strong>Scan</strong> and it lists everything on your home network &mdash; the router, PCs, phones, TVs, printers, network drives and cameras &mdash; by name and maker where the device says so, and the folders PCs and network drives share. A phone hiding behind a private Wi-Fi address is named as one. '
+        'It only looks when you tap, never on a public network such as a caf&eacute;&rsquo;s, and it never logs in to anything or changes a setting.</p>', setup_url)
+    boxes['__APP_BOX_BOOKS__'] = _app_box('books', 'Audiobooks: classic books read aloud, free',
+        '<p style="margin:0">Its <strong>Audiobooks</strong> place lists the LibriVox books people listen to most, and finds any other by title or author. A book plays like a radio programme: each chapter follows the last, it remembers where you got to, and <strong>Clear speech</strong> and the <strong>sleep timer</strong> work on it. '
+        'The books stream from the Internet Archive: nothing but small covers is saved, and the books you start stay on your PC.</p>', setup_url)
+    boxes['__APP_BOX_WEBCAMS__'] = _app_box('webcams', 'World webcams: a fresh picture from cameras round the world',
+        '<p style="margin:0">Its <strong>World webcams</strong> place shows beaches, harbours, cities and mountains, with a new picture from each camera every few minutes, labelled as an updated picture rather than live. Keep your favourites one click away, use <strong>See it in daylight</strong> on a camera that&rsquo;s dark, and open any camera&rsquo;s live video and timelapses on Windy. '
+        'Webcams provided by <a href="https://www.windy.com/" rel="noopener" target="_blank">windy.com</a>.</p>', setup_url)
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU, RM, LO, SH, MV):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL, RA, CM, BL, VT, PH, AV, CR, DC, BH, SU, RM, LO, SH, MV, WA, AB, WC):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")

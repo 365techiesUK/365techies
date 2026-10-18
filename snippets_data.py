@@ -909,8 +909,11 @@ SNIPPETS = {
         # "pc checker", "check my pc specs online" (~730 imps of PC-phrased intent) - and the page said
         # "computer" everywhere. Keeps "what are my specs" (clicks @ 9.4) and "check ... online" (53 imps).
         # Already the best-clicking tool on the site (80 clicks); rank is the constraint, not CTR.
-        "title": "PC Spec Checker: What Are My Specs? Check Free Online",
-        "desc": "Free PC hardware checker. See what is inside your computer instantly: operating system, graphics card, cores, screen, memory and battery, read live.",
+        # 18 Oct 2026: Bing showed it 12,022 times in 3 months at pos 7.4 but only 0.98% clicked (Google 3.2% at the same
+        # position); Bing's words are "my pc specs" (1,470 impressions, 4 clicks), "pc specs", "my computer specs". Keeps every
+        # Google-earning phrase ("pc spec checker", "what are my specs", "check ... online") and adds "my PC specs".
+        "title": "PC Spec Checker: What Are My PC Specs? Check Free Online",
+        "desc": "See your PC specs in seconds, free with no download: operating system, graphics card, processor cores, memory, screen and battery, read live.",
     },
     "outlook-wont-open-in-safe-mode": {
         "desc": "If classic Outlook will not open even in safe mode, the fault is past add-ins. Run Office Quick then Online Repair, make a new profile, then scanpst.",
@@ -926,8 +929,10 @@ SNIPPETS = {
     # front, because that is what this page is found for.
     # 18 Oct 2026 (0.22): Albums joined (photos, Picasa), so "Photos" goes in the title.
     "techies-one-mail": {
-        "title": "Techies One | Free Windows Mail Replacement, Photos &amp; More",
-        "desc": "Techies One, free for Windows 10 and 11: email that replaces Windows Mail and Outlook Express, with scam warnings, plus photo albums, letters and sums.",
+        # 18 Oct 2026 (Bing UK, 3 months: "outlook express" 1,433, "windows live mail" 960, "windows mail" 342; Google and Bing
+        # both showed the page for none of them - seo-research/bing-vs-gsc-2026-10-18): name the two old programs people search
+        "title": "Free Windows Live Mail &amp; Outlook Express Replacement",
+        "desc": "Techies One, free for Windows 10 and 11: email that replaces Windows Live Mail, Outlook Express and Windows Mail, plus photo albums, letters and sums.",
     },
     "free-pc-health-check": {   # 11 Oct 2026: 1,723 impressions / 3 clicks in 28 days - say what it checks, drop the "must-have"
         "title": "Free PC Health Check for Windows 10 &amp; 11 | 365 PC Manager",

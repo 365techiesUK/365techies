@@ -146,6 +146,40 @@ PAGES["greenby-email-login"] = (FIX, "Rather use an email program? Ours already 
     "Check your Greenby login works at greenby.com first: the program uses the same email address and password. Older "
     "Force9 and Free-Online addresses may need their settings typed in. If it won&rsquo;t connect, ring us.")
 
+# 18 Oct 2026 (owner: "do all of them"): the Outlook pages Bing shows most (Bing Webmaster, 24 Aug - 17 Oct: not showing
+# new emails 1,568 impressions, not responding 920, can't add account 556, back to classic 274, old emails 198 - Google
+# shows them a fraction of that) that the 10 Oct review rated an honest "alternative" (cant-add-account "partial": its
+# visitor wants their email working in a program). Each had at most a one-line mention; the full box replaces it.
+PAGES["outlook-not-showing-new-emails"] = (ALT, "Webmail shows them, Outlook doesn&rsquo;t?",
+    "Our free Techies One Mail for Windows PCs reads your email straight from your provider, the same emails webmail shows "
+    "you.",
+    "It doesn&rsquo;t repair Outlook. Keep Outlook if you need it for work. Gmail, Yahoo, AOL and Virgin Media need an app "
+    "password, and a work Microsoft 365 address may need your IT person to approve it.")
+PAGES["outlook-not-responding"] = (ALT, "Fed up with Outlook freezing?",
+    "Our free Techies One Mail is a simpler email program for Windows PCs, with no add-ins to go wrong. It reads the email "
+    "kept with your provider.",
+    "It doesn&rsquo;t repair Outlook or open its .pst files, so keep Outlook if you need add-ins, shared mailboxes or old "
+    "archives. Gmail, Yahoo, AOL and Virgin Media need an app password.")
+PAGES["outlook-cant-add-account-new-outlook"] = (ALT, "The new Outlook won&rsquo;t take your address?",
+    "Our free Techies One Mail for Windows PCs has the settings for BT, Sky, Plusnet, Gmail and Outlook.com built in: type "
+    "your address and it fills them in.",
+    "It uses the same password your provider gives email programs: Gmail, Yahoo, AOL and Virgin Media need an app password, "
+    "and a closed or lapsed mailbox can&rsquo;t be opened by any program. A work Microsoft 365 address may need your IT "
+    "person to approve it.")
+PAGES["how-to-go-back-to-classic-outlook"] = (ALT, "No classic Outlook to go back to?",
+    "If the new Outlook came with Windows and there&rsquo;s no classic Outlook on your PC, our free Techies One Mail is a "
+    "simple email program in the old style, for Windows PCs.",
+    "If you pay for Microsoft 365 or Office, the switch above is the easier answer. Gmail, Yahoo, AOL and Virgin Media need "
+    "an app password.")
+PAGES["outlook-search-not-finding-old-emails"] = (ALT, "Want your search to reach the old emails?",
+    "Our free Techies One Mail for Windows PCs searches your mailbox on your provider&rsquo;s server, a folder at a time, "
+    "so older emails turn up too.",
+    "It finds email that&rsquo;s still with your provider: it can&rsquo;t open old .pst archive files. A work Microsoft 365 "
+    "address may need your IT person to approve it.")
+CLIPS["simple"] = CLIPS["simple"] + ("outlook-not-showing-new-emails", "outlook-not-responding",
+    "outlook-cant-add-account-new-outlook", "how-to-go-back-to-classic-outlook", "outlook-search-not-finding-old-emails")
+CLIP_OF.update({s: "simple" for s in CLIPS["simple"]})
+
 POINTS = [
     "Free, from 365 Techies, the family IT firm that wrote this guide",
     "Signed by 365 Techies Ltd, and it tells you when there&rsquo;s an update",

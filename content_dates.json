@@ -652,7 +652,7 @@
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
-  "h": "886bb8b44ecccc09",
+  "h": "7c93312824e6bb98",
   "last": "2026-10-18"
  },
  "computer-support-gift-for-parents": {
@@ -1203,6 +1203,10 @@
   "h": "a6a4c1318cf7c939",
   "last": "2026-10-06"
  },
+ "free-audiobooks": {
+  "first": "2026-10-18",
+  "h": "7de3dc7e981e4347"
+ },
  "free-courses": {
   "first": "2026-07-28",
   "h": "2e7dc8148ca7bfde",
@@ -1215,7 +1219,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "21a4412039f6004c",
+  "h": "e3c50dc72aadc0d7",
   "last": "2026-10-18"
  },
  "free-tools": {
@@ -1402,8 +1406,8 @@
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
-  "h": "59a085344ab22245",
-  "last": "2026-10-10"
+  "h": "50129822342ee445",
+  "last": "2026-10-18"
  },
  "how-to-keep-children-safe-online": {
   "first": "2026-06-16",
@@ -1421,8 +1425,8 @@
  },
  "how-to-listen-to-the-radio-on-your-computer": {
   "first": "2026-10-08",
-  "h": "14e00b75568c716c",
-  "last": "2026-10-17"
+  "h": "3004528e8ee52401",
+  "last": "2026-10-18"
  },
  "how-to-make-a-google-app-password": {
   "first": "2026-09-29",
@@ -1605,8 +1609,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "d95319264cf0f42d",
-  "last": "2026-10-17"
+  "h": "bcb7b21b0fbd6ff9",
+  "last": "2026-10-18"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2165,6 +2169,10 @@
   "h": "cb777f2441276d37",
   "last": "2026-09-29"
  },
+ "live-webcams": {
+  "first": "2026-10-18",
+  "h": "5cd08aebaa51213b"
+ },
  "locked-out-microsoft-365-admin-account": {
   "first": "2026-07-28",
   "h": "29b227b15fdc0718",
@@ -2550,8 +2558,8 @@
  },
  "outlook-cant-add-account-new-outlook": {
   "first": "2026-07-28",
-  "h": "edaba9b6f9e3edf2",
-  "last": "2026-10-06"
+  "h": "4656019416416857",
+  "last": "2026-10-18"
  },
  "outlook-cant-sign-in": {
   "first": "2026-07-28",
@@ -2640,8 +2648,8 @@
  },
  "outlook-not-responding": {
   "first": "2026-07-28",
-  "h": "e48fd86a6b754a8d",
-  "last": "2026-10-10"
+  "h": "9cc05b5b785d653b",
+  "last": "2026-10-18"
  },
  "outlook-not-sending-emails": {
   "first": "2026-07-28",
@@ -2650,8 +2658,8 @@
  },
  "outlook-not-showing-new-emails": {
   "first": "2026-07-28",
-  "h": "015bf054e5b88f9c",
-  "last": "2026-10-10"
+  "h": "e2393167ad6e490a",
+  "last": "2026-10-18"
  },
  "outlook-not-syncing": {
   "first": "2026-07-28",
@@ -2720,8 +2728,8 @@
  },
  "outlook-search-not-finding-old-emails": {
   "first": "2026-07-28",
-  "h": "a8a61a487c148861",
-  "last": "2026-10-10"
+  "h": "bebb2112f65a56df",
+  "last": "2026-10-18"
  },
  "outlook-search-not-returning-all-results": {
   "first": "2026-07-28",
@@ -3462,7 +3470,7 @@
  },
  "techies-one-mail": {
   "first": "2026-10-10",
-  "h": "efcd3af95625533a",
+  "h": "21509367f422bf39",
   "last": "2026-10-18"
  },
  "techies-one-mail-film": {
@@ -3758,6 +3766,10 @@
   "h": "dc6a87611747845a",
   "last": "2026-09-05"
  },
+ "wifi-analyzer-for-windows": {
+  "first": "2026-10-18",
+  "h": "07ee337404cedfb9"
+ },
  "wifi-controller-end-of-life": {
   "first": "2026-07-28",
   "h": "c41a4b4114db1650",
@@ -3800,7 +3812,7 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "f653188629806f3b",
+  "h": "fac358e901733400",
   "last": "2026-10-18"
  },
  "wifi-support": {

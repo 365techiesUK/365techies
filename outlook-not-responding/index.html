@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-10"
+      "dateModified": "2026-10-18"
     },
     {
       "@type": "HowTo",
@@ -870,7 +870,7 @@
             <a href="#fixflow" class="button secondary button--lg">Fix it with me</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no fix, no fee</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 10 October 2026</p>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 18 October 2026</p>
         </div>
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
@@ -947,7 +947,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Fix it with me, one step at a time<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 10 October 2026</span></p>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 18 October 2026</span></p>
         </div>
         <div class="ff" id="ff">
           <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF 6</span></div>
@@ -1043,9 +1043,38 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
       })();
       </script>
     </section>
-    <section class="section t1mention" aria-label="Another way: Techies One Mail">
+    <section class="section t1mail" aria-label="Techies One Mail" id="techies-one-mail">
       <div class="wrap" style="max-width:880px">
-        <p style="margin:0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan-soft,#6cc4f5);background:rgba(125,170,220,.06);border-radius:0 10px 10px 0;line-height:1.6">If you are fed up with Outlook freezing and don&rsquo;t need its add-ins, our free <a href="/techies-one-mail/" style="color:var(--cyan);text-decoration:underline;text-underline-offset:2px">Techies One Mail</a> is a simpler email program for Windows PCs that reads the email kept with your provider, though it won&rsquo;t repair Outlook.</p>
+      <style>
+        .t1m{border:1px solid rgba(125,170,220,.28);border-radius:16px;background:rgba(125,170,220,.06);padding:clamp(1.1rem,3vw,1.8rem);display:flex;flex-direction:column;gap:.75rem}
+        .t1m h2{margin:0;font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.2}
+        .t1m p{margin:0}
+        .t1m__lede{font-size:1.08rem}
+        .t1m__pts{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:.45rem 1.2rem}
+        .t1m__pts li{display:flex;gap:.5rem;align-items:flex-start;line-height:1.45}
+        .t1m__pts li::before{content:"\2713";color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto}
+        .t1m__note{color:var(--muted);font-size:.95rem;line-height:1.5}
+        .t1m p a:not([class]){color:var(--cyan);text-decoration:underline;text-underline-offset:2px}
+        .t1m__cta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.2rem}
+        .t1m__cta .button{flex:1 1 15rem;text-align:center}
+        .t1m__small{color:var(--faint,var(--muted));font-size:.72rem;letter-spacing:.04em}
+        .t1m__clip{margin:.15rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+        .t1m__vid{border:1px solid rgba(125,170,220,.28);border-radius:12px;overflow:hidden;background:#060c1c;aspect-ratio:16/9}
+        .t1m__vid video{display:block;width:100%;height:100%;object-fit:cover;background:#060c1c}
+        .t1m__clip figcaption{color:var(--muted);font-size:.85rem;line-height:1.4}
+        @media (max-width:600px){.t1m__vid{margin-inline:calc(-1*clamp(1.1rem,3vw,1.8rem) + 1px);border-radius:0;border-inline:0}}
+      </style>
+        <div class="t1m">
+          <p class="eyebrow mono">// OR SKIP THE NEW OUTLOOK</p>
+          <h2>Fed up with Outlook freezing?</h2>
+          <p class="t1m__lede">Our free Techies One Mail is a simpler email program for Windows PCs, with no add-ins to go wrong. It reads the email kept with your provider.</p>
+          <figure class="t1m__clip" data-t1clip><div class="t1m__vid"><video muted loop playsinline preload="none" poster="/images/t1-clip-simple.jpg" width="1280" height="720" aria-label="Techies One Mail: one tick turns on Simple view, with fewer, bigger buttons. Stuck? Press Get help and a real person rings you back."><source src="/images/t1-clip-simple.mp4" type="video/mp4"></video></div><figcaption>The real program, with made-up demo emails &middot; 9 seconds, no sound</figcaption></figure>
+          <script>(function(){var f=document.querySelector("[data-t1clip]");if(!f)return;var v=f.querySelector("video");function still(){v.controls=true;}if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script>
+          <ul class="t1m__pts"><li>Free, from 365 Techies, the family IT firm that wrote this guide</li><li>Signed by 365 Techies Ltd, and it tells you when there&rsquo;s an update</li><li>Big, clear buttons, and warnings about scam emails</li><li>Your email goes straight between your PC and your provider: we never see it or your passwords</li></ul>
+          <p class="t1m__note">It doesn&rsquo;t repair Outlook or open its .pst files, so keep Outlook if you need add-ins, shared mailboxes or old archives. Gmail, Yahoo, AOL and Virgin Media need an app password. <a href="/techies-one-mail/">See what it does, with pictures</a>.</p>
+          <p class="t1m__cta"><a class="button primary button--lg" href="/downloads/t1/TechiesOneMail-Setup-0.22.0.exe">Download Techies One Mail, free</a><a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>
+          <p class="t1m__small mono">FOR WINDOWS 10 AND 11 PCs<span class="t1v"> &middot; VERSION 0.22.0 &middot; 27 MB</span> &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
+        </div>
       </div>
     </section>
 
