@@ -455,6 +455,32 @@ if (WANT_BG) {
     e.preventDefault();
     open(app, link);
   }, true);
+
+  /* 18 Oct 2026 (portal Live, 7 days: 40% of visitors on a phone or tablet, and ONE link sent to a computer): the panel
+     only opened for someone who tapped "Download ... for Windows", and on a phone people pass that button by. Off Windows
+     every installer button now says what it does there. Only its words change: the link, the panel above, the beacon's
+     cancel and the /~send/ count are exactly as before. Buttons a page adds later (the benchmark's result) are caught too. */
+  const sendLabel = /^(iPhone|iPad|phone|tablet)$/.test(device) ? "Send it to my computer" : "Send it to my Windows PC";
+  function relabel() {
+    document.querySelectorAll('a[href*=".exe"]').forEach((a) => {
+      if (a.dataset.dlsendLbl || a.closest(".dlsend")) return;
+      const href = a.getAttribute("href") || "";
+      if (!Object.keys(APPS).some((k) => APPS[k].re.test(href))) return;
+      if (!/^\s*Download/i.test(a.textContent || "")) return;   // every installer button starts "Download" (18 Oct: 90 on the site)
+      a.dataset.dlsendLbl = "1";
+      a.textContent = sendLabel + " →";
+      if (a.hasAttribute("aria-label")) a.setAttribute("aria-label", sendLabel);
+    });
+  }
+  relabel();
+  if ("MutationObserver" in window && document.body) {
+    let queued = false;
+    new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; relabel(); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 })();
 
 // Reading-progress bar: long guides only (4+ content sections), motion-safe.

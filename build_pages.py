@@ -1300,7 +1300,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=23"></script>
+  <script type="module" src="/js/interior.min.js?v=24"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
@@ -3762,6 +3762,13 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
               <div class="bm-verdict" id="bm-verdict"></div>
             </div>
             <div class="bm-fix" id="bm-fix"></div>
+            <div class="bm-app" id="bm-app" hidden>
+              <p class="bm-app__tag mono">FREE APP &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p>
+              <h3 class="bm-app__h">See inside it, free</h3>
+              <p class="bm-app__p">A browser can only time your computer. Our free Windows app, <b>365 PC Manager</b>, checks the rest.</p>
+              <div class="bm-fix-cta"><a class="button primary" href="__PCMSETUP__" download>Download 365 PC Manager free &#8595;</a><a class="button bm-ghost" href="/free-pc-health-check/">What else it checks</a></div>
+              <p class="bm-app__fine">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd. No fake errors, no scare tactics.</p>
+            </div>
             <div class="bm-scale-wrap">
               <p class="bm-scale-title">Where you land <span>(indicative bands &middot; &#9670; measured by us)</span></p>
               <div class="bm-scale"><div class="bm-scale-fill" id="bm-scale-fill"></div><i class="bm-scale-me" id="bm-scale-me"><b>You</b></i>__BENCH_REF_MARKS__</div>
@@ -3868,6 +3875,12 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
       #bm .bm-fix h3{margin:0 0 .5rem;font-size:1.2rem}
       #bm .bm-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
       #bm .bm-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+      #bm .bm-app{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02));text-align:center}
+      #bm .bm-app__tag{margin:0 0 .4rem;font-size:.7rem;letter-spacing:.08em;color:var(--cyan-soft,#5cb8f0)}
+      #bm .bm-app h3{margin:0 0 .5rem;font-size:1.2rem}
+      #bm .bm-app__p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #bm .bm-app__p b{color:var(--ink,#fff)}
+      #bm .bm-app__fine{margin:.8rem auto 0;max-width:56ch;font-size:.78rem;line-height:1.5;color:var(--muted,#9aa6c2)}
       .bm-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem auto 0;opacity:.8;max-width:64ch;line-height:1.5}
       @media(max-width:560px){#bm .bm-top{grid-template-columns:1fr}#bm .bm-verdict{text-align:center}#bm .bm-scale-ticks span{white-space:normal;max-width:70px}}
       </style>
