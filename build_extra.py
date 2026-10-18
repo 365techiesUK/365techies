@@ -22251,7 +22251,7 @@ if COURSES_DATA:
 
 # ---- Pay page (config-driven: each payment method appears once its details are filled in) ----
 PAY_CONFIG = {
-    "stripe_url": "",   # paste the buy.stripe.com "Customers choose what to pay" link to switch card payments ON
+    "stripe_url": "https://buy.stripe.com/8x26oI1jE9Ez64F39E1B600",   # Stripe "Customers choose what to pay" link "Pay 365 Techies" (365 Techies Ltd account, made 18 Oct 2026: GBP 1-5,000, asks "Your name, or the invoice number")
     "paypal_url": "https://paypal.me/365techies",  # owner's PayPal.Me (business acct, supplied 2026-07-10); /<amt>GBP pre-fills
     "bank": {"bankName": "Lloyds Bank", "name": "365 Techies Limited", "sort": "30-96-26", "account": "33512560"},  # owner-supplied 2026-07-10
     # --- GoCardless Direct Debit (staged; each tile/panel stays hidden until its value is filled) ---
@@ -22274,20 +22274,20 @@ def pay_page():
       ("Can a family member pay for me?", "Of course &mdash; sons, daughters and friends settle up on someone&rsquo;s behalf all the time, from anywhere in the country, using this same page."),
     ]
     tiles = []
-    if PAY_CONFIG.get("stripe_url"):
-        tiles.append(f'''          <div class="tile" data-reveal>
-            <h3>&#128179; Pay by card &mdash; safe and simple</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed, add your name, and pay with your usual debit or credit card &mdash; or one tap with Apple&nbsp;Pay or Google&nbsp;Pay. You never need an account, and we never see your card details.</p>
-            <p><a class="button primary" href="{PAY_CONFIG["stripe_url"]}" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
-            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled by Stripe &mdash; the secure payment system behind millions of businesses.</p>
-          </div>''')
     if PAY_CONFIG.get("bank"):
         _b = PAY_CONFIG["bank"]
         tiles.append(f'''          <div class="tile" data-reveal>
             <h3>&#127974; Pay by bank transfer</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Prefer to pay from your own online banking? Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
+            <p style="color:var(--muted);margin:0 0 .9rem">Pay from your own online banking. Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
             <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>{_b["name"]}</strong><br />Sort code: <strong>{_b["sort"]}</strong><br />Account number: <strong>{_b["account"]}</strong><br />Bank: <strong>{_b["bankName"]}</strong></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">When your banking app checks the name, it should confirm <strong>{_b["name"]}</strong> &mdash; that&rsquo;s how you know it&rsquo;s really us. Free to send, and the money arrives in seconds.</p>
+          </div>''')
+    if PAY_CONFIG.get("stripe_url"):
+        tiles.append(f'''          <div class="tile" data-reveal>
+            <h3>&#128179; Pay by card &mdash; safe and simple</h3>
+            <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed, add your name or invoice number, and pay with your usual debit or credit card &mdash; or one tap with Apple&nbsp;Pay or Google&nbsp;Pay. You never need an account, and we never see your card details.</p>
+            <p><a class="button primary" href="{PAY_CONFIG["stripe_url"]}" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
+            <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled by Stripe &mdash; the secure payment system behind millions of businesses.</p>
           </div>''')
     if PAY_CONFIG.get("paypal_url"):
         tiles.append(f'''          <div class="tile" data-reveal>
