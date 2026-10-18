@@ -958,7 +958,7 @@
     var d = el('shopdone'), h;
     if (r.state === 'pending') h = '<h2>Thank you. PayPal is still checking the payment.</h2><p>The machine is yours. As soon as PayPal clears the payment we&rsquo;ll send it and email you the tracking number.</p>';
     else h = '<h2>Thank you &mdash; it&rsquo;s yours.</h2><p>We&rsquo;ll send it within 2 working days by tracked courier and email you the tracking number.</p>';
-    h += '<p>' + (r.email ? 'Your order confirmation is on its way to <b>' + esc(r.email) + '</b>. ' : '') + (r.prov === 'card' ? '' : 'PayPal emails you a receipt as well. ') + 'Any questions, reply to our email or call <a href="tel:+441202775566">01202 775566</a>.</p>';
+    h += '<p>' + (r.email ? 'Your order confirmation is on its way to <b>' + esc(r.email) + '</b>. ' : '') + (r.prov === 'card' ? 'Stripe emails you a receipt as well. ' : 'PayPal emails you a receipt as well. ') + 'Any questions, reply to our email or call <a href="tel:+441202775566">01202 775566</a>.</p>';
     d.innerHTML = h; d.hidden = false;
     avail('Sold', false);
     try { d.scrollIntoView({ block: 'start' }); } catch (e) {}
