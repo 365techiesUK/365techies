@@ -170,6 +170,17 @@
     var fix=root.querySelector('#bm-fix');
     if(overall>=60) fix.innerHTML='<h3>Keep it this way &mdash; a 365 support plan from &pound;18.25 a month</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years: a full service every six weeks, Windows, driver and app updates, security and backup checked, and a written Service Report every time. <b>Home &pound;18.25 per computer a month, business from &pound;24.38</b> &mdash; rolling monthly, no lock-in.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices &#8594;</a><a class="button bm-ghost" href="/free-pc-health-check/">Start free with 365 PC Manager</a></div>';
     else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; a tune-up from &pound;65, an SSD or memory upgrade, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. Then a <b>365 support plan from &pound;18.25 per computer a month</b> keeps it serviced every six weeks so it never slides back.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/monthly-it-support/">See Plans &amp; Prices</a></div>';
+    /* 18 Oct 2026 (portal Live, 7 days: 148 benchmark visitors, 0 app downloads - the app was two pages away): the free
+       app's own download straight under the result, worded for the score. Off Windows, interior.js turns its button
+       into "Send it to my computer". */
+    var app=root.querySelector('#bm-app');
+    if(app){
+      var appH=app.querySelector('.bm-app__h'), appP=app.querySelector('.bm-app__p');
+      if(osName()!=='Windows'){ appH.innerHTML='Got a Windows PC or laptop too?'; appP.innerHTML='The score above is for this device. On a Windows computer, our free app, <b>365 PC Manager</b>, looks inside it: drive health and free space, the memory, the programs that start with Windows and any missed Windows updates. Send yourself the link and install it there.'; }
+      else if(overall<60){ appH.innerHTML='Find out what&rsquo;s slowing it down, free'; appP.innerHTML='A browser can only time your computer. Our free Windows app, <b>365 PC Manager</b>, looks inside it: the programs that start with Windows, how full and healthy the drive is, the memory and any missed Windows updates &mdash; in plain English, and nothing changes unless you tap.'; }
+      else { appH.innerHTML='See inside it, free'; appP.innerHTML='A browser can only time your computer. Our free Windows app, <b>365 PC Manager</b>, checks the rest: drive health and free space, whether antivirus is on and a backup actually exists, battery wear and any missed Windows updates.'; }
+      app.hidden=false;
+    }
     results.hidden=false;
     root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
     window.ttToolDone&&window.ttToolDone("pc-benchmark");
@@ -231,6 +242,9 @@
   /* measurement: clicks on the plan panel's links (plans, app, contact, refurbs) */
   root.addEventListener('click',function(e){ var a=e.target.closest('#bm-fix a'); if(!a) return;
     try{ if(window.gtag&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'benchmark',target:a.getAttribute('href'),score:LAST.overall||0,page:location.pathname}); }catch(x){} });
+  /* ...and on the app strip's download (the visitors beacon counts it too, as /~dl/pcm/<page>) */
+  root.addEventListener('click',function(e){ var a=e.target.closest('#bm-app a[download]'); if(!a) return;
+    try{ if(window.gtag&&localStorage.getItem('tt_internal')!=='1') gtag('event','pcm_download_click',{place:'benchmark',score:LAST.overall||0,page:location.pathname}); }catch(x){} });
   /* Share my score: the share sheet where the browser has one (phones, Windows Chrome/Edge); elsewhere it copies */
   var shareBtn=root.querySelector('#bm-share');
   if(shareBtn) shareBtn.addEventListener('click',function(){

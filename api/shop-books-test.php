@@ -193,6 +193,18 @@ $r = shop_qbo_sale($C, $s3, $u9, $api, $ensure);
 check(!$r[0] && strpos($r[1], 'no stock item with SKU 424242') !== false && count($ENSURED) === $ne, 'a SKU QuickBooks doesn\'t have: not posted, it says to add it there and try again', $r);
 check(shop_qbo_sale($C, array('unit' => 'test-01') + $sale, $cat['units']['test-01'], $api, $ensure)[1] === 'a test sale - never in the books', 'the £1 test listing never goes in');
 check(shop_qbo_sale($C, array('env' => 'sandbox') + $sale, $u, $api, $ensure)[0] === false, 'a PayPal sandbox sale never goes in');
+// 18 Oct 2026: a CARD sale through Stripe goes into the account Stripe pays into, once that has been chosen
+$cardSale = array('prov' => 'stripe', 'order' => 'cs_live_a1B2c3D4e5F6g7H8i9J0', 'capture' => 'pi_3Abc123DEF456ghi', 'fee' => '8.83') + $sale;
+$n = $posts('salesreceipt'); $r = shop_qbo_sale($C, $cardSale, $u, $api, $ensure);
+check(!$r[0] && strpos($r[1], 'Stripe pays your card sales into') !== false && $posts('salesreceipt') === $n, 'a card sale before the Stripe account is chosen: not posted, it says what to choose', $r);
+check(shop_qbo_card_account($C, '90', $api)[0] === false && shop_qbo_card_account($C, '999', $api)[0] === false, 'the Stripe account must be one of the money accounts (not Sales, not made up)');
+$r = shop_qbo_card_account($C, '41', $api);
+check($r[0] && strpos($r[1], 'Lloyds Current') !== false && shop_read()['qbo']['deposit_card'] === '41' && shop_qbo_ids(shop_read(), $C) !== null, 'the Stripe account chosen (Lloyds Current); the setup still counts', $r);
+$r = shop_qbo_sale($C, $cardSale, $u, $api, $ensure);
+$sr = $lastof('SalesReceipt');
+check($r[0] && $sr['DepositToAccountRef']['value'] === '41' && $sr['DocNumber'] === 'WEB-pi3Abc123DEF456gh' && strpos($sr['PrivateNote'], 'by card through Stripe: payment pi_3Abc123DEF456ghi') !== false,
+    'the card sale goes in: paid into the Stripe account, numbered from the Stripe payment, the note says Stripe', $sr);
+check(shop_qbo_sale($C, array('env' => 'test') + $cardSale, $u, $api, $ensure)[0] === false, 'a Stripe TEST-key sale never goes in');
 $r = shop_books_after_sale(array('order' => 'ZZZ1234567890') + $sale, $u, function () { return array('ok' => false, 'why' => 'not_configured'); });
 check(!$r[0] && strpos(shop_read()['books']['latitude-5520-01#1']['sale']['err'], 'not connected') !== false, 'QuickBooks not connected after a sale: the portal is told why (and offers a retry)');
 

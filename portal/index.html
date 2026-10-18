@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-17"
+      "dateModified": "2026-10-18"
     }
   ]
 }
@@ -769,9 +769,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 17 Oct 2026 &middot; 9453c7003c</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 18 Oct 2026 &middot; 36371b2a4f</p><script>
 (function () {
-  var P365BUILD = '9453c7003c';
+  var P365BUILD = '36371b2a4f';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -9688,6 +9688,19 @@
       }
       h += '</div>';
     }
+    // 18 Oct 2026: card sales through Stripe go into the QuickBooks account Stripe pays into - chosen here once
+    if (q.setup) {
+      var cardName = ''; (SHOP.acc || []).forEach(function (a) { if (a.id === q.card) cardName = a.name; });
+      h += '<div class="shop-setup"><b>Card sales (Stripe)</b> &mdash; '
+        + (q.card ? 'go into ' + (cardName ? '<b>' + esc(cardName) + '</b>' : 'the account you chose') + ' in QuickBooks.'
+          : (q.card_on ? '<span class="err">choose the QuickBooks account Stripe pays them into, or they won&rsquo;t go into QuickBooks.</span>'
+            : 'not switched on yet: the Stripe key file isn&rsquo;t on the server.'))
+        + (q.clash ? ' <span class="err">' + q.clash + ' card payment' + (q.clash > 1 ? 's' : '') + ' for a machine that had gone &mdash; see #365-job-tracker and refund in Stripe.</span>' : '');
+      if (!SHOP.acc) h += ' <button type="button" class="sm ghost" id="shopacc2">' + (q.card ? 'Change' : 'Choose the account') + '</button>';
+      else h += '<label for="shopcardacc">Stripe pays your card sales into</label><select id="shopcardacc">' + shopOpts(q.card) + '</select>'
+        + '<p style="margin:.6rem 0 0"><button type="button" class="sm" id="shopcardset">Save</button></p>';
+      h += '</div>';
+    }
     // 14 Oct 2026 (owner: "automatically picks up what we've bought ... from eBay ... adds it automatically into QuickBooks"):
     // the eBay connection (api/shop-ebay-lib.php, hourly by cron) and the Dells it found that aren't listed yet
     var eb = d.ebay || {}, bought = d.bought || [];
@@ -9748,11 +9761,15 @@
           + (r.state === 'sold' && !s ? '<button type="button" class="sm ghost" data-shopact="online" data-unit="' + esc(r.id) + '">Back on sale</button>' : '')
           + (SHOP.open === r.id ? shopCostForm(r, q) : '') + '</td></tr>';
       });
-      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; what it cost &minus; the SSD &minus; PayPal&rsquo;s fee (the courier isn&rsquo;t in it). A sale goes into QuickBooks only once its stock item is found by its SKU, so it never leaves a machine &ldquo;in stock&rdquo; that has gone. The SSDs reach QuickBooks from the bank feed when you buy them.</p>';
+      h += '</table></div><p class="quiet" style="margin:.4rem 0 0">Profit = what the buyer paid &minus; what it cost &minus; the SSD &minus; the PayPal or Stripe fee (the courier isn&rsquo;t in it). A sale goes into QuickBooks only once its stock item is found by its SKU, so it never leaves a machine &ldquo;in stock&rdquo; that has gone. The SSDs reach QuickBooks from the bank feed when you buy them.</p>';
     }
     box.innerHTML = h;
     var acc = document.getElementById('shopacc');
     if (acc) acc.onclick = function () { acc.disabled = true; loadShop('accounts'); };
+    var acc2 = document.getElementById('shopacc2');
+    if (acc2) acc2.onclick = function () { acc2.disabled = true; loadShop('accounts'); };
+    var cs = document.getElementById('shopcardset');
+    if (cs) cs.onclick = function () { cs.disabled = true; loadShop('cardacc', { card: document.getElementById('shopcardacc').value }); };
     var sg = document.getElementById('shopbsug');   // a machine named already: put the suggestion in the name box
     if (sg) sg.onclick = function () { var nb = document.getElementById('shopbname'); nb.value = sg.getAttribute('data-v'); nb.focus(); };
     var su = document.getElementById('shopsetup');
@@ -10661,7 +10678,7 @@
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=23"></script>
+  <script type="module" src="/js/interior.min.js?v=25"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>

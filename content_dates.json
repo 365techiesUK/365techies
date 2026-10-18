@@ -652,8 +652,8 @@
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
-  "h": "771bd2378e1429b4",
-  "last": "2026-10-12"
+  "h": "886bb8b44ecccc09",
+  "last": "2026-10-18"
  },
  "computer-support-gift-for-parents": {
   "first": "2026-07-28",
@@ -1215,7 +1215,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "4f6f0ab32dc278e8",
+  "h": "21a4412039f6004c",
   "last": "2026-10-18"
  },
  "free-tools": {
@@ -2805,13 +2805,13 @@
  },
  "pay": {
   "first": "2026-07-28",
-  "h": "4660b3cb40d12792",
-  "last": "2026-09-27"
+  "h": "93d349df2c5d11d0",
+  "last": "2026-10-18"
  },
  "pc-benchmark": {
   "first": "2026-07-28",
-  "h": "428de41d5a29f742",
-  "last": "2026-10-12"
+  "h": "e78369fcd0395264",
+  "last": "2026-10-18"
  },
  "pc-manager-buy": {
   "first": "2026-10-12",
@@ -2911,8 +2911,8 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "08dc785fa264ad2b",
-  "last": "2026-10-17"
+  "h": "87fe3c6651278789",
+  "last": "2026-10-18"
  },
  "pre-call-checklists": {
   "first": "2026-07-28",
@@ -3001,8 +3001,8 @@
  },
  "privacy-policy": {
   "first": "2026-07-28",
-  "h": "32f77e7de52441e7",
-  "last": "2026-10-17"
+  "h": "0832c8521bfb84e4",
+  "last": "2026-10-18"
  },
  "ps5-emulator-real-or-fake": {
   "first": "2026-10-10",
@@ -3065,13 +3065,13 @@
  },
  "refurbished-dell-for-sale": {
   "first": "2026-10-14",
-  "h": "7983d4142b6e49e7",
-  "last": "2026-10-14"
+  "h": "ca8d91e23fb84bec",
+  "last": "2026-10-18"
  },
  "refurbished-dell-for-sale/test-01": {
   "first": "2026-10-14",
-  "h": "bd2b908e0114d069",
-  "last": "2026-10-14"
+  "h": "ab9ff9f50630e56d",
+  "last": "2026-10-18"
  },
  "refurbished-dell-laptops-bournemouth": {
   "first": "2026-07-28",
@@ -3800,8 +3800,8 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "d71155335d540c86",
-  "last": "2026-10-06"
+  "h": "f653188629806f3b",
+  "last": "2026-10-18"
  },
  "wifi-support": {
   "first": "2026-07-28",

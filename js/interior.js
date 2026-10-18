@@ -455,6 +455,110 @@ if (WANT_BG) {
     e.preventDefault();
     open(app, link);
   }, true);
+
+  /* 18 Oct 2026 (portal Live, 7 days: 40% of visitors on a phone or tablet, and ONE link sent to a computer): the panel
+     only opened for someone who tapped "Download ... for Windows", and on a phone people pass that button by. Off Windows
+     every installer button now says what it does there. Only its words change: the link, the panel above, the beacon's
+     cancel and the /~send/ count are exactly as before. Buttons a page adds later (the benchmark's result) are caught too. */
+  const sendLabel = /^(iPhone|iPad|phone|tablet)$/.test(device) ? "Send it to my computer" : "Send it to my Windows PC";
+  function relabel() {
+    document.querySelectorAll('a[href*=".exe"]').forEach((a) => {
+      if (a.dataset.dlsendLbl || a.closest(".dlsend")) return;
+      const href = a.getAttribute("href") || "";
+      if (!Object.keys(APPS).some((k) => APPS[k].re.test(href))) return;
+      if (!/^\s*Download/i.test(a.textContent || "")) return;   // every installer button starts "Download" (18 Oct: 90 on the site)
+      a.dataset.dlsendLbl = "1";
+      a.textContent = sendLabel + " →";
+      if (a.hasAttribute("aria-label")) a.setAttribute("aria-label", sendLabel);
+    });
+  }
+  relabel();
+  if ("MutationObserver" in window && document.body) {
+    let queued = false;
+    new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; relabel(); });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+})();
+
+/* ---------------- an app download on a Windows PC: the steps, at the moment they're needed ----------------
+   18 Oct 2026 (portal, 7 days: ~43 PC Manager download clicks, 20 new installs - more than half never got installed):
+   the install steps lived only under the button on each app's own page. Now any installer download on a Windows PC, on
+   any page (the app boxes, the benchmark and Wi-Fi results, the Virgin and email pages), brings up a small card under
+   the header with the steps and the two warnings Windows may show - worded as /free-pc-health-check/#download and
+   /techies-one-mail/#download word them. It never blocks the download, takes focus or counts anything. */
+(function () {
+  const ua = navigator.userAgent || "";
+  const uad = navigator.userAgentData;
+  const isWin = /Windows NT|Win64|WOW64/.test(ua) || (uad && uad.platform === "Windows");
+  if (!isWin) return;
+  const APPS = {
+    pcm: { re: /365-pc-manager-setup[^/?#]*\.exe([?#]|$)/i, name: "365 PC Manager", help: "/free-pc-health-check/#download",
+      last: "<b>It opens and checks your PC.</b> Your health score comes up in plain English, and after that it&rsquo;s in your Start menu." },
+    t1: { re: /TechiesOneMail-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies One Mail", help: "/techies-one-mail/#download",
+      last: "<b>Type your email address.</b> It fills in the settings itself for BT, Sky, Plusnet, Gmail, Yahoo, AOL and Outlook.com." },
+  };
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  let card = null;
+
+  function close() {
+    if (!card) return;
+    card.remove(); card = null;
+    document.removeEventListener("keydown", onKey);
+  }
+  function onKey(e) { if (e.key === "Escape") close(); }
+  function show(app, href) {
+    close();
+    const a = APPS[app];
+    let file = href.split(/[?#]/)[0].split("/").pop() || "";
+    try { file = decodeURIComponent(file); } catch (e) {}
+    if (!document.getElementById("dlhelp-css")) {
+      const st = document.createElement("style");
+      st.id = "dlhelp-css";
+      st.textContent =
+        ".dlhelp{position:fixed;z-index:1250;top:calc(var(--header-h,76px) + var(--ticker-h,0px) + .75rem);right:1rem;width:min(25rem,calc(100vw - 2rem));max-height:calc(100vh - var(--header-h,76px) - 2rem);overflow:auto;"
+        + "background:#0e1730;color:#eef3fb;border:1px solid rgba(120,160,230,.32);border-radius:1.1rem;padding:1.1rem 1.15rem 1rem;box-shadow:0 20px 60px rgba(0,0,0,.55);font-size:.92rem;line-height:1.5}"
+        + "@media (prefers-reduced-motion:no-preference){.dlhelp{animation:dlhelp-in .25s ease-out}@keyframes dlhelp-in{from{opacity:0;transform:translateY(-8px)}}}"
+        + ".dlhelp__kick{font:600 .7rem/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;color:#4fb3ff;margin:0 2.4rem .35rem 0}"
+        + ".dlhelp h2{font-size:1.15rem;line-height:1.25;margin:0 2.4rem .6rem 0;color:#fff}"
+        + ".dlhelp ol{margin:0 0 .7rem;padding-left:1.4rem;display:grid;gap:.45rem;list-style:decimal outside}.dlhelp li{display:list-item;list-style:inherit;padding-left:.15rem}.dlhelp li::marker{color:#4fb3ff;font-weight:700}.dlhelp b{color:#fff}"
+        + ".dlhelp code{font:600 .8rem ui-monospace,Menlo,Consolas,monospace;color:#cfe3ff;word-break:break-all}"
+        + ".dlhelp__warn{border-top:1px solid rgba(120,160,230,.22);padding-top:.6rem;font-size:.84rem;color:#c3cfe2}.dlhelp__warn p{margin:0 0 .45rem}"
+        + ".dlhelp__warn a{color:#7cc4ff}"
+        + ".dlhelp__x{position:absolute;top:.55rem;right:.55rem;width:2.3rem;height:2.3rem;border-radius:50%;border:1px solid rgba(120,160,230,.3);background:transparent;color:#eef3fb;font-size:1.3rem;line-height:1;cursor:pointer}"
+        + ".dlhelp__x:focus-visible,.dlhelp a:focus-visible{outline:2px solid #4fb3ff;outline-offset:2px}";
+      document.head.appendChild(st);
+    }
+    card = document.createElement("div");
+    card.className = "dlhelp";
+    card.setAttribute("role", "status");
+    card.setAttribute("aria-live", "polite");
+    card.innerHTML =
+      '<button type="button" class="dlhelp__x" aria-label="Close the install steps">&times;</button>'
+      + '<p class="dlhelp__kick">// DOWNLOADING ' + a.name.toUpperCase() + '</p>'
+      + '<h2>Three quick steps</h2>'
+      + '<ol><li><b>Open the file.</b> It&rsquo;s called <code>' + esc(file) + '</code>. Your browser shows it at the top or bottom of the window, or it&rsquo;s in your Downloads folder.</li>'
+      + '<li><b>Let it install.</b> It takes a few seconds and needs no administrator password.</li>'
+      + '<li>' + a.last + '</li></ol>'
+      + '<div class="dlhelp__warn">'
+      + '<p><b>Edge says it &ldquo;isn&rsquo;t commonly downloaded&rdquo;?</b> Press the three dots next to it, choose Keep, then Show more and Keep anyway.</p>'
+      + '<p><b>A blue &ldquo;Windows protected your PC&rdquo; box?</b> Choose More info, check the publisher says 365 Techies Ltd, then Run anyway. If it says anything else, don&rsquo;t run it.</p>'
+      + '<p><a href="' + a.help + '">More help with installing</a></p></div>';
+    card.querySelector(".dlhelp__x").addEventListener("click", close);
+    document.body.appendChild(card);
+    document.addEventListener("keydown", onKey);
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.defaultPrevented) return;
+    const link = e.target && e.target.closest && e.target.closest("a[href]");
+    if (!link) return;
+    const href = link.getAttribute("href") || "";
+    const app = Object.keys(APPS).find((k) => APPS[k].re.test(href));
+    if (app) show(app, href);
+  });
 })();
 
 // Reading-progress bar: long guides only (4+ content sections), motion-safe.

@@ -2,7 +2,8 @@
 /*
  * Refurbished Dells bought online (shop-lib.php / shop.php, 14 Oct 2026). CLI only:
  *   C:\tools\php\php.exe -d extension=mbstring api/shop-test.php
- * Pure checks in a temp folder against a pretend PayPal (a function standing in for pp_api): PayPal is never called.
+ * Pure checks in a temp folder against a pretend PayPal (a function standing in for pp_api) and, since 18 Oct 2026, a pretend
+ * Stripe (standing in for st_api): neither is ever called.
  */
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 error_reporting(E_ALL);
@@ -174,6 +175,133 @@ check(count($g->additional_image_link) === 1 && (string)$g->image_link !== '', '
 $xml2 = shop_feed_xml($c, shop_norm(array()), $now);
 $sx2 = simplexml_load_string($xml2); $g2 = null; foreach ($sx2->channel->item as $it) { $gg = $it->children('http://base.google.com/ns/1.0'); if ((string)$gg->id === 'latitude-5520-01') $g2 = $gg; }
 check($g2 !== null && (string)$g2->availability === 'in_stock', 'unsold: in_stock');
+
+echo "H  card payments through Stripe (18 Oct 2026)\n";
+// the owner's key file
+file_put_contents($TMP . '/k1.php', "<?php\n\$ST_SECRET = 'rk_live_abcDEF1234567890';\n\$ST_WHSEC = 'whsec_abcdef1234567890';\n");
+file_put_contents($TMP . '/k2.php', "<?php\n\$ST_SECRET = 'pk_live_abcDEF1234567890';\n");
+file_put_contents($TMP . '/k3.php', "<?php\n\$ST_SECRET = 'sk_test_abcDEF1234567890';\n\$ST_WHSEC = 'nope';\n");
+$k = st_creds($TMP . '/k1.php');
+check(is_array($k) && $k['env'] === 'live' && $k['whsec'] === 'whsec_abcdef1234567890', 'a restricted live key + webhook secret: card payments on', json_encode($k));
+check(st_creds($TMP . '/none.php') === null && st_creds($TMP . '/k2.php') === null, 'no key file, or a publishable key: no card button');
+$k = st_creds($TMP . '/k3.php'); check($k['env'] === 'test' && $k['whsec'] === '', 'a test key is env test; a malformed webhook secret is ignored');
+check(st_flat(array('a' => array('b' => array(array('c' => 1))), 'x' => true, 'n' => null)) === array('a[b][0][c]' => '1', 'x' => 'true'), "nested fields in Stripe's a[b][0][c] form");
+check(st_pence('545.00') === 54500 && st_pence('15') === 1500 && st_pence('19.99') === 1999 && st_pence('0.1') === 10, 'pounds to pence without float slips');
+check(st_session_id('cs_live_a1B2c3D4e5F6g7') !== '' && st_session_id('cs_live_') === '' && st_session_id('ORD0000000001') === '', 'session ids recognised, others not');
+// the webhook signature
+$pl = '{"id":"evt_1"}'; $t0 = 1792000000; $sig = hash_hmac('sha256', $t0 . '.' . $pl, 'whsec_abc');
+check(st_sig_ok($pl, 't=' . $t0 . ',v1=' . $sig, 'whsec_abc', $t0 + 10), 'a real Stripe signature passes');
+check(!st_sig_ok($pl, 't=' . $t0 . ',v1=' . $sig, 'whsec_other', $t0 + 10), 'the wrong secret fails');
+check(!st_sig_ok($pl . ' ', 't=' . $t0 . ',v1=' . $sig, 'whsec_abc', $t0 + 10), 'a changed body fails');
+check(!st_sig_ok($pl, 't=' . $t0 . ',v1=' . $sig, 'whsec_abc', $t0 + 301), 'a signature older than 5 minutes fails (no replays)');
+check(st_sig_ok($pl, 't=' . $t0 . ',v1=' . str_repeat('0', 64) . ',v1=' . $sig, 'whsec_abc', $t0), 'any of several v1 signatures may match (secret being rolled)');
+check(!st_sig_ok($pl, '', 'whsec_abc', $t0) && !st_sig_ok($pl, 't=' . $t0 . ',v1=' . $sig, '', $t0), 'no header, or no secret on our side: fails');
+
+// a fresh machine for the card tests, and the pretend Stripe
+$c4 = $CAT; $c4['units']['latitude-7420-01'] = array('status' => 'live', 'ed' => 1, 'price' => '510.00', 'name' => 'Dell Latitude 7420 (Grade A)', 'kind' => 'laptop',
+    'title' => 't', 'desc' => 'd', 'url' => 'https://365techies.co.uk/refurbished-dell-for-sale/latitude-7420-01/', 'images' => array(), 'gpc' => '328', 'ptype' => 'p');
+$c4['units']['latitude-7490-01'] = array('status' => 'live', 'ed' => 1, 'price' => '400.00', 'name' => 'Dell Latitude 7490 (Grade B)', 'kind' => 'laptop',
+    'title' => 't', 'desc' => 'd', 'url' => 'u', 'images' => array(), 'gpc' => '328', 'ptype' => 'p');
+$writeCat($c4); $c = shop_catalogue();
+$ST = array('sessions' => array(), 'calls' => array(), 'n' => 0, 'fail_create' => false, 'expand_403' => false);
+$sapi = function ($cr, $method, $path, $params = array(), $idem = '') use (&$ST) {
+    $ST['calls'][] = $method . ' ' . $path;
+    if ($method === 'POST' && $path === '/v1/checkout/sessions') {
+        if ($ST['fail_create']) return array(500, array('error' => array('message' => 'boom')));
+        $id = 'cs_test_' . str_pad((string)(++$ST['n']), 24, 'a', STR_PAD_LEFT);
+        $amt = $params['line_items'][0]['price_data']['unit_amount'] + $params['shipping_options'][0]['shipping_rate_data']['fixed_amount']['amount'];
+        $ST['sessions'][$id] = array('id' => $id, 'object' => 'checkout.session', 'params' => $params, 'idem' => $idem, 'status' => 'open', 'payment_status' => 'unpaid',
+            'currency' => 'gbp', 'amount_total' => $amt, 'metadata' => $params['metadata'], 'url' => 'https://checkout.stripe.com/c/pay/' . $id,
+            'customer_details' => array('email' => 'Sam@Example.com', 'name' => 'Sam Card', 'phone' => '+447700900456'),
+            'shipping_details' => array('name' => 'Sam Card', 'address' => array('line1' => '2 Sea Rd', 'line2' => '', 'city' => 'Bournemouth', 'state' => '', 'postal_code' => 'bh1 2aa', 'country' => 'GB')),
+            'payment_intent' => 'pi_test_' . $ST['n']);
+        return array(200, $ST['sessions'][$id]);
+    }
+    if (preg_match('#^/v1/checkout/sessions/(cs_[A-Za-z0-9_]+)(/expire)?$#', $path, $m)) {
+        if (!isset($ST['sessions'][$m[1]])) return array(404, array('error' => array('message' => 'no such session')));
+        $s =& $ST['sessions'][$m[1]];
+        if (!empty($m[2])) { $s['status'] = 'expired'; return array(200, $s); }
+        $exp = (array)($params['expand'] ?? array());
+        if ($ST['expand_403'] && in_array('payment_intent.latest_charge.balance_transaction', $exp, true)) return array(403, array('error' => array('message' => 'The provided key does not have the required permissions')));
+        $out = $s;
+        if (in_array('payment_intent.latest_charge.balance_transaction', $exp, true)) $out['payment_intent'] = array('id' => $s['payment_intent'], 'latest_charge' => array('balance_transaction' => array('fee' => 945)));
+        elseif (in_array('payment_intent', $exp, true)) $out['payment_intent'] = array('id' => $s['payment_intent']);
+        return array(200, $out);
+    }
+    return array(404, null);
+};
+$pay = function ($sid) use (&$ST) { $ST['sessions'][$sid]['status'] = 'complete'; $ST['sessions'][$sid]['payment_status'] = 'paid'; };
+$SC = array('secret' => 'rk_live_x', 'whsec' => 'whsec_x', 'env' => 'live');
+$T = $now + 100000;
+$U = $c['units']['latitude-7420-01'];
+
+check(shop_card_start($SC, 'nope-01', $H1, $sapi, $T)[1] === 'no_such' && shop_card_start($SC, 'latitude-5420-01', $H1, $sapi, $T)[1] === 'sold', 'unknown or sold machine: no card page');
+$ST['fail_create'] = true; $r = shop_card_start($SC, 'latitude-7420-01', $H1, $sapi, $T); $ST['fail_create'] = false;
+check(!$r[0] && $r[1] === 'card_failed' && shop_state_of(shop_read(), 'latitude-7420-01', $U, $T) === 'available', 'Stripe fails: no card page and the machine is NOT held');
+$r = shop_card_start($SC, 'latitude-7420-01', $H1, $sapi, $T);
+check($r[0] && st_session_id($r[1]['id']) !== '' && strpos($r[1]['url'], 'https://checkout.stripe.com/') === 0, 'buyer 1 gets a Stripe page', json_encode($r));
+$S1 = $r[1]['id']; $P = $ST['sessions'][$S1]['params'];
+check($P['line_items'][0]['price_data']['unit_amount'] === 51000 && $P['line_items'][0]['price_data']['currency'] === 'gbp' && $P['shipping_options'][0]['shipping_rate_data']['fixed_amount']['amount'] === 1500,
+    "the catalogue's price in pence (£510) + £15 delivery", json_encode($P['line_items']));
+check($P['shipping_address_collection']['allowed_countries'] === array('GB') && $P['phone_number_collection']['enabled'] === true && $P['mode'] === 'payment', 'UK delivery address only; phone asked for');
+check($P['success_url'] === 'https://365techies.co.uk/refurbished-dell-for-sale/latitude-7420-01/?paid={CHECKOUT_SESSION_ID}' && $P['cancel_url'] === 'https://365techies.co.uk/refurbished-dell-for-sale/latitude-7420-01/?cancelled=1', 'back to the machine page, paid or cancelled', $P['success_url']);
+check($P['expires_at'] === $T + 31 * 60 && SHOP_HOLD_CARD > 31 * 60 && $P['metadata'] === array('shop' => '1', 'unit' => 'latitude-7420-01', 'ed' => '1'), "Stripe's page closes in 31 minutes, the hold outlasts it; the session names the machine");
+check(strpos((string)$ST['sessions'][$S1]['idem'], 'shop-') === 0, 'an idempotency key, so a retried request never makes two pages');
+$d = shop_read();
+check(shop_state_of($d, 'latitude-7420-01', $U, $T) === 'held' && $d['o'][$S1]['prov'] === 'stripe' && $d['o'][$S1]['amt'] === '525.00', 'held for buyer 1; the order remembered as a card one (£525)');
+check(shop_card_start($SC, 'latitude-7420-01', $H2, $sapi, $T + 60)[1] === 'held' && shop_create($CR, 'latitude-7420-01', $H2, $api, $T + 60)[1] === 'held', 'buyer 2, by card OR PayPal, meanwhile: "someone is buying it"');
+check(shop_state_of(shop_read(), 'latitude-7420-01', $U, $T + 31 * 60 + 30) === 'held', "still held while Stripe's page could still be paid");
+
+check(shop_card_done($SC, $S1, $sapi, $T + 100)[0] === 'unpaid' && count(shop_read()['sales']) === 2, 'back without paying (or too early): nothing happens');
+check(shop_card_done($SC, 'cs_test_notoursnotoursnotours', $sapi, $T)[0] === 'refused' && shop_card_done($SC, 'bad!', $sapi, $T)[0] === 'refused', 'a session we never made, or a malformed one: refused');
+$pay($S1);
+$r = shop_card_done($SC, $S1, $sapi, $T + 200);
+check($r[0] === 'sold' && $r[2] === true && $r[1]['prov'] === 'stripe' && $r[1]['amt'] === '525.00' && $r[1]['capture'] === 'pi_test_1', 'paid: sold, a new card sale', json_encode($r));
+check($r[1]['name'] === 'Sam Card' && $r[1]['email'] === 'sam@example.com' && $r[1]['lines'] === array('2 Sea Rd', 'Bournemouth') && $r[1]['postcode'] === 'BH1 2AA' && $r[1]['phone'] === '+447700900456', 'name, email, phone and the UK address from Stripe', json_encode($r[1]));
+check($r[1]['fee'] === '9.45', "Stripe's fee kept for the profit (when the key may read it)", $r[1]['fee']);
+$cardSale = $r[1];
+check(shop_state_of(shop_read(), 'latitude-7420-01', $U, $T + 9e6) === 'sold' && count(shop_read()['sales']) === 3, 'sold for good; one sale recorded');
+$r = shop_card_done($SC, $S1, $sapi, $T + 210);
+check($r[0] === 'had' && $r[2] === false && count(shop_read()['sales']) === 3, 'the webhook AND the buyer coming back: no second sale, no second email', json_encode($r));
+check(shop_card_start($SC, 'latitude-7420-01', $H1, $sapi, $T + 220)[1] === 'sold', 'nobody can start buying it now');
+
+// the amount must be what we asked; a key that can't read the fee
+$r = shop_card_start($SC, 'latitude-7490-01', $H1, $sapi, $T + 300); $S2 = $r[1]['id']; $pay($S2);
+$ST['sessions'][$S2]['amount_total'] = 41499;
+check(shop_card_done($SC, $S2, $sapi, $T + 310)[0] === 'refused' && shop_state_of(shop_read(), 'latitude-7490-01', $c['units']['latitude-7490-01'], $T + 310) === 'held', 'paid a different amount than we asked: refused (logged to check), not sold');
+$ST['sessions'][$S2]['amount_total'] = 41500; $ST['expand_403'] = true;
+$r = shop_card_done($SC, $S2, $sapi, $T + 320); $ST['expand_403'] = false;
+check($r[0] === 'sold' && $r[1]['fee'] === '' && $r[1]['capture'] === 'pi_test_2', "a key that can't read charges: still the sale, just no fee", json_encode($r));
+
+// paid by card for a machine that went meanwhile: a clash, never a sale
+$c5 = $c4; $c5['units']['latitude-7490-01']['ed'] = 2; $writeCat($c5); $c = shop_catalogue();
+$r = shop_card_start($SC, 'latitude-7490-01', $H1, $sapi, $T + 400); $S3 = $r[1]['id'];
+$c6 = $c5; $c6['units']['latitude-7490-01']['status'] = 'draft'; $writeCat($c6); $pay($S3);
+$n0 = count(shop_read()['sales']);
+$r = shop_card_done($SC, $S3, $sapi, $T + 410);
+check($r[0] === 'clash' && $r[2] === true && $r[1]['why'] === 'it was taken off sale' && count(shop_read()['sales']) === $n0, 'taken off sale while they paid: a clash (refund it), NOT a sale', json_encode($r));
+$r = shop_card_done($SC, $S3, $sapi, $T + 420);
+check($r[0] === 'clash' && $r[2] === false, 'heard again (the webhook too): still a clash, but Slack is told only once');
+$tx = shop_clash_text($r[1], $c6['units']['latitude-7490-01']);
+check(strpos($tx, 'Refund needed') !== false && strpos($tx, '£415.00') !== false && strpos($tx, 'pi_test_3') !== false && strpos($tx, 'sam@example.com') !== false, 'the refund-needed message: who, how much, the payment', $tx);
+$writeCat($c4); $c = shop_catalogue();
+
+// letting go: the buyer comes back cancelled, or Stripe's page runs out
+$c7 = $c4; $c7['units']['latitude-7490-01']['ed'] = 3; $writeCat($c7); $c = shop_catalogue(); $U3 = $c['units']['latitude-7490-01'];
+$r = shop_card_start($SC, 'latitude-7490-01', $H1, $sapi, $T + 500); $S4 = $r[1]['id'];
+check(!shop_release($S4, $H2) && shop_release($S4, $H1) && shop_state_of(shop_read(), 'latitude-7490-01', $U3, $T + 510) === 'available', 'cancelled on Stripe\'s page: only the same browser lets it go, and then at once');
+$r = shop_card_start($SC, 'latitude-7490-01', $H2, $sapi, $T + 520); $S5 = $r[1]['id'];
+check(shop_card_expired($S5) && shop_state_of(shop_read(), 'latitude-7490-01', $U3, $T + 530) === 'available' && !shop_card_expired($S5), "Stripe's page expired (webhook): free again; a second notice changes nothing");
+$writeCat($c4); $c = shop_catalogue();
+
+// Slack and the email say card, not PayPal; a test key's sale is a test
+$card = shop_card($cardSale, $U, $T);
+$cj = json_encode($card, JSON_UNESCAPED_UNICODE);
+check(strpos($card['text'], 'Laptop order from Sam Card (Dell Latitude 7420') === 0 && strpos($cj, 'Paid by card through Stripe: payment pi_test_1') !== false && strpos($cj, 'PayPal order') === false, 'Slack card: a card sale, with the Stripe payment', $cj);
+list($s, $body) = shop_email($cardSale, $U, $c);
+check(strpos($body, '£525.00 (paid by card)') !== false && strpos($body, 'PayPal') === false, 'the buyer\'s email: paid by card, no PayPal', $body);
+check(strpos(shop_card(array('env' => 'test') + $cardSale, $U, $T)['text'], '[INTERNAL TEST]') === 0 && shop_is_test(array('env' => 'test'), $U), 'a sale made with a TEST key is a test (never in QuickBooks)');
+check(shop_order_id($S1) === $S1 && shop_order_id('ORD0000000001') === 'ORD0000000001' && shop_order_id('x') === '', 'release takes a PayPal order or a Stripe session');
 
 echo "\n" . ($fails ? "$fails FAILED\n" : "ALL PASSED\n");
 array_map('unlink', glob($TMP . '/*') ?: array()); @rmdir($TMP);
