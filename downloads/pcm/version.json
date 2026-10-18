@@ -1,11 +1,11 @@
 {
-  "ver": 43,
-  "version": "1.0.43",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v43.exe",
-  "sha256": "cfbb90a38b4c2ff41464592089a92f2859c971085b2db731be91073a470f894f",
-  "notes": "Version 36.4.2 links a PC that lost its link to us after 36.4 back up by itself, and keeps the app's settings safe if the power goes off. It keeps 36.4.1's fix for PCs that stopped responding: temperature readings stay paused while we put them right. Signed by 365 Techies Ltd.",
+  "ver": 44,
+  "version": "1.0.44",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v44.exe",
+  "sha256": "de8d4d282c1b900e66e382a02d47c9c5a76727c4e4ba06cd7c6ce9ee35cc0971",
+  "notes": "Version 36.5: if you bought your PC from us, This PC now shows when you bought it, how long its guarantee has left and how old its drive is. Share it with a friend and they get a free month of everything. The scam check knows every address on our own website, and in the UK the full service is yours to run yourself with a key, or done for you on one of our plans. Temperature readings stay paused while we put them right. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v43.exe",
-    "sha256": "579471894f5597c7e1891de8e9a461c7b06110e9eee9eb75603f6302b7441f8a"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v44.exe",
+    "sha256": "6a12c9a19183d308a6cb1f8a2b3bf63a04f7a8aa57413dc507c6e268280c9c07"
   }
 }
