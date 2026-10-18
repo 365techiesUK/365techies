@@ -1300,7 +1300,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=24"></script>
+  <script type="module" src="/js/interior.min.js?v=25"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
