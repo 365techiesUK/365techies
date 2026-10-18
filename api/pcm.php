@@ -276,6 +276,11 @@ if ($action === 'checkin') {
                 $auD = @json_decode((string)@file_get_contents(inst_file()), true);
                 $auId = plus_mhash($machine);
                 if ($auId !== '' && is_array($auD) && isset($auD['m'][$auId])) plus_trial_auto_uk($auId, $auCc, (int)$in['ver'], $auD['m'][$auId]);
+            } elseif ($auCc !== '' && function_exists('plus_trial_auto_abroad')) {
+                // 18 Oct 2026: and abroad (plus_trial_auto_abroad - from $TRIAL_AUTO_ABROAD_FROM, never a no-sale country)
+                $auD = @json_decode((string)@file_get_contents(inst_file()), true);
+                $auId = plus_mhash($machine);
+                if ($auId !== '' && is_array($auD) && isset($auD['m'][$auId])) plus_trial_auto_abroad($auId, $auCc, (int)$in['ver'], $auD['m'][$auId]);
             }
         } catch (Throwable $e) { }
     }

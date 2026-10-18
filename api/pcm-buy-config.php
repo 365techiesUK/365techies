@@ -48,6 +48,10 @@ $UK_PRICE = '£19.99 for 1 year, 3 PCs, no renewal';   // 18 Oct 2026 (owner): s
 // first seen by its check-ins on or after this date (installs already counted before it are left to staff, as before).
 // '' = off. Our own PCs are never given one.
 $TRIAL_AUTO_UK_FROM = '2026-10-13';
+// 18 Oct 2026 (owner: "extend it so it's for the people abroad as well"; "new installs from today"): the same automatic free
+// month for a NEW install outside the UK (never in a country we can't sell to at all). Software only there: no report
+// look-over abroad (owner's choice). '' = off.
+$TRIAL_AUTO_ABROAD_FROM = '2026-10-18';
 // FastSpring (12 Oct 2026, owner: "take it over and do it"): a merchant of record - IT is the seller and pays the VAT / sales
 // tax - so it sells everywhere PayPal does not (never the UK or the no-sale countries). pcm-plus-fs-lib.php has the rules.
 // The popup checkout: "365techies.test.onfastspring.com/popup-365techies" while TESTING (pretend money - the app offers

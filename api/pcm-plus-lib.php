@@ -65,6 +65,8 @@ function plus_config($file = null) {
         'uk' => in_array(strtolower($g('BUY_UK')), array('page', 'on'), true) ? strtolower($g('BUY_UK')) : 'off',
         'uk_gbp' => $usd('UK_GBP'), 'uk_price' => plus_cut($g('UK_PRICE'), 40),
         'trial_uk_from' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $g('TRIAL_AUTO_UK_FROM')) ? $g('TRIAL_AUTO_UK_FROM') : '',
+        // 18 Oct 2026: the same automatic free month outside the UK, from its own start date ('' = off)
+        'trial_abroad_from' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $g('TRIAL_AUTO_ABROAD_FROM')) ? $g('TRIAL_AUTO_ABROAD_FROM') : '',
         'fs_storefront' => preg_match('#^[a-z0-9-]+(\.test)?\.onfastspring\.com/[a-z0-9-]+$#', $fsf) ? $fsf : '', 'fs_product' => $fsp('FS_PRODUCT'), 'fs_product_low' => $fsp('FS_PRODUCT_LOW'));
 }
 // FastSpring's mode from the storefront: '' (not set up) | 'test' (pretend money) | 'live'
@@ -517,6 +519,22 @@ function plus_trial_auto_uk($mhash, $country, $ver, $inst, $now = null, $file = 
     $d = plus_load($file);
     if ($d && isset($d['trials'][$mhash])) return null;   // had one already - the usual case, and no lock taken for it
     $r = plus_trial_give($mhash, 'auto (UK)', $now, $file);
+    return !empty($r['ok']) ? $r : null;
+}
+// 18 Oct 2026 (owner: "can we extend it so it's for the people abroad as well ... they get the 30 days and then they can
+// share it out to their friends"): the same automatic free month for a NEW install OUTSIDE the UK - first seen on or after
+// $TRIAL_AUTO_ABROAD_FROM, country known, never where we can't sell at all (PLUS_NO_SALE), never ours / linked / on a plan,
+// one month per PC ever. Abroad it is software only: no report look-over (pcm-lookover.php), as the owner chose.
+function plus_trial_auto_abroad($mhash, $country, $ver, $inst, $now = null, $file = null, $config = null) {
+    $c = strtoupper(trim((string)$country));
+    if (!plus_is_mhash($mhash) || $c === '' || plus_is_uk($c) || plus_no_sale($c) || (int)$ver < PLUS_TRIAL_MIN_VER || !is_array($inst)) return null;
+    $from = plus_config($config)['trial_abroad_from'];
+    if ($from === '' || !empty($inst['o']) || !empty($inst['k']) || !empty($inst['p'])) return null;
+    $f = (string)($inst['f'] ?? '');
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $f) || strcmp($f, $from) < 0) return null;
+    $d = plus_load($file);
+    if ($d && isset($d['trials'][$mhash])) return null;   // had one already
+    $r = plus_trial_give($mhash, 'auto (abroad)', $now, $file);
     return !empty($r['ok']) ? $r : null;
 }
 // For a keyless check-in from this install (app build $ver): the key to hand over now, or null. Handing it over is

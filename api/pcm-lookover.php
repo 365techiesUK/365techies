@@ -59,6 +59,10 @@ if (!$tri && !$ukk) lo_fail('not_trial');
 if (!$tri) $tri = array('until' => (int)$ukk['expires']);
 $pr = plus_check($key, $machine, false);
 if (empty($pr['ok'])) lo_fail($pr['error'] === 'expired' ? 'trial_ended' : 'not_trial');
+// 18 Oct 2026 (owner, when free months went automatic abroad: "No look-over abroad"): a free month outside the UK is software
+// only - no techie look-over. (A key bought in the UK may still ask from anywhere; a country we can't tell is let through.)
+$loCc = geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+if (!$ukk && $loCc !== '' && !plus_is_uk($loCc)) lo_fail('abroad');
 if (empty($in['consent'])) lo_fail('consent');
 $f = array();
 $f['name'] = mm_clean($in['name'] ?? '');

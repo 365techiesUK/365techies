@@ -108,8 +108,32 @@ check(is_array($g2) && $g2['ok'], 'the start date itself counts; the Isle of Man
 $cfg('off', "\$TRIAL_AUTO_UK_FROM = '';\n");
 check(plus_trial_auto_uk('4444444444444444', 'GB', 39, $row, $T) === null, 'no start date: switched off');
 
+echo "F2 the automatic free month abroad (18 Oct 2026)\n";
+$cfg('off', "\$TRIAL_AUTO_ABROAD_FROM = '2026-10-18';\n");
+$T = strtotime('2026-10-20 12:00:00 UTC');
+$rowA = array('f' => '2026-10-19', 'l' => '2026-10-20', 'c' => 'US', 'v' => 44, 'k' => 0, 'p' => 0, 'o' => 0);
+check(plus_trial_auto_abroad('5555555555555555', 'GB', 44, $rowA, $T) === null && plus_trial_auto_abroad('5555555555555555', 'IM', 44, $rowA, $T) === null, 'the UK (and the Isle of Man): never - that is plus_trial_auto_uk');
+check(plus_trial_auto_abroad('5555555555555555', '', 44, $rowA, $T) === null, 'a country we cannot tell: never');
+check(plus_trial_auto_abroad('5555555555555555', 'RU', 44, $rowA, $T) === null && plus_trial_auto_abroad('5555555555555555', 'IR', 44, $rowA, $T) === null, 'a country we can never sell to: never');
+check(plus_trial_auto_abroad('5555555555555555', 'US', 36, $rowA, $T) === null, 'an app too old to take the key: not yet');
+check(plus_trial_auto_abroad('5555555555555555', 'US', 44, array('f' => '2026-10-17') + $rowA, $T) === null, 'an install first seen before the abroad start date: left to staff');
+check(plus_trial_auto_abroad('5555555555555555', 'US', 44, array('o' => 1) + $rowA, $T) === null && plus_trial_auto_abroad('5555555555555555', 'US', 44, array('k' => 1) + $rowA, $T) === null && plus_trial_auto_abroad('5555555555555555', 'US', 44, array('p' => 1) + $rowA, $T) === null, 'ours, linked or on a plan: never');
+$gA = plus_trial_auto_abroad('6666666666666666', 'DE', 44, $rowA, $T);
+check(is_array($gA) && $gA['ok'] && $gA['until'] === $T + 30 * 86400, 'a new install in Germany: given its month (30 days)', json_encode($gA));
+$dA = plus_load(); $tA = $dA['trials']['6666666666666666'] ?? null;
+check($tA && $tA['by'] === 'auto (abroad)' && plus_is_key($tA['key']), 'recorded as given automatically abroad, the key waiting to be handed over');
+check(plus_trial_auto_abroad('6666666666666666', 'DE', 44, $rowA, $T + 3600) === null && plus_trial_auto_uk('6666666666666666', 'GB', 44, array('c' => 'GB') + $rowA, $T + 7200) === null, 'one month per PC, ever (moving to the UK gives no second one)');
+check(plus_trial_auto_abroad('7777777777777777', 'US', 44, array('f' => '2026-10-18') + $rowA, $T)['ok'] ?? false, 'the start date itself counts');
+$cfg('off');
+check(plus_trial_auto_abroad('8888888888888888', 'US', 44, $rowA, $T) === null, 'no abroad start date: switched off (the UK month is not affected)');
+
 echo "G  the shipped config and wiring\n";
 $src = (string)file_get_contents(__DIR__ . '/pcm-buy-config.php');
+check(preg_match("/^\\\$TRIAL_AUTO_ABROAD_FROM = '2026-10-18';/m", $src) === 1, "shipped: the automatic free month abroad, for installs first seen from 18 Oct 2026");
+$pcmSrc = (string)file_get_contents(__DIR__ . '/pcm.php');
+check(strpos($pcmSrc, "plus_trial_auto_abroad(\$auId, \$auCc, (int)\$in['ver'], \$auD['m'][\$auId])") !== false, 'wired: a keyless check-in from abroad may be given its month');
+$loSrc = (string)file_get_contents(__DIR__ . '/pcm-lookover.php');
+check(strpos($loSrc, "if (!\$ukk && \$loCc !== '' && !plus_is_uk(\$loCc)) lo_fail('abroad');") !== false, 'wired: no free look-over for a free month outside the UK (a UK-bought key still may)');
 // 17 Oct 2026 (owner: "keep £19.99 and do step 1"): 'page' - the buy page sells it so the owner can buy one and refund it.
 // 18 Oct 2026 (owner: "put it so they get the option in the PC Manager app"): 'on' - the app offers it beside the plans. The
 // live order was created by PayPal (the owner's own account was refused as the merchant itself); a real purchase + refund is
