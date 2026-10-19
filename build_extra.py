@@ -34852,18 +34852,27 @@ def write_activate_page():
 <script>
 (function () {
   var b = document.getElementById('body');
-  var m = (location.hash || '').match(/^#([A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4})$/);
-  if (!m) { b.innerHTML = '<p>This activation link looks incomplete. Please use the full link we sent you, or ring us on <strong style="color:var(--white)">01202 775566</strong> and we\\u2019ll sort it in a minute.</p>'; return; }
-  var key = m[1];
-  b.innerHTML = '<p>On the computer you want looked after? Tap the button and the 365 PC Manager app will activate itself.</p>'
+  // 19 Oct 2026: the key is found wherever it is in the address - after the # (our link), but also a 365pcm:// link pasted
+  // onto the end, lower case, or a space for a dash (a joined-up link 404'd in front of a new customer; .htaccess now sends
+  // /activate/...KEY here too). The # is searched first.
+  var where = location.hash + ' ' + location.search + ' ' + location.pathname;
+  try { where = decodeURIComponent(where); } catch (e) {}
+  var m = where.toUpperCase().match(/([A-Z2-9]{4})[ -]([A-Z2-9]{4})[ -]([A-Z2-9]{4})/);
+  var W = 'style="color:var(--white)"';
+  var how = '<ol class="steps"><li>Open 365 PC Manager. Not on this PC yet? Ring us on <strong ' + W + '>01202 775566</strong> (or use your remote session) and we\\u2019ll pop the free app on for you.</li>'
+    + '<li>Click the button at the top of the app (<strong ' + W + '>Get the full service</strong> or <strong ' + W + '>Link this PC</strong>), then <strong ' + W + '>Already a customer? Link this PC</strong>.</li>'
+    + '<li>Type the key and click <strong ' + W + '>Activate</strong>.</li></ol>';
+  if (!m) { b.innerHTML = '<p>This activation link looks incomplete. Got a key from us? You can type it into the app instead:</p>' + how
+    + '<p>Or ring us on <strong ' + W + '>01202 775566</strong> and we\\u2019ll sort it in a minute.</p>'; return; }
+  var key = m[1] + '-' + m[2] + '-' + m[3];
+  try { if (location.hash !== '#' + key) history.replaceState(null, '', '/activate/#' + key); } catch (e) {}
+  b.innerHTML = '<p>On the computer you want looked after? Tap the button and the 365 PC Manager app will link itself. If your browser asks, choose <strong ' + W + '>Open</strong>.</p>'
     + '<p style="text-align:center"><button id="go">\\u26a1 Activate now</button></p>'
+    + '<p style="margin-top:1rem">Your key:</p><div class="key">' + key + '</div>'
     + '<div id="fb"></div>';
   function fallback() {
     document.getElementById('fb').innerHTML =
-      '<p style="margin-top:.6rem"><span class="ok">Nothing happened?</span> The app may not be on this PC yet - no bother:</p>'
-      + '<ol class="steps"><li>Ring us on <strong style="color:var(--white)">01202 775566</strong> (or use your remote session) and we\\u2019ll pop the free app on for you.</li>'
-      + '<li>Then open the app, tap <strong style="color:var(--white)">Activate 365 support</strong>, and type this key:</li></ol>'
-      + '<div class="key">' + key + '</div>'
+      '<p style="margin-top:.6rem"><span class="ok">Nothing happened?</span> Type the key into the app instead - no bother:</p>' + how
       + '<p>That\\u2019s it - the app unlocks and we start keeping an eye on your PC\\u2019s health.</p>';
   }
   document.getElementById('go').onclick = function () {

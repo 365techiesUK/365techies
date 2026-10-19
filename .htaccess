@@ -71,6 +71,11 @@ RewriteRule ^(.*)$ /$1? [R=301,L]
 RewriteRule ^(members|members-2|activity|activity-2|groups|forums|register|register-2|profile|moderation|messages|notifications|documents|photos|password-reset|password-recover|external-link|sidebar|gutenberg|remote-jobs|365live|my-account|my-account-2|cart|checkout|checkout-2|shop-2)/?$ - [G]
 RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 
+# 19 Oct 2026: an activation key anywhere AFTER /activate/ in the path - the app link pasted onto the end of the page's
+# address (/activate/365pcm://activate/KEY), or /activate/KEY - lands on the working page with the key after the #
+# instead of a 404 (one did, in front of a new customer). NE keeps the # a #. 302: never cached as permanent.
+RewriteRule ^activate/.*?([A-Za-z2-9]{4}-[A-Za-z2-9]{4}-[A-Za-z2-9]{4}) /activate/#$1 [R=302,NE,L]
+
 # The game moved 23 Sep 2026: /efoil-game/ -> /bournemouth/games/seafront/. It was unlisted and
 # nothing linked to it, so this redirect is belt and braces for a link already shared by hand.
 # The second line sends the future hub at /bournemouth/games/ to the only game there is: a hub

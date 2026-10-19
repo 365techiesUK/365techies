@@ -772,9 +772,9 @@ tbody tr:hover td{background:rgba(29,151,227,.04)}
   <td><span class=key><?=h($key)?></span>
     <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>
     <div style="display:flex;gap:.3rem;margin-top:.2rem;align-items:center">
-      <input class=alink readonly value="365pcm://activate/<?=h($key)?>" onfocus="this.select()" style="width:190px;font-family:ui-monospace,monospace;font-size:.7rem;padding:.25rem .4rem">
-      <button type=button class="ghost copybtn" data-link="365pcm://activate/<?=h($key)?>" style="padding:.3rem .6rem;font-size:.75rem">Copy</button>
-      <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nClick this link on the PC you'd like on support and it'll activate 365 PC Manager for you:\n\n365pcm://activate/".$key."\n\n(If nothing happens, open 365 PC Manager, go to Help & Shop, tap \"Go on support / enter key\" and paste this code: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
+      <input class=alink readonly value="https://365techies.co.uk/activate/#<?=h($key)?>" onfocus="this.select()" style="width:190px;font-family:ui-monospace,monospace;font-size:.7rem;padding:.25rem .4rem">
+      <button type=button class="ghost copybtn" data-link="https://365techies.co.uk/activate/#<?=h($key)?>" style="padding:.3rem .6rem;font-size:.75rem">Copy</button>
+      <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nOpen this link on the PC you'd like on support and it'll link 365 PC Manager to us for you:\n\nhttps://365techies.co.uk/activate/#".$key."\n\n(If nothing happens, open 365 PC Manager, click the button at the top (Get the full service, or Link this PC), then \"Already a customer? Link this PC\", and type this key: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
     </div>
   </td>
   <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span>
