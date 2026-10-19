@@ -1259,7 +1259,7 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                 'h2': 'Why one message jams your whole Outbox',
                 'html': "<p>Classic Outlook sends messages in order. If the one at the front of the queue can't go, everything behind it waits too, which is why a single stuck email stops all your "
                         'other mail from leaving.</p><ul><li><strong>A large attachment.</strong> Most mailboxes cap attachments at around 25MB. A big photo batch, a video, or a hefty PDF can sit '
-                        'trying (and failing) to upload forever.</li><li><strong>A dropped connection.</strong> If your internet blipped mid-send, Outlook may keep retrying a half-sent '
+                        'trying (and failing) to upload forever. A big PDF can be <a href="/techies-pdf/">made smaller for email with our free Techies PDF</a> first.</li><li><strong>A dropped connection.</strong> If your internet blipped mid-send, Outlook may keep retrying a half-sent '
                         'message.</li><li><strong>Work Offline is switched on.</strong> Easy to hit by accident. Nothing sends until you turn it back off.</li><li><strong>A corrupt item.</strong> '
                         "Occasionally the message itself is damaged and won't send however many times you try.</li></ul><p>The good news: the fix below tackles all four, and none of it risks losing "
                         'your email.</p>'},

@@ -1299,7 +1299,8 @@
  },
  "heic-photos-wont-open-on-windows": {
   "first": "2026-10-11",
-  "h": "19db52adc382abb6"
+  "h": "fcc1d2bfc6867d0b",
+  "last": "2026-10-19"
  },
  "help-in-dorset": {
   "first": "2026-07-28",
@@ -1460,8 +1461,8 @@
  },
  "how-to-scan-a-document": {
   "first": "2026-06-16",
-  "h": "b259549bf980630f",
-  "last": "2026-09-26"
+  "h": "c16fde9b703fa1c6",
+  "last": "2026-10-19"
  },
  "how-to-secure-your-microsoft-365-account": {
   "first": "2026-06-16",
@@ -2339,7 +2340,7 @@
  },
  "new-outlook-emails-stuck-in-drafts": {
   "first": "2026-07-28",
-  "h": "ff559cb170d52682",
+  "h": "f6a9a07d364b6ed9",
   "last": "2026-10-19"
  },
  "new-outlook-missing-features": {
@@ -2753,8 +2754,8 @@
  },
  "outlook-stuck-in-outbox": {
   "first": "2026-07-28",
-  "h": "8a43eea51efa2da2",
-  "last": "2026-10-06"
+  "h": "8f9bafd4addba254",
+  "last": "2026-10-19"
  },
  "outlook-stuck-in-sign-in-loop": {
   "first": "2026-07-28",
@@ -3480,7 +3481,7 @@
  },
  "techies-pdf": {
   "first": "2026-10-18",
-  "h": "bb138bb885ca5e4c",
+  "h": "41d56f0741e08b5e",
   "last": "2026-10-19"
  },
  "terms": {

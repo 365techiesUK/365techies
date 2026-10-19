@@ -133,9 +133,9 @@ def hero():
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{bp.bc_sub("Free Tools", "/free-tools/", NAME)}</nav>
-          <p class="eyebrow mono">// FREE FOR WINDOWS 10 &amp; 11 &middot; NOTHING UPLOADED &middot; SIGNED BY 365 TECHIES LTD</p>
-          <h1><em class="grad grad--cyan">Techies PDF</em>: the free PDF editor for Windows that keeps your files on your PC</h1>
-          <p class="lede"><strong>Techies PDF</strong> is a free program for Windows 10 and 11 from 365 Techies, the family-run IT firm in Bournemouth. <strong>Fill in and sign</strong> a PDF form without printing it, <strong>join</strong> PDFs into one, <strong>turn, move or take out</strong> pages, <strong>shrink</strong> a PDF so it can be emailed, turn <strong>photos into a PDF</strong>, copy the words out, and put a <strong>password</strong> on. All on your own computer: your documents are never uploaded anywhere. No adverts, no account, no watermark.</p>
+          <p class="eyebrow mono">// FREE FOR WINDOWS 11 &amp; 10 &middot; WORKS OFFLINE &middot; NOTHING UPLOADED &middot; SIGNED BY 365 TECHIES LTD</p>
+          <h1><em class="grad grad--cyan">Techies PDF</em>: the free PDF editor for Windows 11 and 10 that keeps your files on your PC</h1>
+          <p class="lede"><strong>Techies PDF</strong> is a free program for Windows 11 and 10 from 365 Techies, the family-run IT firm in Bournemouth. <strong>Fill in and sign</strong> a PDF form without printing it, <strong>join (merge)</strong> PDFs into one, <strong>split</strong> off just the pages you need, <strong>turn, move or take out</strong> pages, <strong>shrink (compress)</strong> a PDF so it can be emailed, turn <strong>photos into a PDF</strong>, copy the words out, and put a <strong>password</strong> on. All on your own computer, and it works offline: your documents are never uploaded anywhere. No adverts, no account, no watermark.</p>
           <div class="page-hero__cta">
             <a href="#download" class="button primary button--lg">Download it free</a>
             <a href="tel:+441202775566" class="button secondary button--lg">Rather we set it up? 01202 775566</a>
@@ -208,10 +208,10 @@ ICONS = {
 }
 PARTS = [
     ("sign", "Fill in &amp; sign", "Type into forms, sign, add text, highlight"),
-    ("join", "Join PDFs", "Put two or more PDFs into one"),
+    ("join", "Join (merge) PDFs", "Combine two or more PDFs into one"),
     ("pages", "Turn &amp; move pages", "Fix upside-down pages, change the order, take pages out"),
-    ("split", "Take pages out", "Save just the pages you need, or one PDF per page"),
-    ("shrink", "Make it smaller", "Shrink a big PDF so it can be emailed"),
+    ("split", "Split a PDF", "Save just the pages you need, or one PDF per page"),
+    ("shrink", "Make it smaller", "Compress a big PDF so it can be emailed"),
     ("photos", "Photos to PDF", "Letters, receipts and forms from your phone"),
     ("words", "Copy the words", "Get the text out to paste somewhere else"),
     ("password", "Passwords", "Lock a PDF, or unlock one you have the password for"),
@@ -243,19 +243,19 @@ FEATS = [
      "Open the PDF and type straight into its boxes, tick its boxes, and press <strong>Add or edit signatures</strong> to sign: type your name in a handwriting style, draw it with the mouse or a finger, or use a photo of your signature. Put it on the line, make it bigger or smaller, and press <strong>Save</strong>. If the PDF has no boxes to type in (a scanned form, say), <strong>Text</strong> puts words anywhere on the page. <strong>Highlight</strong> and <strong>Draw</strong> are there too, and <strong>Print</strong> when it has to go on paper.",
      "A club membership form filled in and signed in Techies PDF, with the signature on the signature line (a made-up sample)"),
     ("join", "Several PDFs that should go as one",
-     "Join PDFs into one",
-     "Choose the PDFs (or drop them onto the window), put them in order with the arrows, and press <strong>Join them into one PDF</strong>. Insurance certificates, bank statements, a CV and its references: one tidy file to send. The PDFs you started with stay as they were.",
+     "Join (merge) PDFs into one",
+     "Choose the PDFs (or drop them onto the window), put them in order with the arrows, and press <strong>Join them into one PDF</strong>. Insurance certificates, bank statements, a CV and its references: one tidy file to send. Some programs call this merging or combining PDFs: it&rsquo;s the same job. The PDFs you started with stay as they were.",
      "Join PDFs together: a car insurance certificate, a schedule and an MOT certificate in order, with Join them into one PDF (made-up samples)"),
     ("pages", "A page upside down, or one you don&rsquo;t need",
-     "Turn, move or take out pages",
+     "Turn (rotate), move or take out pages",
      "Every page shows as a picture. Turn a page with the round arrows, move it earlier or later (or drag it), and take out the blank or unwanted ones, then save. Scanned letters that came out upside down are put right in two clicks.",
      "Turn, move or take out pages: four pages of a letter, page 3 turned the right way up and page 4 marked Taken out, with Save the PDF (a made-up sample)"),
     ("split", "Only some of the pages are needed",
-     "Save just the pages you need, or one PDF per page",
+     "Split a PDF: save just the pages you need, or one PDF per page",
      "Type the pages you want, like <strong>1-3, 5</strong>, and they&rsquo;re saved as a new PDF. Or press <strong>Make a PDF for every page</strong> and each page becomes its own file, named so you can tell them apart.",
      "Take pages out into a new PDF: pages 1-2 typed in, with Save these pages, and Make 4 PDFs for one PDF per page (a made-up sample)"),
     ("shrink", "&ldquo;The attachment is too big to send&rdquo;",
-     "Make a PDF smaller for email",
+     "Make a PDF smaller (compress it) for email",
      "Most email can only take about 20 to 25 MB, and a PDF of phone photos or scans is often bigger. Choose <strong>Good for email</strong> (pictures stay clear and sharp), <strong>Smaller</strong> or <strong>Smallest</strong>, and a smaller copy is saved beside it. Our made-up PDF of five holiday photos went from 27 MB to 1.3 MB. A PDF that&rsquo;s mostly words is usually small already, and if it can&rsquo;t be made smaller it tells you so, rather than giving you a bigger one.",
      "Make a PDF smaller for email: a 27 MB PDF of holiday photos made 1.3 MB, 95% smaller, with the choices Good for email, Smaller and Smallest (a made-up sample)"),
     ("photos", "Letters and receipts photographed on a phone",
@@ -484,18 +484,20 @@ WHO = """    <section class="section section--alt tpp" aria-labelledby="tpp-who"
 FAQS = [
     ("Is Techies PDF really free?",
      "Yes. The program costs nothing: no trial, no adverts, no watermark on what you save, no daily limit and no account to make with us. If you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs from &pound;20), and we agree the price with you before we start."),
-    ("Is there a free PDF editor for Windows?",
-     "Yes: Techies PDF, free for Windows 10 and 11. It fills in and signs forms, adds text, highlights and drawings, joins PDFs, turns, moves and takes out pages, shrinks PDFs for email, turns photos into a PDF, copies the words out and puts on or takes off a password. It can&rsquo;t change the words already in a PDF: it adds things on top."),
+    ("Is there a free PDF editor for Windows 11?",
+     "Yes: Techies PDF, free for Windows 11 and Windows 10. It fills in and signs forms, adds text, highlights and drawings, joins (merges) PDFs, splits off the pages you need, turns, moves and takes out pages, shrinks (compresses) PDFs for email, turns photos into a PDF, copies the words out and puts on or takes off a password. It can&rsquo;t change the words already in a PDF: it adds things on top."),
     ("How do I sign a PDF on Windows?",
      "Open the PDF in Techies PDF, press <strong>Add or edit signatures</strong> at the top right, and type your name in a handwriting style, draw it, or use a photo of your signature. Place it on the line, resize it if you need to, and press <strong>Save</strong>. It&rsquo;s a picture of your signature, which is accepted for most everyday forms; some documents, like a will, must be signed on paper."),
     ("How do I fill in a PDF form?",
      "Open it in Techies PDF and click in its boxes to type, and tick its tick boxes. Then press <strong>Save</strong>. If the form has no boxes (a scan, for example), press <strong>Text</strong> and click where the words should go."),
-    ("How do I combine PDF files into one?",
+    ("How do I merge or combine PDF files into one?",
      "Choose <strong>Join PDFs together</strong>, pick the PDFs (or drop them onto the window), put them in order with the arrows and press <strong>Join them into one PDF</strong>. You choose where the new PDF is saved, and the ones you started with aren&rsquo;t changed."),
-    ("How do I make a PDF smaller to email?",
+    ("How do I compress a PDF to make it smaller for email?",
      "Choose <strong>Make a PDF smaller for email</strong>, pick the PDF and press <strong>Make it smaller</strong>. Start with <strong>Good for email</strong>; if it&rsquo;s still too big, try <strong>Smaller</strong> or <strong>Smallest</strong>. It works by making the pictures in the PDF smaller, so PDFs of photos and scans come down the most."),
     ("How do I rotate a page in a PDF and save it?",
      "Choose <strong>Turn, move or take out pages</strong>, pick the PDF, press the round arrow under the page until it&rsquo;s the right way up, then press <strong>Save the PDF</strong>."),
+    ("How do I split a PDF into separate pages?",
+     "Choose <strong>Take pages out into a new PDF</strong> and pick the PDF. Type the pages you want, like <strong>1-3, 5</strong>, and press <strong>Save these pages</strong> to save them as a new PDF. To split every page into its own PDF, use <strong>Make a PDF for every page</strong> underneath. The PDF you started with isn&rsquo;t changed."),
     ("How do I turn photos into a PDF?",
      "Choose <strong>Turn photos into a PDF</strong>, pick the photos, put them in order and press <strong>Make the PDF</strong>. Each photo goes on its own page, the right way up, on A4 or at the photo&rsquo;s own size. iPhone (HEIC) photos need turning into JPG first."),
     ("How do I remove a password from a PDF?",
@@ -506,6 +508,8 @@ FAQS = [
      "No. Techies PDF fills in and signs PDFs for free, and joins, shrinks and rearranges them too. You&rsquo;d only need a paid PDF program for things Techies PDF doesn&rsquo;t do yet, such as changing a PDF&rsquo;s own words or turning a scan into words you can copy."),
     ("Does Techies PDF upload my documents?",
      "No. Everything happens on your own PC. Your PDFs aren&rsquo;t sent to 365 Techies or anyone else, and the program doesn&rsquo;t check in with us at all."),
+    ("Does Techies PDF work offline?",
+     "Yes. Once it&rsquo;s installed it works without the internet: signing, joining, splitting, compressing and every other job happens on your PC. You only need the internet to download it."),
     ("Does it work on a Mac, iPad or phone?",
      "No, it&rsquo;s for Windows 10 and 11 (64-bit) PCs only."),
 ]
@@ -514,9 +518,9 @@ TRADEMARK = """    <section class="section tpp" aria-label="Trademarks">
       <div class="wrap"><p class="tpp-tm">Microsoft, Windows, Microsoft Edge and Word are trademarks of the Microsoft group of companies. Adobe and Acrobat are trademarks of Adobe. iPhone, iPad and Mac are trademarks of Apple Inc. Android is a trademark of Google LLC. Mozilla and Firefox are trademarks of the Mozilla Foundation. Other names belong to their owners. Techies PDF is made by 365 Techies Ltd and is not made, endorsed or supported by any company named here.</p></div>
     </section>"""
 
-TITLE = "Techies PDF | Free PDF Editor for Windows, Nothing Uploaded"
-DESC = ("Free PDF editor for Windows 10 and 11: fill in and sign forms, combine and compress PDFs, rotate pages and turn "
-        "photos into a PDF. Nothing is uploaded.")
+TITLE = "Techies PDF | Free Offline PDF Editor for Windows 11 and 10"
+DESC = ("Free offline PDF editor for Windows 11 and 10: fill in and sign forms, merge, split and compress PDFs, rotate "
+        "pages, photos to PDF. Nothing is uploaded.")
 
 
 def build():
@@ -532,18 +536,18 @@ def build():
             "@type": "SoftwareApplication", "@id": f"{bp.SITE}/{s}/#app", "name": NAME,
             "operatingSystem": "Windows 10 (64-bit), Windows 11", "applicationCategory": "UtilitiesApplication",
             "description": ("A free PDF program for Windows 10 and 11 PCs, made by 365 Techies: read, fill in and sign PDF forms, "
-                            "add text, highlights and drawings, join PDFs, turn, move and take out pages, save some pages as a new "
-                            "PDF, make a PDF smaller for email, turn photos into a PDF, copy the words out, and put a password on "
+                            "add text, highlights and drawings, join (merge) PDFs, turn, move and take out pages, split a PDF (save "
+                            "some pages as a new PDF), make a PDF smaller (compress it) for email, turn photos into a PDF, copy the words out, and put a password on "
                             "or take one off (with the password). Everything happens on the PC; nothing is uploaded."),
             "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock"},
             "isAccessibleForFree": True, "inLanguage": "en-GB",
             "downloadUrl": REL["url"], "softwareVersion": REL["ver"], "fileSize": MB.replace(" ", ""),
             "featureList": ["Fill in PDF forms and sign them (typed, drawn or a photo of your signature)",
-                            "Add text, highlights and drawings to any PDF", "Join PDFs into one",
-                            "Turn, move and take out pages", "Save some pages as a new PDF, or one PDF per page",
-                            "Make a PDF smaller for email", "Turn photos into a PDF (A4 or photo size)",
+                            "Add text, highlights and drawings to any PDF", "Join (merge) PDFs into one",
+                            "Turn (rotate), move and take out pages", "Split a PDF: some pages as a new PDF, or one PDF per page",
+                            "Make a PDF smaller (compress it) for email", "Turn photos into a PDF (A4 or photo size)",
                             "Copy the words out of a PDF", "Put a password on a PDF (AES-256), or take one off with the password",
-                            "Works on the PC: nothing uploaded, no account, no adverts, no watermark"],
+                            "Works offline on the PC: nothing uploaded, no account, no adverts, no watermark"],
             "screenshot": [f"{bp.SITE}/images/tpdf-{n}-{TAG}-1440.webp" for n in ["sign", "home"] + [f[0] for f in FEATS[1:]]],
             "publisher": {"@id": bp.SITE + "/#business"}, "provider": {"@id": bp.SITE + "/#business"},
             "datePublished": "2026-10-18", "url": f"{bp.SITE}/{s}/",

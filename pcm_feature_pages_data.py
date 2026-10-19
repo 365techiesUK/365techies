@@ -1180,7 +1180,7 @@ PH = {
                  '<p>We look after Windows PCs only, not iPhones or iPads, so for anything on the phone itself, Apple&rsquo;s own help is the place to go.</p>'},
         {'eyebrow': '/07 &mdash; TOO BIG TO EMAIL', 'h2': 'Photos too big to email?',
          'html': '<p>Phone photos are often several megabytes each, and email services limit how much one email can carry &mdash; Gmail&rsquo;s limit is 25 MB of attachments. A handful of full-size photos can go over it.</p>'
-                 '<p>Our app&rsquo;s <strong>Shrink photos to email them</strong> makes smaller copies (1,600 pixels on the longest side, still sharp on any screen) in a separate folder, and leaves your originals untouched. And <strong>Turn photos into a PDF</strong> puts photographed letters or forms into one PDF, a page each, ready to send.</p>'},
+                 '<p>Our app&rsquo;s <strong>Shrink photos to email them</strong> makes smaller copies (1,600 pixels on the longest side, still sharp on any screen) in a separate folder, and leaves your originals untouched. And <strong>Turn photos into a PDF</strong> puts photographed letters or forms into one PDF, a page each, ready to send. Our free <a href="/techies-pdf/">Techies PDF</a> program does that too, and can make a big PDF smaller so it fits in an email.</p>'},
         {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
          'html': _call_us('If HEIC photos still won&rsquo;t open after both add-ons are installed, or you have hundreds to sort out on a Windows PC, we can do it with you.')
                  + '<p>We work on Windows PCs only &mdash; not iPhones, iPads or Macs.</p>'},
