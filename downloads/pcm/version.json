@@ -1,11 +1,11 @@
 {
-  "ver": 44,
-  "version": "1.0.44",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v44.exe",
-  "sha256": "de8d4d282c1b900e66e382a02d47c9c5a76727c4e4ba06cd7c6ce9ee35cc0971",
-  "notes": "Version 36.5: if you bought your PC from us, This PC now shows when you bought it, how long its guarantee has left and how old its drive is. Share it with a friend and they get a free month of everything. The scam check knows every address on our own website, and in the UK the full service is yours to run yourself with a key, or done for you on one of our plans. Temperature readings stay paused while we put them right. Signed by 365 Techies Ltd.",
+  "ver": 45,
+  "version": "1.0.45",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v45.exe",
+  "sha256": "568d5f32d788646096bce3b3056c291d03512c8564636de3262eb2a759442202",
+  "notes": "Version 36.5.1: Techies PDF, our free program for filling in, signing, joining and shrinking PDFs, now has its own place in the menu under Techies One. And the Techies One page now recognises Windows 10 and 11 properly - it was telling every PC that Techies One couldn't run on it. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v44.exe",
-    "sha256": "6a12c9a19183d308a6cb1f8a2b3bf63a04f7a8aa57413dc507c6e268280c9c07"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v45.exe",
+    "sha256": "e324f4a5b279cdcef7202c2cbbb457b8ecbfdec4653ee866b89d69c4e7b023de"
   }
 }
