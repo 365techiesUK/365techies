@@ -284,7 +284,8 @@ ErrorDocument 404 /404.html
 # pcm-paylink.php itself stays served (staff token gated); its library is
 # include-only and its test suite is CLI-only, so both are denied over HTTP.
 # Pay-page card payments -> the QuickBooks invoice (19 Oct 2026): pcm-paystripe-lib.php include-only, its test CLI-only.
-<FilesMatch "^(pcm-paylink(-events)?\.(json(\..*)?|log)|pcm-paylink-lib\.php|pcm-paylink-test\.php|pcm-paylink-sweep\.php|pcm-paystripe-(lib|test)\.php)$">
+# ... and PayPal's (19 Oct 2026): api/pay-pp.php is the URL; pay-pp-lib.php include-only, its test CLI-only.
+<FilesMatch "^(pcm-paylink(-events)?\.(json(\..*)?|log)|pcm-paylink-lib\.php|pcm-paylink-test\.php|pcm-paylink-sweep\.php|pcm-paystripe-(lib|test)\.php|pay-pp-(lib|test)\.php)$">
   Require all denied
 </FilesMatch>
 # Slack jobs poller (22 Sep 2026): reads #sos-jobs-in-out into the job store from the

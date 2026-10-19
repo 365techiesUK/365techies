@@ -120,6 +120,10 @@ $iq = invq_morning();
    couldn't). A clean no-op with no Stripe key on the server. */
 require_once __DIR__ . '/pcm-paystripe-lib.php';
 try { $pst = pst_sweep(); } catch (Throwable $e) { $pst = array('error' => 'exception'); }
+/* ... and the pay page's PayPal payments (pay-pp-lib.php): an order approved but never brought back to our page, a capture
+   PayPal was still checking. A clean no-op with no PayPal keys on the server. */
+require_once __DIR__ . '/pay-pp-lib.php';
+try { $ppy = ppay_sweep(); } catch (Throwable $e) { $ppy = array('error' => 'exception'); }
 
 /* Dells bought on eBay (14 Oct 2026, shop-ebay-lib.php): at most hourly, asks eBay for the orders we bought, keeps each
    whole Latitude / OptiPlex / Precision for the staff portal's Shop tab, puts the new ones in QuickBooks and posts a line to

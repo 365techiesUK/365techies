@@ -10,6 +10,7 @@
  * PayPal's webhook (a POST carrying PayPal-Transmission-* headers): genuine only when PayPal's own verify call says so;
  *   PAYMENT.CAPTURE.COMPLETED -> the key, if the page did not already make it; .REFUNDED (in full) / .REVERSED -> switched off.
  * Each webhook delivery and failure adds a line to api/pcm-plus-pp.log (denied, gitignored; the last 300) - never a key.
+ * 19 Oct 2026: PAYMENT.CAPTURE.COMPLETED for one of the pay page's orders goes to pay-pp-lib.php (its QuickBooks invoice).
  * NO closing tag in this file.
  */
 error_reporting(0);
@@ -31,6 +32,17 @@ if (isset($h['paypal-transmission-id'])) {
     $cr = pp_creds();
     if (!$cr || $cr['webhook'] === '') { pp_log("503\twebhook before the keys file has a webhook id"); ppo(array('ok' => false), 503); }
     if (!pp_verify($cr, $raw, $h)) { pp_log("401\twebhook not verified by PayPal"); ppo(array('ok' => false), 401); }
+    // 19 Oct 2026: a capture on one of the pay page's orders (pay-pp-lib.php) -> its QuickBooks invoice is marked paid
+    $ev0 = json_decode($raw, true);
+    $oid0 = (string)($ev0['resource']['supplementary_data']['related_ids']['order_id'] ?? '');
+    if ((string)($ev0['event_type'] ?? '') === 'PAYMENT.CAPTURE.COMPLETED' && preg_match('/^[A-Z0-9]{10,30}$/', $oid0)) {
+        require_once __DIR__ . '/pay-pp-lib.php';
+        if (ppay_seen($oid0)) {
+            list($pst0) = ppay_finish($cr, $oid0, 'webhook');
+            pp_log(($pst0 === 'busy' ? 503 : 200) . "\tPAYMENT.CAPTURE.COMPLETED\tpay page order: " . $pst0);
+            ppo(array('ok' => $pst0 !== 'busy', 'note' => 'pay page: ' . $pst0), $pst0 === 'busy' ? 503 : 200);
+        }
+    }
     if (!defined('RV_LIB')) define('RV_LIB', 1);
     require_once __DIR__ . '/pcm-review.php';   // the website's own email sender (info@) - top-level scope on purpose (its globals)
     list($code, $why) = pp_event($cr, $raw, 'plus_send_key');

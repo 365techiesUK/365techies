@@ -15,6 +15,8 @@
  *      paid into" account, deposit_card) - never more than the invoice still owes, and never twice: each checkout is
  *      claimed in pcm-paylink.json ('stripe' => checkout id => what happened) before QuickBooks is touched;
  *   4. says so in Slack (the pay links' channel) - or, when a check fails, says exactly what to do by hand, once.
+ * 19 Oct 2026, later (owner: "can PayPal payments mark the invoice paid automatically too?"): pst_book() is the booking for
+ * both - pay-pp-lib.php hands it the pay page's PayPal payments (into the shop's 'deposit' account, the one PayPal pays into).
  * Two ways in: shop-stripe.php (Stripe's webhook, within seconds) and tm-cron.php (every 10 minutes, the last 3 days of
  * checkouts: the insurance, and how a payment made before this existed is picked up).
  *
@@ -99,47 +101,63 @@ function pst_invoice_check($inv, $pence, $kind) {
 }
 /* The day it was paid, as the business counts days. */
 function pst_day($ts) { return (new DateTime('@' . (int)$ts))->setTimezone(new DateTimeZone('Europe/London'))->format('Y-m-d'); }
-/* The QuickBooks Payment: against the one invoice, into the account Stripe pays into. */
-function pst_payment_body($inv, $pence, $deposit, $s) {
-    $amt = round($pence / 100, 2);
+/* A payment to book, whoever took it: array(key: our store's key for it, prov: stripe|paypal, pence, ref, who: the payer's
+   name as the provider has it, when: unix time paid, txn: the provider's payment id, mark: an id that is written into the
+   QuickBooks note and looked for there before booking again, note: that note). */
+function pst_prov($pay) { return ($pay['prov'] ?? '') === 'paypal' ? 'PayPal' : 'Stripe'; }
+/* A paid Stripe checkout -> the payment to book */
+function pst_stripe_pay($s) {
     $pi = is_array($s['payment_intent'] ?? null) ? (string)($s['payment_intent']['id'] ?? '') : (string)($s['payment_intent'] ?? '');
+    $sid = (string)($s['id'] ?? '');
+    return array('key' => $sid, 'prov' => 'stripe', 'pence' => (int)($s['amount_total'] ?? 0), 'ref' => pst_ref_of($s),
+        'who' => trim((string)($s['customer_details']['name'] ?? '')), 'when' => (int)($s['created'] ?? time()),
+        'txn' => $pi !== '' ? $pi : $sid, 'mark' => $sid,
+        'note' => 'Paid by card through Stripe on the 365techies.co.uk pay page - payment ' . ($pi !== '' ? $pi : '?')
+            . ', checkout ' . $sid . '. Recorded automatically by the website.');
+}
+/* The QuickBooks Payment: against the one invoice, into the account the provider pays into. */
+function pst_payment_body($inv, $pence, $deposit, $pay) {
+    $amt = round($pence / 100, 2);
     return array(
         'CustomerRef' => array('value' => (string)$inv['CustomerRef']['value']),
         'TotalAmt' => $amt,
-        'TxnDate' => pst_day($s['created'] ?? time()),
+        'TxnDate' => pst_day($pay['when'] ?? time()),
         'DepositToAccountRef' => array('value' => (string)$deposit),
-        'PaymentRefNum' => substr($pi !== '' ? $pi : (string)$s['id'], 0, 21),
-        'PrivateNote' => 'Paid by card through Stripe on the 365techies.co.uk pay page - payment ' . ($pi !== '' ? $pi : '?')
-            . ', checkout ' . (string)$s['id'] . '. Recorded automatically by the website.',
+        'PaymentRefNum' => substr((string)$pay['txn'], 0, 21),
+        'PrivateNote' => (string)$pay['note'],
         'Line' => array(array('Amount' => $amt, 'LinkedTxn' => array(array('TxnId' => (string)$inv['Id'], 'TxnType' => 'Invoice')))),
     );
 }
-function pst_who($s, $inv = null) {
+function pst_who($pay, $inv = null) {
     $n = is_array($inv) ? trim((string)($inv['CustomerRef']['name'] ?? '')) : '';
-    if ($n === '') $n = trim((string)($s['customer_details']['name'] ?? ''));
+    if ($n === '') $n = trim((string)($pay['who'] ?? ''));
     return $n !== '' ? $n : 'someone';
 }
 function pst_inv_label($inv) {
     $doc = trim((string)($inv['DocNumber'] ?? ''));
     return $doc !== '' ? $doc : 'id ' . (string)($inv['Id'] ?? '?');
 }
-function pst_paid_text($s, $inv, $pence) {
+function pst_paid_text($pay, $inv) {
+    $pence = (int)$pay['pence'];
     $owedAfter = round((float)($inv['Balance'] ?? 0) - $pence / 100, 2);
-    return '💳 *Paid by card:* ' . pl_money($pence / 100) . ' from ' . pst_who($s, $inv) . ' on the pay page (Stripe). '
+    $head = ($pay['prov'] ?? '') === 'paypal' ? '💰 *Paid with PayPal:* ' : '💳 *Paid by card:* ';
+    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay, $inv) . ' on the pay page (' . pst_prov($pay) . '). '
         . 'QuickBooks invoice *' . pst_inv_label($inv) . '* is marked paid automatically'
         . ($owedAfter > 0.004 ? ' - part payment, ' . pl_money($owedAfter) . ' still owed.' : ' - nothing to do.');
 }
-function pst_flag_text($s, $ref, $why) {
-    $pence = (int)($s['amount_total'] ?? 0);
-    return '💳 *Card payment needs a look:* ' . pl_money($pence / 100) . ' from ' . pst_who($s) . ' on the pay page (Stripe), reference '
+function pst_flag_text($pay, $why) {
+    $pence = (int)$pay['pence']; $ref = (string)$pay['ref'];
+    $head = ($pay['prov'] ?? '') === 'paypal' ? '💰 *PayPal payment needs a look:* ' : '💳 *Card payment needs a look:* ';
+    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay) . ' on the pay page (' . pst_prov($pay) . '), reference '
         . ($ref !== '' ? '`' . $ref . '`' : '_none_') . '. I couldn\'t mark a QuickBooks invoice paid: ' . $why
-        . '. The money is safe in Stripe - please record it against the right invoice in QuickBooks by hand (Receive payment, '
-        . 'deposit to the Stripe account).';
+        . '. The money is safe in ' . pst_prov($pay) . ' - please record it against the right invoice in QuickBooks by hand (Receive payment, '
+        . 'deposit to the ' . pst_prov($pay) . ' account).';
 }
 
 /* ---- the part that talks to Stripe, QuickBooks and Slack ---------------------------------------------------------------- */
 
-/* What we already know about a checkout: null | array(state done|flagged|claim|retry, at, tries, ...) */
+/* What we already know about a payment (a Stripe checkout id, or pp:<PayPal order id> - one map, 'stripe', for both):
+   null | array(state done|flagged|claim|retry, at, tries, ...) */
 function pst_seen($sid) {
     $d = pl_store_read(PLQ_STORE);
     return isset($d['stripe'][$sid]) && is_array($d['stripe'][$sid]) ? $d['stripe'][$sid] : null;
@@ -207,32 +225,28 @@ function pst_already_on($c, $inv, $sid) {
     }
     return '';
 }
-/* One checkout, from start to finish. $s: the checkout as Stripe's event or list gave it (only its id is believed).
-   -> array(what: ignored|already|held|done|flagged|retry, detail) */
-function pst_handle($cr, $sid, $via = 'cron') {
-    list($code, $s) = st_api($cr, 'GET', '/v1/checkout/sessions/' . rawurlencode($sid));
-    if ($code !== 200 || !is_array($s)) { pst_log($via . ' ' . $sid . ' could not read it back (http ' . $code . ')'); return array('retry', 'stripe http ' . $code); }
-    $bad = pst_session_check($s, $cr['env']);
-    if ($bad !== '') return array('ignored', $bad);
-    $pence = (int)$s['amount_total']; $ref = pst_ref_of($s);
-    if (!pst_note($sid, array('state' => 'claim', 'ref' => $ref, 'pence' => $pence, 'via' => $via), true)) return array('already', '');
+/* Book one payment against its QuickBooks invoice, from start to finish - Stripe's (pst_handle) and PayPal's
+   (pay-pp-lib.php) alike. -> array(what: already|done|flagged|retry, detail) */
+function pst_book($pay, $via = 'cron') {
+    $key = (string)$pay['key']; $pence = (int)$pay['pence']; $ref = (string)$pay['ref']; $prov = (string)$pay['prov'];
+    if (!pst_note($key, array('state' => 'claim', 'prov' => $prov, 'ref' => $ref, 'pence' => $pence, 'via' => $via), true)) return array('already', '');
 
-    $retry = function ($why) use ($sid, $s, $ref) {
-        $seen = pst_seen($sid);
+    $retry = function ($why) use ($key, $pay) {
+        $seen = pst_seen($key);
         if ((int)($seen['tries'] ?? 0) >= PST_MAX_TRIES) {
-            pst_note($sid, array('state' => 'flagged', 'why' => $why));
-            pst_slack(pst_flag_text($s, $ref, $why . ' (tried ' . PST_MAX_TRIES . ' times)'));
-            pst_log($sid . ' flagged after tries: ' . $why);
+            pst_note($key, array('state' => 'flagged', 'why' => $why));
+            pst_slack(pst_flag_text($pay, $why . ' (tried ' . PST_MAX_TRIES . ' times)'));
+            pst_log($key . ' flagged after tries: ' . $why);
             return array('flagged', $why);
         }
-        pst_note($sid, array('state' => 'retry', 'why' => $why));
-        pst_log($sid . ' will try again: ' . $why);
+        pst_note($key, array('state' => 'retry', 'why' => $why));
+        pst_log($key . ' will try again: ' . $why);
         return array('retry', $why);
     };
-    $flag = function ($why) use ($sid, $s, $ref) {
-        pst_note($sid, array('state' => 'flagged', 'why' => $why));
-        pst_slack(pst_flag_text($s, $ref, $why));
-        pst_log($sid . ' flagged: ' . $why);
+    $flag = function ($why) use ($key, $pay) {
+        pst_note($key, array('state' => 'flagged', 'why' => $why));
+        pst_slack(pst_flag_text($pay, $why));
+        pst_log($key . ' flagged: ' . $why);
         return array('flagged', $why);
     };
 
@@ -242,43 +256,54 @@ function pst_handle($cr, $sid, $via = 'cron') {
         return $w === 'busy' ? $retry('QuickBooks was busy') : $flag('the website isn\'t connected to QuickBooks (' . $w . ')');
     }
     if (($g = shop_qbo_gate($c)) !== '') return $flag($g);
+    // the shop's QuickBooks setup says where each provider pays in: 'deposit' (PayPal), 'deposit_card' (Stripe)
     $q = (array)(shop_read()['qbo'] ?? array());
-    $deposit = (string)($q['deposit_card'] ?? '');
+    $deposit = (string)($q[$prov === 'paypal' ? 'deposit' : 'deposit_card'] ?? '');
     if ($deposit === '' || (!empty($q['realm']) && (string)$q['realm'] !== (string)$c['realm']))
-        return $flag('the account Stripe pays into isn\'t chosen yet (portal: shop books, "card sales are paid into")');
+        return $flag($prov === 'paypal' ? 'the account PayPal pays into isn\'t chosen yet (portal: shop books)'
+                                        : 'the account Stripe pays into isn\'t chosen yet (portal: shop books, "card sales are paid into")');
     if ($ref === '') return $flag('there was no invoice number on it');
 
     $row = pst_link_row($ref, $pence);
     list($inv, $kind, $why) = pst_find_invoice($c, $ref, $row);
     if ($why !== '' && !$inv) return (strpos($why, 'two QuickBooks') === 0) ? $flag($why) : $retry('QuickBooks didn\'t answer (' . $why . ')');
     if ($kind === '') return $flag('the reference isn\'t an invoice number');
-    $was = $inv ? pst_already_on($c, $inv, $sid) : '';
+    $was = $inv ? pst_already_on($c, $inv, (string)$pay['mark']) : '';
     if ($was === null) return $retry('QuickBooks didn\'t answer about the invoice\'s payments');
     if ($was !== '') {   // recorded by an earlier run that never got to write it down
-        pst_note($sid, array('state' => 'done', 'qbo_payment' => $was, 'invoice' => (string)$inv['Id'], 'doc' => pst_inv_label($inv)));
-        pst_log($via . ' ' . $sid . ' was already on invoice ' . pst_inv_label($inv) . ' (payment ' . $was . ')');
+        pst_note($key, array('state' => 'done', 'qbo_payment' => $was, 'invoice' => (string)$inv['Id'], 'doc' => pst_inv_label($inv)));
+        pst_log($via . ' ' . $key . ' was already on invoice ' . pst_inv_label($inv) . ' (payment ' . $was . ')');
         return array('done', $was);
     }
     $bad = pst_invoice_check($inv, $pence, $kind);
     if ($bad !== '') return $flag($bad);
 
-    $res = invq_api($c, 'POST', '/payment', pst_payment_body($inv, $pence, $deposit, $s));
+    $res = invq_api($c, 'POST', '/payment', pst_payment_body($inv, $pence, $deposit, $pay));
     if (!qbo_lib_ok($res) || empty($res['json']['Payment']['Id'])) {
         $code = (int)($res['code'] ?? 0);
         return ($code === 0 || $code >= 500) ? $retry('QuickBooks didn\'t answer (' . invq_why($res) . ')') : $flag('QuickBooks refused it: ' . invq_why($res));
     }
     $pid = (string)$res['json']['Payment']['Id'];
-    pst_note($sid, array('state' => 'done', 'qbo_payment' => $pid, 'invoice' => (string)$inv['Id'], 'doc' => pst_inv_label($inv)));
+    pst_note($key, array('state' => 'done', 'qbo_payment' => $pid, 'invoice' => (string)$inv['Id'], 'doc' => pst_inv_label($inv)));
     if ($row) {   // the console's row shows "paid" from now on
-        $rid = (string)$row['id'];
-        pl_store_locked(PLQ_STORE, function ($data) use ($rid) {
-            foreach ($data['links'] as $i => $r) if ((string)($r['id'] ?? '') === $rid) { $data['links'][$i]['status'] = 'paid'; $data['links'][$i]['paid_at'] = time(); $data['links'][$i]['paid_by'] = 'card'; }
+        $rid = (string)$row['id']; $by = $prov === 'paypal' ? 'paypal' : 'card';
+        pl_store_locked(PLQ_STORE, function ($data) use ($rid, $by) {
+            foreach ($data['links'] as $i => $r) if ((string)($r['id'] ?? '') === $rid) { $data['links'][$i]['status'] = 'paid'; $data['links'][$i]['paid_at'] = time(); $data['links'][$i]['paid_by'] = $by; }
             return array('ok' => true, 'data' => $data);
         });
     }
-    pst_slack(pst_paid_text($s, $inv, $pence));
-    pst_log($via . ' ' . $sid . ' ' . pl_money($pence / 100) . ' -> QuickBooks payment ' . $pid . ' on invoice ' . pst_inv_label($inv));
+    pst_slack(pst_paid_text($pay, $inv));
+    pst_log($via . ' ' . $key . ' ' . pl_money($pence / 100) . ' -> QuickBooks payment ' . $pid . ' on invoice ' . pst_inv_label($inv));
     return array('done', $pid);
+}
+/* One Stripe checkout. Only its id is believed: it is read back from Stripe.
+   -> array(what: ignored|already|done|flagged|retry, detail) */
+function pst_handle($cr, $sid, $via = 'cron') {
+    list($code, $s) = st_api($cr, 'GET', '/v1/checkout/sessions/' . rawurlencode($sid));
+    if ($code !== 200 || !is_array($s)) { pst_log($via . ' ' . $sid . ' could not read it back (http ' . $code . ')'); return array('retry', 'stripe http ' . $code); }
+    $bad = pst_session_check($s, $cr['env']);
+    if ($bad !== '') return array('ignored', $bad);
+    return pst_book(pst_stripe_pay($s), $via);
 }
 /* tm-cron.php: every PST_SWEEP_EVERY seconds, the pay page's paid checkouts of the last PST_SWEEP_DAYS days that nothing has
    finished with yet. No Stripe key on the server = a clean no-op. */
