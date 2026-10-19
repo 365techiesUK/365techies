@@ -22292,7 +22292,7 @@ def pay_page():
         _b = PAY_CONFIG["bank"]
         tiles.append(f'''          <div class="tile" data-reveal>
             <h3>&#127974; Pay by bank transfer</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Pay from your own online banking. Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
+            <p style="color:var(--muted);margin:0 0 .9rem">Pay from your own online banking. Use these details and put <strong class="pay-refword">your surname</strong> as the reference so we know it&rsquo;s you:</p>
             <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>{_b["name"]}</strong><br />Sort code: <strong>{_b["sort"]}</strong><br />Account number: <strong>{_b["account"]}</strong><br />Bank: <strong>{_b["bankName"]}</strong></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">When your banking app checks the name, it should confirm <strong>{_b["name"]}</strong> &mdash; that&rsquo;s how you know it&rsquo;s really us. Free to send, and the money arrives in seconds.</p>
           </div>''')
@@ -22300,7 +22300,8 @@ def pay_page():
         tiles.append(f'''          <div class="tile" data-reveal>
             <h3>&#128179; Pay by card &mdash; safe and simple</h3>
             <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed, add your name or invoice number, and pay with your usual debit or credit card &mdash; or one tap with Apple&nbsp;Pay or Google&nbsp;Pay. You never need an account, and we never see your card details.</p>
-            <p><a class="button primary" href="{PAY_CONFIG["stripe_url"]}" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
+            <p class="pay-card-amt" hidden style="margin:0 0 .9rem"></p>
+            <p><a class="button primary" id="pay-card-go" href="{PAY_CONFIG["stripe_url"]}" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled by Stripe &mdash; the secure payment system behind millions of businesses.</p>
           </div>''')
     if PAY_CONFIG.get("paypal_url"):
@@ -22363,9 +22364,23 @@ def pay_page():
           <h2 class="section-title section-title--center" data-title>Choose whichever suits you<span class="title-underline title-underline--center"></span></h2>
         </div>
         <style>#ways .section-head{{margin-bottom:1.1rem}} #ways .section-title{{font-size:clamp(1.6rem,3vw,2.2rem)}}</style>
+        <!-- 19 Oct 2026 (owner: "send them a payment link that sends them to our website, and then they can choose how they want
+             to pay"): the staff console's pay link is /pay/?amount=60.00&ref=12838 - amount and invoice number only, nothing
+             personal. Shown here, put into the bank-transfer reference and the PayPal box; the card payer is told what to type. -->
+        <div id="pay-due" hidden style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(29,151,227,.55);border-radius:14px;padding:1rem 1.2rem">
+          <p style="margin:0;font-size:1.2rem">Amount to pay: <strong id="pay-due-amt"></strong><span id="pay-due-refw"> &middot; Reference: <strong class="mono" id="pay-due-ref"></strong></span></p>
+          <p style="margin:.4rem 0 0;color:var(--muted);font-size:.92rem">Choose whichever way suits you below &mdash; bank transfer, card or PayPal. Please use the reference so we know it&rsquo;s you.</p>
+        </div>
         <div class="split-2">
 {tiles_html}
         </div>
+        <script>(function(){{var q=location.search,m=/[?&]amount=([0-9]{{1,5}}(?:[.][0-9]{{1,2}})?)(?:&|$)/.exec(q);if(!m)return;var a=parseFloat(m[1]);if(!(a>=1&&a<=20000))return;
+var r=/[?&]ref=([A-Za-z0-9-]{{1,24}})(?:&|$)/.exec(q),ref=r?r[1]:"",money="&pound;"+a.toFixed(2),box=document.getElementById("pay-due");if(!box)return;
+document.getElementById("pay-due-amt").innerHTML=money;if(ref)document.getElementById("pay-due-ref").textContent=ref;else document.getElementById("pay-due-refw").style.display="none";box.hidden=false;
+if(ref){{var w=document.querySelectorAll(".pay-refword");for(var i=0;i<w.length;i++)w[i].textContent=ref;}}
+var c=document.querySelector(".pay-card-amt");if(c){{c.innerHTML="On the next page, type <strong>"+money+"</strong> as the amount"+(ref?" and <strong>"+ref+"</strong> as the invoice number":"")+".";c.hidden=false;}}
+var g=document.getElementById("pay-card-go");if(g&&ref)g.href=g.href.split("?")[0]+"?client_reference_id="+ref;
+var p=document.getElementById("pp-amt");if(p){{p.value=a.toFixed(2);var ev;try{{ev=new Event("input");}}catch(e){{ev=document.createEvent("Event");ev.initEvent("input",true,true);}}p.dispatchEvent(ev);}}}})();</script>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Monthly plans" style="padding-top:0">
@@ -31843,6 +31858,7 @@ def write_portal_page():
       var amt0 = (q && q.value ? q.value : '').trim(), desc0 = (qd && qd.value ? qd.value : '').trim();
       w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="plamt" type="text" inputmode="decimal" value="' + esc(amt0) + '" placeholder="Amount to collect \\u00a3" style="width:100%;max-width:320px"></div>'
         + '<div style="margin:0 0 .3rem"><input class="pldesc" type="text" maxlength="100" value="' + esc(desc0) + '" placeholder="What it\\u2019s for \\u2014 the customer sees this" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="plref" type="text" maxlength="24" placeholder="Invoice number (optional) \\u2014 it becomes their payment reference" style="width:100%;max-width:340px;font-size:.85rem;padding:.35rem .5rem"></div>'
         + '<button class="sm plgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udd17 Create the link</button> '
         + '<span class="quiet plmsg"></span>';
       var msg = w.querySelector('.plmsg');
@@ -31850,8 +31866,10 @@ def write_portal_page():
         var go = this;
         var amt = (w.querySelector('.plamt').value || '').trim(), desc = (w.querySelector('.pldesc').value || '').trim();
         if (!amt || !desc) { msg.textContent = 'Put in the amount and what it\\u2019s for first.'; return; }
-        go.disabled = true; msg.textContent = 'Asking GoCardless\\u2026';
-        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc })
+        // 19 Oct 2026: a link to our pay page - they choose bank transfer, card or PayPal there (pcm-paylink page mode)
+        var ref = ((w.querySelector('.plref') || {}).value || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
+        go.disabled = true; msg.textContent = 'Making the link\\u2026';
+        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc, ref: ref })
           .then(function (r) {
             go.disabled = false;
             if (!r || !r.ok) { msg.innerHTML = paylinkErr(r); return; }
@@ -31863,14 +31881,15 @@ def write_portal_page():
   }
   function showPayLink(w, r, em, ph) {
     var exp = r.expires ? new Date(r.expires * 1000).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+    var isPage = r.kind === 'page' || /^https:\\/\\/365techies\\.co\\.uk\\/pay\\//.test('' + r.url);
     w.innerHTML = '<div class="quiet" style="margin:.2rem 0 .35rem">'
-        + (r.reused ? 'That job already had a live link \\u2014 this is the same one, so nobody gets asked twice.' : '\\u2713 Link ready.')
+        + (r.reused ? 'That job already had a live link \\u2014 this is the same one, so nobody gets asked twice.' : (isPage ? '\\u2713 Link to our pay page ready \\u2014 they choose bank transfer, card or PayPal.' : '\\u2713 Link ready.'))
         + (exp ? ' Expires ' + esc(exp) + '.' : '') + '</div>'
       + '<div class="plurl" style="margin:0 0 .35rem;word-break:break-all;font-size:.76rem;opacity:.85">' + esc(r.url) + '</div>'
       + '<button class="sm ghost plcopy" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">copy link</button> '
       + (ph ? '<button class="sm plsms" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcac Text it to ' + esc(ph) + '</button> ' : '')
       + (em ? '<button class="sm ghost plmail" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\u2709\\ufe0f Email it</button> ' : '')
-      + '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>'
+      + (isPage ? '<span class="quiet" style="font-size:.8rem">When it arrives (bank, Stripe or PayPal), mark the invoice paid in QuickBooks.</span>' : '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>')
       + '<div class="quiet plmsg2" style="margin-top:.3rem"></div>';
     var m2 = w.querySelector('.plmsg2');
     w.querySelector('.plcopy').onclick = function () {
@@ -31892,7 +31911,7 @@ def write_portal_page():
     }
     if (w.querySelector('.plsms')) w.querySelector('.plsms').onclick = function () { sendIt('sms', ph); };
     if (w.querySelector('.plmail')) w.querySelector('.plmail').onclick = function () { sendIt('email', em); };
-    w.querySelector('.plchk').onclick = function () {
+    if (w.querySelector('.plchk')) w.querySelector('.plchk').onclick = function () {
       m2.textContent = 'Checking\\u2026';
       post(PAY, { action: 'status', stoken: S.stoken, machine: mid(), id: r.id })
         .then(function (j) {

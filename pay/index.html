@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-18"
+      "dateModified": "2026-10-19"
     },
     {
       "@type": "FAQPage",
@@ -829,7 +829,7 @@
         <h1 class="taskhead__h">A simple, safe way to <em class="grad grad--cyan">pay us</em></h1>
         <p class="taskhead__lede">Thank you for choosing a small family business. The price is always agreed <strong>before</strong> the work starts, you never need an account or an app, and if you&rsquo;d rather sort it together we&rsquo;re one phone call away on <a href="tel:+441202775566">01202 775566</a>.</p>
         <p class="taskhead__trust mono"><span>Price agreed before work starts</span><span>No account or app needed</span><span>Real people if you need us</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 18 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 19 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -853,17 +853,25 @@
           <h2 class="section-title section-title--center" data-title>Choose whichever suits you<span class="title-underline title-underline--center"></span></h2>
         </div>
         <style>#ways .section-head{margin-bottom:1.1rem} #ways .section-title{font-size:clamp(1.6rem,3vw,2.2rem)}</style>
+        <!-- 19 Oct 2026 (owner: "send them a payment link that sends them to our website, and then they can choose how they want
+             to pay"): the staff console's pay link is /pay/?amount=60.00&ref=12838 - amount and invoice number only, nothing
+             personal. Shown here, put into the bank-transfer reference and the PayPal box; the card payer is told what to type. -->
+        <div id="pay-due" hidden style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(29,151,227,.55);border-radius:14px;padding:1rem 1.2rem">
+          <p style="margin:0;font-size:1.2rem">Amount to pay: <strong id="pay-due-amt"></strong><span id="pay-due-refw"> &middot; Reference: <strong class="mono" id="pay-due-ref"></strong></span></p>
+          <p style="margin:.4rem 0 0;color:var(--muted);font-size:.92rem">Choose whichever way suits you below &mdash; bank transfer, card or PayPal. Please use the reference so we know it&rsquo;s you.</p>
+        </div>
         <div class="split-2">
           <div class="tile" data-reveal>
             <h3>&#127974; Pay by bank transfer</h3>
-            <p style="color:var(--muted);margin:0 0 .9rem">Pay from your own online banking. Use these details and put <strong>your surname</strong> as the reference so we know it&rsquo;s you:</p>
+            <p style="color:var(--muted);margin:0 0 .9rem">Pay from your own online banking. Use these details and put <strong class="pay-refword">your surname</strong> as the reference so we know it&rsquo;s you:</p>
             <p class="mono" style="font-size:1.05rem;line-height:2">Account name: <strong>365 Techies Limited</strong><br />Sort code: <strong>30-96-26</strong><br />Account number: <strong>33512560</strong><br />Bank: <strong>Lloyds Bank</strong></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">When your banking app checks the name, it should confirm <strong>365 Techies Limited</strong> &mdash; that&rsquo;s how you know it&rsquo;s really us. Free to send, and the money arrives in seconds.</p>
           </div>
           <div class="tile" data-reveal>
             <h3>&#128179; Pay by card &mdash; safe and simple</h3>
             <p style="color:var(--muted);margin:0 0 .9rem">Takes about two minutes. Type the amount we agreed, add your name or invoice number, and pay with your usual debit or credit card &mdash; or one tap with Apple&nbsp;Pay or Google&nbsp;Pay. You never need an account, and we never see your card details.</p>
-            <p><a class="button primary" href="https://buy.stripe.com/8x26oI1jE9Ez64F39E1B600" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
+            <p class="pay-card-amt" hidden style="margin:0 0 .9rem"></p>
+            <p><a class="button primary" id="pay-card-go" href="https://buy.stripe.com/8x26oI1jE9Ez64F39E1B600" target="_blank" rel="noopener">Pay by card now &#8594;</a></p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Handled by Stripe &mdash; the secure payment system behind millions of businesses.</p>
           </div>
           <div class="tile" data-reveal>
@@ -885,6 +893,13 @@
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">Mon&ndash;Fri, 9am&ndash;5pm &middot; or text us on <a href="sms:+447520615332">07520 615332</a></p>
           </div>
         </div>
+        <script>(function(){var q=location.search,m=/[?&]amount=([0-9]{1,5}(?:[.][0-9]{1,2})?)(?:&|$)/.exec(q);if(!m)return;var a=parseFloat(m[1]);if(!(a>=1&&a<=20000))return;
+var r=/[?&]ref=([A-Za-z0-9-]{1,24})(?:&|$)/.exec(q),ref=r?r[1]:"",money="&pound;"+a.toFixed(2),box=document.getElementById("pay-due");if(!box)return;
+document.getElementById("pay-due-amt").innerHTML=money;if(ref)document.getElementById("pay-due-ref").textContent=ref;else document.getElementById("pay-due-refw").style.display="none";box.hidden=false;
+if(ref){var w=document.querySelectorAll(".pay-refword");for(var i=0;i<w.length;i++)w[i].textContent=ref;}
+var c=document.querySelector(".pay-card-amt");if(c){c.innerHTML="On the next page, type <strong>"+money+"</strong> as the amount"+(ref?" and <strong>"+ref+"</strong> as the invoice number":"")+".";c.hidden=false;}
+var g=document.getElementById("pay-card-go");if(g&&ref)g.href=g.href.split("?")[0]+"?client_reference_id="+ref;
+var p=document.getElementById("pp-amt");if(p){p.value=a.toFixed(2);var ev;try{ev=new Event("input");}catch(e){ev=document.createEvent("Event");ev.initEvent("input",true,true);}p.dispatchEvent(ev);}})();</script>
       </div>
     </section>
     <section class="section" aria-label="Monthly plans" style="padding-top:0">

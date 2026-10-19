@@ -102,6 +102,7 @@ function plq_mark($id, $state, $why = '', $payment = '') {
 function plq_check_row($row) {
     $before = pl_row_state($row);
     if ($before !== 'open') return array('state' => $before, 'reached' => true);   // settled rows need no call
+    if ((string)(isset($row['br']) ? $row['br'] : '') === '') return array('state' => $before, 'reached' => false);   // a pay-page link
     list($code, $j) = plq_get('/billing_requests/' . rawurlencode((string)$row['br']));
     if ($code < 200 || $code >= 300) return array('state' => $before, 'reached' => false);   // believe nothing, change nothing
     $br = isset($j['billing_requests']) ? $j['billing_requests'] : null;
@@ -123,6 +124,7 @@ function paylink_sweep($limit = PLQ_MAX_CHECK) {
     $due = array();
     foreach ((array)$store['links'] as $row) {
         if (pl_row_state($row, $now) !== 'open') continue;
+        if ((string)(isset($row['br']) ? $row['br'] : '') === '') continue;           // 19 Oct 2026: a pay-page link - nothing to ask GoCardless
         $out['open']++;
         if ((int)$row['created'] > $now - PLQ_MIN_AGE) continue;                       // the webhook's head start
         if ((int)(isset($row['checked_at']) ? $row['checked_at'] : 0) > $now - PLQ_RECHECK) continue;

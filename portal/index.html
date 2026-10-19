@@ -775,9 +775,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 19 Oct 2026 &middot; 393b205809</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 19 Oct 2026 &middot; 48920e9e02</p><script>
 (function () {
-  var P365BUILD = '393b205809';
+  var P365BUILD = '48920e9e02';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7626,6 +7626,7 @@
       var amt0 = (q && q.value ? q.value : '').trim(), desc0 = (qd && qd.value ? qd.value : '').trim();
       w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="plamt" type="text" inputmode="decimal" value="' + esc(amt0) + '" placeholder="Amount to collect \u00a3" style="width:100%;max-width:320px"></div>'
         + '<div style="margin:0 0 .3rem"><input class="pldesc" type="text" maxlength="100" value="' + esc(desc0) + '" placeholder="What it\u2019s for \u2014 the customer sees this" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="plref" type="text" maxlength="24" placeholder="Invoice number (optional) \u2014 it becomes their payment reference" style="width:100%;max-width:340px;font-size:.85rem;padding:.35rem .5rem"></div>'
         + '<button class="sm plgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83d\udd17 Create the link</button> '
         + '<span class="quiet plmsg"></span>';
       var msg = w.querySelector('.plmsg');
@@ -7633,8 +7634,10 @@
         var go = this;
         var amt = (w.querySelector('.plamt').value || '').trim(), desc = (w.querySelector('.pldesc').value || '').trim();
         if (!amt || !desc) { msg.textContent = 'Put in the amount and what it\u2019s for first.'; return; }
-        go.disabled = true; msg.textContent = 'Asking GoCardless\u2026';
-        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc })
+        // 19 Oct 2026: a link to our pay page - they choose bank transfer, card or PayPal there (pcm-paylink page mode)
+        var ref = ((w.querySelector('.plref') || {}).value || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
+        go.disabled = true; msg.textContent = 'Making the link\u2026';
+        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc, ref: ref })
           .then(function (r) {
             go.disabled = false;
             if (!r || !r.ok) { msg.innerHTML = paylinkErr(r); return; }
@@ -7646,14 +7649,15 @@
   }
   function showPayLink(w, r, em, ph) {
     var exp = r.expires ? new Date(r.expires * 1000).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+    var isPage = r.kind === 'page' || /^https:\/\/365techies\.co\.uk\/pay\//.test('' + r.url);
     w.innerHTML = '<div class="quiet" style="margin:.2rem 0 .35rem">'
-        + (r.reused ? 'That job already had a live link \u2014 this is the same one, so nobody gets asked twice.' : '\u2713 Link ready.')
+        + (r.reused ? 'That job already had a live link \u2014 this is the same one, so nobody gets asked twice.' : (isPage ? '\u2713 Link to our pay page ready \u2014 they choose bank transfer, card or PayPal.' : '\u2713 Link ready.'))
         + (exp ? ' Expires ' + esc(exp) + '.' : '') + '</div>'
       + '<div class="plurl" style="margin:0 0 .35rem;word-break:break-all;font-size:.76rem;opacity:.85">' + esc(r.url) + '</div>'
       + '<button class="sm ghost plcopy" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">copy link</button> '
       + (ph ? '<button class="sm plsms" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcac Text it to ' + esc(ph) + '</button> ' : '')
       + (em ? '<button class="sm ghost plmail" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\u2709\ufe0f Email it</button> ' : '')
-      + '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>'
+      + (isPage ? '<span class="quiet" style="font-size:.8rem">When it arrives (bank, Stripe or PayPal), mark the invoice paid in QuickBooks.</span>' : '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>')
       + '<div class="quiet plmsg2" style="margin-top:.3rem"></div>';
     var m2 = w.querySelector('.plmsg2');
     w.querySelector('.plcopy').onclick = function () {
@@ -7675,7 +7679,7 @@
     }
     if (w.querySelector('.plsms')) w.querySelector('.plsms').onclick = function () { sendIt('sms', ph); };
     if (w.querySelector('.plmail')) w.querySelector('.plmail').onclick = function () { sendIt('email', em); };
-    w.querySelector('.plchk').onclick = function () {
+    if (w.querySelector('.plchk')) w.querySelector('.plchk').onclick = function () {
       m2.textContent = 'Checking\u2026';
       post(PAY, { action: 'status', stoken: S.stoken, machine: mid(), id: r.id })
         .then(function (j) {

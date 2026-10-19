@@ -155,6 +155,21 @@ if ($action === 'create') {
     if ($desc === '')   fail('no_desc');
     if ($amount === false) fail('bad_amount', array('min' => PL_MIN_AMOUNT, 'max' => PL_MAX_AMOUNT));
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) fail('bad_email');
+
+    // 19 Oct 2026 (owner): the link is our own pay page unless GoCardless is asked for by name (mode=gc) - the customer
+    // chooses bank transfer, card or PayPal there. No GoCardless call, no expiry; the reference is the invoice number
+    // (or the job). The GoCardless route below stays for when the server has a read-write GoCardless key.
+    $ref = substr(preg_replace('/[^A-Za-z0-9-]/', '', (string)(isset($in['ref']) ? $in['ref'] : '')), 0, 24);
+    if ((isset($in['mode']) ? (string)$in['mode'] : '') !== 'gc') {
+        $url = pl_page_url($amount, $ref !== '' ? $ref : $job);
+        $row = array('id' => pl_new_id(), 'kind' => 'page', 'job' => $job, 'ref' => $ref, 'name' => $name, 'email' => $email,
+                     'phone' => $phone, 'amount' => $amount, 'desc' => $desc, 'br' => '', 'brf' => '', 'url' => $url,
+                     'created' => time(), 'expires' => 0, 'by' => $who, 'status' => 'open', 'sent_count' => 0);
+        $r = pl_store_locked($STORE, function ($data) use ($row) { $data['links'][] = $row; return array('ok' => true, 'data' => $data); });
+        if (empty($r['ok'])) fail(isset($r['error']) ? $r['error'] : 'store');
+        lg('created page link ' . $row['id'] . ' ' . pl_money($amount) . ' ref ' . ($ref !== '' ? $ref : '-') . ' by ' . $who);
+        out(array('ok' => true, 'id' => $row['id'], 'url' => $url, 'expires' => 0, 'state' => 'open', 'kind' => 'page'));
+    }
     if ($email === '' && $phone === '') fail('no_destination');      // nothing to send it to
     if (gc_token() === '') fail('no_gocardless');
 
@@ -226,7 +241,7 @@ if ($action === 'send') {
     if (!$row) fail('unknown_link');
     $state = pl_row_state($row);
     if ($state !== 'open') fail('link_' . $state);
-    if (!pl_flow_link_ok($row['url'])) fail('bad_link');          // belt and braces before anything is sent
+    if (!pl_link_ok($row['url'])) fail('bad_link');               // belt and braces before anything is sent (GoCardless flow or our pay page)
 
     // The destination comes from the row, never from this request.
     $to = ($via === 'sms') ? (string)$row['phone'] : (string)$row['email'];
@@ -259,7 +274,8 @@ if ($action === 'send') {
 
     $slack = slack_note(':link: *Pay link sent* - ' . ($row['name'] !== '' ? $row['name'] : $to) . ' asked for '
            . pl_money($row['amount']) . ' (' . $row['desc'] . ') by ' . $via . ', sent by ' . $who
-           . ($row['job'] !== '' ? ' - job ' . $row['job'] : '') . '. Watch GoCardless for the payment.');
+           . ($row['job'] !== '' ? ' - job ' . $row['job'] : '')
+           . ((string)(isset($row['kind']) ? $row['kind'] : '') === 'page' ? '. They pay through our pay page - watch the bank, Stripe and PayPal for it.' : '. Watch GoCardless for the payment.'));
     out(array('ok' => true, 'via' => $via, 'slack' => $slack));
 }
 
@@ -270,6 +286,8 @@ if ($action === 'status') {
     $id = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
     $row = pl_find(pl_store_read($STORE), $id);
     if (!$row) fail('unknown_link');
+    // a link to our pay page can't be checked here: the money comes to the bank, Stripe or PayPal
+    if ((string)(isset($row['kind']) ? $row['kind'] : '') === 'page') out(array('ok' => true, 'state' => pl_row_state($row), 'checked' => false, 'kind' => 'page'));
     if (gc_token() === '') out(array('ok' => true, 'state' => pl_row_state($row), 'checked' => false));
 
     require_once __DIR__ . '/pcm-paylink-sweep.php';

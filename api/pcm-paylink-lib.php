@@ -63,6 +63,16 @@ function pl_new_id() { return date('ymd') . '-' . substr(bin2hex(random_bytes(3)
 
 /* A GoCardless hosted authorisation link for ONE customer. This is the only
    shape we will ever text or email from here. */
+/* 19 Oct 2026 (owner: "send them a payment link that sends them to our website, and then they can choose how they
+   want to pay"): the link is our own pay page with the amount and the invoice number on it - bank transfer first, then
+   card (Stripe), PayPal or a call. Nothing personal is in it (no name, no email): only the amount and the reference. */
+function pl_page_url($amount, $ref = '') {
+    $ref = substr(preg_replace('/[^A-Za-z0-9-]/', '', (string)$ref), 0, 24);
+    return 'https://365techies.co.uk/pay/?amount=' . number_format((float)$amount, 2, '.', '') . ($ref !== '' ? '&ref=' . $ref : '');
+}
+function pl_page_link_ok($u) { return (bool)preg_match('#^https://365techies\.co\.uk/pay/\?amount=\d{1,5}\.\d{2}(&ref=[A-Za-z0-9-]{1,24})?$#', (string)$u); }
+function pl_link_ok($u) { return pl_flow_link_ok($u) || pl_page_link_ok($u); }
+
 function pl_flow_link_ok($u) {
     $u = (string)$u;
     if (strpos($u, 'https://pay.gocardless.com/billing/static/flow?id=BRF') !== 0) return false;
@@ -154,6 +164,10 @@ function pl_msg_sms($name, $amount, $desc, $url) {
     $hi = pl_first_name($name);
     $hi = ($hi !== '') ? $hi . ', h' : 'H';
     $for = ($desc !== '') ? (' for ' . $desc) : '';
+    if (pl_page_link_ok($url)) {   // 19 Oct 2026: our pay page - they choose how to pay
+        return $hi . 'ere is how to pay 365 Techies ' . pl_money($amount) . $for . ' - by bank transfer, card or PayPal, whichever suits you: '
+             . $url . ' Questions? Call us on 01202 775566.';
+    }
     return $hi . 'ere is your secure link to pay 365 Techies ' . pl_money($amount) . $for . '. '
          . 'You choose your own bank and approve it in your banking app - we never see your details. '
          . $url . ' Questions? Call us on 01202 775566.';
@@ -166,6 +180,7 @@ function pl_msg_email($name, $amount, $desc, $url, $note = '') {
     $money = pl_money($amount);
     $for = ($desc !== '') ? (' for ' . $desc) : '';
     $subject = 'Your 365 Techies payment link - ' . $money;
+    if (pl_page_link_ok($url)) return pl_msg_email_page($hi, $money, $desc, $url, $note, $subject);
 
     $text = $hi . "\n\n"
         . 'Here is your secure link to pay ' . $money . $for . ":\n\n"
@@ -195,6 +210,34 @@ function pl_msg_email($name, $amount, $desc, $url, $note = '') {
         . '<p style="text-align:center;color:#8a94a6;font-size:11px;margin:16px 0 0">365 Techies &middot; 01202 775566 &middot; 365techies.co.uk<br>Payments handled securely by GoCardless.</p>'
         . '</div></body></html>';
 
+    return array($subject, $text, $html);
+}
+
+/* 19 Oct 2026: the email for a link to our pay page - they choose bank transfer, card or PayPal there */
+function pl_msg_email_page($hi, $money, $desc, $url, $note, $subject) {
+    $for = ($desc !== '') ? (' for ' . $desc) : '';
+    $text = $hi . "\n\n"
+        . 'Here is your link to pay ' . $money . $for . ":\n\n"
+        . $url . "\n\n";
+    if ($note !== '') $text .= $note . "\n\n";
+    $text .= "On that page you can pay by bank transfer (our details and your reference are there), by card or with\n"
+        . "PayPal - whichever suits you. There is no account to create.\n\n"
+        . "Any questions, reply to this email or call 01202 775566.\n\n"
+        . "365 Techies\n01202 775566 - 365techies.co.uk\n";
+    $noteHtml = ($note !== '') ? '<p style="margin:0 0 16px">' . nl2br(pl_esc_html($note)) . '</p>' : '';
+    $forHtml  = ($desc !== '') ? (' for <strong>' . pl_esc_html($desc) . '</strong>') : '';
+    $html = '<!doctype html><html><body style="margin:0;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;color:#1a2433">'
+        . '<div style="max-width:520px;margin:0 auto;padding:24px">'
+        . '<div style="background:#fff;border-radius:14px;padding:28px 26px;box-shadow:0 1px 3px rgba(0,0,0,.08)">'
+        . '<p style="font-size:16px;margin:0 0 14px">' . pl_esc_html($hi) . '</p>'
+        . '<p style="margin:0 0 16px">Here is your link to pay <strong>' . pl_esc_html($money) . '</strong>' . $forHtml . '.</p>'
+        . $noteHtml
+        . '<p style="text-align:center;margin:26px 0"><a href="' . pl_esc_html($url) . '" style="display:inline-block;background:#0a8f4c;color:#fff;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 26px;border-radius:10px">Pay ' . pl_esc_html($money) . '</a></p>'
+        . '<p style="font-size:13px;color:#4a5568;margin:0 0 14px">On our page you can pay <strong>by bank transfer</strong> (our details and your reference are there), <strong>by card</strong> or <strong>with PayPal</strong> &mdash; whichever suits you. There is no account to create.</p>'
+        . '<p style="font-size:13px;color:#4a5568;margin:0">Any questions, reply to this email or call <strong>01202&nbsp;775566</strong>.</p>'
+        . '</div>'
+        . '<p style="text-align:center;color:#8a94a6;font-size:11px;margin:16px 0 0">365 Techies &middot; 01202 775566 &middot; 365techies.co.uk</p>'
+        . '</div></body></html>';
     return array($subject, $text, $html);
 }
 
