@@ -3130,8 +3130,9 @@ const CARDEF = {
 // ---------------------------------------------------------------- your red roadster: long, low and open, a tan cabin, a turning steering wheel
 // (our own design: a wedge nose with flush lamps, scoops ahead of the rear wheels, louvres over the engine, humps behind
 // the seats, a light bar across the tail and four pipes)
-function spider() {
-  const k = new Kit(), col = '#c0111c', len = 2.3, w = 1.98, wz = [-1.42, 1.42];   // (a deeper red, 6 Oct: the owner wanted it less toy-like)
+function spider(opt) {   // opt.jet: the Skimmer (19 Oct 2026) - the same roadster in pearl white with a gas-thruster kit
+  opt = opt || {};
+  const k = new Kit(), col = opt.jet ? '#e6ebef' : '#c0111c', len = 2.3, w = 1.98, wz = [-1.42, 1.42];   // (a deeper red, 6 Oct: the owner wanted it less toy-like)
   const keys = [[-2.32, 0.6, 0.36, 0.44], [-2.18, 0.82, 0.3, 0.53], [-1.92, 0.93, 0.28, 0.645], [-1.42, 1.0, 0.28, 0.76], [-0.95, 0.97, 0.28, 0.79], [-0.52, 0.94, 0.28, 0.81],
     [-0.42, 0.93, 0.28, 0.8], [-0.33, 0.92, 0.28, 0.47], [0.9, 0.93, 0.28, 0.47], [0.99, 0.95, 0.28, 0.85], [1.2, 1.08, 0.28, 0.85], [1.45, 1.13, 0.28, 0.858], [1.72, 1.11, 0.29, 0.865], [2.1, 1.04, 0.3, 0.875], [2.2, 1.0, 0.31, 0.89], [2.27, 0.95, 0.36, 0.92], [2.31, 0.87, 0.42, 0.915]];
   const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };
@@ -3202,7 +3203,11 @@ function spider() {
   k.box(1.3, 0.025, 0.04, 0, 0.865, len + 0.012, '#0b0b0c', 0, 0, 0, 'trim');   // and the shadow line under it
   k.box(1.0, 0.1, 0.3, 0, 0.29, len - 0.1, '#3c4046', 0, 0, 0, 'trim');   // the diffuser, and its fins
   for (let i = 0; i < 5; i++) k.box(0.02, 0.09, 0.24, -0.2 + i * 0.1, 0.295, len - 0.02, '#5a5e64', 0, 0, 0, 'trim');
-  for (const x of [-0.4, 0.4]) { k.roll(0.085, 0.12, 18, x, 0.36, len, '#c9cdd2', 'lit'); k.roll(0.058, 0.02, 14, x, 0.36, len + 0.055, '#0e0e10', 'trim'); }   // two big bright pipes, dark inside
+  if (opt.jet) {   // the Skimmer: no pipes - two big thruster nozzles at the corners, glowing inside, and four lift jets underneath
+    for (const x of [-0.5, 0.5]) { k.roll(0.15, 0.2, 22, x, 0.4, len - 0.02, '#2a3038', 'trim'); k.roll(0.115, 0.04, 20, x, 0.4, len + 0.07, '#7fe8ff', 'glow'); k.roll(0.07, 0.02, 16, x, 0.4, len + 0.09, '#e8fbff', 'glow'); }
+    for (const x of [-0.62, 0.62]) for (const z of [-1.0, 1.0]) { k.cyl(0.12, 0.12, 0.04, 18, x, 0.13, z, '#2a3038', 0, 0, 'trim'); k.cyl(0.085, 0.085, 0.045, 16, x, 0.11, z, '#7fe8ff', 0, 0, 'glow'); }
+    for (const sd of [-1, 1]) k.box(0.02, 0.03, 2.1, sd * 0.99, 0.38, 0.05, '#5fe0ff', 0, 0, 0, 'glow');   // a cyan line along each sill: the kit's mark
+  } else for (const x of [-0.4, 0.4]) { k.roll(0.085, 0.12, 18, x, 0.36, len, '#c9cdd2', 'lit'); k.roll(0.058, 0.02, 14, x, 0.36, len + 0.055, '#0e0e10', 'trim'); }   // two big bright pipes, dark inside
   k.box(0.44, 0.093, 0.02, 0, 0.645, len + 0.03, '#ffffff', 0, 0, 0, 'plate');   // the plate, on the red between the lamps
   // pass 2 (owner, 6 Oct: "a couple of passes on the cars"): the lamps' detail - an LED line through each, a white reversing lamp and an amber
   // indicator at the inner end; a slim third brake light on the lip; a reflector strip across the bumper; the engine lid's shut lines
@@ -3555,8 +3560,8 @@ export function people() {
 }
 
 export function playerCar(id) {
-  if (!CARDEF[id] || id === 'roadster') {   // the red roadster: its own body, wheels and cabin (the two of you come from people())
-    const S = spider();
+  if (!CARDEF[id] || id === 'roadster' || id === 'skimmer') {   // the red roadster (and the Skimmer, its white thruster version): its own body, wheels and cabin (the two of you come from people())
+    const S = spider({ jet: id === 'skimmer' });
     return { body: S.k.build(), wheel: bigWheel(), wheels: [[-S.wx, 0.34, S.wz[0]], [S.wx, 0.34, S.wz[0]], [-S.wxr, 0.34, S.wz[1]], [S.wxr, 0.34, S.wz[1]]], len: S.len, width: S.w, open: true };
   }
   const D = CARDEF[id], k = new Kit(), len = D.len, w = D.w, skin = ['#e0b088', '#c98d5a'];

@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=72';
+import { createWorld } from './world3d.js?v=73';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -244,12 +244,12 @@ function hud(g, W, t, mode) {
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && document.body.classList.contains('touchy')) {   // the same for thumbs
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
-    hudText(g, TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  NITRO  RIGHT THUMB' : 'TOUCH LEFT ◀     ▶ TOUCH RIGHT     BOTH AT ONCE: NITRO', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');
+    hudText(g, W.jet ? (TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  BOOST  LIFT  RIGHT THUMB' : 'TOUCH LEFT ◀  ▶ TOUCH RIGHT   BOTH: BOOST   LIFT BUTTON: FLY') : TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  NITRO  RIGHT THUMB' : 'TOUCH LEFT ◀     ▶ TOUCH RIGHT     BOTH AT ONCE: NITRO', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');
     g.globalAlpha = 1;
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
-    hudText(g, W.autoDrift ? 'STEER ◀ ▶     NITRO  SPACE     RADIO  R' : 'STEER ◀ ▶   DRIFT  TAP ▼   NITRO  SPACE   RADIO  R', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');   // (between the map and the nitro bottles: across them it covered the NITRO label)
+    hudText(g, W.jet ? (W.autoDrift ? 'STEER ◀ ▶   BOOST  SPACE   LIFT  SHIFT (HOLD TO HOVER)' : 'STEER ◀ ▶   DRIFT  TAP ▼   BOOST  SPACE   LIFT  SHIFT') : W.autoDrift ? 'STEER ◀ ▶     NITRO  SPACE     RADIO  R' : 'STEER ◀ ▶   DRIFT  TAP ▼   NITRO  SPACE   RADIO  R', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');   // (between the map and the nitro bottles: across them it covered the NITRO label)
     g.globalAlpha = 1;
   }
   banner(g, W, t);
@@ -373,6 +373,17 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
   hudText(g, String(E.mph(W)), xr - 17, yb - 4, 21, W.boosting ? '#8fe3ff' : '#ffffff', 'right');
   hudText(g, 'MPH', xr, yb - 4, 6, '#c9d6e6', 'right');
   const nb = W.bottles || 0, show = Math.min(10, nb), bw3 = 4.6, bgp = 1.2, by2 = yb - 1.5, bx = x0 - 16 - 10 * (bw3 + bgp);   // (left of the speedo: on top of the number it hid it)
+  if (W.jet) {   // the Skimmer: its pressure tank instead of bottles - drains as it boosts, lifts and hovers; red and flashing when low
+    const bw = 10 * (bw3 + bgp) - bgp, k = Math.max(0, Math.min(1, (W.gas || 0) / (E.GAS_MAX || 100))), low = k < 0.2, busy = W.boosting || W.hover;
+    g.fillStyle = 'rgba(255,255,255,0.12)'; g.fillRect(bx, by2 - 7, bw, 7);
+    g.fillStyle = low ? ((t / 250 | 0) % 2 ? '#ff5a5a' : '#ff9a9a') : busy ? '#e8fbff' : '#5fe0ff'; g.fillRect(bx, by2 - 7, bw * k, 7);
+    g.fillStyle = 'rgba(255,255,255,0.5)'; g.fillRect(bx, by2 - 7, bw * k, 1.2);   // a highlight along its top
+    for (let q = 1; q < 5; q++) { g.fillStyle = 'rgba(6,12,28,0.55)'; g.fillRect(bx + bw * q / 5 - 0.4, by2 - 7, 0.8, 7); }   // fifths
+    g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(bx, by2 + 1.4, bw, 1.2); g.fillStyle = '#8fe3ff'; g.fillRect(bx, by2 + 1.4, bw * Math.min(1, W.boost || 0), 1.2);   // the meter that tops the tank up
+    hudText(g, 'PRESSURE', bx, by2 - 11, 5.2, low ? '#ff8080' : busy ? '#ffffff' : '#9fdcff', 'left');
+    hudText(g, Math.round(W.gas || 0) + '%', bx + bw, by2 - 11, 5.2, low ? '#ff8080' : '#c9d6e6', 'right');
+    return;
+  }
   for (let i = 0; i < 10; i++) {   // the bottles: full ones blue, the one in use draining white
     const xx = bx + i * (bw3 + bgp), on = i < show, live = W.boosting && i === show;
     g.fillStyle = on ? '#4fc3ff' : 'rgba(255,255,255,0.12)'; g.fillRect(xx, by2 - 7, bw3, 7); g.fillRect(xx + 1.3, by2 - 9, bw3 - 2.6, 2);
@@ -496,6 +507,9 @@ function sound(name, S, e) {
     case 'beat': [523, 659, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.16, 0.05, { type: 'square', when: k * 0.07, verb: 0.45 })); break;
     case 'nitro': S.tone(300, 0.4, 0.06, { type: 'sawtooth', to: 1400, verb: 0.3 }); S.noise(0.4, 0.08, 600, { type: 'bandpass', q: 2, to: 5000 }); break;
     case 'boost': S.noise(0.8, 0.14, 300, { type: 'bandpass', q: 1.2, to: 3000, verb: 0.3 }); S.tone(160, 0.6, 0.06, { type: 'sawtooth', to: 320 }); break;
+    case 'jetBoost': S.noise(1.0, 0.24, 5200, { type: 'highpass', to: 1400, verb: 0.35 }); S.noise(0.5, 0.14, 900, { type: 'bandpass', q: 0.8, to: 400 }); S.tone(70, 0.35, 0.12, { type: 'sine', to: 38 }); break;   // the Skimmer's rear nozzles: a hard hiss of gas and a thump
+    case 'lift': S.noise(1.3, 0.28, 3200, { type: 'bandpass', q: 0.7, to: 1100, verb: 0.45 }); S.noise(0.6, 0.12, 7000, { type: 'highpass', to: 3000 }); S.tone(52, 0.6, 0.16, { type: 'sine', to: 32 }); break;   // its jets underneath: a roar of gas off the road
+    case 'empty': S.tone(220, 0.16, 0.05, { type: 'square', to: 130 }); S.noise(0.25, 0.05, 2500, { type: 'highpass' }); break;   // the tank's too low
     case 'check': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.14, 0.055, { type: 'square', when: k * 0.08, verb: 0.4 })); break;
     case 'goal':
       if (sting('goal')) break;
@@ -730,6 +744,7 @@ function touchBuild() {
     + 'font:800 calc(var(--b)*.19)/1 Archivo,system-ui,sans-serif;letter-spacing:.05em;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 10px rgba(0,0,0,.25)}'
     + '#crTouch .tb.on{transform:scale(.94);filter:brightness(1.5)}'
     + '#crTouch .brake{left:var(--el);border-color:rgba(255,196,96,.8);background:rgba(255,160,40,.24)}#crTouch .nitro{right:var(--er);border-color:rgba(255,120,120,.85);background:rgba(255,56,56,.3)}'
+    + '#crTouch .lift{display:none;right:var(--er);bottom:calc(var(--lift) + var(--b) + 14px);border-color:rgba(120,230,255,.9);background:rgba(40,190,255,.28)}#crTouch.jet .lift{display:block}'   // (the Skimmer: LIFT above BOOST, under the right thumb)
     + '#crTouch .tl{left:var(--el);font-size:calc(var(--b)*.36)}#crTouch .tr{left:calc(var(--el) + var(--b) + 12px);font-size:calc(var(--b)*.36)}'
     + '#crTouch.lay-buttons .brake{left:auto;right:calc(var(--er) + var(--b) + 12px)}#crTouch.lay-sides .tl,#crTouch.lay-sides .tr,#crTouch.lay-buttons .z,#crTouch.lay-buttons .hint{display:none}'
     + '#crTouch .hint{position:absolute;bottom:calc(var(--lift) + var(--b) + 14px);font:800 calc(var(--b)*.42)/1 Archivo,system-ui,sans-serif;color:#fff;opacity:.5;transition:opacity 1.2s;text-shadow:0 2px 8px rgba(0,0,0,.5)}'
@@ -741,7 +756,7 @@ function touchBuild() {
   const el = document.createElement('div'); el.id = 'crTouch'; el.setAttribute('aria-hidden', 'true');
   el.innerHTML = '<div class="z zl"></div><div class="z zr"></div><span class="hint hl">&#9664;</span><span class="hint hr">&#9654;</span>'
     + '<button type="button" class="tb tl" data-a="left">&#9664;</button><button type="button" class="tb tr" data-a="right">&#9654;</button>'
-    + '<button type="button" class="tb brake" data-a="down">BRAKE</button><button type="button" class="tb nitro" data-a="fire">NITRO</button>'
+    + '<button type="button" class="tb brake" data-a="down">BRAKE</button><button type="button" class="tb nitro" data-a="fire">NITRO</button><button type="button" class="tb lift" data-a="alt">LIFT</button>'
     + '<button type="button" class="tp pause" data-a="pause">&#10074;&#10074;</button><button type="button" class="tp full" data-a="full">&#x26F6;</button>'
     + '<div class="turn">Turn your phone sideways<br>for a bigger picture</div>';
   document.body.appendChild(el); TOUCH.el = el;
@@ -765,12 +780,14 @@ function touchBuild() {
 function touchApply() {   // what the fingers on the screen are asking for (only ever written while the touch controls are in use)
   const inp = window.ARCADE365 && window.ARCADE365.input; if (!inp) return;
   let L = false, Rt = false, brake = false, nitro = false;
-  for (const q of TOUCH.ptr.values()) { if (q.act === 'left') L = true; else if (q.act === 'right') Rt = true; else if (q.act === 'down') brake = true; else if (q.act === 'fire') nitro = true; }
+  let lift = false;
+  for (const q of TOUCH.ptr.values()) { if (q.act === 'left') L = true; else if (q.act === 'right') Rt = true; else if (q.act === 'down') brake = true; else if (q.act === 'fire') nitro = true; else if (q.act === 'alt') lift = true; }
+  inp.alt = lift; if (lift) inp.altTap = true;   // (the Skimmer's LIFT button; a quick tap is latched till the next step, as the brake's is)
   const both = L && Rt && TOUCH.layout === 'sides';
   if (both && !TOUCH.both) TOUCH.both = performance.now(); else if (!both) TOUCH.both = 0;
   inp.left = L && !both; inp.right = Rt && !both; inp.down = brake; inp.fire = nitro || (both && performance.now() - TOUCH.both > 120);   // (both thumbs: straight on, and nitro once they've stayed down a moment)
 }
-function touchClear() { for (const q of TOUCH.ptr.values()) if (q.el && !q.zone) q.el.classList.remove('on'); TOUCH.ptr.clear(); TOUCH.both = 0; const inp = window.ARCADE365 && window.ARCADE365.input; if (inp) { inp.left = inp.right = inp.down = inp.fire = false; } }
+function touchClear() { for (const q of TOUCH.ptr.values()) if (q.el && !q.zone) q.el.classList.remove('on'); TOUCH.ptr.clear(); TOUCH.both = 0; const inp = window.ARCADE365 && window.ARCADE365.input; if (inp) { inp.left = inp.right = inp.down = inp.fire = inp.alt = false; } }
 function touchFrame(mode) {   // each picture: the race layout on or off, which controls, the hints
   const want = mode === 'play' && isTouchy();
   if (want && !TOUCH.el) touchBuild();
@@ -778,8 +795,9 @@ function touchFrame(mode) {   // each picture: the race layout on or off, which 
   if (!want) return;
   const lay = (RAD.set && RAD.set.touch) === 'buttons' ? 'buttons' : 'sides';
   if (lay !== TOUCH.layout) { TOUCH.layout = lay; touchClear(); }
-  const cls = 'lay-' + lay + (performance.now() - TOUCH.hintT > 5000 ? ' quiet' : '') + (innerHeight > innerWidth * 1.1 && innerWidth < 700 ? ' upright' : '');
+  const cls = 'lay-' + lay + (performance.now() - TOUCH.hintT > 5000 ? ' quiet' : '') + (innerHeight > innerWidth * 1.1 && innerWidth < 700 ? ' upright' : '') + (R.W && R.W.jet ? ' jet' : '');
   if (TOUCH.el.className !== cls) TOUCH.el.className = cls;
+  { const nb = TOUCH.el.querySelector('.nitro'), lbl = R.W && R.W.jet ? 'BOOST' : 'NITRO'; if (nb && nb.textContent !== lbl) nb.textContent = lbl; }   // (the Skimmer's right-thumb button is its rear nozzles)
   if (TOUCH.both && performance.now() - TOUCH.both > 120 && window.ARCADE365 && !window.ARCADE365.input.fire) window.ARCADE365.input.fire = true;
 }
 document.addEventListener('click', (e) => {   // Play on a phone or a tablet: full screen and sideways (Settings can switch it off)
@@ -915,7 +933,7 @@ A.start({
   pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
-    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch']], def: 'roadster' },
+    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Skimmer has gas thrusters instead of nitro - Space for a boost, Shift (or X, B, the right mouse button) to LIFT over the traffic, held to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Skimmer']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
@@ -925,7 +943,7 @@ A.start({
     { key: 'touchfull', type: 'switch', label: 'Full screen when you race', small: 'Phones and tablets: Play takes the game full screen and sideways. An iPhone can\'t do that for a web page: add the game to your Home Screen instead.', def: true },
     { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
   ],
-  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
+  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Skimmer', 'White · flies']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
   statKey: (W) => 'v' + W.diff,
   hires: () => true,

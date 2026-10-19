@@ -420,3 +420,50 @@ test('carrying on from a goal (7 Oct): Space in the goal moment, and round 2 goe
   drive(W, 90, {}); E.step(W, { fire: true }); quiet(W); assert.ok(!W.goalSeq && !W.over, 'carried on');
   drive(W, 700, {}); assert.equal(W.stage, E.RUN_START[1]); assert.equal(E.STAGES[W.stage].key, 'bournemouth', 'round 2: into town'); assert.equal(W.round, 2);
 });
+
+// ---- the Skimmer (owner, 19 Oct 2026): our own thruster roadster - a gas tank instead of nitro, LIFT to hop and hover
+function lorryAhead(W, z, x) { const t = E.VEH.findIndex((v) => v.id === 'lorry'); W.cars.push({ id: 777, s: W.s + z, x: x, tx: x, v: 25, v0: 25, t: t, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: z, spin: 0 }); }
+function place(W, i, v) { W.s = i * E.SEG; W.x = 0; W.v = v; W.h = E.heightAt(W, W.s); W.vh = 0; W.air = false; W.lift = false; W.psi = W.phi = 0; }
+function straight(W) { return findSeg(W, E.segIndex(W.s) + 20, (g, j) => { for (let q = j; q < j + 60; q++) { const h = E.segAt(W, q); if (Math.abs(h.k) > 1 / 900 || h.tun || h.gate || h.fk) return false; } return true; }); }
+
+test('the Skimmer: a gas tank, not bottles; LIFT throws it up and costs gas; held, it hovers higher for more; it lands', () => {
+  const W = E.newWorld(2, { car: 'skimmer' }, 5); go(W); clear(W);
+  assert.equal(W.car, 'skimmer'); assert.ok(W.jet); assert.equal(W.bottles, 0, 'no nitro bottles'); assert.ok(W.gas > 0, 'a tank of gas');
+  const i = straight(W); assert.ok(i > 0, 'a straight'); place(W, i, 50); drive(W, 3, {});
+  const g0 = W.gas; E.step(W, { alt: true }); quiet(W);
+  assert.ok(W.air && W.lift, 'lifted'); assert.equal(Math.round(g0 - W.gas), E.LIFT_COST, 'a lift costs gas');
+  let top = 0; for (let n = 0; n < 240 && W.air; n++) { E.step(W, {}); quiet(W); clear(W); top = Math.max(top, W.h - E.heightAt(W, W.s)); }
+  assert.ok(!W.air && !W.lift, 'back on the road'); assert.ok(top > 3.8 && top < 5, 'a tap: a hop of about 4 m (was ' + top.toFixed(2) + ')');
+  // held: it hovers - higher, longer, and the tank drains
+  place(W, i + 5, 50); W.gas = 100; drive(W, 2, {});
+  let hi = 0, t = 0; for (let n = 0; n < 400 && (n < 2 || W.air); n++) { E.step(W, { alt: n < 150 }); quiet(W); clear(W); hi = Math.max(hi, W.h - E.heightAt(W, W.s)); if (W.air) t++; }
+  assert.ok(hi > 5.5 && hi <= E.HOVER_MAX + 0.6, 'held, it climbs to its ceiling (' + hi.toFixed(2) + ' m)');
+  assert.ok(t / 60 > 2.6, 'and stays up longer (' + (t / 60).toFixed(2) + ' s)'); assert.ok(W.gas < 100 - E.LIFT_COST - 40, 'hovering uses gas');
+});
+
+test('the Skimmer hops a lorry it would have hit, and can\'t lift under a roof; the nozzles push and cost gas', () => {
+  let W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W);
+  const i = straight(W); place(W, i, 60); drive(W, 2, {});
+  lorryAhead(W, 30, 0);   // (a lorry is long: lift a second out and hold it, so it hovers clear of the whole length - as the driver does)
+  let hit = false; for (let n = 0; n < 200; n++) { E.step(W, { alt: n < 45 }); if (W.events.some((e) => e.sfx === 'bump') || W.crash) hit = true; quiet(W); }
+  assert.ok(!hit, 'over it, not into it'); assert.equal(W.hopN, 1, 'a hop scored');
+  // the same lorry without a lift: a hit
+  W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W); place(W, i, 60); drive(W, 2, {}); lorryAhead(W, 30, 0);
+  hit = false; for (let n = 0; n < 120; n++) { E.step(W, {}); if (W.events.some((e) => e.sfx === 'bump') || W.crash) hit = true; quiet(W); }
+  assert.ok(hit, 'on the road, it hits it');
+  // under a roof: no lift
+  W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W);
+  const ti = findSeg(W, E.segIndex(W.s) + 20, (g) => !!g.tun);
+  if (ti > 0) { place(W, ti + 2, 40); drive(W, 2, {}); const g0 = W.gas; E.step(W, { alt: true }); quiet(W); assert.ok(!W.air && W.gas === g0, 'no lift in a tunnel'); }
+  // the rear nozzles: a hard push, for gas
+  W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W); place(W, i, 40); drive(W, 2, {});
+  const B = E.newWorld(2, { car: 'skimmer' }, 6); go(B); clear(B); place(B, i, 40); drive(B, 2, {});
+  const g1 = W.gas; drive(W, 50, (w) => { clear(w); return { fire: true }; }); drive(B, 50, (w) => { clear(w); return {}; });
+  assert.ok(W.v > B.v + 6, 'faster with the nozzles (' + W.v.toFixed(1) + ' v ' + B.v.toFixed(1) + ')'); assert.ok(W.gas <= g1 - E.BURST_COST + 1, 'a burst costs gas');
+});
+
+test('the Skimmer\'s driver gets round a stage, hopping traffic now and then', () => {
+  const W = E.newWorld(2, { car: 'skimmer' }, 1); let goal = false, lifts = 0;
+  for (let i = 0; i < 60 * 60 * 6 && !W.over && !goal; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'goal' || e.sfx === 'check')) goal = true; if (W.events.some((e) => e.sfx === 'lift')) lifts++; quiet(W); W.time = Math.max(W.time, 10); }
+  assert.ok(goal, 'it reaches a checkpoint'); assert.ok(lifts > 0, 'and lifts over traffic (' + lifts + ' lifts, ' + W.hopN + ' hops)');
+});
