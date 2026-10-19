@@ -35,8 +35,9 @@ PCM_TOUR = ("y9far6n8Vr0", 294, "2026-10-29T11:00:00+00:00", "365 PC Manager: th
 # The Techies One film (1:51, public since 18 Oct): the same cut as images/t1-suite-film-v1.mp4.
 T1_FILM = ("AqKPq0a-qNo", 111, None, "Techies One: free email, letters, sums and files in one simple Windows program")
 # The Virgin Media -> Junara Short (37.6 s, reels/shorts-2026-10-15 info-a; facts re-checked on Virgin's page 19 Oct 2026).
-# Owner, 19 Oct: "Publish the private Junara Short and add it to the page". ⚠ Publish it BEFORE pushing the page.
-JUNARA_SHORT = ("phVgRXXbePs", 38, None, "Virgin Media Email Is Moving to Junara: What to Do")
+# Owner, 19 Oct: "Publish the private Junara Short and add it to the page".
+# 19 Oct: the owner SCHEDULED it for Tue 20 Oct 12:00 (checked in Studio) rather than publishing it straight away.
+JUNARA_SHORT = ("phVgRXXbePs", 38, "2026-10-20T12:00:00+01:00", "Virgin Media Email Is Moving to Junara: What to Do")
 
 PLAY = ('<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/>'
         '<path d="M19 15l15 9-15 9z" fill="#fff"/></svg>')
