@@ -308,6 +308,10 @@ VEM_POSTER = "/images/vem-howto-poster-v2.webp"
 VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
 VEM_VIDEO_SECS = 85   # the lede says "An 85-second video": mind the a/an if this changes
 VEM_VIDEO_DATE = "2026-10-08"
+# 19 Oct 2026 (owner: "make it public and switch the page to YouTube"): the same wide film on YouTube. Computers and
+# tablets play it from there (a play is a view on the channel); an upright phone keeps our phone-shaped cut, because the
+# wide film's text is tiny there and YouTube has no tall copy. Without the script the page plays our own wide copy.
+VEM_YT = "QxO1TYRihkg"
 VEM_URL = "https://365techies.co.uk/" + VIRGIN_TOOL_SLUG + "/"
 VEM_SHARE_TEXT = "Moving off Virgin Media email? This free tool from 365 Techies moves it all into Gmail, and there's a short video showing how:"
 
@@ -490,7 +494,7 @@ def virgin_tool_page(setup_url):
           <li><b>Check it all arrived</b>, folder by folder</li>
         </ol>
         <p class="vw__cta"><a class="button primary" href="{EMAIL_MOVER_ADDON_URL}" target="_blank" rel="noopener" data-vem-addon>Add the Email Mover to Chrome &#8599;</a><a class="button secondary" href="{setup_url}" download data-vmc-dl>Download 365 PC Manager &#8595;</a></p>
-        <p class="vw__note">Prefer pictures? <a href="#how">Every step below, with the screen you&rsquo;ll see</a> &middot; <a href="#move-for-me">or let us do it for &pound;60</a></p>
+        <p class="vw__note">Prefer pictures? <a href="#how">Every step below, with the screen you&rsquo;ll see</a> &middot; <a href="#move-for-me">or let us do it for &pound;60</a> &middot; <a href="https://www.youtube.com/watch?v={VEM_YT}" target="_blank" rel="noopener">Watch it on YouTube</a></p>
         <div class="vw__more">
           <div class="vw__qr" id="vemqr">
             <canvas id="vemqrc" width="320" height="320" role="img" aria-label="QR code that opens this page on your phone"></canvas>
@@ -511,7 +515,7 @@ def virgin_tool_page(setup_url):
       </div>
       <style>
         .vw__box{{position:relative;max-width:980px;margin:1.3rem auto 0;border-radius:20px;overflow:hidden;border:1px solid var(--hp-edge);box-shadow:0 34px 80px -30px rgba(0,0,0,.75);background:#090e20;aspect-ratio:16/9}}
-        .vw__box video{{display:block;width:100%;height:100%;object-fit:contain;background:#090e20}}
+        .vw__box video,.vw__box iframe{{display:block;width:100%;height:100%;object-fit:contain;background:#090e20;border:0}}
         .vw__play{{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,13,34,.18);border:0;cursor:pointer;padding:0}}
         .vw__play span{{width:84px;height:84px;border-radius:50%;background:rgba(29,151,227,.95);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;padding-left:6px;box-shadow:0 14px 34px rgba(0,0,0,.5);transition:transform .15s ease}}
         .vw__play:hover span,.vw__play:focus-visible span{{transform:scale(1.07)}}
@@ -549,14 +553,23 @@ def virgin_tool_page(setup_url):
       <script>
         (function(){{
           var v=document.getElementById('vemvid'), b=document.getElementById('vemplay'); if(!v||!b) return;
+          var YT='{VEM_YT}', tall=false;
           function hide(){{ b.style.display='none'; }}
-          b.addEventListener('click',function(){{ hide(); try{{ var p=v.play(); if(p&&p.catch) p.catch(function(){{}}); }}catch(e){{}}
-            try{{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{{page:location.pathname}}); }}catch(e){{}} }});
-          v.addEventListener('play',hide);
           /* a phone held upright gets the phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
-          try{{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){{
+          try{{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){{ tall=true;
             var sv=v.querySelector('source'); sv.src=v.getAttribute('data-tall'); v.poster=v.getAttribute('data-tallposter');
             v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load(); }} }}catch(e){{}}
+          /* 19 Oct 2026: anywhere else the button plays the same film from YouTube (a view on our channel), in this box */
+          if(!tall&&YT) v.controls=false;
+          b.addEventListener('click',function(){{ hide();
+            try{{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{{page:location.pathname,src:tall?'own_tall':'youtube'}}); }}catch(e){{}}
+            if(!tall&&YT){{ var i=document.createElement('iframe');
+              i.src='https://www.youtube-nocookie.com/embed/'+YT+'?autoplay=1&rel=0&playsinline=1';
+              i.title=v.getAttribute('aria-label')+' (YouTube)';
+              i.setAttribute('allow','accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture');
+              i.setAttribute('allowfullscreen',''); v.parentNode.replaceChild(i,v); return; }}
+            try{{ var p=v.play(); if(p&&p.catch) p.catch(function(){{}}); }}catch(e){{}} }});
+          v.addEventListener('play',hide);
           /* the scan-me QR for computers: opens this page, at the video, on the phone */
           (function(){{
             var box=document.getElementById('vemqr'), cv=document.getElementById('vemqrc'); if(!box||!cv) return;
@@ -759,7 +772,7 @@ def virgin_tool_page(setup_url):
                                  "app moves it into Gmail and checks every folder arrived. Real screens, a made-up sample mailbox, a spoken guide."),
                  "thumbnailUrl": [bp.SITE + VEM_POSTER, bp.SITE + "/images/vem-howto-poster-v2.jpg"],
                  "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M25S",
-                 "contentUrl": bp.SITE + VEM_VIDEO, "embedUrl": bp.SITE + "/" + s + "/#watch",
+                 "contentUrl": bp.SITE + VEM_VIDEO, "embedUrl": "https://www.youtube.com/embed/" + VEM_YT,
                  "publisher": {"@type": "Organization", "name": "365 Techies", "logo": {"@type": "ImageObject", "url": bp.SITE + "/logo.jpg"}}}
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d, image=VIRGIN_OG),
                          video,

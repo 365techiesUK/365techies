@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/images/pcm-virgin-og-v30.jpg"
       },
-      "dateModified": "2026-10-08"
+      "dateModified": "2026-10-19"
     },
     {
       "@type": "VideoObject",
@@ -307,7 +307,7 @@
       "uploadDate": "2026-10-08",
       "duration": "PT1M25S",
       "contentUrl": "https://365techies.co.uk/images/vem-howto-v3.mp4",
-      "embedUrl": "https://365techies.co.uk/virgin-email-mover/#watch",
+      "embedUrl": "https://www.youtube.com/embed/QxO1TYRihkg",
       "publisher": {
         "@type": "Organization",
         "name": "365 Techies",
@@ -1020,7 +1020,7 @@
         <h1 class="taskhead__h">Move your Virgin Media email to Gmail, <em class="grad grad--cyan">free</em></h1>
         <p class="taskhead__lede">Our free Chrome add-on copies your Virgin Media, blueyonder, ntlworld or virgin.net email, and our free Windows app moves it into Gmail. No Virgin app password, no sign-up. Watch how, or let us do it for you.</p>
         <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; 4.9 on Google</a></span><span>Family-run since 1995</span><span>Signed by 365 Techies Ltd</span><span>Windows 10 &amp; 11</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 8 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 19 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -1054,7 +1054,7 @@
           <li><b>Check it all arrived</b>, folder by folder</li>
         </ol>
         <p class="vw__cta"><a class="button primary" href="https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd" target="_blank" rel="noopener" data-vem-addon>Add the Email Mover to Chrome &#8599;</a><a class="button secondary" href="/downloads/pcm/365-pc-manager-setup-v44.exe" download data-vmc-dl>Download 365 PC Manager &#8595;</a></p>
-        <p class="vw__note">Prefer pictures? <a href="#how">Every step below, with the screen you&rsquo;ll see</a> &middot; <a href="#move-for-me">or let us do it for &pound;60</a></p>
+        <p class="vw__note">Prefer pictures? <a href="#how">Every step below, with the screen you&rsquo;ll see</a> &middot; <a href="#move-for-me">or let us do it for &pound;60</a> &middot; <a href="https://www.youtube.com/watch?v=QxO1TYRihkg" target="_blank" rel="noopener">Watch it on YouTube</a></p>
         <div class="vw__more">
           <div class="vw__qr" id="vemqr">
             <canvas id="vemqrc" width="320" height="320" role="img" aria-label="QR code that opens this page on your phone"></canvas>
@@ -1075,7 +1075,7 @@
       </div>
       <style>
         .vw__box{position:relative;max-width:980px;margin:1.3rem auto 0;border-radius:20px;overflow:hidden;border:1px solid var(--hp-edge);box-shadow:0 34px 80px -30px rgba(0,0,0,.75);background:#090e20;aspect-ratio:16/9}
-        .vw__box video{display:block;width:100%;height:100%;object-fit:contain;background:#090e20}
+        .vw__box video,.vw__box iframe{display:block;width:100%;height:100%;object-fit:contain;background:#090e20;border:0}
         .vw__play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(7,13,34,.18);border:0;cursor:pointer;padding:0}
         .vw__play span{width:84px;height:84px;border-radius:50%;background:rgba(29,151,227,.95);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;padding-left:6px;box-shadow:0 14px 34px rgba(0,0,0,.5);transition:transform .15s ease}
         .vw__play:hover span,.vw__play:focus-visible span{transform:scale(1.07)}
@@ -1113,14 +1113,23 @@
       <script>
         (function(){
           var v=document.getElementById('vemvid'), b=document.getElementById('vemplay'); if(!v||!b) return;
+          var YT='QxO1TYRihkg', tall=false;
           function hide(){ b.style.display='none'; }
-          b.addEventListener('click',function(){ hide(); try{ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
-            try{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{page:location.pathname}); }catch(e){} });
-          v.addEventListener('play',hide);
           /* a phone held upright gets the phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
-          try{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){
+          try{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){ tall=true;
             var sv=v.querySelector('source'); sv.src=v.getAttribute('data-tall'); v.poster=v.getAttribute('data-tallposter');
             v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load(); } }catch(e){}
+          /* 19 Oct 2026: anywhere else the button plays the same film from YouTube (a view on our channel), in this box */
+          if(!tall&&YT) v.controls=false;
+          b.addEventListener('click',function(){ hide();
+            try{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{page:location.pathname,src:tall?'own_tall':'youtube'}); }catch(e){}
+            if(!tall&&YT){ var i=document.createElement('iframe');
+              i.src='https://www.youtube-nocookie.com/embed/'+YT+'?autoplay=1&rel=0&playsinline=1';
+              i.title=v.getAttribute('aria-label')+' (YouTube)';
+              i.setAttribute('allow','accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture');
+              i.setAttribute('allowfullscreen',''); v.parentNode.replaceChild(i,v); return; }
+            try{ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){} });
+          v.addEventListener('play',hide);
           /* the scan-me QR for computers: opens this page, at the video, on the phone */
           (function(){
             var box=document.getElementById('vemqr'), cv=document.getElementById('vemqrc'); if(!box||!cv) return;
