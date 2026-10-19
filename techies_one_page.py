@@ -36,6 +36,7 @@ the fix-page boxes use, and the build stops if the installer is missing.
 import html
 
 import build_pages as bp
+import yt_watch   # 19 Oct 2026: the hero film plays from YouTube
 from techies_one_boxes import release
 
 SLUG = "techies-one-mail"
@@ -107,7 +108,7 @@ CSS = """    <style>
       .t1p-shot img{display:block;width:100%;height:auto}
       .t1p-cap{margin:.5rem 0 0;font-size:.82rem;color:var(--muted);text-align:center}
       .t1p-film{position:relative;border:1px solid var(--t1edge);border-radius:14px;overflow:hidden;background:#060c1c;box-shadow:0 18px 50px rgba(0,0,0,.35);aspect-ratio:16/9}
-      .t1p-film video{display:block;width:100%;height:100%;object-fit:cover;background:#060c1c}
+      .t1p-film video,.t1p-film img,.t1p-film iframe{display:block;width:100%;height:100%;object-fit:cover;background:#060c1c;border:0}
       .t1p-play{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;border:0;padding:0 0 7%;background:transparent;cursor:pointer}
       .t1p-play span{display:flex;align-items:center;gap:.6rem;background:rgba(6,12,28,.86);color:#fff;font-weight:700;font-size:1.05rem;padding:.85rem 1.4rem .85rem 1.1rem;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);box-shadow:0 12px 32px rgba(0,0,0,.45);transition:transform .2s ease}
       .t1p-play:hover span,.t1p-play:focus-visible span{transform:scale(1.05)}
@@ -200,6 +201,25 @@ def film(src, poster, label, long, short):
             f'          </div>{FILM_JS}')
 
 
+# 19 Oct 2026 (owner: our YouTube videos on the busy pages, so every play is a view on the channel): the hero film plays
+# the same cut from YouTube (yt_watch.T1_FILM, public since 18 Oct). Click-to-play on youtube-nocookie: only the poster
+# loads until the button is pressed. The Mail film further down has no YouTube copy, so it stays ours.
+YT_FILM_JS = ('<script>(function(f){if(!f)return;var b=f.querySelector(".t1p-play");b.addEventListener("click",function(){'
+              'var i=document.createElement("iframe");'
+              'i.src="https://www.youtube-nocookie.com/embed/"+f.getAttribute("data-t1yt")+"?autoplay=1&rel=0&playsinline=1";'
+              'i.title=f.getAttribute("data-title");'
+              'i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");'
+              'i.setAttribute("allowfullscreen","");var p=f.querySelector("img");if(p)p.parentNode.replaceChild(i,p);else f.appendChild(i);'
+              'f.classList.add("on");});})(document.currentScript.previousElementSibling);</script>')
+
+
+def yt_film(video, poster, label, long, short):
+    return (f'<div class="t1p-film" data-t1yt="{video[0]}" data-title="{label}">\n'
+            f'            <img src="{poster}" width="1920" height="1080" alt="" decoding="async">\n'
+            f'            <button class="t1p-play" type="button" aria-label="{long}"><span>{PLAY_SVG}<b class="long">{long}</b><b class="short">{short}</b></span></button>\n'
+            f'          </div>{YT_FILM_JS}')
+
+
 def hero():
     return f"""{CSS}    <section class="page-hero dh dh-hero t1p" aria-label="Introduction">
       <div class="dh-hero__grid">
@@ -216,9 +236,9 @@ def hero():
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
         </div>
         <figure id="video" style="margin:0">
-          {film(SUITE_FILM, SUITE_POSTER, "Techies One in " + SUITE_LEN + ": Mail, Letters, Sums, Files and Space, with a spoken guide and captions",
+          {yt_film(yt_watch.T1_FILM, SUITE_POSTER, "Techies One in " + SUITE_LEN + ": Mail, Letters, Sums, Files and Space, with a spoken guide and captions",
                 "Watch: Techies One in " + SUITE_LEN, "Watch the film")}
-          <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people, emails and files shown are made up.</figcaption>
+          <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people, emails and files shown are made up. &middot; <a href="https://www.youtube.com/watch?v={yt_watch.T1_FILM[0]}" target="_blank" rel="noopener">Watch on YouTube</a></figcaption>
           <details class="t1p-says"><summary>What the film says</summary><p>{SUITE_SAYS}</p></details>
         </figure>
       </div>
@@ -923,7 +943,8 @@ def build():
                                        "and files shown are made up."),
                        "thumbnailUrl": [bp.SITE + SUITE_POSTER], "uploadDate": SUITE_UPLOADED,
                        "duration": "PT%dM%dS" % (SUITE_SECS // 60, SUITE_SECS % 60), "contentUrl": bp.SITE + SUITE_FILM,
-                       "embedUrl": f"{bp.SITE}/{s}/#video", "inLanguage": "en-GB", "publisher": {"@id": bp.SITE + "/#business"}}
+                       "embedUrl": "https://www.youtube.com/embed/" + yt_watch.T1_FILM[0], "inLanguage": "en-GB",
+                       "publisher": {"@id": bp.SITE + "/#business"}}
         mail_video = {"@type": "VideoObject", "@id": f"{bp.SITE}/{s}/#mail-video", "name": "Techies One Mail in %d seconds" % FILM_SECS,
                       "description": ("The email problems Techies One Mail fixes: an old email program that stopped, BT or Sky email "
                                       "that won't go in, fiddly buttons, scam emails, an inbox full of old email and more than one "

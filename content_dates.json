@@ -242,8 +242,8 @@
  },
  "broadband-down": {
   "first": "2026-07-28",
-  "h": "bd3696f8fe7ecc31",
-  "last": "2026-10-13"
+  "h": "e9c005fe9b65b952",
+  "last": "2026-10-19"
  },
  "broadband-help": {
   "first": "2026-07-28",
@@ -262,8 +262,8 @@
  },
  "btinternet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "9aeb82a980102e1c",
-  "last": "2026-10-13"
+  "h": "969b121da4f87083",
+  "last": "2026-10-19"
  },
  "business-access-point-end-of-life": {
   "first": "2026-07-28",
@@ -352,8 +352,8 @@
  },
  "cant-send-btinternet-email-new-outlook": {
   "first": "2026-07-28",
-  "h": "3a28eeb016fe4a48",
-  "last": "2026-10-13"
+  "h": "3e1e9efd64288004",
+  "last": "2026-10-19"
  },
  "case-studies": {
   "first": "2026-07-28",
@@ -377,8 +377,8 @@
  },
  "cctv-not-working-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "904d71fb96b7b172",
-  "last": "2026-10-13"
+  "h": "d7dd7d675f46d7dc",
+  "last": "2026-10-19"
  },
  "cctv-smart-home": {
   "first": "2026-07-28",
@@ -452,8 +452,8 @@
  },
  "comcast-email-moving-to-yahoo": {
   "first": "2026-10-11",
-  "h": "def35852640b6c3b",
-  "last": "2026-10-13"
+  "h": "063ae21ce358d5c9",
+  "last": "2026-10-19"
  },
  "common-outlook-problems-and-fixes": {
   "first": "2026-06-16",
@@ -1062,8 +1062,8 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "d160abb2234b8efb",
-  "last": "2026-10-18"
+  "h": "550b7604dc10bbd1",
+  "last": "2026-10-19"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1081,8 +1081,8 @@
  },
  "eircom-email-price-increase": {
   "first": "2026-10-11",
-  "h": "fb7e682cc3a3eaec",
-  "last": "2026-10-13"
+  "h": "513056ac52083075",
+  "last": "2026-10-19"
  },
  "email-basics-course": {
   "first": "2026-07-28",
@@ -1191,8 +1191,8 @@
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
-  "h": "89f133128b7d005d",
-  "last": "2026-10-13"
+  "h": "31dd4a0eb741e297",
+  "last": "2026-10-19"
  },
  "forgot-windows-password-or-pin": {
   "first": "2026-10-12",
@@ -1219,8 +1219,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "e3c50dc72aadc0d7",
-  "last": "2026-10-18"
+  "h": "6d9521e1cd7e9290",
+  "last": "2026-10-19"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -1239,8 +1239,8 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "f332a1992f57aada",
-  "last": "2026-10-17"
+  "h": "2218fb5b1565a11f",
+  "last": "2026-10-19"
  },
  "gaming-pc-tune-up": {
   "first": "2026-09-05",
@@ -1284,8 +1284,8 @@
  },
  "greenby-email-login": {
   "first": "2026-10-13",
-  "h": "6faefcfbbcb8920b",
-  "last": "2026-10-13"
+  "h": "976b7e040818507a",
+  "last": "2026-10-19"
  },
  "hard-drive-upgrade": {
   "first": "2026-07-28",
@@ -1373,8 +1373,8 @@
  },
  "how-to-check-laptop-battery-health": {
   "first": "2026-10-13",
-  "h": "c46d85502db88813",
-  "last": "2026-10-17"
+  "h": "970031a425c04dee",
+  "last": "2026-10-19"
  },
  "how-to-check-ssd-health": {
   "first": "2026-10-17",
@@ -1406,8 +1406,8 @@
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
-  "h": "50129822342ee445",
-  "last": "2026-10-18"
+  "h": "62f0d88b7290d6d6",
+  "last": "2026-10-19"
  },
  "how-to-keep-children-safe-online": {
   "first": "2026-06-16",
@@ -1470,8 +1470,8 @@
  },
  "how-to-set-an-alarm-on-your-computer": {
   "first": "2026-10-08",
-  "h": "ddc52f54f817e51e",
-  "last": "2026-10-13"
+  "h": "4426b16283d4ed37",
+  "last": "2026-10-19"
  },
  "how-to-set-up-a-new-windows-computer": {
   "first": "2026-06-16",
@@ -1569,8 +1569,8 @@
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
-  "h": "0a680f6e7832d783",
-  "last": "2026-10-13"
+  "h": "73bb1f1773fb65af",
+  "last": "2026-10-19"
  },
  "identity-theft": {
   "first": "2026-07-28",
@@ -1584,8 +1584,8 @@
  },
  "is-it-down": {
   "first": "2026-07-28",
-  "h": "ae68adcecd2e8d42",
-  "last": "2026-10-13"
+  "h": "36c29489ee96cbeb",
+  "last": "2026-10-19"
  },
  "is-it-safe-to-buy-a-refurbished-laptop": {
   "first": "2026-06-19",
@@ -1604,8 +1604,8 @@
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "e9efc70bf35cf794",
-  "last": "2026-10-18"
+  "h": "e311779c2d478546",
+  "last": "2026-10-19"
  },
  "it-advice": {
   "first": "2026-07-28",
@@ -2064,8 +2064,8 @@
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
-  "h": "8e38e308e72c5264",
-  "last": "2026-10-13"
+  "h": "70eb0411b3c2ffed",
+  "last": "2026-10-19"
  },
  "join": {
   "first": "2026-07-28",
@@ -2122,13 +2122,13 @@
  },
  "laptop-shuts-down-at-30-percent-battery": {
   "first": "2026-08-01",
-  "h": "d03147f5097bdd32",
-  "last": "2026-10-13"
+  "h": "955f4b6121b71309",
+  "last": "2026-10-19"
  },
  "laptop-shuts-off-when-moved": {
   "first": "2026-08-01",
-  "h": "c92ac8102190c6a7",
-  "last": "2026-10-13"
+  "h": "e4b5c1da6603968a",
+  "last": "2026-10-19"
  },
  "laptop-ssd-upgrade-bournemouth": {
   "first": "2026-07-28",
@@ -2146,8 +2146,8 @@
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
-  "h": "ce80cb87c14ad764",
-  "last": "2026-10-13"
+  "h": "889a3f43310ec7b2",
+  "last": "2026-10-19"
  },
  "laptop-wont-turn-on-no-lights": {
   "first": "2026-07-28",
@@ -2259,8 +2259,8 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "8b10d08ceccd2ade",
-  "last": "2026-10-13"
+  "h": "a713e7448e6629b7",
+  "last": "2026-10-19"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
@@ -2299,8 +2299,8 @@
  },
  "move-plusnet-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "58f9f20d93cbd5c5",
-  "last": "2026-10-13"
+  "h": "604779f229de848d",
+  "last": "2026-10-19"
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
@@ -2314,8 +2314,8 @@
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "1f95e8a509ef3c9f",
-  "last": "2026-10-13"
+  "h": "da891f1d3db93255",
+  "last": "2026-10-19"
  },
  "new-computer-setup": {
   "first": "2026-07-28",
@@ -2339,8 +2339,8 @@
  },
  "new-outlook-emails-stuck-in-drafts": {
   "first": "2026-07-28",
-  "h": "79f2a099502a59a3",
-  "last": "2026-10-13"
+  "h": "ff559cb170d52682",
+  "last": "2026-10-19"
  },
  "new-outlook-missing-features": {
   "first": "2026-07-28",
@@ -2349,18 +2349,18 @@
  },
  "new-outlook-no-send-receive-button": {
   "first": "2026-07-28",
-  "h": "44cfd79fa5742176",
-  "last": "2026-10-13"
+  "h": "75cef0d62691337b",
+  "last": "2026-10-19"
  },
  "new-outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "7e3ceb0d8fa65c93",
-  "last": "2026-10-13"
+  "h": "5a8cb306df62bd27",
+  "last": "2026-10-19"
  },
  "new-outlook-only-showing-recent-emails": {
   "first": "2026-07-28",
-  "h": "38a4414f655d55e4",
-  "last": "2026-10-13"
+  "h": "3828cceff18d9ac4",
+  "last": "2026-10-19"
  },
  "new-outlook-search-not-working": {
   "first": "2026-07-28",
@@ -2558,8 +2558,8 @@
  },
  "outlook-cant-add-account-new-outlook": {
   "first": "2026-07-28",
-  "h": "4656019416416857",
-  "last": "2026-10-18"
+  "h": "21c97783a1a7f00f",
+  "last": "2026-10-19"
  },
  "outlook-cant-sign-in": {
   "first": "2026-07-28",
@@ -2648,8 +2648,8 @@
  },
  "outlook-not-responding": {
   "first": "2026-07-28",
-  "h": "9cc05b5b785d653b",
-  "last": "2026-10-18"
+  "h": "0eca469c46ee629e",
+  "last": "2026-10-19"
  },
  "outlook-not-sending-emails": {
   "first": "2026-07-28",
@@ -2658,8 +2658,8 @@
  },
  "outlook-not-showing-new-emails": {
   "first": "2026-07-28",
-  "h": "e2393167ad6e490a",
-  "last": "2026-10-18"
+  "h": "7424c94811bbe6df",
+  "last": "2026-10-19"
  },
  "outlook-not-syncing": {
   "first": "2026-07-28",
@@ -2728,8 +2728,8 @@
  },
  "outlook-search-not-finding-old-emails": {
   "first": "2026-07-28",
-  "h": "bebb2112f65a56df",
-  "last": "2026-10-18"
+  "h": "c644f7e9fdea097b",
+  "last": "2026-10-19"
  },
  "outlook-search-not-returning-all-results": {
   "first": "2026-07-28",
@@ -2914,8 +2914,8 @@
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "b14c6c870317ac2d",
-  "last": "2026-10-13"
+  "h": "eb8ca60b59e9d35c",
+  "last": "2026-10-19"
  },
  "portal": {
   "first": "2026-09-05",
@@ -2944,13 +2944,13 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "c075c17ddbedecfa",
-  "last": "2026-10-13"
+  "h": "1fcf230e6145f366",
+  "last": "2026-10-19"
  },
  "printer-offline": {
   "first": "2026-10-12",
-  "h": "081f9b95f651b0e1",
-  "last": "2026-10-13"
+  "h": "7ee88855bc86a8df",
+  "last": "2026-10-19"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
@@ -2959,13 +2959,13 @@
  },
  "printer-says-wifi-password-incorrect": {
   "first": "2026-07-28",
-  "h": "cd96930a6619dcc5",
-  "last": "2026-10-13"
+  "h": "6a530a88541936aa",
+  "last": "2026-10-19"
  },
  "printer-stopped-working-after-changing-wifi-password": {
   "first": "2026-07-28",
-  "h": "4ef6fb831b2a2894",
-  "last": "2026-10-13"
+  "h": "d1d5018772454d3b",
+  "last": "2026-10-19"
  },
  "printer-support": {
   "first": "2026-07-28",
@@ -2974,8 +2974,8 @@
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "9506d59f138c847f",
-  "last": "2026-10-13"
+  "h": "b2bde61c71794efa",
+  "last": "2026-10-19"
  },
  "printer-wont-connect-after-moving-house": {
   "first": "2026-07-28",
@@ -2989,8 +2989,8 @@
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "896671588c633a7f",
-  "last": "2026-10-13"
+  "h": "213bc729beed723d",
+  "last": "2026-10-19"
  },
  "printer-wont-connect-to-mesh-wifi": {
   "first": "2026-07-28",
@@ -3296,8 +3296,8 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "bdded9bd1b2949ff",
-  "last": "2026-10-13"
+  "h": "17cd3fbcf076656b",
+  "last": "2026-10-19"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
@@ -3341,8 +3341,8 @@
  },
  "sky-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "0998d263696bdd82",
-  "last": "2026-10-13"
+  "h": "edf673cf6fe7acf6",
+  "last": "2026-10-19"
  },
  "slow-computer-repair": {
   "first": "2026-07-28",
@@ -3415,8 +3415,8 @@
  },
  "stop-programs-starting-with-windows": {
   "first": "2026-10-13",
-  "h": "dd7c9a92cb87baa0",
-  "last": "2026-10-18"
+  "h": "1b39ee349d3afacb",
+  "last": "2026-10-19"
  },
  "stop-using-onedrive-without-losing-files": {
   "first": "2026-07-28",
@@ -3470,8 +3470,8 @@
  },
  "techies-one-mail": {
   "first": "2026-10-10",
-  "h": "6a9791222356b958",
-  "last": "2026-10-18"
+  "h": "62e3212809967884",
+  "last": "2026-10-19"
  },
  "techies-one-mail-film": {
   "first": "2026-10-13",
@@ -3847,8 +3847,8 @@
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
-  "h": "1096911cccc61d58",
-  "last": "2026-10-13"
+  "h": "6568066d89670307",
+  "last": "2026-10-19"
  },
  "windows-10-esu-business-cost": {
   "first": "2026-07-29",
@@ -3867,8 +3867,8 @@
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
-  "h": "0b0c2cd2aeccd080",
-  "last": "2026-10-13"
+  "h": "c6cfddc827242069",
+  "last": "2026-10-19"
  },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
@@ -3882,8 +3882,8 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "0b21a124851098d0",
-  "last": "2026-10-13"
+  "h": "e0f8df00135f92c5",
+  "last": "2026-10-19"
  },
  "windows-11-support": {
   "first": "2026-07-28",
@@ -3902,8 +3902,8 @@
  },
  "windows-live-mail-not-working": {
   "first": "2026-10-12",
-  "h": "ff3eecf546dc5682",
-  "last": "2026-10-13"
+  "h": "e3a15c26fd62d9db",
+  "last": "2026-10-19"
  },
  "windows-reinstall": {
   "first": "2026-07-28",

@@ -8,6 +8,7 @@ import io
 import os as _os_pcm
 import json as _json_pcm
 import build_pages as bp
+import yt_watch   # 19 Oct 2026: the PC Manager tour button under the /free-pc-health-check/ reel
 from build_pages import (FIX_FLOW_STYLE, FIX_FLOW_SCRIPT, _fix_flow_section, _ff_plan_card, _ff_fixed_ending, _ff_stuck_ending, _ff_steps_html, _ff_plain, _ff_first_sentences, _FIX_FLOW_BIZ_RE)
 import build_local  # registers the 12 local/customer pages on import
 from reviews_data import REVIEWS, BY_NAME, pick   # one source of truth - must
@@ -936,6 +937,7 @@ def pcm_landing():
           </button>
         </div>
         <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0;text-align:center">The real app, version 36 &mdash; health score &rarr; My PC &rarr; internet &amp; email &rarr; Scam check &rarr; photos &rarr; music &rarr; radio &rarr; DJ decks &rarr; alarms &rarr; Get help &rarr; games. Nothing mocked up: the music screens show the app&rsquo;s sample library.</p>
+        <p style="text-align:center;margin:.3rem 0 0">''' + yt_watch.button(yt_watch.PCM_TOUR, "Watch the full 5-minute tour, with sound") + '''</p>
       </div>
       <script>
         (function(){
@@ -1193,9 +1195,12 @@ def pcm_landing():
     </script>''',
       cta("Rather we just sorted it?", "Put your computer on a 365 support plan and we&rsquo;ll keep it healthy for you &mdash; the app included.",
           primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+      # 19 Oct 2026: at big-text widths the no-wrap button squeezed the words to one letter a line (a 1,403 px bar over the
+      # whole screen at 240 px): the row now wraps, and under 360 px only "Free & signed" shows beside the button.
       ('''    <div id="pcmbar" role="region" aria-label="''' + ("Get the app" if PCM_LIVE else "Join the waitlist") + '''" style="position:fixed;left:0;right:0;bottom:0;z-index:60;transform:translateY(130%);transition:transform .3s ease;background:rgba(10,18,38,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(125,170,220,.3);box-shadow:0 -10px 30px rgba(0,0,0,.35)">
-      <div class="wrap" style="display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem">
-        <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong> &mdash; 365 PC Manager is ready to download, and installs in a couple of clicks." if PCM_LIVE else "<strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.") + '''</span>
+      <style>@media (max-width:359px){#pcmbar .pcmbar__more{display:none}}</style>
+      <div class="wrap" style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .7rem;padding:.65rem 1rem">
+        <span style="flex:1 1 8rem;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong><span class=\"pcmbar__more\"> &mdash; 365 PC Manager is ready to download, and installs in a couple of clicks.</span>" if PCM_LIVE else "<strong>Coming soon</strong><span class=\"pcmbar__more\"> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.</span>") + '''</span>
         <a href="#download" class="button primary" id="pcmbarcta" style="white-space:nowrap;padding:.5rem 1rem;flex:0 0 auto">''' + ("Download free &#8595;" if PCM_LIVE else "Join free &#8594;") + '''</a>
         <button type="button" id="pcmbarx" aria-label="Dismiss this bar" style="background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:.1rem .35rem;flex:0 0 auto">&times;</button>
       </div>

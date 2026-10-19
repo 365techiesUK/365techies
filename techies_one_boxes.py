@@ -22,6 +22,7 @@ import os
 import re
 
 import build_pages as bp
+import yt_watch   # 19 Oct 2026: the Techies One film on YouTube, under each 9-second clip
 
 FIX, ALT = "fix", "alt"
 
@@ -132,7 +133,8 @@ def clip(slug):
     return (f'          <figure class="t1m__clip" data-t1clip><div class="t1m__vid"><video muted loop playsinline preload="none" '
             f'poster="/images/t1-clip-{name}.jpg" width="1280" height="720" aria-label="{CLIP_SAYS[name]}">'
             f'<source src="/images/t1-clip-{name}.mp4" type="video/mp4"></video></div>'
-            f'<figcaption>The real program, with made-up demo emails &middot; 9 seconds, no sound</figcaption></figure>\n'
+            f'<figcaption>The real program, with made-up demo emails &middot; 9 seconds, no sound</figcaption>'
+            f'{yt_watch.button(yt_watch.T1_FILM, "Watch the Techies One film, with sound (under 2 minutes)")}</figure>\n'
             f'          {CLIP_JS}\n')
 
 

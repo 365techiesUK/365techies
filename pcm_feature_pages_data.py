@@ -77,6 +77,7 @@ Preview locally: set PCM_FEATURE_PREVIEW=1 and build; build again without it bef
 The electricity price is Ofgem's cap for 1 Oct - 31 Dec 2026 (Direct Debit, GB average), read on ofgem.gov.uk on
 8 Oct 2026: 26.32p a kWh, 54.83p a day standing charge. Update PRICE_P / PRICE_FROM each quarter.
 """
+import yt_watch   # 19 Oct 2026: the voiced YouTube Short under each 9-second clip (yt_watch.PCM_SHORTS)
 
 LIVE = True
 
@@ -164,7 +165,8 @@ def _app_box(key, head, what_html, setup_url, note='', clip=''):
             + (f'<figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);aspect-ratio:16/9;background:#060c1c">'
                f'<video muted loop playsinline preload="none" poster="/images/pcm-clip-{clip}.jpg" width="1280" height="720" aria-label="{alt}" '
                f'style="display:block;width:100%;height:100%;object-fit:cover"><source src="/images/pcm-clip-{clip}.mp4" type="video/mp4"></video></div>'
-               f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption></figure>' + _CLIP_JS + '</div>'
+               f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption>'
+               + yt_watch.pcm_short(clip) + '</figure>' + _CLIP_JS + '</div>'
                if clip else
                f'<figure style="margin:0"><img src="{src}" width="{w}" height="{h}" alt="{alt}" loading="lazy" decoding="async" '
                f'style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
