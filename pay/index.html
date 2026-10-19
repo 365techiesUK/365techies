@@ -856,6 +856,29 @@
         <!-- 19 Oct 2026 (owner: "send them a payment link that sends them to our website, and then they can choose how they want
              to pay"): the staff console's pay link is /pay/?amount=60.00&ref=12838 - amount and invoice number only, nothing
              personal. Shown here, put into the bank-transfer reference and the PayPal box; the card payer is told what to type. -->
+        <!-- 19 Oct 2026 (owner: "can PayPal payments mark the invoice paid automatically too?"): on a pay link, the PayPal button is a
+             PayPal checkout with the invoice on it (api/pay-pp.php); PayPal sends the customer back to /pay/?ppdone=1&token=<order>,
+             this box says how it went, and the QuickBooks invoice is marked paid by the server. -->
+        <div id="pay-pp-result" hidden role="status" style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(40,200,120,.55);border-radius:14px;padding:1rem 1.2rem"><p id="pay-pp-msg" style="margin:0;font-size:1.1rem"></p></div>
+        <script>(function(){var q=location.search,box=document.getElementById("pay-pp-result"),msg=document.getElementById("pay-pp-msg");if(!box||!msg)return;
+var amber="rgba(230,150,40,.75)",no="<strong>PayPal couldn&rsquo;t take that payment</strong>, so nothing has been charged. Please try again, or choose another way to pay below.";
+function into(){var go=function(){try{box.scrollIntoView({block:"center"});}catch(e){box.scrollIntoView();}};if(document.readyState==="complete")go();else window.addEventListener("load",go);}
+if(/[?&]ppno=1(?:&|$)/.test(q)){box.hidden=false;msg.innerHTML=no;box.style.borderColor=amber;into();return;}
+if(!/[?&]ppdone=1(?:&|$)/.test(q))return;var t=/[?&]token=([A-Z0-9]{10,30})(?:&|$)/.exec(q),tries=0;
+box.hidden=false;msg.textContent="Confirming your PayPal payment…";into();
+function money(a){return /^[0-9]{1,5}[.][0-9]{2}$/.test(a||"")?"&pound;"+a:"";}
+function okref(r){return /^[A-Za-z0-9-]{1,24}$/.test(r||"");}
+function show(j){var s=j&&j.ok?j.state:"";if(s==="busy"&&tries++<2){setTimeout(ask,4000);return;}
+var m=j?money(j.amount):"",r=j&&okref(j.ref)?" Reference <strong>"+j.ref+"</strong>.":"";
+if(s==="declined"&&m&&j&&okref(j.ref)){location.replace("/pay/?amount="+j.amount+"&ref="+j.ref+"&ppno=1");return;}
+if(s==="paid")msg.innerHTML="<strong>Thank you &mdash; your PayPal payment"+(m?" of "+m:"")+" has gone through.</strong>"+r+" There&rsquo;s nothing more to do; PayPal will email you a receipt.";
+else if(s==="pending")msg.innerHTML="<strong>Thank you &mdash; PayPal has your payment"+(m?" of "+m:"")+"</strong> and is just finishing its checks."+r+" There&rsquo;s nothing more to do: it reaches us as soon as PayPal clears it.";
+else if(s==="declined"){msg.innerHTML=no;box.style.borderColor=amber;}
+else{msg.innerHTML="<strong>We couldn&rsquo;t confirm that PayPal payment just now.</strong> If PayPal says you&rsquo;ve paid, please don&rsquo;t pay again &mdash; it will reach us. Any doubt, call us on <a href='tel:+441202775566'>01202 775566</a>.";box.style.borderColor=amber;}
+into();try{history.replaceState(null,"","/pay/");}catch(e){}}
+function ask(){var x=new XMLHttpRequest();x.open("POST","/api/pay-pp.php");x.setRequestHeader("Content-Type","application/json");x.timeout=45000;
+x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}show(j);};x.onerror=x.ontimeout=function(){show(null);};x.send(JSON.stringify({"do":"done",order:t[1]}));}
+if(!t){show(null);return;}ask();})();</script>
         <div id="pay-due" hidden style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(29,151,227,.55);border-radius:14px;padding:1rem 1.2rem">
           <p style="margin:0;font-size:1.2rem">Amount to pay: <strong id="pay-due-amt"></strong><span id="pay-due-refw"> &middot; Reference: <strong class="mono" id="pay-due-ref"></strong></span></p>
           <p style="margin:.4rem 0 0;color:var(--muted);font-size:.92rem">Choose whichever way suits you below &mdash; bank transfer, card or PayPal. Please use the reference so we know it&rsquo;s you.</p>
@@ -899,7 +922,12 @@ document.getElementById("pay-due-amt").innerHTML=money;if(ref)document.getElemen
 if(ref){var w=document.querySelectorAll(".pay-refword");for(var i=0;i<w.length;i++)w[i].textContent=ref;}
 var c=document.querySelector(".pay-card-amt");if(c){c.innerHTML="On the next page, type <strong>"+money+"</strong> as the amount"+(ref?" and <strong>"+ref+"</strong> as the invoice number":"")+".";c.hidden=false;}
 var g=document.getElementById("pay-card-go");if(g&&ref)g.href=g.href.split("?")[0]+"?client_reference_id="+ref;
-var p=document.getElementById("pp-amt");if(p){p.value=a.toFixed(2);var ev;try{ev=new Event("input");}catch(e){ev=document.createEvent("Event");ev.initEvent("input",true,true);}p.dispatchEvent(ev);}})();</script>
+var p=document.getElementById("pp-amt");if(p){p.value=a.toFixed(2);var ev;try{ev=new Event("input");}catch(e){ev=document.createEvent("Event");ev.initEvent("input",true,true);}p.dispatchEvent(ev);}
+var go=document.getElementById("pp-go");if(go&&ref){go.removeAttribute("target");go.addEventListener("click",function(e){e.preventDefault();if(go.getAttribute("data-busy"))return;go.setAttribute("data-busy","1");
+var fb=go.href,v=parseFloat((p&&p.value)||""),amt=(isFinite(v)&&v>=1&&v<=5000)?v.toFixed(2):a.toFixed(2);go.textContent="Opening PayPal…";
+var x=new XMLHttpRequest();x.open("POST","/api/pay-pp.php");x.setRequestHeader("Content-Type","application/json");x.timeout=20000;
+x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(err){}var u=j&&j.ok?String(j.url||""):"";location.href=(u.indexOf("https://www.paypal.com/")===0||u.indexOf("https://www.sandbox.paypal.com/")===0)?u:fb;};
+x.onerror=x.ontimeout=function(){location.href=fb;};x.send(JSON.stringify({"do":"start",amount:amt,ref:ref}));});}})();</script>
       </div>
     </section>
     <section class="section" aria-label="Monthly plans" style="padding-top:0">

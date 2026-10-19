@@ -22374,9 +22374,10 @@ def pay_page():
         <div id="pay-pp-result" hidden role="status" style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(40,200,120,.55);border-radius:14px;padding:1rem 1.2rem"><p id="pay-pp-msg" style="margin:0;font-size:1.1rem"></p></div>
         <script>(function(){{var q=location.search,box=document.getElementById("pay-pp-result"),msg=document.getElementById("pay-pp-msg");if(!box||!msg)return;
 var amber="rgba(230,150,40,.75)",no="<strong>PayPal couldn&rsquo;t take that payment</strong>, so nothing has been charged. Please try again, or choose another way to pay below.";
-if(/[?&]ppno=1(?:&|$)/.test(q)){{box.hidden=false;msg.innerHTML=no;box.style.borderColor=amber;return;}}
+function into(){{var go=function(){{try{{box.scrollIntoView({{block:"center"}});}}catch(e){{box.scrollIntoView();}}}};if(document.readyState==="complete")go();else window.addEventListener("load",go);}}
+if(/[?&]ppno=1(?:&|$)/.test(q)){{box.hidden=false;msg.innerHTML=no;box.style.borderColor=amber;into();return;}}
 if(!/[?&]ppdone=1(?:&|$)/.test(q))return;var t=/[?&]token=([A-Z0-9]{{10,30}})(?:&|$)/.exec(q),tries=0;
-box.hidden=false;msg.textContent="Confirming your PayPal payment…";
+box.hidden=false;msg.textContent="Confirming your PayPal payment…";into();
 function money(a){{return /^[0-9]{{1,5}}[.][0-9]{{2}}$/.test(a||"")?"&pound;"+a:"";}}
 function okref(r){{return /^[A-Za-z0-9-]{{1,24}}$/.test(r||"");}}
 function show(j){{var s=j&&j.ok?j.state:"";if(s==="busy"&&tries++<2){{setTimeout(ask,4000);return;}}
@@ -22386,7 +22387,7 @@ if(s==="paid")msg.innerHTML="<strong>Thank you &mdash; your PayPal payment"+(m?"
 else if(s==="pending")msg.innerHTML="<strong>Thank you &mdash; PayPal has your payment"+(m?" of "+m:"")+"</strong> and is just finishing its checks."+r+" There&rsquo;s nothing more to do: it reaches us as soon as PayPal clears it.";
 else if(s==="declined"){{msg.innerHTML=no;box.style.borderColor=amber;}}
 else{{msg.innerHTML="<strong>We couldn&rsquo;t confirm that PayPal payment just now.</strong> If PayPal says you&rsquo;ve paid, please don&rsquo;t pay again &mdash; it will reach us. Any doubt, call us on <a href='tel:+441202775566'>01202 775566</a>.";box.style.borderColor=amber;}}
-try{{history.replaceState(null,"","/pay/");}}catch(e){{}}}}
+into();try{{history.replaceState(null,"","/pay/");}}catch(e){{}}}}
 function ask(){{var x=new XMLHttpRequest();x.open("POST","/api/pay-pp.php");x.setRequestHeader("Content-Type","application/json");x.timeout=45000;
 x.onload=function(){{var j=null;try{{j=JSON.parse(x.responseText);}}catch(e){{}}show(j);}};x.onerror=x.ontimeout=function(){{show(null);}};x.send(JSON.stringify({{"do":"done",order:t[1]}}));}}
 if(!t){{show(null);return;}}ask();}})();</script>
