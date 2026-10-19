@@ -14,6 +14,7 @@ function plq_log($m) { $GLOBALS['G']['log'][] = $m; }
 function plq_slack($t) { $GLOBALS['G']['slack'][] = $t; return empty($GLOBALS['G']['hookfail']); }
 define('PCM_SLACK_LIB', 1);   // the real Slack library stays out: its bot is stubbed here
 function slk_call($m, $a, $t = 6) { $GLOBALS['G']['bot'][] = array($m, $a); return array('ok' => true); }
+function slk_creds() { return array('xoxb-test', 'C0B4TD439FB'); }
 function st_api($cr, $m, $path, $p = array(), $idem = '') {
     $GLOBALS['G']['stripe_calls']++;
     if ($path === '/v1/checkout/sessions') return array(200, array('data' => $GLOBALS['G']['list']));
@@ -218,12 +219,12 @@ check(pl_job_invoice($jf, 'x@example.com', 'X', 90) === null, 'a different amoun
 check(pl_job_invoice($jf, 'old@example.com', 'Old', 50) === null, 'older than 45 days -> no guess');
 check(pl_job_invoice($jf, '', 'hanna knight', 60) === array('ref' => '12838', 'id' => '12838'), 'no email -> matched by name');
 
-// 9. the webhook refuses (the 302 of 19 Oct 2026) -> the bot posts it to #daily-jobs-in-jobs-out
+// 9. the webhook refuses (the 302 of 19 Oct 2026) -> the bot posts it to #365-job-tracker
 $G['hookfail'] = true; $G['bot'] = array();
 $G['inv']['13020'] = array('Id' => '13020', 'DocNumber' => '4905/160', 'Balance' => 30, 'TotalAmt' => 30, 'CustomerRef' => array('value' => '94', 'name' => 'D Customer'));
 $G['sessions']['cs_live_uUUUUUUUUUU1'] = sess('cs_live_uUUUUUUUUUU1', array('client_reference_id' => '4905-160', 'amount_total' => 3000));
 reset_g(); $r = pst_handle($CR, 'cs_live_uUUUUUUUUUU1');
-check($r[0] === 'done' && count($G['bot']) === 1 && $G['bot'][0][0] === 'chat.postMessage' && $G['bot'][0][1]['channel'] === 'C0BS3BVP48J' && strpos($G['bot'][0][1]['text'], '4905/160') !== false, 'Slack webhook refused -> the bot posts "paid" to #daily-jobs-in-jobs-out', json_encode($G['bot']));
+check($r[0] === 'done' && count($G['bot']) === 1 && $G['bot'][0][0] === 'chat.postMessage' && $G['bot'][0][1]['channel'] === 'C0B4TD439FB' && strpos($G['bot'][0][1]['text'], '4905/160') !== false, 'Slack webhook refused -> the bot posts "paid" to #365-job-tracker', json_encode($G['bot']));
 $G['hookfail'] = false; $G['bot'] = array();
 $G['sessions']['cs_live_vVVVVVVVVVV1'] = sess('cs_live_vVVVVVVVVVV1', array('client_reference_id' => '4905-160', 'amount_total' => 3000));
 $G['inv']['13020']['Balance'] = 30;
