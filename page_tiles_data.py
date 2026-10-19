@@ -136,7 +136,7 @@ PAGE_HERO_TILES = {
  ],
  'dell-business-support-dorset': [
   ('hp-c-fix', 'gauge', 'What the plan covers', 'Monitoring, patching, health checks, backups', 'PROACTIVE', '#s1'),
-  ('hp-c-care', 'phone', 'Remote first, on site too', 'Same-day response from the same small team', 'HOW HELP REACHES YOU', '#s2'),
+  ('hp-c-care', 'phone', 'Remote first, on site too', 'Same-day response from the same team', 'HOW HELP REACHES YOU', '#s2'),
   ('hp-c-biz', 'laptop', 'Refresh tired machines', 'Refurbished Latitudes and OptiPlexes, phased in', 'FROM &pound;510', '/dell-hardware/'),
   ('hp-c-buy', 'briefcase', 'Per-computer pricing', 'Business plans, no VAT added, no long tie-in', 'FROM &pound;24.38', '#s5'),
  ],

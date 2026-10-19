@@ -1220,7 +1220,7 @@ function wl_body($first) {
     . "night when we are not.\r\n\r\n"
     . "Reading this on your phone? Tap the link anyway. We will email you a\r\n"
     . "six-digit code to let you in, and that device stays signed in too.\r\n\r\n"
-    . "Thank you, genuinely, for being with us. We are a small family firm and\r\n"
+    . "Thank you, genuinely, for being with us. We are a family firm and\r\n"
     . "everything we build gets built because people like you stayed with us.\r\n\r\n"
     . "Steve & David\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
@@ -1445,7 +1445,7 @@ function wl_body_html($first) {
 
 <tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 30px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>
-<p style="margin:22px 0 18px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Thank you, genuinely, for being with us. We are a small family firm and everything we build gets built because people like you stayed with us.</p>
+<p style="margin:22px 0 18px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Thank you, genuinely, for being with us. We are a family firm and everything we build gets built because people like you stayed with us.</p>
 <p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>
 <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">365 Techies &middot; family-run IT support in Bournemouth since 1995<br /><a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; <a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>

@@ -6421,7 +6421,7 @@ add(
           <h2 class="section-title section-title--center" data-title>Cyber security help in Bournemouth, Poole and across Dorset<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("A small local team","We&rsquo;re a family-run firm based in Bournemouth, looking after businesses in Christchurch, Poole, Wimborne, Ferndown and across Dorset since 1995. You speak to the people who do the work."),
+{grid_cards([("A local team","We&rsquo;re a family-run firm based in Bournemouth, looking after businesses in Christchurch, Poole, Wimborne, Ferndown and across Dorset since 1995. You speak to the people who do the work."),
              ("Help the same day","Most security work is done remotely and usually the same day: locking down a hacked email account, cleaning a computer, switching on multi-factor sign-in. On a <a href=\"/business-it-support-plans/\">business plan</a>, remote fixes are included."),
              ("On-site when it&rsquo;s needed","Routers, Wi-Fi and new computers sometimes need a visit. We come to you anywhere in Dorset, with the work quoted before we start."),
              ("Prices you can see","Business antivirus, email filtering, staff training and password managers are priced <a href=\"#software\">on this page</a>, per person a month. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),

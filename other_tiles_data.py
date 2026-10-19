@@ -782,7 +782,7 @@ OTHER_HERO_TILES = {
  ],
  'reviews': [
   ('hp-c-fix', 'briefcase', 'See the work behind them', 'Real jobs for real customers, written up', 'CASE STUDIES', '/case-studies/'),
-  ('hp-c-care', 'user', 'Who are David and Steve?', 'The small family team named in these reviews', 'MEET THE TEAM', '/meet-the-team/'),
+  ('hp-c-care', 'user', 'Who are David and Steve?', 'The family team named in these reviews', 'MEET THE TEAM', '/meet-the-team/'),
   ('hp-c-biz', 'star', 'Leave us a review', 'Tell others how we did, straight on Google', 'ON GOOGLE', '/leave-a-review/'),
   ('hp-c-buy', 'home', 'Get the same care', 'Monthly support for homes and businesses', 'SEE PLANS &amp; PRICES', '/monthly-it-support/'),
  ],

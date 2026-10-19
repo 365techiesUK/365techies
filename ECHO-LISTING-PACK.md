@@ -39,7 +39,7 @@ Online support when you need it
 Fast, secure remote help anywhere in the UK — and we always phone before we connect, so you know exactly who you're dealing with.
 
 A friendly face, not a call centre
-Because we're a small family team, you see the same faces year after year. We even run online get-togethers — one-to-one chats, group chats, and quiz afternoons and evenings.
+Because we're a family team, you see the same faces year after year. We even run online get-togethers — one-to-one chats, group chats, and quiz afternoons and evenings.
 
 Easy online booking
 Book or reschedule your appointment in seconds with our online booking system.

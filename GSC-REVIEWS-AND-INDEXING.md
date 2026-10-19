@@ -8,7 +8,7 @@ Google Business Profile → "Ask for reviews".)
 
 ### Text message template (best response for this audience)
 Hi [Name], it's [your name] at 365 Techies — really glad we got your [laptop/computer] sorted!
-If you have a spare moment, a quick Google review genuinely helps our small family business:
+If you have a spare moment, a quick Google review genuinely helps our family business:
 https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI
 Thank you! 😊
 
@@ -19,7 +19,7 @@ Hi [Name],
 
 Thanks for choosing 365 Techies — it was a pleasure helping you with [the issue].
 
-We're a small, family-run business, and honest Google reviews from customers like you make a
+We're a family-run business, and honest Google reviews from customers like you make a
 real difference in helping other local people find us.
 
 If you have a spare minute, we'd be hugely grateful if you'd share your experience here:

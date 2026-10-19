@@ -94,7 +94,7 @@ Hi [name],
 
 Hope you're well! We're proud to look after [company]'s IT, and we've featured you as one of the local businesses we work with on our new website: https://365techies.co.uk/about/
 
-If you have a "suppliers", "partners" or "who we work with" page, we'd love to be added as your IT support in return — every local link genuinely helps a small family firm like ours. No problem at all if it's not something you do.
+If you have a "suppliers", "partners" or "who we work with" page, we'd love to be added as your IT support in return — every local link genuinely helps a family firm like ours. No problem at all if it's not something you do.
 
 Thanks for being great to work with — we're always a call away on 01202 775566.
 
