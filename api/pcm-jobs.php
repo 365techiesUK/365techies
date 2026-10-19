@@ -125,12 +125,79 @@ function slack_send($hook, $payload) {
     return array($code >= 200 && $code < 300, $code, substr((string)$res, 0, 120));
 }
 
+// 19 Oct 2026: the #daily-jobs-in-jobs-out webhook went quiet after 28 Sep (Slack answered "302", and the console said
+// "tell David by hand"). The portal's Slack BOT (pcm-slack-bot.php - the one that posts the Service Reports, and was
+// in that channel) now carries the card whenever the webhook fails or isn't set. Channel: $SLACK_JOBS_CHANNEL in
+// pcm-slack-bot.php if it's there, otherwise #daily-jobs-in-jobs-out.
+function jobs_bot_channel() {
+    $f = __DIR__ . '/pcm-slack-bot.php';
+    $raw = is_file($f) ? (string)@file_get_contents($f) : '';
+    return preg_match('/\$SLACK_JOBS_CHANNEL\s*=\s*[\'"]([A-Z0-9]{8,14})[\'"]/', $raw, $m) ? $m[1] : 'C0BS3BVP48J';
+}
+function jobs_bot_ready() {
+    require_once __DIR__ . '/pcm-slack-lib.php';
+    $c = slk_creds();
+    return $c[0] !== '';
+}
+// The card for one job record -> array(summary text, blocks)
+function jobs_card($j) {
+    $name = (string)($j['name'] ?? ''); $email = (string)($j['email'] ?? ''); $phone = (string)($j['phone'] ?? '');
+    $addr = (string)($j['addr'] ?? ''); $desc = (string)($j['desc'] ?? ''); $note = (string)($j['note'] ?? '');
+    $amount = (float)($j['amount'] ?? 0); $invU = (string)($j['invoice_url'] ?? ''); $invN = (string)($j['invoice_no'] ?? '');
+    $qbo = (string)($j['qbo'] ?? ''); $who = (string)($j['by'] ?? 'staff'); $ts = (int)($j['ts'] ?? time()); $id = (string)($j['id'] ?? '');
+    $fields = array();
+    if ($name !== '')  $fields[] = array('type' => 'mrkdwn', 'text' => "*Customer:*\n" . slack_esc($name));
+    $fields[] = array('type' => 'mrkdwn', 'text' => "*Agreed:*\n£" . number_format($amount, 2));
+    if ($email !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Email:*\n" . slack_esc($email));
+    if ($phone !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Phone:*\n" . slack_esc($phone));
+    if ($addr !== '')  $fields[] = array('type' => 'mrkdwn', 'text' => "*Address:*\n" . slack_esc($addr));
+    $blocks = array(
+        array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => '💷 Quote agreed — ' . ($name !== '' ? $name : $email), 'emoji' => true)),
+        array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => "*Job:* " . slack_esc($desc))),
+        array('type' => 'section', 'fields' => array_slice($fields, 0, 10)),
+    );
+    if ($note !== '') $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => "*Notes:*\n>" . str_replace("\n", "\n>", slack_esc($note))));
+    if ($invU !== '') {
+        $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
+            'text' => "✅ *Draft invoice ready in QuickBooks* — <" . $invU . "|open it" . ($invN !== '' ? ' (#' . slack_esc($invN) . ')' : '') . "> and press send."));
+    } else {
+        $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
+            'text' => "📝 *To do:* raise the invoice in QuickBooks from the details above." .
+                      ($qbo === 'no_config' ? " _(QuickBooks isn't connected to the portal yet, so this one is by hand.)_" : "")));
+    }
+    $blocks[] = array('type' => 'context', 'elements' => array(array('type' => 'mrkdwn',
+        'text' => 'Agreed by ' . slack_esc($who) . ' · ' . date('H:i, D j M', $ts) . ' · job ' . $id . ' · reply in this thread when it\'s sent and when it\'s paid')));
+    $summary = 'Quote agreed: ' . ($name !== '' ? $name : $email) . ' — ' . $desc . ' — £' . number_format($amount, 2);
+    return array($summary, $blocks);
+}
+// Post one job's card: the webhook first, then the bot. -> array(slack: sent|failed|not-configured, code, via, bot)
+function jobs_post_card($j) {
+    list($summary, $blocks) = jobs_card($j);
+    $o = array('slack' => 'not-configured', 'code' => 0, 'via' => '', 'bot' => '');
+    $hook = jobs_hook();
+    if ($hook !== '') {
+        list($okS, $code, $body) = slack_send($hook, array('text' => $summary, 'blocks' => $blocks, 'unfurl_links' => false));
+        $o['code'] = $code;
+        if ($okS) { $o['slack'] = 'sent'; $o['via'] = 'webhook'; return $o; }
+        $o['slack'] = 'failed';
+        lg('slack webhook failed ' . $code . ' ' . $body . ' for ' . ($j['id'] ?? ''));
+    }
+    require_once __DIR__ . '/pcm-slack-lib.php';
+    $r = slk_call('chat.postMessage', array('channel' => jobs_bot_channel(), 'text' => $summary, 'blocks' => $blocks, 'unfurl_links' => false), 8);
+    if (!empty($r['ok'])) { $o['slack'] = 'sent'; $o['via'] = 'bot'; lg('slack via the bot for ' . ($j['id'] ?? '')); return $o; }
+    $e = substr((string)(isset($r['error']) ? $r['error'] : 'unknown'), 0, 40);
+    if ($e === 'not_configured' && $o['slack'] === 'not-configured') return $o;
+    $o['slack'] = 'failed'; $o['bot'] = $e;
+    lg('slack bot failed ' . $e . ' for ' . ($j['id'] ?? ''));
+    return $o;
+}
+
 // ===========================================================================
 if ($action === 'recent') {
     $n = max(1, min(50, (int)(isset($in['n']) ? $in['n'] : 20)));
     $data = @json_decode((string)@file_get_contents($JOBS), true);
     $jobs = (is_array($data) && isset($data['jobs']) && is_array($data['jobs'])) ? $data['jobs'] : array();
-    out(array('ok' => true, 'jobs' => array_slice(array_reverse($jobs), 0, $n), 'slack' => (jobs_hook() !== '' ? 'ready' : 'not-configured')));
+    out(array('ok' => true, 'jobs' => array_slice(array_reverse($jobs), 0, $n), 'slack' => ((jobs_hook() !== '' || jobs_bot_ready()) ? 'ready' : 'not-configured')));
 }
 
 if ($action === 'quote') {
@@ -165,40 +232,25 @@ if ($action === 'quote') {
     if (empty($r['ok'])) fail(isset($r['error']) ? $r['error'] : 'store');
     lg('quote ' . $id . ' ' . $email . ' £' . number_format($amount, 2) . ' by ' . $who);
 
-    // ---- the Slack card: one post per job ----
-    $hook = jobs_hook();
-    $slack = 'not-configured'; $scode = 0;
-    if ($hook !== '') {
-        $fields = array();
-        if ($name !== '')  $fields[] = array('type' => 'mrkdwn', 'text' => "*Customer:*\n" . slack_esc($name));
-        $fields[] = array('type' => 'mrkdwn', 'text' => "*Agreed:*\n£" . number_format($amount, 2));
-        if ($email !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Email:*\n" . slack_esc($email));
-        if ($phone !== '') $fields[] = array('type' => 'mrkdwn', 'text' => "*Phone:*\n" . slack_esc($phone));
-        if ($addr !== '')  $fields[] = array('type' => 'mrkdwn', 'text' => "*Address:*\n" . slack_esc($addr));
+    // ---- the Slack card: one post per job (the webhook, else the bot - jobs_post_card) ----
+    $p = jobs_post_card($job);
+    out(array('ok' => true, 'id' => $id, 'slack' => $p['slack'], 'slack_code' => $p['code'], 'slack_via' => $p['via'], 'slack_bot' => $p['bot']));
+}
 
-        $blocks = array(
-            array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => '💷 Quote agreed — ' . ($name !== '' ? $name : $email), 'emoji' => true)),
-            array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => "*Job:* " . slack_esc($desc))),
-            array('type' => 'section', 'fields' => array_slice($fields, 0, 10)),
-        );
-        if ($note !== '') $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => "*Notes:*\n>" . str_replace("\n", "\n>", slack_esc($note))));
-        if ($invU !== '') {
-            $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
-                'text' => "✅ *Draft invoice ready in QuickBooks* — <" . $invU . "|open it" . ($invN !== '' ? ' (#' . slack_esc($invN) . ')' : '') . "> and press send."));
-        } else {
-            $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
-                'text' => "📝 *To do:* raise the invoice in QuickBooks from the details above." .
-                          ($qbo === 'no_config' ? " _(QuickBooks isn't connected to the portal yet, so this one is by hand.)_" : "")));
-        }
-        $blocks[] = array('type' => 'context', 'elements' => array(array('type' => 'mrkdwn',
-            'text' => 'Agreed by ' . slack_esc($who) . ' · ' . date('H:i, D j M') . ' · job ' . $id . ' · reply in this thread when it\'s sent and when it\'s paid')));
-
-        $summary = 'Quote agreed: ' . ($name !== '' ? $name : $email) . ' — ' . $desc . ' — £' . number_format($amount, 2);
-        list($okS, $scode, $body) = slack_send($hook, array('text' => $summary, 'blocks' => $blocks, 'unfurl_links' => false));
-        $slack = $okS ? 'sent' : 'failed';
-        if (!$okS) lg('slack failed ' . $scode . ' ' . $body . ' for ' . $id);
+// 19 Oct 2026: post a recorded job's card again - the console's "Post it to Slack again" after a failed post
+if ($action === 'reslack') {
+    $id = preg_replace('/[^0-9a-z-]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
+    if ($id === '') fail('bad_id');
+    $data = @json_decode((string)@file_get_contents($JOBS), true);
+    $found = null;
+    $list = (is_array($data) && isset($data['jobs']) && is_array($data['jobs'])) ? $data['jobs'] : array();
+    foreach ($list as $jj) {
+        if (is_array($jj) && (string)($jj['id'] ?? '') === $id) $found = $jj;
     }
-    out(array('ok' => true, 'id' => $id, 'slack' => $slack, 'slack_code' => $scode));
+    if (!$found) fail('unknown_job');
+    $p = jobs_post_card($found);
+    lg('reslack ' . $id . ' ' . $p['slack'] . ($p['via'] !== '' ? ' via ' . $p['via'] : '') . ' by ' . $who);
+    out(array('ok' => true, 'id' => $id, 'slack' => $p['slack'], 'slack_code' => $p['code'], 'slack_via' => $p['via'], 'slack_bot' => $p['bot']));
 }
 
 /*

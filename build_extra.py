@@ -31925,6 +31925,9 @@ def write_portal_page():
     if (e === 'no_email' || e === 'bad_email') return 'No usable email address on file.';
     if (e === 'sms_failed') return 'The text didn\\u2019t go' + (r && r.why ? ' (' + esc(r.why) + ')' : '') + ' \\u2014 try emailing it instead.';
     if (e === 'email_failed') return 'The mail server refused it \\u2014 try again in a minute.';
+    // 19 Oct 2026: "Insufficient permissions" = the GoCardless key on the server is read-only (it was made for reading
+    // the support plans); a pay link needs a read-write one
+    if (e === 'gc_failed' && r && /insufficient permissions/i.test('' + r.why)) return 'GoCardless won\\u2019t make pay links with the key on the server \\u2014 it\\u2019s read-only. Steve: GoCardless \\u2192 Developers \\u2192 create a read-write access token and put it in api/pcm-gocardless.php. Meanwhile, send the invoice (This month\\u2019s jobs \\u2192 invoices \\u2192 Approve &amp; send) \\u2014 it carries our bank details.';
     if (e === 'gc_failed') return 'GoCardless refused it' + (r && r.why ? ': ' + esc(r.why) : '') + '.';
     return 'Couldn\\u2019t do that \\u2014 the server said ' + esc(e || 'nothing') + '.';
   }
@@ -31979,8 +31982,20 @@ def write_portal_page():
                 if (!j || !j.ok) { bits.push('<strong>Not recorded:</strong> ' + esc(jobsErr(j))); msg.innerHTML = bits.join(' '); return; }
                 if (j.slack === 'sent') bits.unshift('\\u2713 <strong>Posted to #daily-jobs-in-jobs-out</strong> for David (job ' + esc(j.id) + ').');
                 else if (j.slack === 'not-configured') bits.unshift('\\u2713 Job recorded (' + esc(j.id) + ') \\u2014 <strong>but the #daily-jobs-in-jobs-out webhook isn\\u2019t set up on the server yet</strong>, so nothing went to Slack. Tell David by hand this time.');
-                else bits.unshift('\\u2713 Job recorded (' + esc(j.id) + ') \\u2014 Slack refused the post (' + esc('' + j.slack_code) + '). Tell David by hand this time.');
+                else bits.unshift('\\u2713 Job recorded (' + esc(j.id) + ') \\u2014 Slack refused the post (' + esc('' + j.slack_code) + (j.slack_bot ? '; bot: ' + esc('' + j.slack_bot) : '') + '). <button class="sm jobreslack" data-id="' + esc(j.id) + '" style="margin:0 0 0 .3rem;padding:.25rem .6rem;font-size:.8rem">Post it to Slack again</button>');
                 msg.innerHTML = bits.join(' ');
+                // 19 Oct 2026: one more go at Slack for this job (pcm-jobs reslack: the webhook, else the bot)
+                var rs = msg.querySelector('.jobreslack');
+                if (rs) rs.onclick = function () {
+                  rs.disabled = true; rs.textContent = 'Posting\\u2026';
+                  post(JOBS, { action: 'reslack', stoken: S.stoken, machine: mid(), id: rs.getAttribute('data-id') })
+                    .then(function (k) {
+                      if (k && k.ok && k.slack === 'sent') { rs.outerHTML = '<strong>\\u2713 Posted to #daily-jobs-in-jobs-out</strong> for David.'; return; }
+                      rs.disabled = false; rs.textContent = 'Post it to Slack again';
+                      rs.insertAdjacentHTML('afterend', ' <span class="quiet">Still refused (' + esc('' + ((k && (k.slack_bot || k.slack_code || k.error)) || 'no answer')) + ') \\u2014 tell David by hand this time.</span>');
+                    })
+                    .catch(function () { rs.disabled = false; rs.textContent = 'Post it to Slack again'; });
+                };
               })
               .catch(function () { go.disabled = false; bits.push('<strong>Not recorded</strong> \\u2014 couldn\\u2019t reach the server.'); msg.innerHTML = bits.join(' '); });
           });
