@@ -15705,7 +15705,7 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcmapp","speccheck","pcbench","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcmapp","speccheck","pcbench","battcheck","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Everyday help", "Simple free helpers for home.",
        ["tpdfapp","dclock","vtimer"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",

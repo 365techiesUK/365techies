@@ -78,6 +78,7 @@ The electricity price is Ofgem's cap for 1 Oct - 31 Dec 2026 (Direct Debit, GB a
 8 Oct 2026: 26.32p a kWh, 54.83p a day standing charge. Update PRICE_P / PRICE_FROM each quarter.
 """
 import yt_watch   # 19 Oct 2026: the voiced YouTube Short under each 9-second clip (yt_watch.PCM_SHORTS)
+import battery_report_tool   # 19 Oct 2026: the battery report checker on how-to-check-laptop-battery-health
 
 LIVE = True
 
@@ -1569,27 +1570,30 @@ DC = {
 BH = {
     'slug': 'how-to-check-laptop-battery-health',
     'title': 'How to Check Laptop Battery Health on Windows 11 and 10',
-    'metaDesc': 'Check your laptop battery\'s health in a minute with Windows\' own battery report: what design and full charge capacity mean, and when to replace it.',
+    'metaDesc': 'Check your laptop battery\'s health and charge cycles free: our app shows them with nothing to type, or use Windows\' own report. When to replace it.',
     'ogTitle': 'How to check your laptop battery\'s health, in a minute',
     'crumbName': 'How to Check Laptop Battery Health',
     'eyebrow': '// LAPTOP BATTERY HEALTH',
     'h1': 'How to check your <em class="grad grad--cyan">laptop battery&rsquo;s health</em>',
-    'lede': 'Windows already measures how much charge your battery holds compared with when it was new. One command turns that into a report: divide the <strong>full charge capacity</strong> by the <strong>design capacity</strong> and you have the battery&rsquo;s health. Here&rsquo;s how, what the numbers mean, and when a new battery is worth it.',
-    'chips': ['Windows&rsquo; own figures', 'Free battery check app', 'Windows specialists since 1995'],
-    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Make the battery report', '#s1'],
+    'lede': 'Windows already measures how much charge your battery holds compared with when it was new. Our free <strong>365 PC Manager</strong> app reads it for you, with nothing to type: the battery&rsquo;s <strong>health</strong> and its <strong>charge cycles</strong>. Rather not install anything? Windows&rsquo; own battery report shows the same, and you can drop it on this page to have it read. Here&rsquo;s how, what the numbers mean, and when a new battery is worth it.',
+    'chips': ['Free app: nothing to type', 'Windows&rsquo; own figures', 'Nothing uploaded'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Check it with our free app', '#s1'],
     'ctaHead': 'Battery not lasting, or shutting off?', 'ctaSub': 'We check the battery with you, tell you straight whether a new one is worth it, and fit it. Call 01202 775566 or text 07520 615332.',
     'schemaKind': 'howto',
     'atAGlance': [
-        ('The quick way', 'Right-click Start, open Terminal, type powercfg /batteryreport and press Enter, then open the battery-report.html file it saves.'),
+        ('The easy way', 'Our free 365 PC Manager app shows the battery&rsquo;s health and charge cycles on its This PC page. Nothing to type.'),
+        ('Without installing anything', 'Right-click Start, open Terminal, type powercfg /batteryreport and press Enter, then open the battery-report.html file it saves.'),
+        ('Read it for you', 'Drop the report on this page: it shows the health, charge cycles and how fast it&rsquo;s wearing. It&rsquo;s read in your browser and never uploaded.'),
         ('The two numbers', 'Design capacity is what the battery held when new. Full charge capacity is what it holds today.'),
         ('Battery health', 'Full charge capacity divided by design capacity. 39,000 out of 52,000 mWh is 75%.'),
         ('Cycle count', 'How many charge cycles it has been through, on laptops that report it.'),
         ('A new battery?', 'When it no longer lasts long enough for you, or the laptop shuts off with charge still showing.'),
-        ('Free check', 'Our free 365 PC Manager app shows the battery&rsquo;s health and charge cycles on its This PC page.'),
     ],
     'sections': [
-        {'eyebrow': '/01 &mdash; THE QUICK WAY', 'h2': 'Check battery health with Windows&rsquo; battery report',
-         'html': '<p>Windows has a battery report built in. It takes about a minute and needs nothing installed.</p>'
+        {'eyebrow': '/01 &mdash; THE EASY WAY', 'h2': 'Check it with our free app, nothing to type',
+         'html': '<p>The easiest way: our free <strong>365 PC Manager</strong> app reads the battery straight from Windows and shows its <strong>health</strong> (how much of its original charge it still holds) and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page. There&rsquo;s no command to type and nothing to upload.</p><span id="battery-app"></span>__APP_BOX_BATTERY__'},
+        {'eyebrow': '/02 &mdash; NOTHING TO INSTALL', 'h2': 'Or use Windows&rsquo; own battery report',
+         'html': '<p>Rather not install anything? Windows has a battery report built in. It takes about a minute, and it&rsquo;s the one time you type a command: Microsoft&rsquo;s own, below. Never type or paste a command someone else sends you or a website asks for out of the blue.</p>'
                  '<ol>'
                  '<li><strong>Right-click the Start button</strong> and choose <strong>Terminal</strong> (on Windows 10, <strong>Windows PowerShell</strong>).</li>'
                  '<li>Type <strong>powercfg /batteryreport</strong> and press <strong>Enter</strong>.</li>'
@@ -1598,7 +1602,8 @@ BH = {
                  '</ol>'
                  '<p>If Windows says it can&rsquo;t write the report, right-click Start, choose <strong>Terminal (Admin)</strong> and try again. '
                  'The command comes from Microsoft&rsquo;s own <a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options" rel="noopener" target="_blank">powercfg documentation</a>.</p>'},
-        {'eyebrow': '/02 &mdash; READ THE NUMBERS', 'h2': 'What design capacity and full charge capacity mean',
+        battery_report_tool.SECTION,
+        {'eyebrow': '/04 &mdash; READ THE NUMBERS', 'h2': 'What design capacity and full charge capacity mean',
          'html': '<ul>'
                  '<li><strong>Design capacity</strong> is how much energy the battery held when it was new, in milliwatt-hours (mWh).</li>'
                  '<li><strong>Full charge capacity</strong> is how much it holds now, when Windows says it&rsquo;s at 100%.</li>'
@@ -1606,7 +1611,7 @@ BH = {
                  '</ul>'
                  '<p><strong>Battery health = full charge capacity &divide; design capacity &times; 100.</strong> A battery designed for 52,000 mWh that now holds 39,000 mWh is at 75%: it runs for roughly three-quarters as long as it did new.</p>'
                  '<p>Further down, <strong>Battery capacity history</strong> shows how the full charge capacity has fallen over the months, and <strong>Battery life estimates</strong> compares how long it lasted when new with how long it lasts now.</p>'},
-        {'eyebrow': '/03 &mdash; WHAT IT MEANS', 'h2': 'Is your battery&rsquo;s health good enough?',
+        {'eyebrow': '/05 &mdash; WHAT IT MEANS', 'h2': 'Is your battery&rsquo;s health good enough?',
          'html': '<p>Every battery wears a little with each charge, so a laptop a few years old won&rsquo;t show 100%. There&rsquo;s no official pass mark: what matters is whether it still lasts long enough for you.</p>'
                  '<p>Two signs a new battery is worth it:</p>'
                  '<ul>'
@@ -1614,12 +1619,10 @@ BH = {
                  '<li><strong>The laptop switches off with charge still showing</strong>, at 20 or 30%, when you move it, or the moment you unplug it. A worn battery can&rsquo;t deliver what the laptop asks of it. See <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30%</a> and <a href="/laptop-turns-off-when-unplugged/">laptop turns off when unplugged</a>.</li>'
                  '</ul>'
                  '<p><strong>Stop straight away if the case is bulging</strong>, the trackpad lifts or the keyboard rises: that&rsquo;s a swollen battery. Don&rsquo;t charge it; ring us (<a href="/dell-xps-swollen-battery/">what a swollen battery looks like</a>).</p>'},
-        {'eyebrow': '/04 &mdash; THE MAKER&rsquo;S CHECK', 'h2': 'Your laptop maker&rsquo;s own battery check',
+        {'eyebrow': '/06 &mdash; THE MAKER&rsquo;S CHECK', 'h2': 'Your laptop maker&rsquo;s own battery check',
          'html': '<p>Most makers have their own app that shows the battery&rsquo;s condition: <strong>Lenovo Vantage</strong>, <strong>HP Support Assistant</strong> and Dell&rsquo;s power app, and many laptops have a battery test in the BIOS start-up screen too. They read the same chip as Windows&rsquo; report.</p>'
                  '<p>To slow the wear down on a laptop that lives plugged in, many can stop charging at about 80%: Lenovo calls it Conservation Mode, and Dell and HP put the setting in the BIOS or their power apps. More in <a href="/how-to-make-your-laptop-battery-last-longer/">how to make your laptop battery last longer</a>.</p>'},
-        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app read it for you',
-         'html': '__APP_BOX_BATTERY__'},
-        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
          'html': _call_us('If the battery no longer lasts or the laptop keeps switching itself off, we can check it with you and fit a new one. The price depends on your model and the battery it takes, and you get a clear price before we start.')},
     ],
     'howToName': 'How to check a Windows laptop&rsquo;s battery health',
@@ -1630,9 +1633,10 @@ BH = {
         {'name': 'Work out the health', 'text': 'Divide the full charge capacity by the design capacity and multiply by 100. That is how much of its original charge the battery still holds.'},
     ],
     'faqs': [
-        {'q': 'How do I check my laptop battery health on Windows?', 'a': '<p>Right-click Start, open Terminal, type <strong>powercfg /batteryreport</strong> and press Enter, then open the battery-report.html file it saves. Divide the full charge capacity by the design capacity to get the health as a percentage.</p>'},
+        {'q': 'How do I check my laptop battery health on Windows?', 'a': '<p>The easiest way is our free 365 PC Manager app: it shows the battery&rsquo;s health and charge cycles on its This PC page, with nothing to type. Without installing anything, right-click Start, open Terminal, type <strong>powercfg /batteryreport</strong> and press Enter, then drop the battery-report.html file it saves on this page, or divide its full charge capacity by its design capacity.</p>'},
         {'q': 'What is a good battery health percentage?', 'a': '<p>There&rsquo;s no official pass mark. The figure is simply how much of its original charge the battery still holds, so at 70% it runs for roughly 70% as long as it did new. If that still gets you through your day, it&rsquo;s fine. If it doesn&rsquo;t, or the laptop shuts off with charge left, a new battery is worth it.</p>'},
         {'q': 'Where is the battery report saved?', 'a': '<p>In the folder Terminal was in when you ran the command, which is usually your own user folder (C:\\Users\\YourName). Windows tells you the exact path when it finishes.</p>'},
+        {'q': 'Is it safe to drop my battery report on this page?', 'a': '<p>Yes. The checker on this page reads it with your own browser, on your own computer: the file is never uploaded or sent to us or anyone else. That matters, because the report also holds your PC&rsquo;s name and model and how it has been used.</p>'},
         {'q': 'What does design capacity mean?', 'a': '<p>How much energy the battery held when it was new, in milliwatt-hours. Full charge capacity is how much it holds today.</p>'},
         {'q': 'Why does my laptop shut off when the battery says 30%?', 'a': '<p>A worn battery can&rsquo;t deliver the power the laptop needs, so the voltage drops and the laptop switches off even though the gauge shows charge left. Check the battery&rsquo;s health first; see <a href="/laptop-shuts-down-at-30-percent-battery/">laptop shuts down at 30%</a>.</p>'},
         {'q': 'Can you replace my laptop battery?', 'a': '<p>Yes. We check the battery and fit the right replacement for your model, with a clear price before we start. Call 01202 775566 or text 07520 615332.</p>'},

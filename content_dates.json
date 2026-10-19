@@ -1224,8 +1224,8 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "fca5c2ad4ac0accd",
-  "last": "2026-10-18"
+  "h": "1aa23445cc345a30",
+  "last": "2026-10-19"
  },
  "fuel-prices": {
   "first": "2026-10-04",
@@ -1374,7 +1374,7 @@
  },
  "how-to-check-laptop-battery-health": {
   "first": "2026-10-13",
-  "h": "970031a425c04dee",
+  "h": "6280b1e881262e3b",
   "last": "2026-10-19"
  },
  "how-to-check-ssd-health": {
@@ -2920,7 +2920,7 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "fde33321a5fff50f",
+  "h": "64905f205439a7f9",
   "last": "2026-10-19"
  },
  "pre-call-checklists": {

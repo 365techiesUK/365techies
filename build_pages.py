@@ -459,6 +459,7 @@ NAV_MENUS = [
         ]), ("Check your computer", [
             ("PC Spec Checker", "/computer-spec-checker/"),
             ("PC Speed Test", "/pc-benchmark/"),
+            ("Laptop Battery Health Check", "/how-to-check-laptop-battery-health/"),   # 19 Oct 2026 (app first, then the report checker)
             ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
             ("PC Build Budget Planner", "/custom-pc-builder/"),
         ]), ("Local &amp; specialist", [
@@ -3344,6 +3345,7 @@ TOOLS = {
   "aicalc":       ("AI ROI Calculator", "/ai-roi-calculator/", "Could AI genuinely save your business time and money? Work it out."),
   "servercloud":  ("Server or Cloud?", "/server-or-cloud-picker/", "Get a clear, jargon-free steer on the right setup for your business."),
   "isitdown":     ("Is It Down?", "/is-it-down/", "Facebook quiet? Email dead? Live status for 30+ big services &mdash; and whether it&rsquo;s them or your connection."),
+  "battcheck":    ("Laptop Battery Health Check", "/how-to-check-laptop-battery-health/", "How worn is your laptop battery? Our free app shows its health and charge cycles with nothing to type &mdash; or drop Windows&rsquo; own battery report into our checker, read in your browser and never uploaded."),   # 19 Oct 2026
   "speccheck":    ("PC Hardware Checker", "/computer-spec-checker/", "What&rsquo;s inside your computer? OS, graphics card, screen, memory and more &mdash; revealed instantly, nothing installed."),
   "gpubench":     ("Graphics Card Benchmark", "/graphics-card-benchmark/", "How powerful is your GPU? A live 3D WebGL benchmark &mdash; graphics score, live FPS, advanced stress tests and honest advice."),
   "safetycourse": ("Free Online Safety Course", "/online-safety-course/", "Spot scam emails, texts &amp; calls, use safe passwords and shop safely &mdash; a free, friendly 6-lesson course with a certificate."),
