@@ -34,14 +34,15 @@ define('PST_MAX_TRIES', 6);           // a passing problem (QuickBooks busy, no 
 define('PST_KEEP', 300);              // checkouts remembered
 
 function pst_log($m) { plq_log('stripe ' . $m); }
-/* Slack: the pay links' webhook (slack-webhook-jobs.php), else the portal's bot into its own channel, #365-job-tracker -
-   that webhook has answered 302 since 28 Sep 2026 (nothing has reached #daily-jobs-in-jobs-out since), while the bot posts
-   in #365-job-tracker every day, where David logs the done jobs. */
+/* Slack: the pay links' webhook (slack-webhook-jobs.php), else the portal's bot into #daily-jobs-in-jobs-out, beside the
+   job's "Quote agreed" card - that webhook has answered 302 since 28 Sep 2026; the bot posts there fine (Hanna's "Paid by
+   card", 19 Oct 18:45). Same channel as pcm-jobs.php's cards ($SLACK_JOBS_CHANNEL in pcm-slack-bot.php overrides). */
 function pst_slack($text) {
     if (plq_slack($text)) return true;
     require_once __DIR__ . '/pcm-slack-lib.php';
-    $bc = slk_creds();
-    $chan = preg_match('/^[A-Z0-9]{8,14}$/', (string)$bc[1]) ? (string)$bc[1] : 'C0B4TD439FB';   // #365-job-tracker
+    $f = __DIR__ . '/pcm-slack-bot.php';
+    $raw = is_file($f) ? (string)@file_get_contents($f) : '';
+    $chan = preg_match('/\$SLACK_JOBS_CHANNEL\s*=\s*[\'"]([A-Z0-9]{8,14})[\'"]/', $raw, $m) ? $m[1] : 'C0BS3BVP48J';   // #daily-jobs-in-jobs-out
     $r = slk_call('chat.postMessage', array('channel' => $chan, 'text' => $text, 'unfurl_links' => false), 8);
     if (empty($r['ok'])) pst_log('slack: the webhook and the bot both refused (' . (string)($r['error'] ?? '') . ')');
     return !empty($r['ok']);
