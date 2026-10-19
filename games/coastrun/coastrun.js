@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=73';
+import { createWorld } from './world3d.js?v=74';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -361,15 +361,15 @@ function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've 
 function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that climbs and drops with each gear, the gear, the nitro beneath
   const xr = GW - 10, yb = GH - 9, pct = W.v / E.VMAX;
   let gi = 0; while (gi < 6 && pct > RG[gi + 1]) gi++;
-  const rpm = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, gi), rf = Math.max(0, Math.min(1, (rpm - REV0) / (REDLINE - REV0)));
+  const rpm = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, gi), rf = W.jet ? Math.min(1, W.count > 0 ? (W.rev || 0) * 0.3 : W.v / (E.VMAX * 1.49)) : Math.max(0, Math.min(1, (rpm - REV0) / (REDLINE - REV0)));   // (the Skimmer: one gear, so a power bar climbing with the speed)
   const n = 16, sw = 3.2, gap = 1.1, x0 = xr - n * (sw + gap) + gap, y0 = yb - 27, lit = Math.round(rf * n);
   for (let i = 0; i < n; i++) {   // the rev bar: slanted segments, rising, white then amber then red
     const x = x0 + i * (sw + gap), hh = 3.5 + 4 * i / (n - 1);
-    g.fillStyle = i < lit ? (i >= n - 3 ? '#ff3b3b' : i >= n - 7 ? '#ffc23a' : '#eef4fa') : 'rgba(255,255,255,0.13)';
+    g.fillStyle = i < lit ? (W.jet ? (i >= n - 4 ? '#e8fbff' : '#5fe0ff') : i >= n - 3 ? '#ff3b3b' : i >= n - 7 ? '#ffc23a' : '#eef4fa') : 'rgba(255,255,255,0.13)';
     g.beginPath(); g.moveTo(x + 1.3, y0 - hh); g.lineTo(x + sw + 1.3, y0 - hh); g.lineTo(x + sw, y0); g.lineTo(x, y0); g.fill();
   }
-  hudText(g, W.count > 0 ? 'N' : String(gi + 1), x0 - 5, y0, 9, '#ffc23a', 'right');
-  hudText(g, 'GEAR', x0 - 5, y0 - 9.5, 4.6, '#c9d6e6', 'right', false);
+  hudText(g, W.count > 0 ? (W.jet ? 'P' : 'N') : W.jet ? 'D' : String(gi + 1), x0 - 5, y0, 9, W.jet ? '#5fe0ff' : '#ffc23a', 'right');
+  hudText(g, W.jet ? 'DRIVE' : 'GEAR', x0 - 5, y0 - 9.5, 4.6, '#c9d6e6', 'right', false);
   hudText(g, String(E.mph(W)), xr - 17, yb - 4, 21, W.boosting ? '#8fe3ff' : '#ffffff', 'right');
   hudText(g, 'MPH', xr, yb - 4, 6, '#c9d6e6', 'right');
   const nb = W.bottles || 0, show = Math.min(10, nb), bw3 = 4.6, bgp = 1.2, by2 = yb - 1.5, bx = x0 - 16 - 10 * (bw3 + bgp);   // (left of the speedo: on top of the number it hid it)
@@ -614,6 +614,7 @@ function makeAudio(a, bus) {
   const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(); return { f: f, g: gn }; };
   o.wind = loop('bandpass', 900, 0.6); o.skid = loop('bandpass', 2400, 7); o.rumble = loop('lowpass', 160, 1);
   o.sq = squeal(a, bus); o.passT = 0; o.passD = new Map();
+  o.ev = electricGraph(a, bus);   // (the Skimmer's: silent in the others)
   tyres(a, bus, o);
   return o;
 }
@@ -655,6 +656,28 @@ function raceSet(o, t, rpm, thr, nitro, crash) {
   o.gain.setTargetAtTime(crash ? 0.03 : ENG_GAIN * (0.7 + Math.min(1, Math.max(0, (rpm - 1000) / 6500)) * 0.45), t, 0.06);
 }
 const ENG_GAIN = 0.62;
+// the Skimmer's electric drive (owner, 19 Oct 2026: "it's an electric car ... we can't have the sound of an engine"): no firing,
+// no gears - the motor's whine climbing smoothly with the speed (a soft low note and its harmonics, the inverter's thin high note
+// over it), louder under power; the gas hiss when the nozzles or the lift jets fire. One graph, silent unless you're in a Skimmer
+function electricGraph(a, bus) {
+  const out = a.createGain(); out.gain.value = 0; out.connect(bus);
+  const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1200; lp.Q.value = 0.9; lp.connect(out);
+  const osc = (type, g0) => { const o = a.createOscillator(), g = a.createGain(); o.type = type; g.gain.value = g0; o.connect(g); g.connect(lp); o.start(); return { o: o, g: g }; };
+  const body = osc('sawtooth', 0.06), m1 = osc('triangle', 0.55), m2 = osc('sine', 0.3), m3 = osc('sine', 0.12), inv = osc('sine', 0.035);
+  const wob = a.createOscillator(), wg = a.createGain(); wob.frequency.value = 5.3; wg.gain.value = 1.6; wob.connect(wg); for (const o of [m1, m2, m3]) wg.connect(o.o.detune); wob.start();   // (a faint waver in the note, as a real motor's has)
+  const len = Math.floor(a.sampleRate * 2), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const s = a.createBufferSource(), hf = a.createBiquadFilter(), hg = a.createGain(); s.buffer = buf; s.loop = true; hf.type = 'bandpass'; hf.frequency.value = 2400; hf.Q.value = 0.45; hg.gain.value = 0; s.connect(hf); hf.connect(hg); hg.connect(bus); s.start();
+  return { out: out, lp: lp, body: body, m1: m1, m2: m2, m3: m3, inv: inv, hiss: { f: hf, g: hg } };
+}
+function electricSet(o, t, pct, thr, boost, jets, crash) {   // pct: speed (0 standing, 1 = 180 mph), thr: power 0-1, boost / jets: the gas firing
+  const f = 62 + pct * 820;   // the motor's note: ~60 Hz pulling away, ~900 Hz at 180 mph, higher still on a boost
+  o.body.o.frequency.setTargetAtTime(f * 0.5, t, 0.035); o.m1.o.frequency.setTargetAtTime(f, t, 0.035); o.m2.o.frequency.setTargetAtTime(f * 2.0, t, 0.035);
+  o.m3.o.frequency.setTargetAtTime(f * 3.01, t, 0.035); o.inv.o.frequency.setTargetAtTime(2600 + pct * 4200, t, 0.06);
+  o.lp.frequency.setTargetAtTime(700 + pct * 3200 + thr * 600 + boost * 1400, t, 0.05);
+  o.out.gain.setTargetAtTime(crash ? 0.008 : (0.03 + 0.07 * thr) * (0.5 + 0.5 * Math.min(1, pct * 1.6)) + boost * 0.025, t, 0.06);
+  o.hiss.g.gain.setTargetAtTime(jets ? 0.11 : boost ? 0.06 : 0, t, 0.04); o.hiss.f.frequency.setTargetAtTime(jets ? 1700 : 3000, t, 0.08);
+}
 // a racing car's run through the gears, rendered offline with the same engine: window.CRengineSample(seconds) -> WAV bytes
 window.CRengineSample = function (sec) {
   const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
@@ -669,6 +692,22 @@ window.CRengineSample = function (sec) {
     }
     return a.startRendering();
   }).then((b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const w = (p, s2) => { for (let i = 0; i < s2.length; i++) v.setUint8(p + i, s2.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true);
+    return Array.from(new Uint8Array(buf)); });
+};
+// the Skimmer's electric drive, rendered offline the same way (for checking by ear): window.CRelectricSample(seconds) -> WAV bytes.
+// A launch (0-60 in about 0.6 s), on to flat out, a boost, a lift's hiss, then easing off
+window.CRelectricSample = function (sec) {
+  const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
+  const o = electricGraph(a, bus); let sp = 0;
+  for (let t = 0; t < sec; t += 1 / 60) {
+    const boost = t > sec * 0.55 && t < sec * 0.68 ? 1 : 0, jets = t > sec * 0.74 && t < sec * 0.84, off = t > sec - 1.4;
+    if (t > 0.3 && !off) sp = Math.min(boost ? 1.45 : 1.12, sp + (sp < 0.33 ? 0.62 : (boost ? 0.55 : 0.12) * (1.12 - Math.min(1.1, sp))) / 60); else if (off) sp = Math.max(0.4, sp - 0.35 / 60);
+    electricSet(o, t, t < 0.3 ? 0.02 : sp, t < 0.3 ? 0.1 : off ? 0.15 : 1, boost, jets, false);
+  }
+  return a.startRendering().then((b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
     const w = (p, s2) => { for (let i = 0; i < s2.length; i++) v.setUint8(p + i, s2.charCodeAt(i)); };
     w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
     for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true);
@@ -874,6 +913,7 @@ function frameAudio(W, S, mode, SET) {
   if (!a) return;
   if (!AU) { if (!playing) return; loadWorklet(a); if (!WLdone) return; AU = makeAudio(a, S.bus() || a.destination); }   // (a moment while the engine loads)
   const now = a.currentTime, T = 0.06;
+  if (!playing && AU.ev) { AU.ev.out.gain.setTargetAtTime(0, now, 0.05); AU.ev.hiss.g.gain.setTargetAtTime(0, now, 0.05); }
   if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); if (AU.tyre) AU.tyre.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
@@ -883,7 +923,12 @@ function frameAudio(W, S, mode, SET) {
   const lift = (R.braking || W.drift) && pct > 0.4 && !W.crash;
   const shifting = AU.shiftT && now < AU.shiftT;   // a moment off the throttle as the gear goes in
   const thr = W.crash || W.timeUp ? 0.2 : shifting ? 0.05 : lift ? 0.25 : 1;
-  if (AU.race) {   // the road gearbox, revs in real numbers
+  if (W.jet) {   // the Skimmer: the engine silent, the electric drive instead (no gears, so no shifts, pops or crackles either)
+    if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); }
+    const pe = W.count > 0 ? (W.rev || 0) * 0.12 : pct * (W.boosting ? 1.06 : 1), te = W.count > 0 ? (W.rev || 0) : W.crash || W.timeUp ? 0.12 : lift ? 0.2 : 1;
+    if (AU.ev) electricSet(AU.ev, now, pe, te, W.boosting ? 1 : 0, !!(W.lift && (W.hover || W.airT < 0.45)), !!W.crash);
+  } else if (AU.ev) { AU.ev.out.gain.setTargetAtTime(0, now, 0.05); AU.ev.hiss.g.gain.setTargetAtTime(0, now, 0.05); }
+  if (W.jet) { /* (above) */ } else if (AU.race) {   // the road gearbox, revs in real numbers
     let rg = 0; while (rg < 6 && pct > RG[rg + 1]) rg++;
     let r2 = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, rg);
     if (W.timeUp) r2 = Math.max(1000, r2 * 0.6);
@@ -895,9 +940,9 @@ function frameAudio(W, S, mode, SET) {
     raceSet(AU, now, r2, t2, W.boosting ? 1 : 0, !!W.crash);
   } else engineSet(AU, now, rpm, thr, W.boosting ? 1 : 0, !!W.crash);
   // a gear change: the revs drop with a crisp cut and a crackle from the pipes; lifting off at speed pops and bangs
-  if (!AU.race && AU.gi != null && gi > AU.gi && !W.crash && W.count <= 0) { AU.shiftT = now + 0.09; S.noise(0.05, 0.06, 1500, { type: 'bandpass', q: 1.5, when: 0.04 }); S.noise(0.04, 0.045, 2600, { type: 'bandpass', q: 2, when: 0.1 }); }
+  if (!AU.race && !W.jet && AU.gi != null && gi > AU.gi && !W.crash && W.count <= 0) { AU.shiftT = now + 0.09; S.noise(0.05, 0.06, 1500, { type: 'bandpass', q: 1.5, when: 0.04 }); S.noise(0.04, 0.045, 2600, { type: 'bandpass', q: 2, when: 0.1 }); }
   AU.gi = gi;
-  if (!AU.race && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
+  if (!AU.race && !W.jet && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : (W.drift ? 0.028 : (W.slide || 0) * 0.016) * (AU.tyre ? 0.4 : 1), now, 0.03);   // (a little grit under the squeal)

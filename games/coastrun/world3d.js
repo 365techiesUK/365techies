@@ -637,16 +637,22 @@ export function createWorld() {
     g.userData.dia = [0.26, 0.6, 0.94].map((z) => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); d.position.z = z; d.scale.setScalar(0.17); g.add(d); return d; });   // shock diamonds in the core
     g.visible = false; return g; });
   const fworks = particles(2200, true, { near: [10, 40] }), FWP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // fireworks over Poole Harbour (summer nights, as in the owner's footage)
-  const smoke = particles(700, false), sparks = particles(500, true, { near: [0.8, 2.0] }), tyre = particles(1100, false, { near: [0.5, 1.4], lift: 0.12, flat: true }), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 };   // (tyre: smoke and dust low along the road, right by the car)
+  const smoke = particles(700, false), sparks = particles(500, true, { near: [0.8, 2.0] }), tyre = particles(1100, false, { near: [0.5, 1.4], lift: 0.12, flat: true }), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 }, STM = { quick: true, drag: 0.993 };   // (tyre: smoke and dust low along the road, right by the car)
   scene.add(smoke.points); scene.add(sparks.points); scene.add(tyre.points); scene.add(fworks.points);
   const skid = skidMarks(); scene.add(skid.mesh);
   const glows = glowPoints(1200); scene.add(glows.points);
 
   // ---------------------------------------------------------------- state
-  // ---- the Skimmer's lift jets (19 Oct 2026, from the thruster car shown on 15 Oct): four columns of gas straight down from under the
-  // car while it lifts off and hovers, reaching the road (each cone's tip sits at its nozzle, stretched down to the ground)
-  const liftMat = new THREE.MeshBasicMaterial({ map: gasTexture(), color: '#e8f8ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, opacity: 0.8 });
-  const liftJets = [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]].map(([x, z]) => { const gm = new THREE.ConeGeometry(0.3, 1, 14, 1, true); gm.translate(0, -0.5, 0); const m = new THREE.Mesh(gm, liftMat); m.userData.at = [x, z]; m.visible = false; return m; });
+  // ---- the Skimmer's gas jets (19 Oct 2026, from the thruster car shown on 15 Oct; owner, evening: "look more like the actual
+  // thrusters ... steam"): each a wide column of white steam (normal blending, so it shows on a bright day, as the real one's did)
+  // round a thin bright core. Four point down from under the car as it lifts and hovers (each cone's tip at its nozzle, stretched to
+  // the road); two blast back out of the rear nozzles on a boost. The steam pool below pours puffs down/back out of them
+  const liftMat = new THREE.MeshBasicMaterial({ map: gasTexture(), color: '#e8f8ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, opacity: 0.75 });
+  const steamMat = new THREE.MeshBasicMaterial({ map: liftMat.map, color: '#ffffff', transparent: true, depthWrite: false, side: THREE.DoubleSide, opacity: 0.5 });
+  const jetCone = (r, mat) => { const gm = new THREE.ConeGeometry(r, 1, 18, 1, true); gm.translate(0, -0.5, 0); return new THREE.Mesh(gm, mat); };
+  const liftJets = [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]].map(([x, z]) => { const g = new THREE.Group(); g.add(jetCone(0.85, steamMat)); g.add(jetCone(0.22, liftMat)); g.userData.at = [x, z]; g.visible = false; return g; });
+  const rearJets = [-0.5, 0.5].map((x) => { const g = new THREE.Group(); for (const [r, m] of [[0.5, steamMat], [0.15, liftMat]]) { const c = jetCone(r, m); c.geometry.rotateX(-Math.PI / 2); g.add(c); } g.userData.x = x; g.visible = false; return g; });   // (rotated: the cone runs back from the nozzle)
+  const steam = particles(1100, false, { near: [0.6, 1.8], lift: 0 }); scene.add(steam.points);   // the Skimmer's steam puffs
   const R = { brakeK: 0, lastV: 0, slump: 0, flying: [], crashObj: null, hop: 0, crashK: 0, camShake: 0, hemiI: 0.6, sunI: 2.6, envI: 1, tunK: 0, flareK: 0, flareN: 0, lastBanner: null, pose: {}, W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camOff: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
     fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
 
@@ -1470,6 +1476,7 @@ export function createWorld() {
     { const sg = m.body.paint.clone(); sg.translate(0, -0.6, 0); sg.scale(1.06, 1.08, 1.04); sg.translate(0, 0.6, 0); bubble.geometry.dispose(); bubble.geometry = sg; }   // the shield's shell, just outside the paint
     flames.forEach((f, q) => { f.position.set((q ? 1 : -1) * 0.4, 0.36, m.len + 0.08); player.add(f); });
     liftJets.forEach((j) => { j.position.set(j.userData.at[0], 0.12, j.userData.at[1]); player.add(j); });   // (seen only on the Skimmer, as it lifts and hovers)
+    rearJets.forEach((j) => { j.position.set(j.userData.x, 0.4, m.len + 0.1); player.add(j); });   // (and on its boost)
     tailGlow.forEach((s, q) => { s.position.set((q ? 1 : -1) * 0.52, 0.69, m.len + 0.08); player.add(s); });
     tailWash.position.set(0, 0.03, m.len + 1.4); player.add(tailWash);
     nitroLight.position.set(0, 0.5, m.len + 1.2); player.add(nitroLight);
@@ -1975,7 +1982,8 @@ export function createWorld() {
     nitroLight.intensity = W.boosting ? 2.3 + Math.sin(t / 23) * 0.3 + Math.sin(t / 37) * 0.2 : 0;
     nitroLight.color.set(W.jet ? '#9fe8ff' : '#ff8a30');   // (the Skimmer's gas glows cold, not hot)
     { const alt = W.h - E.heightAt(W, W.s), on = !!W.jet && !!W.lift && !W.crash && (W.hover || W.airT < 0.45);   // the lift jets: on as it leaves the road and while it hovers
-      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(9, Math.max(0.6, alt + 0.2)), wd = 0.85 + Math.random() * 0.3; j.scale.set(wd, L, wd); } }); }
+      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(9, Math.max(0.6, alt + 0.2)), wd = 0.85 + Math.random() * 0.3; j.scale.set(wd, L, wd); } });
+      const bo = !!W.jet && !!W.boosting && !W.crash; rearJets.forEach((j) => { j.visible = bo; if (bo) { const wd = 0.85 + Math.random() * 0.3; j.scale.set(wd, wd, (2.2 + (R.nk || 0) * 1.6) * (0.85 + Math.random() * 0.3)); } }); }
     if (W.boosting && !R.wasBoost) R.nk = 1; R.wasBoost = !!W.boosting; R.nk = Math.max(0, (R.nk || 0) - dt / 0.3);   // the moment it fires
     flames.forEach((f, q) => { f.visible = !!W.boosting && !W.jet; if (f.visible) { const fl = 0.75 + Math.random() * 0.5; const kk = 1 + (R.nk || 0) * 0.7; f.scale.set((0.9 + Math.random() * 0.2) * kk, (0.9 + Math.random() * 0.2) * kk, fl * (0.6 + R.boostK * 0.5) * kk); f.userData.dia.forEach((d) => { d.material.opacity = 0.5 + Math.random() * 0.5; }); } });
 
@@ -1989,8 +1997,8 @@ export function createWorld() {
     effects(W, t, dt, cx, cy, cz, R.visHead, travel);
     flare(W); gulls(W, t, cx, cy, cz, fx, fz);
     if (W.banner && W.banner !== R.lastBanner) { R.lastBanner = W.banner; if (W.banner.kind === 'check' || W.banner.kind === 'goal' || W.banner.kind === 'go') confetti(cx, cy, cz, fx, fz, W.banner.kind === 'goal' ? 360 : 200); }
-    { const LK = LOOK[R.lookKey] || {}, am = (1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1); smoke.amb(am); tyre.amb(am); }   // smoke takes the light it's in
-    smoke.update(dt); sparks.update(dt); tyre.update(dt); updateShards(dt); fworks.update(dt);
+    { const LK = LOOK[R.lookKey] || {}, am = (1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1); smoke.amb(am); tyre.amb(am); steam.amb(am); }   // smoke takes the light it's in
+    smoke.update(dt); sparks.update(dt); tyre.update(dt); steam.update(dt); updateShards(dt); fworks.update(dt);
     if (LOOK[R.lookKey] && LOOK[R.lookKey].fireworks && !W.ferry && !W.crash) {   // a burst out over the water ahead every second or so, a rocket's trail under it
       R.fwT = (R.fwT || 0) - dt;
       if (R.fwT <= 0) {
@@ -2072,12 +2080,16 @@ export function createWorld() {
     // underneath fire, a cloud trail from the two rear nozzles on a boost, little puffs off the sides as it steers in the air
     if (W.jet && !W.crash) {
       const alt = W.h - E.heightAt(W, W.s), gy = cy - alt + 0.15, firing = W.lift && (W.hover || W.airT < 0.45);
-      if (firing && alt < 6) { const n = Math.round(6 * (1 - alt / 6)) + 2; for (let q = 0; q < n; q++) { const a = Math.random() * Math.PI * 2, r0 = 0.6 + Math.random() * 0.8, sp = 5 + Math.random() * 6;
-        tyre.emit(cx + Math.cos(a) * r0, gy, cz + Math.sin(a) * r0, Math.cos(a) * sp + tfx * W.v * 0.45, 0.2 + Math.random() * 0.8, Math.sin(a) * sp + tfz * W.v * 0.45, 1.0, 6.5, '#f1f5f9', 0.5, 1.6, 0, SMK); } }   // rolling along the road
-      if (W.boosting) for (const sd of [-0.62, 0.62]) for (let q = 0; q < 3; q++) { const p = rear(sd);
-        tyre.emit(p[0] - fx * 0.5, p[1] + 0.08, p[2] - fz * 0.5, tfx * W.v * 0.5 - fx * (6 + Math.random() * 4) + (Math.random() - 0.5) * 1.5, 0.2 + Math.random() * 0.6, tfz * W.v * 0.5 - fz * (6 + Math.random() * 4) + (Math.random() - 0.5) * 1.5, 0.5, 3.8, '#eef4f8', 0.48, 1.1, 0, SMK); }   // the rear nozzles' trail
+      const at = (x, z) => [cx + rx * x - fx * z, cz + rz * x - fz * z];   // a point on the car (its x across, z back) in the world
+      if (firing) for (const [jx, jz] of [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]]) for (let q = 0; q < 3; q++) {   // steam pouring down from each jet to the road
+        const p = at(jx, jz), fall = (alt + 0.6) / 0.42;
+        steam.emit(p[0] + (Math.random() - 0.5) * 0.2, cy + 0.1 - Math.random() * 0.4, p[1] + (Math.random() - 0.5) * 0.2, tfx * W.v * 0.85 + (Math.random() - 0.5) * 2, -fall * (0.8 + Math.random() * 0.4), tfz * W.v * 0.85 + (Math.random() - 0.5) * 2, 0.32, 1.7, '#f6fafd', 0.6, 0.5, 0, STM); }
+      if (firing && alt < 8) { const n = Math.round(10 * (1 - alt / 8)) + 3; for (let q = 0; q < n; q++) { const a = Math.random() * Math.PI * 2, r0 = 0.8 + Math.random() * 1.2, sp = 6 + Math.random() * 8;
+        tyre.emit(cx + Math.cos(a) * r0, gy, cz + Math.sin(a) * r0, Math.cos(a) * sp + tfx * W.v * 0.45, 0.3 + Math.random() * 1.1, Math.sin(a) * sp + tfz * W.v * 0.45, 1.2, 7.5, '#f4f8fb', 0.6, 1.8, 0, SMK); } }   // billowing out along the road
+      if (W.boosting) for (const jx of [-0.5, 0.5]) for (let q = 0; q < 5; q++) { const p = at(jx, carInfo ? carInfo.len + 0.3 : 2.6), back = 16 + Math.random() * 10;   // the rear nozzles' blast: a thick white plume
+        steam.emit(p[0], cy + 0.4 + (Math.random() - 0.5) * 0.2, p[1], tfx * W.v * 0.75 - fx * back + (Math.random() - 0.5) * 2.5, (Math.random() - 0.3) * 1.5, tfz * W.v * 0.75 - fz * back + (Math.random() - 0.5) * 2.5, 0.4, 3.2, '#f2f7fb', 0.55, 0.65, 0, STM); }
       if (W.lift && Math.abs(W.steer || 0) > 0.3 && (W.t % 2 === 0)) { const sd = -(W.steer > 0 ? 1 : -1);   // a side thruster puffing to turn it
-        for (let q = 0; q < 2; q++) tyre.emit(cx + rx * sd * 1.1 + fx * (q ? 0.9 : -0.9), cy + 0.45, cz + rz * sd * 1.1 + fz * (q ? 0.9 : -0.9), tfx * W.v * 0.8 + rx * sd * 4, 0.3, tfz * W.v * 0.8 + rz * sd * 4, 0.25, 1.6, '#ffffff', 0.5, 0.55, 0, SMK); }
+        for (let q = 0; q < 2; q++) { const p = at(sd * 1.1, q ? -0.9 : 0.9); steam.emit(p[0], cy + 0.45, p[1], tfx * W.v * 0.8 + rx * sd * 5, 0.3, tfz * W.v * 0.8 + rz * sd * 5, 0.25, 1.8, '#ffffff', 0.55, 0.5, 0, STM); } }
     }
     // wheelspin (pulling away): thick smoke boiling off the rear tyres, drifting back and up behind the car
     const ws = W.wspin || 0;
@@ -2127,7 +2139,7 @@ export function createWorld() {
     for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear();
     R.stubs.forEach((m) => { scene.remove(m); m.geometry.dispose(); }); R.stubs = [];
     for (const [, m] of traffic) scene.remove(m); traffic.clear();
-    smoke.clear(); sparks.clear(); tyre.clear(); skid.clear();
+    smoke.clear(); sparks.clear(); tyre.clear(); steam.clear(); skid.clear();
     if (W.segs.length && W.segs[0].i === 0) { W.segs[0].px = 0; W.segs[0].pz = 0; W.segs[0].th = 0; }
   }
   function setSize(w, h) { if (w === R.w && h === R.h) return; R.w = w; R.h = h; renderer.setSize(w, h, false); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
@@ -2141,7 +2153,7 @@ export function createWorld() {
     const g = new THREE.Group(), box = new THREE.BoxGeometry(0.01, 0.01, 0.01), mats = [...Object.values(MAT), ...Object.values(CAR), roadMat, rumbleMat, slowMat, poolMat, groundMat, seaMat];
     for (const m of mats) if (m && m.isMaterial) g.add(new THREE.Mesh(box, m));
     g.position.set(0, -500, 0); scene.add(g);
-    const hidden = [bubble, glint, ...flames, ...liftJets, ...tailGlow, tailWash].filter(Boolean), was = hidden.map((o) => o.visible);
+    const hidden = [bubble, glint, ...flames, ...liftJets, ...rearJets, ...tailGlow, tailWash].filter(Boolean), was = hidden.map((o) => o.visible);
     hidden.forEach((o) => { o.visible = true; });
     const done = () => { scene.remove(g); hidden.forEach((o, i) => { o.visible = was[i]; }); R.warmed = true; };   // (the frame-rate watcher waits for this)
     try {   // for the picture as drawn through the glow and grade (into a render target: linear colour) and straight to the screen (a slow PC)

@@ -132,7 +132,9 @@
     // the Skimmer (owner, 19 Oct 2026, after the thruster car shown in the US on 15 Oct): our own open roadster with a gas-thruster kit
     // instead of nitro - a pressure tank, a short hard push from the rear nozzles (Space) and LIFT from jets underneath (Shift / X / B):
     // hop the traffic, hold it to hover a little, steer in the air, land straight. Our own design and name: never a real make
-    skimmer: { top: 1.0, acc: 1.04, grip: 0.98, yaw: 1.02, jet: true }
+    // (owner, 19 Oct evening: "it's an electric car ... 0 to 60 in about 0.6 of a second ... faster than 240": 201 mph flat out, its boost ~268,
+    // and an electric motor's shove off the line - launch: extra pull that fades out by about a third of its top speed)
+    skimmer: { top: 1.12, acc: 1.04, grip: 0.98, yaw: 1.02, jet: true, launch: 42 }
   };
   // how tall the traffic is (m): the Skimmer can only clear what it's above
   var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, gtbrit: 1.3, raging: 1.25, trident: 1.25, barchetta: 1.15 };
@@ -1295,7 +1297,7 @@
     // bottle from cruise reaches ~234 (the roadster) - softer from a crawl (the tyres spin); when it runs out the speed bleeds away over a few seconds
     // (was 141 mph and x1.55, one bottle ~204, 7 Oct)
     var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.33 : 1);
-    var v = W.v, accel = 10.5 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? (W.jet ? 54 : 38 * (0.3 + 0.7 * Math.min(1, v / (top * 0.6)))) * Math.max(0, 1 - Math.pow(v / hz, 3)) : 0);   // (the Skimmer's nozzles push off the air, not the tyres: as hard from a crawl, and harder)   // (about 1.1 g off the line, then it takes its time to the top: 10.5 was 8.8 at 141 mph, 8 Oct)
+    var v = W.v, accel = 10.5 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? (W.jet ? 54 : 38 * (0.3 + 0.7 * Math.min(1, v / (top * 0.6)))) * Math.max(0, 1 - Math.pow(v / hz, 3)) : 0) + (C.launch ? C.launch * Math.max(0, 1 - v / (hzN * 0.55)) : 0);   // (the Skimmer's nozzles push off the air, not the tyres: as hard from a crawl, and harder)   // (about 1.1 g off the line, then it takes its time to the top: 10.5 was 8.8 at 141 mph, 8 Oct)
     if (out) v = W.crash.hard ? v * (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : Math.max(W.crash.v0 * 0.45, v * 0.95);   // (a bounce: down to about half speed, not a stop)
     else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
     else if (W.drift && !W.air) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
@@ -1312,7 +1314,7 @@
     // wheelspin: foot down from a standstill or a crawl, the rear tyres spin up (smoke, black lines, the screech: world3d.js, coastrun.js);
     // it eases as the speed builds and is gone by about 40 mph. Off the line at the green it always spins, a flying start too
     if (W.launchT > 0) W.launchT--;
-    var spinT = out || W.air || W.ferry || !(gas || W.boosting) ? 0 : Math.max(clamp(1.15 - v / 18, 0, 1), (W.launchT || 0) / 100, W.boosting && !W.jet ? clamp((top * 0.62 - v) / (top * 0.3), 0, 1) : 0);   // (nitro from low speed: they spin too)
+    var spinT = out || W.air || W.ferry || !(gas || W.boosting) ? 0 : Math.max(clamp(1.15 - v / 18, 0, 1), (W.launchT || 0) / 100, W.boosting && !W.jet ? clamp((top * 0.62 - v) / (top * 0.3), 0, 1) : 0) * (W.jet ? 0.35 : 1);   // (nitro from low speed: they spin too)
     W.wspin = (W.wspin || 0) + (spinT - (W.wspin || 0)) * Math.min(1, (spinT > (W.wspin || 0) ? 8 : 2.5) * DT);
     if (W.wspin > 0.35 && !W.spinOn) { W.spinOn = true; W.events.push({ sfx: 'skid' }); if (Math.random() < 0.45) voice(W, 'spin'); } else if (W.wspin < 0.1) W.spinOn = false;
     if (W.kickA) W.x += Math.sin(W.kickA) * v * DT * 0.45;   // (the fishtail carries you a little sideways)
@@ -1482,7 +1484,7 @@
     if (W.jet) { if (W.boost >= 1) { W.boost -= 1; W.gas = Math.min(GAS_MAX, W.gas + 25); pop(W, '+25 GAS', 'TANK TOPPED UP', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); } }   // the Skimmer: the meter full tops up the tank
     else if (W.boost >= 1 && W.bottles < BOTTLE_MAX) { W.boost -= 1; W.bottles++; pop(W, '+1 NITRO', 'A BOTTLE FILLED', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); }   // the meter full: another bottle
     else if (W.bottles >= BOTTLE_MAX) W.boost = Math.min(W.boost, 0.99);
-    if (!W.timeUp && !out) { var p2 = W.v / VMAX; W.sAcc += p2 * p2 * 48 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }   // (48 was 32: at 180 mph a run is shorter, 8 Oct - a run scores about what it did, so the old Hall of Fame still counts)
+    if (!W.timeUp && !out) { var p2 = W.v / (VMAX * (W.jet ? C.top : 1)); W.sAcc += p2 * p2 * 48 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }   // (48 was 32: at 180 mph a run is shorter, 8 Oct - a run scores about what it did, so the old Hall of Fame still counts)
     requests(W);
     var HOLD = { ask: 70, wave: 240, look: 210, hair: 170, sulk: 260, clap: 120, hold: W.boosting ? 1e9 : 50 };
     if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (HOLD[W.her.k] || 110)) mood(W, 'idle');
