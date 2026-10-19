@@ -269,7 +269,8 @@ JUNARA_FACTS = [
 ]
 
 
-def junara_facts_html():
+def junara_facts_html(after=""):
+    """The facts table; `after` goes under its "Checked against" line (19 Oct 2026: the Junara Short's button)."""
     rows = "\n".join('              <tr><th scope="row">' + a + '</th><td>' + b
                      + ((' <small class="jfacts__src">(' + c + ')</small>') if c else '') + '</td></tr>'
                      for a, b, c in JUNARA_FACTS)
@@ -279,7 +280,7 @@ def junara_facts_html():
         <div class="price-table-wrap" tabindex="0" role="group" aria-label="The facts (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><tbody>
 {rows}
             </tbody></table></div>
-        <p style="text-align:center;font-size:.85rem;color:var(--muted);margin:.8rem 0 0">Checked against Virgin Media&rsquo;s, Virgin Media O2&rsquo;s and Junara&rsquo;s own pages. Updated 29 September 2026.</p>
+        <p style="text-align:center;font-size:.85rem;color:var(--muted);margin:.8rem 0 0">Checked against Virgin Media&rsquo;s, Virgin Media O2&rsquo;s and Junara&rsquo;s own pages. Updated 29 September 2026.</p>{after}
       </div>
       <style>.jfacts__src{{display:inline;font-size:.78rem;color:var(--muted)}}.jfacts__src a{{color:var(--muted)}}</style>
     </section>'''

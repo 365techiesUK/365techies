@@ -23795,7 +23795,12 @@ def junara_v2(d, crumbs):
     also = ('Rather keep your Virgin address? <a href="#s3">What Junara costs</a> &middot; <a href="#s4">your deadline</a> &middot; '
             '<a href="#s5">keep it or move it?</a> &middot; <a href="#s6">is this Junara email real?</a> &middot; '
             '<a href="/move-virgin-media-email-to-gmail/">move it to Gmail by hand</a>')
-    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(), ""
+    # 19 Oct 2026 (owner: "publish the private Junara Short and add it to the page"): its button sits under the facts
+    # table, below the first screen (the 6 Oct first-screen measurements above are untouched). Plays from YouTube.
+    short = ('\n        <p style="text-align:center;margin:1rem 0 0">'
+             + yt_watch.button(yt_watch.JUNARA_SHORT, "Watch it in 38 seconds: what&rsquo;s changing, and what to do", shape="tall")
+             + '</p>')
+    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(after=short), ""
 
 
 # Plusnet (26 Sep 2026): same first screen and box; Greenby facts from Greenby's own FAQ, read 26 Sep 2026.
