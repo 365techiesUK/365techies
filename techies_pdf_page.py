@@ -19,6 +19,8 @@ Rules, from what the program really does (0.1.0):
     structured data (no user ratings collected).
 The download, version and size come from downloads/tpdf/version.json, and the build stops if the installer is missing.
 """
+import datetime
+import html
 import json
 import os
 import re
@@ -107,6 +109,21 @@ CSS = """    <style>
       .tpp-card h3{margin:0 0 .5rem;font-size:1.15rem}
       .tpp-tm{font-size:.78rem;color:var(--muted);max-width:60rem;margin:1.6rem auto 0;text-align:center;line-height:1.5}
       @media (max-width:860px){.tpp-feat{grid-template-columns:1fr}.tpp-feat:nth-child(even) .tpp-feat__txt{order:0}}
+      .tpp-clip{display:inline-flex;align-items:center;gap:.8rem;max-width:100%;box-sizing:border-box;margin:.35rem 0 0;padding:.45rem 1rem .45rem .45rem;border:1px solid var(--tpedge);border-radius:12px;background:var(--tpfill);color:inherit;text-decoration:none;transition:border-color .2s ease,background .2s ease;cursor:pointer}
+      .tpp-clip:hover,.tpp-clip:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}
+      .tpp-clip--soon{cursor:default;opacity:.85}.tpp-clip--soon:hover{border-color:var(--tpedge);background:var(--tpfill)}
+      .tpp-clip__pic{position:relative;flex:none;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#0b1430}
+      .tpp-clip__pic img{display:block;width:100%;height:100%;object-fit:cover}
+      .tpp-clip__pic svg{position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+      .tpp-clip b{display:block;font-size:1rem}
+      .tpp-clip small{display:block;color:var(--muted);font-size:.85rem;line-height:1.35}
+      .tpp-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}
+      .tpp-dlg::backdrop{background:rgba(2,6,16,.84)}
+      .tpp-dlg__v{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:#060c1c}
+      .tpp-dlg__v iframe{display:block;width:100%;height:100%;border:0}
+      .tpp-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
+      .tpp-dlg__x:hover,.tpp-dlg__x:focus-visible{background:#1d97e3}
+      .tpp-dlg__says{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     </style>
 """
 
@@ -256,6 +273,99 @@ FEATS = [
 ]
 
 
+# The six reels (19 Oct 2026, D:/claude/reels/techies-pdf-2026-10-19: the real program on made-up documents, the Lily-copy
+# voice, captions burned in). Owner: "get views on the reels on our YouTube channel ... from our webpage" - so they play
+# from YouTube, not from our server: a play here is a view there. Click-to-play on youtube-nocookie in one pop-up player
+# (nothing loads and no cookie is set until the visitor presses the button). Each is keyed by the job it shows; "id" is the
+# YouTube video id (None = no button), "live" = when YouTube makes it public. Until then the button says
+# when it's out and does nothing, and its VideoObject waits as text/plain until the script finds the time has passed.
+SHORTS = {
+    "sign": dict(id="B2MBn5KOo6k", slug="sign-a-pdf", secs=21, live="2026-10-20T17:00:00+01:00", out="Tue 20 Oct",
+                 name="How to sign a PDF without printing it (free, Windows)",
+                 says="Need to sign a form? Don&rsquo;t print it. Open it in Techies PDF, and type straight into the boxes. Then add your signature. Type it, draw it, or use a photo. Put it on the line, and press Save."),
+    "shrink": dict(id="4R_94kkKYLM", slug="too-big-to-email", secs=21, live="2026-10-22T17:00:00+01:00", out="Thu 22 Oct",
+                   name="PDF too big to email? Make it smaller in seconds",
+                   says="Is your PDF too big to email? Techies PDF makes it smaller, right here on your computer. Photos and scans come down the most. And your original stays just as it was."),
+    "join": dict(id="Zaj0lErSGkQ", slug="join-pdfs", secs=21, live="2026-10-24T17:00:00+01:00", out="Sat 24 Oct",
+                 name="How to join PDFs into one (free, no uploading)",
+                 says="Lots of PDFs to send? Send just one. Drop them into Techies PDF, and put them in order. Press Join, and they&rsquo;re one PDF. The ones you started with aren&rsquo;t changed."),
+    "photos": dict(id="o0K6FKsCRKo", slug="photos-to-pdf", secs=21, live="2026-10-26T17:00:00+00:00", out="Mon 26 Oct",
+                   name="Turn photos of a letter into one PDF (free)",
+                   says="Photographed a letter or a receipt? Techies PDF turns your photos into one PDF, a page each. The right way up, on A4, ready to send or print. And nothing is uploaded. It all happens on your PC."),
+    "pages": dict(id="YEf7mCaN8rk", slug="upside-down-page", secs=21, live="2026-10-28T17:00:00+00:00", out="Wed 28 Oct",
+                  name="PDF page upside down? Turn it the right way up",
+                  says="Got a page that&rsquo;s upside down? Techies PDF shows every page. Turn it the right way up. Move pages around, or take out the ones you don&rsquo;t need. Then save it, and you&rsquo;re done."),
+    "password": dict(id="et8ThvbGKis", slug="password-a-pdf", secs=21, live="2026-10-30T17:00:00+00:00", out="Fri 30 Oct",
+                     name="Put a password on a PDF before you email it",
+                     says="Emailing something private? Put a password on the PDF first. Then tell them the password by phone, not in the same email. Know the password? You can take it off, too."),
+}
+SHORT_END = " Free, from 365 Techies."
+PLAY = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg>'
+
+
+def short_live(v):
+    return datetime.datetime.now(datetime.timezone.utc) >= datetime.datetime.fromisoformat(v["live"])
+
+
+def short_button(fid):
+    v = SHORTS.get(fid)
+    if not v or not v["id"]:
+        return ""
+    base = "/images/tpdf-short-%s-v1" % v["slug"]
+    return ('\n              <a class="tpp-clip" id="short-%s" href="https://www.youtube.com/shorts/%s" target="_blank" rel="noopener" '
+            'data-yt="%s" data-live="%s" data-out="%s" data-label="%s: %d seconds, with a spoken guide and captions" data-says="%s">'
+            '<span class="tpp-clip__pic"><img src="%s-thumb.webp" width="72" height="72" alt="" loading="lazy" decoding="async">%s</span>'
+            '<span><b>Watch it in %d seconds</b><small>The real program, with a spoken guide and captions</small></span></a>'
+            % (v["slug"], v["id"], v["id"], v["live"], v["out"], v["name"], v["secs"], html.escape(html.unescape(v["says"] + SHORT_END)),
+               base, PLAY, v["secs"]))
+
+
+def short_node(fid):
+    v = SHORTS[fid]
+    words = v["says"] + SHORT_END
+    for a, b in (("&rsquo;", "'"), ("&amp;", "&")):
+        words = words.replace(a, b)
+    return {"@context": "https://schema.org", "@type": "VideoObject", "@id": "%s/%s/#short-%s" % (bp.SITE, SLUG, v["slug"]),
+            "name": "Techies PDF: " + v["name"],
+            "description": "%s, in Techies PDF for Windows 10 and 11: the real program on made-up documents, with a spoken guide "
+                           "and captions. From 365 Techies in Dorset." % v["name"],
+            "thumbnailUrl": ["%s/images/tpdf-short-%s-v1-poster.webp" % (bp.SITE, v["slug"]),
+                             "https://i.ytimg.com/vi/%s/hqdefault.jpg" % v["id"]],
+            "uploadDate": v["live"][:10], "duration": "PT%dS" % v["secs"], "embedUrl": "https://www.youtube.com/embed/" + v["id"],
+            "url": "https://www.youtube.com/shorts/" + v["id"], "transcript": words, "inLanguage": "en-GB",
+            "publisher": {"@id": bp.SITE + "/#business"}}
+
+
+def short_waiting():
+    """The VideoObjects of reels not public yet, as text/plain: the player script turns each into real structured data once
+    its time has passed, so the page needn't be rebuilt on the day."""
+    return "".join('    <script type="text/plain" class="tpp-ld" data-live="%s">%s</script>\n' % (v["live"], json.dumps(short_node(k)))
+                   for k, v in SHORTS.items() if v["id"] and not short_live(v))
+
+
+# One player for every reel: a modal dialog with the YouTube video in it (Esc, the X or a click outside closes it and
+# stops the video). A reel not out yet: its button says when, and does nothing.
+CLIP_DIALOG = ('    <dialog class="tpp-dlg" id="tppclip" aria-label="Techies PDF video" aria-describedby="tppclip-says">'
+               '<button class="tpp-dlg__x" type="button" aria-label="Close the video">&times;</button>'
+               '<div class="tpp-dlg__v"></div><p class="tpp-dlg__says" id="tppclip-says"></p></dialog>\n'
+               '    <script>(function(){var d=document.getElementById("tppclip");'
+               'document.querySelectorAll("script.tpp-ld").forEach(function(s){if(Date.now()>=Date.parse(s.getAttribute("data-live"))){'
+               'var j=document.createElement("script");j.type="application/ld+json";j.text=s.text;s.parentNode.replaceChild(j,s);}});'
+               'var v=d&&d.querySelector(".tpp-dlg__v"),t=document.getElementById("tppclip-says");'
+               'document.querySelectorAll("a.tpp-clip").forEach(function(a){var lv=Date.parse(a.getAttribute("data-live")),o=a.getAttribute("data-out");'
+               'if(Date.now()<lv){a.removeAttribute("href");a.removeAttribute("target");a.classList.add("tpp-clip--soon");a.setAttribute("aria-disabled","true");'
+               'a.querySelector("b").textContent="New video, out "+o;return;}'
+               'if(!d||!d.showModal)return;'
+               'a.addEventListener("click",function(e){e.preventDefault();var i=document.createElement("iframe");'
+               'i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");'
+               'i.setAttribute("allowfullscreen","");i.setAttribute("title",a.getAttribute("data-label"));'
+               'i.src="https://www.youtube-nocookie.com/embed/"+a.getAttribute("data-yt")+"?autoplay=1&rel=0&playsinline=1&loop=1&playlist="+a.getAttribute("data-yt");'
+               'v.innerHTML="";v.appendChild(i);t.textContent=a.getAttribute("data-says");d.showModal();});});'
+               'if(!d)return;d.addEventListener("close",function(){v.innerHTML="";});'
+               'd.querySelector(".tpp-dlg__x").addEventListener("click",function(){d.close();});'
+               'd.addEventListener("click",function(e){if(e.target===d)d.close();});})();</script>')
+
+
 def feat_blocks():
     out = []
     for fid, prob, h, body, alt in FEATS:
@@ -263,7 +373,7 @@ def feat_blocks():
             <div class="tpp-feat__txt">
               <p class="tpp-prob mono">{prob}</p>
               <h3>{h}</h3>
-              <p>{body}</p>
+              <p>{body}</p>{short_button(fid)}
             </div>
             <figure style="margin:0"><div class="tpp-shot">{shot(fid, alt)}</div></figure>
           </div>""")
@@ -414,7 +524,7 @@ def build():
         hero(), PROOF, download(), overview(), jobs(), PRIVATE, SAFETY, LIMITS, growing(), WHO, bp.faq_html(FAQS),
         bp.cta("Rather we set it up for you?", "We can install Techies PDF and show you round, over the phone or on a visit. It&rsquo;s a paid job, from &pound;20 remotely, and we agree the price before we start.",
                primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Send us a message", "/contact/")),
-        TRADEMARK,
+        TRADEMARK, short_waiting() + CLIP_DIALOG,
     ])
 
     def schema(s, _d=DESC):
@@ -438,8 +548,13 @@ def build():
             "publisher": {"@id": bp.SITE + "/#business"}, "provider": {"@id": bp.SITE + "/#business"},
             "datePublished": "2026-10-18", "url": f"{bp.SITE}/{s}/",
         }
+        vids = [short_node(k) for k, v in SHORTS.items() if v["id"] and short_live(v)]
+        for n in vids:
+            n.pop("@context")
+        if vids:
+            app["subjectOf"] = [{"@id": n["@id"]} for n in vids]
         return bp.graph([bp.crumb_sub(s, "Free Tools", "free-tools", NAME),
-                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app,
+                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app, *vids,
                          bp.howto_node(s, "How to install Techies PDF", [(n, re.sub(r"<[^>]+>", "", t)) for n, t in STEPS]),
                          bp.faqpage(s, FAQS)])
 
