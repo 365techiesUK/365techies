@@ -15106,6 +15106,15 @@ def computer_spec_checker():
            cta1=("See my results", "#spc"), cta2=("Benchmark it", "#benchtool"),
            chips=["Instant &amp; free", "Readings never sent to us", "Spec sheet &amp; score card to share"]),
       SPECCHECK_TOOL,
+      # 19 Oct 2026 (owner: the Spec Checker Short live, so the page earns the channel views): under the results, below
+      # the first screen. Both play from YouTube in the shared pop-up (yt_watch).
+      '    <section class="section" aria-label="Watch it on a real PC" style="padding-top:.4rem;padding-bottom:.2rem">\n'
+      '      <div class="wrap" style="text-align:center">\n'
+      '        <p style="margin:0;color:var(--muted);font-size:.95rem">Watch the checker and its benchmark on a real PC:</p>\n'
+      '        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.2rem .8rem">'
+      + yt_watch.button(yt_watch.SPEC_SHORT, "Watch it in 31 seconds", shape="tall")
+      + yt_watch.button(yt_watch.PC_SPECS_FILM, "The full guide: 3 free ways to check your specs (under 2 minutes)")
+      + '</div>\n      </div>\n    </section>',
       SPECCHECK_APP_BAND,
       PCBENCH_TOOL,
       SPECCHECK_W11_BAND,
