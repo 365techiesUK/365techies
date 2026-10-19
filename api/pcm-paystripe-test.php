@@ -11,7 +11,9 @@ require $ROOT . '/api/pcm-paylink-lib.php';
 $G = array('sessions' => array(), 'list' => array(), 'inv' => array(), 'posts' => array(), 'slack' => array(), 'conn' => array('ok' => true, 'realm' => 'R1', 'live' => true),
            'deposit' => 'D1', 'postcode' => 200, 'stripe_calls' => 0, 'queries' => array());
 function plq_log($m) { $GLOBALS['G']['log'][] = $m; }
-function plq_slack($t) { $GLOBALS['G']['slack'][] = $t; return true; }
+function plq_slack($t) { $GLOBALS['G']['slack'][] = $t; return empty($GLOBALS['G']['hookfail']); }
+define('PCM_SLACK_LIB', 1);   // the real Slack library stays out: its bot is stubbed here
+function slk_call($m, $a, $t = 6) { $GLOBALS['G']['bot'][] = array($m, $a); return array('ok' => true); }
 function st_api($cr, $m, $path, $p = array(), $idem = '') {
     $GLOBALS['G']['stripe_calls']++;
     if ($path === '/v1/checkout/sessions') return array(200, array('data' => $GLOBALS['G']['list']));
@@ -52,6 +54,7 @@ function invq_api($c, $m, $path, $body = null) {
 // --- the library, without its require_once lines (the stubs stand in)
 $src = file_get_contents($ROOT . '/api/pcm-paystripe-lib.php');
 $src = preg_replace('/^require_once .*$/m', '', $src);
+$src = str_replace('__DIR__', var_export($ROOT . '/api', true), $src);   // it runs from a temp copy
 file_put_contents($tmp . '/lib.php', $src);
 require $tmp . '/lib.php';
 
@@ -214,6 +217,18 @@ check(pl_job_invoice($jf, 'x@example.com', 'X', 85) === array('ref' => '4905-140
 check(pl_job_invoice($jf, 'x@example.com', 'X', 90) === null, 'a different amount -> no guess');
 check(pl_job_invoice($jf, 'old@example.com', 'Old', 50) === null, 'older than 45 days -> no guess');
 check(pl_job_invoice($jf, '', 'hanna knight', 60) === array('ref' => '12838', 'id' => '12838'), 'no email -> matched by name');
+
+// 9. the webhook refuses (the 302 of 19 Oct 2026) -> the bot posts it to #daily-jobs-in-jobs-out
+$G['hookfail'] = true; $G['bot'] = array();
+$G['inv']['13020'] = array('Id' => '13020', 'DocNumber' => '4905/160', 'Balance' => 30, 'TotalAmt' => 30, 'CustomerRef' => array('value' => '94', 'name' => 'D Customer'));
+$G['sessions']['cs_live_uUUUUUUUUUU1'] = sess('cs_live_uUUUUUUUUUU1', array('client_reference_id' => '4905-160', 'amount_total' => 3000));
+reset_g(); $r = pst_handle($CR, 'cs_live_uUUUUUUUUUU1');
+check($r[0] === 'done' && count($G['bot']) === 1 && $G['bot'][0][0] === 'chat.postMessage' && $G['bot'][0][1]['channel'] === 'C0BS3BVP48J' && strpos($G['bot'][0][1]['text'], '4905/160') !== false, 'Slack webhook refused -> the bot posts "paid" to #daily-jobs-in-jobs-out', json_encode($G['bot']));
+$G['hookfail'] = false; $G['bot'] = array();
+$G['sessions']['cs_live_vVVVVVVVVVV1'] = sess('cs_live_vVVVVVVVVVV1', array('client_reference_id' => '4905-160', 'amount_total' => 3000));
+$G['inv']['13020']['Balance'] = 30;
+reset_g(); $r = pst_handle($CR, 'cs_live_vVVVVVVVVVV1');
+check($r[0] === 'done' && count($G['bot']) === 0, 'webhook working -> the bot stays quiet');
 
 array_map('unlink', glob($tmp . '/*')); @rmdir($tmp);
 echo "paystripe: $pass passed, $fail failed\n";

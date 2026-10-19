@@ -34,6 +34,18 @@ define('PST_MAX_TRIES', 6);           // a passing problem (QuickBooks busy, no 
 define('PST_KEEP', 300);              // checkouts remembered
 
 function pst_log($m) { plq_log('stripe ' . $m); }
+/* Slack: the pay links' webhook (slack-webhook-jobs.php), else the portal's bot into #daily-jobs-in-jobs-out - that webhook
+   answered 302 on 19 Oct 2026, and pcm-jobs.php sends the job cards the same way ($SLACK_JOBS_CHANNEL overrides). */
+function pst_slack($text) {
+    if (plq_slack($text)) return true;
+    require_once __DIR__ . '/pcm-slack-lib.php';
+    $f = __DIR__ . '/pcm-slack-bot.php';
+    $raw = is_file($f) ? (string)@file_get_contents($f) : '';
+    $chan = preg_match('/\$SLACK_JOBS_CHANNEL\s*=\s*[\'"]([A-Z0-9]{8,14})[\'"]/', $raw, $m) ? $m[1] : 'C0BS3BVP48J';
+    $r = slk_call('chat.postMessage', array('channel' => $chan, 'text' => $text, 'unfurl_links' => false), 8);
+    if (empty($r['ok'])) pst_log('slack: the webhook and the bot both refused (' . (string)($r['error'] ?? '') . ')');
+    return !empty($r['ok']);
+}
 
 /* ---- the pure part (pcm-paystripe-test.php) --------------------------------------------------------------------------- */
 
@@ -208,7 +220,7 @@ function pst_handle($cr, $sid, $via = 'cron') {
         $seen = pst_seen($sid);
         if ((int)($seen['tries'] ?? 0) >= PST_MAX_TRIES) {
             pst_note($sid, array('state' => 'flagged', 'why' => $why));
-            plq_slack(pst_flag_text($s, $ref, $why . ' (tried ' . PST_MAX_TRIES . ' times)'));
+            pst_slack(pst_flag_text($s, $ref, $why . ' (tried ' . PST_MAX_TRIES . ' times)'));
             pst_log($sid . ' flagged after tries: ' . $why);
             return array('flagged', $why);
         }
@@ -218,7 +230,7 @@ function pst_handle($cr, $sid, $via = 'cron') {
     };
     $flag = function ($why) use ($sid, $s, $ref) {
         pst_note($sid, array('state' => 'flagged', 'why' => $why));
-        plq_slack(pst_flag_text($s, $ref, $why));
+        pst_slack(pst_flag_text($s, $ref, $why));
         pst_log($sid . ' flagged: ' . $why);
         return array('flagged', $why);
     };
@@ -263,7 +275,7 @@ function pst_handle($cr, $sid, $via = 'cron') {
             return array('ok' => true, 'data' => $data);
         });
     }
-    plq_slack(pst_paid_text($s, $inv, $pence));
+    pst_slack(pst_paid_text($s, $inv, $pence));
     pst_log($via . ' ' . $sid . ' ' . pl_money($pence / 100) . ' -> QuickBooks payment ' . $pid . ' on invoice ' . pst_inv_label($inv));
     return array('done', $pid);
 }
