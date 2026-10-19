@@ -280,22 +280,22 @@ FEATS = [
 # YouTube video id (None = no button), "live" = when YouTube makes it public. Until then the button says
 # when it's out and does nothing, and its VideoObject waits as text/plain until the script finds the time has passed.
 SHORTS = {
-    "sign": dict(id="B2MBn5KOo6k", slug="sign-a-pdf", secs=21, live="2026-10-20T17:00:00+01:00", out="Tue 20 Oct",
+    "sign": dict(id="B2MBn5KOo6k", slug="sign-a-pdf", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
                  name="How to sign a PDF without printing it (free, Windows)",
                  says="Need to sign a form? Don&rsquo;t print it. Open it in Techies PDF, and type straight into the boxes. Then add your signature. Type it, draw it, or use a photo. Put it on the line, and press Save."),
-    "shrink": dict(id="4R_94kkKYLM", slug="too-big-to-email", secs=21, live="2026-10-22T17:00:00+01:00", out="Thu 22 Oct",
+    "shrink": dict(id="4R_94kkKYLM", slug="too-big-to-email", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
                    name="PDF too big to email? Make it smaller in seconds",
                    says="Is your PDF too big to email? Techies PDF makes it smaller, right here on your computer. Photos and scans come down the most. And your original stays just as it was."),
-    "join": dict(id="Zaj0lErSGkQ", slug="join-pdfs", secs=21, live="2026-10-24T17:00:00+01:00", out="Sat 24 Oct",
+    "join": dict(id="Zaj0lErSGkQ", slug="join-pdfs", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
                  name="How to join PDFs into one (free, no uploading)",
                  says="Lots of PDFs to send? Send just one. Drop them into Techies PDF, and put them in order. Press Join, and they&rsquo;re one PDF. The ones you started with aren&rsquo;t changed."),
-    "photos": dict(id="o0K6FKsCRKo", slug="photos-to-pdf", secs=21, live="2026-10-26T17:00:00+00:00", out="Mon 26 Oct",
+    "photos": dict(id="o0K6FKsCRKo", slug="photos-to-pdf", secs=21, live="2026-10-21T17:00:00+01:00", out="Wed 21 Oct",
                    name="Turn photos of a letter into one PDF (free)",
                    says="Photographed a letter or a receipt? Techies PDF turns your photos into one PDF, a page each. The right way up, on A4, ready to send or print. And nothing is uploaded. It all happens on your PC."),
-    "pages": dict(id="YEf7mCaN8rk", slug="upside-down-page", secs=21, live="2026-10-28T17:00:00+00:00", out="Wed 28 Oct",
+    "pages": dict(id="YEf7mCaN8rk", slug="upside-down-page", secs=21, live="2026-10-22T17:00:00+01:00", out="Thu 22 Oct",
                   name="PDF page upside down? Turn it the right way up",
                   says="Got a page that&rsquo;s upside down? Techies PDF shows every page. Turn it the right way up. Move pages around, or take out the ones you don&rsquo;t need. Then save it, and you&rsquo;re done."),
-    "password": dict(id="et8ThvbGKis", slug="password-a-pdf", secs=21, live="2026-10-30T17:00:00+00:00", out="Fri 30 Oct",
+    "password": dict(id="et8ThvbGKis", slug="password-a-pdf", secs=21, live="2026-10-23T17:00:00+01:00", out="Fri 23 Oct",
                      name="Put a password on a PDF before you email it",
                      says="Emailing something private? Put a password on the PDF first. Then tell them the password by phone, not in the same email. Know the password? You can take it off, too."),
 }
