@@ -72,6 +72,29 @@ function pl_page_url($amount, $ref = '') {
 }
 function pl_page_link_ok($u) { return (bool)preg_match('#^https://365techies\.co\.uk/pay/\?amount=\d{1,5}\.\d{2}(&ref=[A-Za-z0-9-]{1,24})?$#', (string)$u); }
 function pl_link_ok($u) { return pl_flow_link_ok($u) || pl_page_link_ok($u); }
+/* 19 Oct 2026 (owner: "David's not going to have Claude in front of him ... he needs to basically work automatically"): the
+   QuickBooks invoice the portal's "Quote agreed" made for this customer (same email - or same name when there is no email)
+   and this exact amount in the last 45 days, newest first (pcm-jobs.json). -> array(ref: '4905-131' - the invoice's own
+   number with a dash, Stripe allows no slash - or QuickBooks' id when the number wasn't kept, id: QuickBooks' id) | null */
+function pl_job_invoice($jobsFile, $email, $name, $amount, $now = null) {
+    $now = $now === null ? time() : $now;
+    $j = @json_decode((string)@file_get_contents($jobsFile), true);
+    $email = strtolower(trim((string)$email)); $name = strtolower(trim((string)$name));
+    if ($email === '' && $name === '') return null;
+    foreach (array_reverse((array)(isset($j['jobs']) ? $j['jobs'] : array())) as $job) {
+        if (!is_array($job) || empty($job['invoice_no'])) continue;
+        if ((int)(isset($job['ts']) ? $job['ts'] : 0) < $now - 45 * 86400) continue;
+        $je = strtolower(trim((string)(isset($job['email']) ? $job['email'] : '')));
+        $jn = strtolower(trim((string)(isset($job['name']) ? $job['name'] : '')));
+        if ($email !== '' ? $je !== $email : $jn !== $name) continue;
+        if (abs((float)(isset($job['amount']) ? $job['amount'] : 0) - (float)$amount) > 0.001) continue;
+        $id = preg_replace('/\D/', '', (string)$job['invoice_no']);
+        if ($id === '') continue;
+        $doc = substr(preg_replace('/[^A-Za-z0-9-]/', '', str_replace('/', '-', (string)(isset($job['invoice_doc']) ? $job['invoice_doc'] : ''))), 0, 24);
+        return array('ref' => $doc !== '' ? $doc : $id, 'id' => $id);
+    }
+    return null;
+}
 
 function pl_flow_link_ok($u) {
     $u = (string)$u;

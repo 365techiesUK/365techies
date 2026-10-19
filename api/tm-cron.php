@@ -115,6 +115,12 @@ try { $lc = lc_sweep(); } catch (Throwable $e) { $lc = array('ok' => false, 'err
 require_once __DIR__ . '/pcm-invq-sweep.php';
 $iq = invq_morning();
 
+/* Pay-page card payments (19 Oct 2026, pcm-paystripe-lib.php): every 10 minutes, the pay page's paid Stripe checkouts of the
+   last 3 days that the webhook hasn't finished with - each marks its QuickBooks invoice paid (or says in Slack why it
+   couldn't). A clean no-op with no Stripe key on the server. */
+require_once __DIR__ . '/pcm-paystripe-lib.php';
+try { $pst = pst_sweep(); } catch (Throwable $e) { $pst = array('error' => 'exception'); }
+
 /* Dells bought on eBay (14 Oct 2026, shop-ebay-lib.php): at most hourly, asks eBay for the orders we bought, keeps each
    whole Latitude / OptiPlex / Precision for the staff portal's Shop tab, puts the new ones in QuickBooks and posts a line to
    #365-job-tracker. A clean no-op until api/ebay-key.php is on the server. Same placement as the sweeps above. */

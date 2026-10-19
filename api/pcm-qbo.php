@@ -405,7 +405,7 @@ if ($action === 'qbostart') {
     }
 
     // 2. the draft invoice, if an amount was given
-    $invId = ''; $invErr = '';
+    $invId = ''; $invErr = ''; $invDoc = '';
     if ($amount > 0) {
         if (!$LIVE) {
             done(array('ok' => true, 'mode' => 'DRY-RUN', 'live_enabled' => !empty($QBO_LIVE_ENABLED),
@@ -436,6 +436,7 @@ if ($action === 'qbostart') {
         $res = qbo_api('POST', '/invoice', $inv, $access);
         if (qbo_ok($res) && !empty($res['json']['Invoice']['Id'])) {
             $invId = (string)$res['json']['Invoice']['Id'];
+            $invDoc = (string)(isset($res['json']['Invoice']['DocNumber']) ? $res['json']['Invoice']['DocNumber'] : '');   // 4905/NNN - what the customer sees
             lg('draft invoice ' . $invId . ' (' . number_format($amount, 2) . ') for ' . $email);
         } else {
             $invErr = qbo_why($res);
@@ -452,7 +453,7 @@ if ($action === 'qbostart') {
     // were already there and nothing needed writing. Only the last can happen in
     // dry-run, so the mode is reported as it actually is rather than assumed live.
     done(array('ok' => true, 'mode' => ($LIVE ? 'LIVE' : 'DRY-RUN'), 'qbo_id' => $cid, 'existed' => $wasThere,
-               'invoice_id' => $invId, 'invoice_error' => $invErr,
+               'invoice_id' => $invId, 'invoice_doc' => $invDoc, 'invoice_error' => $invErr,
                'invoice_url' => ($invId !== '' ? $qboHost . '/app/invoice?txnId=' . rawurlencode($invId) : ''),
                'customer_url' => $qboHost . '/app/customerdetail?nameId=' . rawurlencode($cid),
                'plan' => $plan));

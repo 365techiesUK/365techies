@@ -144,6 +144,7 @@ function jobs_card($j) {
     $name = (string)($j['name'] ?? ''); $email = (string)($j['email'] ?? ''); $phone = (string)($j['phone'] ?? '');
     $addr = (string)($j['addr'] ?? ''); $desc = (string)($j['desc'] ?? ''); $note = (string)($j['note'] ?? '');
     $amount = (float)($j['amount'] ?? 0); $invU = (string)($j['invoice_url'] ?? ''); $invN = (string)($j['invoice_no'] ?? '');
+    $invD = (string)($j['invoice_doc'] ?? '');   // 19 Oct 2026: the number on the invoice (4905/NNN); $invN is QuickBooks' own id
     $qbo = (string)($j['qbo'] ?? ''); $who = (string)($j['by'] ?? 'staff'); $ts = (int)($j['ts'] ?? time()); $id = (string)($j['id'] ?? '');
     $fields = array();
     if ($name !== '')  $fields[] = array('type' => 'mrkdwn', 'text' => "*Customer:*\n" . slack_esc($name));
@@ -159,7 +160,7 @@ function jobs_card($j) {
     if ($note !== '') $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => "*Notes:*\n>" . str_replace("\n", "\n>", slack_esc($note))));
     if ($invU !== '') {
         $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
-            'text' => "✅ *Draft invoice ready in QuickBooks* — <" . $invU . "|open it" . ($invN !== '' ? ' (#' . slack_esc($invN) . ')' : '') . "> and press send."));
+            'text' => "✅ *Draft invoice ready in QuickBooks* — <" . $invU . "|open it" . ($invD !== '' ? ' (' . slack_esc($invD) . ')' : ($invN !== '' ? ' (#' . slack_esc($invN) . ')' : '')) . "> and press send."));
     } else {
         $blocks[] = array('type' => 'section', 'text' => array('type' => 'mrkdwn',
             'text' => "📝 *To do:* raise the invoice in QuickBooks from the details above." .
@@ -209,6 +210,7 @@ if ($action === 'quote') {
     $addr  = clean(isset($in['addr'])  ? $in['addr']  : '', 300);
     $invU  = clean(isset($in['invoice_url']) ? $in['invoice_url'] : '', 300);
     $invN  = clean(isset($in['invoice_no'])  ? $in['invoice_no']  : '', 40);
+    $invD  = clean(isset($in['invoice_doc']) ? $in['invoice_doc'] : '', 40);
     $qbo   = clean(isset($in['qbo']) ? $in['qbo'] : '', 60);   // what the console learned from pcm-qbo.php
     $amountRaw = (string)(isset($in['amount']) ? $in['amount'] : '');
     $amount = ($amountRaw === '') ? 0.0 : round((float)preg_replace('/[^0-9.]/', '', $amountRaw), 2);
@@ -221,7 +223,7 @@ if ($action === 'quote') {
     $id = date('ymd') . '-' . substr(bin2hex(random_bytes(3)), 0, 5);
     $job = array('id' => $id, 'ts' => time(), 'by' => $who, 'name' => $name, 'email' => $email, 'phone' => $phone,
                  'addr' => $addr, 'desc' => $desc, 'note' => $note, 'amount' => $amount,
-                 'invoice_url' => $invU, 'invoice_no' => $invN, 'qbo' => $qbo, 'status' => 'quoted');
+                 'invoice_url' => $invU, 'invoice_no' => $invN, 'invoice_doc' => $invD, 'qbo' => $qbo, 'status' => 'quoted');
 
     $r = jobs_locked(function ($data) use ($job) {
         global $MAX_JOBS;

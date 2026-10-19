@@ -6,7 +6,9 @@
  *   checkout.session.expired, checkout.session.async_payment_failed      -> the machine's hold lets go
  * Every request must carry a valid Stripe-Signature for $ST_WHSEC (api/shop-stripe-key.php, the owner's); the event itself is
  * never trusted for the money - shop_card_done reads the session back from Stripe. Only the shop's own sessions (metadata
- * shop=1) are touched; anything else gets 200 and is ignored. No key file -> 503, so Stripe keeps retrying until there is one.
+ * shop=1) are touched as sales; anything else gets 200 and is ignored. No key file -> 503, so Stripe keeps retrying until there is one.
+ * 19 Oct 2026: the pay page's card button (a Payment Link, client_reference_id = the invoice number) -> its QuickBooks invoice
+ * is marked paid and Slack is told (pcm-paystripe-lib.php). A passing problem answers 500 so Stripe tries again.
  * NO closing tag in this file.
  */
 error_reporting(0);
@@ -24,7 +26,15 @@ if (!st_sig_ok($raw, (string)($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), $cr['whs
 $ev = json_decode($raw, true);
 $type = is_array($ev) ? (string)($ev['type'] ?? '') : '';
 $obj = is_array($ev) ? (array)($ev['data']['object'] ?? array()) : array();
-if (($obj['object'] ?? '') !== 'checkout.session' || (string)($obj['metadata']['shop'] ?? '') !== '1') shw(200, 'not ours');
+if (($obj['object'] ?? '') !== 'checkout.session') shw(200, 'not ours');
+if ((string)($obj['metadata']['shop'] ?? '') !== '1') {
+    $psid = st_session_id($obj['id'] ?? '');
+    if ($psid === '' || (string)($obj['payment_link'] ?? '') === '') shw(200, 'not ours');
+    if ($type !== 'checkout.session.completed' && $type !== 'checkout.session.async_payment_succeeded') shw(200, 'ignored');
+    require_once __DIR__ . '/pcm-paystripe-lib.php';
+    list($pwhat, $pdetail) = pst_handle($cr, $psid, 'webhook');
+    shw($pwhat === 'retry' ? 500 : 200, 'pay page: ' . $pwhat);
+}
 $sid = st_session_id($obj['id'] ?? '');
 if ($sid === '') shw(200, 'no session');
 

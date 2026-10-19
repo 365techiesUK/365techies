@@ -113,7 +113,7 @@ ok(strpos($SRC, "fail('bad_action')") !== false, 'an unknown action is refused')
 ok(preg_match('/\$to = \(\$via === \'sms\'\) \? \(string\)\$row\[\'phone\'\] : \(string\)\$row\[\'email\'\]/', $SRC) === 1,
    'the destination is read from the stored row');
 ok(!preg_match('/\$in\[\'(to|number|mobile|dest)\'\]/', $SRC), 'no caller-supplied destination anywhere');
-ok(strpos($SRC, 'pl_flow_link_ok($row[\'url\'])') !== false, 'the link is re-checked at send time');
+ok(strpos($SRC, 'pl_link_ok($row[\'url\'])') !== false, 'the link is re-checked at send time (a GoCardless flow or, since 19 Oct 2026, our own pay page)');
 ok(!preg_match('/lg\([^;]*\$tok/', $SRC) && !preg_match("/'token'\s*=>/", $SRC), 'the GoCardless token is never logged or returned');
 ok(strpos($SRC, "'mandate_request'") === false, 'this endpoint cannot create a Direct Debit mandate');
 ok(strpos($SRC, 'Idempotency-Key') !== false, 'a double-click cannot create two payment requests');

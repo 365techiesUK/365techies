@@ -31858,7 +31858,7 @@ def write_portal_page():
       var amt0 = (q && q.value ? q.value : '').trim(), desc0 = (qd && qd.value ? qd.value : '').trim();
       w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="plamt" type="text" inputmode="decimal" value="' + esc(amt0) + '" placeholder="Amount to collect \\u00a3" style="width:100%;max-width:320px"></div>'
         + '<div style="margin:0 0 .3rem"><input class="pldesc" type="text" maxlength="100" value="' + esc(desc0) + '" placeholder="What it\\u2019s for \\u2014 the customer sees this" style="width:100%;max-width:320px"></div>'
-        + '<div style="margin:0 0 .3rem"><input class="plref" type="text" maxlength="24" placeholder="Invoice number (optional) \\u2014 it becomes their payment reference" style="width:100%;max-width:340px;font-size:.85rem;padding:.35rem .5rem"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="plref" type="text" maxlength="24" value="' + esc(panel.getAttribute('data-invref') || '') + '" placeholder="Invoice number \\u2014 leave blank and we find the QuickBooks one" style="width:100%;max-width:340px;font-size:.85rem;padding:.35rem .5rem"></div>'
         + '<button class="sm plgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udd17 Create the link</button> '
         + '<span class="quiet plmsg"></span>';
       var msg = w.querySelector('.plmsg');
@@ -31867,9 +31867,10 @@ def write_portal_page():
         var amt = (w.querySelector('.plamt').value || '').trim(), desc = (w.querySelector('.pldesc').value || '').trim();
         if (!amt || !desc) { msg.textContent = 'Put in the amount and what it\\u2019s for first.'; return; }
         // 19 Oct 2026: a link to our pay page - they choose bank transfer, card or PayPal there (pcm-paylink page mode)
-        var ref = ((w.querySelector('.plref') || {}).value || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
+        var ref = ((w.querySelector('.plref') || {}).value || '').replace(/\\//g, '-').replace(/[^A-Za-z0-9-]/g, '').slice(0, 24);
+        var invId = (ref && ref === (panel.getAttribute('data-invref') || '')) ? (panel.getAttribute('data-invid') || '') : '';
         go.disabled = true; msg.textContent = 'Making the link\\u2026';
-        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc, ref: ref })
+        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc, ref: ref, inv_id: invId })
           .then(function (r) {
             go.disabled = false;
             if (!r || !r.ok) { msg.innerHTML = paylinkErr(r); return; }
@@ -31889,7 +31890,10 @@ def write_portal_page():
       + '<button class="sm ghost plcopy" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">copy link</button> '
       + (ph ? '<button class="sm plsms" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcac Text it to ' + esc(ph) + '</button> ' : '')
       + (em ? '<button class="sm ghost plmail" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\u2709\\ufe0f Email it</button> ' : '')
-      + (isPage ? '<span class="quiet" style="font-size:.8rem">When it arrives (bank, Stripe or PayPal), mark the invoice paid in QuickBooks.</span>' : '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>')
+      + (isPage ? '<div class="quiet" style="font-size:.8rem;margin:.1rem 0 .3rem">'
+          + (r.ref ? 'Reference on it: <strong>' + esc(r.ref) + '</strong>' + (r.ref_from === 'quickbooks' ? ' (their QuickBooks invoice, found for you)' : '') + '. '
+                   : 'No invoice number on it \\u2014 a card payment will need marking paid in QuickBooks by hand. ')
+          + 'Paid by card \\u2192 QuickBooks marks the invoice paid by itself and Slack is told. Bank transfer \\u2192 match it in QuickBooks\\u2019 bank feed as usual. PayPal \\u2192 mark it paid by hand.</div>' : '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>')
       + '<div class="quiet plmsg2" style="margin-top:.3rem"></div>';
     var m2 = w.querySelector('.plmsg2');
     w.querySelector('.plcopy').onclick = function () {
@@ -31975,7 +31979,7 @@ def write_portal_page():
         if (toSlack && (!desc || !amt)) { msg.textContent = 'Put in the job and the agreed amount first.'; return; }
         go.disabled = true; msg.textContent = 'Working\\u2026';
         var em = w.getAttribute('data-em'), nm = w.getAttribute('data-nm'), ph = w.getAttribute('data-ph');
-        var bits = [], qboState = '', invUrl = '', invNo = '';
+        var bits = [], qboState = '', invUrl = '', invNo = '', invDoc = '';
         // 1. QuickBooks, best effort. Any failure here must not stop the Slack post.
         post(QBO, { action: 'qbostart', stoken: S.stoken, machine: mid(), live: 1,
                     email: em, name: nm, phone: ph, desc: desc, amount: amt })
@@ -31984,8 +31988,10 @@ def write_portal_page():
             if (r.mode === 'DRY-RUN') { qboState = 'dry-run'; bits.push('QuickBooks is in dry-run \\u2014 nothing written there.'); return; }
             qboState = 'live';
             bits.push(r.existed ? 'Customer already in QuickBooks.' : '\\u2713 Customer added to QuickBooks.');
-            if (r.invoice_id) { invUrl = r.invoice_url || ''; invNo = '' + r.invoice_id;
-              bits.push('\\u2713 Draft invoice created \\u2014 <a href="' + esc(invUrl) + '" target="_blank" rel="noopener">open it</a> (#' + esc(invNo) + ').'); }
+            if (r.invoice_id) { invUrl = r.invoice_url || ''; invNo = '' + r.invoice_id; invDoc = '' + (r.invoice_doc || '');
+              // 19 Oct 2026: the number on the invoice (4905/NNN), not QuickBooks' own id - and "Send a pay link" picks it up
+              panel.setAttribute('data-invid', invNo); panel.setAttribute('data-invref', (invDoc || invNo).replace(/\\//g, '-'));
+              bits.push('\\u2713 Draft invoice created \\u2014 <a href="' + esc(invUrl) + '" target="_blank" rel="noopener">open it</a> (' + (invDoc ? 'invoice ' + esc(invDoc) : '#' + esc(invNo)) + ').'); }
             else if (r.invoice_error) bits.push('Invoice didn\\u2019t save: ' + esc(r.invoice_error));
             else if (r.customer_url) bits.push('<a href="' + esc(r.customer_url) + '" target="_blank" rel="noopener">Open them in QuickBooks</a>.');
           })
@@ -31995,7 +32001,7 @@ def write_portal_page():
             if (!toSlack) { go.disabled = false; msg.innerHTML = bits.join(' ') || 'Done.'; return; }
             return post(JOBS, { action: 'quote', stoken: S.stoken, machine: mid(),
                                 name: nm, email: em, phone: ph, desc: desc, amount: amt, note: note,
-                                addr: (w.getAttribute('data-ad') || ''), invoice_url: invUrl, invoice_no: invNo, qbo: qboState })
+                                addr: (w.getAttribute('data-ad') || ''), invoice_url: invUrl, invoice_no: invNo, invoice_doc: invDoc, qbo: qboState })
               .then(function (j) {
                 go.disabled = false;
                 if (!j || !j.ok) { bits.push('<strong>Not recorded:</strong> ' + esc(jobsErr(j))); msg.innerHTML = bits.join(' '); return; }

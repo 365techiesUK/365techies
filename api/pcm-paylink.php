@@ -159,16 +159,24 @@ if ($action === 'create') {
     // 19 Oct 2026 (owner): the link is our own pay page unless GoCardless is asked for by name (mode=gc) - the customer
     // chooses bank transfer, card or PayPal there. No GoCardless call, no expiry; the reference is the invoice number
     // (or the job). The GoCardless route below stays for when the server has a read-write GoCardless key.
-    $ref = substr(preg_replace('/[^A-Za-z0-9-]/', '', (string)(isset($in['ref']) ? $in['ref'] : '')), 0, 24);
+    $ref = substr(preg_replace('/[^A-Za-z0-9-]/', '', str_replace('/', '-', (string)(isset($in['ref']) ? $in['ref'] : ''))), 0, 24);
+    $invId = preg_match('/^\d{1,12}$/', (string)(isset($in['inv_id']) ? $in['inv_id'] : '')) ? (string)$in['inv_id'] : '';
+    $refFrom = $ref !== '' ? 'typed' : '';
     if ((isset($in['mode']) ? (string)$in['mode'] : '') !== 'gc') {
+        // 19 Oct 2026: no number typed -> the QuickBooks invoice "Quote agreed" made for this customer and amount, so the
+        // reference - and the automatic QuickBooks entry when they pay by card (pcm-paystripe-lib.php) - needs nobody to type it
+        if ($ref === '') {
+            $ji = pl_job_invoice($BASE . '/pcm-jobs.json', $email, $name, $amount);
+            if ($ji) { $ref = $ji['ref']; $invId = $ji['id']; $refFrom = 'quickbooks'; }
+        }
         $url = pl_page_url($amount, $ref !== '' ? $ref : $job);
-        $row = array('id' => pl_new_id(), 'kind' => 'page', 'job' => $job, 'ref' => $ref, 'name' => $name, 'email' => $email,
+        $row = array('id' => pl_new_id(), 'kind' => 'page', 'job' => $job, 'ref' => $ref, 'inv_id' => $invId, 'name' => $name, 'email' => $email,
                      'phone' => $phone, 'amount' => $amount, 'desc' => $desc, 'br' => '', 'brf' => '', 'url' => $url,
                      'created' => time(), 'expires' => 0, 'by' => $who, 'status' => 'open', 'sent_count' => 0);
         $r = pl_store_locked($STORE, function ($data) use ($row) { $data['links'][] = $row; return array('ok' => true, 'data' => $data); });
         if (empty($r['ok'])) fail(isset($r['error']) ? $r['error'] : 'store');
         lg('created page link ' . $row['id'] . ' ' . pl_money($amount) . ' ref ' . ($ref !== '' ? $ref : '-') . ' by ' . $who);
-        out(array('ok' => true, 'id' => $row['id'], 'url' => $url, 'expires' => 0, 'state' => 'open', 'kind' => 'page'));
+        out(array('ok' => true, 'id' => $row['id'], 'url' => $url, 'expires' => 0, 'state' => 'open', 'kind' => 'page', 'ref' => $ref, 'ref_from' => $refFrom));
     }
     if ($email === '' && $phone === '') fail('no_destination');      // nothing to send it to
     if (gc_token() === '') fail('no_gocardless');
