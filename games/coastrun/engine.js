@@ -139,7 +139,14 @@
   // how tall the traffic is (m): the Skimmer can only clear what it's above
   var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, gtbrit: 1.3, raging: 1.25, trident: 1.25, barchetta: 1.15 };
   // the Skimmer's gas: the tank (0-100), a burst from the rear nozzles, a lift, the hover while LIFT is held, the most it can hover to
-  var GAS_MAX = 100, GAS0 = 60, BURST_T = 54, BURST_COST = 20, LIFT_COST = 14, LIFT_V = 9.6, LIFT_G = 0.85, HOVER_RATE = 26, HOVER_MAX = 7.5;
+  // (owner, 20 Oct 2026: "concentrate on the car going fast ... when you need to jump obstacles or cars in front, you press it and you fly up
+  // over the vehicle in front, to save slowing down or going around it ... a lot more hyped"): the lift is now a quick, hard HOP - up fast,
+  // down fast (LIFT_G 2.2 was 0.85: a tap ~3 m and ~0.9 s, was 5.5 m and 2.3 s of floating) - sized to clear whatever is in front of you
+  // (HOP_CLEAR over its roof, launched harder if it's close, up to HOP_VMAX), the jets holding you over its whole length; held, it still hovers.
+  // The rear nozzles fire like a rocket: thrust spooling up over JET_SPOOL s from a quarter to full, and a top speed of JET_BOOST times the
+  // car's (~302 mph; was 1.33, 268). The tank refills a little as you drive (GAS_RECHARGE /s) and each vehicle hopped gives HOP_GAS back
+  var GAS_MAX = 100, GAS0 = 70, BURST_T = 54, BURST_COST = 20, LIFT_COST = 12, LIFT_V = 13, LIFT_G = 2.2, HOVER_RATE = 26, HOVER_MAX = 7.5,
+    HOP_CLEAR = 0.9, HOP_VMAX = 24, JET_SPOOL = 0.3, JET_BOOST = 1.5, JET_PUSH = 66, GAS_RECHARGE = 3, HOP_GAS = 5;
   // the speeds: more time, fewer and slower cars, bends that push less (assist), bounces instead of crashes at Gentle;
   // psiTop = how far from the road's direction the car turns at full speed (radians); req = which of a request's goals
   var DIFF = {
@@ -791,6 +798,7 @@
     };
     W.rng = rnd(W.seed);
     W.jet = !!CARS[W.car].jet; W.gas = W.jet ? GAS0 : 0; W.burstT = 0; W.lift = false; W.hover = false; W.altWas = false; W.hopN = 0; W.liftT = 0;
+    W.jetK = 0; W.liftK = 0; W.hopTo = null;   // (how far the rear nozzles / the lift jets have spooled up, 0-1; the vehicle a hop is aimed over)
     if (W.jet) W.bottles = 0;   // (no nitro bottles: the tank instead)
     buildStage(W, 0); nextFork(W, 0);
     W.time = W.D.time * STAGES[0].t + 10;   // (OutRun's start: a little in hand for the first stage)
@@ -820,6 +828,30 @@
     W.cars.push({ id: W.carN++, s: z, x: x, tx: x, v: v, v0: v, t: t, b: b, col: (W.rng() * 8) | 0, lc: 60, hitT: -999, passed: false, ds: z - W.s, spin: 0 });
   }
   function sameRoad(W, c) { return !(W.fork && W.fork.s && c.b && c.b !== W.fork.s); }
+  // the Skimmer's hop (20 Oct 2026): the nearest vehicle in your path that you'd reach within a second and a half - how soon you get to it
+  // (t1, s) and how high over the road here you need to be to clear its roof (need, m)
+  function hopTarget(W) {
+    var best = null, y0 = heightAt(W, W.s);
+    for (var j = 0; j < W.cars.length; j++) {
+      var c = W.cars[j]; if (!sameRoad(W, c)) continue;
+      var V = VEH[c.t], dz = c.s - W.s, cl = W.v - c.v, hl = V.l + CAR_L;
+      if (Math.abs(c.x - W.x) > V.w + CAR_W + 0.3 || dz < -hl * 0.5 || cl < 2) continue;
+      var t1 = (dz - hl) / cl; if (t1 > 1.5) continue;
+      if (!best || t1 < best.t1) best = { car: c, t1: Math.min(0.6, t1), need: (VEH_H[V.id] || 1.5) + HOP_CLEAR + heightAt(W, c.s) - y0 };
+    }
+    return best;
+  }
+  // in a hop, how high the jets must hold you (m over the road here): over anything you're above or just about to be, and over the vehicle the
+  // hop was aimed at until you're past it; -1: nothing
+  function overRoof(W) {
+    var need = -1, y0 = heightAt(W, W.s);
+    for (var j = 0; j < W.cars.length; j++) {
+      var c = W.cars[j]; if (!sameRoad(W, c)) continue;
+      var V = VEH[c.t], dz = c.s - W.s, hl = V.l + CAR_L, ahead = c === W.hopTo && W.airT < 2.2 ? 60 : hl + Math.max(0, W.v - c.v) * 0.25;
+      if (Math.abs(c.x - W.x) < V.w + CAR_W + 0.3 && dz > -hl && dz < ahead) need = Math.max(need, (VEH_H[V.id] || 1.5) + 0.5 + heightAt(W, c.s) - y0);
+    }
+    return need;
+  }
 
   // ---------------------------------------------------------------- rivals: sports cars as quick as you, to keep up with and get past
   // One at a time. It turns up a way ahead already at speed; if you drop well back it eases off so you can always catch it; right
@@ -1275,7 +1307,7 @@
     if (W.jet) {   // the Skimmer's rear nozzles: a short, hard push from the tank (held, it fires again as each one ends, while the gas lasts)
       if (W.burstT > 0) W.burstT--;
       if (wantBoost && W.burstT <= 0) {
-        if (W.gas >= BURST_COST) { W.gas -= BURST_COST; W.burstT = BURST_T; W.events.push({ sfx: 'jetBoost' }); fx(W, { k: 'jet', x: W.x }); mood(W, 'hold'); if (Math.random() < 0.5) voice(W, 'nitro'); }
+        if (W.gas >= BURST_COST) { var lit = W.jetK < 0.3; W.gas -= BURST_COST; W.burstT = BURST_T; W.events.push({ sfx: 'jetBoost', n: lit ? 1 : 0 }); if (lit) { fx(W, { k: 'jet', x: W.x }); W.shake = Math.max(W.shake, 6); mood(W, 'hold'); if (Math.random() < 0.5) voice(W, 'nitro'); } }   // (n: 1 = lit from cold - the full ignition; 0 = held on, the next charge feeding in)
         else if (W.t - (W.lowT || -999) > 90) { W.lowT = W.t; pop(W, 'LOW PRESSURE', 'DRIFT OR BRAKE TO REFILL', 0, 'nitro'); W.events.push({ sfx: 'empty' }); }
       }
       W.nitroT = W.burstT;   // (the boosting physics, the camera's rush and her hold all follow it)
@@ -1290,14 +1322,19 @@
     }
     W.boosting = !W.timeUp && !out && W.nitroT > 0;
     W.wasBoost = W.boosting;
+    if (W.jet) {   // the jets spool up as they fire - a small flame/note first, full in JET_SPOOL s - and die away quicker
+      W.jetK = W.boosting ? Math.min(1, W.jetK + DT / JET_SPOOL) : Math.max(0, W.jetK - DT / 0.18);
+      var liftOn = W.lift && (W.hover || W.airT < 0.45 || W.hopHold);
+      W.liftK = liftOn ? Math.min(1, W.liftK + DT / 0.12) : Math.max(0, W.liftK - DT / 0.2);
+    }
 
     // ---- speed
     // flat out (owner, 8 Oct: "more like 180 ... then the nitrous takes it up to about 240 or 230"): the roadster 180 mph, the GT 193, the hatch 169;
     // 0-60 in 2.3 s, 90% of its top in ~12 s. Nitro: its own top speed 1.33 times the car's (240 / 257 / 225 mph) and a hard shove towards it - one
     // bottle from cruise reaches ~234 (the roadster) - softer from a crawl (the tyres spin); when it runs out the speed bleeds away over a few seconds
     // (was 141 mph and x1.55, one bottle ~204, 7 Oct)
-    var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.33 : 1);
-    var v = W.v, accel = 10.5 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? (W.jet ? 54 : 38 * (0.3 + 0.7 * Math.min(1, v / (top * 0.6)))) * Math.max(0, 1 - Math.pow(v / hz, 3)) : 0) + (C.launch ? C.launch * Math.max(0, 1 - v / (hzN * 0.55)) : 0);   // (the Skimmer's nozzles push off the air, not the tyres: as hard from a crawl, and harder)   // (about 1.1 g off the line, then it takes its time to the top: 10.5 was 8.8 at 141 mph, 8 Oct)
+    var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? (W.jet ? JET_BOOST : 1.33) : 1);
+    var v = W.v, accel = 10.5 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? (W.jet ? JET_PUSH * (0.25 + 0.75 * W.jetK) : 38 * (0.3 + 0.7 * Math.min(1, v / (top * 0.6)))) * Math.max(0, 1 - Math.pow(v / hz, 3)) : 0) + (C.launch ? C.launch * Math.max(0, 1 - v / (hzN * 0.55)) : 0);   // (the Skimmer's nozzles push off the air, not the tyres: as hard from a crawl, and harder)   // (about 1.1 g off the line, then it takes its time to the top: 10.5 was 8.8 at 141 mph, 8 Oct)
     if (out) v = W.crash.hard ? v * (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : Math.max(W.crash.v0 * 0.45, v * 0.95);   // (a bounce: down to about half speed, not a stop)
     else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
     else if (W.drift && !W.air) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
@@ -1305,6 +1342,7 @@
     else if (gas || W.boosting) v += accel * DT;
     else v -= (1.6 + 0.00035 * v * v) * DT;   // (off the throttle: the engine and the air slow it, gently)
     if (W.jet && brake && !W.air && v > 15) W.gas = Math.min(GAS_MAX, W.gas + 5 * DT);   // (the Skimmer's braking tops the tank up a little: the motors charge the compressor)
+    else if (W.jet && !W.air && !W.boosting && v > 20) W.gas = Math.min(GAS_MAX, W.gas + GAS_RECHARGE * DT);   // (and driving, more slowly: a hop every few seconds, 20 Oct)
     if (!W.air) v -= GRAV * 0.35 * gradeAt(W, W.s) * DT;   // uphill slows you a little, downhill helps
     var wasOff = W.off;
     W.off = !W.air && Math.abs(W.x) > roadHalf(g) + RUMBLE;
@@ -1369,9 +1407,13 @@
       if (roofed) { if (W.t - (W.lowT || -999) > 90) { W.lowT = W.t; pop(W, 'NO LIFT', 'NOT UNDER A ROOF', 0, 'nitro'); } }
       else if (W.gas < LIFT_COST) { if (W.t - (W.lowT || -999) > 90) { W.lowT = W.t; pop(W, 'LOW PRESSURE', 'DRIFT OR BRAKE TO REFILL', 0, 'nitro'); W.events.push({ sfx: 'empty' }); } }
       else if (W.v > 6 && !W.crash) {
-        W.gas -= LIFT_COST; W.air = true; W.lift = true; W.airT = 0; W.liftT = 0; W.vh = roadVY + LIFT_V; W.h = roadY + W.vh * DT;
+        // aimed at what's in front (20 Oct): fast enough to be over its roof by the time you reach it - harder the closer it is
+        var tg = hopTarget(W), v0 = LIFT_V;
+        if (tg) { var t1 = Math.max(0.14, tg.t1); v0 = clamp((tg.need + 0.5 * GRAV * LIFT_G * t1 * t1) / t1, LIFT_V, HOP_VMAX); }
+        W.hopTo = tg ? tg.car : null;
+        W.gas -= LIFT_COST; W.air = true; W.lift = true; W.airT = 0; W.liftT = 0; W.vh = roadVY + v0; W.h = roadY + W.vh * DT;
         if (W.drift) endDrift(W);
-        W.events.push({ sfx: 'lift' }); fx(W, { k: 'lift', x: W.x }); mood(W, 'cheer');
+        W.events.push({ sfx: 'lift', n: Math.min(1, (v0 - LIFT_V) / (HOP_VMAX - LIFT_V)) }); fx(W, { k: 'lift', x: W.x }); mood(W, 'cheer'); W.shake = Math.max(W.shake, 4 + 6 * (v0 - LIFT_V) / (HOP_VMAX - LIFT_V));
       }
     }
     if (!W.air) {
@@ -1380,9 +1422,14 @@
       else { W.h = roadY; W.vh = roadVY; }
     }
     if (W.air) {
-      if (W.lift) {   // the Skimmer: lighter than a jump, and while LIFT is held the jets hold it up (hovering uses gas) to HOVER_MAX
+      if (W.lift) {   // the Skimmer: a quick, hard hop; while LIFT is held the jets hold it up (hovering uses gas) to HOVER_MAX
         var lg = GRAV * LIFT_G;
-        W.hover = altNow && W.gas > 0 && !roofed && W.airT > 0.12;
+        W.hover = altNow && W.gas > 0 && !roofed && W.airT > 0.25;   // (0.25 s: a quick tap is a hop, never a hover)
+        // and the jets never let it come down onto something it's over: they catch it at its roof (+ a little) until it's past -
+        // a hop carries you over the whole length of a lorry, and on over the next car if it's right behind
+        var carry = W.hover ? -1 : overRoof(W);
+        W.hopHold = carry >= 0;
+        if (carry >= 0) { var dh = carry - (W.h - roadY); if (dh > -2.5 && W.vh - roadVY < 2) W.vh = roadVY + Math.max(W.vh - roadVY, clamp(dh * 4, -8, 6)) + lg * DT; }   // (eased in: falling towards it, it slows as it nears the roof height, no jolt)
         if (W.hover) {   // the jets hold it against its weight and ease it up to its ceiling (no overshoot), then hold it there
           var vt = clamp((HOVER_MAX - (W.h - roadY)) * 1.6, -1.5, 4.5);
           W.vh += lg * DT + (vt - W.vh) * Math.min(1, 3 * DT); W.gas = Math.max(0, W.gas - HOVER_RATE * DT);
@@ -1400,7 +1447,7 @@
           var crook = Math.abs(W.psi - W.phi), onRd2 = Math.abs(W.x) <= roadHalf(g) + RUMBLE;
           if (W.airT > 0.6 && crook < 0.08 && onRd2) { W.score += 2000; W.boost = Math.min(1, W.boost + 0.15); pop(W, 'CLEAN LANDING', '+2,000', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
           else if (crook > 0.16) { W.v *= 0.9; W.kickK = (W.psi > W.phi ? 1 : -1) * Math.min(0.3, crook); W.kickT = 0; pop(W, 'ROUGH LANDING', '', 0, 'nitro'); }
-          W.lift = false; W.hover = false;
+          W.lift = false; W.hover = false; W.hopTo = null; W.hopHold = false;
         }
         if (W.airT > 0.35) {
           var ap = Math.round(W.airT * 20 * (W.liftT > 0 ? 0.6 : 1)) * 100; W.score += ap; W.airBest = Math.max(W.airBest, W.airT); pop(W, W.airT > 0.9 ? 'BIG AIR' : 'AIR', '+' + ap.toLocaleString('en-GB'), 0, 'gold');   // (a lift's air scores a little less than a real jump's: it's bought with gas)
@@ -1447,9 +1494,13 @@
         }
       }
       if (W.lift && !out && car.ds >= 0 && dz < 0 && dxx < hitW + 0.4 && !car.hopped) {   // the Skimmer over the top of it: a hop
-        car.hopped = true; W.hopN++; var big = (VEH_H[V.id] || 1.5) > 2.5, hp = big ? 3000 : 1500; W.score += hp; W.boost = Math.min(1, W.boost + 0.1);
-        pop(W, big ? 'OVER THE ' + (V.id === 'lorry' ? 'LORRY' : V.id === 'bus' ? 'BUS' : V.id === 'camper' ? 'CAMPER' : V.id === 'tractor' ? 'TRACTOR' : 'VAN') + '!' : 'HOP!', '+' + hp.toLocaleString('en-GB'), car.x - W.x, 'gold');
-        W.events.push({ sfx: 'near', x: car.x - W.x, n: 1 }); mood(W, 'cheer'); if (W.rng() < 0.3) voice(W, 'wheee');
+        // (20 Oct: hops chain in the near-miss combo - HOP x3 - and give a little gas back, so you can keep flying over the traffic; a hopped
+        // vehicle is never a near miss as well - it was scored twice)
+        car.hopped = true; W.hopN++; if (!car.rival) { car.passed = true; W.passN++; if (W.req && W.req.k === 'pass') W.req.have++; }   /* (a rival: its own overtake, below) */
+        W.combo = W.comboT > 0 ? Math.min(W.combo + 1, 9) : 1; W.comboT = 200;
+        var big = (VEH_H[V.id] || 1.5) > 2.5, hp = (big ? 1000 : 600) * W.combo; W.score += hp; W.boost = Math.min(1, W.boost + 0.12); W.gas = Math.min(GAS_MAX, W.gas + HOP_GAS);
+        pop(W, (big ? 'OVER THE ' + (V.id === 'lorry' ? 'LORRY' : V.id === 'bus' ? 'BUS' : V.id === 'camper' ? 'CAMPER' : V.id === 'tractor' ? 'TRACTOR' : 'VAN') + '!' : 'HOP!') + (W.combo > 1 ? ' x' + W.combo : ''), '+' + hp.toLocaleString('en-GB'), car.x - W.x, 'gold');
+        W.events.push({ sfx: 'hop', x: car.x - W.x, n: W.combo, big: big }); mood(W, 'cheer'); if (W.rng() < 0.3) voice(W, 'wheee');
       }
       if (!car.rival && !car.passed && car.ds >= 0 && dz < 0) {
         car.passed = true;
@@ -1484,7 +1535,7 @@
     if (W.jet) { if (W.boost >= 1) { W.boost -= 1; W.gas = Math.min(GAS_MAX, W.gas + 25); pop(W, '+25 GAS', 'TANK TOPPED UP', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); } }   // the Skimmer: the meter full tops up the tank
     else if (W.boost >= 1 && W.bottles < BOTTLE_MAX) { W.boost -= 1; W.bottles++; pop(W, '+1 NITRO', 'A BOTTLE FILLED', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); }   // the meter full: another bottle
     else if (W.bottles >= BOTTLE_MAX) W.boost = Math.min(W.boost, 0.99);
-    if (!W.timeUp && !out) { var p2 = W.v / (VMAX * (W.jet ? C.top : 1)); W.sAcc += p2 * p2 * 48 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }   // (48 was 32: at 180 mph a run is shorter, 8 Oct - a run scores about what it did, so the old Hall of Fame still counts)
+    if (!W.timeUp && !out) { var p2 = W.jet ? Math.min(1.33, W.v / (VMAX * C.top)) : W.v / VMAX; W.sAcc += p2 * p2 * 48 * (W.boosting ? 1.5 : 1) * (W.jet ? 0.84 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }   // (48 was 32: at 180 mph a run is shorter, 8 Oct - a run scores about what it did, so the old Hall of Fame still counts)   // (the Skimmer, 20 Oct: hopping the traffic instead of braking for it, it covers more road - its speed points x0.84 and capped at the nitro cars' 1.33, so the shared Hall of Fame stays fair)
     requests(W);
     var HOLD = { ask: 70, wave: 240, look: 210, hair: 170, sulk: 260, clap: 120, hold: W.boosting ? 1e9 : 50 };
     if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (HOLD[W.her.k] || 110)) mood(W, 'idle');
@@ -1525,7 +1576,7 @@
       if (hopOK) for (j = 0; j < W.cars.length; j++) {
         c = W.cars[j]; if (!sameRoad(W, c)) continue;
         var cl2 = W.v - c.v, VV = VEH[c.t], ttc = (c.s - W.s - VV.l - CAR_L) / Math.max(1, cl2);
-        if (Math.abs(c.x - W.x) < VV.w + CAR_W + 0.3 && cl2 > 8 && ttc > 0.35 && ttc < 0.7) { W.botLift = (VEH_H[VV.id] || 1.5) > 2.5 ? 45 : 3; hopping = true; break; }
+        if (Math.abs(c.x - W.x) < VV.w + CAR_W + 0.3 && cl2 > 8 && ttc > 0.25 && ttc < 0.6) { W.botLift = 2; hopping = true; break; }   // (20 Oct: a tap - the hop aims itself and carries it over a lorry's length)
         if (Math.abs(c.x - W.x) < VV.w + CAR_W + 0.3 && cl2 > 8 && ttc >= 0.7 && ttc < 1.6) hopping = true;   // (one coming up to hop: don't brake for it)
       }
       if (room < 14 + close * close / (W.v > top ? 20 : 26) + close * 0.3 && !hopping && !(W.botLift > 0)) W.botBrake = 4;   // (its brakes' real distance, more again over its top speed - the nitro: 26 was 40 until 180 mph, 8 Oct)

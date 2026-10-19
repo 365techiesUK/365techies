@@ -651,8 +651,16 @@ export function createWorld() {
   const steamMat = new THREE.MeshBasicMaterial({ map: liftMat.map, color: '#ffffff', transparent: true, depthWrite: false, side: THREE.DoubleSide, opacity: 0.5 });
   const jetCone = (r, mat) => { const gm = new THREE.ConeGeometry(r, 1, 18, 1, true); gm.translate(0, -0.5, 0); return new THREE.Mesh(gm, mat); };
   const liftJets = [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]].map(([x, z]) => { const g = new THREE.Group(); g.add(jetCone(0.85, steamMat)); g.add(jetCone(0.22, liftMat)); g.userData.at = [x, z]; g.visible = false; return g; });
-  const rearJets = [-0.5, 0.5].map((x) => { const g = new THREE.Group(); for (const [r, m] of [[0.5, steamMat], [0.15, liftMat]]) { const c = jetCone(r, m); c.geometry.rotateX(-Math.PI / 2); g.add(c); } g.userData.x = x; g.visible = false; return g; });   // (rotated: the cone runs back from the nozzle)
-  const steam = particles(1100, false, { near: [0.6, 1.8], lift: 0 }); scene.add(steam.points);   // the Skimmer's steam puffs
+  // the rear nozzles (20 Oct 2026; owner: "like the rocket launcher things"): a rocket's flame - a bright blue-white core with shock diamonds
+  // down it and a glow at the nozzle, inside a white plume; each part scaled on its own (the group isn't), so the diamonds stay round
+  const rocketSteam = new THREE.MeshBasicMaterial({ map: liftMat.map, color: '#ffffff', transparent: true, depthWrite: false, side: THREE.DoubleSide, opacity: 0.3 });   // (fainter than the lift's: from behind, solid cones read as beams of light)
+  const rocketCore = new THREE.MeshBasicMaterial({ map: liftMat.map, color: '#dff4ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false, opacity: 0.95 });
+  const rearJets = [-0.5, 0.5].map((x) => { const g = new THREE.Group(), parts = [];
+    for (const [r, m] of [[0.5, rocketSteam], [0.2, rocketCore], [0.09, liftMat]]) { const c = jetCone(r, m); c.geometry.rotateX(-Math.PI / 2); g.add(c); parts.push(c); }   // (rotated: the cone runs back from the nozzle)
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#bfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); g.add(glow);
+    const dia = [0.16, 0.32, 0.48, 0.64].map(() => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); g.add(d); return d; });
+    g.userData = { x: x, parts: parts, glow: glow, dia: dia }; g.visible = false; return g; });
+  const steam = particles(2200, false, { near: [0.6, 1.8], lift: 0 }); scene.add(steam.points);   // the Skimmer's steam puffs (2200: 20 Oct, "a bit more ... smoke ... or steam")
   const R = { brakeK: 0, lastV: 0, slump: 0, flying: [], crashObj: null, hop: 0, crashK: 0, camShake: 0, hemiI: 0.6, sunI: 2.6, envI: 1, tunK: 0, flareK: 0, flareN: 0, lastBanner: null, pose: {}, W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camOff: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
     fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
 
@@ -1981,9 +1989,15 @@ export function createWorld() {
     { const sl = W.pw ? W.pw.shield : 0; bubble.visible = sl > 0 && !W.crash; if (bubble.visible) { bubble.position.copy(player.position); bubble.quaternion.copy(player.quaternion); bubble.material.uniforms.t.value = t / 1000; bubble.material.uniforms.a.value = sl < 120 ? (Math.floor(t / 110) % 2 ? 0.25 : 1) : 1; } }
     nitroLight.intensity = W.boosting ? 2.3 + Math.sin(t / 23) * 0.3 + Math.sin(t / 37) * 0.2 : 0;
     nitroLight.color.set(W.jet ? '#9fe8ff' : '#ff8a30');   // (the Skimmer's gas glows cold, not hot)
-    { const alt = W.h - E.heightAt(W, W.s), on = !!W.jet && !!W.lift && !W.crash && (W.hover || W.airT < 0.45);   // the lift jets: on as it leaves the road and while it hovers
-      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(9, Math.max(0.6, alt + 0.2)), wd = 0.85 + Math.random() * 0.3; j.scale.set(wd, L, wd); } });
-      const bo = !!W.jet && !!W.boosting && !W.crash; rearJets.forEach((j) => { j.visible = bo; if (bo) { const wd = 0.85 + Math.random() * 0.3; j.scale.set(wd, wd, (2.2 + (R.nk || 0) * 1.6) * (0.85 + Math.random() * 0.3)); } }); }
+    // the jets spool up (20 Oct 2026; owner: "when you first do it, it sort of comes out sort of small and then goes full"): W.liftK / W.jetK
+    // run 0-1 as they light, and the flames grow with them - thin and short first, then the full column / the full rocket
+    { const alt = W.h - E.heightAt(W, W.s), lk = W.jet && !W.crash ? W.liftK || 0 : 0, on = lk > 0.02;   // the lift jets: as it leaves the road, while it hovers or the jets hold it over a roof
+      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(11, Math.max(0.6, alt + 0.2)) * (0.35 + 0.65 * lk), wd = (0.85 + Math.random() * 0.3) * (0.3 + 0.7 * lk); j.scale.set(wd, L, wd); } });
+      const bk = W.jet && !W.crash ? W.jetK || 0 : 0, bo = bk > 0.02;
+      rearJets.forEach((j) => { j.visible = bo; if (!bo) return; const U = j.userData, fl = 0.88 + Math.random() * 0.24, L = (0.7 + 2.9 * bk) * (1 + (R.nk || 0) * 0.45) * fl;
+        U.parts[0].scale.set(0.45 + 0.85 * bk, 0.45 + 0.85 * bk, L * 0.75); U.parts[1].scale.set(0.5 + 0.7 * bk, 0.5 + 0.7 * bk, L * 0.5); U.parts[2].scale.set(0.6 + 0.5 * bk, 0.6 + 0.5 * bk, L * 0.36);   // (short and fat: long thin cones read as beams of light from behind; the white plume does the length)
+        U.glow.scale.setScalar((0.5 + 0.7 * bk) * (0.9 + Math.random() * 0.2)); U.glow.material.opacity = 0.6 + 0.4 * bk;
+        U.dia.forEach((d, q) => { d.position.set(0, 0, L * 0.4 * (0.2 + q * 0.22)); d.scale.setScalar((0.24 - q * 0.04) * (0.5 + 0.5 * bk)); d.material.opacity = bk * (0.55 + Math.random() * 0.45); }); }); }
     if (W.boosting && !R.wasBoost) R.nk = 1; R.wasBoost = !!W.boosting; R.nk = Math.max(0, (R.nk || 0) - dt / 0.3);   // the moment it fires
     flames.forEach((f, q) => { f.visible = !!W.boosting && !W.jet; if (f.visible) { const fl = 0.75 + Math.random() * 0.5; const kk = 1 + (R.nk || 0) * 0.7; f.scale.set((0.9 + Math.random() * 0.2) * kk, (0.9 + Math.random() * 0.2) * kk, fl * (0.6 + R.boostK * 0.5) * kk); f.userData.dia.forEach((d) => { d.material.opacity = 0.5 + Math.random() * 0.5; }); } });
 
@@ -2079,15 +2093,18 @@ export function createWorld() {
     // the Skimmer (19 Oct 2026): white gas, the way the real thruster car showed it - clouds that roll out along the road as the jets
     // underneath fire, a cloud trail from the two rear nozzles on a boost, little puffs off the sides as it steers in the air
     if (W.jet && !W.crash) {
-      const alt = W.h - E.heightAt(W, W.s), gy = cy - alt + 0.15, firing = W.lift && (W.hover || W.airT < 0.45);
+      const alt = W.h - E.heightAt(W, W.s), gy = cy - alt + 0.15, lk = W.liftK || 0, bk = W.jetK || 0, firing = lk > 0.05, q0 = R.low ? 0.5 : 1;
       const at = (x, z) => [cx + rx * x - fx * z, cz + rz * x - fz * z];   // a point on the car (its x across, z back) in the world
-      if (firing) for (const [jx, jz] of [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]]) for (let q = 0; q < 3; q++) {   // steam pouring down from each jet to the road
+      if (firing) for (const [jx, jz] of [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]]) for (let q = 0, nq = Math.round(5 * lk * q0); q < nq; q++) {   // steam pouring down from each jet to the road
         const p = at(jx, jz), fall = (alt + 0.6) / 0.42;
-        steam.emit(p[0] + (Math.random() - 0.5) * 0.2, cy + 0.1 - Math.random() * 0.4, p[1] + (Math.random() - 0.5) * 0.2, tfx * W.v * 0.85 + (Math.random() - 0.5) * 2, -fall * (0.8 + Math.random() * 0.4), tfz * W.v * 0.85 + (Math.random() - 0.5) * 2, 0.32, 1.7, '#f6fafd', 0.6, 0.5, 0, STM); }
-      if (firing && alt < 8) { const n = Math.round(10 * (1 - alt / 8)) + 3; for (let q = 0; q < n; q++) { const a = Math.random() * Math.PI * 2, r0 = 0.8 + Math.random() * 1.2, sp = 6 + Math.random() * 8;
-        tyre.emit(cx + Math.cos(a) * r0, gy, cz + Math.sin(a) * r0, Math.cos(a) * sp + tfx * W.v * 0.45, 0.3 + Math.random() * 1.1, Math.sin(a) * sp + tfz * W.v * 0.45, 1.2, 7.5, '#f4f8fb', 0.6, 1.8, 0, SMK); } }   // billowing out along the road
-      if (W.boosting) for (const jx of [-0.5, 0.5]) for (let q = 0; q < 5; q++) { const p = at(jx, carInfo ? carInfo.len + 0.3 : 2.6), back = 16 + Math.random() * 10;   // the rear nozzles' blast: a thick white plume
-        steam.emit(p[0], cy + 0.4 + (Math.random() - 0.5) * 0.2, p[1], tfx * W.v * 0.75 - fx * back + (Math.random() - 0.5) * 2.5, (Math.random() - 0.3) * 1.5, tfz * W.v * 0.75 - fz * back + (Math.random() - 0.5) * 2.5, 0.4, 3.2, '#f2f7fb', 0.55, 0.65, 0, STM); }
+        steam.emit(p[0] + (Math.random() - 0.5) * 0.25, cy + 0.1 - Math.random() * 0.4, p[1] + (Math.random() - 0.5) * 0.25, tfx * W.v * 0.85 + (Math.random() - 0.5) * 2.4, -fall * (0.8 + Math.random() * 0.4), tfz * W.v * 0.85 + (Math.random() - 0.5) * 2.4, 0.4, 2.4, '#f6fafd', 0.62, 0.55, 0, STM); }
+      if (firing && alt < 9) { const n = Math.round((16 * (1 - alt / 9) + 5) * lk * q0); for (let q = 0; q < n; q++) { const a = Math.random() * Math.PI * 2, r0 = 0.8 + Math.random() * 1.4, sp = 7 + Math.random() * 9;
+        tyre.emit(cx + Math.cos(a) * r0, gy, cz + Math.sin(a) * r0, Math.cos(a) * sp + tfx * W.v * 0.45, 0.3 + Math.random() * 1.4, Math.sin(a) * sp + tfz * W.v * 0.45, 1.3, 9, q % 3 ? '#f4f8fb' : '#e6ebef', 0.62, 2.1, 0, SMK); } }   // billowing out along the road
+      if (bk > 0.05) for (const jx of [-0.5, 0.5]) { const pn = at(jx, carInfo ? carInfo.len + 0.15 : 2.4);
+        for (let q = 0, nq = Math.round((3 + 6 * bk) * q0); q < nq; q++) { const p = at(jx, carInfo ? carInfo.len + 0.5 + 1.2 * bk * Math.random() : 2.6), back = (6 + Math.random() * 8) * (0.5 + 0.5 * bk);   // the rear nozzles' blast: a thick white plume, rolling and spreading round the back of the car (carried along: thrown straight back at the car's speed it was gone past the camera before you saw it)
+          steam.emit(p[0] + (Math.random() - 0.5) * 0.4, cy + 0.4 + (Math.random() - 0.5) * 0.35, p[1], tfx * W.v * 0.84 - fx * back + (Math.random() - 0.5) * 3.6, (Math.random() - 0.2) * 2.2, tfz * W.v * 0.84 - fz * back + (Math.random() - 0.5) * 3.6, 0.5, 4.2 + 2.2 * bk, q % 4 ? '#f2f7fb' : '#dfe5ea', 0.6, 1.1, 0, STM); }
+        for (let q = 0; q < 3; q++) { const back = 18 + Math.random() * 16;   // and the flame itself flickering out of the nozzle: hot blue-white gas, gone in a moment
+          sparks.emit(pn[0] + (Math.random() - 0.5) * 0.12, cy + 0.4 + (Math.random() - 0.5) * 0.12, pn[1], tfx * W.v * 0.9 - fx * back, (Math.random() - 0.5) * 0.6, tfz * W.v * 0.9 - fz * back, 0.3 + 0.2 * bk, 0.9 + 0.5 * bk, q ? '#8fd2ff' : '#d6f0ff', 0.75 * bk, 0.1 + Math.random() * 0.08, 0, SPK); } }
       if (W.lift && Math.abs(W.steer || 0) > 0.3 && (W.t % 2 === 0)) { const sd = -(W.steer > 0 ? 1 : -1);   // a side thruster puffing to turn it
         for (let q = 0; q < 2; q++) { const p = at(sd * 1.1, q ? -0.9 : 0.9); steam.emit(p[0], cy + 0.45, p[1], tfx * W.v * 0.8 + rx * sd * 5, 0.3, tfz * W.v * 0.8 + rz * sd * 5, 0.25, 1.8, '#ffffff', 0.55, 0.5, 0, STM); } }
     }
@@ -2118,8 +2135,13 @@ export function createWorld() {
           break;
         case 'lift': for (let i = 0; i < 40; i++) { const a = Math.random() * Math.PI * 2, sp = 7 + Math.random() * 8;   // the Skimmer lifting off: a burst of gas out across the road
             tyre.emit(cx + Math.cos(a) * 1.2, W.h + 0.1, cz + Math.sin(a) * 1.2, Math.cos(a) * sp + tfx * W.v * 0.4, 0.3 + Math.random() * 1.2, Math.sin(a) * sp + tfz * W.v * 0.4, 1.4, 7.5, '#f4f7fa', 0.55, 1.9, 0, SMK); }
-          R.flash = Math.max(R.flash, 0.12); R.camShake = Math.max(R.camShake || 0, 0.2); break;
-        case 'jet': for (let i = 0; i < 16; i++) { const p = rear(i % 2 ? 0.62 : -0.62); tyre.emit(p[0], p[1] + 0.1, p[2], -fx * (8 + Math.random() * 6) + tfx * W.v * 0.4, 0.3 + Math.random(), -fz * (8 + Math.random() * 6) + tfz * W.v * 0.4, 0.6, 4.5, '#f4f7fa', 0.55, 1.2, 0, SMK); } break;   // a boost firing: a white blast back out of the nozzles
+          for (let i = 0; i < 30; i++) { const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 4;   // (and a cloud straight up round it as it leaves)
+            steam.emit(cx + Math.cos(a) * 1.1, W.h + 0.3, cz + Math.sin(a) * 1.1, Math.cos(a) * sp + tfx * W.v * 0.6, 2 + Math.random() * 4, Math.sin(a) * sp + tfz * W.v * 0.6, 0.8, 4.2, '#f6f9fc', 0.6, 1.1, 0, STM); }
+          R.flash = Math.max(R.flash, 0.16); R.camShake = Math.max(R.camShake || 0, 0.28); break;
+        case 'jet': for (let i = 0; i < 40; i++) { const p = rear(i % 2 ? 0.62 : -0.62); tyre.emit(p[0], p[1] + 0.1, p[2], -fx * (8 + Math.random() * 9) + tfx * W.v * 0.4, 0.3 + Math.random() * 1.5, -fz * (8 + Math.random() * 9) + tfz * W.v * 0.4, 0.7, 5.5, i % 3 ? '#f4f7fa' : '#e2e8ec', 0.6, 1.5, 0, SMK); }   // the rocket lighting: a white blast back out of the nozzles...
+          for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2, p = rear(i % 2 ? 0.5 : -0.5), sp = 9 + Math.random() * 3;   // ...and a shock ring punching out round them
+            steam.emit(p[0], p[1] + 0.1, p[2], Math.cos(a) * sp * rx + tfx * W.v * 0.8, Math.sin(a) * sp * 0.7, Math.cos(a) * sp * rz + tfz * W.v * 0.8, 0.3, 2.2, '#ffffff', 0.7, 0.45, 0, STM); }
+          R.flash = Math.max(R.flash, 0.22); R.camShake = Math.max(R.camShake || 0, 0.32); break;
         case 'land': R.land = 1;
           if (W.jet) for (let i = 0; i < 26; i++) { const a = Math.random() * Math.PI * 2, sp = 4 + Math.random() * 6; tyre.emit(cx + Math.cos(a) * 1.3, W.h + 0.1, cz + Math.sin(a) * 1.3, Math.cos(a) * sp + tfx * W.v * 0.5, 0.3 + Math.random() * 0.6, Math.sin(a) * sp + tfz * W.v * 0.5, 1.0, 5, '#eef3f7', 0.45, 1.3, 0, SMK); }   // (the Skimmer settles in a puff of its own gas)
           for (let i = 0; i < 14; i++) tyre.emit(x + (Math.random() - 0.5) * 2, W.h + 0.15, z + (Math.random() - 0.5) * 2, tfx * W.v * 0.4 + (Math.random() - 0.5) * 5, 0.5, tfz * W.v * 0.4 + (Math.random() - 0.5) * 5, 0.6, 2.6, '#d8d0c0', 0.45, 1.0, 0, SMK);

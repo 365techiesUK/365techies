@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=74';
+import { createWorld } from './world3d.js?v=75';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -361,7 +361,7 @@ function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've 
 function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that climbs and drops with each gear, the gear, the nitro beneath
   const xr = GW - 10, yb = GH - 9, pct = W.v / E.VMAX;
   let gi = 0; while (gi < 6 && pct > RG[gi + 1]) gi++;
-  const rpm = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, gi), rf = W.jet ? Math.min(1, W.count > 0 ? (W.rev || 0) * 0.3 : W.v / (E.VMAX * 1.49)) : Math.max(0, Math.min(1, (rpm - REV0) / (REDLINE - REV0)));   // (the Skimmer: one gear, so a power bar climbing with the speed)
+  const rpm = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, gi), rf = W.jet ? Math.min(1, W.count > 0 ? (W.rev || 0) * 0.3 : W.v / (E.VMAX * 1.68)) : Math.max(0, Math.min(1, (rpm - REV0) / (REDLINE - REV0)));   // (the Skimmer: one gear, so a power bar climbing with the speed)
   const n = 16, sw = 3.2, gap = 1.1, x0 = xr - n * (sw + gap) + gap, y0 = yb - 27, lit = Math.round(rf * n);
   for (let i = 0; i < n; i++) {   // the rev bar: slanted segments, rising, white then amber then red
     const x = x0 + i * (sw + gap), hh = 3.5 + 4 * i / (n - 1);
@@ -507,8 +507,10 @@ function sound(name, S, e) {
     case 'beat': [523, 659, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.16, 0.05, { type: 'square', when: k * 0.07, verb: 0.45 })); break;
     case 'nitro': S.tone(300, 0.4, 0.06, { type: 'sawtooth', to: 1400, verb: 0.3 }); S.noise(0.4, 0.08, 600, { type: 'bandpass', q: 2, to: 5000 }); break;
     case 'boost': S.noise(0.8, 0.14, 300, { type: 'bandpass', q: 1.2, to: 3000, verb: 0.3 }); S.tone(160, 0.6, 0.06, { type: 'sawtooth', to: 320 }); break;
-    case 'jetBoost': S.noise(1.0, 0.24, 5200, { type: 'highpass', to: 1400, verb: 0.35 }); S.noise(0.5, 0.14, 900, { type: 'bandpass', q: 0.8, to: 400 }); S.tone(70, 0.35, 0.12, { type: 'sine', to: 38 }); break;   // the Skimmer's rear nozzles: a hard hiss of gas and a thump
-    case 'lift': S.noise(1.3, 0.28, 3200, { type: 'bandpass', q: 0.7, to: 1100, verb: 0.45 }); S.noise(0.6, 0.12, 7000, { type: 'highpass', to: 3000 }); S.tone(52, 0.6, 0.16, { type: 'sine', to: 32 }); break;   // its jets underneath: a roar of gas off the road
+    case 'jetBoost': { const a = S.ctx(); if (a) rocketIgnite(a, S.bus() || a.destination, a.currentTime, !!(e && e.n)); break; }   /* (e.n, not n: n defaults to 1) */   // the Skimmer's rear nozzles: a rocket lighting (the roar itself: electricSet)
+    case 'lift': { const a = S.ctx(); if (a) liftIgnite(a, S.bus() || a.destination, a.currentTime, (e && e.n) || 0); break; }   // its jets underneath firing
+    case 'hop': { const a = S.ctx(); if (a) { const d = S.bus() || a.destination, t = a.currentTime; burst(a, d, t, 0.38, 0.16, 'bandpass', 2600, 420, 1.2, 0.02); if (e && e.big) thump(a, d, t, 0.3, 0.16, 120, 60); }   // over the top of a vehicle: it whooshes by underneath
+      S.tone(880 * Math.pow(1.122, Math.min(n, 9) - 1), 0.14, 0.045, { type: 'triangle', when: 0.06, verb: 0.3 }); S.tone(1320 * Math.pow(1.122, Math.min(n, 9) - 1), 0.18, 0.03, { type: 'triangle', when: 0.12, verb: 0.3 }); break; }
     case 'empty': S.tone(220, 0.16, 0.05, { type: 'square', to: 130 }); S.noise(0.25, 0.05, 2500, { type: 'highpass' }); break;   // the tank's too low
     case 'check': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.14, 0.055, { type: 'square', when: k * 0.08, verb: 0.4 })); break;
     case 'goal':
@@ -668,15 +670,66 @@ function electricGraph(a, bus) {
   const len = Math.floor(a.sampleRate * 2), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
   const s = a.createBufferSource(), hf = a.createBiquadFilter(), hg = a.createGain(); s.buffer = buf; s.loop = true; hf.type = 'bandpass'; hf.frequency.value = 2400; hf.Q.value = 0.45; hg.gain.value = 0; s.connect(hf); hf.connect(hg); hg.connect(bus); s.start();
-  return { out: out, lp: lp, body: body, m1: m1, m2: m2, m3: m3, inv: inv, hiss: { f: hf, g: hg } };
+  // the thrusters (20 Oct 2026; owner: the rear ones should sound "like the rocket launcher things", not "a nitrous bottle", and the ones
+  // underneath "more like thrusters"): the rocket a deep, tearing roar - a brown-noise rumble, a gritty mid roar (driven into a soft clip)
+  // and the crackle of a rocket's exhaust; the lift jets a lower, hollow roar with a turbine's whine over it. Both follow how far the jets
+  // have spooled up (W.jetK / W.liftK), so the sound starts small and opens out to full as the flame does
+  const SR = a.sampleRate, n2 = Math.floor(SR * 2.5);
+  const loop = (fill) => { const b = a.createBuffer(1, n2, SR), dd = b.getChannelData(0); fill(dd); const src = a.createBufferSource(); src.buffer = b; src.loop = true; src.start(0, Math.random() * 2); return src; };
+  const brown = loop((dd) => { let v = 0; for (let i = 0; i < n2; i++) { v = (v + 0.02 * (Math.random() * 2 - 1)) / 1.02; dd[i] = v * 3.5; } });
+  const crackle = loop((dd) => { let amp = 0; for (let i = 0; i < n2; i++) { if (Math.random() < 0.003) amp = (0.35 + Math.random() * 0.65) * (Math.random() < 0.5 ? -1 : 1); amp *= 0.93; dd[i] = amp * (0.4 + Math.random() * 0.6) + (Math.random() * 2 - 1) * 0.04; } });
+  const chain = (src, nodes) => { let n = src; for (const x of nodes) { n.connect(x); n = x; } const g = a.createGain(); g.gain.value = 0; n.connect(g); g.connect(bus); return g; };
+  const filt = (type, f, q) => { const x = a.createBiquadFilter(); x.type = type; x.frequency.value = f; x.Q.value = q; return x; };
+  const clip = a.createWaveShaper(), cv = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; cv[i] = Math.tanh(x * 3) / Math.tanh(3); } clip.curve = cv;
+  const rkRumF = filt('lowpass', 120, 0.7), rkRoarF = filt('bandpass', 600, 0.55), rkCrkF = filt('bandpass', 1900, 0.5);
+  const rk = { rumF: rkRumF, rum: chain(brown, [rkRumF]), roarF: rkRoarF, roar: chain(s, [rkRoarF, clip, filt('lowpass', 3200, 0.5)]), crk: chain(crackle, [rkCrkF]) };
+  const lfRoarF = filt('bandpass', 420, 0.8), wh = a.createOscillator(); wh.type = 'sine'; wh.frequency.value = 1500; wh.start();
+  const wv = a.createOscillator(), wvg = a.createGain(); wv.frequency.value = 7; wvg.gain.value = 9; wv.connect(wvg); wvg.connect(wh.detune); wv.start();
+  const lf = { rum: chain(brown, [filt('lowpass', 240, 0.8)]), roarF: lfRoarF, roar: chain(s, [lfRoarF]), whine: chain(wh, []), wh: wh };
+  return { out: out, lp: lp, body: body, m1: m1, m2: m2, m3: m3, inv: inv, hiss: { f: hf, g: hg }, rk: rk, lf: lf };
 }
-function electricSet(o, t, pct, thr, boost, jets, crash) {   // pct: speed (0 standing, 1 = 180 mph), thr: power 0-1, boost / jets: the gas firing
+// everything in the electric graph to silence (paused, a menu, another car)
+function electricQuiet(o, t) { for (const g of [o.out, o.hiss.g, o.rk.rum, o.rk.roar, o.rk.crk, o.lf.rum, o.lf.roar, o.lf.whine]) g.gain.setTargetAtTime(0, t, 0.05); }
+function electricSet(o, t, pct, thr, boost, jets, crash) {   // pct: speed (0 standing, 1 = 180 mph), thr: power 0-1, boost / jets: how far the rear nozzles / the lift jets have spooled up (0-1)
   const f = 62 + pct * 820;   // the motor's note: ~60 Hz pulling away, ~900 Hz at 180 mph, higher still on a boost
   o.body.o.frequency.setTargetAtTime(f * 0.5, t, 0.035); o.m1.o.frequency.setTargetAtTime(f, t, 0.035); o.m2.o.frequency.setTargetAtTime(f * 2.0, t, 0.035);
   o.m3.o.frequency.setTargetAtTime(f * 3.01, t, 0.035); o.inv.o.frequency.setTargetAtTime(2600 + pct * 4200, t, 0.06);
   o.lp.frequency.setTargetAtTime(700 + pct * 3200 + thr * 600 + boost * 1400, t, 0.05);
   o.out.gain.setTargetAtTime(crash ? 0.008 : (0.03 + 0.07 * thr) * (0.5 + 0.5 * Math.min(1, pct * 1.6)) + boost * 0.025, t, 0.06);
-  o.hiss.g.gain.setTargetAtTime(jets ? 0.11 : boost ? 0.06 : 0, t, 0.04); o.hiss.f.frequency.setTargetAtTime(jets ? 1700 : 3000, t, 0.08);
+  o.hiss.g.gain.setTargetAtTime(crash ? 0 : 0.07 * jets + 0.035 * boost, t, 0.04); o.hiss.f.frequency.setTargetAtTime(jets > boost ? 1700 : 3000, t, 0.08);   // (the steam)
+  const bk = crash ? 0 : boost, lk = crash ? 0 : jets;
+  o.rk.rumF.frequency.setTargetAtTime(90 + 520 * bk, t, 0.06); o.rk.rum.gain.setTargetAtTime(0.26 * Math.pow(bk, 1.4), t, 0.05);   // (it opens out as it spools: low and small first, then the full roar)
+  o.rk.roarF.frequency.setTargetAtTime(340 + 780 * bk + pct * 260, t, 0.06); o.rk.roar.gain.setTargetAtTime(0.12 * Math.pow(bk, 1.6), t, 0.05);
+  o.rk.crk.gain.setTargetAtTime(0.1 * Math.pow(bk, 2), t, 0.05);
+  o.lf.rum.gain.setTargetAtTime(0.19 * lk, t, 0.04); o.lf.roarF.frequency.setTargetAtTime(300 + 260 * lk, t, 0.05); o.lf.roar.gain.setTargetAtTime(0.11 * Math.pow(lk, 1.3), t, 0.04);
+  o.lf.wh.frequency.setTargetAtTime(1150 + 950 * lk, t, 0.12); o.lf.whine.gain.setTargetAtTime(0.022 * lk, t, 0.08);   // (the turbine's whine winds up with it)
+}
+// the thrusters' one-shots (20 Oct 2026), built from filtered noise and low thumps - live (sound() below) and offline (CRelectricSample)
+const NOISEB = new WeakMap();
+function noiseBuf(a) { let b = NOISEB.get(a); if (!b) { const n = Math.floor(a.sampleRate * 2); b = a.createBuffer(1, n, a.sampleRate); const d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; NOISEB.set(a, b); } return b; }
+function burst(a, dest, t, dur, gain, type, f0, f1, q, attack) {   // a noise burst through a filter that sweeps f0 -> f1
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = noiseBuf(a); f.type = type; f.Q.value = q || 0.7;
+  f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + (attack || 0.008)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(dest); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
+}
+function thump(a, dest, t, dur, gain, f0, f1) {   // a low boom, its pitch falling
+  const o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest); o.start(t); o.stop(t + dur + 0.05);
+}
+function rocketIgnite(a, dest, t, cold) {   // the rear nozzles lighting from cold: the crack of ignition, a deep WHOOMF, the flame catching and roaring up
+  if (!cold) { burst(a, dest, t, 0.3, 0.09, 'bandpass', 900, 300, 0.8, 0.01); return; }   // (held on: just the next charge feeding in)
+  burst(a, dest, t, 0.07, 0.34, 'highpass', 3200, 1500, 0.7, 0.002);
+  thump(a, dest, t, 0.55, 0.4, 96, 30);
+  burst(a, dest, t, 0.42, 0.3, 'bandpass', 240, 2600, 0.8, 0.03);
+  burst(a, dest, t + 0.05, 1.7, 0.2, 'lowpass', 2600, 240, 0.6, 0.06);   // (rolling away as the steady roar takes over)
+}
+function liftIgnite(a, dest, t, n) {   // the jets underneath (n 0-1: how hard it launched): a hollow BOOM off the road, the valve, a blast of gas, the whoosh up
+  thump(a, dest, t, 0.5, 0.34 + 0.2 * n, 72, 27);
+  burst(a, dest, t, 0.09, 0.24 + 0.2 * n, 'highpass', 2600, 1200, 0.7, 0.002);
+  burst(a, dest, t, 0.85, 0.3 + 0.12 * n, 'lowpass', 3400, 330, 0.7, 0.01);
+  burst(a, dest, t + 0.03, 0.55, 0.13, 'bandpass', 520, 3000, 1.1, 0.05);
 }
 // a racing car's run through the gears, rendered offline with the same engine: window.CRengineSample(seconds) -> WAV bytes
 window.CRengineSample = function (sec) {
@@ -698,14 +751,18 @@ window.CRengineSample = function (sec) {
     return Array.from(new Uint8Array(buf)); });
 };
 // the Skimmer's electric drive, rendered offline the same way (for checking by ear): window.CRelectricSample(seconds) -> WAV bytes.
-// A launch (0-60 in about 0.6 s), on to flat out, a boost, a lift's hiss, then easing off
+// A launch (0-60 in about 0.6 s), on to flat out, the rocket lit and held, two quick hops, a hover, then easing off
 window.CRelectricSample = function (sec) {
   const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
-  const o = electricGraph(a, bus); let sp = 0;
+  const o = electricGraph(a, bus); let sp = 0, bk = 0, lk = 0, lit = false; const hops = [0.66, 0.72], hov = [0.8, 0.9], fired = {};
   for (let t = 0; t < sec; t += 1 / 60) {
-    const boost = t > sec * 0.55 && t < sec * 0.68 ? 1 : 0, jets = t > sec * 0.74 && t < sec * 0.84, off = t > sec - 1.4;
-    if (t > 0.3 && !off) sp = Math.min(boost ? 1.45 : 1.12, sp + (sp < 0.33 ? 0.62 : (boost ? 0.55 : 0.12) * (1.12 - Math.min(1.1, sp))) / 60); else if (off) sp = Math.max(0.4, sp - 0.35 / 60);
-    electricSet(o, t, t < 0.3 ? 0.02 : sp, t < 0.3 ? 0.1 : off ? 0.15 : 1, boost, jets, false);
+    const boost = t > sec * 0.4 && t < sec * 0.6, off = t > sec - 1.4, u = t / sec;
+    const jets = hops.some((h) => u > h && u < h + 0.45 / sec) || (u > hov[0] && u < hov[1]);
+    if (boost && !lit) { rocketIgnite(a, bus, t, true); lit = true; } if (!boost) lit = false;
+    for (const h of [...hops, hov[0]]) if (u > h && !fired[h]) { fired[h] = 1; liftIgnite(a, bus, t, h === hops[1] ? 1 : 0.2); }
+    bk = boost ? Math.min(1, bk + (1 / 60) / 0.3) : Math.max(0, bk - (1 / 60) / 0.18); lk = jets ? Math.min(1, lk + (1 / 60) / 0.12) : Math.max(0, lk - (1 / 60) / 0.2);
+    if (t > 0.3 && !off) sp = Math.min(boost ? 1.68 : 1.12, sp + (sp < 0.33 ? 0.62 : (boost ? 0.55 : 0.12) * ((boost ? 1.68 : 1.12) - Math.min(1.66, sp))) / 60); else if (off) sp = Math.max(0.4, sp - 0.35 / 60);
+    electricSet(o, t, t < 0.3 ? 0.02 : sp, t < 0.3 ? 0.1 : off ? 0.15 : 1, bk, lk, false);
   }
   return a.startRendering().then((b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
     const w = (p, s2) => { for (let i = 0; i < s2.length; i++) v.setUint8(p + i, s2.charCodeAt(i)); };
@@ -849,7 +906,7 @@ document.addEventListener('click', (e) => {   // Play on a phone or a tablet: fu
     const p = document.createElement('p'); p.className = 'soft cr-tip'; p.innerHTML = 'For the whole screen on an iPhone: tap <b>Share</b> then <b>Add to Home Screen</b>, and play from there.'; box.appendChild(p); };
   add();
 })();
-const BUZZ = { boost: 18, crash: [45, 30, 70], smash: 30, bump: 22, scrape: 8, grid: [8, 22, 8, 22, 8], land: 14 };   // a buzz you can feel on a phone (Android: iPhones have none for web pages)
+const BUZZ = { boost: 18, crash: [45, 30, 70], smash: 30, bump: 22, scrape: 8, grid: [8, 22, 8, 22, 8], land: 14, lift: 24, hop: 12 };   // a buzz you can feel on a phone (Android: iPhones have none for web pages)
 const CAMS = [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']];
 document.addEventListener('keydown', (e) => {   // C: the next camera (saved with the other settings)
   if ((e.key || '').toLowerCase() !== 'c' || e.repeat || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
@@ -913,7 +970,7 @@ function frameAudio(W, S, mode, SET) {
   if (!a) return;
   if (!AU) { if (!playing) return; loadWorklet(a); if (!WLdone) return; AU = makeAudio(a, S.bus() || a.destination); }   // (a moment while the engine loads)
   const now = a.currentTime, T = 0.06;
-  if (!playing && AU.ev) { AU.ev.out.gain.setTargetAtTime(0, now, 0.05); AU.ev.hiss.g.gain.setTargetAtTime(0, now, 0.05); }
+  if (!playing && AU.ev) electricQuiet(AU.ev, now);
   if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); if (AU.tyre) AU.tyre.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
@@ -926,8 +983,8 @@ function frameAudio(W, S, mode, SET) {
   if (W.jet) {   // the Skimmer: the engine silent, the electric drive instead (no gears, so no shifts, pops or crackles either)
     if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); }
     const pe = W.count > 0 ? (W.rev || 0) * 0.12 : pct * (W.boosting ? 1.06 : 1), te = W.count > 0 ? (W.rev || 0) : W.crash || W.timeUp ? 0.12 : lift ? 0.2 : 1;
-    if (AU.ev) electricSet(AU.ev, now, pe, te, W.boosting ? 1 : 0, !!(W.lift && (W.hover || W.airT < 0.45)), !!W.crash);
-  } else if (AU.ev) { AU.ev.out.gain.setTargetAtTime(0, now, 0.05); AU.ev.hiss.g.gain.setTargetAtTime(0, now, 0.05); }
+    if (AU.ev) electricSet(AU.ev, now, pe, te, W.jetK || 0, W.liftK || 0, !!W.crash);
+  } else if (AU.ev) electricQuiet(AU.ev, now);
   if (W.jet) { /* (above) */ } else if (AU.race) {   // the road gearbox, revs in real numbers
     let rg = 0; while (rg < 6 && pct > RG[rg + 1]) rg++;
     let r2 = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, rg);
@@ -978,7 +1035,7 @@ A.start({
   pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
-    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Skimmer has gas thrusters instead of nitro - Space for a boost, Shift (or X, B, the right mouse button) to LIFT over the traffic, held to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Skimmer']], def: 'roadster' },
+    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Skimmer flies - Space fires its rear rockets (over 300 mph), and a tap of Shift (or X, B, the right mouse button) hops it straight over whatever is in front of you; hold it to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Skimmer']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },

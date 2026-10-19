@@ -432,8 +432,9 @@ test('the Skimmer: a gas tank, not bottles; LIFT throws it up and costs gas; hel
   const i = straight(W); assert.ok(i > 0, 'a straight'); place(W, i, 50); drive(W, 3, {});
   const g0 = W.gas; E.step(W, { alt: true }); quiet(W);
   assert.ok(W.air && W.lift, 'lifted'); assert.equal(Math.round(g0 - W.gas), E.LIFT_COST, 'a lift costs gas');
-  let top = 0; for (let n = 0; n < 240 && W.air; n++) { E.step(W, {}); quiet(W); clear(W); top = Math.max(top, W.h - E.heightAt(W, W.s)); }
-  assert.ok(!W.air && !W.lift, 'back on the road'); assert.ok(top > 3.8 && top < 5, 'a tap: a hop of about 4 m (was ' + top.toFixed(2) + ')');
+  let top = 0, up = 1; for (let n = 0; n < 240 && W.air; n++) { E.step(W, {}); quiet(W); clear(W); top = Math.max(top, W.h - E.heightAt(W, W.s)); if (W.air) up++; }
+  assert.ok(up / 60 > 0.7 && up / 60 < 1.15, 'up and down in about a second (' + (up / 60).toFixed(2) + ' s)');
+  assert.ok(!W.air && !W.lift, 'back on the road'); assert.ok(top > 2.5 && top < 3.6, 'a tap: a quick hop of about 3 m (was ' + top.toFixed(2) + ')');   // (20 Oct: a hard, quick hop - was a 4-5 m float)
   // held: it hovers - higher, longer, and the tank drains
   place(W, i + 5, 50); W.gas = 100; drive(W, 2, {});
   let hi = 0, t = 0; for (let n = 0; n < 400 && (n < 2 || W.air); n++) { E.step(W, { alt: n < 150 }); quiet(W); clear(W); hi = Math.max(hi, W.h - E.heightAt(W, W.s)); if (W.air) t++; }
@@ -460,6 +461,29 @@ test('the Skimmer hops a lorry it would have hit, and can\'t lift under a roof; 
   const B = E.newWorld(2, { car: 'skimmer' }, 6); go(B); clear(B); place(B, i, 40); drive(B, 2, {});
   const g1 = W.gas; drive(W, 50, (w) => { clear(w); return { fire: true }; }); drive(B, 50, (w) => { clear(w); return {}; });
   assert.ok(W.v > B.v + 6, 'faster with the nozzles (' + W.v.toFixed(1) + ' v ' + B.v.toFixed(1) + ')'); assert.ok(W.gas <= g1 - E.BURST_COST + 1, 'a burst costs gas');
+});
+
+test('the Skimmer\'s hop is aimed at what\'s in front: a TAP clears a car or a lorry, at full speed; a late tap launches harder', () => {
+  const run = (z, tapAt, kind, v) => {
+    const W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W); const i = straight(W); place(W, i, v || 70); W.gas = 100; drive(W, 2, {});
+    const t = E.VEH.findIndex((q) => q.id === kind); W.cars.push({ id: 778, s: W.s + z, x: 0, tx: 0, v: 25, v0: 25, t: t, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: z, spin: 0 });
+    let hit = false, hi = 0, v0 = W.v, vMin = W.v;
+    for (let n = 0; n < 240; n++) { E.step(W, { up: true, alt: n === tapAt || n === tapAt + 1 }); if (W.events.some((e) => e.sfx === 'bump') || W.crash) hit = true; quiet(W); hi = Math.max(hi, W.h - E.heightAt(W, W.s)); if (W.air) vMin = Math.min(vMin, W.v); }
+    return { hit, hops: W.hopN, hi: +hi.toFixed(2), kept: vMin >= v0 - 1, air: W.air };
+  };
+  let r = run(40, 0, 'hatch'); assert.ok(!r.hit && r.hops === 1, 'a tap a few lengths out: over the car (' + JSON.stringify(r) + ')'); assert.ok(r.kept, 'without losing speed');
+  r = run(45, 0, 'lorry'); assert.ok(!r.hit && r.hops === 1, 'a tap: over a whole lorry - the jets hold it over the length (' + JSON.stringify(r) + ')'); assert.ok(!r.air, 'and down again');
+  r = run(16, 0, 'lorry'); assert.ok(!r.hit && r.hops === 1, 'tapped late, it launches harder and still clears it (' + JSON.stringify(r) + ')'); assert.ok(r.hi > 4.2, 'higher (' + r.hi + ' m)');
+  r = run(45, 999, 'lorry'); assert.ok(r.hit, 'no tap: into it');
+});
+
+test('the Skimmer\'s rear nozzles: a rocket - the push spools up, and on a boost it tops 280 mph', () => {
+  const W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W); const i = straight(W); place(W, i, 60); W.gas = 100; drive(W, 2, {});
+  const v0 = W.v; E.step(W, { up: true, fire: true }); quiet(W); const a0 = (W.v - v0) * 60;
+  drive(W, 18, (w) => { clear(w); return { up: true, fire: true }; }); const v1 = W.v; E.step(W, { up: true, fire: true }); quiet(W); const a1 = (W.v - v1) * 60;
+  assert.ok(W.jetK > 0.95 && a1 > a0 * 1.6, 'it builds: ' + a0.toFixed(1) + ' then ' + a1.toFixed(1) + ' m/s/s');
+  let vmax = 0; for (let n = 0; n < 60 * 14; n++) { W.gas = 100; W.time = 60; E.step(W, { up: true, fire: true }); quiet(W); clear(W); W.x = 0; W.psi = W.phi = 0; vmax = Math.max(vmax, W.v); }
+  assert.ok(vmax * 2.237 > 280 && vmax * 2.237 < 310, 'flat out on the nozzles: ' + Math.round(vmax * 2.237) + ' mph');
 });
 
 test('the Skimmer\'s driver gets round a stage, hopping traffic now and then', () => {
