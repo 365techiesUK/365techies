@@ -731,6 +731,23 @@ function liftIgnite(a, dest, t, n) {   // the jets underneath (n 0-1: how hard i
   burst(a, dest, t, 0.85, 0.3 + 0.12 * n, 'lowpass', 3400, 330, 0.7, 0.01);
   burst(a, dest, t + 0.03, 0.55, 0.13, 'bandpass', 520, 3000, 1.1, 0.05);
 }
+// the Skimmer's own sound for a piece of recorded play (for films of the game): window.CRelectricRender({ fps, frames: [{ pe, te, bk, lk,
+// ign: 1 = the rocket lit / 0 = a charge fed in, lift: launch strength 0-1, hop: 1 = over a vehicle (2 a big one) }] }) -> WAV bytes, mono 44.1 kHz
+window.CRelectricRender = function (track) {
+  const SR = 44100, fps = track.fps || 30, F = track.frames, sec = F.length / fps + 0.5, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
+  const o = electricGraph(a, bus);
+  F.forEach((f, i) => { const t = i / fps;
+    electricSet(o, t, f.pe || 0, f.te == null ? 1 : f.te, f.bk || 0, f.lk || 0, false);
+    if (f.ign != null) rocketIgnite(a, bus, t, !!f.ign);
+    if (f.lift != null) liftIgnite(a, bus, t, f.lift);
+    if (f.hop) { burst(a, bus, t, 0.38, 0.16, 'bandpass', 2600, 420, 1.2, 0.02); if (f.hop > 1) thump(a, bus, t, 0.3, 0.16, 120, 60); }
+  });
+  return a.startRendering().then((b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const w = (p, s2) => { for (let i = 0; i < s2.length; i++) v.setUint8(p + i, s2.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i] * 0.5)) * 32767, true);   // (half: headroom - the mix is levelled afterwards)
+    return Array.from(new Uint8Array(buf)); });
+};
 // a racing car's run through the gears, rendered offline with the same engine: window.CRengineSample(seconds) -> WAV bytes
 window.CRengineSample = function (sec) {
   const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
@@ -1035,7 +1052,7 @@ A.start({
   pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
-    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Skimmer flies - Space fires its rear rockets (over 300 mph), and a tap of Shift (or X, B, the right mouse button) hops it straight over whatever is in front of you; hold it to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Skimmer']], def: 'roadster' },
+    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Spindrift flies - Space fires its rear rockets (over 300 mph), and a tap of Shift (or X, B, the right mouse button) hops it straight over whatever is in front of you; hold it to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Spindrift']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
@@ -1045,7 +1062,7 @@ A.start({
     { key: 'touchfull', type: 'switch', label: 'Full screen when you race', small: 'Phones and tablets: Play takes the game full screen and sideways. An iPhone can\'t do that for a web page: add the game to your Home Screen instead.', def: true },
     { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
   ],
-  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Skimmer', 'White · flies']] },
+  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Spindrift', 'Orange · flies']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
   statKey: (W) => 'v' + W.diff,
   hires: () => true,

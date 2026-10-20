@@ -3130,9 +3130,10 @@ const CARDEF = {
 // ---------------------------------------------------------------- your red roadster: long, low and open, a tan cabin, a turning steering wheel
 // (our own design: a wedge nose with flush lamps, scoops ahead of the rear wheels, louvres over the engine, humps behind
 // the seats, a light bar across the tail and four pipes)
-function spider(opt) {   // opt.jet: the Skimmer (19 Oct 2026) - the same roadster in pearl white with a gas-thruster kit
+function spider(opt) {   // opt.jet: the Skimmer (19 Oct 2026) - the same roadster with a gas-thruster kit; racing orange since 20 Oct (was pearl white: it
+  // vanished against the sky, the road and its own steam - the owner picked orange from a trial of four) and shown as the "Spindrift"
   opt = opt || {};
-  const k = new Kit(), col = opt.jet ? '#e6ebef' : '#c0111c', len = 2.3, w = 1.98, wz = [-1.42, 1.42];   // (a deeper red, 6 Oct: the owner wanted it less toy-like)
+  const k = new Kit(), col = opt.jet ? '#ff6a13' : '#c0111c', len = 2.3, w = 1.98, wz = [-1.42, 1.42];   // (a deeper red, 6 Oct: the owner wanted it less toy-like)
   const keys = [[-2.32, 0.6, 0.36, 0.44], [-2.18, 0.82, 0.3, 0.53], [-1.92, 0.93, 0.28, 0.645], [-1.42, 1.0, 0.28, 0.76], [-0.95, 0.97, 0.28, 0.79], [-0.52, 0.94, 0.28, 0.81],
     [-0.42, 0.93, 0.28, 0.8], [-0.33, 0.92, 0.28, 0.47], [0.9, 0.93, 0.28, 0.47], [0.99, 0.95, 0.28, 0.85], [1.2, 1.08, 0.28, 0.85], [1.45, 1.13, 0.28, 0.858], [1.72, 1.11, 0.29, 0.865], [2.1, 1.04, 0.3, 0.875], [2.2, 1.0, 0.31, 0.89], [2.27, 0.95, 0.36, 0.92], [2.31, 0.87, 0.42, 0.915]];
   const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };

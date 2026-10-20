@@ -134,6 +134,7 @@
     // hop the traffic, hold it to hover a little, steer in the air, land straight. Our own design and name: never a real make
     // (owner, 19 Oct evening: "it's an electric car ... 0 to 60 in about 0.6 of a second ... faster than 240": 201 mph flat out, its boost ~268,
     // and an electric motor's shove off the line - launch: extra pull that fades out by about a third of its top speed)
+    // (named the SPINDRIFT on screen from 20 Oct - the owner's pick; its id stays 'skimmer' so saved settings keep working)
     skimmer: { top: 1.12, acc: 1.04, grip: 0.98, yaw: 1.02, jet: true, launch: 42 }
   };
   // how tall the traffic is (m): the Skimmer can only clear what it's above
@@ -798,7 +799,7 @@
     };
     W.rng = rnd(W.seed);
     W.jet = !!CARS[W.car].jet; W.gas = W.jet ? GAS0 : 0; W.burstT = 0; W.lift = false; W.hover = false; W.altWas = false; W.hopN = 0; W.liftT = 0;
-    W.jetK = 0; W.liftK = 0; W.hopTo = null;   // (how far the rear nozzles / the lift jets have spooled up, 0-1; the vehicle a hop is aimed over)
+    W.jetK = 0; W.liftK = 0; W.hopTo = null; W.roll = 0; W.rollDir = 0; W.rollT = 0; W.rollSide = 1;   // (how far the rear nozzles / the lift jets have spooled up, 0-1; the vehicle a hop is aimed over)
     if (W.jet) W.bottles = 0;   // (no nitro bottles: the tank instead)
     buildStage(W, 0); nextFork(W, 0);
     W.time = W.D.time * STAGES[0].t + 10;   // (OutRun's start: a little in hand for the first stage)
@@ -1411,6 +1412,9 @@
         var tg = hopTarget(W), v0 = LIFT_V;
         if (tg) { var t1 = Math.max(0.14, tg.t1); v0 = clamp((tg.need + 0.5 * GRAV * LIFT_G * t1 * t1) / t1, LIFT_V, HOP_VMAX); }
         W.hopTo = tg ? tg.car : null;
+        // (20 Oct, from a stunt clip the owner sent: the car rolling as it goes over the traffic) - a hop over a vehicle is a barrel roll, the
+        // way you're steering (else turn about): only the look - where it goes, how high and when it lands are just the same
+        if (tg) { W.rollDir = Math.abs(W.steer) > 0.25 ? (W.steer > 0 ? 1 : -1) : (W.rollSide = -W.rollSide); W.rollT = 0; } else W.rollDir = 0;
         W.gas -= LIFT_COST; W.air = true; W.lift = true; W.airT = 0; W.liftT = 0; W.vh = roadVY + v0; W.h = roadY + W.vh * DT;
         if (W.drift) endDrift(W);
         W.events.push({ sfx: 'lift', n: Math.min(1, (v0 - LIFT_V) / (HOP_VMAX - LIFT_V)) }); fx(W, { k: 'lift', x: W.x }); mood(W, 'cheer'); W.shake = Math.max(W.shake, 4 + 6 * (v0 - LIFT_V) / (HOP_VMAX - LIFT_V));
@@ -1435,6 +1439,7 @@
           W.vh += lg * DT + (vt - W.vh) * Math.min(1, 3 * DT); W.gas = Math.max(0, W.gas - HOVER_RATE * DT);
         }
         W.vh -= lg * DT; W.liftT += DT;
+        if (W.rollDir) { W.rollT += DT; var ru = clamp((W.rollT - 0.06) / 0.62, 0, 1); W.roll = W.rollDir * 2 * Math.PI * ru * ru * (3 - 2 * ru); if (ru >= 1) { W.rollDir = 0; W.roll = 0; } }
       } else W.vh -= GRAV * 1.5 * jk * DT;   // a little heavier in the air: a short, punchy jump
       W.h += W.vh * DT; W.airT += DT;
       if (roofed && W.h > roadY + 2.2) {   // and if you fly into one, the roof keeps you down
@@ -1447,7 +1452,7 @@
           var crook = Math.abs(W.psi - W.phi), onRd2 = Math.abs(W.x) <= roadHalf(g) + RUMBLE;
           if (W.airT > 0.6 && crook < 0.08 && onRd2) { W.score += 2000; W.boost = Math.min(1, W.boost + 0.15); pop(W, 'CLEAN LANDING', '+2,000', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
           else if (crook > 0.16) { W.v *= 0.9; W.kickK = (W.psi > W.phi ? 1 : -1) * Math.min(0.3, crook); W.kickT = 0; pop(W, 'ROUGH LANDING', '', 0, 'nitro'); }
-          W.lift = false; W.hover = false; W.hopTo = null; W.hopHold = false;
+          W.lift = false; W.hover = false; W.hopTo = null; W.hopHold = false; W.roll = 0; W.rollDir = 0;
         }
         if (W.airT > 0.35) {
           var ap = Math.round(W.airT * 20 * (W.liftT > 0 ? 0.6 : 1)) * 100; W.score += ap; W.airBest = Math.max(W.airBest, W.airT); pop(W, W.airT > 0.9 ? 'BIG AIR' : 'AIR', '+' + ap.toLocaleString('en-GB'), 0, 'gold');   // (a lift's air scores a little less than a real jump's: it's bought with gas)

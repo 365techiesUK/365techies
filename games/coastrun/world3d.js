@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=58';
+import * as MD from './models3d.js?v=59';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1829,6 +1829,7 @@ export function createWorld() {
     if (!cr || !cr.hard) R.slump = 0;
     crashScene(W, cr, T, dt, cx, cy, cz, heading, POS.y);
     player.position.y += lift; R.land = Math.max(0, (R.land || 0) - dt * 5); player.position.y -= R.land * 0.06;
+    if (W.roll && !cr) { const rh = 0.6, th = W.roll; roll += th; player.position.y += rh * (1 - Math.cos(th)); player.position.x += rh * Math.sin(th) * Math.cos(yaw); player.position.z -= rh * Math.sin(th) * Math.sin(yaw); }   // a barrel roll over the traffic (20 Oct): about its middle, not its wheels
     player.rotation.set(0, 0, 0); player.rotation.order = 'YXZ'; player.rotation.y = yaw; player.rotation.x = pitch; player.rotation.z = roll;
     R.wheelSpin += W.v * dt / 0.34; R.rearSpin = (R.rearSpin || 0) + (W.wspin || 0) * 38 * dt;   // (the rear wheels turning faster than the car is going: wheelspin)
     R.brakeK += (((W.v < R.lastV - 0.05 && !W.crash) || W.drift ? 1 : 0) - R.brakeK) * Math.min(1, dt * 12); R.lastV = W.v;
@@ -1992,7 +1993,7 @@ export function createWorld() {
     // the jets spool up (20 Oct 2026; owner: "when you first do it, it sort of comes out sort of small and then goes full"): W.liftK / W.jetK
     // run 0-1 as they light, and the flames grow with them - thin and short first, then the full column / the full rocket
     { const alt = W.h - E.heightAt(W, W.s), lk = W.jet && !W.crash ? W.liftK || 0 : 0, on = lk > 0.02;   // the lift jets: as it leaves the road, while it hovers or the jets hold it over a roof
-      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(11, Math.max(0.6, alt + 0.2)) * (0.35 + 0.65 * lk), wd = (0.85 + Math.random() * 0.3) * (0.3 + 0.7 * lk); j.scale.set(wd, L, wd); } });
+      liftJets.forEach((j) => { j.visible = on; if (on) { const L = Math.min(11, Math.max(0.6, alt + 0.2)) * (0.35 + 0.65 * lk) * Math.max(0.12, Math.cos(W.roll || 0)), wd = (0.85 + Math.random() * 0.3) * (0.3 + 0.7 * lk); j.scale.set(wd, L, wd); } });
       const bk = W.jet && !W.crash ? W.jetK || 0 : 0, bo = bk > 0.02;
       rearJets.forEach((j) => { j.visible = bo; if (!bo) return; const U = j.userData, fl = 0.88 + Math.random() * 0.24, L = (0.7 + 2.9 * bk) * (1 + (R.nk || 0) * 0.45) * fl;
         U.parts[0].scale.set(0.45 + 0.85 * bk, 0.45 + 0.85 * bk, L * 0.75); U.parts[1].scale.set(0.5 + 0.7 * bk, 0.5 + 0.7 * bk, L * 0.5); U.parts[2].scale.set(0.6 + 0.5 * bk, 0.6 + 0.5 * bk, L * 0.36);   // (short and fat: long thin cones read as beams of light from behind; the white plume does the length)

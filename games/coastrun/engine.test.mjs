@@ -467,11 +467,11 @@ test('the Skimmer\'s hop is aimed at what\'s in front: a TAP clears a car or a l
   const run = (z, tapAt, kind, v) => {
     const W = E.newWorld(2, { car: 'skimmer' }, 6); go(W); clear(W); const i = straight(W); place(W, i, v || 70); W.gas = 100; drive(W, 2, {});
     const t = E.VEH.findIndex((q) => q.id === kind); W.cars.push({ id: 778, s: W.s + z, x: 0, tx: 0, v: 25, v0: 25, t: t, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: z, spin: 0 });
-    let hit = false, hi = 0, v0 = W.v, vMin = W.v;
-    for (let n = 0; n < 240; n++) { E.step(W, { up: true, alt: n === tapAt || n === tapAt + 1 }); if (W.events.some((e) => e.sfx === 'bump') || W.crash) hit = true; quiet(W); hi = Math.max(hi, W.h - E.heightAt(W, W.s)); if (W.air) vMin = Math.min(vMin, W.v); }
-    return { hit, hops: W.hopN, hi: +hi.toFixed(2), kept: vMin >= v0 - 1, air: W.air };
+    let hit = false, hi = 0, v0 = W.v, vMin = W.v, rollMax = 0;
+    for (let n = 0; n < 240; n++) { E.step(W, { up: true, alt: n === tapAt || n === tapAt + 1 }); if (W.events.some((e) => e.sfx === 'bump') || W.crash) hit = true; quiet(W); hi = Math.max(hi, W.h - E.heightAt(W, W.s)); if (W.air) vMin = Math.min(vMin, W.v); rollMax = Math.max(rollMax, Math.abs(W.roll || 0)); }
+    return { hit, hops: W.hopN, hi: +hi.toFixed(2), kept: vMin >= v0 - 1, air: W.air, rolled: rollMax > 6, upright: !W.roll };
   };
-  let r = run(40, 0, 'hatch'); assert.ok(!r.hit && r.hops === 1, 'a tap a few lengths out: over the car (' + JSON.stringify(r) + ')'); assert.ok(r.kept, 'without losing speed');
+  let r = run(40, 0, 'hatch'); assert.ok(!r.hit && r.hops === 1, 'a tap a few lengths out: over the car (' + JSON.stringify(r) + ')'); assert.ok(r.kept, 'without losing speed'); assert.ok(r.rolled && r.upright, 'a barrel roll over it, landing upright');
   r = run(45, 0, 'lorry'); assert.ok(!r.hit && r.hops === 1, 'a tap: over a whole lorry - the jets hold it over the length (' + JSON.stringify(r) + ')'); assert.ok(!r.air, 'and down again');
   r = run(16, 0, 'lorry'); assert.ok(!r.hit && r.hops === 1, 'tapped late, it launches harder and still clears it (' + JSON.stringify(r) + ')'); assert.ok(r.hi > 4.2, 'higher (' + r.hi + ' m)');
   r = run(45, 999, 'lorry'); assert.ok(r.hit, 'no tap: into it');
