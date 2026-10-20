@@ -21,11 +21,17 @@ its page's "Start here" section, all filmed in Windows Sandbox:
 They were scheduled, not yet public, when they went on the pages. A film with "live" waits on its own: until then the
 poster says when it's out and the button does nothing (SCRIPT_LIVE), and its VideoObject is written only when the page
 is built after "live" - or added by the same script in the browser once the time has passed, so no rebuild is needed.
+
+20 Oct 2026 (owner: the printer page videos "from our YouTube channel ... the same way we did it on the PC Manager and the
+Virgin email mover pages"): the EE hub printer film on /printer-wont-connect-to-ee-smart-hub/, straight after the guided
+steps (the page reads explanation -> steps -> film -> detail), with its 27-second Short as a button underneath ("extra").
+Real screens from a customer's hub, network names hidden. Made public by the owner before this went live.
 """
 import datetime
 import json
 
 import build_pages as bp
+import yt_watch
 from techies_one_boxes import _section_end
 
 VIDEOS = {
@@ -119,6 +125,18 @@ VIDEOS = {
               "app checks this in one go. 365 PC Manager shows whether a remote session is open right now, and every "
               "remote-control program on the PC. Download it free at 365techies.co.uk."),
         tools=[("free-pc-health-check", "365 PC Manager (free, for Windows)")]),
+    "ee-printer": dict(
+        id="R7CE9j62tHs", secs=115, uploaded="2026-10-20", poster="/images/howto-ee-printer-poster-v1.jpg",
+        name="Printer Won't Connect to EE Smart Hub? The Fix (Compatible WiFi)",
+        desc=("A 1 minute 55 second guide from 365 Techies, on a real EE hub: why printers say the wifi password is wrong "
+              "(WPA3-Personal-Transition security), turning on EE's Compatible WiFi, and joining the printer to it - even "
+              "one plugged into the computer by USB."),
+        cap="1 min 55 s &middot; a spoken guide with captions &middot; a real EE hub and HP printer, network names hidden",
+        says='Printer says your EE wifi password is wrong? It almost certainly isn&rsquo;t. Here&rsquo;s the fix we used on a real EE hub. On EE&rsquo;s newer hubs, the main wifi uses a security setting called WPA3-Personal-Transition. It&rsquo;s meant to let older devices in, but plenty of printers still can&rsquo;t join it. And because &ldquo;wrong password&rdquo; is the only error they have, that&rsquo;s what they tell you. On a computer connected to the hub, open a web browser, and go to 192.168.1.254. If it warns you the page isn&rsquo;t secure, that&rsquo;s normal for your own hub. Open the Wireless tile. Here, Compatible WiFi is switched off. Choose Change settings, and sign in with the admin password from the card on the back of the hub. Compatible WiFi is a second network, named after your main one, with -Comp on the end. Switch its 2.4GHz band on, and leave 5GHz off. Keep the security on WPA2, use a password of just letters and numbers, and save. Now run your printer&rsquo;s wireless setup, and choose the network ending in -Comp. Printer plugged into the computer by USB? On an HP, the printer&rsquo;s own software does it from the PC. Open Printer Setup &amp; Software, then Convert a USB connected printer to wireless. Choose to enter the settings yourself, pick the -Comp network, and type its password. That&rsquo;s it. The printer joins, and your laptop stays on the main wifi. Want us to do it for you? We&rsquo;ll sort it remotely for &pound;20. The full guide is at 365techies.co.uk.',
+        tools=[],
+        # the Short sits under the film; its own rule stops the film block's link style (.hvf a) restyling the button
+        extra=('        <p style="text-align:center;margin:.3rem 0 0"><style>.hvf a.ytw{color:inherit;text-decoration:none}</style>'
+               + yt_watch.button(yt_watch.EE_SHORT, "Or watch it in 27 seconds", shape="tall") + '</p>\n')),
 }
 
 # page -> (film, where it goes, heading or None, intro). "after:<marker>" = straight after the section containing the
@@ -141,6 +159,10 @@ PLACES = {
                                                   "Watch: check for remote access, and cut them off",
                                                   "Where remote-control programs show up on a Windows 11 PC, and what to do "
                                                   "if someone did get in."),
+    "printer-wont-connect-to-ee-smart-hub": ("ee-printer", 'after:id="fixflow"', "Watch: the fix on a real EE hub",
+                                             "The whole fix in under 2 minutes: why the printer turns the password down, "
+                                             "switching on Compatible WiFi, and joining the printer to it, even one "
+                                             "plugged in by USB."),
 }
 
 STYLE = """    <style>
@@ -232,7 +254,7 @@ def _inner(slug, v, intro, heading):
         '<b class="l">Watch the video (%s)</b><b class="s">Watch (%s)</b></span></button>\n' % (m, m) +
         '        </div>\n'
         '        <p class="hvf-cap">%s &middot; <a%s href="https://www.youtube.com/watch?v=%s" target="_blank" rel="noopener">Watch on YouTube</a></p>\n'
-        % (v["cap"], ' class="hvf-yt"' if gated else "", v["id"]) + more +
+        % (v["cap"], ' class="hvf-yt"' if gated else "", v["id"]) + more + v.get("extra", "") +
         '        <details class="hvf-says"><summary>What the video says</summary><p>%s</p></details>\n' % v["says"] +
         ('        ' + ld + '\n        ' + SCRIPT_LIVE + '\n' if gated else
          '        ' + SCRIPT + '\n'

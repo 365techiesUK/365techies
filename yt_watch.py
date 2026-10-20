@@ -82,6 +82,11 @@ SCRIPT = ('<script>(function(){if(window.__ytw)return;window.__ytw=1;'
           'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script>')
 
 
+# The EE hub printer Short (27 s, reels/ee-printer-howto-2026-10-20, John Sims' real hub with the network names hidden),
+# under the full EE film on /printer-wont-connect-to-ee-smart-hub/ (howto_videos "ee-printer"). Uploaded 20 Oct 2026.
+EE_SHORT = ("cX0HoFSRIfI", 27, None, "Printer says your EE wifi password is wrong?")
+
+
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""
     return "%d-second" % secs if secs < 90 else "%d-minute" % round(secs / 60)
