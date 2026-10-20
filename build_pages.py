@@ -3559,16 +3559,19 @@ def _ff_steps_html(steps, yes_label, no_label, seq=False, last_yes=None):
     and the last No is 'stuck'. Sequence mode (seq=True, for a set-up walk-through): Yes goes on to the next step
     and the last Yes is 'fixed'; No is always 'stuck'."""
     out = []
-    for i, (title, body, ask) in enumerate(steps):
+    for i, st in enumerate(steps):
+        title, body, ask = st[0], st[1], st[2]
+        opts = st[3] if len(st) > 3 and st[3] else {}   # 20 Oct 2026: a step's own buttons (yes/yes_go/no/no_go)
         n = i + 1; last = (n == len(steps))
         if seq:
             yes_go = 'fixed' if last else str(n + 1); no_go = 'stuck'
         else:
             yes_go = 'fixed'; no_go = 'stuck' if last else str(n + 1)
+        yes_go = str(opts.get('yes_go', yes_go)); no_go = str(opts.get('no_go', no_go))
         out.append('\n            <li class="ff-step' + (' is-on' if i == 0 else '') + '" data-step="' + str(n) + '"' + ('' if i == 0 else ' hidden') + '>\n'
                    '              <div class="ff-head"><span class="ff-num">' + ('%02d' % n) + '</span>' + title + '</div>\n'
                    '              <div class="ff-body">' + body +
-                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + (last_yes if (seq and last and last_yes) else yes_label) + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + no_label + '</button></div>\n'
+                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + opts.get('yes', (last_yes if (seq and last and last_yes) else yes_label)) + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + opts.get('no', no_label) + '</button></div>\n'
                    '              </div>\n            </li>')
     return "".join(out) + "\n"
 
