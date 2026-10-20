@@ -91,6 +91,16 @@ PAGES = {
     'printer-wont-connect-to-ee-smart-hub': ('devices', '// IS IT ON YOUR NETWORK?', 'Has the printer joined your hub?',
         'Not sure whether the printer made it onto the Smart Hub&rsquo;s network? Our free app scans your network and lists what&rsquo;s there, '
         'printers included, with each one&rsquo;s address.'),
+    # 20 Oct 2026 (owner: "still promote the PC Manager ... get some views on our YouTube channel"): the other router printer
+    # pages, the box after the explanation, before "let us do it" (AFTER_SECTION) as on the EE page
+    'printer-wont-connect-to-bt-smart-hub': ('devices', '// IS IT ON YOUR NETWORK?', 'Has the printer joined your Smart Hub?',
+        'Not sure whether the printer made it onto the Hub&rsquo;s network? Our free app scans your network and lists what&rsquo;s there, '
+        'printers included, with each one&rsquo;s address.'),
+    'printer-wont-connect-to-sky-router': ('devices', '// IS IT ON YOUR NETWORK?', 'Has the printer joined your Sky wifi?',
+        'Not sure whether the printer made it onto the Sky hub&rsquo;s network? Our free app scans your network and lists what&rsquo;s there, '
+        'printers included, with each one&rsquo;s address.'),
+    'printer-wont-connect-after-moving-house': ('printers', '// THE QUICK CHECK', 'See what Windows thinks of your printer',
+        'Printer on the new wifi but the computer still won&rsquo;t print? Our free app shows whether Windows sees it as offline and clears anything stuck in the queue.'),
     'cctv-not-working-after-changing-broadband': ('devices', '// IS IT ON YOUR NETWORK?', 'Is the recorder on your new network?',
         'After a new router, the recorder or cameras often haven&rsquo;t joined its network yet. Our free app scans your network and lists '
         'what&rsquo;s connected, cameras and recorders included.'),
@@ -131,7 +141,8 @@ def _section_end(html, start):
 
 # 20 Oct 2026: pages whose box goes after a named section instead (the EE printer page: "has the printer joined your hub?"
 # belongs after the fix, before "When to let us do it for you", not between the guided steps and the explanation)
-AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7'}
+AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7', 'printer-wont-connect-to-bt-smart-hub': 's5',
+                 'printer-wont-connect-to-sky-router': 's5', 'printer-wont-connect-after-moving-house': 's5'}
 
 
 def insert(slug, html):
