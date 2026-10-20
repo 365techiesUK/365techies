@@ -23379,7 +23379,7 @@ def _fix_flow_for_playbook(p):
         steps.append((title, body, 'Done that check?'))
     n = len(steps)
     text = _ff_plain(p['title'], True) + ' - the checks (365techies.co.uk/' + p['slug'] + '/)\n' + "\n".join(
-        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the playbook below ↓', '').strip() for i, (t, b, _) in enumerate(steps)) + \
+        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the playbook below ↓', '').strip() for i, (t, b, *_) in enumerate(steps)) + \
         '\nStuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.co.uk/contact/'
     return _fix_flow_section({
         'eyebrow': '// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK', 'h2': cfg['h2'],
@@ -23505,7 +23505,7 @@ def _fix_flow_for(d):
     if len(steps) < 3: return None
     n = len(steps)
     text = cfg.get('text_title', _ff_plain(d.get('h1', slug), True) + ' - the fix order') + ' (365techies.co.uk/' + slug + '/)\n' + "\n".join(
-        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the guide below ↓', '').strip() for i, (t, b, _) in enumerate(steps)) + \
+        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the guide below ↓', '').strip() for i, (t, b, *_) in enumerate(steps)) + \
         cfg.get('text_tail', '\nStill stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/')
     words = {'six': 6, 'seven': 7, 'five': 5, 'four': 4, 'three': 3}
     return _fix_flow_section({
