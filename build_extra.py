@@ -23257,7 +23257,9 @@ PRINTER_FIX_TOOL = _fix_flow_section({
 FIX_FLOW_PAGES = {
     'printer-wont-connect-after-moving-house': {'h2': 'Get the printer connected in the new place, step by step', 'ask': 'Is the printer connecting now?', 'tip': 'Print a test page from the computer you use most.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
     'printer-wont-connect-to-bt-smart-hub':    {'h2': 'Get it talking to the Smart Hub, step by step',          'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the Hub if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
-    'printer-wont-connect-to-ee-smart-hub':    {'stuck_what': 'With your permission we connect to your Windows computer, get onto the hub, turn on Compatible WiFi and move the printer onto it while you watch &mdash; over the USB cable if it&rsquo;s plugged in, so nobody has to touch the printer. If it needs hands-on attention we say so and arrange a visit or a collection.', 'h2': 'Get it talking to the EE hub, step by step',             'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the hub if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
+    'printer-wont-connect-to-ee-smart-hub':    {'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here', 'last_yes': 'Yes, it&rsquo;s printing',
+        'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+        'stuck_what': 'With your permission we connect to your Windows computer, get onto the hub, turn on Compatible WiFi and move the printer onto it while you watch &mdash; over the USB cable if it&rsquo;s plugged in, so nobody has to touch the printer. If it needs hands-on attention we say so and arrange a visit or a collection.', 'h2': 'Get it talking to the EE hub, step by step',             'ask': 'Done that step?', 'tip': 'Print a test page, then set a fixed address in the hub if you have not already.', 'h3s': 'Stuck at a step? We can do it for you, remotely.'},
     'printer-wont-connect-to-sky-router':      {'h2': 'Get it talking to the Sky router, step by step',         'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the router if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
     'printer-prints-but-wont-scan-after-new-router': {'h2': 'Get scanning back, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, None), (2, None), (3, None), (4, 'Or use scan to email, which ignores the router')]},
@@ -23410,6 +23412,13 @@ _PHONE_STUCK = {   # phone pages: no screen-share promise (our remote support is
     'stuck_what': 'Ring us and we go through the phone together, or we look at the phone alongside your computer at a visit: it is part of email support.',
     'stuck_tail': '', 'stuck_link': ('/email-support/', 'Email support'), 'areas': False,
     'text_tail': '\nStuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/'}
+# Pages that read in their own order (20 Oct 2026, the EE printer page: the owner found the guided steps and two promotion
+# bands BEFORE the explanation "doesn't make any sense"). flow_after: the guided steps follow this section, not section 1;
+# keep_after: the 'keep it that way' band follows this section; glance_after_keep: the at-a-glance table follows that band.
+PAGE_LAYOUT = {
+    'printer-wont-connect-to-ee-smart-hub': {'flow_after': 's2', 'keep_after': 's8', 'glance_after_keep': True},
+}
+
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
     'outlook-app-asking-to-sign-in-android': dict(_PHONE_STUCK),
     'outlook-app-crashing-android': dict(_PHONE_STUCK),
@@ -23489,7 +23498,7 @@ def _fix_flow_for(d):
             steps.append((title, body, cfg['ask']))
     else:
         for st in d.get('howToSteps') or []:
-            steps.append((st['name'], '<p>' + st['text'] + '</p>', cfg['ask']))
+            steps.append((st['name'], '<p>' + st['text'] + '</p>', st.get('ask', cfg['ask'])))
     if cfg.get('max_steps'): steps = steps[:cfg['max_steps']]
     while len(steps) > 3 and _FIX_FLOW_TRAIL_RE.search(_ff_plain(steps[-1][0])): steps = steps[:-1]
     if len(steps) < 3: return None
@@ -23502,7 +23511,7 @@ def _fix_flow_for(d):
         'eyebrow': cfg.get('eyebrow', '// FIX IT WITH ME &middot; STEP BY STEP'), 'h2': cfg['h2'],
         'lede': cfg.get('lede', 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
         'rev_suffix': '', 'os': False, 'count': n, 'areas': cfg.get('areas', True),
-        'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq')),
+        'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq'), last_yes=cfg.get('last_yes')),
         'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?'),
                                        '/business-it-support-plans/' if _FIX_FLOW_BIZ_RE.search(slug) else '/monthly-it-support/'),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
@@ -24052,6 +24061,19 @@ def build_new_page(d):
         else:   # no flow: after the page's own fixes, just before its closing section
             _last = f'id="s{len(d["sections"])}"'
             _blocks.insert(next((i for i, b in enumerate(_blocks) if _last in b), len(_blocks)), bp.keep_band(_kb))
+    _lay = PAGE_LAYOUT.get(d['slug'])
+    if _lay:   # 20 Oct 2026: a page that reads in its own order (see PAGE_LAYOUT)
+        def _move(block, after_marker):
+            if block is None or block not in _blocks: return
+            _blocks.remove(block)
+            k = next((i for i, b in enumerate(_blocks) if after_marker in b), None)
+            assert k is not None, (d['slug'], after_marker)
+            _blocks.insert(k + 1, block)
+        _kbb = next((b for b in _blocks if 'class="section kb"' in b), None)
+        _agb = next((b for b in _blocks if 'aria-label="At a glance"' in b), None)
+        if _lay.get('flow_after') and _ff: _move(_ff, 'id="%s"' % _lay['flow_after'])
+        if _lay.get('keep_after') and _kbb: _move(_kbb, 'id="%s"' % _lay['keep_after'])
+        if _lay.get('glance_after_keep') and _agb and _kbb: _move(_agb, 'class="section kb"')
     if d['slug'] in DELL_PANEL_FIX:
         _blocks.append(dell_panel(d['slug']))   # Dell hardware faults: fix first, replace second (26 Sep 2026)
     _an = bp.apple_notice_for(d['slug'])   # Outlook pages: 'Windows PCs only' strip between section 1 and the flow

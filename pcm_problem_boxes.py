@@ -129,12 +129,25 @@ def _section_end(html, start):
     return -1
 
 
+# 20 Oct 2026: pages whose box goes after a named section instead (the EE printer page: "has the printer joined your hub?"
+# belongs after the fix, before "When to let us do it for you", not between the guided steps and the explanation)
+AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7'}
+
+
 def insert(slug, html):
     if slug not in PAGES or 'id="in-the-app"' in html:
         return html
     sec = _section(slug)
     if not sec:
         return html
+    if slug in AFTER_SECTION:
+        i = html.find('id="%s"' % AFTER_SECTION[slug])
+        if i < 0:
+            raise SystemExit("pcm_problem_boxes: no section id=%s on /%s/" % (AFTER_SECTION[slug], slug))
+        start = html.rfind('<section', 0, i)
+        end = _section_end(html, start)
+        if end > 0:
+            return html[:end] + "\n" + sec + html[end:]
     i = html.find('id="fixflow"')
     if i >= 0:
         start = html.rfind('<section', 0, i)

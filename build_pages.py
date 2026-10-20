@@ -3554,7 +3554,7 @@ def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &po
     return ('<h3>' + h3 + '</h3><p>' + what + tail + '</p>'
             '<div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="' + link[0] + '">' + link[1] + '</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
 
-def _ff_steps_html(steps, yes_label, no_label, seq=False):
+def _ff_steps_html(steps, yes_label, no_label, seq=False, last_yes=None):
     """steps: list of (title, body_html, ask). Fix mode (default): every Yes ends the flow as fixed, No goes on
     and the last No is 'stuck'. Sequence mode (seq=True, for a set-up walk-through): Yes goes on to the next step
     and the last Yes is 'fixed'; No is always 'stuck'."""
@@ -3568,7 +3568,7 @@ def _ff_steps_html(steps, yes_label, no_label, seq=False):
         out.append('\n            <li class="ff-step' + (' is-on' if i == 0 else '') + '" data-step="' + str(n) + '"' + ('' if i == 0 else ' hidden') + '>\n'
                    '              <div class="ff-head"><span class="ff-num">' + ('%02d' % n) + '</span>' + title + '</div>\n'
                    '              <div class="ff-body">' + body +
-                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + yes_label + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + no_label + '</button></div>\n'
+                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + (last_yes if (seq and last and last_yes) else yes_label) + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + no_label + '</button></div>\n'
                    '              </div>\n            </li>')
     return "".join(out) + "\n"
 
