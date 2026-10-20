@@ -2980,12 +2980,12 @@
  },
  "printer-wont-connect-after-moving-house": {
   "first": "2026-07-28",
-  "h": "bc1b0118a0d73a22",
+  "h": "9b3f3b16d7025608",
   "last": "2026-10-20"
  },
  "printer-wont-connect-to-bt-smart-hub": {
   "first": "2026-07-28",
-  "h": "caca5eb0b06c0b30",
+  "h": "df032c70470d00c3",
   "last": "2026-10-20"
  },
  "printer-wont-connect-to-ee-smart-hub": {
@@ -3000,7 +3000,7 @@
  },
  "printer-wont-connect-to-sky-router": {
   "first": "2026-07-28",
-  "h": "eef0ee84a5b6b0c0",
+  "h": "a667c2f5f3610520",
   "last": "2026-10-20"
  },
  "printer-wont-scan-to-computer-windows-11": {
