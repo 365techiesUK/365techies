@@ -172,12 +172,12 @@ AT_A_GLANCE = {
   ('When to call us', 'If you&rsquo;d rather not poke around in router settings, ring 01202 775566 (Monday to Friday, 9 to 5).'),
  ],
  'printer-wont-connect-to-ee-smart-hub': [
-  ('Most common cause', 'After the BT-to-EE switch your printer is still trying to join the old BT wifi that no longer exists &mdash; plus band steering and WPA3 on newer EE hubs.'),
-  ('The reliable fix', 'Switch on the hub&rsquo;s Compatible WiFi &mdash; a separate 2.4GHz network using WPA2 &mdash; and re-run the printer&rsquo;s wireless setup against it.'),
-  ('DIY first step', 'Open the EE app, or type 192.168.1.254 (or eehub) into a browser and sign in with the admin password on the card on the back of the hub.'),
+  ('Most common cause', 'EE&rsquo;s newer hubs run the main wifi on WPA3-Personal-Transition with one name for both bands &mdash; older printers can&rsquo;t join and report a wrong password. After a BT-to-EE switch the printer may also still be looking for the old network.'),
+  ('The reliable fix', 'Switch on the hub&rsquo;s Compatible WiFi &mdash; a separate 2.4GHz network using WPA2, named after your main network with -Comp on the end &mdash; and re-run the printer&rsquo;s wireless setup against it.'),
+  ('DIY first step', 'Go to 192.168.1.254 (or eehub) in a browser, open the Wireless tile and check the Security type; the admin password for changing it is on the card on the back of the hub.'),
   ('&lsquo;MAC filter&rsquo; warning', 'Usually a false alarm &mdash; EE&rsquo;s current hubs don&rsquo;t use MAC filtering on the main network, so the real cause is almost always the wrong band or WPA3 security.'),
-  ('Can it be fixed remotely?', 'Yes &mdash; most EE-hub printer jobs are fixed remotely, usually the same day, in one short session while you watch.'),
-  ('When to call us', 'If you&rsquo;d rather not poke around in hub settings, or it still won&rsquo;t connect after these steps &mdash; 01202 775566, Mon&ndash;Fri 9am&ndash;5pm, no-fix-no-fee.'),
+  ('Can it be fixed remotely?', 'Yes &mdash; even with nobody at the printer, if it&rsquo;s plugged into a Windows computer by USB. Remote fix &pound;20, usually the same day, while you watch.'),
+  ('When to call us', 'If you&rsquo;d rather not poke around in hub settings, or it still won&rsquo;t connect after these steps &mdash; 01202 775566, Mon&ndash;Fri 9am&ndash;5pm, &pound;20 remotely, no-fix-no-fee.'),
  ],
  'printer-wont-connect-to-mesh-wifi': [
   ('Can it be fixed remotely?', 'Yes &mdash; most problems on this page are fixed in one short remote session, no fix, no fee.'),

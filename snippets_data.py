@@ -40,6 +40,13 @@ from html import unescape as _unescape
 
 # slug -> {"title": ..., "desc": ...}  (either key optional)
 SNIPPETS = {
+    "printer-wont-connect-to-ee-smart-hub": {
+        # 20 Oct 2026 (owner: "improve the SEO and the AI and the SERPs"): GSC ~2,000 imps, 65 clicks, 3.2% CTR at pos ~5 - low for
+        # page one. The page now carries a real job (WPA3-Personal-Transition refused a 2013 HP; Compatible WiFi fixed it), so the
+        # snippet leads with the symptom people type ("password is wrong") and the remote price. Judge ~17 Nov.
+        "title": "Printer Won't Connect to EE Smart Hub? The Fix That Works",
+        "desc": "Printer says your EE Wi-Fi password is wrong? It usually isn't. Turn on EE's Compatible WiFi (2.4GHz, WPA2) and it joins. Steps, or we fix it for £20.",
+    },
     "wifi-support": {
         # 5 Sep 2026: this page had ZERO search impressions in 28 days despite ~709 inbound
         # links - Google associated it with nothing. Not a CTR play (head-term title fixes

@@ -675,8 +675,8 @@ PAGE_HERO_TILES = {
   ('hp-c-buy', 'alert', 'New BT hub just fitted?', 'New name and password: re-enter them on the printer', 'CHECK THIS FIRST', '#s1'),
  ],
  'printer-wont-connect-to-ee-smart-hub': [
-  ('hp-c-biz', 'wifi', 'Turn on Compatible WiFi', 'The separate 2.4GHz network printers can join', 'THE RELIABLE FIX', '#s3'),
-  ('hp-c-buy', 'alert', 'Says a MAC filter blocks it?', 'Usually a false alarm: check the band and WPA3', 'RED HERRING', '#s4'),
+  ('hp-c-biz', 'wifi', 'Turn on Compatible WiFi', 'The separate 2.4GHz network printers can join', 'THE RELIABLE FIX', '#s4'),
+  ('hp-c-buy', 'alert', 'Password &lsquo;wrong&rsquo;? MAC filter?', 'Usually the hub&rsquo;s WPA3 security, not you', 'RED HERRINGS', '#s6'),
  ],
  'printer-wont-connect-to-mesh-wifi': [
   ('hp-c-biz', 'wifi', 'Printer can&rsquo;t join?', 'Give it a clean 2.4GHz connection first', 'START HERE', '#s3'),
