@@ -1271,7 +1271,7 @@ export function createWorld() {
   }
 
   function updateChunks(W) {
-    const s = W.s, need0 = Math.floor(Math.max(0, E.segIndex(s) - 12) / CH), need1 = Math.floor(Math.min(E.lastIndex(W), E.segIndex(s + R.view)) / CH);
+    const s = W.s, need0 = Math.floor(Math.max(0, E.segIndex(s) - (R.keepBehind || 12)) / CH),   /* (keepBehind: the films' roadside cameras keep more road behind the car) */ need1 = Math.floor(Math.min(E.lastIndex(W), E.segIndex(s + R.view)) / CH);
     for (const [c, ch] of R.chunks) if (c < need0 || c > need1 + 1) { dropChunk(ch); R.chunks.delete(c); }
     let made = 0;
     for (let c = need0; c <= need1; c++) {
@@ -2233,7 +2233,7 @@ export function createWorld() {
     for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
     for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (v) => { R.camNear = v !== 'far' && v !== false; R.camDrv = v === 'driver'; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
+  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (v) => { R.camNear = v !== 'far' && v !== false; R.camDrv = v === 'driver'; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, keepBehind: (n) => { R.keepBehind = n; }, warmed: () => !!R.warmed };
 }
 
 // ---------------------------------------------------------------- textures made on the spot
