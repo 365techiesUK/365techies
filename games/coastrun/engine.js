@@ -1690,7 +1690,7 @@
             W.v *= 0.72; W.shake = Math.max(W.shake, 14); car.v = W.v * 0.5; car.x += (car.x >= W.x ? 1 : -1) * 2.5; W.events.push({ sfx: 'bump', x: car.x - W.x }); fx(W, { k: 'bump', x: car.x }); mood(W, 'scared'); knock(W); copHurt(W, 1, 'HIT A WRECK');
           }
           else {
-            var sd = W.x >= car.x ? 1 : -1; W.x += sd * 1.1; car.x -= sd * 0.7; car.tx = car.x; car.backT = W.t + 240; if (W.cop) W.cop.ramT = W.t; W.v *= 0.86; car.v = Math.min(car.v, W.v);
+            var sd = W.x >= car.x ? 1 : -1; W.x += sd * 1.1; car.x -= sd * 0.7; car.tx = car.x; car.backT = W.t + 240; car.hurt = (car.hurt || 0) + 1; if (W.cop) W.cop.ramT = W.t;   /* (hurt: world3d.js shows the damage - smoke, a sag, a lamp out) */ W.v *= 0.86; car.v = Math.min(car.v, W.v);
             W.shake = Math.max(W.shake, 14); W.combo = 0; W.comboT = 0; if (W.drift) endDrift(W);
             W.events.push({ sfx: 'ram', x: car.x - W.x }); fx(W, { k: 'bump', x: (car.x + W.x) / 2 }); fx(W, { k: 'sparks', x: W.x - sd * CAR_W }); mood(W, 'scared'); voice(W, 'bump'); knock(W);
             copHurt(W, 1, 'RAMMED!');

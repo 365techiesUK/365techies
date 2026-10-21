@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=61';
+import * as MD from './models3d.js?v=62';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1949,6 +1949,14 @@ export function createWorld() {
         if (V.cop) { const CW = MD.COP_WHEELS, wm = MD.copWheel(); m.userData.wheels = [];   // its wheels: apart, so they turn
           for (const sd of [-1, 1]) for (const z of CW.z) { const side = new THREE.Group(), spin = new THREE.Group(); side.position.set(sd * CW.x, CW.r, z); if (sd < 0) side.rotation.y = Math.PI;
             for (const k in wm) if (wm[k] && MAT[k]) spin.add(new THREE.Mesh(wm[k], MAT[k])); side.add(spin); m.add(side); m.userData.wheels.push([spin, sd]); } }
+        if (V.cop) {   // its POLICE lettering (bonnet, both doors, the boot lid) and the number on its roof, for the helicopter; the headlamps' wig-wag glow
+          const dec = (txt, w, h, x, y, z, rx, ry, rz, num) => { const d = new THREE.Mesh(new THREE.PlaneGeometry(w, h), decalMat(txt, num)); d.position.set(x, y, z); d.rotation.set(rx, ry, rz); d.renderOrder = 2; m.add(d); };
+          dec('POLICE', 0.98, 0.3, 0, 0.805, -1.47, -Math.PI / 2 + 0.06, 0, Math.PI);   // the bonnet: reads from in front
+          dec('POLICE', 0.84, 0.25, 0, 0.995, 1.93, -Math.PI / 2, 0, 0);   // the boot lid: reads from behind
+          for (const sd of [-1, 1]) dec('POLICE', 1.08, 0.17, sd * 0.947, 0.835, -0.12, 0, sd * Math.PI / 2, 0);   // the doors, over the checks
+          dec(copNumber(c.id), 0.66, 0.3, 0, 1.428, 0.68, -Math.PI / 2, 0, 0, true);   // the roof
+          for (const sd of [-1, 1]) { const hl = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); hl.scale.set(1.5, 1.5, 1); hl.position.set(sd * 0.68, 0.67, -2.32); hl.userData.sir = sd * 2; m.add(hl); }
+        }
         if (V.cop) for (const sd of [-1, 1]) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#4a7bff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); sp.scale.set(2.6, 2.6, 1); sp.position.set(sd * 0.3, 1.56, 0.32); sp.userData.sir = sd; m.add(sp); }   // (the blue glow of its lights: seen a long way off, and at night)
         if (V.rival && c.racer == null) { const tg = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ff2a3a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.55 })); tg.scale.set(1.7, 0.55, 1); tg.position.set(0, 0.75, V.l + 0.15); m.add(tg); }   // its tail bar glows, so you can pick it out ahead
         scene.add(m); traffic.set(c.id, m);
@@ -1964,8 +1972,13 @@ export function createWorld() {
         const wk = c.wreck;
         if (wk) { const u = Math.min(1, wk.t / 36); m.rotation.y += wk.dir * (1 - Math.exp(-wk.t / 18)) * 2.6; if (wk.flip) { m.rotation.z += wk.dir * Math.PI * u; m.position.y += Math.sin(u * Math.PI) * 1.9 + u * 1.45; }
           if (wk.t < 420 && Math.random() < 0.5) smoke.emit(POS.x + (Math.random() - 0.5), POS.y + 1.2, POS.z + (Math.random() - 0.5), (Math.random() - 0.5), 1.4 + Math.random() * 1.6, (Math.random() - 0.5), 1.4, 3.2, wk.t < 90 ? '#4a4a4a' : '#8a8a8a', 0.45, 1.6); }
-        const on = Math.floor(W.t / 8) % 2;
-        for (const ch of m.children) if (ch.userData.sir) ch.material.opacity = wk ? 0 : (ch.userData.sir < 0 ? on : 1 - on) * (0.75 + 0.25 * Math.sin(W.t * 0.9 + c.id));
+        const on = Math.floor(W.t / 8) % 2, hu = Math.min(3, c.hurt || 0);
+        for (const ch of m.children) if (ch.userData.sir) { const sd = ch.userData.sir, lit = (sd < 0) === (Math.abs(sd) === 2) ? 1 - on : on;   // (the headlamps: the opposite beat to the bar above them)
+          ch.material.opacity = wk || (hu >= 2 && sd === -1) ? 0 : lit * (Math.abs(sd) === 2 ? 0.7 : 0.75 + 0.25 * Math.sin(W.t * 0.9 + c.id)); }   // (rammed twice: one blue lamp out)
+        if (hu && !wk) {   // rammed: steam and smoke from under the bonnet, more each time; a sag to one side
+          m.rotation.z += 0.022 * hu * (c.id % 2 ? 1 : -1);
+          if (Math.random() < 0.3 * hu) { const ry = m.rotation.y; smoke.emit(POS.x - Math.sin(ry) * 1.6, POS.y + 0.9, POS.z - Math.cos(ry) * 1.6, (Math.random() - 0.5) * 0.6, 0.8 + Math.random(), (Math.random() - 0.5) * 0.6, 0.9 + 0.35 * hu, 2.2, hu > 1 ? '#3e3e3e' : '#7a7a7a', 0.5 + 0.12 * hu, 1.8); }   // (thick enough to see against the sky)
+        }
       }
       if (c.rival && W.goT != null && W.t - W.goT < 200 && c.v < 22) {   // a racer off the line: its tyres spinning too
         const V = E.VEH[c.t], k3 = 1 - c.v / 22, pts = [];
@@ -2288,6 +2301,19 @@ function starTex() {   // a cartoon star, yellow with a white edge
   for (let i = 0; i < 10; i++) { const r = i % 2 ? 12 : 28, a = -Math.PI / 2 + i * Math.PI / 5; x.lineTo(32 + Math.cos(a) * r, 32 + Math.sin(a) * r); }
   x.closePath(); x.fillStyle = '#ffd83a'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#fffbe8'; x.stroke(); return (STARTEX = tex(c, false));
 }
+// the police cars' lettering and roof numbers (21 Oct 2026): a canvas each, cached - dark blue POLICE (white on the roof number's black)
+const DECALS = new Map();
+function decalMat(txt, num) {
+  const key = (num ? 'n:' : 't:') + txt; let mt = DECALS.get(key); if (mt) return mt;
+  const c = canvas(512, num ? 232 : 140), x = c.getContext('2d');
+  x.clearRect(0, 0, c.width, c.height); x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = '900 ' + (num ? 170 : 112) + 'px "Arial Black", Arial, sans-serif'; x.fillStyle = num ? '#101114' : '#14286e';
+  if (!num) { x.lineWidth = 10; x.strokeStyle = 'rgba(255,255,255,0.9)'; x.strokeText(txt, 256, 74); }
+  x.fillText(txt, 256, num ? 122 : 74);
+  mt = new THREE.MeshStandardMaterial({ map: tex(c, false), transparent: true, depthWrite: false, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+  DECALS.set(key, mt); return mt;
+}
+function copNumber(id) { return 'BD' + (12 + (id * 37) % 87); }   // (made-up call signs: a letter pair and a number)
 let SGLOW = null;
 function sirenGlow() { if (SGLOW) return SGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.25, 'rgba(150,185,255,0.7)'); g.addColorStop(1, 'rgba(60,110,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (SGLOW = tex(c, false)); }
 function flameGlow() { if (FGLOW) return FGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,200,120,0.6)'); g.addColorStop(1, 'rgba(255,120,40,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (FGLOW = tex(c, false)); }

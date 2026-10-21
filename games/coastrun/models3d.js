@@ -2541,7 +2541,7 @@ const TRAFFIC = {
   // blue lenses are their own materials (sirA, sirB) so world3d.js flashes every police car's lights by changing just those two. Generic POLICE:
   // no real force's name or crest
   police(k, col) {
-    roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten', noWheels: true });   // (its wheels apart: they turn - COP_WHEELS)
+    roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten', noWheels: true, police: true });   // (its wheels apart: they turn - COP_WHEELS; two officers up front)
     const CK = ['#1e3fae', '#f2d00a'];
     for (const sd of [-1, 1]) for (let i = 0; i < 12; i++) {   // the checks: two rows along each flank, offset
       const z = -2.05 + i * 0.36 + 0.18;
@@ -2552,6 +2552,7 @@ const TRAFFIC = {
     k.box(1.12, 0.09, 0.26, 0, 1.42, 0.32, '#202327', 0, 0, 0, 'lit');   // the light bar
     k.box(0.46, 0.1, 0.22, -0.28, 1.47, 0.32, '#3d6dff', 0, 0, 0, 'sirA'); k.box(0.46, 0.1, 0.22, 0.28, 1.47, 0.32, '#3d6dff', 0, 0, 0, 'sirB');
     for (const sd of [-1, 1]) k.box(0.18, 0.06, 0.03, sd * 0.42, 0.62, -2.31, '#3d6dff', 0, 0, 0, sd < 0 ? 'sirB' : 'sirA');   // blue flashers in the grille
+    for (const sd of [-1, 1]) k.box(0.3, 0.075, 0.05, sd * 0.68, 0.635, -2.2, '#ffffff', 0, sd * 0.3, 0, sd < 0 ? 'sirA' : 'sirB');   // the headlamps wig-wagging, left then right (owner, 21 Oct: all four police upgrades)
   },
   sports(k, col) {   // a modern sports coupe of our own: long bonnet, cabin set back, a fastback to a short tail, a lamp bar across it, four pipes
     roadCar(k, col, { L: 2.2, hw: 0.96, r: 0.33, wz: [-1.36, 1.32], clear: 0.16, noseY: 0.5, bonnetY: 0.76, beltY: 0.84, tailY: 0.9, ws: [-0.45, 0.18], roofY: 1.22, roofEnd: 0.82, deck: 1.82, back: 'saloon', doors: [-0.4, 0.62], rims: 'ten', sporty: true });
@@ -2698,13 +2699,17 @@ const TRAFFIC = {
 // Keys: rpaint (clearcoat body), rglass, shiny (chrome, alloy), lit (black, tyres), rlamp (lamps).
 const RIMS = { steel: [8, false, 0.05], five: [5, false, 0.085], twin: [5, true, 0.042], star: [5, false, 0.045], ten: [10, false, 0.034], seven: [7, false, 0.05] };
 function occupant(k, x, y, z, r, o) {   // someone sitting in a car (y: the middle of the head): shoulders, neck, head, hair; o.kid smaller, o.shades
-  o = o || {}; const s = o.kid ? 0.78 : 1, sk = SKIN[(r() * 5) | 0], sh = ['#2a3a5a', '#7a2a2a', '#e8e6e0', '#2a4a3a', '#3a3a3e', '#c8a060', '#5a6a8a', '#1a1a1c'][(r() * 8) | 0];
+  o = o || {}; const s = o.kid ? 0.78 : 1, sk = SKIN[(r() * 5) | 0], sh0 = ['#2a3a5a', '#7a2a2a', '#e8e6e0', '#2a4a3a', '#3a3a3e', '#c8a060', '#5a6a8a', '#1a1a1c'][(r() * 8) | 0], sh = o.police ? '#cfe81c' : sh0;   // (o.police: a hi-vis jacket)
   const hair = o.hair || ['#2a1c12', '#4a3020', '#8a6a3a', '#d8b46a', '#151515', '#7a7a7a', '#a0522d'][(r() * 7) | 0], hy = y - 0.27 * s;
   k.box(0.4 * s, 0.26 * s, 0.24 * s, x, hy - 0.2 * s, z + 0.02, sh, 0, 0, 0, 'lit').ball(0.1 * s, x - 0.17 * s, hy + 0.04 * s, z + 0.02, sh, 1, 0.75, 1.1, 'lit', 8).ball(0.1 * s, x + 0.17 * s, hy + 0.04 * s, z + 0.02, sh, 1, 0.75, 1.1, 'lit', 8);   // chest, shoulders
+  if (o.police) { k.box(0.41, 0.025, 0.25, x, hy - 0.14, z + 0.02, '#c9cdd2', 0, 0, 0, 'shiny').box(0.41, 0.025, 0.25, x, hy - 0.05, z + 0.02, '#c9cdd2', 0, 0, 0, 'shiny'); }   // (its two reflective bands)
   k.cyl(0.04 * s, 0.045 * s, 0.1 * s, 8, x, hy + 0.06 * s, z, sk);   // the neck
   k.ball(0.092 * s, x, y, z, sk, 0.92, 1.1, 1, 'lit', 12);   // the head
-  const st = r(), cap = !o.long && !o.kid && st < 0.12;
-  if (cap) { const cc = ['#1d3557', '#c1121f', '#2a2a2a', '#f4f2ec', '#2a6f4a'][(r() * 5) | 0]; k.put(new THREE.SphereGeometry(0.1 * s, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), cc, x, y + 0.02 * s, z + 0.008, 0, 0, 0, 0.97, 0.8, 1.04).box(0.15 * s, 0.012, 0.1 * s, x, y + 0.015 * s, z - 0.13 * s, cc, 0, 0, 0, 'lit'); }   // a cap
+  const st = r(), cap = !o.police && !o.long && !o.kid && st < 0.12;
+  if (o.police) {   // a police officer's peaked cap: navy, a black peak, the black-and-white chequered band round it
+    k.put(new THREE.CylinderGeometry(0.112, 0.098, 0.07, 14), '#141a2e', x, y + 0.075, z + 0.005, 0, 0, 0).box(0.17, 0.014, 0.09, x, y + 0.035, z - 0.09, '#0b0b0d', 0, -0.25, 0, 'lit');   // (the peak tipped down a little)
+    for (let q = 0; q < 12; q++) { const a = q / 12 * Math.PI * 2; k.box(0.05, 0.026, 0.012, x + Math.sin(a) * 0.1, y + 0.05, z + Math.cos(a) * 0.1, q % 2 ? '#f2f2f2' : '#0d0d0d', a, 0, 0, 'lit'); }
+  } else if (cap) { const cc = ['#1d3557', '#c1121f', '#2a2a2a', '#f4f2ec', '#2a6f4a'][(r() * 5) | 0]; k.put(new THREE.SphereGeometry(0.1 * s, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), cc, x, y + 0.02 * s, z + 0.008, 0, 0, 0, 0.97, 0.8, 1.04).box(0.15 * s, 0.012, 0.1 * s, x, y + 0.015 * s, z - 0.13 * s, cc, 0, 0, 0, 'lit'); }   // a cap
   else if (st > 0.06 || o.long || o.kid) k.ball(0.098 * s, x, y + 0.035 * s, z + 0.018, hair, 0.97, o.long ? 1.05 : 0.86, 1.03, 'lit', 12);   // the hair, over the top and back (a few men bald)
   if (o.long) { const hs = r(); if (hs < 0.5) k.ball(0.08 * s, x, y - 0.08 * s, z + 0.05, hair, 1.1, 1.2, 0.6, 'lit', 10); else if (hs < 0.8) k.put(capG(0.035 * s, 0.12 * s), hair, x, y - 0.02 * s, z + 0.11 * s, 0.6, 0, 0); else k.ball(0.05 * s, x, y + 0.07 * s, z + 0.07 * s, hair, 1, 0.9, 1, 'lit', 8); }   // long down the back, a ponytail or a bun
   for (const sd of [-1, 1]) k.ball(0.022 * s, x + sd * 0.085 * s, y - 0.005, z + 0.004, sk, 0.5, 1, 0.75, 'lit', 6);   // the ears
@@ -2715,6 +2720,7 @@ function occupant(k, x, y, z, r, o) {   // someone sitting in a car (y: the midd
 function seatsFor(k, r, seats) {   // a car's people and the headrests behind them: seats [[x, y, z, who]], who 'drv' always there, 'pas' sometimes, 'kid' now and then
   for (const [x, y, z, who] of seats) {
     k.box(0.24, 0.16, 0.08, x, y - 0.1, z + 0.13, '#1c1d20', 0, 0, 0, 'lit');   // the headrest
+    if (who === 'cop') { occupant(k, x, y, z, r, { police: true }); continue; }
     if (who === 'drv' || (who === 'pas' && r() < 0.45) || (who === 'kid' && r() < 0.25)) occupant(k, x, y - (who === 'kid' ? 0.09 : 0), z, r, { kid: who === 'kid', long: r() < 0.4, shades: who === 'drv' && r() < 0.35 });
   }
 }
@@ -2749,7 +2755,7 @@ function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose 
   sidePanel(k, cab, s0 + 0.06, p.roofEnd - (sal ? 0.12 : 0.3), p.beltY - 0.02, shade(col, -0.04), 3, null, { u0: 0.8 });   // the A-pillars and the frame over the side windows, joining the roof to the body (the side glass read as open air)
   { const bz = p.doors && p.doors.length > 1 ? p.doors[1] : (s1 + p.roofEnd) / 2; sidePanel(k, cab, bz - 0.045, bz + 0.045, p.beltY - 0.02, '#141518', 3, null, { key: 'lit' }); }   // the B-pillars, black, lying on the glass
   { const r = rnd(7000 + Math.round(p.L * 100 + p.roofY * 77 + col.charCodeAt(2) * 13 + col.charCodeAt(4))), hx = hc * 0.48, fy = p.roofY - 0.21, fz = (p.doors && p.doors.length > 1 ? p.doors[1] : (s1 + p.roofEnd) / 2) - 0.18;
-    const seats = [[hx, fy, fz, 'drv'], [-hx, fy, fz, 'pas']]; if (!p.sporty) seats.push([hx, fy - 0.02, fz + 0.82, 'kid'], [-hx, fy - 0.02, fz + 0.82, 'kid']);
+    const seats = p.police ? [[hx, fy, fz, 'cop'], [-hx, fy, fz, 'cop']] : [[hx, fy, fz, 'drv'], [-hx, fy, fz, 'pas']]; if (!p.sporty && !p.police) seats.push([hx, fy - 0.02, fz + 0.82, 'kid'], [-hx, fy - 0.02, fz + 0.82, 'kid']);
     seatsFor(k, r, seats); }   // (the driver on the right: these are British roads)
   // pass 1 (owner, 6 Oct: "a couple of passes on the cars"): the side glass split by a dark B-pillar and edged in bright trim, door handles,
   // indicator repeaters, LED strips in the lamps, reflectors, running lights under the headlamps, a wiper on a hatch's back window
