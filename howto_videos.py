@@ -28,6 +28,7 @@ steps (the page reads explanation -> steps -> film -> detail), with its 27-secon
 Real screens from a customer's hub, network names hidden. Made public by the owner before this went live.
 
 21 Oct 2026: the Techies PDF how-to film (3:06, uploaded full quality) inside /how-to-scan-a-document/, before "Key points".
+21 Oct 2026: the EE film swapped to its full-quality upload azwrRzEGMYo (the 20 Oct R7CE9j62tHs was a compressed copy).
 """
 import datetime
 import json
@@ -128,7 +129,7 @@ VIDEOS = {
               "remote-control program on the PC. Download it free at 365techies.co.uk."),
         tools=[("free-pc-health-check", "365 PC Manager (free, for Windows)")]),
     "ee-printer": dict(
-        id="R7CE9j62tHs", secs=115, uploaded="2026-10-20", poster="/images/howto-ee-printer-poster-v1.jpg",
+        id="azwrRzEGMYo", secs=115, uploaded="2026-10-21", poster="/images/howto-ee-printer-poster-v1.jpg",
         name="Printer Won't Connect to EE Smart Hub? The Fix (Compatible WiFi)",
         desc=("A 1 minute 55 second guide from 365 Techies, on a real EE hub: why printers say the wifi password is wrong "
               "(WPA3-Personal-Transition security), turning on EE's Compatible WiFi, and joining the printer to it - even "
