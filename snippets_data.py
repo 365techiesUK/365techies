@@ -813,6 +813,10 @@ SNIPPETS = {
     "business-wifi-health-check-dorset": {
         "title": "Business Wi-Fi Health Check, Bournemouth &amp; Dorset",
     },
+    "onedrive-taking-up-space": {
+        "title": "OneDrive Taking Up Space on Your PC? Free It Up Safely",
+        "desc": "OneDrive filling your hard drive? Right-click, Free up space: files stay in OneDrive but leave the PC. Then set Files On-Demand and Storage Sense.",
+    },
     "onedrive-full-cant-send-email": {
         "title": "OneDrive Full and Can't Send Email? The Fix, Step by Step",
     },

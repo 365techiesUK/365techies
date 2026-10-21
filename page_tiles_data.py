@@ -822,6 +822,10 @@ PAGE_HERO_TILES = {
   ('hp-c-biz', 'cloud', 'Make local copies first', 'The one step that makes leaving OneDrive safe', 'DO THIS FIRST', '#s2'),
   ('hp-c-buy', 'monitor', 'Just want Desktop back?', 'Undo Folder Backup without leaving OneDrive', 'SMALLER JOB', '/onedrive-moved-my-desktop-and-documents/'),
  ],
+ 'onedrive-taking-up-space': [
+  ('hp-c-fix', 'cloud', 'Free up the space now', 'Right-click, Free up space: nothing is deleted', 'TRY THIS FIRST', '#s2'),
+  ('hp-c-care', 'shield', 'A work or shared OneDrive?', 'The same fix, and the one thing never to do', 'WORK ACCOUNTS', '#s5'),
+ ],
  'stop-word-saving-to-onedrive': [
   ('hp-c-biz', 'cloud', 'Where did my files go?', 'They&rsquo;re in the OneDrive of the signed-in account', 'FIND THEM FIRST', '#s2'),
   ('hp-c-buy', 'shield', 'Before you switch it off', 'What you give up: AutoSave and version history', 'WORTH KNOWING', '#s5'),

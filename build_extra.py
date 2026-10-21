@@ -22993,6 +22993,7 @@ _PACK_SCENE = {
     "onedrive-problems": "m365", "onedrive-moved-my-desktop-and-documents": "m365",
     "files-missing-from-onedrive": "m365", "onedrive-full-cant-send-email": "email",
     "stop-using-onedrive-without-losing-files": "m365", "excel-onedrive-sync-conflicts": "m365",
+    "onedrive-taking-up-space": "m365",
     "excel-spreadsheet-rescue": "business", "microsoft-word-wont-open": "speed",
     "stop-word-saving-to-onedrive": "m365", "teams-keeps-opening-wrong-account": "remote",
     "microsoft-office-unlicensed-product-error": "m365", "former-it-provider-controls-microsoft-365": "business",
@@ -23440,6 +23441,12 @@ FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
     'quickbooks-sage-running-slow': {'ask': 'Is it faster now?', 'tip': 'Time the same job you timed before, on the same computer.'},
     'sage-50-multi-user-cannot-connect': {'ask': 'Can the other computers connect now?', 'tip': 'Open Sage on every workstation, not just the one you fixed on.'},
 }
+# 21 Oct 2026: the OneDrive disk-space page runs in order (free it, set it, keep it, check), with its own last question
+FIX_FLOW_OVERRIDES['onedrive-taking-up-space'] = {'mode': 'seq', 'ask': 'Done that step?', 'yes': 'Done, next step', 'no': 'I am stuck here',
+    'last_yes': 'Yes, the space is back', 'h2': 'Free up the space with me, one step at a time', 'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP',
+    'lede': 'The five steps from this guide, one at a time. None of them deletes a file. Tick each one off and it shows the next. Nothing here leaves your device.',
+    'tip': 'Look at the C: drive again in a week: with Storage Sense on, it should stay that way.', 'h3s': 'Stuck at a step? That is a quick remote job.',
+    'h3f': 'Done{mins}. The room is yours again.', 'plan_lead': 'Rather have it done for you?'}
 for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11'):
     FIX_FLOW_OVERRIDES[_k] = {'h2': 'Check this Dell for Windows 11 with me, step by step', 'eyebrow': '// CHECK IT WITH ME &middot; STEP BY STEP',
         'h3f': 'Checked{mins}. Now you know where this Dell stands.', 'tip': 'If it passes, the upgrade is free; if it fails, the last section of the guide lays out the honest options.',

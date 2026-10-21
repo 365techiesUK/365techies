@@ -19,7 +19,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Start here",
     "h2": "Pick the symptom &mdash; each one has its own full fix page",
-    "html": "<p>OneDrive ships on every Windows 11 PC, and it doesn&rsquo;t always wait to be asked before it starts rearranging things. Microsoft&rsquo;s own help for it is scattered across half a dozen separate articles, so we&rsquo;ve done the triage for you. Pick the line that sounds most like your problem &mdash; each links to a step-by-step page written the way we actually talk customers through it on the phone.</p><ul><li><strong><a href=\"/onedrive-moved-my-desktop-and-documents/\">Windows moved my Desktop and Documents into OneDrive</a></strong> &mdash; you never asked, and now everything lives under <code>C:\\Users\\&lt;name&gt;\\OneDrive\\...</code>. Your files are not lost. Here&rsquo;s why it happened and how to undo it safely &mdash; including the one dialog box that catches people out.</li><li><strong><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive, or folders that look empty</a></strong> &mdash; a ten-minute checklist ordered by likelihood: wrong account, cloud-only placeholders, another device, the Personal Vault and the recycle bin clocks.</li><li><strong><a href=\"/onedrive-full-cant-send-email/\">OneDrive is full &mdash; and now my email is bouncing</a></strong> &mdash; the storage-quota collision Microsoft never explains on one page, what the &ldquo;frozen account&rdquo; warnings actually mean, and the fastest ways back under the limit.</li><li><strong><a href=\"/stop-using-onedrive-without-losing-files/\">I want to stop using OneDrive &mdash; without losing anything</a></strong> &mdash; the safe order of operations for leaving OneDrive, with a clear table of what each step does and does not remove.</li><li><strong><a href=\"/excel-onedrive-sync-conflicts/\">Excel files conflicting, duplicating or not saving on OneDrive</a></strong> &mdash; the &ldquo;we couldn&rsquo;t merge the changes&rdquo; error, how to rescue the edits you thought you lost, and how to stop it happening again.</li></ul><p>One more that surprises people: if <em>Word</em> has started saving brand-new documents straight to the cloud with date-stamped names, that&rsquo;s a separate change &mdash; see <a href=\"/stop-word-saving-to-onedrive/\">stop Word saving to OneDrive</a>.</p>"
+    "html": "<p>OneDrive ships on every Windows 11 PC, and it doesn&rsquo;t always wait to be asked before it starts rearranging things. Microsoft&rsquo;s own help for it is scattered across half a dozen separate articles, so we&rsquo;ve done the triage for you. Pick the line that sounds most like your problem &mdash; each links to a step-by-step page written the way we actually talk customers through it on the phone.</p><ul><li><strong><a href=\"/onedrive-moved-my-desktop-and-documents/\">Windows moved my Desktop and Documents into OneDrive</a></strong> &mdash; you never asked, and now everything lives under <code>C:\\Users\\&lt;name&gt;\\OneDrive\\...</code>. Your files are not lost. Here&rsquo;s why it happened and how to undo it safely &mdash; including the one dialog box that catches people out.</li><li><strong><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive, or folders that look empty</a></strong> &mdash; a ten-minute checklist ordered by likelihood: wrong account, cloud-only placeholders, another device, the Personal Vault and the recycle bin clocks.</li><li><strong><a href=\"/onedrive-full-cant-send-email/\">OneDrive is full &mdash; and now my email is bouncing</a></strong> &mdash; the storage-quota collision Microsoft never explains on one page, what the &ldquo;frozen account&rdquo; warnings actually mean, and the fastest ways back under the limit.</li><li><strong><a href=\"/onedrive-taking-up-space/\">OneDrive is filling up my PC&rsquo;s hard drive</a></strong> &mdash; Free up space, Files On-Demand and Storage Sense: the files stay safe in OneDrive, the room comes back to your PC, and nothing is deleted.</li><li><strong><a href=\"/stop-using-onedrive-without-losing-files/\">I want to stop using OneDrive &mdash; without losing anything</a></strong> &mdash; the safe order of operations for leaving OneDrive, with a clear table of what each step does and does not remove.</li><li><strong><a href=\"/excel-onedrive-sync-conflicts/\">Excel files conflicting, duplicating or not saving on OneDrive</a></strong> &mdash; the &ldquo;we couldn&rsquo;t merge the changes&rdquo; error, how to rescue the edits you thought you lost, and how to stop it happening again.</li></ul><p>One more that surprises people: if <em>Word</em> has started saving brand-new documents straight to the cloud with date-stamped names, that&rsquo;s a separate change &mdash; see <a href=\"/stop-word-saving-to-onedrive/\">stop Word saving to OneDrive</a>.</p>"
    },
    {
     "eyebrow": "Why it happens",
@@ -474,7 +474,7 @@ OFFICE_PAGES = [
     "text": "If the account was frozen, sign in at onedrive.com and follow the prompts to unfreeze by deleting files or buying storage. Then choose a lasting fix: regular tidy-ups, a Microsoft storage plan, or managed Microsoft 365 from 365 Techies on 01202 775566."
    }
   ],
-  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes &mdash; start here</a></li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive? The 10-minute checklist</a></li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents &mdash; the safe undo</a></li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a></li><li><a href=\"/outlook-problems/\">Common Outlook problems (when it&rsquo;s not a storage issue)</a></li><li><a href=\"/is-it-down/\">Is OneDrive actually down? Check here</a></li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Microsoft 365 backup &mdash; do you need it?</a></li><li><a href=\"/how-to-secure-your-microsoft-365-account/\">How to secure your Microsoft 365 account</a></li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support &amp; management</a></li></ul>",
+  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes &mdash; start here</a></li><li><a href=\"/onedrive-taking-up-space/\">OneDrive filling your PC&rsquo;s own drive? &mdash; the other kind of &ldquo;full&rdquo;</a></li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive? The 10-minute checklist</a></li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents &mdash; the safe undo</a></li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a></li><li><a href=\"/outlook-problems/\">Common Outlook problems (when it&rsquo;s not a storage issue)</a></li><li><a href=\"/is-it-down/\">Is OneDrive actually down? Check here</a></li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Microsoft 365 backup &mdash; do you need it?</a></li><li><a href=\"/how-to-secure-your-microsoft-365-account/\">How to secure your Microsoft 365 account</a></li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support &amp; management</a></li></ul>",
   "crumbName": "OneDrive Full",
   "primaryCta": [
    "Talk to a Techie",
@@ -602,6 +602,142 @@ OFFICE_PAGES = [
   ],
   "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &mdash; the full symptom-by-symptom triage hub.</li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &mdash; undo Folder Backup without leaving OneDrive entirely.</li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive</a> &mdash; the 10-minute checklist to run before anything else if files already look gone.</li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and email bouncing</a> &mdash; when a full account freezes storage and blocks your email.</li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you need Microsoft 365 backup?</a> &mdash; why sync was never backup, and what to use instead.</li><li><a href=\"/remote-support/\">Remote support from &pound;20</a> &mdash; we do the whole sequence while you watch.</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; accounts, licences and setup, handled properly.</li></ul>",
   "crumbName": "Stop Using OneDrive Safely",
+  "primaryCta": [
+   "Get It Fixed Remotely",
+   "/remote-support/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+ {
+  "slug": "onedrive-taking-up-space",
+  "title": "OneDrive Taking Up Space on Your PC? Free It Up Safely | 365 Techies",
+  "metaDesc": "OneDrive filling your hard drive? Right-click, Free up space: the files stay safe in OneDrive but leave your PC. Then set Files On-Demand and Storage Sense so it stays that way. Plain-English steps from a family-run Bournemouth firm.",
+  "ogTitle": "OneDrive filling your hard drive? Free up the space, lose nothing",
+  "eyebrow": "OneDrive problems",
+  "h1": "OneDrive taking up space on your PC? Free it up without losing a file",
+  "lede": "OneDrive doesn&rsquo;t have to keep a copy of everything on your computer. With one right-click, <strong>Free up space</strong>, your files stay safe in OneDrive and still show in File Explorer, but they stop taking room on the PC &mdash; and a Windows setting called <strong>Storage Sense</strong> keeps it that way. Nothing below deletes a file, and it works the same for a work OneDrive and shared company folders.",
+  "chips": [
+   "Nothing here deletes a file &mdash; each step explained",
+   "Works for a work OneDrive and shared folders too",
+   "One-shot remote fix from &pound;20 &mdash; watch us do it"
+  ],
+  "ctaHead": "Rather we freed the space for you? It&rsquo;s a quick remote job.",
+  "ctaSub": "We&rsquo;ll set OneDrive and Storage Sense up properly in one careful remote session from &pound;20, while you watch every click &mdash; and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset, with free local collection if a machine ever needs hands-on work &mdash; no walk-in shop, and no need for one.",
+  "sections": [
+   {
+    "eyebrow": "Read this first",
+    "h2": "Is it your PC that&rsquo;s full, or your OneDrive?",
+    "html": "<p>Two different things get called &ldquo;OneDrive is full&rdquo;, and the fixes are opposite:</p><ul><li><strong>Your PC&rsquo;s own drive is filling up.</strong> In File Explorer, <strong>This PC</strong> shows the C: drive bar red or nearly full, Windows warns about low disk space, and the OneDrive folder is huge. That&rsquo;s this page: OneDrive is keeping copies of your files <em>on the PC</em> as well as in the cloud, and you can tell it not to.</li><li><strong>Your OneDrive storage is full.</strong> The OneDrive icon, or an email from Microsoft, says you&rsquo;re out of cloud storage (often the free 5&nbsp;GB), and files stop syncing or email bounces. That&rsquo;s a different problem: see <a href=\"/onedrive-full-cant-send-email/\">OneDrive full and can&rsquo;t send email</a>.</li></ul><p>The rest of this page fixes the first one, and nothing in it deletes a file. It works the same on a personal OneDrive, a work or school OneDrive, and shared company folders synced from SharePoint or Teams.</p>"
+   },
+   {
+    "eyebrow": "Step 1 &mdash; the quick win",
+    "h2": "Free up the space now: right-click, Free up space",
+    "html": "<p>OneDrive has a feature Microsoft calls <strong>Files On-Demand</strong>. A file can be <strong>online-only</strong>: it still shows in File Explorer with its name, size and date, but the contents stay in the cloud and download when you open it. Online-only files take no room on your PC. The space goes because every file you open stays downloaded afterwards, and over months that adds up.</p><ol><li>Open <strong>File Explorer</strong> and find <strong>OneDrive</strong> in the list on the left. A personal one says <em>OneDrive &ndash; Personal</em>; a work one says <em>OneDrive &ndash;</em> and the company&rsquo;s name.</li><li>Right-click it and choose <strong>Free up space</strong>. On Windows 11 it may be inside a <strong>OneDrive</strong> sub-menu, or under <strong>Show more options</strong>.</li><li>Give it a moment. The ticks next to your files turn into <strong>blue clouds</strong>, and the space comes back.</li><li>Shared company folders synced to the PC sit under the company&rsquo;s name, with a <strong>building</strong> icon. Right-click each of those and choose <strong>Free up space</strong> too.</li></ol><p>What the little icons mean, from Microsoft&rsquo;s own help:</p><table><thead><tr><th>Icon</th><th>What it means</th><th>Room on your PC</th></tr></thead><tbody><tr><td><strong>Blue cloud</strong></td><td>Online-only: downloads when you open it</td><td>None</td></tr><tr><td><strong>Green tick</strong></td><td>Downloaded because you opened it; can be freed again</td><td>Yes</td></tr><tr><td><strong>White tick in a solid green circle</strong></td><td>Set to &ldquo;Always keep on this device&rdquo;</td><td>Yes, and Storage Sense leaves it alone</td></tr></tbody></table><p>Online-only files need the internet to open. For anything you need on a train or with no Wi-Fi, right-click that folder and choose <strong>Always keep on this device</strong> &mdash; just that folder, not the whole OneDrive.</p>"
+   },
+   {
+    "eyebrow": "Step 2",
+    "h2": "Check OneDrive is set to save space",
+    "html": "<p>If <strong>Free up space</strong> is missing, or everything downloads again straight away, check this setting:</p><ol><li>Click the <strong>OneDrive cloud</strong> by the clock (it may be hidden under the little <strong>^</strong> arrow).</li><li>Click the <strong>cog</strong> (Help &amp; Settings), then <strong>Settings</strong>.</li><li>Open <strong>Sync and back up</strong> and expand <strong>Advanced settings</strong>.</li><li>Under <strong>Files On-Demand</strong>, choose <strong>Free up disk space</strong>. The other choice, <strong>Download all files</strong>, keeps a full copy of everything on the PC &mdash; which is exactly what fills it.</li></ol><p>If it&rsquo;s greyed out on a work computer, the company&rsquo;s IT have set it centrally. Ask them: it&rsquo;s a normal request, and it changes nothing for anyone else.</p>"
+   },
+   {
+    "eyebrow": "Step 3 &mdash; keep it that way",
+    "h2": "Let Windows tidy OneDrive for you: Storage Sense",
+    "html": "<p>Opening a file brings it back onto the PC, so the space slowly fills again. Windows can put files back to online-only by itself when you haven&rsquo;t opened them for a while:</p><ol><li>Open <strong>Settings</strong> (Windows key + I), then <strong>System</strong>, then <strong>Storage</strong>.</li><li>Turn <strong>Storage Sense</strong> on, then click it to open its settings.</li><li>Under <strong>Locally available cloud content</strong>, find your OneDrive and set <strong>Content will become online-only if not opened for more than</strong> to <strong>14 days</strong> or <strong>30 days</strong>. Do the same for a work OneDrive if you have one.</li><li>Choose how often Storage Sense runs &mdash; every week is fine &mdash; and close Settings.</li></ol><p>Anything set to <strong>Always keep on this device</strong> is left alone, so files you need offline stay put. On newer Windows 11 (version 22H2 and later), Microsoft&rsquo;s own default is 30 days once Storage Sense is on.</p><p>One thing to check on the same screen: Storage Sense can also empty old Recycle Bin items and old Downloads. If you use the Recycle Bin as a safety net, or keep things in Downloads, set those to <strong>Never</strong>.</p>"
+   },
+   {
+    "eyebrow": "Work or school OneDrive",
+    "h2": "Company OneDrive and shared folders: the same fix, and one big warning",
+    "html": "<p>If your company or a client asked you to install OneDrive, their shared folders (SharePoint or Teams libraries) are often syncing to your PC too, and those can be far bigger than your own files. Files On-Demand works on them in exactly the same way: right-click the folder under the company&rsquo;s name and choose <strong>Free up space</strong>.</p><p><strong>The warning:</strong> never <em>delete</em> files from a OneDrive or shared folder to make room. Deleting removes them from OneDrive on every device and online &mdash; and for a shared folder, from everyone&rsquo;s view. They wait in the online recycle bin for 93 days on a work account, 30 on a personal one, but someone has to notice they&rsquo;ve gone. <strong>Free up space</strong> is the button that removes the copy from <em>your</em> PC only.</p><p>Don&rsquo;t need a shared folder on this PC at all? In OneDrive <strong>Settings</strong>, <strong>Account</strong>, you can <strong>Stop sync</strong> for that library. Its files stay safe online, and you can still open them in a web browser or in Teams.</p>"
+   },
+   {
+    "eyebrow": "Worth a look while you&rsquo;re there",
+    "h2": "Is OneDrive backing up your own folders into someone else&rsquo;s account?",
+    "html": "<p>OneDrive can back up your <strong>Desktop</strong>, <strong>Documents</strong> and <strong>Pictures</strong> by moving them inside the OneDrive folder, and newer Windows 11 PCs often switch this on when you sign in. If you signed OneDrive in with a <strong>work</strong> account, your own folders may now be going into your employer&rsquo;s or client&rsquo;s OneDrive &mdash; your files, in their account.</p><ol><li>OneDrive <strong>Settings</strong> &gt; <strong>Sync and back up</strong> &gt; <strong>Manage back up</strong>.</li><li>See which folders are switched on, and which account it names.</li><li>If they shouldn&rsquo;t be there, switch them off and choose to keep the files on this PC.</li></ol><p>That last choice matters: pick the wrong button and your Desktop can look empty. <a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> walks through it safely, and <a href=\"/two-onedrive-accounts-personal-and-work/\">two OneDrive accounts, personal and work</a> sorts the two out properly.</p>"
+   },
+   {
+    "eyebrow": "Still full?",
+    "h2": "Space didn&rsquo;t come back? Find out what&rsquo;s really using it",
+    "html": "<p>If the OneDrive folder is now mostly blue clouds and the drive is still full, OneDrive wasn&rsquo;t the main culprit. Open <strong>Settings &gt; System &gt; Storage</strong>: Windows shows what&rsquo;s using the space by category &mdash; apps, temporary files, documents, pictures, videos. Our <a href=\"/how-to-free-up-storage-space/\">free-up-space guide</a> takes you through Windows&rsquo; own clean-up tools safely, with no cleaner apps.</p><p>Two OneDrive leftovers worth knowing: folders set to <strong>Always keep on this device</strong> still count (choose <strong>Free up space</strong> on any you don&rsquo;t need offline), and if you&rsquo;ve already deleted files from the OneDrive folder, the downloaded ones went to the PC&rsquo;s own Recycle Bin and take up room until it&rsquo;s emptied.</p>"
+   },
+   {
+    "eyebrow": "The honest bit",
+    "h2": "Don&rsquo;t switch OneDrive off just to get the space back",
+    "html": "<p>Unlinking or uninstalling OneDrive doesn&rsquo;t give the space back the way people hope: files already downloaded stay on the PC, and done in the wrong order it can leave folders full of cloud placeholders and no files. If you genuinely want to stop using OneDrive, our <a href=\"/stop-using-onedrive-without-losing-files/\">leave OneDrive safely</a> guide gives the safe order.</p><p>For most people, though, <strong>Free up space</strong> plus <strong>Storage Sense</strong> is the best of both: the files stay safe in the cloud with their version history, and the PC gets its room back.</p>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "Will &ldquo;Free up space&rdquo; delete my OneDrive files?",
+    "a": "No. It only removes the copy stored on your PC. The files stay in OneDrive, still show in File Explorer with a blue cloud, and download again the moment you open one. Nothing changes online or on your other devices."
+   },
+   {
+    "q": "Can I still open the files after freeing up space?",
+    "a": "Yes &mdash; double-click as normal and the file downloads and opens. You need an internet connection for that. For files you need offline, right-click their folder and choose &ldquo;Always keep on this device&rdquo;."
+   },
+   {
+    "q": "What do the blue cloud and green tick icons mean?",
+    "a": "A blue cloud means online-only: no room used on your PC. A green tick means the file was downloaded because you opened it, and it can be freed again. A white tick in a solid green circle means &ldquo;Always keep on this device&rdquo;: it stays on the PC and works offline."
+   },
+   {
+    "q": "Why does OneDrive keep filling my drive up again?",
+    "a": "Because opening a file downloads it, and it stays downloaded. Turn on Storage Sense (Settings &gt; System &gt; Storage) and set your OneDrive to become online-only after 14 or 30 days unopened, and Windows frees the space for you from then on."
+   },
+   {
+    "q": "&ldquo;Free up space&rdquo; is missing or greyed out &mdash; why?",
+    "a": "Usually Files On-Demand is switched off: OneDrive Settings &gt; Sync and back up &gt; Advanced settings, choose &ldquo;Free up disk space&rdquo;. On a work computer, the company&rsquo;s IT may control the setting centrally, so ask them. Files On-Demand needs Windows 10 version 1709 or later."
+   },
+   {
+    "q": "Does this work for a work OneDrive and shared SharePoint or Teams folders?",
+    "a": "Yes. Microsoft&rsquo;s Files On-Demand covers work and school OneDrive and SharePoint team sites. Right-click the folder under the company&rsquo;s name and choose Free up space. If you don&rsquo;t need a shared library on this PC at all, stop syncing it in OneDrive Settings &gt; Account; the files stay safe online."
+   },
+   {
+    "q": "Should I just delete files from the OneDrive folder to save space?",
+    "a": "No. Deleting a file from the OneDrive folder deletes it from OneDrive everywhere &mdash; online and on your other devices, and for shared folders from everyone&rsquo;s view. It can be restored from the online recycle bin for 30 days (personal) or 93 days (work or school), but Free up space is the safe button."
+   },
+   {
+    "q": "Will freeing up space stop my files syncing?",
+    "a": "No. Online-only files are still in sync: new files and changes you make still upload, and changes made elsewhere still show. Only the copy on your PC&rsquo;s drive goes."
+   },
+   {
+    "q": "Is it my OneDrive storage that&rsquo;s full, or my PC?",
+    "a": "If This PC in File Explorer shows the C: drive nearly full, it&rsquo;s the PC &mdash; this page fixes that. If OneDrive or Microsoft says you&rsquo;re out of storage (often the free 5 GB), that&rsquo;s your cloud space: see our &ldquo;OneDrive full and can&rsquo;t send email&rdquo; guide."
+   },
+   {
+    "q": "Can you just do this for me?",
+    "a": "Gladly &mdash; it&rsquo;s a quick remote job. From &pound;20 we&rsquo;ll free the space, set Files On-Demand and Storage Sense properly, and check your own folders aren&rsquo;t backing up into the wrong account, while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "OneDrive Disk Space Help, Dorset",
+  "howToName": "How to stop OneDrive taking up space on your PC",
+  "howToSteps": [
+   {
+    "name": "Free up space on your OneDrive folders",
+    "text": "In File Explorer, right-click OneDrive in the left-hand list and choose Free up space (on Windows 11 it may be in a OneDrive sub-menu or under Show more options). Do the same for any shared company folders under the company&rsquo;s name. The ticks turn into blue clouds: the files stay in OneDrive but stop using room on the PC."
+   },
+   {
+    "name": "Set Files On-Demand to save space",
+    "text": "Click the OneDrive cloud by the clock, then the cog, Settings, Sync and back up, Advanced settings. Under Files On-Demand choose Free up disk space, not Download all files. Greyed out on a work PC? The company&rsquo;s IT control it: ask them."
+   },
+   {
+    "name": "Turn on Storage Sense for cloud files",
+    "text": "Settings &gt; System &gt; Storage &gt; Storage Sense: switch it on, then under Locally available cloud content set your OneDrive to become online-only if not opened for 14 or 30 days. Set the Recycle Bin and Downloads options to Never if you rely on them."
+   },
+   {
+    "name": "Check what OneDrive is backing up",
+    "text": "OneDrive Settings &gt; Sync and back up &gt; Manage back up. If your Desktop, Documents or Pictures are going into a work account, switch them off and choose to keep the files on this PC."
+   },
+   {
+    "name": "Check the space has come back",
+    "text": "Open This PC in File Explorer, or Settings &gt; System &gt; Storage, and look at the C: drive. Still full? Settings &gt; System &gt; Storage shows what else is using it.",
+    "ask": "Has the space come back?"
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &mdash; the full symptom-by-symptom triage hub.</li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and can&rsquo;t send email</a> &mdash; when it&rsquo;s your cloud storage that&rsquo;s full, not the PC.</li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &mdash; undo Folder Backup safely.</li><li><a href=\"/two-onedrive-accounts-personal-and-work/\">Two OneDrive accounts, personal and work</a> &mdash; the three rules that sort them out.</li><li><a href=\"/onedrive-sharepoint-teams-explained/\">OneDrive, SharePoint and Teams explained</a> &mdash; which one holds what.</li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a> &mdash; the safe order, if you really want out.</li><li><a href=\"/how-to-free-up-storage-space/\">How to free up space on Windows 11</a> &mdash; Windows&rsquo; own clean-up tools, no cleaner apps.</li></ul>",
+  "crumbName": "OneDrive Taking Up Space",
   "primaryCta": [
    "Get It Fixed Remotely",
    "/remote-support/"

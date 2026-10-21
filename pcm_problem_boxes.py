@@ -57,6 +57,11 @@ _BOX = {
         'phones, <strong>printers</strong>, <strong>cameras and recorders</strong>, TVs and storage drives &mdash; with each one&rsquo;s address, found the '
         'same way Windows finds them for its Network folder. So after a new router you can see at once whether the printer or camera has joined. It '
         'doesn&rsquo;t log in to anything or change anything, and it never scans a public network such as a caf&eacute;&rsquo;s.</p>'),
+    # 21 Oct 2026: the OneDrive disk-space page - what Storage & space really shows (drives, temporary files, biggest files)
+    'storage': ('storage', 'How full is each drive, and what&rsquo;s filling it?',
+        '<p style="margin:0">Our free app&rsquo;s <strong>Storage &amp; space</strong> page shows how full every drive is, clears Windows&rsquo; '
+        '<strong>temporary files</strong>, and finds your <strong>biggest files</strong>, with buttons to open each one or its folder. So after freeing up '
+        'OneDrive you can see at once whether the C: drive has its room back, and what else is using it.</p>'),
     'remote': ('remote', 'Is anyone still connected to your PC?',
         '<p style="margin:0">Our free app&rsquo;s <strong>Remote access</strong> page says for certain whether a Remote Desktop, Quick Assist or Splashtop session is open '
         'right now, lists the remote-control programs on the PC and which are running, and reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected. '
@@ -104,6 +109,8 @@ PAGES = {
     'cctv-not-working-after-changing-broadband': ('devices', '// IS IT ON YOUR NETWORK?', 'Is the recorder on your new network?',
         'After a new router, the recorder or cameras often haven&rsquo;t joined its network yet. Our free app scans your network and lists '
         'what&rsquo;s connected, cameras and recorders included.'),
+    'onedrive-taking-up-space': ('storage', '// SEE WHAT&rsquo;S USING THE SPACE', 'Has the C: drive got its room back?',
+        'Freed up OneDrive and want to see the difference, or find what else is filling the drive? Our free app shows every drive and your biggest files.'),
     'windows-10-end-of-life': ('windows', '// CHECK YOUR OWN PC', 'Is your PC still getting updates?',
         'Not sure which Windows you have, or whether extended updates are really reaching it? Our free app reads it from Windows.'),
     'wifi-keeps-dropping': ('wifi', '// SEE YOUR SIGNAL', 'Check your Wi-Fi signal from the PC',

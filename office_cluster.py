@@ -20,6 +20,7 @@ _OFFICE_CLUSTER = [
    ("onedrive-moved-my-desktop-and-documents", "OneDrive moved my files", "Windows did it without asking &mdash; the safe way back."),
    ("files-missing-from-onedrive", "Files missing from OneDrive", "The ten-minute checklist, ordered by likelihood."),
    ("onedrive-full-cant-send-email", "OneDrive full &amp; email bouncing", "The storage collision Microsoft never explains in one place."),
+   ("onedrive-taking-up-space", "OneDrive filling your PC", "Free up the space; the files stay safe in OneDrive."),
    ("stop-using-onedrive-without-losing-files", "Leave OneDrive safely", "The right order of steps, with nothing lost."),
    ("onedrive-files-disappeared", "OneDrive files disappeared", "Get them back: recycle bin, version history, the other account."),
    ("onedrive-couldnt-merge-changes", "&ldquo;Couldn&rsquo;t merge the changes&rdquo;", "Keep both copies and lose nothing."),
