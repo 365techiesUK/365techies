@@ -26,6 +26,7 @@ import os
 import re
 
 import build_pages as bp
+import yt_watch   # 21 Oct 2026: the 3-minute how-to film plays from YouTube
 
 SLUG = "techies-pdf"
 NAME = "Techies PDF"
@@ -140,6 +141,7 @@ def hero():
             <a href="#download" class="button primary button--lg">Download it free</a>
             <a href="tel:+441202775566" class="button secondary button--lg">Rather we set it up? 01202 775566</a>
           </div>
+          <p style="margin:0 0 .9rem">{yt_watch.button(yt_watch.TPDF_FILM, "Watch the 3-minute how-to: every job, start to finish")}</p>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Our firm is rated 4.9 on Google</strong></span><span>365 Techies &middot; family-run since 1995</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
         </div>
@@ -300,6 +302,22 @@ SHORTS = {
                      says="Emailing something private? Put a password on the PDF first. Then tell them the password by phone, not in the same email. Know the password? You can take it off, too."),
 }
 SHORT_END = " Free, from 365 Techies."
+
+# 21 Oct 2026: the full how-to film (yt_watch.TPDF_FILM, button in the hero), public before this went live.
+FILM = dict(uploaded="2026-10-21", desc='A 3-minute guide from 365 Techies to Techies PDF, the free PDF program for Windows 10 and 11: fill in and sign a PDF, join (merge) PDFs, turn, move or take out pages, split a PDF, make a PDF smaller for email, turn photos into a PDF, copy the words out and put a password on - all on your own PC, nothing uploaded.',
+            says='Need to sign a form, join some PDFs, or make one small enough to email? Here&rsquo;s how to do all of that for free, with Techies PDF. It&rsquo;s a free program for Windows 10 and 11, from 365 Techies. Everything happens on your own computer, so your documents are never uploaded anywhere. Download it from 365techies.co.uk. There&rsquo;s no account to make. Open it, and every job has its own big button. To fill in a form, press Open a PDF, and choose it. Then click in the boxes and type. Tick boxes work too. To sign it, press Add or edit signatures, then Add new signature. Type your name, draw it with the mouse, or use a photo of your signature. Put it on the line, make it the right size, and press Save. To join PDFs into one, just drop them onto the window. Put them in order with the arrows, and press Join them into one PDF. You get one tidy PDF, and the ones you started with aren&rsquo;t changed. Is a page upside down? Choose Turn, move or take out pages. Every page shows as a picture. Turn it the right way up with the round arrow. Take out the pages you don&rsquo;t need, move them around, and press Save the PDF. Only need some of the pages? Choose Take pages out into a new PDF. Type the pages you want, like 1-2, and press Save these pages. Or make a PDF for every page, and each one becomes its own file. Is a PDF too big to email? Choose Make a PDF smaller for email. Pick the PDF, start with Good for email, and press Make it smaller. Our PDF of holiday photos went from 27 MB to 1.3 MB. A smaller copy is saved, and your original stays as it was. Photographed a letter or a receipt? Choose Turn photos into a PDF. Put the photos in order, choose A4 pages, and press Make the PDF. Each photo goes on its own page, the right way up. Need the words, not the PDF? Choose Copy the words out of a PDF. All the words appear, ready to copy and paste into an email or a letter. Sending something private? Put a password on a copy before you email it. Type the password twice, and press Put the password on. Then tell the person the password by phone, not in the same email. Know the password? You can take it off again, too. Techies PDF adds text and signatures on top. It can&rsquo;t change the words already in a PDF. It&rsquo;s free, for Windows 10 and 11. Download it from 365techies.co.uk.')
+
+
+def film_node():
+    vid, secs, _live, name = yt_watch.TPDF_FILM
+    words = FILM["says"]
+    for a, b in (("&rsquo;", "'"), ("&amp;", "&")):
+        words = words.replace(a, b)
+    return {"@type": "VideoObject", "@id": "%s/%s/#howto-film" % (bp.SITE, SLUG), "name": name, "description": FILM["desc"],
+            "thumbnailUrl": "https://i.ytimg.com/vi/%s/maxresdefault.jpg" % vid, "uploadDate": FILM["uploaded"],
+            "duration": "PT%dM%dS" % (secs // 60, secs % 60), "embedUrl": "https://www.youtube.com/embed/" + vid,
+            "url": "https://www.youtube.com/watch?v=" + vid, "transcript": words, "inLanguage": "en-GB",
+            "publisher": {"@id": bp.SITE + "/#business"}}
 PLAY = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg>'
 
 
@@ -555,6 +573,7 @@ def build():
         vids = [short_node(k) for k, v in SHORTS.items() if v["id"] and short_live(v)]
         for n in vids:
             n.pop("@context")
+        vids.insert(0, film_node())
         if vids:
             app["subjectOf"] = [{"@id": n["@id"]} for n in vids]
         return bp.graph([bp.crumb_sub(s, "Free Tools", "free-tools", NAME),

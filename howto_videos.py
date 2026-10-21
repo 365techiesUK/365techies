@@ -26,6 +26,8 @@ is built after "live" - or added by the same script in the browser once the time
 Virgin email mover pages"): the EE hub printer film on /printer-wont-connect-to-ee-smart-hub/, straight after the guided
 steps (the page reads explanation -> steps -> film -> detail), with its 27-second Short as a button underneath ("extra").
 Real screens from a customer's hub, network names hidden. Made public by the owner before this went live.
+
+21 Oct 2026: the Techies PDF how-to film (3:06, uploaded full quality) inside /how-to-scan-a-document/, before "Key points".
 """
 import datetime
 import json
@@ -137,6 +139,13 @@ VIDEOS = {
         # the Short sits under the film; its own rule stops the film block's link style (.hvf a) restyling the button
         extra=('        <p style="text-align:center;margin:.3rem 0 0"><style>.hvf a.ytw{color:inherit;text-decoration:none}</style>'
                + yt_watch.button(yt_watch.EE_SHORT, "Or watch it in 27 seconds", shape="tall") + '</p>\n')),
+    "techies-pdf": dict(
+        id="Jd0PrHSWJQc", secs=186, uploaded="2026-10-21", poster="/images/howto-techies-pdf-poster-v1.jpg",
+        name='Free PDF Editor for Windows 11: Sign, Merge, Split & Compress PDFs',
+        desc='A 3-minute guide from 365 Techies to Techies PDF, the free PDF program for Windows 10 and 11: fill in and sign a PDF, join (merge) PDFs, turn, move or take out pages, split a PDF, make a PDF smaller for email, turn photos into a PDF, copy the words out and put a password on - all on your own PC, nothing uploaded.',
+        cap="3 min 6 s &middot; a spoken guide with captions &middot; the real program on made-up documents",
+        says='Need to sign a form, join some PDFs, or make one small enough to email? Here&rsquo;s how to do all of that for free, with Techies PDF. It&rsquo;s a free program for Windows 10 and 11, from 365 Techies. Everything happens on your own computer, so your documents are never uploaded anywhere. Download it from 365techies.co.uk. There&rsquo;s no account to make. Open it, and every job has its own big button. To fill in a form, press Open a PDF, and choose it. Then click in the boxes and type. Tick boxes work too. To sign it, press Add or edit signatures, then Add new signature. Type your name, draw it with the mouse, or use a photo of your signature. Put it on the line, make it the right size, and press Save. To join PDFs into one, just drop them onto the window. Put them in order with the arrows, and press Join them into one PDF. You get one tidy PDF, and the ones you started with aren&rsquo;t changed. Is a page upside down? Choose Turn, move or take out pages. Every page shows as a picture. Turn it the right way up with the round arrow. Take out the pages you don&rsquo;t need, move them around, and press Save the PDF. Only need some of the pages? Choose Take pages out into a new PDF. Type the pages you want, like 1-2, and press Save these pages. Or make a PDF for every page, and each one becomes its own file. Is a PDF too big to email? Choose Make a PDF smaller for email. Pick the PDF, start with Good for email, and press Make it smaller. Our PDF of holiday photos went from 27 MB to 1.3 MB. A smaller copy is saved, and your original stays as it was. Photographed a letter or a receipt? Choose Turn photos into a PDF. Put the photos in order, choose A4 pages, and press Make the PDF. Each photo goes on its own page, the right way up. Need the words, not the PDF? Choose Copy the words out of a PDF. All the words appear, ready to copy and paste into an email or a letter. Sending something private? Put a password on a copy before you email it. Type the password twice, and press Put the password on. Then tell the person the password by phone, not in the same email. Know the password? You can take it off again, too. Techies PDF adds text and signatures on top. It can&rsquo;t change the words already in a PDF. It&rsquo;s free, for Windows 10 and 11. Download it from 365techies.co.uk.',
+        tools=[("techies-pdf", "Techies PDF (free, for Windows)")]),
 }
 
 # page -> (film, where it goes, heading or None, intro). "after:<marker>" = straight after the section containing the
@@ -159,6 +168,9 @@ PLACES = {
                                                   "Watch: check for remote access, and cut them off",
                                                   "Where remote-control programs show up on a Windows 11 PC, and what to do "
                                                   "if someone did get in."),
+    "how-to-scan-a-document": ("techies-pdf", "before:<h2>Key points</h2>", None,
+                               "Scanned it? Watch how to join the pages into one PDF, make it small enough to email, and more, "
+                               "free in Techies PDF (photos to PDF from 2:01)."),
     "printer-wont-connect-to-ee-smart-hub": ("ee-printer", 'after:id="fixflow"', "Watch: the fix on a real EE hub",
                                              "The whole fix in under 2 minutes: why the printer turns the password down, "
                                              "switching on Compatible WiFi, and joining the printer to it, even one "
