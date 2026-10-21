@@ -1050,6 +1050,7 @@
       c = cars[i]; if (!c.cop || c.block) continue;
       c.ps = c.s;
       if (c.wreck) { c.wreck.t++; c.v = Math.max(0, c.v - (c.v * 0.9 + 5) * DT); c.s += c.v * DT; c.x += c.wreck.dx * Math.max(0, 1 - c.wreck.t / 45) * DT; continue; }
+      c.vx = 0;
       if (c.wait) { var dw = c.s - W.s; if (chase && dw < 170 && dw > -30) { c.wait = false; c.tx = clamp(Math.round(c.x / 4.6) * 4.6, -4.6, 4.6); c.v = 5; W.events.push({ sfx: 'siren', x: c.x - W.x }); } else continue; }
       var gap = W.s - c.s, want;
       if (!chase) want = gap > 12 ? Math.min(CV, W.v + gap * 0.4) : Math.max(0, W.v - 3);   // (caught, or you've escaped: they pull up round you)
@@ -1076,7 +1077,8 @@
         if (fr != null) tx = fr; else if (c.skill > 0.62 || (blk.cop && !blk.wreck && !blk.block)) c.v = Math.min(c.v, blk.v + bd * 0.5);   // (they keep their distance from each other; the less careful ones go straight into the traffic, a wreck or a roadblock - the pile-ups)
       }
       var lat = gap < -4 ? 3.2 : 7.5;   // (ahead of you it can't mirror your every move)
-      c.tx = clamp(tx, -(HALF - 0.9), HALF - 0.9); c.x += clamp(c.tx - c.x, -lat * DT, lat * DT);
+      c.tx = clamp(tx, -(HALF - 0.9), HALF - 0.9); var x0c = c.x; c.x += clamp(c.tx - c.x, -lat * DT, lat * DT); c.vx = (c.x - x0c) / DT;   // (vx: which way it's really going - world3d.js points it that way)
+      if (c.yaw && chase) c.yaw *= c.v > 8 ? 0.9 : 0.97;   // (out of a lay-by it straightens up as it gets going; caught, the one across your nose stays across)
       var z0 = c.s; c.s += c.v * DT;
       if (F && c.b === 0 && segIndex(c.s) >= F.split && segIndex(z0) < F.split) { c.b = F.s || (c.x >= 0 ? 1 : -1); c.x -= c.b * OFF0; c.tx = c.x; }   // (at a split: the road you took)
     }

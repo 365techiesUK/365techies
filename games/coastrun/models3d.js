@@ -2541,7 +2541,7 @@ const TRAFFIC = {
   // blue lenses are their own materials (sirA, sirB) so world3d.js flashes every police car's lights by changing just those two. Generic POLICE:
   // no real force's name or crest
   police(k, col) {
-    roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten' });
+    roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten', noWheels: true });   // (its wheels apart: they turn - COP_WHEELS)
     const CK = ['#1e3fae', '#f2d00a'];
     for (const sd of [-1, 1]) for (let i = 0; i < 12; i++) {   // the checks: two rows along each flank, offset
       const z = -2.05 + i * 0.36 + 0.18;
@@ -2743,7 +2743,7 @@ function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose 
     [(s1 + p.roofEnd) / 2, hc - 0.03, p.beltY, p.roofY], [p.roofEnd, hc - 0.05, p.beltY + 0.01, p.roofY - 0.04], [end, hc - 0.1, endY - 0.05, endY]];
   const capL = [[s1 + 0.04, p.roofY - 0.08], [(s1 + p.roofEnd) / 2, p.roofY - 0.07], [p.roofEnd - 0.1, p.roofY - 0.09], [p.roofEnd + 0.02, p.roofY - 0.08]];   // (the roof only: the back window is the cabin's glass)
   const roof = capOver(cab, capL, 3);
-  const B = racerBody(k, col, { w: [[wf, p.r, 0.23], [wr, p.r, 0.24]], up: p.tall ? 4 : 3.2, crease: 0.07, style: p.rims || 'five', rim: '#c4c8cc', cal: p.sporty ? '#b81e26' : '#4a4d52', mirror: [s0 + 0.14, p.beltY + 0.1], doors: p.doors,
+  const B = racerBody(k, col, { w: [[wf, p.r, 0.23], [wr, p.r, 0.24]], up: p.tall ? 4 : 3.2, crease: 0.07, style: p.rims || 'five', rim: '#c4c8cc', cal: p.sporty ? '#b81e26' : '#4a4d52', mirror: [s0 + 0.14, p.beltY + 0.1], doors: p.doors, noWheels: p.noWheels,
     keys: keys, cabin: cab, roof: roof, roofBelly: 0.2, roofDn: 8 });
   sidePanel(k, cab, p.roofEnd - (sal ? 0.25 : 0.5), end, p.beltY - 0.02, shade(col, -0.04), 3, p.roofEnd - (sal ? 0.02 : 0.08));   // the C-pillars, slanting, the back window between them
   sidePanel(k, cab, s0 + 0.06, p.roofEnd - (sal ? 0.12 : 0.3), p.beltY - 0.02, shade(col, -0.04), 3, null, { u0: 0.8 });   // the A-pillars and the frame over the side windows, joining the roof to the body (the side glass read as open air)
@@ -2827,7 +2827,7 @@ function racerBody(k, col, o) {   // a lofted body (paint, shaded deeper low dow
     const hw = B.hwAt(z), R = r + 0.05;
     k.put(new THREE.CylinderGeometry(R, R, 0.36, 18, 1, true, -Math.PI / 2, Math.PI), '#0b0b0c', sd * (hw - 0.2), r, z, 0, 0, Math.PI / 2, 1, 1, 1, 'lit');
     k.put(new THREE.TorusGeometry(R + 0.008, 0.016, 5, 22, Math.PI), col, sd * (hw - 0.012), r, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'rpaint');
-    rwheel(k, sd * (hw - w / 2 - 0.02), z, r, w, o.rim || '#cdd1d5', o.style, o.cal);
+    if (!o.noWheels) rwheel(k, sd * (hw - w / 2 - 0.02), z, r, w, o.rim || '#cdd1d5', o.style, o.cal);   // (noWheels: the police car's turn - world3d.js spins them, copWheel)
   }
   if (o.mirror) { const [mz, my] = o.mirror; for (const sd of [-1, 1]) { const hw = B.hwAt(mz) - 0.06;   // door mirrors on short arms
     k.box(0.12, 0.02, 0.03, sd * (hw + 0.05), my - 0.03, mz, '#151517', 0, 0, sd * 0.3, 'lit');
@@ -3254,6 +3254,11 @@ function spider(opt) {   // opt.jet: the Skimmer (19 Oct 2026) - the same roadst
   for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * ((z > 0 ? wxr : wx) - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
   return { k: k, len: len, w: w, wz: wz, wx: wx, wxr: wxr };
 }
+// the police car's wheels (owner, 21 Oct: "their wheels on their police cars didn't go round" - they drive right beside you, so it shows): one wheel,
+// its axle along X through the origin, its face to +X; world3d.js puts four on each police car at COP_WHEELS and turns them by the distance driven
+export const COP_WHEELS = { r: 0.32, w: 0.235, x: 0.78, z: [-1.42, 1.42] };
+let COPW = null;
+export function copWheel() { if (COPW) return COPW; const wk = new Kit(); wheelParts(wk, 0, 0, 0, COP_WHEELS.r, COP_WHEELS.w, 1, '#cdd1d5', 'ten', '#b81e26'); return (COPW = wk.build()); }
 function bigWheel() {   // your wheel: a low rounded tyre, a ten-spoke concave alloy, the disc behind it (the caliper is on the body: the wheel turns)
   const wk = new Kit(); wheelParts(wk, 0, 0, 0, 0.34, 0.29, 1, '#d4d8dc', 'twin', false, { t: 'tyre', a: 'alloy', d: 'trim' }); return wk.build();
 }

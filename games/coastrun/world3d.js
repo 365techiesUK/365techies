@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=60';
+import * as MD from './models3d.js?v=61';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1946,6 +1946,9 @@ export function createWorld() {
         const mm = MD.trafficModel(c.t, c.col), V = E.VEH[c.t]; m = new THREE.Group();
         for (const k in mm) if (mm[k] && MAT[k]) { const mesh = new THREE.Mesh(mm[k], MAT[k]); mesh.castShadow = !V.rival && k !== 'glow'; m.add(mesh); }   // (a racer: its soft blob shadow only - seven of them in the shadow pass cost a slow PC)
         const blob = new THREE.Mesh(blobGeo, blobMat); blob.scale.set(V.w * 2.6, 1, V.l * 2.3); blob.position.y = 0.05; m.add(blob);
+        if (V.cop) { const CW = MD.COP_WHEELS, wm = MD.copWheel(); m.userData.wheels = [];   // its wheels: apart, so they turn
+          for (const sd of [-1, 1]) for (const z of CW.z) { const side = new THREE.Group(), spin = new THREE.Group(); side.position.set(sd * CW.x, CW.r, z); if (sd < 0) side.rotation.y = Math.PI;
+            for (const k in wm) if (wm[k] && MAT[k]) spin.add(new THREE.Mesh(wm[k], MAT[k])); side.add(spin); m.add(side); m.userData.wheels.push([spin, sd]); } }
         if (V.cop) for (const sd of [-1, 1]) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#4a7bff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); sp.scale.set(2.6, 2.6, 1); sp.position.set(sd * 0.3, 1.56, 0.32); sp.userData.sir = sd; m.add(sp); }   // (the blue glow of its lights: seen a long way off, and at night)
         if (V.rival && c.racer == null) { const tg = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ff2a3a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.55 })); tg.scale.set(1.7, 0.55, 1); tg.position.set(0, 0.75, V.l + 0.15); m.add(tg); }   // its tail bar glows, so you can pick it out ahead
         scene.add(m); traffic.set(c.id, m);
@@ -1956,7 +1959,8 @@ export function createWorld() {
       m.rotation.order = 'YXZ'; m.rotation.y = -POS.th + (c.tx - c.x) * -0.04 + (c.spin > 0 ? c.spin * 0.15 : 0); m.rotation.z = POS.bank * 0.8;
       m.rotation.x = Math.atan((E.heightAt(W, c.s + 2) - E.heightAt(W, c.s - 2)) / 4);
       if (c.cop) {   // the Getaway's police: parked at an angle in a roadblock or a lay-by; a wreck spins, flips over onto its roof and smokes; the lights flash
-        m.rotation.y += c.yaw || 0;
+        m.rotation.y += (c.yaw || 0) - (c.tx - c.x) * -0.04 - Math.max(-0.5, Math.min(0.5, Math.atan2(c.vx || 0, Math.max(c.v, 4))));   // (pointing the way it's actually going, not where it's heading for: the traffic's lean made them crab sideways)
+        if (m.userData.wheels) { const a = c.s / MD.COP_WHEELS.r; for (const [sp, sd] of m.userData.wheels) sp.rotation.x = sd > 0 ? -a : a; }
         const wk = c.wreck;
         if (wk) { const u = Math.min(1, wk.t / 36); m.rotation.y += wk.dir * (1 - Math.exp(-wk.t / 18)) * 2.6; if (wk.flip) { m.rotation.z += wk.dir * Math.PI * u; m.position.y += Math.sin(u * Math.PI) * 1.9 + u * 1.45; }
           if (wk.t < 420 && Math.random() < 0.5) smoke.emit(POS.x + (Math.random() - 0.5), POS.y + 1.2, POS.z + (Math.random() - 0.5), (Math.random() - 0.5), 1.4 + Math.random() * 1.6, (Math.random() - 0.5), 1.4, 3.2, wk.t < 90 ? '#4a4a4a' : '#8a8a8a', 0.45, 1.6); }
