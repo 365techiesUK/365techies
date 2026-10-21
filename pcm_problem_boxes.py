@@ -149,7 +149,8 @@ def _section_end(html, start):
 # 20 Oct 2026: pages whose box goes after a named section instead (the EE printer page: "has the printer joined your hub?"
 # belongs after the fix, before "When to let us do it for you", not between the guided steps and the explanation)
 AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7', 'printer-wont-connect-to-bt-smart-hub': 's5',
-                 'printer-wont-connect-to-sky-router': 's5', 'printer-wont-connect-after-moving-house': 's5'}
+                 'printer-wont-connect-to-sky-router': 's5', 'printer-wont-connect-after-moving-house': 's5',
+                 'onedrive-taking-up-space': 's7'}   # 21 Oct: after "what's really using the space"
 
 
 def insert(slug, html):
