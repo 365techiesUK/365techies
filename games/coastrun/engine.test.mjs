@@ -491,3 +491,46 @@ test('the Skimmer\'s driver gets round a stage, hopping traffic now and then', (
   for (let i = 0; i < 60 * 60 * 6 && !W.over && !goal; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'goal' || e.sfx === 'check')) goal = true; if (W.events.some((e) => e.sfx === 'lift')) lifts++; quiet(W); W.time = Math.max(W.time, 10); }
   assert.ok(goal, 'it reaches a checkpoint'); assert.ok(lifts > 0, 'and lifts over traffic (' + lifts + ' lifts, ' + W.hopN + ' hops)');
 });
+
+// ---------------------------------------------------------------- THE GETAWAY (21 Oct 2026): the police chase level
+function getawayDriver(W) {   // the autopilot, plus a player's two moves in a chase: jump a roadblock, rocket away from one right behind you
+  const inp = E.autopilot(W, 1), C = W.cop, b = C.blocks.find((B) => B.s - W.s > 4 && B.s - W.s < 200);
+  if (b) { inp.down = false; if (b.s - W.s < 10 + W.v * 0.42 && !W.air && W.gas >= E.LIFT_COST) inp.alt = true; }
+  if (!b && W.gas > 35 && W.cars.some((c) => c.cop && !c.block && !c.wreck && !c.wait && W.s - c.s > -3 && W.s - c.s < 30)) inp.fire = true;
+  return inp;
+}
+test('the Getaway: the Spindrift, no clock, no requests; picked like a car; a normal game has no police', () => {
+  const W = E.newWorld(2, { car: 'getaway' }, 5), N = E.newWorld(2, { car: 'skimmer' }, 5);
+  assert.equal(W.car, 'skimmer'); assert.ok(W.jet); assert.ok(W.cop); assert.equal(W.cop.max, E.COP_MAX[2]);
+  assert.equal(N.cop, undefined, 'a normal game: no police');
+  go(W); const t0 = W.time; drive(W, 600, {}); assert.equal(W.time, t0, 'no clock: the police are the clock');
+  assert.equal(W.req, null, 'she asks for nothing in a chase');
+});
+test('the Getaway: police on your tail from the start, quicker than you flat out, slower than your rockets', () => {
+  const W = E.newWorld(2, { car: 'getaway' }, 6); go(W); drive(W, 3, {});
+  const cops = W.cars.filter((c) => c.cop && !c.block);
+  assert.ok(cops.length >= 2, 'two behind you at GO'); assert.ok(cops.every((c) => c.s < W.s), 'behind you');
+  assert.ok(E.copTop(W) > E.topSpeed(W) && E.copTop(W) < E.topSpeed(W) * 1.5, 'faster than you, not your rockets');
+  let close = false;   // plain driving, no rockets, slowing for the bends: they get to you
+  drive(W, 60 * 40, (W2) => { if (W2.cars.some((c) => c.cop && !c.block && !c.wait && !c.wreck && Math.abs(c.s - W2.s) < 12)) close = true; return E.autopilot(W2, 1); });
+  assert.ok(close || W.cop.dmg > 0, 'they get to you');
+});
+test('the Getaway: a roadblock ahead - warned, jumped and cleared; the road round it kept clear of traffic', () => {
+  const W = E.newWorld(2, { car: 'getaway' }, 12); go(W);
+  let saw = null;
+  drive(W, 60 * 90, (W2) => { if (!saw && W2.cop.blocks.length) saw = W2.cop.blocks[0]; return getawayDriver(W2); });
+  assert.ok(saw, 'a roadblock came'); assert.ok(saw.ids.length >= 2, 'police cars across the road');
+  assert.ok(W.cop.cleared >= 1 || saw.done, 'jumped (or got through)');
+});
+test('the Getaway: damage to the limit and you\'re BUSTED; the game ends with them round you', () => {
+  const W = E.newWorld(2, { car: 'getaway' }, 7); go(W); drive(W, 60, {});
+  W.cop.dmg = W.cop.max - 1; const c = W.cars.find((q) => q.cop && !q.block);
+  c.s = W.s; c.x = W.x; c.wreck = null; c.wait = false;   // one of them right into you
+  drive(W, 1, {});
+  assert.ok(W.cop.busted, 'busted'); assert.ok(W.timeUp);
+  drive(W, 60 * 12, {}); assert.ok(W.over, 'the game is over');
+});
+test('the Getaway: a whole chase replays exactly from the same seed and input', () => {
+  const run = () => { const W = E.newWorld(2, { car: 'getaway' }, 13); go(W); drive(W, 60 * 60, (W2) => getawayDriver(W2)); return [W.s.toFixed(4), W.x.toFixed(4), W.score, W.cop.dmg, W.cop.down, W.cars.length].join(); };
+  assert.equal(run(), run());
+});

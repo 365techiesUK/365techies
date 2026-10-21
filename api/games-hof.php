@@ -66,7 +66,8 @@ $HOF_ARCADE = array(
     // (the 3D Eclipse of 4 Oct: an invincible bot that takes every medal and power item scores ~15,500 a second over two loops)
     'eclipse'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 30000, 'base' => 100000, 'word' => 'stage'),
     // (365 Coast Run, 5 Oct: a driver that gets round scores ~2,000-2,700 a second, plus up to ~450,000 at each goal; the third round on is capped)
-    'coastrun' => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 8000, 'base' => 500000, 'word' => 'stage'),
+    // (+ the Getaway, 21 Oct 2026: its own boards g1-g3 - a test driver that escapes scores ~4,500-5,500 a second)
+    'coastrun' => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast', 'g1' => 'Getaway · Gentle', 'g2' => 'Getaway · Classic', 'g3' => 'Getaway · Fast'), 'rate' => 8000, 'base' => 500000, 'word' => 'stage'),
 );
 $HOF_RUNS = __DIR__ . '/games-hof-runs.json';
 $HOF_RUNLOCK = __DIR__ . '/games-hof-runs.lock';

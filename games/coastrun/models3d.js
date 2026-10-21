@@ -2537,6 +2537,22 @@ const TRAFFIC = {
     if (v % 2) roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.98, ws: [-0.75, -0.06], roofY: 1.46, roofEnd: 2.0, back: 'estate', rails: true, doors: [-0.64, 0.42, 1.3], rims: 'ten' });
     else roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten' });
   },
+  // the Getaway's police car (21 Oct 2026): a saloon in white with the blue-and-yellow checks along its sides and a light bar on the roof - its two
+  // blue lenses are their own materials (sirA, sirB) so world3d.js flashes every police car's lights by changing just those two. Generic POLICE:
+  // no real force's name or crest
+  police(k, col) {
+    roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten' });
+    const CK = ['#1e3fae', '#f2d00a'];
+    for (const sd of [-1, 1]) for (let i = 0; i < 12; i++) {   // the checks: two rows along each flank, offset
+      const z = -2.05 + i * 0.36 + 0.18;
+      k.box(0.024, 0.15, 0.36, sd * 0.935, 0.44, z, CK[i % 2], 0, 0, 0, 'lit');
+      k.box(0.024, 0.15, 0.36, sd * 0.93, 0.59, z, CK[(i + 1) % 2], 0, 0, 0, 'lit');
+    }
+    k.box(1.6, 0.05, 0.42, 0, 0.865, -1.55, '#f2d00a', 0, 0, 0, 'lit');   // a yellow band across the bonnet's nose
+    k.box(1.12, 0.09, 0.26, 0, 1.42, 0.32, '#202327', 0, 0, 0, 'lit');   // the light bar
+    k.box(0.46, 0.1, 0.22, -0.28, 1.47, 0.32, '#3d6dff', 0, 0, 0, 'sirA'); k.box(0.46, 0.1, 0.22, 0.28, 1.47, 0.32, '#3d6dff', 0, 0, 0, 'sirB');
+    for (const sd of [-1, 1]) k.box(0.18, 0.06, 0.03, sd * 0.42, 0.62, -2.31, '#3d6dff', 0, 0, 0, sd < 0 ? 'sirB' : 'sirA');   // blue flashers in the grille
+  },
   sports(k, col) {   // a modern sports coupe of our own: long bonnet, cabin set back, a fastback to a short tail, a lamp bar across it, four pipes
     roadCar(k, col, { L: 2.2, hw: 0.96, r: 0.33, wz: [-1.36, 1.32], clear: 0.16, noseY: 0.5, bonnetY: 0.76, beltY: 0.84, tailY: 0.9, ws: [-0.45, 0.18], roofY: 1.22, roofEnd: 0.82, deck: 1.82, back: 'saloon', doors: [-0.4, 0.62], rims: 'ten', sporty: true });
   },
@@ -3040,12 +3056,12 @@ for (const id in RTAIL) { const f = TRAFFIC[id], T = RTAIL[id], D = RDRV[id]; TR
   for (const sd of [-1, 1]) { k.box(T.lw * 0.85, 0.014, 0.03, sd * T.lx, T.ly + 0.02, T.z + 0.035, '#ffc4cc', 0, 0, 0, 'rlamp'); k.box(0.1, 0.035, 0.02, sd * (T.dw / 2 + 0.1), T.py + 0.1, T.z - 0.03, '#b0121a', 0, 0, 0, 'rlamp'); }
   k.box(T.dw, 0.08, 0.26, 0, T.py - 0.13, T.z - 0.15, '#141416', 0, 0, 0, 'lit'); for (let i = 0; i < 5; i++) k.box(0.018, 0.075, 0.22, (i - 2) * T.dw / 6, T.py - 0.12, T.z - 0.06, '#34373c', 0, 0, 0, 'lit');
 }; }
-export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans', 'coupe9', 'gtbrit', 'raging', 'trident', 'barchetta'];
+export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans', 'coupe9', 'gtbrit', 'raging', 'trident', 'barchetta', 'police'];   // (police last: engine.js COP)
 const TCOL = {   // the colours real cars come in (silver, grey, black, white, a deep blue, a dark red, a dark green) - not toy primaries
   hatch: ['#b9bdc2', '#2e3238', '#e9eaec', '#1f3a66', '#7d1f24', '#5f6670', '#14161a', '#9a3a2a'], saloon: ['#a9adb3', '#16181b', '#e7e8ea', '#22385e', '#4a4e55', '#25412f', '#6e1c22', '#8a8a86'],
   van: ['#eeeeec', '#eeeeec', '#b9bdc2', '#1f3a66', '#eeeeec', '#2e3238'], bus: ['#a8232b', '#2c5e3c', '#1f4f8a'], camper: ['#eeeeec', '#c9ccd0'], tractor: ['#2f7a3a', '#b02a25', '#2a5aa0'], lorry: ['#2b5aa8', '#eeeeec', '#a8232b', '#2f6b48'], sports: ['#b9bdc2', '#14161a', '#7a1a22', '#e9eaec', '#22385e'],
   wedge: ['#d10f1d', '#f2c230', '#e8eaec', '#e2531c'], lemans: ['#2e64d8', '#d62a1c', '#f4f4f4', '#e2531c'], coupe9: ['#c0c4c8', '#c81e1e', '#f2f2ee', '#2f6b48'], gtbrit: ['#2f6b48', '#c0c4c8', '#8a8f96', '#c9a227'],
-  raging: ['#9fd000', '#ef7d00', '#f2c230', '#f4f4f2'], trident: ['#2b4fa0', '#e8e4da', '#c0c4c8', '#5a6b78'], barchetta: ['#c81e1e', '#e8c02a', '#c0c4c8', '#2e64d8'] };   // (the racers: their own colours)
+  raging: ['#9fd000', '#ef7d00', '#f2c230', '#f4f4f2'], trident: ['#2b4fa0', '#e8e4da', '#c0c4c8', '#5a6b78'], barchetta: ['#c81e1e', '#e8c02a', '#c0c4c8', '#2e64d8'], police: ['#f2f4f6'] };   // (the racers: their own colours)
 export function trafficModel(t, colIdx) {
   const id = TRAFFIC_ORDER[t], cols = TCOL[id], c0 = cols[colIdx % cols.length], col = typeof c0 === 'string' ? c0 : CARCOL[c0], key = 'veh|' + id + '|' + col + '|' + (colIdx % cols.length);
   let m = cache.get(key); if (m) return m;

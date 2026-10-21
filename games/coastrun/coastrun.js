@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=75';
+import { createWorld } from './world3d.js?v=76';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -37,7 +37,7 @@ let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') |
   if (moved) try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {}
 })();
 const placeKey = (st) => (E.STAGES[st] ? E.STAGES[st].key : String(st));
-function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[placeKey(st)] ? d[placeKey(st)] : 0; }
+function bestOf(W, st) { const d = BEST[(W.cop ? 'g' : 'd') + W.diff];   /* (the Getaway keeps its own) */ return d && d[placeKey(st)] ? d[placeKey(st)] : 0; }
 // ---- your ghost (owner, 7 Oct, after the OutRun 2 audit: in place of the seven rubber-band racers): your best drive through each stage, kept
 // on this device by place and speed, played back beside you as a see-through car; the gap to it shows where your place in the race used to
 const GST = { W: null, leg: -1, rec: null, done: null, play: null, s0: 0 };
@@ -54,7 +54,7 @@ function ghostAt(p, col, v) {   // the point where column col reaches v (p sorte
 }
 function ghostFrame(W, mode) {   // each picture (before the 3D world draws): record this stage, play back your best of it
   W.ghost = null;
-  if (mode === 'title' || W.demo) return;
+  if (mode === 'title' || W.demo || W.cop) return;   // (no ghost in the Getaway: a see-through car beside you there would read as one of them)
   if (GST.W !== W) { GST.W = W; GST.leg = -1; GST.rec = null; GST.done = null; GST.play = null; }
   if (W.count > 0) return;
   if (W.stageNo !== GST.leg) {   // a new stage: the last one's drive put by (to be kept if it was your best), this one's ghost out
@@ -83,7 +83,7 @@ function ghostTag(g, W, t, mode) {   // where the race place was: the gap to you
   hudText(g, (ahead ? '-' : '+') + Math.abs(gp).toFixed(2) + 's', x, y + 6, 11, ahead ? '#5dff9a' : '#ff8a8a', 'left');
   hudText(g, ahead ? 'AHEAD' : 'BEHIND', x + 70, y - 5, 5, ahead ? '#5dff9a' : '#ff8a8a', 'right', false);
 }
-function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[placeKey(st)] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
+function saveBest(W, st, sec) { const k = (W.cop ? 'g' : 'd') + W.diff; (BEST[k] || (BEST[k] = {}))[placeKey(st)] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
 const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, warmAt: 0, shakeOn: true };
 const FIXEDRES = /[?&]fixedres/.test(location.search);   // (for the test pictures: never step the resolution down)
 window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: R.plain, ft: +R.ft.toFixed(1) });   // for checking: the picture's width, resolution step and frame time
@@ -200,12 +200,37 @@ function hudText(g, s, x, y, size, col, align, stroke) {
 }
 function stretchOf(W, i) { for (let j = W.stretch.length - 1; j >= 0; j--) if (i >= W.stretch[j].from && i < W.stretch[j].to) return W.stretch[j]; return null; }
 const clock = (sec) => { const m = Math.floor(sec / 60), s = sec - m * 60; return m + "'" + (s < 10 ? '0' : '') + s.toFixed(2).replace('.', '"'); };
+// ---- the Getaway (21 Oct 2026): the corner shows your car's damage in place of the clock, and how many of them are after you; one close behind
+// you and the edges of the screen flash blue and red, with how far back it is
+function copHud(g, W, t) {
+  const C = W.cop, hurt = W.t - C.hurtT < 40 && (t / 120 | 0) % 2;
+  hudText(g, C.busted ? 'BUSTED' : 'DAMAGE', 10, 13, 6.5, C.busted ? '#ff5a5a' : '#d8cdb0');
+  for (let i = 0; i < C.max; i++) {
+    const x = 10 + i * 9, y = 18;
+    g.fillStyle = i < C.dmg ? (hurt ? '#ffffff' : '#ff4d4d') : 'rgba(255,255,255,0.14)'; g.fillRect(x, y, 7, 14);
+    if (i >= C.dmg) { g.strokeStyle = 'rgba(255,255,255,0.45)'; g.lineWidth = 0.6; g.strokeRect(x + 0.3, y + 0.3, 6.4, 13.4); }
+  }
+  let n = 0, near = 1e9;
+  for (const c of W.cars) if (c.cop && !c.block && !c.wreck && !c.wait) { n++; const d = W.s - c.s; if (d > -4 && d < near) near = d; }
+  if (W.count <= 0) hudText(g, C.tyres > 0 ? 'TYRES BURST!' : n ? n + (n === 1 ? ' POLICE CAR' : ' POLICE CARS') + ' ON YOU' : 'CLEAR - FOR NOW', 10, 41, 6, C.tyres > 0 ? '#ffb347' : n ? '#9fc4ff' : '#9fe8b0');
+  return near;
+}
+function copAlert(g, W, t, near) {
+  if (!W.cop || W.cop.busted || W.goalSeq || W.count > 0 || near > 70) return;
+  const k = Math.max(0, Math.min(1, (70 - near) / 60)), on = (t / 160 | 0) % 2;
+  for (const left of [true, false]) {
+    const col = (left ? on : !on) ? '60,110,255' : '255,50,60', x0 = left ? 0 : GW - 46, gr = g.createLinearGradient(left ? 0 : GW, 0, left ? 46 : GW - 46, 0);
+    gr.addColorStop(0, 'rgba(' + col + ',' + (0.45 * k).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(' + col + ',0)'); g.fillStyle = gr; g.fillRect(x0, 0, 46, GH);
+  }
+  hudText(g, near < 4 ? 'POLICE ALONGSIDE!' : 'POLICE ' + Math.round(near) + ' M BEHIND', GW / 2, GH - 24, 8, on ? '#ff7b7b' : '#8fb4ff', 'center');
+}
 function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
   for (const [x, y] of [[30, 26], [GW - 34, 30]]) { const gr = g.createRadialGradient(x, y, 0, x, y, 52); gr.addColorStop(0, 'rgba(0,8,24,0.5)'); gr.addColorStop(0.6, 'rgba(0,8,24,0.22)'); gr.addColorStop(1, 'rgba(0,8,24,0)'); g.fillStyle = gr; g.fillRect(x - 60, y - 60, 120, 120); }   // a soft shade behind the corner numbers, so they read on a bright sky
   // the clock, and this stretch's own time
-  hudText(g, 'TIME', 10, 13, 6.5, '#d8cdb0');
-  hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffc23a');
+  let copNear = 1e9;
+  if (W.cop) copNear = copHud(g, W, t);
+  else { hudText(g, 'TIME', 10, 13, 6.5, '#d8cdb0'); hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffc23a'); }
   if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.2, '#e8eef5');
   if (mode !== 'title') clockExtras(g, W, t, pi);
   // the score, your hearts, which stretch of five
@@ -224,7 +249,8 @@ function hud(g, W, t, mode) {
     g.fillStyle = '#ffc23a'; g.fillRect(bx, by + 0.6, Math.max(1, bw * p), 2.2);
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.fillRect(bx + bw - 1, by - 1, 2, 5.2);
   }
-  if (W.field && W.field.length) rivalTag(g, W, t, mode); else ghostTag(g, W, t, mode);
+  if (W.field && W.field.length) rivalTag(g, W, t, mode); else if (!W.cop) ghostTag(g, W, t, mode);
+  if (W.cop && mode !== 'title') copAlert(g, W, t, copNear);
   routeMap(g, W, 8, GH - 46, t);
   powers(g, W, t);
   speedo(g, W, t);
@@ -403,7 +429,7 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
   g.save(); g.globalAlpha = a;
   g.fillStyle = 'rgba(6,10,18,0.8)'; g.fillRect(x, y, w, h);
   g.fillStyle = '#ffc23a'; g.fillRect(x + 10, y, w - 20, 1);
-  hudText(g, 'GOAL  ·  ' + Rz.goal.toUpperCase(), x + w / 2, y + 14, 8.5, '#ffc23a', 'center', false);
+  hudText(g, (W.cop ? 'ESCAPED  ·  ' : 'GOAL  ·  ') + Rz.goal.toUpperCase(), x + w / 2, y + 14, 8.5, '#ffc23a', 'center', false);
   Rz.legs.forEach((L, i) => {
     const yy = y + 28 + i * 11, show = age > 60 + i * 12; if (!show) return;
     hudText(g, (i + 1) + '  ' + E.STAGES[L.st].name, x + 12, yy, 7, '#ffffff', 'left', false);
@@ -412,14 +438,15 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
   });
   const yb = y + 28 + Rz.legs.length * 11 + 4;
   if (age > 60 + Rz.legs.length * 12) {
-    hudText(g, 'TIME BONUS  ' + Rz.timeBonus.toLocaleString('en-GB'), x + 12, yb, 7, '#ffe9a8', 'left', false);
-    hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
+    hudText(g, (W.cop ? 'ESCAPE BONUS  ' : 'TIME BONUS  ') + Rz.timeBonus.toLocaleString('en-GB'), x + 12, yb, 7, '#ffe9a8', 'left', false);
+    if (W.cop) hudText(g, 'POLICE CRASHED  ' + W.cop.down + '   ·   ROADBLOCKS JUMPED  ' + W.cop.cleared, x + 12, yb + 11, 7, '#9fc4ff', 'left', false);
+    else hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
     if (Rz.pos) hudText(g, 'FINISHED P' + Rz.pos + ' OF ' + Rz.of2 + (Rz.posBonus ? '  +' + Rz.posBonus.toLocaleString('en-GB') : ''), x + 12, yb + 22, 7, Rz.pos === 1 ? '#ffd23f' : '#ffffff', 'left', false);
   }
   if (age > 110 + Rz.legs.length * 12) {   // her verdict on the drive (OutRun 2's Heart Attack grades), and how to carry on
     const SAY = { S: 'SHE SAYS: BEST DAY EVER!', A: 'SHE SAYS: THAT WAS AMAZING!', B: 'SHE SAYS: NICE DRIVING!', C: 'SHE SAYS: NOT BAD...', D: 'SHE SAYS: HMPH.' };
     hudText(g, SAY[Rz.rank] || '', x + 12, yb + 35, 6.6, Rz.rank === 'S' || Rz.rank === 'A' ? '#ff9ec4' : Rz.rank === 'D' ? '#9fb3c8' : '#ffd1df', 'left', false);
-    if (W.goalSeq && W.goalSeq.t > 60) { const left = Math.max(0, Math.ceil((480 - W.goalSeq.t) / 60)); hudText(g, 'SPACE: CARRY ON TO ROUND ' + W.round + '   ·   ↓ FINISH  (' + left + ')', x + w / 2, y + h - 4, 5.2, (t / 400 | 0) % 2 ? '#ffffff' : '#ffc23a', 'center', false); }
+    if (W.goalSeq && W.goalSeq.t > 60) { const left = Math.max(0, Math.ceil((480 - W.goalSeq.t) / 60)); hudText(g, W.cop ? 'SPACE: FINISH  (' + left + ')' : 'SPACE: CARRY ON TO ROUND ' + W.round + '   ·   ↓ FINISH  (' + left + ')', x + w / 2, y + h - 4, 5.2, (t / 400 | 0) % 2 ? '#ffffff' : '#ffc23a', 'center', false); }
   }
   if (age > 90 + Rz.legs.length * 12) { const s = 1 + Math.max(0, 1 - (age - 90 - Rz.legs.length * 12) / 12) * 0.8; g.save(); g.translate(x + w - 26, yb + 6); g.scale(s, s); hudText(g, Rz.rank, 0, 8, 26, Rz.rank === 'S' ? '#ff4dd2' : Rz.rank === 'A' ? '#ffd400' : '#ffffff', 'center'); g.restore(); hudText(g, 'RANK', x + w - 26, yb - 12, 6, '#bfe6ff', 'center', false); }
   g.restore();
@@ -452,7 +479,7 @@ function banner(g, W, t) {
   if (b.sub) hudText(g, b.sub, 0, 16, 10, cols[1], 'center');
   g.restore();
 }
-const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#f2e3b3' };
+const POP_COL = { red: '#ff5a5a', near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#f2e3b3' };
 function pops(g, W) {   // the pop-ups (audit, 7 Oct: a third of them landed on top of each other): stacked - the newest at the bottom, the others
   // easing up out of its way - at most three at once, the least important dropped first; a bottle filled flashes the nitro gauge instead,
   // and a change of place flashes the POS box
@@ -529,6 +556,16 @@ function sound(name, S, e) {
     case 'horn': [0, 0.55].forEach((w) => { S.tone(98, 0.45, 0.07, { type: 'sawtooth', when: w, verb: 0.6 }); S.tone(123, 0.45, 0.05, { type: 'sawtooth', when: w, verb: 0.6 }); }); break;   // the ferry's horn
     case 'land': S.tone(90, 0.2, 0.08 + 0.04 * n, { type: 'sine', to: 40 }); S.noise(0.18, 0.06 + 0.04 * n, 900, { to: 200 }); break;
     case 'extra': [523, 659, 784, 1047].forEach((f, k) => S.tone(f, 0.1, 0.05, { type: 'square', when: k * 0.08, verb: 0.3 })); break;
+    // the Getaway (21 Oct 2026): a police car pulling out (a whoop of its siren), a ram (metal on metal), one crashing (as far off as it is),
+    // a stinger (the bang and the tyres going), the roadblock warning, a roadblock jumped, busted
+    case 'siren': [0, 0.28].forEach((w) => S.tone(620, 0.26, 0.035, { type: 'sawtooth', to: 1180, when: w, pan: p, verb: 0.3 })); break;
+    case 'ram': S.noise(0.45, 0.32, 1900, { pan: p, verb: 0.25 }); S.tone(95, 0.3, 0.2, { type: 'sine', to: 40, pan: p }); S.noise(0.3, 0.12, 5200, { type: 'bandpass', q: 3, to: 2800, when: 0.04, pan: p }); S.tone(2400, 0.12, 0.02, { type: 'square', to: 1500, when: 0.02, pan: p }); break;
+    case 'copdown': { const far = Math.min(1, Math.abs((e && e.d) || 0) / 300), k = 1 - far * 0.85;
+      S.noise(1.1, 0.3 * k, 2200 - far * 1400, { pan: p, verb: 0.45 }); S.tone(70, 0.8, 0.2 * k, { type: 'sine', to: 28 }); for (let i = 0; i < 3; i++) S.noise(0.1, 0.09 * k, 1700, { when: 0.2 + i * 0.2, pan: p }); break; }
+    case 'stinger': S.noise(0.12, 0.35, 900, { verb: 0.3 }); S.tone(160, 0.2, 0.18, { type: 'square', to: 60 }); S.noise(1.4, 0.1, 5200, { type: 'highpass', to: 2600, when: 0.08 }); break;
+    case 'alarm': [0, 0.32, 0.64].forEach((w, k) => { S.tone(k % 2 ? 784 : 988, 0.26, 0.05, { type: 'square', when: w, verb: 0.35 }); }); break;
+    case 'cleared': [523, 784, 1047, 1568].forEach((f, k) => S.tone(f, 0.22, 0.06, { type: 'square', when: k * 0.06, verb: 0.5 })); S.noise(0.6, 0.12, 400, { type: 'bandpass', q: 1, to: 4000, verb: 0.4 }); break;
+    case 'busted': [494, 466, 440, 330].forEach((f, k) => S.tone(f, 0.34, 0.07, { type: 'sawtooth', when: k * 0.26, verb: 0.45 })); [0.1, 0.65].forEach((w) => S.tone(760, 0.5, 0.03, { type: 'sawtooth', to: 940, when: w, verb: 0.5 })); break;
   }
 }
 let AU = null;
@@ -923,7 +960,7 @@ document.addEventListener('click', (e) => {   // Play on a phone or a tablet: fu
     const p = document.createElement('p'); p.className = 'soft cr-tip'; p.innerHTML = 'For the whole screen on an iPhone: tap <b>Share</b> then <b>Add to Home Screen</b>, and play from there.'; box.appendChild(p); };
   add();
 })();
-const BUZZ = { boost: 18, crash: [45, 30, 70], smash: 30, bump: 22, scrape: 8, grid: [8, 22, 8, 22, 8], land: 14, lift: 24, hop: 12 };   // a buzz you can feel on a phone (Android: iPhones have none for web pages)
+const BUZZ = { boost: 18, crash: [45, 30, 70], smash: 30, bump: 22, scrape: 8, grid: [8, 22, 8, 22, 8], land: 14, lift: 24, hop: 12, ram: [40, 20, 40], stinger: [30, 15, 30, 15, 30], busted: [80, 40, 120] };   // a buzz you can feel on a phone (Android: iPhones have none for web pages)
 const CAMS = [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']];
 document.addEventListener('keydown', (e) => {   // C: the next camera (saved with the other settings)
   if ((e.key || '').toLowerCase() !== 'c' || e.repeat || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
@@ -979,6 +1016,25 @@ function sting(name) {   // the goal jingle / the time-up sting, in place of the
   return true;
 }
 window.CRengineOn = () => (AU ? (AU.race ? 'race engine' : 'oscillator engine') : WL ? (WLdone ? 'loaded, not started' : 'loading') : 'not loaded');   // which engine is running (for checking)
+// the Getaway's sirens: the nearest police car's two-tone (hi-lo, about a second a pair), louder as it closes, over on its side, a touch higher
+// coming at you and lower going away; quiet once you're caught, escaped, or there's none about
+function sirenSet(W, a, now, S) {
+  if (!W || !W.cop) { if (AU.sir) AU.sir.g.gain.setTargetAtTime(0, now, 0.1); return; }
+  if (!AU.sir) {
+    const o = a.createOscillator(), o2 = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain(), p = a.createStereoPanner ? a.createStereoPanner() : null;
+    o.type = 'sawtooth'; o2.type = 'square'; f.type = 'bandpass'; f.frequency.value = 1300; f.Q.value = 0.8; g.gain.value = 0;
+    const g2 = a.createGain(); g2.gain.value = 0.35; o.connect(f); o2.connect(g2); g2.connect(f); f.connect(g);
+    if (p) { g.connect(p); p.connect(S.bus() || a.destination); } else g.connect(S.bus() || a.destination);
+    o.start(); o2.start(); AU.sir = { o: o, o2: o2, g: g, p: p };
+  }
+  let best = null, bd = 1e9;
+  for (const c of W.cars) if (c.cop && !c.wreck && !c.block && !c.wait) { const d = Math.hypot(c.s - W.s, (c.x - W.x) * 2); if (d < bd) { bd = d; best = c; } }
+  const quiet = !best || W.goalSeq || W.count > 0 || W.over, vol = quiet ? 0 : 0.07 * Math.pow(Math.max(0, 1 - bd / 340), 1.5) * (W.cop.busted ? 0.6 : 1);
+  const hi = Math.floor(now / 0.55) % 2, dop = best ? Math.max(0.9, Math.min(1.1, 1 + (best.s < W.s ? best.v - W.v : W.v - best.v) / 340)) : 1, fr = (hi ? 940 : 760) * dop;
+  AU.sir.o.frequency.setTargetAtTime(fr, now, 0.012); AU.sir.o2.frequency.setTargetAtTime(fr * 1.005, now, 0.012);
+  AU.sir.g.gain.setTargetAtTime(vol, now, 0.08);
+  if (AU.sir.p && best) AU.sir.p.pan.setTargetAtTime(Math.max(-0.8, Math.min(0.8, (best.x - W.x) / 8)), now, 0.1);
+}
 function frameAudio(W, S, mode, SET) {
   music(W, S, mode, SET);
   { const a0 = S.existing && S.existing(); if (a0) loadWorklet(a0); }
@@ -988,7 +1044,7 @@ function frameAudio(W, S, mode, SET) {
   if (!AU) { if (!playing) return; loadWorklet(a); if (!WLdone) return; AU = makeAudio(a, S.bus() || a.destination); }   // (a moment while the engine loads)
   const now = a.currentTime, T = 0.06;
   if (!playing && AU.ev) electricQuiet(AU.ev, now);
-  if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); if (AU.tyre) AU.tyre.g.gain.setTargetAtTime(0, now, 0.05); return; }
+  if (!playing) { if (AU.sir) AU.sir.g.gain.setTargetAtTime(0, now, 0.05); if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); if (AU.tyre) AU.tyre.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
   if (W.count <= 0 && gi === 0) rpm = Math.max(0.12, Math.min(1, 0.12 + pct / GEARS[1] * 0.85));
@@ -1017,6 +1073,7 @@ function frameAudio(W, S, mode, SET) {
   if (!AU.race && !W.jet && AU.gi != null && gi > AU.gi && !W.crash && W.count <= 0) { AU.shiftT = now + 0.09; S.noise(0.05, 0.06, 1500, { type: 'bandpass', q: 1.5, when: 0.04 }); S.noise(0.04, 0.045, 2600, { type: 'bandpass', q: 2, when: 0.1 }); }
   AU.gi = gi;
   if (!AU.race && !W.jet && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
+  sirenSet(W, a, now, S);
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : (W.drift ? 0.028 : (W.slide || 0) * 0.016) * (AU.tyre ? 0.4 : 1), now, 0.03);   // (a little grit under the squeal)
@@ -1052,7 +1109,7 @@ A.start({
   pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
-    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Spindrift flies - Space fires its rear rockets (over 300 mph), and a tap of Shift (or X, B, the right mouse button) hops it straight over whatever is in front of you; hold it to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Spindrift']], def: 'roadster' },
+    { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best; the Spindrift flies - Space fires its rear rockets (over 300 mph), and a tap of Shift (or X, B, the right mouse button) hops it straight over whatever is in front of you; hold it to hover. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch'], ['skimmer', 'Spindrift'], ['getaway', 'Getaway']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
@@ -1062,17 +1119,19 @@ A.start({
     { key: 'touchfull', type: 'switch', label: 'Full screen when you race', small: 'Phones and tablets: Play takes the game full screen and sideways. An iPhone can\'t do that for a web page: add the game to your Home Screen instead.', def: true },
     { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
   ],
-  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Spindrift', 'Orange · flies']] },
+  picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Spindrift', 'Orange · flies'], ['getaway', 'Getaway', 'Police chase · NEW']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
-  statKey: (W) => 'v' + W.diff,
+  statKey: (W) => (W.cop ? 'g' : 'v') + W.diff,   // (the Getaway: its own boards, so the race's stay fair)
+  statKeyFor: (SET, speed) => (SET.car === 'getaway' ? 'g' : 'v') + speed,
   hires: () => true,
   step: smoothStep, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
-  overText: (W) => W.complete ? 'Goal! ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + ' – rank ' + W.complete.rank + (W.complete.round > 1 ? ', round ' + W.complete.round : '') : 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
+  overText: (W) => W.cop && W.cop.busted && !W.complete ? 'Busted! ' + W.cop.busted.why.toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) + ' – stage ' + W.stageNo : W.cop && W.complete ? 'Escaped to ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + '! – rank ' + W.complete.rank : W.complete ? 'Goal! ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + ' – rank ' + W.complete.rank + (W.complete.round > 1 ? ', round ' + W.complete.round : '') : 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
   titleText: 'Race along the Dorset coast from Bournemouth seafront with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road, to one of five goals &mdash; Lyme Regis, Durdle Door, Portland, Weymouth or the Needles. Drift the bends, earn your nitro, and do what she asks for <b>hearts</b>.',
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
   touchText: 'Touch the <b>left</b> or <b>right</b> of the screen to steer, <b>both at once</b> for nitro; <b>Brake</b> and <b>Nitro</b> at the sides too &mdash; the car goes by itself. Settings &gt; Touch steering for buttons instead.',
   help: [
+    '<b>NEW - the Getaway:</b> pick it like a car. You built the only flying car in Dorset - and the police think you stole it. There&rsquo;s no clock: they chase you down with sirens going, draw alongside and ram you, wait in lay-bys to pull out after you, and block the road with roadblocks and stingers. Rocket away from them (Space), hop the roadblocks (a tap of Shift, X or B), and make them crash into the traffic and each other. Too much damage, or boxed in at a standstill, and you&rsquo;re <b>BUSTED</b>; each checkpoint patches the car up a little. Reach the end of the coast road and you&rsquo;ve <b>ESCAPED</b>. It has its own Hall of Fame.',
     '<b>The aim:</b> reach a <b>goal</b> before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time &mdash; a little less each time. Five stretches make a run: reach one of the five goals for a time bonus, a love bonus and a rank, and the game is won. Or press <b>Space</b> at the goal to carry on into round 2, back through the town &mdash; busier and quicker.',
     '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over, unless you roll over the next checkpoint before the car stops: <b>JUST MADE IT!</b> Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',

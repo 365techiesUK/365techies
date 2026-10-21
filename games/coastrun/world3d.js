@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=59';
+import * as MD from './models3d.js?v=60';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -421,6 +421,8 @@ export function createWorld() {
   };
   MAT.twall.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;'); };   // the lamps' light on the walls: brighter low down, by each part's own colour
   MAT.twall.customProgramCacheKey = () => 'twall';
+  // the Getaway's police lights (21 Oct 2026): every police car's left lenses share sirA, its right ones sirB - flashing them is two colour changes a frame
+  MAT.sirA = new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.8, 2.8, 2.8) }); MAT.sirB = new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(0.3, 0.3, 0.3) });
   const KIT = (f) => { const k = new MD.Kit(); f(k); return k.build(); }, TW = E.TUN_W;
   const DECK = KIT((k) => k.box(2 * E.BRG_W + 0.9, 1.1, SEG + 0.06, 0, -1.2, 0, '#9a968c'));
   const TROOF = KIT((k) => { k.box(2 * TW + 2.4, 1.4, SEG + 0.7, 0, 5.7, 0, '#4f4a43', 0, 0, 0, 'troof'); k.box(2 * TW + 0.4, 0.35, 0.5, 0, 5.36, 0, '#3e3a34', 0, 0, 0, 'troof'); });
@@ -1944,6 +1946,7 @@ export function createWorld() {
         const mm = MD.trafficModel(c.t, c.col), V = E.VEH[c.t]; m = new THREE.Group();
         for (const k in mm) if (mm[k] && MAT[k]) { const mesh = new THREE.Mesh(mm[k], MAT[k]); mesh.castShadow = !V.rival && k !== 'glow'; m.add(mesh); }   // (a racer: its soft blob shadow only - seven of them in the shadow pass cost a slow PC)
         const blob = new THREE.Mesh(blobGeo, blobMat); blob.scale.set(V.w * 2.6, 1, V.l * 2.3); blob.position.y = 0.05; m.add(blob);
+        if (V.cop) for (const sd of [-1, 1]) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#4a7bff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); sp.scale.set(2.6, 2.6, 1); sp.position.set(sd * 0.3, 1.56, 0.32); sp.userData.sir = sd; m.add(sp); }   // (the blue glow of its lights: seen a long way off, and at night)
         if (V.rival && c.racer == null) { const tg = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ff2a3a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.55 })); tg.scale.set(1.7, 0.55, 1); tg.position.set(0, 0.75, V.l + 0.15); m.add(tg); }   // its tail bar glows, so you can pick it out ahead
         scene.add(m); traffic.set(c.id, m);
       }
@@ -1952,6 +1955,14 @@ export function createWorld() {
       m.position.set(POS.x, POS.y, POS.z);
       m.rotation.order = 'YXZ'; m.rotation.y = -POS.th + (c.tx - c.x) * -0.04 + (c.spin > 0 ? c.spin * 0.15 : 0); m.rotation.z = POS.bank * 0.8;
       m.rotation.x = Math.atan((E.heightAt(W, c.s + 2) - E.heightAt(W, c.s - 2)) / 4);
+      if (c.cop) {   // the Getaway's police: parked at an angle in a roadblock or a lay-by; a wreck spins, flips over onto its roof and smokes; the lights flash
+        m.rotation.y += c.yaw || 0;
+        const wk = c.wreck;
+        if (wk) { const u = Math.min(1, wk.t / 36); m.rotation.y += wk.dir * (1 - Math.exp(-wk.t / 18)) * 2.6; if (wk.flip) { m.rotation.z += wk.dir * Math.PI * u; m.position.y += Math.sin(u * Math.PI) * 1.9 + u * 1.45; }
+          if (wk.t < 420 && Math.random() < 0.5) smoke.emit(POS.x + (Math.random() - 0.5), POS.y + 1.2, POS.z + (Math.random() - 0.5), (Math.random() - 0.5), 1.4 + Math.random() * 1.6, (Math.random() - 0.5), 1.4, 3.2, wk.t < 90 ? '#4a4a4a' : '#8a8a8a', 0.45, 1.6); }
+        const on = Math.floor(W.t / 8) % 2;
+        for (const ch of m.children) if (ch.userData.sir) ch.material.opacity = wk ? 0 : (ch.userData.sir < 0 ? on : 1 - on) * (0.75 + 0.25 * Math.sin(W.t * 0.9 + c.id));
+      }
       if (c.rival && W.goT != null && W.t - W.goT < 200 && c.v < 22) {   // a racer off the line: its tyres spinning too
         const V = E.VEH[c.t], k3 = 1 - c.v / 22, pts = [];
         for (const sd of [-1, 1]) { place(W, c.s - V.l * 0.7, c.x + sd * 0.8, c.b, P2); pts.push([P2.x, P2.y + 0.3, P2.z]);
@@ -1960,6 +1971,19 @@ export function createWorld() {
       } else if (R.rivalSkid && R.rivalSkid.has(c.id)) R.rivalSkid.delete(c.id);
     }
     for (const [id, m] of traffic) if (!seen.has(id)) { scene.remove(m); traffic.delete(id); }
+    { const ST = R.stingers || (R.stingers = new Map()), seenS = new Set();   // the Getaway's stingers: a black strip of spikes across the road
+      for (const st of (W.stingers || [])) {
+        let g = ST.get(st.id);
+        if (!g) { g = new THREE.Group(); const w = st.x1 - st.x0;
+          const strip = new THREE.Mesh(new THREE.BoxGeometry(w, 0.07, 0.42), new THREE.MeshStandardMaterial({ color: '#1a1b1d', roughness: 0.7 })); strip.position.y = 0.05; g.add(strip);
+          const spk = new THREE.MeshStandardMaterial({ color: '#d4d7db', roughness: 0.3, metalness: 0.8 });
+          for (let q = -w / 2 + 0.15; q < w / 2; q += 0.3) for (const dz of [-0.12, 0.12]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 4), spk); sp.position.set(q, 0.14, dz); g.add(sp); }
+          scene.add(g); ST.set(st.id, g); }
+        seenS.add(st.id); place(W, st.s, (st.x0 + st.x1) / 2, 0, POS); g.position.set(POS.x, POS.y, POS.z); g.rotation.set(0, -POS.th, 0);
+      }
+      for (const [id, g] of ST) if (!seenS.has(id)) { scene.remove(g); ST.delete(id); }
+      const on = Math.floor(W.t / 8) % 2; MAT.sirA.color.setScalar(on ? 2.8 : 0.28); MAT.sirB.color.setScalar(on ? 0.28 : 2.8);
+    }
     if (R.ghostCar) {   // your ghost: on the road where your best drive was at this moment (not in a split's other branch, not right on top of you)
       const G = W.ghost, gi = G ? E.segIndex(G.s) : 0, gs = G ? E.segAt(W, gi) : null;
       R.ghostCar.visible = !!(G && gs && !(gs.fk && gs.fk.b) && !W.crash && !W.ferry && gi >= W.base && gi <= E.lastIndex(W));
@@ -2151,6 +2175,11 @@ export function createWorld() {
             for (let i = 0; i < 18; i++) sparks.emit(bx + (Math.random() - 0.5) * 1.4, cy + 0.12, bz + (Math.random() - 0.5) * 0.6, tfx * W.v * (0.5 + Math.random() * 0.3) + (Math.random() - 0.5) * 4, 0.8 + Math.random() * 3, tfz * W.v * (0.5 + Math.random() * 0.3) + (Math.random() - 0.5) * 4, 0.09, 0.04, i % 3 ? '#ffb347' : '#fff6dc', 1, 0.3 + Math.random() * 0.2, 9, SPK);
             sparks.emit(bx, cy + 0.2, bz, tfx * W.v * 0.85, 0, tfz * W.v * 0.85, 0.7, 0.25, '#fff0d0', 0.6, 0.1, 0, SPK); } break;
         case 'confetti': confetti(cx, cy, cz, Math.sin(heading), -Math.cos(heading), 300); break;
+        case 'copcrash': { const Q = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }; place(W, f.s, f.x, 0, Q);   // a police car crashing, where it is
+          for (let i = 0; i < 34; i++) sparks.emit(Q.x, Q.y + 0.7, Q.z, (Math.random() - 0.5) * 12, Math.random() * 8, (Math.random() - 0.5) * 12, 0.3, 0.8, ['#ffb347', '#ff6a3d', '#ffe08a', '#7fb2ff'][i % 4], 1, 0.7, 9);
+          for (let i = 0; i < 26; i++) smoke.emit(Q.x, Q.y + 0.8, Q.z, (Math.random() - 0.5) * 5, 1 + Math.random() * 3, (Math.random() - 0.5) * 5, 1.6, 3.2, '#6a6a6a', 0.6, 1.9);
+          if (Math.abs(f.s - W.s) < 60) R.camShake = Math.max(R.camShake || 0, 0.25); break; }
+        case 'cleared': for (let i = 0; i < 60; i++) sparks.emit(cx, cy + 1.5, cz, (Math.random() - 0.5) * 14, 2 + Math.random() * 9, (Math.random() - 0.5) * 14, 0.28, 0.9, ['#ffd23f', '#ffffff', '#4a7bff'][i % 3], 1, 0.6, 9); R.flash = Math.max(R.flash, 0.3); R.camShake = Math.max(R.camShake || 0, 0.3); break;
         case 'fireworks': for (let b2 = 0; b2 < 6; b2++) { const ox = x + Math.sin(heading) * 60 + (Math.random() - 0.5) * 60, oz = z - Math.cos(heading) * 60 + (Math.random() - 0.5) * 60, oy = W.h + 30 + Math.random() * 20, cc = ['#ff5a5f', '#ffd23f', '#5aa9ff', '#7cff8a'][b2 % 4]; for (let i = 0; i < 50; i++) { const a = Math.random() * 6.28, e = Math.random() * 3.14 - 1.57, sp = 10 + Math.random() * 6; sparks.emit(ox, oy, oz, Math.cos(a) * Math.cos(e) * sp, Math.sin(e) * sp, Math.sin(a) * Math.cos(e) * sp, 0.7, 1.6, cc, 1, 1.2, 3); } } break;
       }
     }
@@ -2255,6 +2284,8 @@ function starTex() {   // a cartoon star, yellow with a white edge
   for (let i = 0; i < 10; i++) { const r = i % 2 ? 12 : 28, a = -Math.PI / 2 + i * Math.PI / 5; x.lineTo(32 + Math.cos(a) * r, 32 + Math.sin(a) * r); }
   x.closePath(); x.fillStyle = '#ffd83a'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#fffbe8'; x.stroke(); return (STARTEX = tex(c, false));
 }
+let SGLOW = null;
+function sirenGlow() { if (SGLOW) return SGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.25, 'rgba(150,185,255,0.7)'); g.addColorStop(1, 'rgba(60,110,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (SGLOW = tex(c, false)); }
 function flameGlow() { if (FGLOW) return FGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,200,120,0.6)'); g.addColorStop(1, 'rgba(255,120,40,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (FGLOW = tex(c, false)); }
 function flameTexture() {   // a flame along its length: white-blue at the pipe, orange, then gone
   const W = 64, H = 256, c = canvas(W, H), x = c.getContext('2d');

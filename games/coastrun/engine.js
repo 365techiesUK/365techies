@@ -122,7 +122,8 @@
     { id: 'wedge', w: 1.0, l: 2.25, v: [1, 1], rival: true },   // the rivals (see rivals()): their pace is set there
     { id: 'lemans', w: 0.95, l: 2.1, v: [1, 1], rival: true },
     { id: 'coupe9', w: 0.95, l: 2.1, v: [1, 1], rival: true }, { id: 'gtbrit', w: 0.96, l: 2.2, v: [1, 1], rival: true }, { id: 'raging', w: 1.0, l: 2.2, v: [1, 1], rival: true },
-    { id: 'trident', w: 0.95, l: 2.25, v: [1, 1], rival: true }, { id: 'barchetta', w: 0.97, l: 2.3, v: [1, 1], rival: true }
+    { id: 'trident', w: 0.95, l: 2.25, v: [1, 1], rival: true }, { id: 'barchetta', w: 0.97, l: 2.3, v: [1, 1], rival: true },
+    { id: 'police', w: 0.95, l: 2.3, v: [1, 1], cop: true }   // the Getaway's police cars (always last: COP)
   ];
   // the player's car: top speed, acceleration, grip, and how quickly it turns
   var CARS = {
@@ -138,7 +139,7 @@
     skimmer: { top: 1.12, acc: 1.04, grip: 0.98, yaw: 1.02, jet: true, launch: 42 }
   };
   // how tall the traffic is (m): the Skimmer can only clear what it's above
-  var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, gtbrit: 1.3, raging: 1.25, trident: 1.25, barchetta: 1.15 };
+  var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, gtbrit: 1.3, raging: 1.25, trident: 1.25, barchetta: 1.15, police: 1.5 };
   // the Skimmer's gas: the tank (0-100), a burst from the rear nozzles, a lift, the hover while LIFT is held, the most it can hover to
   // (owner, 20 Oct 2026: "concentrate on the car going fast ... when you need to jump obstacles or cars in front, you press it and you fly up
   // over the vehicle in front, to save slowing down or going around it ... a lot more hyped"): the lift is now a quick, hard HOP - up fast,
@@ -784,7 +785,7 @@
     var d = speed === 3 ? 3 : speed === 2 ? 2 : 1;
     set = set || {};
     var W = {
-      diff: d, speed: d, D: DIFF[d], car: CARS[set.car] ? set.car : 'roadster', auto: set.pedal !== 'hold',
+      diff: d, speed: d, D: DIFF[d], car: set.car === 'getaway' ? 'skimmer' : CARS[set.car] ? set.car : 'roadster', auto: set.pedal !== 'hold',
       seed: seed == null ? (Math.random() * 4294967296) >>> 0 : seed >>> 0,
       segs: [], base: 0, fork: null, goalAt: -1, stretch: [], pendingSide: 0,
       s: 0, x: 0, v: 0, psi: 0, phi: 0, steer: 0, yawRate: 0, h: 0, vh: 0, air: false, airT: 0, land: 0,
@@ -806,6 +807,7 @@
     W.s = 3 * SEG; W.h = heightAt(W, W.s);
     for (var z = W.s + 320; z < W.s + VIEW; z += W.D.gap * (0.85 + W.rng() * 1.1)) spawnCar(W, z);   // (the road ahead of the grid clear)
     makeField(W);
+    if (set.car === 'getaway' || set.mode === 'getaway') copInit(W);   // (the Getaway: chosen like a car on the title screen)
     return W;
   }
   function bannerOf(W, txt, sub, kind) { W.banner = { txt: txt, sub: sub || '', kind: kind || '', t: W.t }; }
@@ -823,6 +825,7 @@
     var i = segIndex(z); if (i > lastIndex(W) - 4 || i < W.base) return;
     var g = segAt(W, i), S = STAGES[g.st], t = pick(S.mix, W.rng), T = VEH[t], b = 0, x = LANES[(W.rng() * 3) | 0];
     if (g.gate || (g.fk && g.fk.a)) return;
+    if (W.cop && W.cop.zone && z > W.cop.zone[0] && z < W.cop.zone[1]) return;   // (a roadblock: the police have stopped the traffic)
     if (g.fk && g.fk.b) b = W.fork && W.fork.s ? W.fork.s : (W.rng() < 0.5 ? -1 : 1);
     for (var j = 0; j < W.cars.length; j++) { var o = W.cars[j]; if (o.b === b && Math.abs(o.s - z) < 40 && Math.abs(o.x - x) < 3) return; }
     var tv = W.D.tv * (1 + 0.06 * Math.min(4, W.round - 1)), v = VTRAF * (T.v[0] + W.rng() * (T.v[1] - T.v[0])) * tv;
@@ -945,6 +948,198 @@
       }
     }
   }
+  // ---------------------------------------------------------------- THE GETAWAY (owner, 21 Oct 2026: "a police getaway level with the flying car ... they're
+  // really after you and try and get you, and road blockages, so you can use your thrust thing to jump over them ... a full action level ... so it goes
+  // viral"). The story in a line: you built the only flying car in Dorset, and the police think you stole it. The Spindrift only, the same coast, no
+  // clock: police cars chase you down (sirens and blue lights: coastrun.js, world3d.js) - they come up behind, draw alongside and ram you; more wait in
+  // lay-bys ahead and pull out after you; roadblocks of parked police cars with a stinger across the road - find the gap or hop the lot. They crash
+  // into the traffic, into each other and into their own roadblocks. Rams, stingers and crashes do damage: too much, or boxed in at a standstill,
+  // and you're BUSTED. Reach the goal and you've ESCAPED. Every chance from W.rng, every move in step(): a recorded run replays exactly.
+  var COP = VEH.length - 1, COP_MAX = [0, 8, 5, 4];   // (the police car's vehicle index; damage you can take before you're busted, by difficulty)
+  function copInit(W) {
+    W.cop = { dmg: 0, max: COP_MAX[W.diff], started: false, nextCh: 0, nextAmb: W.s + 1500, nextBlock: W.s + 2300, blocks: [], cleared: 0, down: 0, lost: 0,
+      pileT: -999, pileN: 0, boxT: 0, ramT: -999, busted: null, escaped: false, tyres: 0, hurtT: -999, sqT: -999, squeeze: 0, zone: null, lastS: W.s };
+    W.stingers = []; W.reqNext = 1e12;   // (no passenger requests in a chase: she's busy holding on)
+    spawnCop(W, W.s - 9.5, -4.6, 0, { grid: true }); spawnCop(W, W.s - 11.5, 4.6, 0, { grid: true });   // (on the grid behind you through the lights)
+  }
+  function heat(W) { return clamp(W.stageNo + 2 * (W.round - 1), 1, 5); }   // how hard they're after you: one more step every stretch
+  function copTop(W) { return VMAX * CARS[W.car].top * [0, 0.98, 1.05, 1.1][W.diff] * (1 + 0.015 * (heat(W) - 1)); }   // (quicker than you flat out - not than your rockets)
+  function spawnCop(W, z, x, v, o) {
+    var i = segIndex(z); if (i < W.base + (o && o.grid ? 0 : 2) || i > lastIndex(W) - 4) return null;
+    var g = segAt(W, i); if ((g.gate && !(o && o.grid)) || g.fk) return null;
+    var c = { id: W.carN++, s: z, ps: z, x: x, tx: x, v: v, v0: v, t: COP, b: 0, col: 0, lc: 0, hitT: -999, passed: z < W.s, ds: z - W.s, spin: 0,
+      cop: true, skill: 0.5 + W.rng() * 0.5, side: (W.cop.sideN = -(W.cop.sideN || 1)), backT: 0, wreck: null, wait: false, block: false, yaw: 0 };
+    if (o) for (var k in o) c[k] = o[k];
+    W.cars.push(c); return c;
+  }
+  function copLaneFree(W, c, L) {
+    for (var q = 0; q < W.cars.length; q++) { var o = W.cars[q]; if (o !== c && o.b === c.b && Math.abs(o.s - c.s) < 16 && Math.abs(o.x - L) < 2.4) return false; }
+    return true;
+  }
+  // a roadblock: on the next open, straight-ish road from ~760 m ahead (no junction, tunnel, bridge or checkpoint near, room to jump it): police cars
+  // parked across it at an angle, a stinger before them. Low heat: one lane left open (often with the stinger in it); from heat 3, sometimes the lot
+  function placeBlock(W, h) {
+    var C = W.cop, i0 = segIndex(W.s + 760), best = -1, i, q;
+    for (i = i0; i < i0 + 70 && i < lastIndex(W) - 12; i++) {
+      var ok = true;
+      for (q = i - 45; q <= i + 12 && ok; q++) { var gq = segAt(W, q); if (gq.gate || gq.fk || gq.tun || gq.brg || gq.wet || Math.abs(gq.k) > 1 / 320) ok = false; }
+      if (ok) { best = i; break; }
+    }
+    if (best < 0) return false;
+    var zb = best * SEG, full = h >= 3 && W.rng() < 0.2 + 0.1 * h, gap = full ? -1 : (W.rng() * 3) | 0, B = { s: zb, gap: gap, ids: [], warned: false, done: false, hit: false, air: false };
+    for (i = W.cars.length - 1; i >= 0; i--) { var o = W.cars[i]; if (!o.cop && o.s > zb - 170 && o.s < zb + 60) W.cars.splice(i, 1); }   // (the police have stopped the traffic either side)
+    for (var L = 0; L < 3; L++) if (L !== gap) { var c = spawnCop(W, zb + (L === 1 ? 1.4 : 0), LANES[L] * 0.97, 0, { block: true, blk: B, yaw: (L === 1 ? (W.rng() < 0.5 ? -1 : 1) : L - 1) * 0.42 }); if (c) B.ids.push(c.id); }
+    if (gap < 0 || W.rng() < 0.7) W.stingers.push({ id: W.carN++, s: zb - 16, x0: gap < 0 ? -HALF : LANES[gap] - 2.2, x1: gap < 0 ? HALF : LANES[gap] + 2.2, hit: false });
+    C.blocks.push(B); C.zone = [zb - 190, zb + 70];
+    return true;
+  }
+  function wreckCop(W, c, why) {
+    if (c.wreck) return;
+    var off = c.x > 0.5 ? 1 : c.x < -0.5 ? -1 : W.rng() < 0.5 ? -1 : 1;   // (it slews off towards the nearer side of the road: a wreck mostly ends up out of the lanes)
+    c.wreck = { t: 0, dir: W.rng() < 0.5 ? -1 : 1, flip: why !== 'stinger' && c.v > 40 && W.rng() < 0.65, dx: off * (7 + W.rng() * 6), why: why };
+    var C = W.cop, d = c.s - W.s;
+    W.events.push({ sfx: 'copdown', x: c.x - W.x, d: d }); fx(W, { k: 'copcrash', x: c.x, s: c.s, id: c.id });
+    if (Math.abs(d) < 320 && !C.busted && !W.goalSeq) {   // (one you'd see: points, more for each one in the same pile-up)
+      C.down++; C.pileN = W.t - C.pileT < 150 ? C.pileN + 1 : 1; C.pileT = W.t;
+      var pts = 5000 * C.pileN; W.score += pts;
+      pop(W, C.pileN > 1 ? 'PILE-UP x' + C.pileN : 'COP DOWN!', '+' + pts.toLocaleString('en-GB'), c.x - W.x, 'gold');
+      mood(W, 'cheer');
+    }
+  }
+  function copHurt(W, n, txt) {   // damage: a ram, a stinger, a crash
+    var C = W.cop; if (!C || C.busted || W.goalSeq) return;
+    C.dmg = Math.min(C.max, C.dmg + n); C.hurtT = W.t;
+    pop(W, txt, C.dmg >= C.max ? 'WRECKED' : 'DAMAGE ' + C.dmg + '/' + C.max, 0, 'red');
+    if (C.dmg >= C.max) bust(W, 'YOUR CAR IS WRECKED');
+  }
+  function bust(W, why) {   // caught: the car brakes to a stop with them all round it (step's time-up path), then the result
+    var C = W.cop; if (!C || C.busted || W.goalSeq) return;
+    C.busted = { t: W.t, why: why }; W.timeUp = true;
+    spawnCop(W, W.s + 22, clamp(W.x + 1.2, -4.6, 4.6), W.v * 0.5, { yaw: 0.35 }); spawnCop(W, W.s - 16, clamp(W.x - 2.5, -4.6, 4.6), W.v);   /* (and they've got you: one pulls across in front, another up behind) */ W.timeUpT = W.t; W.tuCoast = false; W.tuBrake = Math.max(16, W.v / 2.5);
+    endDrift(W); W.events.push({ sfx: 'busted' }); W.events.push({ say: 'Busted! ' + why }); bannerOf(W, 'BUSTED!', why, 'red'); mood(W, 'sad'); voice(W, 'fail', true);
+  }
+  function copStep(W) {
+    var C = W.cop, cars = W.cars, F = W.fork, h = heat(W), CV = copTop(W), i, j, c, o, live = 0;
+    if (W.count > 0 || W.ferry || W.demo) return;
+    var chase = !C.busted && !W.goalSeq && !W.over;
+    if (!C.started) {   // GO: two of them right behind you on the start line, sirens on
+      C.started = true; C.nextCh = W.t + 60 * 10;
+      W.events.push({ sfx: 'siren' }); pop(W, 'THEY THINK YOU STOLE IT', 'GET TO THE COAST!', 0, 'red');
+    }
+    for (i = 0; i < cars.length; i++) { c = cars[i]; if (c.cop && !c.block && !c.wreck && !c.wait) live++; }
+    // more of them, from behind, as the heat rises
+    if (chase && live < [0, 2, 3, 3, 4, 5][h] + (W.diff === 3 ? 1 : W.diff === 1 ? -1 : 0) && W.t >= C.nextCh) {
+      C.nextCh = spawnCop(W, W.s - 150 - W.rng() * 70, LANES[(W.rng() * 3) | 0], Math.max(30, W.v * 0.95)) ? W.t + 60 * (8.5 - h) * (0.7 + W.rng() * 0.6) : W.t + 30;
+    }
+    // one waiting in a lay-by ahead, lights going, to pull out after you
+    if (chase && W.s >= C.nextAmb) {
+      var za = W.s + 640, ia = segIndex(za), ga = segAt(W, ia);
+      if (ia < lastIndex(W) - 6 && !ga.gate && !ga.fk && !ga.tun && !ga.brg && !ga.wet) {
+        var e = edges(W, ga), sd = W.rng() < 0.5 ? -1 : 1, xa = sd * 9.4;
+        if (xa < e[0] || xa > e[1]) { sd = -sd; xa = sd * 9.4; }
+        if (xa >= e[0] && xa <= e[1]) spawnCop(W, za, xa, 0, { wait: true, yaw: -sd * 0.5 });
+      }
+      C.nextAmb = W.s + [0, 2600, 2200, 1900, 1650, 1450][h] * (0.8 + W.rng() * 0.4);
+    }
+    // a roadblock ahead
+    if (chase && W.s >= C.nextBlock) C.nextBlock = placeBlock(W, h) ? W.s + [0, 3300, 2800, 2400, 2100, 1800][h] * (0.85 + W.rng() * 0.3) : W.s + 120;
+    if (C.zone && W.s > C.zone[1] + 40) C.zone = null;
+    if (C.tyres > 0) { C.tyres--; if (W.t % 5 === 0 && !W.air && W.v > 8) fx(W, { k: 'sparks', x: W.x + (W.t % 10 ? 0.7 : -0.7) }); if (C.tyres === 0) pop(W, 'TYRES CHANGED', 'BACK UP TO SPEED', 0, 'nitro'); }
+    // the police: chasing, waiting, wrecked
+    for (i = 0; i < cars.length; i++) {
+      c = cars[i]; if (!c.cop || c.block) continue;
+      c.ps = c.s;
+      if (c.wreck) { c.wreck.t++; c.v = Math.max(0, c.v - (c.v * 0.9 + 5) * DT); c.s += c.v * DT; c.x += c.wreck.dx * Math.max(0, 1 - c.wreck.t / 45) * DT; continue; }
+      if (c.wait) { var dw = c.s - W.s; if (chase && dw < 170 && dw > -30) { c.wait = false; c.tx = clamp(Math.round(c.x / 4.6) * 4.6, -4.6, 4.6); c.v = 5; W.events.push({ sfx: 'siren', x: c.x - W.x }); } else continue; }
+      var gap = W.s - c.s, want;
+      if (!chase) want = gap > 12 ? Math.min(CV, W.v + gap * 0.4) : Math.max(0, W.v - 3);   // (caught, or you've escaped: they pull up round you)
+      else if (W.v < 9 && gap > 0 && gap < 30) want = Math.max(0, (gap - 7) * 1.6);   // you've stopped (a crash): up behind you, and stop
+      else if (gap > 70) want = CV;
+      else if (gap > 5) want = Math.min(CV, W.v + 2.5 + gap * 0.1);
+      else if (gap > -5) want = W.v * (W.t < c.backT ? 0.9 : 1.012);
+      else want = c.aheadT < 150 ? clamp(W.v * 0.97, CV * 0.55, CV) : W.v * 0.78;   // ahead of you: in your way for a couple of seconds at a fair lick (hop it!) - never braking you to a stop - then it drops back behind you to chase
+      c.aheadT = gap < -4 && chase ? (c.aheadT || 0) + 1 : 0;
+      var ac = want > c.v ? (c.v < 40 ? 15 : 8.5) : 18;
+      c.v = Math.max(0, c.v + clamp(want - c.v, -ac * DT, ac * DT));
+      // across: lined up behind you, then up alongside and into you; held off a moment after a ram; ahead, in your lane
+      // (alongside it winds up first - holds beside you for most of a second, so you see it coming - then swings in)
+      if (gap > 2.5 || gap < -4 || W.t < c.backT) c.wind = 0; else if (!c.wind) c.wind = W.t + 55 + ((W.rng() * 55) | 0);
+      var tx = gap > 18 ? W.x + c.side * 0.4 : gap > 2.5 ? W.x + c.side * 2.5 : gap > -4 ? W.x + c.side * (W.t < c.backT ? 3.4 : W.t < c.wind || W.t - C.ramT < 150 ? 2.7 : 0.5) : c.aheadT < 150 ? W.x : (W.x > 0 ? -4.6 : 4.6);   // (one ram at a time: the others hold beside you; ahead, it pulls aside to let you by once it's had its go)
+      // what's in its way: round it if there's room, brakes if it's a careful one - and if not, it hits it
+      for (j = 0; j < cars.length; j++) { o = cars[j]; if (o !== c && o.cop && !o.block && !o.wreck && !o.wait && o.b === c.b && Math.abs(o.s - c.s) < 7 && Math.abs(o.x - tx) < 2.3) tx = o.x + (c.x >= o.x ? 2.4 : -2.4); }   // (not on top of another of them)
+      var look = 14 + 30 * c.skill, blk = null, bd = 1e9;
+      for (j = 0; j < cars.length; j++) { o = cars[j]; if (o === c || o.b !== c.b) continue; var dd = o.s - c.s; if (dd > 0 && dd < look && dd < bd && Math.abs(o.x - c.x) < 2.4 && (o.v < c.v - 1 || o.block || o.wreck || o.wait)) { bd = dd; blk = o; } }
+      if (blk) {
+        var al = [blk.x - 3.7, blk.x + 3.7], fr = null;
+        if (Math.abs(al[1] - tx) < Math.abs(al[0] - tx)) al.reverse();
+        for (j = 0; j < 2 && fr == null; j++) if (Math.abs(al[j]) < HALF - 0.8 && copLaneFree(W, c, al[j])) fr = al[j];
+        if (fr != null) tx = fr; else if (c.skill > 0.62 || (blk.cop && !blk.wreck && !blk.block)) c.v = Math.min(c.v, blk.v + bd * 0.5);   // (they keep their distance from each other; the less careful ones go straight into the traffic, a wreck or a roadblock - the pile-ups)
+      }
+      var lat = gap < -4 ? 3.2 : 7.5;   // (ahead of you it can't mirror your every move)
+      c.tx = clamp(tx, -(HALF - 0.9), HALF - 0.9); c.x += clamp(c.tx - c.x, -lat * DT, lat * DT);
+      var z0 = c.s; c.s += c.v * DT;
+      if (F && c.b === 0 && segIndex(c.s) >= F.split && segIndex(z0) < F.split) { c.b = F.s || (c.x >= 0 ? 1 : -1); c.x -= c.b * OFF0; c.tx = c.x; }   // (at a split: the road you took)
+    }
+    // police crashes: into the back of the traffic, another police car, a roadblock or a wreck; a stinger
+    for (i = 0; i < cars.length; i++) {
+      c = cars[i]; if (!c.cop || c.block || c.wreck || c.wait) continue;
+      var V1 = VEH[c.t];
+      for (j = 0; j < cars.length; j++) {
+        o = cars[j]; if (o === c || o.b !== c.b || o.wait) continue;
+        var V2 = VEH[o.t], dz2 = o.s - c.s;
+        if (dz2 > -0.5 && dz2 < V1.l + V2.l - 0.3 && Math.abs(o.x - c.x) < (V1.w + V2.w) * 0.85) {
+          wreckCop(W, c, o.block ? 'block' : o.cop ? 'cop' : 'car');
+          if (o.cop && !o.block && !o.wreck) wreckCop(W, o, 'cop'); else if (!o.cop) { o.spin = 70; o.v *= 0.6; }
+          break;
+        }
+      }
+      if (!c.wreck) for (j = 0; j < W.stingers.length; j++) { var sg = W.stingers[j]; if (c.ps < sg.s && c.s >= sg.s && c.x > sg.x0 - V1.w && c.x < sg.x1 + V1.w && c.b === 0) { wreckCop(W, c, 'stinger'); sg.hit = true; break; } }
+    }
+    // you over a stinger (unless you're high enough over it)
+    for (j = 0; j < W.stingers.length; j++) {
+      var st = W.stingers[j];
+      if (C.lastS < st.s && W.s >= st.s && !W.crash && W.x > st.x0 - CAR_W && W.x < st.x1 + CAR_W && !(W.air && W.h - heightAt(W, st.s) > 0.45)) {
+        st.hit = true; C.tyres = 60 * 7; W.v *= 0.8; W.events.push({ sfx: 'stinger' }); fx(W, { k: 'sparks', x: W.x }); W.shake = Math.max(W.shake, 12); mood(W, 'scared');
+        copHurt(W, 1, 'STINGER! TYRES BURST');
+      }
+    }
+    // the roadblocks: the warning, then cleared (over it) or through the gap; gone once they're well behind
+    for (j = C.blocks.length - 1; j >= 0; j--) {
+      var B = C.blocks[j], dB = B.s - W.s;
+      if (!B.warned && dB < 480 && dB > 0 && chase) { B.warned = true; pop(W, 'ROADBLOCK AHEAD', B.gap < 0 ? 'JUMP IT!' : 'FIND THE GAP - OR JUMP IT', 0, 'red'); W.events.push({ sfx: 'alarm' }); mood(W, 'scared'); }
+      if (Math.abs(dB) < 3 && W.air) B.air = true;
+      if (!B.done && dB < -6) {
+        B.done = true;
+        if (!B.hit && chase) {
+          if (B.air) { C.cleared++; W.score += 10000; pop(W, 'ROADBLOCK CLEARED!', '+10,000', 0, 'gold'); W.events.push({ sfx: 'cleared' }); W.shake = Math.max(W.shake, 8); mood(W, 'cheer'); fx(W, { k: 'cleared', x: W.x }); }
+          else { W.score += 3000; pop(W, 'THROUGH THE GAP', '+3,000', 0, 'gold'); mood(W, 'cheer'); }
+        }
+      }
+      if (dB < -260) { for (i = cars.length - 1; i >= 0; i--) if (cars[i].blk === B) cars.splice(i, 1); C.blocks.splice(j, 1); }
+    }
+    for (j = W.stingers.length - 1; j >= 0; j--) if (W.stingers[j].s < W.s - 260) W.stingers.splice(j, 1);
+    // the squeeze: between two of them, one each side, at speed
+    if (chase && W.v > 30 && W.t - C.sqT > 180) {
+      var lo = null, hi = null;
+      for (i = 0; i < cars.length; i++) { c = cars[i]; if (!c.cop || c.block || c.wreck || c.wait || Math.abs(c.s - W.s) > 4.5) continue; if (c.x < W.x - 1.4) lo = c; else if (c.x > W.x + 1.4) hi = c; }
+      if (lo && hi && hi.x - lo.x < 6.4) { C.sqT = W.t; C.squeeze++; W.score += 3000; pop(W, 'THE SQUEEZE!', '+3,000', 0, 'gold'); W.events.push({ sfx: 'near', x: 0, n: 3 }); mood(W, 'scared'); }
+    }
+    // boxed in: stopped, with one of them beside you or in front
+    if (chase && W.v < 5 && !W.crash) {   // (not while you're still getting going again after a crash)
+      var boxed = false;
+      for (i = 0; i < cars.length && !boxed; i++) { c = cars[i]; if (c.cop && !c.wreck && !c.wait && sameRoad(W, c) && c.s - W.s > -3 && c.s - W.s < (c.block ? 16 : 11) && Math.abs(c.x - W.x) < 5) boxed = true; }   // (or pulled up at a roadblock)
+      C.boxT = boxed ? C.boxT + 1 : 0; if (C.boxT > 100) bust(W, 'BOXED IN');
+    } else C.boxT = 0;
+    // shaken off: one that's dropped right back, or gone down the other road
+    for (i = cars.length - 1; i >= 0; i--) {
+      c = cars[i]; if (!c.cop || c.block) continue;
+      if (c.s < W.s - 420 || c.s > W.s + VIEW + 150 || (F && F.s && c.b && c.b !== F.s && segIndex(c.s) >= F.end - 2) || (!F && c.b)) {
+        if (!c.wreck && !c.wait && c.s < W.s && chase) { C.lost++; pop(W, 'SHAKEN OFF', 'ONE LESS ON YOUR TAIL', 0, 'nitro'); }
+        cars.splice(i, 1);
+      }
+    }
+    C.lastS = W.s;
+  }
   function laneFree(W, c, L) {
     if (sameRoad(W, c) && Math.abs(W.s - c.s) < 60 && Math.abs(W.x - L) < 3.2) return false;   // never pull out in front of the player
     for (var q = 0; q < W.cars.length; q++) { var o = W.cars[q]; if (o !== c && o.b === c.b && Math.abs(o.s - c.s) < 45 && Math.abs(o.x - L) < 3) return false; }
@@ -954,6 +1149,7 @@
     var cars = W.cars, i, j, c, o, F = W.fork;
     for (i = 0; i < cars.length; i++) {
       c = cars[i];
+      if (c.cop) continue;   // (the police: copStep)
       if (c.spin > 0) { c.spin--; c.v *= 0.97; c.s += c.v * DT; continue; }
       var ahead = null, dmin = 1e9;
       for (j = 0; j < cars.length; j++) {
@@ -983,11 +1179,11 @@
       }
     }
     for (i = cars.length - 1; i >= 0; i--) {
-      c = cars[i];
+      c = cars[i]; if (c.cop) continue;
       if (c.s < W.s - 120 || c.s > W.s + VIEW + 120 || segIndex(c.s) > lastIndex(W) - 2 || (F && F.s && c.b && c.b !== F.s && segIndex(c.s) >= F.end - 2) || (!F && c.b)) cars.splice(i, 1);
     }
     var want = Math.round(VIEW / (W.D.gap * Math.pow(0.96, Math.min(4, Math.max(0, W.round - 2)))) * (W.field.length ? 0.72 : 0.8)), n = 0;   // (the racers fill the road too: less traffic)
-    for (i = 0; i < cars.length; i++) if (cars[i].s > W.s) n++;
+    for (i = 0; i < cars.length; i++) if (cars[i].s > W.s && !cars[i].cop) n++;
     if (n < want && W.t % 10 === 0 && !W.goalSeq) spawnCar(W, W.s + VIEW * (0.8 + W.rng() * 0.18));   // (none join while the goal plays)
   }
 
@@ -1025,7 +1221,8 @@
   }
   function bonus(W, c) {   // a bonus picked up
     var k = c.pw, dx = c.x - W.x;
-    if (k === 'time') { if (!W.timeUp) W.time += 3; pop(W, 'EXTRA TIME', '+3 SECONDS', dx, 'time'); }
+    if (k === 'time' && W.cop) { if (W.cop.dmg > 0) W.cop.dmg--; pop(W, 'REPAIR KIT', 'DAMAGE ' + W.cop.dmg + '/' + W.cop.max, dx, 'time'); }   // (the Getaway: no clock - a repair)
+    else if (k === 'time') { if (!W.timeUp) W.time += 3; pop(W, 'EXTRA TIME', '+3 SECONDS', dx, 'time'); }
     else { W.pw[k] = PW[k]; pop(W, k === 'magnet' ? 'COIN MAGNET' : k === 'shield' ? 'SHIELD' : 'DOUBLE POINTS', k === 'double' ? '10 SECONDS' : '8 SECONDS', dx, k); }
     W.score += 500; W.events.push({ sfx: 'power', k: k, x: dx }); fx(W, { k: 'power', x: c.x, pw: k }); mood(W, 'cheer');
   }
@@ -1118,7 +1315,7 @@
     W.legT0 = W.t; W.legHearts = 0;
   }
   function gate(W, g) {
-    var saved = W.timeUp && !W.over;   // (out of time, rolled over the line)
+    var saved = W.timeUp && !W.over && !(W.cop && W.cop.busted);   // (out of time, rolled over the line - never busted)
     if (saved) { W.timeUp = false; W.overT = 0; W.tuCoast = false; W.score += 10000; mood(W, 'cheer'); }
     if (g.kind === 'check' || g.kind === 'round') {
       if (g.kind === 'check') endLeg(W);
@@ -1131,6 +1328,10 @@
         if (W.goalSeq) { W.roundPending = g.st; return; }   // (the goal's moment isn't over: the rest when it is - goalEnd)
         W.result = null; rebunch(W); W.bestPos = 99;
         bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + (W.round > 2 ? ' - busier and quicker' : ''), 'stage'); W.events.push({ say: 'Round ' + W.round }); W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 150 };
+      } else if (W.cop) {   // the Getaway: a checkpoint patches the car up
+        var rp = W.cop.dmg > 0; if (rp) W.cop.dmg--;
+        bannerOf(W, 'CHECKPOINT', rp ? 'PATCHED UP: DAMAGE ' + W.cop.dmg + '/' + W.cop.max : 'KEEP GOING!', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint' });
+        W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 140 }; mood(W, 'cheer'); voice(W, 'check', true);
       } else {
         W.time += add; bannerOf(W, saved ? 'JUST MADE IT!' : 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC' + (saved ? '  ·  +10,000' : ''), saved ? 'gold' : 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
         W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 140 };   // (then she names the place)
@@ -1141,6 +1342,10 @@
       var bonus = Math.ceil(W.time) * 1000 * Math.min(W.round, 3), love = W.runHearts * 5000;
       var asked = Math.max(1, W.runAsked * 3), pct = W.runHearts / asked, mark = pct * 70 + Math.min(30, W.time);
       var rank = mark >= 88 ? 'S' : mark >= 72 ? 'A' : mark >= 55 ? 'B' : mark >= 38 ? 'C' : 'D';
+      if (W.cop) {   // the Getaway: escaped - the bonus for what's left of the car and the roadblocks cleared; the rank by the damage
+        var CP = W.cop; CP.escaped = true; bonus = (CP.max - CP.dmg) * 25000 + CP.cleared * 5000; love = 0;
+        rank = CP.dmg === 0 ? 'S' : CP.dmg <= CP.max / 3 ? 'A' : CP.dmg <= CP.max * 0.6 ? 'B' : 'C';
+      }
       var placeB = W.field.length ? POS_BONUS[W.pos] || 0 : 0;
       W.goalSeq = { t: 0, rank: rank, brake: Math.max(9, W.v * W.v / 540) };   // (pulling up within ~270 m, before the next road)
       W.pops.length = 0;   // (the pop-ups from just before the line cleared: the goal's own banner is separate)
@@ -1148,7 +1353,7 @@
       W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.field.length ? W.pos : 0, of2: FIELD_N + 1, posBonus: placeB };
       W.score += bonus + love + placeB; W.round++;
       W.time = W.D.time * (RUNS[nextRun(STAGES[g.st])].tf || 1) * STAGES[RUN_START[nextRun(STAGES[g.st])]].t * Math.max(0.8, Math.pow(0.97, Math.max(0, W.round - 2))) + 10;   // (the next run's first stage's time)
-      bannerOf(W, 'GOAL!', 'TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
+      if (W.cop) bannerOf(W, 'ESCAPED!', 'ESCAPE BONUS +' + bonus.toLocaleString('en-GB'), 'goal'); else bannerOf(W, 'GOAL!', 'TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
       W.events.push({ sfx: 'goal' }); W.events.push({ say: 'Goal! Time bonus ' + bonus + ', love bonus ' + love + ', rank ' + rank });
       fx(W, { k: 'fireworks', x: 0 }); fx(W, { k: 'confetti', x: 0 });
       mood(W, rank === 'S' || rank === 'A' ? 'wave' : rank === 'B' ? 'clap' : rank === 'C' ? 'look' : 'sulk', 1); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
@@ -1164,7 +1369,7 @@
       bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[st].run].banner + (W.round > 2 ? ' - busier and quicker' : ''), 'stage'); W.events.push({ say: 'Round ' + W.round }); mood(W, 'cheer'); }
     W.reqNext = Math.max(W.reqNext, W.t + 60 * 4);
   }
-  function topSpeed(W) { return VMAX * CARS[W.car].top; }
+  function topSpeed(W) { return VMAX * CARS[W.car].top * (W.cop && W.cop.tyres > 0 ? 0.62 : 1); }   // (the Getaway: on burst tyres, until they're changed)
   var CF = 0.25;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second (0.32 x 63 / VMAX, 8 Oct: each bend is as hard at the new top speed as it was at the old)
   function turnLimit(W, v) { return (0.6 + (W.D.psiTop - 0.6) * Math.pow(Math.min(1, v / VMAX), 0.8)) * CARS[W.car].yaw; }   // the angle a held key turns the car to
   function pushOut(W, k, v) { return k * v * v * CF * (W.D.cf || 1) * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
@@ -1256,13 +1461,13 @@
       var GS = W.goalSeq; GS.t++;
       if (GS.t === 30) for (var gi = W.cars.length - 1; gi >= 0; gi--) if (!W.cars[gi].rival && Math.abs(W.cars[gi].s - W.s) < 420) W.cars.splice(gi, 1);   // (half a second in, the camera swinging round: the road near you cleared - you'd overtake them braking, then they'd pass you in the shot)
       if (GS.t % 100 === 0) { var CEL = { S: ['cheer', 'wave'], A: ['wave', 'cheer'], B: ['clap', 'cheer'], C: ['look', 'clap'], D: ['sulk', 'sulk'] }[GS.rank] || ['cheer', 'wave']; mood(W, CEL[(GS.t / 100) % 2], 1); }   // (celebrating all through it, as the rank deserves)
-      var ai = autopilot(W, 0), carry = GS.t > 60 && (W.fireEdge || W.demo), finish = GS.t > 60 && !!inp.down && !W.demo;
+      var ai = autopilot(W, 0), carry = !W.cop && GS.t > 60 && (W.fireEdge || W.demo), finish = GS.t > 60 && (!!inp.down || (W.cop && W.fireEdge)) && !W.demo;
       inp = { left: ai.left, right: ai.right, up: false, down: false, fire: false, alt: false };
       W.nitroT = 0; W.v = Math.max(0, W.v - GS.brake * DT);   // (pulling up at the goal)
       if (carry) { GS.carry = true; goalEnd(W); W.clockHeld = true; }   // (Space: on to the next round - its clock waits for its start line: you pull away from a standstill)
       else if (GS.t >= GOAL_SEQ || finish) { W.complete = { goal: W.result ? W.result.goal : '', rank: GS.rank, round: W.round - 1 }; W.over = true; }   // (the goal: game complete)
     }
-    if (!W.timeUp && !W.goalSeq && !W.clockHeld) {
+    if (!W.timeUp && !W.goalSeq && !W.clockHeld && !W.cop) {   // (the Getaway has no clock: the police are the clock)
       var before = Math.ceil(W.time);
       W.time -= DT;
       if (W.time <= 0) { W.time = 0; W.timeUp = true; W.timeUpT = W.t; W.tuCoast = gateWithin(W, W.v * W.v / (2 * TU_COAST)); W.tuBrake = Math.max(14, W.v / 3.4); W.events.push({ sfx: 'timeup' }); W.events.push({ say: 'Time up' }); bannerOf(W, 'TIME UP', '', 'red'); endDrift(W); mood(W, 'sad'); voice(W, 'timeup', true); W.req = null; W.reqSide = null; }
@@ -1466,7 +1671,7 @@
     }
 
     // ---- the traffic: bumps, near misses, overtakes and slipstreams
-    moveTraffic(W); fieldStep(W);
+    moveTraffic(W); fieldStep(W); if (W.cop) copStep(W);
     out = !!W.crash;
     var slipping = false;
     for (var q = 0; q < W.cars.length; q++) {
@@ -1474,7 +1679,23 @@
       if (!sameRoad(W, car)) { car.ds = car.s - W.s; continue; }
       var V = VEH[car.t], dz = car.s - W.s, dxx = Math.abs(car.x - W.x), hitW = V.w + CAR_W - 0.1, hitL = V.l + CAR_L;
       var clear = W.air && (!W.lift || W.h - heightAt(W, car.s) > (VEH_H[V.id] || 1.5) * 0.92);   // (in the air you miss it - a Skimmer only if it's high enough over it)
-      if (!out && !clear && Math.abs(dz) < hitL && dxx < hitW && W.t - car.hitT > 30) {
+      if (car.cop) {   // the Getaway's police: parked in a roadblock or wrecked, a crash; driving, a ram
+        if (!out && !clear && !car.wait && Math.abs(dz) < hitL && dxx < hitW && W.t - car.hitT > 30 && !(W.cop && W.cop.busted)) {
+          car.hitT = W.t;
+          if (W.pw.shield > 0) { smash(W, 'car'); wreckCop(W, car, 'shield'); }
+          else if (car.block) { crash(W, true, 'roadblock'); W.s = Math.min(W.s, car.s - hitL - 0.5); if (car.blk) car.blk.hit = true; copHurt(W, 2, 'INTO THE ROADBLOCK'); }
+          else if (car.wreck) {   // a wreck: a hard knock that throws it aside, not a stop
+            W.v *= 0.72; W.shake = Math.max(W.shake, 14); car.v = W.v * 0.5; car.x += (car.x >= W.x ? 1 : -1) * 2.5; W.events.push({ sfx: 'bump', x: car.x - W.x }); fx(W, { k: 'bump', x: car.x }); mood(W, 'scared'); knock(W); copHurt(W, 1, 'HIT A WRECK');
+          }
+          else {
+            var sd = W.x >= car.x ? 1 : -1; W.x += sd * 1.1; car.x -= sd * 0.7; car.tx = car.x; car.backT = W.t + 240; if (W.cop) W.cop.ramT = W.t; W.v *= 0.86; car.v = Math.min(car.v, W.v);
+            W.shake = Math.max(W.shake, 14); W.combo = 0; W.comboT = 0; if (W.drift) endDrift(W);
+            W.events.push({ sfx: 'ram', x: car.x - W.x }); fx(W, { k: 'bump', x: (car.x + W.x) / 2 }); fx(W, { k: 'sparks', x: W.x - sd * CAR_W }); mood(W, 'scared'); voice(W, 'bump'); knock(W);
+            copHurt(W, 1, 'RAMMED!');
+          }
+          dz = car.s - W.s;
+        }
+      } else if (!out && !clear && Math.abs(dz) < hitL && dxx < hitW && W.t - car.hitT > 30) {
         car.hitT = W.t;
         if (W.pw.shield > 0) { smash(W, 'car'); car.spin = 60; car.x += (car.x >= W.x ? 1 : -1) * 2.5; car.v *= 0.6; }
         else if (W.v >= car.v) {
@@ -1503,8 +1724,8 @@
         // vehicle is never a near miss as well - it was scored twice)
         car.hopped = true; W.hopN++; if (!car.rival) { car.passed = true; W.passN++; if (W.req && W.req.k === 'pass') W.req.have++; }   /* (a rival: its own overtake, below) */
         W.combo = W.comboT > 0 ? Math.min(W.combo + 1, 9) : 1; W.comboT = 200;
-        var big = (VEH_H[V.id] || 1.5) > 2.5, hp = (big ? 1000 : 600) * W.combo; W.score += hp; W.boost = Math.min(1, W.boost + 0.12); W.gas = Math.min(GAS_MAX, W.gas + HOP_GAS);
-        pop(W, (big ? 'OVER THE ' + (V.id === 'lorry' ? 'LORRY' : V.id === 'bus' ? 'BUS' : V.id === 'camper' ? 'CAMPER' : V.id === 'tractor' ? 'TRACTOR' : 'VAN') + '!' : 'HOP!') + (W.combo > 1 ? ' x' + W.combo : ''), '+' + hp.toLocaleString('en-GB'), car.x - W.x, 'gold');
+        var big = (VEH_H[V.id] || 1.5) > 2.5, hp = (big || car.cop ? 1000 : 600) * W.combo; W.score += hp; W.boost = Math.min(1, W.boost + 0.12); W.gas = Math.min(GAS_MAX, W.gas + HOP_GAS);
+        pop(W, (car.cop ? 'OVER THE POLICE!' : big ? 'OVER THE ' + (V.id === 'lorry' ? 'LORRY' : V.id === 'bus' ? 'BUS' : V.id === 'camper' ? 'CAMPER' : V.id === 'tractor' ? 'TRACTOR' : 'VAN') + '!' : 'HOP!') + (W.combo > 1 ? ' x' + W.combo : ''), '+' + hp.toLocaleString('en-GB'), car.x - W.x, 'gold');
         W.events.push({ sfx: 'hop', x: car.x - W.x, n: W.combo, big: big }); mood(W, 'cheer'); if (W.rng() < 0.3) voice(W, 'wheee');
       }
       if (!car.rival && !car.passed && car.ds >= 0 && dz < 0) {
@@ -1549,7 +1770,7 @@
       mood(W, Math.random() < 0.5 ? 'look' : 'hair', Math.random() < 0.5 ? -1 : 1); if (W.t - W.voiceT > 60 * 20 && Math.random() < 0.5) voice(W, 'chat');
     }
 
-    if (W.timeUp && W.v < 1.5) { if (++W.overT > 40) W.over = true; }
+    if (W.timeUp && W.v < 1.5) { if (++W.overT > (W.cop && W.cop.busted ? 150 : 40)) W.over = true; }
     if (W.timeUp && !W.tuCoast && W.t - W.timeUpT > 30 && W.fireEdge) W.over = true;   // (Space: straight to the result - one more go)
     if (W.t % 60 === 0) { var drop = i1 - 80 - W.base; if (drop > 300) { W.segs.splice(0, drop); W.base += drop; } }
     if (W.pw.double > 0 && W.score > score0) W.score += W.score - score0;
@@ -1621,7 +1842,7 @@
     nextAhead: nextAhead, nextBehind: nextBehind, SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VERGE: VERGE, FIELD_N: FIELD_N, BOTTLE_MAX: BOTTLE_MAX, NITRO_T: NITRO_T, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
     LEVELS: LEVELS, RUN_START: RUN_START, RUNS: RUNS, PLACES: PLACES, nextRun: nextRun, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
     GAS_MAX: GAS_MAX, BURST_T: BURST_T, BURST_COST: BURST_COST, LIFT_COST: LIFT_COST, HOVER_MAX: HOVER_MAX, VEH_H: VEH_H,
-    STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf,
+    STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf, COP: COP, COP_MAX: COP_MAX, heat: heat, copTop: copTop,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,
     segAt: segAt, segIndex: segIndex, lastIndex: lastIndex, heightAt: heightAt, forkOff: forkOff, edges: edges, roadHalf: roadHalf, bendHere: bendHere, rnd: rnd
   };
