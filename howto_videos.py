@@ -29,6 +29,8 @@ Real screens from a customer's hub, network names hidden. Made public by the own
 
 21 Oct 2026: the Techies PDF how-to film (3:06, uploaded full quality) inside /how-to-scan-a-document/, before "Key points".
 21 Oct 2026: the EE film swapped to its full-quality upload azwrRzEGMYo (the 20 Oct R7CE9j62tHs was a compressed copy).
+21 Oct 2026 (owner: "do both, just go for it"): the OneDrive-taking-up-space film (2:03, 4K, filmed in the Hyper-V
+studio) on /onedrive-taking-up-space/, straight after the guided steps, as on the EE page. Public before this went live.
 """
 import datetime
 import json
@@ -147,6 +149,15 @@ VIDEOS = {
         cap="3 min 6 s &middot; a spoken guide with captions &middot; the real program on made-up documents",
         says='Need to sign a form, join some PDFs, or make one small enough to email? Here&rsquo;s how to do all of that for free, with Techies PDF. It&rsquo;s a free program for Windows 10 and 11, from 365 Techies. Everything happens on your own computer, so your documents are never uploaded anywhere. Download it from 365techies.co.uk. There&rsquo;s no account to make. Open it, and every job has its own big button. To fill in a form, press Open a PDF, and choose it. Then click in the boxes and type. Tick boxes work too. To sign it, press Add or edit signatures, then Add new signature. Type your name, draw it with the mouse, or use a photo of your signature. Put it on the line, make it the right size, and press Save. To join PDFs into one, just drop them onto the window. Put them in order with the arrows, and press Join them into one PDF. You get one tidy PDF, and the ones you started with aren&rsquo;t changed. Is a page upside down? Choose Turn, move or take out pages. Every page shows as a picture. Turn it the right way up with the round arrow. Take out the pages you don&rsquo;t need, move them around, and press Save the PDF. Only need some of the pages? Choose Take pages out into a new PDF. Type the pages you want, like 1-2, and press Save these pages. Or make a PDF for every page, and each one becomes its own file. Is a PDF too big to email? Choose Make a PDF smaller for email. Pick the PDF, start with Good for email, and press Make it smaller. Our PDF of holiday photos went from 27 MB to 1.3 MB. A smaller copy is saved, and your original stays as it was. Photographed a letter or a receipt? Choose Turn photos into a PDF. Put the photos in order, choose A4 pages, and press Make the PDF. Each photo goes on its own page, the right way up. Need the words, not the PDF? Choose Copy the words out of a PDF. All the words appear, ready to copy and paste into an email or a letter. Sending something private? Put a password on a copy before you email it. Type the password twice, and press Put the password on. Then tell the person the password by phone, not in the same email. Know the password? You can take it off again, too. Techies PDF adds text and signatures on top. It can&rsquo;t change the words already in a PDF. It&rsquo;s free, for Windows 10 and 11. Download it from 365techies.co.uk.',
         tools=[("techies-pdf", "Techies PDF (free, for Windows)")]),
+    "onedrive-space": dict(
+        id="bKebDq3gLow", secs=123, uploaded="2026-10-21", poster="/images/howto-onedrive-space-poster-v1.jpg",
+        name="OneDrive Taking Up Space on Your PC? Free It Up Safely (Windows 11)",
+        desc=("A 2-minute guide from 365 Techies, filmed on Windows 11 with a real OneDrive: why OneDrive fills the drive, "
+              "right-click Free up space (the files stay in OneDrive), OneDrive's Files On-Demand button for every file at "
+              "once, Storage Sense to keep it that way, and the one rule for work and shared folders."),
+        cap="2 min 3 s &middot; a spoken guide with captions &middot; real Windows 11 and OneDrive, our own demo files",
+        says="OneDrive filling up your PC? You don&rsquo;t have to switch it off, and you won&rsquo;t lose a single file. Here&rsquo;s how to get the space back, safely. OneDrive keeps your files in the cloud. But every file you open is downloaded to your PC as well, and it stays there. Over time, that fills the drive. On this PC, OneDrive is using 1.3 GB. Open File Explorer, and right-click OneDrive. Choose Free up space. The green ticks turn into blue clouds. The files are still there, and still in OneDrive. They just stop taking room on your PC. Back in Settings, OneDrive has gone from the list, and the free space has gone up by the same amount. Double-click any file, and it downloads the moment you need it. OneDrive&rsquo;s own settings can do the same for every file at once. Open Sync and backup, then Advanced settings. Under Files On-Demand, choose Free up disk space. To keep it that way, open Windows Settings, then System, then Storage, and switch on Storage Sense. Under Locally available cloud content, 30 days is a good choice. When the drive gets low, files you haven&rsquo;t opened in a month go back to the cloud, all by themselves. On a work computer, it&rsquo;s the same for the company&rsquo;s shared folders. Just never delete files to make room: that deletes them for everyone. That&rsquo;s it. Your files are safe in OneDrive, and your PC has its room back. Want us to do it for you? We&rsquo;ll sort it remotely. The full guide is at 365techies.co.uk.",
+        tools=[]),
 }
 
 # page -> (film, where it goes, heading or None, intro). "after:<marker>" = straight after the section containing the
@@ -176,6 +187,9 @@ PLACES = {
                                              "The whole fix in under 2 minutes: why the printer turns the password down, "
                                              "switching on Compatible WiFi, and joining the printer to it, even one "
                                              "plugged in by USB."),
+    "onedrive-taking-up-space": ("onedrive-space", 'after:id="fixflow"', "Watch: free up the space, keep every file",
+                                 "The whole fix in 2 minutes on a real OneDrive: Free up space, the one OneDrive setting, "
+                                 "and Storage Sense, with Settings showing the space come back."),
 }
 
 STYLE = """    <style>
