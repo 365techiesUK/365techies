@@ -31,6 +31,9 @@ Real screens from a customer's hub, network names hidden. Made public by the own
 21 Oct 2026: the EE film swapped to its full-quality upload azwrRzEGMYo (the 20 Oct R7CE9j62tHs was a compressed copy).
 21 Oct 2026 (owner: "do both, just go for it"): the OneDrive-taking-up-space film (2:03, 4K, filmed in the Hyper-V
 studio) on /onedrive-taking-up-space/, straight after the guided steps, as on the EE page. Public before this went live.
+22 Oct 2026 (owner: "do what's left, all of that"): the ten 21 Oct how-tos filmed in the Hyper-V studio, each on the page
+it answers, scheduled: every film goes public at 11:00 on its day (23 Oct - 1 Nov) and its Short at 12:00. The clipboard
+film has no page that answers it yet, so it is in VIDEOS only. Transcripts are the films' own voice scripts.
 """
 import datetime
 import json
@@ -158,6 +161,86 @@ VIDEOS = {
         cap="2 min 3 s &middot; a spoken guide with captions &middot; real Windows 11 and OneDrive, our own demo files",
         says="OneDrive filling up your PC? You don&rsquo;t have to switch it off, and you won&rsquo;t lose a single file. Here&rsquo;s how to get the space back, safely. OneDrive keeps your files in the cloud. But every file you open is downloaded to your PC as well, and it stays there. Over time, that fills the drive. On this PC, OneDrive is using 1.3 GB. Open File Explorer, and right-click OneDrive. Choose Free up space. The green ticks turn into blue clouds. The files are still there, and still in OneDrive. They just stop taking room on your PC. Back in Settings, OneDrive has gone from the list, and the free space has gone up by the same amount. Double-click any file, and it downloads the moment you need it. OneDrive&rsquo;s own settings can do the same for every file at once. Open Sync and backup, then Advanced settings. Under Files On-Demand, choose Free up disk space. To keep it that way, open Windows Settings, then System, then Storage, and switch on Storage Sense. Under Locally available cloud content, 30 days is a good choice. When the drive gets low, files you haven&rsquo;t opened in a month go back to the cloud, all by themselves. On a work computer, it&rsquo;s the same for the company&rsquo;s shared folders. Just never delete files to make room: that deletes them for everyone. That&rsquo;s it. Your files are safe in OneDrive, and your PC has its room back. Want us to do it for you? We&rsquo;ll sort it remotely. The full guide is at 365techies.co.uk.",
         tools=[]),
+    'clear-history': dict(
+        id='AnK0qN4ZyNI', secs=88, uploaded='2026-10-23', live='2026-10-23T11:00:00+01:00', out='Fri 23 Oct, 11:00',
+        poster='/images/howto-clear-history-poster-v1.jpg',
+        name='How to Clear Browsing History, Cache and Cookies in Microsoft Edge',
+        desc='An 88-second guide from 365 Techies: clear your browsing history, cache and cookies in Microsoft Edge with Ctrl + Shift + Delete, remove just one site with Ctrl + H, and the same keys in Google Chrome.',
+        cap='1 min 28 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Websites acting up, or just want to clear what you&rsquo;ve been looking at? Here&rsquo;s how to clear your browsing history, cache and cookies, in Microsoft Edge. Press Control, Shift and Delete, all together. The Delete browsing data box opens. First, choose a time range. To clear everything, pick All time. Browsing history is the list of sites you&rsquo;ve visited. Cached images and files are copies of pages, kept so they load faster. Cookies are small files that let websites remember you. Clear them, and you&rsquo;ll be signed out of most sites, so have your passwords handy. Tick what you want to clear, and choose Clear now. Just want to remove one site? Press Control and H to open your history, find the site, and delete it from the list. Using Google Chrome? The same three keys open its own Delete browsing data box, and it works the same way. So: Control, Shift and Delete, pick a time range, then Clear now. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'ip-address': dict(
+        id='0pYzz4Xup3o', secs=73, uploaded='2026-10-24', live='2026-10-24T11:00:00+01:00', out='Sat 24 Oct, 11:00',
+        poster='/images/howto-ip-address-poster-v1.jpg',
+        name='How to Find Your IP Address on Windows 11 (Both of Them)',
+        desc='A 73-second guide from 365 Techies: find both of your IP addresses on Windows 11: the one on your home network (Settings, Network & internet, Properties) and the public one websites see.',
+        cap='1 min 13 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Need to find your IP address? Your PC actually has two: one on your home network, and one the internet sees. Here&rsquo;s how to find both. For the one on your home network, open Settings, then Network and internet. Choose Properties at the top, for Wi-Fi or Ethernet. Scroll down, and your address is next to IPv4 address. It&rsquo;s four numbers, with dots between them. Websites see a different address: your broadband&rsquo;s public one. To see it, open your web browser, and go to ipinfo.io/what-is-my-ip. That address belongs to your broadband connection, so every device in your home shares it. So: Settings, Network and internet, Properties, for the one at home. ipinfo.io/what-is-my-ip, for the public one. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'screenshot': dict(
+        id='a1zmY3Dr478', secs=89, uploaded='2026-10-25', live='2026-10-25T11:00:00+00:00', out='Sun 25 Oct, 11:00',
+        poster='/images/howto-screenshot-poster-v1.jpg',
+        name='How to Take a Screenshot on Windows 11 (3 Easy Ways)',
+        desc='An 89-second guide from 365 Techies: three ways to take a screenshot on Windows 11 - Windows + Shift + S, the Print Screen key and the Snipping Tool - and where to find it afterwards.',
+        cap='1 min 29 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Need to show someone what&rsquo;s on your screen? Here&rsquo;s how to take a screenshot on Windows 11, three ways, and where to find it afterwards. The quickest way: press the Windows key, Shift and S, all together. The screen dims, and a bar appears at the top. Drag a box round the part you want, and let go. That&rsquo;s it. It&rsquo;s copied, ready to paste. In an email, a message or a document, press Control and V. It&rsquo;s saved for you, too. Open Pictures, then the Screenshots folder. On most keyboards, the Print Screen key opens the same snipping bar. Want the whole screen in one go? Press the Windows key and Print Screen. The screen flashes, and the picture goes straight into Screenshots. For more choices, open the Snipping Tool from the Start menu. Choose New, and pick a shape: a box, one window, the whole screen, or freehand. It can record a video of your screen, too. Press the Windows key, Shift and R, and pick the area to record. So, to recap: Windows, Shift and S, drag a box, then paste. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'recover-files': dict(
+        id='Dx79dYO4f9s', secs=84, uploaded='2026-10-26', live='2026-10-26T11:00:00+00:00', out='Mon 26 Oct, 11:00',
+        poster='/images/howto-recover-files-poster-v1.jpg',
+        name='How to Recover Deleted Files on Windows 11 (Recycle Bin, Ctrl + Z, OneDrive)',
+        desc="An 84-second guide from 365 Techies: get a deleted file back on Windows 11 from the Recycle Bin, with Ctrl + Z, or from OneDrive's own recycle bin - and what to do if the bin was emptied.",
+        cap='1 min 24 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Deleted a file by mistake? Don&rsquo;t panic. It&rsquo;s almost certainly still on your PC. Here&rsquo;s how to get it back. Files you delete go to the Recycle Bin first. Double-click it on your desktop. Find your file. The list shows where it came from, and when it was deleted. Right-click it, and choose Restore. It goes straight back to the folder it came from. Can&rsquo;t see it? Type part of its name in the search box, at the top. Only just deleted it? Press Control and Z straight away, and it comes right back. Files in OneDrive have a second recycle bin, online at onedrive.com. A personal account keeps deleted files there for 30 days. Emptied the Recycle Bin? Stop using the computer straight away, because new files can write over the old ones. And don&rsquo;t download random recovery programs. Call us first: we may still be able to get them back. So: open the Recycle Bin, right-click, Restore. Need a hand? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'web-pop-ups': dict(
+        id='BRntouWDjWM', secs=70, uploaded='2026-10-27', live='2026-10-27T11:00:00+00:00', out='Tue 27 Oct, 11:00',
+        poster='/images/howto-web-pop-ups-poster-v1.jpg',
+        name='How to Stop Website Pop-ups and Notifications in Microsoft Edge',
+        desc='A 70-second guide from 365 Techies: stop website notification pop-ups in Microsoft Edge (Site permissions, Notifications, Ask before sending), remove a site you once allowed, and spot the scam ones.',
+        cap='1 min 10 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Pop-ups appearing in the corner of your screen, even when the website&rsquo;s closed? They&rsquo;re usually website notifications. Here&rsquo;s how to stop them in Microsoft Edge. Click the three dots at the top right of Edge, and choose Settings. Choose Privacy, search, and services. Then Site permissions, All permissions, and Notifications. Turn off Ask before sending. Now websites can&rsquo;t even ask. Said yes to one before? It&rsquo;s listed under Allowed. Click the three dots next to it, and choose Remove. And a pop-up saying your PC is infected, with a number to call, is a scam. Don&rsquo;t ring it. Just close the browser. So: Edge Settings, Site permissions, Notifications, and turn off Ask before sending. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'frozen-program': dict(
+        id='G73XVM2223g', secs=72, uploaded='2026-10-28', live='2026-10-28T11:00:00+00:00', out='Wed 28 Oct, 11:00',
+        poster='/images/howto-frozen-program-poster-v1.jpg',
+        name='How to Close a Frozen Program on Windows 11 (Task Manager)',
+        desc='A 72-second guide from 365 Techies: close a frozen program on Windows 11 with Task Manager (Ctrl + Shift + Esc, End task), and two other ways to open Task Manager.',
+        cap='1 min 12 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Program frozen, and it won&rsquo;t close? Here&rsquo;s how to close it with Task Manager, without restarting your PC. Press Control, Shift and Escape, all together. Task Manager opens. A program that&rsquo;s stopped working says Not responding, at the top of its window. In Task Manager, click its name, then choose End task, at the top. It closes straight away. Anything you hadn&rsquo;t saved in it is lost, so give it a minute first, in case it&rsquo;s just busy. You can also right-click the taskbar, and choose Task Manager. And if the whole PC seems stuck, press Control, Alt and Delete, and choose Task Manager from there. So: Control, Shift and Escape, click the program, then End task. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'clipboard': dict(
+        id='SGlTnkESQ3A', secs=73, uploaded='2026-10-29', live='2026-10-29T11:00:00+00:00', out='Thu 29 Oct, 11:00',
+        poster='/images/howto-clipboard-poster-v1.jpg',
+        name='How to Use Clipboard History in Windows 11 (Windows + V)',
+        desc='A 73-second guide from 365 Techies: turn on clipboard history in Windows 11 with Windows + V, paste from the list, pin things you use often and clear the rest.',
+        cap='1 min 13 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Copied something, then copied something else, and lost the first one? Windows can remember everything you copy. Here&rsquo;s how to use clipboard history. Press the Windows key and V. The first time, choose Turn on. Now copy things as normal, with Control and C. When you want to paste, press the Windows key and V, instead of Control and V. Everything you&rsquo;ve copied is listed. Click the one you want. Pin anything you use often, like a phone number. Pinned items stay, even after you restart. Everything else clears when the PC restarts. To wipe the list now, choose Clear all. So: Windows and V, turn it on once, then paste from the list. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'system-restore': dict(
+        id='YmGqu9F-Ghc', secs=74, uploaded='2026-10-30', live='2026-10-30T11:00:00+00:00', out='Fri 30 Oct, 11:00',
+        poster='/images/howto-system-restore-poster-v1.jpg',
+        name='How to Use System Restore in Windows 11 (Turn It On First)',
+        desc='A 74-second guide from 365 Techies: switch on System Restore in Windows 11, make a restore point, and undo a bad update or program - your documents and photos are not touched.',
+        cap='1 min 14 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Something went wrong after an update, or a new program? System Restore can put Windows back how it was. But only if it&rsquo;s switched on, so let&rsquo;s check that first. Open the Start menu, type create a restore point, and open it. Choose your C drive, then Configure. Choose Turn on system protection, give it about 5% of the drive, and choose OK. Now choose Create, type a name you&rsquo;ll recognise, and choose Create again. Windows makes restore points by itself too, before big updates. To go back, open the same window, and choose System Restore. Pick a restore point, and follow the steps. Your documents and photos aren&rsquo;t touched. Programs and updates added since then are removed. Turn it on today, so it&rsquo;s there when you need it. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'zip': dict(
+        id='uvhGZjxuLcI', secs=70, uploaded='2026-10-31', live='2026-10-31T11:00:00+00:00', out='Sat 31 Oct, 11:00',
+        poster='/images/howto-zip-poster-v1.jpg',
+        name='How to Zip and Unzip Files in Windows 11 (No Software Needed)',
+        desc='A 70-second guide from 365 Techies: zip files into one to send them (right-click, Compress to, ZIP File) and open a zip someone sent you (Extract all) in Windows 11, with nothing to install.',
+        cap='1 min 10 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Need to send lots of files at once, or open a zip file someone sent you? Here&rsquo;s how to zip and unzip files in Windows 11, with nothing to install. Select the files. Hold Control, and click each one. Right-click them, choose Compress to, then ZIP file. Type a name, and press Enter. That one zip file holds them all, ready to attach to an email. Got a zip file? Right-click it, and choose Extract all. Choose Extract, and the files appear in a new folder, ready to use. Only open zip files you were expecting. Scammers hide viruses in them. So: right-click, Compress to, ZIP file. And to open one: right-click, Extract all. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
+    'split-screen': dict(
+        id='C1Bc_0Za3Ts', secs=61, uploaded='2026-11-01', live='2026-11-01T11:00:00+00:00', out='Sun 1 Nov, 11:00',
+        poster='/images/howto-split-screen-poster-v1.jpg',
+        name='How to Split Your Screen in Windows 11 (3 Easy Ways)',
+        desc='A 61-second guide from 365 Techies: put two windows side by side in Windows 11: drag a window to the edge, Windows key + arrow, or the snap layouts on the maximise button.',
+        cap='1 min 1 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
+        says='Want two windows side by side? Here&rsquo;s how to split your screen in Windows 11, three easy ways. Drag a window by its top bar, right to the edge of the screen, and let go. It fills that half. Windows shows your other windows. Click one, and it fills the other half. Or press the Windows key and the left or right arrow. For more layouts, point at the maximise button, the square at the top right. Pick a layout, and a spot for the window. To go back, press the Windows key and the opposite arrow. So: drag a window to the edge, or press Windows and an arrow key. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
+        tools=[]),
 }
 
 # page -> (film, where it goes, heading or None, intro). "after:<marker>" = straight after the section containing the
@@ -190,6 +273,26 @@ PLACES = {
     "onedrive-taking-up-space": ("onedrive-space", 'after:id="fixflow"', "Watch: free up the space, keep every file",
                                  "The whole fix in 2 minutes on a real OneDrive: Free up space, the one OneDrive setting, "
                                  "and Storage Sense, with Settings showing the space come back."),
+    'how-to-take-a-screenshot': ('screenshot', 'before:<h2>Snip just part of the screen</h2>', None,
+        'Watch it done first: three ways to take a screenshot on Windows 11, and where to find it afterwards.'),
+    'how-to-recover-deleted-files': ('recover-files', 'before:<h2>Where to look first</h2>', None,
+        'Watch it done first: the Recycle Bin, Ctrl + Z, and OneDrive&rsquo;s own recycle bin.'),
+    'it-jargon-buster/cache': ('clear-history', 'before:<h2>How 365 Techies can help</h2>', None,
+        'Watch: clear your browser&rsquo;s cache, cookies and history in Microsoft Edge (Google Chrome uses the same keys).'),
+    'it-jargon-buster/cookies': ('clear-history', 'before:<h2>How 365 Techies can help</h2>', None,
+        'Watch: clear cookies, cache and history in Microsoft Edge. Clearing cookies signs you out of most websites, so have your passwords handy.'),
+    'it-jargon-buster/ip-address': ('ip-address', 'before:<h2>How 365 Techies can help</h2>', None,
+        'Watch: find both of your IP addresses on Windows 11, the one on your home network and the public one websites see.'),
+    'scam-pop-up-help-poole': ('web-pop-ups', 'after:id="s2"', 'Watch: stop website pop-ups in Edge',
+        'Many pop-ups come from websites you once allowed to send notifications. Here&rsquo;s how to switch them off for good in Microsoft Edge.'),
+    'why-does-my-pc-keep-crashing': ('frozen-program', 'after:id="fixflow"', 'Watch: one program frozen? Close it',
+        'If it&rsquo;s one program that has stopped responding rather than the whole PC, close it with Task Manager, without restarting.'),
+    'how-to-update-windows-safely': ('system-restore', 'before:<h2>Stay safe around big updates</h2>', None,
+        'Before a big update, switch on System Restore: watch how to turn it on, make a restore point, and undo a bad change.'),
+    'cant-open-attachments-in-outlook': ('zip', 'after:id="fixflow"', 'Watch: open a zip file, or zip files to send',
+        'Got a .zip attachment? Right-click it and choose Extract all. And to send lots of files at once, zip them into one.'),
+    'how-to-set-up-a-second-monitor': ('split-screen', 'before:<h2>Key points</h2>', None,
+        'Watch: put two windows side by side in Windows 11, on one screen or across both.'),
 }
 
 STYLE = """    <style>
