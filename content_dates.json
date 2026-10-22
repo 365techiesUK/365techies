@@ -347,8 +347,8 @@
  },
  "cant-open-attachments-in-outlook": {
   "first": "2026-07-28",
-  "h": "300522fd8c5b7b7c",
-  "last": "2026-10-06"
+  "h": "ec384b1bcddc2631",
+  "last": "2026-10-22"
  },
  "cant-send-btinternet-email-new-outlook": {
   "first": "2026-07-28",
@@ -1456,8 +1456,8 @@
  },
  "how-to-recover-deleted-files": {
   "first": "2026-06-16",
-  "h": "a4619a653b89c807",
-  "last": "2026-09-05"
+  "h": "f872357d814b5b4a",
+  "last": "2026-10-22"
  },
  "how-to-scan-a-document": {
   "first": "2026-06-16",
@@ -1486,8 +1486,8 @@
  },
  "how-to-set-up-a-second-monitor": {
   "first": "2026-06-16",
-  "h": "6ac19d8665f0a420",
-  "last": "2026-09-26"
+  "h": "4450d73ddadabc1c",
+  "last": "2026-10-22"
  },
  "how-to-set-up-email-on-your-phone": {
   "first": "2026-06-16",
@@ -1521,8 +1521,8 @@
  },
  "how-to-take-a-screenshot": {
   "first": "2026-06-16",
-  "h": "bebdf41143e79e4a",
-  "last": "2026-09-26"
+  "h": "1c782e584af89cc4",
+  "last": "2026-10-22"
  },
  "how-to-transfer-files-to-a-new-computer": {
   "first": "2026-06-16",
@@ -1540,8 +1540,8 @@
  },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
-  "h": "331eebd487facc0a",
-  "last": "2026-09-05"
+  "h": "7d4aaa633d055b35",
+  "last": "2026-10-22"
  },
  "how-to-use-a-password-manager": {
   "first": "2026-06-16",
@@ -1640,13 +1640,13 @@
  },
  "it-jargon-buster/cache": {
   "first": "2026-07-28",
-  "h": "aebf518d3e4a5445",
-  "last": "2026-09-26"
+  "h": "ee150aa660140df9",
+  "last": "2026-10-22"
  },
  "it-jargon-buster/cookies": {
   "first": "2026-07-28",
-  "h": "785e3fab5a659a64",
-  "last": "2026-08-31"
+  "h": "9b342b03c74eaa2d",
+  "last": "2026-10-22"
  },
  "it-jargon-buster/cpu": {
   "first": "2026-07-28",
@@ -1675,8 +1675,8 @@
  },
  "it-jargon-buster/ip-address": {
   "first": "2026-07-28",
-  "h": "11353eddd0107a5d",
-  "last": "2026-08-31"
+  "h": "e86201dd747b14f9",
+  "last": "2026-10-22"
  },
  "it-jargon-buster/malware": {
   "first": "2026-07-28",
@@ -3218,8 +3218,8 @@
  },
  "scam-pop-up-help-poole": {
   "first": "2026-07-28",
-  "h": "8a28e0b1feb336fb",
-  "last": "2026-10-13"
+  "h": "82a9875043dc4d76",
+  "last": "2026-10-22"
  },
  "scam-recovery": {
   "first": "2026-09-05",
@@ -3754,8 +3754,8 @@
  },
  "why-does-my-pc-keep-crashing": {
   "first": "2026-10-11",
-  "h": "4fcd3b750064aff1",
-  "last": "2026-10-17"
+  "h": "edfbfb3848eda0b0",
+  "last": "2026-10-22"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
