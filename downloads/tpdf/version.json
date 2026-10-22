@@ -1,7 +1,7 @@
 {
- "ver": "0.1.0",
- "url": "https://365techies.co.uk/downloads/tpdf/TechiesPDF-Setup-0.1.0.exe",
- "sha256": "558e60893c735e023da5065c05b51ea4e604986f7b7a9f54ee041b60fbd222f4",
- "size": 22401064,
- "notes": "The first version: read, fill in and sign PDFs; join them; turn, move and take out pages; save some pages as a new PDF; make a PDF smaller for email; turn photos into a PDF; copy the words out; put a password on or take one off. Signed by 365 Techies Ltd."
+ "ver": "0.2.0",
+ "url": "https://365techies.co.uk/downloads/tpdf/TechiesPDF-Setup-0.2.0.exe",
+ "sha256": "0af4b9fdc04ebbbec3f675a69c5db8a645e37ab6130c52869e13097c061c61df",
+ "size": 22963144,
+ "notes": "New in 0.2.0: read the words in scanned pages (Windows' own text reader does it, on your PC), turn a PDF into a Word document, and change the words in a PDF by covering them and typing new ones. Also an About page, and our other free programs on the start screen. Signed by 365 Techies Ltd."
 }

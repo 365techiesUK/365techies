@@ -1584,7 +1584,7 @@ BH = {
     'ctaHead': 'Battery not lasting, or shutting off?', 'ctaSub': 'We check the battery with you, tell you straight whether a new one is worth it, and fit it. Call 01202 775566 or text 07520 615332.',
     'schemaKind': 'howto',
     'atAGlance': [
-        ('The easy way', 'Our free 365 PC Manager app shows the battery&rsquo;s health and charge cycles on its This PC page. Nothing to type.'),
+        ('The easy way', 'Our free 365 PC Manager app shows the battery&rsquo;s health and charge cycles on its This PC page, and how it has worn over time on its Power page. Nothing to type.'),
         ('Without installing anything', 'Right-click Start, open Terminal, type powercfg /batteryreport and press Enter, then open the battery-report.html file it saves.'),
         ('Read it for you', 'Drop the report on this page: it shows the health, charge cycles and how fast it&rsquo;s wearing. It&rsquo;s read in your browser and never uploaded.'),
         ('The two numbers', 'Design capacity is what the battery held when new. Full charge capacity is what it holds today.'),
@@ -1594,7 +1594,7 @@ BH = {
     ],
     'sections': [
         {'eyebrow': '/01 &mdash; THE EASY WAY', 'h2': 'Check it with our free app, nothing to type',
-         'html': '<p>The easiest way: our free <strong>365 PC Manager</strong> app reads the battery straight from Windows and shows its <strong>health</strong> (how much of its original charge it still holds) and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page. There&rsquo;s no command to type and nothing to upload.</p><span id="battery-app"></span>__APP_BOX_BATTERY__'},
+         'html': '<p>The easiest way: our free <strong>365 PC Manager</strong> app reads the battery straight from Windows and shows its <strong>health</strong> (how much of its original charge it still holds) and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page. From version 36.6 it also shows <strong>how the battery has worn over time</strong>, from Windows&rsquo; own battery records, on its <strong>Power</strong> page. There&rsquo;s no command to type and nothing to upload.</p><span id="battery-app"></span>__APP_BOX_BATTERY__'},
         {'eyebrow': '/02 &mdash; NOTHING TO INSTALL', 'h2': 'Or use Windows&rsquo; own battery report',
          'html': '<p>Rather not install anything? Windows has a battery report built in. It takes about a minute, and it&rsquo;s the one time you type a command: Microsoft&rsquo;s own, below. Never type or paste a command someone else sends you or a website asks for out of the blue.</p>'
                  '<ol>'

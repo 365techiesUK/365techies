@@ -10,7 +10,10 @@ Rules, from what the program really does (0.1.0):
     the page says so wherever "editor" is used;
   - a signature is a picture of your signature (typed, drawn or from a photo), not a certified digital signature;
   - taking a password off needs the password: it never breaks a lock;
-  - no PDF to Word and no reading words from scans (OCR) yet; Windows 10 and 11 (64-bit) only; its window is Microsoft
+  - 0.2.0 (22 Oct 2026): it reads the words in scans with Windows' own reader (on the PC, check the words), turns a PDF
+    into a Word document (the WORDS only: layout, pictures and fonts aren't kept) and changes words by COVERING them and
+    typing new ones - the old words stay inside the file, and the page says so; never say it edits the original text;
+  -  Windows 10 and 11 (64-bit) only; its window is Microsoft
     Edge's app window (Edge comes with Windows);
   - it never contacts us or anyone else: no check-in, no update check (so: "come back here for new versions");
   - Save keeps the version before; the tools always save a new file and never change the original;
@@ -33,7 +36,8 @@ NAME = "Techies PDF"
 TAG = "v1"                    # pictures of 0.1.0 (18 Oct 2026). Cached for a year: a new look = a new tag
 OG = f"/images/tpdf-og-{TAG}.jpg"
 # the pictures' sizes at 1440 wide (tools/playwright-check/tpdf-shots.mjs at 1120 x 800, 2x, cropped to the content)
-DIMS = {"home": 801, "sign": 1029, "join": 643, "pages": 724, "split": 707, "shrink": 977, "photos": 994, "words": 765,
+TAGS = {"home": "v2", "scan": "v2", "word": "v2", "cover": "v2"}  # 0.2.0 (22 Oct 2026): the nine-button start screen + 3 new
+DIMS = {"home": 1029, "scan": 829, "word": 859, "cover": 1029, "sign": 1029, "join": 643, "pages": 724, "split": 707, "shrink": 977, "photos": 994, "words": 765,
         "password": 833}
 
 
@@ -62,7 +66,7 @@ MB = f"{round(REL['size'] / 1_048_576)} MB"   # as Windows and Edge show it
 
 
 def shot(name, alt, eager=False):
-    base = f"/images/tpdf-{name}-{TAG}"
+    base = f"/images/tpdf-{name}-{TAGS.get(name, TAG)}"
     lazy = "" if eager else ' loading="lazy"'
     return (f'<img src="{base}-720.webp" srcset="{base}-720.webp 720w, {base}-1440.webp 1440w" '
             f'sizes="(max-width:880px) 100vw, 640px" width="1440" height="{DIMS[name]}" alt="{alt}"{lazy} decoding="async">')
@@ -136,7 +140,7 @@ def hero():
           <nav class="breadcrumb" aria-label="Breadcrumb">{bp.bc_sub("Free Tools", "/free-tools/", NAME)}</nav>
           <p class="eyebrow mono">// FREE FOR WINDOWS 11 &amp; 10 &middot; WORKS OFFLINE &middot; NOTHING UPLOADED &middot; SIGNED BY 365 TECHIES LTD</p>
           <h1><em class="grad grad--cyan">Techies PDF</em>: the free PDF editor for Windows 11 and 10 that keeps your files on your PC</h1>
-          <p class="lede"><strong>Techies PDF</strong> is a free program for Windows 11 and 10 from 365 Techies, the family-run IT firm in Bournemouth. <strong>Fill in and sign</strong> a PDF form without printing it, <strong>join (merge)</strong> PDFs into one, <strong>split</strong> off just the pages you need, <strong>turn, move or take out</strong> pages, <strong>shrink (compress)</strong> a PDF so it can be emailed, turn <strong>photos into a PDF</strong>, copy the words out, and put a <strong>password</strong> on. All on your own computer, and it works offline: your documents are never uploaded anywhere. No adverts, no account, no watermark.</p>
+          <p class="lede"><strong>Techies PDF</strong> is a free program for Windows 11 and 10 from 365 Techies, the family-run IT firm in Bournemouth. <strong>Fill in and sign</strong> a PDF form without printing it, <strong>join (merge)</strong> PDFs into one, <strong>split</strong> off just the pages you need, <strong>turn, move or take out</strong> pages, <strong>shrink (compress)</strong> a PDF so it can be emailed, turn <strong>photos into a PDF</strong>, copy the words out (from <strong>scans</strong> too), turn a PDF into a <strong>Word</strong> document, <strong>change the words</strong> in one, and put a <strong>password</strong> on. All on your own computer, and it works offline: your documents are never uploaded anywhere. No adverts, no account, no watermark.</p>
           <div class="page-hero__cta">
             <a href="#download" class="button primary button--lg">Download it free</a>
             <a href="tel:+441202775566" class="button secondary button--lg">Rather we set it up? 01202 775566</a>
@@ -207,6 +211,9 @@ ICONS = {
     "photos": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="9" r="1.3"/>',
     "words": '<path d="M5 5h14M5 9h14M5 13h9M5 17h6M16 15l3 3-3 3"/>',
     "password": '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/>',
+    "scan": '<path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><path d="M8 9h8M8 12h8M8 15h5"/>',
+    "word": '<path d="M6 3h9l4 4v14H6zM15 3v4h4"/><path d="M8.5 11l1.5 6 2-4.5 2 4.5 1.5-6"/>',
+    "cover": '<path d="M4 6h10M4 10h6M4 14h4"/><path d="M13 21l-3 .5.5-3 7.5-7.5 2.5 2.5z"/>',
 }
 PARTS = [
     ("sign", "Fill in &amp; sign", "Type into forms, sign, add text, highlight"),
@@ -216,6 +223,9 @@ PARTS = [
     ("shrink", "Make it smaller", "Compress a big PDF so it can be emailed"),
     ("photos", "Photos to PDF", "Letters, receipts and forms from your phone"),
     ("words", "Copy the words", "Get the text out to paste somewhere else"),
+    ("scan", "Read scanned pages", "Windows reads the words in a scan, on your PC"),
+    ("word", "PDF to Word", "Its words in a Word document, to change"),
+    ("cover", "Change the words", "Cover old words and type new ones"),
     ("password", "Passwords", "Lock a PDF, or unlock one you have the password for"),
 ]
 
@@ -232,7 +242,7 @@ def overview():
         <p class="eyebrow mono">// WHAT IT DOES</p>
         <h2 id="tpp-features">The PDF jobs people ring us about, in one simple program</h2>
         <p class="tpp-lede">A form to sign, a letter that needs to go as one PDF, a scan that came out upside down, an attachment too big to send. Each job has its own big button and plain words, and you choose where the result is saved.</p>
-        <figure style="margin:0;max-width:880px"><div class="tpp-shot">{shot("home", "The Techies PDF start screen: Open a PDF to read, fill in or sign, and buttons for Join PDFs together, Turn, move or take out pages, Take pages out into a new PDF, Make a PDF smaller for email, Turn photos into a PDF, Copy the words out of a PDF and Put a password on or take one off")}</div></figure>
+        <figure style="margin:0;max-width:880px"><div class="tpp-shot">{shot("home", "The Techies PDF start screen: Open a PDF to read, fill in or sign, and buttons for Join PDFs together, Turn, move or take out pages, Take pages out into a new PDF, Make a PDF smaller for email, Turn photos into a PDF, Copy the words out of a PDF, Turn a PDF into a Word document, Change the words in a PDF and Put a password on or take one off, with our other free programs below")}</div></figure>
         <ul class="tpp-parts">{tiles}</ul>
       </div>
     </section>"""
@@ -266,8 +276,20 @@ FEATS = [
      "Turn photos into a PDF: two photos of a receipt and a boiler service sheet as pages 1 and 2, with A4 pages chosen (made-up samples)"),
     ("words", "You need the words, not the PDF",
      "Copy the words out of a PDF",
-     "All the words, page by page, ready to <strong>Copy</strong> and paste into an email or a letter, or to save as a text file. If a PDF is a scan (a picture of a page), there are no words to copy, and Techies PDF says so rather than giving you nothing.",
+     "All the words, page by page, ready to <strong>Copy</strong> and paste into an email or a letter, or to save as a text file. If a PDF is a scan (a picture of a page), Techies PDF says so and offers to read it: see the next part.",
      "Copy the words out of a PDF: the words of a letter shown page by page, with Copy all the words and Save as a text file (a made-up sample)"),
+    ("scan", "A letter that only came as a scan",
+     "Read the words in a scanned PDF",
+     "When a page is a picture of words (a scan, or a photo of a letter), press <strong>Read the words in the scanned pages</strong>. Windows&rsquo; own text reader reads them on your computer, so the page is never sent anywhere. Then copy the words, save them, put them in a Word document, or save <strong>a copy of the PDF that can be searched</strong>, so Ctrl+F finds its words. Reading a picture isn&rsquo;t perfect (1 and l, or 0 and O, can get mixed up), so check names and numbers.",
+     "Copy the words out of a PDF: a made-up scanned water bill, read by Windows on the PC, with Copy all the words, Save as a text file, Save as a Word document and Save a copy of the PDF that can be searched"),
+    ("word", "You need to change a document you only have as a PDF",
+     "Turn a PDF into a Word document",
+     "Its words go into a Word document you can change in Word (or our free <a href=\"/techies-one-mail/\">Techies One</a>), a line for each line and a new page for each page, scans included once they&rsquo;ve been read. It&rsquo;s the words: the layout, pictures and fonts aren&rsquo;t kept, and Techies PDF says so before you save.",
+     "Turn a PDF into a Word document: a made-up insurance letter&rsquo;s words, with Save as a Word document and a note that the layout, pictures and fonts aren&rsquo;t kept"),
+    ("cover", "A wrong date or name in a PDF",
+     "Change the words in a PDF",
+     "Drag a box over the words that are wrong and type the right ones. The box takes the colour of the paper behind them and the new words go on top, sized to fit (with <strong>Smaller</strong> and <strong>Bigger</strong> if you need them), and it&rsquo;s saved as a new copy. Be aware: the old words are <strong>covered, not taken out</strong>. They&rsquo;re still inside the file, so never use this to hide private details such as bank or card numbers.",
+     "Change the words in a PDF: a box drawn over a made-up letter&rsquo;s date, now reading 8 November 2026"),
     ("password", "Sending something private",
      "Put a password on a PDF, or take one off",
      "Put a password on a copy before you email it (it&rsquo;s locked with AES-256, the strongest kind PDFs use), and tell the person the password by phone or text, not in the same email. Got a PDF that asks for a password every time? Type the password once and a copy is saved that opens straight away. Taking a password off needs the password: Techies PDF never breaks a lock.",
@@ -460,8 +482,9 @@ LIMITS = """    <section class="section section--alt tpp" aria-labelledby="tpp-l
         <p class="eyebrow mono">// HONEST LIMITS</p>
         <h2 id="tpp-limits">What it can&rsquo;t do (yet)</h2>
         <ul class="tpp-list">
-          <li><strong>It can&rsquo;t change the words already in a PDF.</strong> It adds things on top: your typing in the form&rsquo;s boxes, new text anywhere on a page, signatures, highlights and drawings. To reword a letter, change the document it came from (a Word file, say) and make the PDF again.</li>
-          <li><strong>No PDF to Word yet,</strong> and it can&rsquo;t read the words in a scan (a picture of a page). Copy the words works on PDFs made from typed documents.</li>
+          <li><strong>Changing words covers them, it doesn&rsquo;t take them out.</strong> The old words stay inside the file under the new ones, so never use it to hide private details. For big changes, change the document the PDF came from (a Word file, say) and make the PDF again.</li>
+          <li><strong>PDF to Word gives you the words, not the look.</strong> The layout, pictures and fonts aren&rsquo;t kept.</li>
+          <li><strong>Reading scans needs checking.</strong> Windows reads them well, but not perfectly: check names, numbers and dates. A few PCs don&rsquo;t have Windows&rsquo; text reader yet: Techies PDF offers to add it (it&rsquo;s a free part of Windows; Windows asks your permission first and fetches it from Windows Update).</li>
           <li><strong>A signature is a picture of your signature,</strong> not a certified digital signature. That&rsquo;s accepted for most everyday forms, but some documents, such as a will, must be signed on paper. If in doubt, ask whoever sent you the form.</li>
           <li><strong>Taking a password off needs the password.</strong> If it&rsquo;s been forgotten, Techies PDF can&rsquo;t open the PDF, and nor can we.</li>
           <li><strong>Shrinking works on pictures.</strong> PDFs of photos and scans come down a lot; a PDF that&rsquo;s mostly words is usually small already.</li>
@@ -484,7 +507,7 @@ def growing():
           <div class="tpp-card">
             <h3>What&rsquo;s in it</h3>
             <p style="margin:0 0 .4rem"><strong>Version {REL['ver']}.</strong> {REL['notes'].replace("'", "&rsquo;")}</p>
-            <p style="margin:0;color:var(--muted);font-size:.95rem">Things we&rsquo;d like to add (no dates yet): PDF to Word, and reading the words in scans.</p>
+            <p style="margin:0;color:var(--muted);font-size:.95rem">Things we&rsquo;d like to add (no dates yet): keeping a PDF&rsquo;s layout when it goes into Word.</p>
           </div>
         </div>
       </div>
@@ -503,7 +526,13 @@ FAQS = [
     ("Is Techies PDF really free?",
      "Yes. The program costs nothing: no trial, no adverts, no watermark on what you save, no daily limit and no account to make with us. If you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs from &pound;20), and we agree the price with you before we start."),
     ("Is there a free PDF editor for Windows 11?",
-     "Yes: Techies PDF, free for Windows 11 and Windows 10. It fills in and signs forms, adds text, highlights and drawings, joins (merges) PDFs, splits off the pages you need, turns, moves and takes out pages, shrinks (compresses) PDFs for email, turns photos into a PDF, copies the words out and puts on or takes off a password. It can&rsquo;t change the words already in a PDF: it adds things on top."),
+     "Yes: Techies PDF, free for Windows 11 and Windows 10. It fills in and signs forms, adds text, highlights and drawings, joins (merges) PDFs, splits off the pages you need, turns, moves and takes out pages, shrinks (compresses) PDFs for email, turns photos into a PDF, copies the words out (scans included, read by Windows on your PC), turns a PDF into a Word document, changes words by covering them and typing new ones, and puts on or takes off a password."),
+    ("Can I change the words in a PDF for free?",
+     "Yes, with Techies PDF&rsquo;s <strong>Change the words in a PDF</strong>: drag a box over the wrong words and type the right ones, then save a copy. The old words are covered over, not taken out: they&rsquo;re still inside the file, so never use it to hide private details. To reword a whole letter, it&rsquo;s better to turn it into a Word document, change it there and make a new PDF."),
+    ("How do I turn a PDF into Word for free?",
+     "Open Techies PDF, choose <strong>Turn a PDF into a Word document</strong>, choose the PDF and press <strong>Save as a Word document</strong>. You get its words, a line for each line and a page for each page, ready to change. The layout, pictures and fonts aren&rsquo;t kept. Nothing is uploaded: it all happens on your computer."),
+    ("Can it read the words in a scanned PDF?",
+     "Yes. If a page is a picture of words, <strong>Copy the words out of a PDF</strong> offers to read it with Windows&rsquo; own text reader, on your computer. Then you can copy the words, save them, put them in Word, or save a copy of the PDF that can be searched. Check names and numbers afterwards: reading a picture isn&rsquo;t perfect."),
     ("How do I sign a PDF on Windows?",
      "Open the PDF in Techies PDF, press <strong>Add or edit signatures</strong> at the top right, and type your name in a handwriting style, draw it, or use a photo of your signature. Place it on the line, resize it if you need to, and press <strong>Save</strong>. It&rsquo;s a picture of your signature, which is accepted for most everyday forms; some documents, like a will, must be signed on paper."),
     ("How do I fill in a PDF form?",

@@ -260,7 +260,7 @@ def box(slug):
           <p class="t1m__lede">{lede}</p>
 {clip(slug)}          <ul class="t1m__pts">{points}</ul>
           <p class="t1m__note">{note} <a href="/techies-one-mail/">See what it does, with pictures</a>.</p>
-          <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One Mail, free</a>{'<a class="button secondary button--lg" href="/techies-one-mail/">What it looks like</a></p>' if slug in NO_SETUP else '<a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>'}
+          <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One, free</a>{'<a class="button secondary button--lg" href="/techies-one-mail/">What it looks like</a></p>' if slug in NO_SETUP else '<a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>'}
           <p class="t1m__small mono">FOR WINDOWS 10 AND 11 PCs<span class="t1v"> &middot; VERSION {ver} &middot; {mb} MB</span> &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
         </div>
       </div>
