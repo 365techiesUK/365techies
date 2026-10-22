@@ -32,17 +32,17 @@ function vis_warm_paths() {
 // opens a "Send it to your computer" panel (js/interior.js) and they sent themselves the link.
 // Returns dl, send, call, text or lead; '' for an ordinary page.
 function vis_act_kind($p) {
-    return preg_match('#^/~(dl|send|call|text|lead)/#', (string)$p, $m) ? $m[1] : '';
+    return preg_match('#^/~(dl|send|call|text|lead|share)/#', (string)$p, $m) ? $m[1] : '';   // share: 22 Oct 2026
 }
 // the actions in a page-count map: how many of each (each visitor once a day), and the pages the calls, texts and
 // enquiries came from (the page path after the kind; the app pings have their own per-app tally, vis_dl_tally)
 function vis_actions(array $pages, $nFrom = 8) {
-    $acts = array('dl' => 0, 'send' => 0, 'call' => 0, 'text' => 0, 'lead' => 0); $from = array();
+    $acts = array('dl' => 0, 'send' => 0, 'call' => 0, 'text' => 0, 'lead' => 0, 'share' => 0); $from = array();
     foreach ($pages as $k => $n) {
         $kind = vis_act_kind($k);
         if ($kind === '') continue;
         $acts[$kind] += (int)$n;
-        if ($kind === 'dl' || $kind === 'send') continue;
+        if ($kind === 'dl' || $kind === 'send' || $kind === 'share') continue;
         $src = substr((string)$k, strlen($kind) + 2);
         if ($src === '' || $src[0] !== '/') $src = '/';
         if (!isset($from[$src])) $from[$src] = array('call' => 0, 'text' => 0, 'lead' => 0, 'n' => 0);

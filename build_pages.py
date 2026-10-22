@@ -1099,6 +1099,8 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
     # 14 Oct 2026: that panel's Send / Email / Copy (js/interior.js fires tt:send) is /~send/<app><page>
     'document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1"||p==="tpdf"||p==="tmove")tap("/~send/"+p+location.pathname);});'
+    # 22 Oct 2026: "Share this page" (js/interior.js fires tt:share) is /~share/<how><page>
+    'document.addEventListener("tt:share",function(e){var w=e&&e.detail&&e.detail.how;if(/^(native|whatsapp|email|facebook|copy)$/.test(w||""))tap("/~share/"+w+location.pathname);});'
     '}catch(e){}})();</script>\n')
 
 

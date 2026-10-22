@@ -26317,7 +26317,7 @@ def write_portal_page():
   #p365app .nx-lvcc-h span { font-weight:400; font-size:.85rem; color:#7f95a8; }
   #p365app .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
   /* 1 Oct 2026: what they did - the action counts and the pages they acted from */
-  #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; grid-template-columns:repeat(5,minmax(0,1fr)); }
+  #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; grid-template-columns:repeat(6,minmax(0,1fr)); }
   #p365app .nx-lvtools { margin:.6rem 0 1.1rem; }
   #p365app .nx-lvtools__scroll { overflow-x:auto; }
   #p365app .nx-lvtools table { width:100%; border-collapse:collapse; font-size:.92rem; }
@@ -30447,7 +30447,8 @@ def write_portal_page():
   // 14 Oct 2026: send = on a phone, tablet or Mac the download opens "Send it to your computer" and they sent the link
   var NXL_ACT = { dl: ['Downloads', '\\u2b07 Downloaded PC Manager', ''], send: ['Sent to a computer', '\\u2197 Sent the app link to a computer', ''],
     call: ['Tapped Call', '\\u260e Tapped Call', 'Tapped Call'],
-    text: ['Tapped Text', '\\u2709 Tapped Text', 'Tapped Text'], lead: ['Sent the form', '\\u2714 Sent an enquiry', 'Sent an enquiry'] };
+    text: ['Tapped Text', '\\u2709 Tapped Text', 'Tapped Text'], lead: ['Sent the form', '\\u2714 Sent an enquiry', 'Sent an enquiry'],
+    share: ['Shared a page', '\\u21aa Shared a page', ''] };   // 22 Oct 2026: "Share this page" (js/interior.js)
   function nxlWarm(p) { var m = /^\\/~(call|text|lead)\\//.exec(String(p || '')); return m ? NXL_ACT[m[1]][2] : (NXL_WARM[p] || ''); }
   var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
   var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
@@ -30505,6 +30506,9 @@ def write_portal_page():
     // 14 Oct 2026: /~send/<app><page> - the link sent to a computer from the phone panel
     var snd = /^\\/~send\\/(pcm|t1)(\\/.*)$/.exec(p);
     if (snd) return '\\u2197 ' + (snd[1] === 'pcm' ? 'PC Manager' : 'Techies One Mail') + ' link sent to a computer' + (snd[2] !== '/' ? ' \\u00b7 ' + nxlPage(site, snd[2]) : '');
+    // 22 Oct 2026: /~share/<how><page> - "Share this page" on a phone's share menu, WhatsApp, email, Facebook or Copy
+    var shr = /^\\/~share\\/(native|whatsapp|email|facebook|copy)(\\/.*)$/.exec(p);
+    if (shr) return '\\u21aa Shared ' + ({ native: 'with the phone\\u2019s share menu', whatsapp: 'on WhatsApp', email: 'by email', facebook: 'on Facebook', copy: 'by copying the link' })[shr[1]] + ' \\u00b7 ' + nxlPage(site, shr[2]);
     // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
     var act = /^\\/~(call|text|lead)(\\/.*)$/.exec(p);
     if (act) return NXL_ACT[act[1]][1] + ' \\u00b7 ' + nxlPage(site, act[2]);
@@ -30733,8 +30737,8 @@ def write_portal_page():
     // 1 Oct 2026: what they did - Call and Text taps, enquiries sent, PC Manager download clicks (the beacon's action pings)
     var ac = s.acts || {}, acN = (ac.call || 0) + (ac.text || 0) + (ac.lead || 0);
     h += '<h3 class="nx-lvcc-h">What they did <span>each visitor once a day \\u00b7 counted from 1 Oct 2026</span></h3>'
-      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl', 'send'].map(function (k) {
-          return '<div' + (k !== 'dl' && k !== 'send' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
+      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl', 'send', 'share'].map(function (k) {
+          return '<div' + (k !== 'dl' && k !== 'send' && k !== 'share' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
         }).join('') + '</div>'
       + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
           return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';

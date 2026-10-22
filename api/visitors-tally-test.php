@@ -153,7 +153,7 @@ $d = $s['days'][$DAY]['t365'];
 check($d['warm'] === 3, 'a call, a text or an enquiry makes a visitor warm; a download alone does not', $d['warm']);
 $s = vis_fold($s, live($T + 60, array(row('cccc0001', 'Poole', 'GB', true, 'Google', $IPH, array($J, '/~call' . $J, '/~call' . $J)))), $T + 60);
 $st = vis_stats($s, $T + 60); $a = $st['sites']['all']['today'];
-check($a['acts'] === array('dl' => 2, 'send' => 1, 'call' => 2, 'text' => 1, 'lead' => 1), 'actions counted, each visitor once a day', json_encode($a['acts']));
+check($a['acts'] === array('dl' => 2, 'send' => 1, 'call' => 2, 'text' => 1, 'lead' => 1, 'share' => 0), 'actions counted, each visitor once a day', json_encode($a['acts']));
 check($a['actFrom'][0]['k'] === $J && $a['actFrom'][0]['n'] === 2 && $a['actFrom'][0]['call'] === 1 && $a['actFrom'][0]['lead'] === 1, 'where they acted: the Junara page first', json_encode($a['actFrom']));
 $home = array_values(array_filter($a['actFrom'], function ($x) { return $x['k'] === '/'; }));
 check(count($home) === 1 && $home[0]['call'] === 1, 'a Call tap on the home page is from /', json_encode($a['actFrom']));
@@ -167,6 +167,7 @@ $us = array_values(array_filter($a['perCountry'], function ($x) { return $x['k']
 check(count($us) === 1 && $us[0]['acts']['dl'] === 1 && $us[0]['acts']['call'] === 0, 'actions per country', json_encode($us));
 check(vis_act_kind('/~dl/pcm/') === 'dl' && vis_act_kind('/~lead/x/') === 'lead' && vis_act_kind('/~calling/') === '' && vis_act_kind('/call/') === '', 'only the four ping paths are actions');
 // 11 Oct 2026: a download click now carries the page it was clicked on
+check(vis_act_kind('/~share/whatsapp/techies-move/') === 'share' && vis_act_kind('/~sharing/') === '', 'a page shared is an action, not a page');   // 22 Oct 2026
 check(vis_act_kind('/~dl/pcm/computer-spec-checker/') === 'dl' && vis_act_kind('/~dl/t1/techies-one-mail/') === 'dl', 'a download click with its page is still a download');
 $DLT = date('Y-m-d');
 $dvs = array('days' => array($DLT => array('t365' => array('pages' => array('/~dl/pcm/' => 1, '/~dl/pcm/computer-spec-checker/' => 3, '/~dl/pcm/free-pc-health-check/' => 2, '/~dl/t1/techies-one-mail/' => 4, '/computer-spec-checker/' => 9),

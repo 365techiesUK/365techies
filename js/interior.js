@@ -588,3 +588,133 @@ if (WANT_BG) {
   }, { passive: true });
   paint(); // deep links (#s5 etc.) land mid-page — show the true position immediately
 })();
+
+/* ---------------- share this page: the phone's own share menu, or WhatsApp, email, Facebook and Copy ----------------
+   22 Oct 2026 (owner: "on the phone view ... have we got it that they have a way of sharing it ... to an email or ...
+   WhatsApp ... Also on the PC"). Every public page gets a small "Share this page" button under its byline (or its
+   opening summary) and a "Know someone this would help?" box before its questions. On a phone or tablet the button opens
+   the device's own share menu, so WhatsApp, Messages, Email and the rest are all there; on a computer it opens a small
+   panel with WhatsApp, Email, Facebook and Copy the link (and the computer's own share menu, where it has one).
+   WhatsApp and Facebook are plain links: nothing of theirs loads until a button is pressed. The address shared is the
+   page's canonical one, never anything after ? or #. Pages marked noindex (the portal, orders, sign-ins) get nothing.
+   A share fires tt:share, which the visitors beacon counts as /~share/<how><page>. */
+(function () {
+  if (document.querySelector('meta[name="robots"][content*="noindex"]')) return;
+  const h1 = document.querySelector("main h1, h1");
+  if (!h1) return;
+  const canon = document.querySelector('link[rel="canonical"]');
+  const url = (canon && /^https:\/\//.test(canon.href)) ? canon.href : location.origin + location.pathname;
+  const og = document.querySelector('meta[property="og:title"]');   // written for sharing, so it reads well in a message
+  const title = ((og && og.content) || document.title || h1.textContent || "").replace(/\s*[|–—-]\s*365 ?Techies.*$/i, "").replace(/\s+/g, " ").trim();
+  const text = "I thought this might help: " + title;
+  const coarse = !!(window.matchMedia && matchMedia("(pointer: coarse)").matches);
+  const canShare = typeof navigator.share === "function";
+  const phone = canShare && coarse;   // phones and tablets: their own share menu first
+  const told = (how) => document.dispatchEvent(new CustomEvent("tt:share", { detail: { how } }));
+  const enc = encodeURIComponent;
+  const ICON = {
+    share: '<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
+    whatsapp: '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9 9.5c.5 2 2.5 4 4.5 4.5l1.2-1.2 1.8.8-.4 1.6c-3.6.3-7.6-3.7-7.3-7.3l1.6-.4.8 1.8z"/>',
+    email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    facebook: '<path d="M14 21v-8h3l.5-3.5H14V7.8c0-1 .3-1.8 1.8-1.8H18V3a24 24 0 0 0-2.8-.1C12.6 2.9 11 4.5 11 7.4v2.1H8V13h3v8"/>',
+    copy: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  };
+  const svg = (k) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[k] + "</svg>";
+  const opt = (how, label, href) => href
+    ? '<a class="tshare__opt" data-share="' + how + '" href="' + href + '"' + (/^https:/.test(href) ? ' target="_blank" rel="noopener"' : "") + ">" + svg(how) + "<span>" + label + "</span></a>"
+    : '<button type="button" class="tshare__opt" data-share="' + how + '">' + svg(how === "more" || how === "native" ? "share" : how) + "<span>" + label + "</span></button>";
+  function options(withNative) {
+    return (withNative ? opt("native", "Share this page") : "")
+      + opt("whatsapp", "WhatsApp", "https://wa.me/?text=" + enc(text + " " + url))
+      + opt("email", "Email", "mailto:?subject=" + enc(title) + "&amp;body=" + enc(text + "\n\n" + url))
+      + opt("facebook", "Facebook", "https://www.facebook.com/sharer/sharer.php?u=" + enc(url))
+      + opt("copy", "Copy the link")
+      + (canShare && !withNative ? opt("more", "More ways to share") : "");
+  }
+  const css = document.createElement("style");
+  css.textContent =
+    ".tshare-top{margin:.7rem 0 0}"
+    + ".tshare-btn,.tshare__opt{display:inline-flex;align-items:center;gap:.5rem;min-height:2.75rem;padding:.5rem 1rem;border-radius:999px;border:1px solid rgba(120,160,230,.38);background:rgba(125,170,220,.08);color:#e6eefc;font-family:inherit;font-weight:600;font-size:.95rem;line-height:1.2;text-decoration:none;cursor:pointer;box-sizing:border-box}"
+    + ".tshare-btn:hover,.tshare-btn:focus-visible,.tshare__opt:hover,.tshare__opt:focus-visible{border-color:#4fb3ff;background:rgba(29,151,227,.16);color:#fff}"
+    + ".tshare-btn svg,.tshare__opt svg{width:1.2rem;height:1.2rem;flex:none}"
+    + ".tshare__opt[data-share=whatsapp] svg{color:#25d366}.tshare__opt[data-share=facebook] svg{color:#6fa4ff}"
+    + ".tshare-box{padding-top:0}.tshare-box__in{max-width:880px;margin:0 auto;border:1px solid rgba(120,160,230,.26);border-radius:16px;background:rgba(125,170,220,.06);padding:clamp(1rem,3vw,1.5rem)}"
+    + ".tshare-box h2{margin:0 0 .35rem;font-size:clamp(1.15rem,2.6vw,1.4rem)}.tshare-box p{margin:0 0 .9rem;color:var(--muted,#a9b6cc)}"
+    + ".tshare__opts{display:flex;flex-wrap:wrap;gap:.55rem}"
+    + ".tshare{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;background:rgba(3,6,16,.72);padding:1rem}"
+    + "@media (min-width:640px){.tshare{align-items:center}}"
+    + ".tshare__box{position:relative;width:100%;max-width:26rem;max-height:calc(100vh - 2rem);overflow:auto;background:#0e1730;color:#eef3fb;border:1px solid rgba(120,160,230,.28);border-radius:1.2rem;padding:1.4rem 1.3rem 1.3rem;box-shadow:0 20px 60px rgba(0,0,0,.55)}"
+    + ".tshare__box h2{font-size:1.35rem;line-height:1.2;margin:0 2.4rem .9rem 0;color:#fff}"
+    + ".tshare__box .tshare__opts{display:grid;gap:.55rem}.tshare__box .tshare__opt{width:100%;justify-content:flex-start}"
+    + ".tshare__x{position:absolute;top:.6rem;right:.6rem;width:2.6rem;height:2.6rem;border-radius:50%;border:1px solid rgba(120,160,230,.3);background:transparent;color:#eef3fb;font-size:1.4rem;line-height:1;cursor:pointer}"
+    + "html.tshare-open{overflow:hidden}";
+  document.head.appendChild(css);
+
+  let panel = null, back = null;
+  function close() {
+    if (!panel) return;
+    panel.remove(); panel = null;
+    document.documentElement.classList.remove("tshare-open");
+    if (back) { try { back.focus(); } catch (e) {} back = null; }
+  }
+  function openPanel(from) {
+    close();
+    back = from;
+    panel = document.createElement("div");
+    panel.className = "tshare";
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", "tshare-h");
+    panel.innerHTML = '<div class="tshare__box"><button type="button" class="tshare__x" aria-label="Close">&times;</button>'
+      + '<h2 id="tshare-h">Share this page</h2><div class="tshare__opts">' + options(false) + "</div></div>";
+    document.body.appendChild(panel);
+    document.documentElement.classList.add("tshare-open");
+    panel.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    const first = panel.querySelector(".tshare__opt");
+    if (first) { try { first.focus(); } catch (e) {} }
+  }
+  function nativeShare() {
+    navigator.share({ title, text, url }).then(() => told("native")).catch(() => {});
+  }
+  function copy(b) {
+    const label = b.querySelector("span");
+    const done = () => { if (label) { const was = label.textContent; label.textContent = "Link copied ✓"; setTimeout(() => { label.textContent = was; }, 2500); } told("copy"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => { window.prompt("Copy this link:", url); told("copy"); });
+    else { window.prompt("Copy this link:", url); told("copy"); }
+  }
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    if (panel && (t === panel || t.closest(".tshare__x"))) { close(); return; }
+    if (t.closest(".tshare-btn")) { e.preventDefault(); if (phone) nativeShare(); else openPanel(t.closest(".tshare-btn")); return; }
+    const o = t.closest(".tshare__opt");
+    if (!o) return;
+    const how = o.getAttribute("data-share");
+    if (how === "native" || how === "more") { e.preventDefault(); nativeShare(); return; }
+    if (how === "copy") { e.preventDefault(); copy(o); return; }
+    told(how);                                        // WhatsApp, Email, Facebook: the link itself does the rest
+    if (panel) setTimeout(close, 400);
+  });
+
+  // 1. under the byline, or under the opening summary of pages without one
+  const top = document.createElement("p");
+  top.className = "tshare-top";
+  top.innerHTML = '<button type="button" class="tshare-btn">' + svg("share") + "<span>Share this page</span></button>";
+  const by = document.querySelector(".page-hero__byline");
+  const hero = h1.closest("section");
+  const lede = hero && hero.querySelector(".lede");
+  if (by) by.insertAdjacentElement("afterend", top);
+  else if (lede) lede.insertAdjacentElement("afterend", top);
+  else h1.insertAdjacentElement("afterend", top);
+
+  // 2. a box before the page's questions (or its closing call to action)
+  const before = document.querySelector("section.faq-section") || document.querySelector("section.cta-band");
+  if (before) {
+    const box = document.createElement("section");
+    box.className = "section tshare-box";
+    box.setAttribute("aria-labelledby", "tshare-box-h");
+    box.innerHTML = '<div class="wrap"><div class="tshare-box__in"><h2 id="tshare-box-h">Know someone this would help?</h2>'
+      + '<p>Send them this page. It only takes a moment.</p><div class="tshare__opts">' + options(phone) + "</div></div></div>";
+    before.insertAdjacentElement("beforebegin", box);
+  }
+})();
