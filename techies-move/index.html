@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    // phone_click: a tap on any tel: link. Twelve phone leads a window were invisible to
+    // every source; this counts the ones that start from the site. It queues into
+    // dataLayer like every other call here - same consent gate, no extra Google contact.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a) return;
+      gtag('event', 'phone_click', { phone_number: (a.getAttribute('href') || '').replace('tel:', ''), link_text: (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40) });
+    }, true);
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>Techies Move | Free PC Transfer Tool for Windows 11 and 10</title>
+  <meta name="description" content="Free tool to move your files, photos, favourites and Outlook email files from your old PC to a new Windows 11 PC by USB stick, then keep it as a backup." />
+  <link rel="canonical" href="https://365techies.co.uk/techies-move/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/techies-move/" />
+  <meta property="og:title" content="Techies Move: the free way to move everything from your old PC to your new one" />
+  <meta property="og:description" content="Free tool to move your files, photos, favourites and Outlook email files from your old PC to a new Windows 11 PC by USB stick, then keep it as a backup. Nothing uploaded." />
+  <meta property="og:image" content="https://365techies.co.uk/images/tmove-og-v1.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Techies Move: the free way to move everything from your old PC to your new one" />
+  <meta name="twitter:description" content="Free tool to move your files, photos, favourites and Outlook email files from your old PC to a new Windows 11 PC by USB stick, then keep it as a backup. Nothing uploaded." />
+  <meta name="twitter:image" content="https://365techies.co.uk/images/tmove-og-v1.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/techies-move/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Free Tools",
+          "item": "https://365techies.co.uk/free-tools/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Techies Move",
+          "item": "https://365techies.co.uk/techies-move/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/techies-move/#webpage",
+      "url": "https://365techies.co.uk/techies-move/",
+      "name": "Techies Move",
+      "description": "Free tool to move your files, photos, favourites and Outlook email files from your old PC to a new Windows 11 PC by USB stick, then keep it as a backup. Nothing uploaded.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/techies-move/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/images/tmove-og-v1.jpg"
+      },
+      "dateModified": "2026-10-22"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://365techies.co.uk/techies-move/#app",
+      "name": "Techies Move",
+      "operatingSystem": "Windows 10 (64-bit), Windows 11",
+      "applicationCategory": "UtilitiesApplication",
+      "description": "A free program for Windows 10 and 11 PCs, made by 365 Techies, that moves a person's files from an old PC to a new one through a USB stick or external hard drive: Desktop, Documents, Pictures, Videos, Music, Downloads and any added folder, browser favourites (Edge, Chrome, Brave, Firefox), Outlook data files and signatures, a list of email accounts and their settings, the desktop picture and lists of programs, printers and Wi-Fi networks. It says what size of USB stick is needed, lists the passwords to check (it never reads or copies passwords), and can keep the drive as a backup with a weekly reminder. Nothing is deleted, overwritten or uploaded.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP",
+        "availability": "https://schema.org/InStock"
+      },
+      "isAccessibleForFree": true,
+      "inLanguage": "en-GB",
+      "downloadUrl": "https://365techies.co.uk/downloads/tmove/TechiesMove-Setup-0.2.0.exe",
+      "softwareVersion": "0.2.0",
+      "fileSize": "12MB",
+      "featureList": [
+        "Moves Desktop, Documents, Pictures, Videos, Music, Downloads and any added folder to a new PC by USB stick",
+        "Says what size of USB stick is needed and whether a drive has room (and FAT32's 4 GB limit)",
+        "Favourites from Microsoft Edge, Google Chrome (including Google-account favourites), Brave and Firefox",
+        "Outlook data files (.pst) and signatures, and a list of email accounts with their settings",
+        "A checklist of the passwords to check before the old PC is switched off (passwords are never read or copied)",
+        "Lists installed programs, and has Windows reinstall many on the new PC",
+        "Never deletes or overwrites: a different file of the same name is kept as '(from old PC)'",
+        "Keeps the drive as a backup afterwards, with earlier versions kept and a weekly reminder",
+        "Works offline: nothing uploaded, no account, no adverts"
+      ],
+      "screenshot": [
+        "https://365techies.co.uk/images/tmove-pack-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-home-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-extras-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-passwords-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-setup-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-done-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-email-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-keep-v1-1440.webp",
+        "https://365techies.co.uk/images/tmove-backup-card-v1-1440.webp"
+      ],
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "provider": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "datePublished": "2026-10-22",
+      "url": "https://365techies.co.uk/techies-move/"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/techies-move/#howto",
+      "name": "How to move to a new computer with Techies Move",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Download it on both computers",
+          "text": "Press the Download button on the old PC, and again on the new one. The file is called TechiesMove-Setup-0.2.0.exe and is signed by 365 Techies Ltd. It installs in a few seconds and needs no administrator password."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "On the old PC, plug in a USB stick and pack up",
+          "text": "Choose This is my OLD computer. Techies Move counts what you have and says what size of stick you need. Choose the stick, untick anything you don&rsquo;t want, and press Start copying. Your old PC isn&rsquo;t changed."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "On the new PC, put it back",
+          "text": "Plug the stick into the new PC, open Techies Move, choose This is my NEW computer and press Put it on this PC. Your pictures go into Pictures, your documents into Documents, and so on, and it shows you what to do next for your favourites, Chrome and email."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/techies-move/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I transfer files from my old computer to my new one?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Install Techies Move on both computers. On the old one, plug in a USB stick, choose <strong>This is my OLD computer</strong> and press <strong>Start copying</strong>. Then plug the stick into the new one, choose <strong>This is my NEW computer</strong> and press <strong>Put it on this PC</strong>. Your photos, documents, desktop, music, videos, downloads, favourites and Outlook files go into the right places. It&rsquo;s free, and nothing is uploaded."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Windows 11 have a transfer tool?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not one that copies PC to PC any more. Microsoft removed the PC-to-PC Migration from Windows 11&rsquo;s Windows Backup app in September 2026. Windows Backup still backs your folders up to OneDrive and brings them back on the new PC, but the free OneDrive only holds 5 GB. Techies Move does the move through a USB stick instead, with no cloud space needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happened to Windows Easy Transfer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Windows Easy Transfer was left out of Windows 10, so it isn&rsquo;t on Windows 10 or 11 PCs. Techies Move does the same job for Windows 10 and 11, free: it copies your files, favourites and Outlook files onto a USB stick and puts them back on the new PC."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a free alternative to PCmover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes: Techies Move is free and moves your folders, favourites, email files and signatures, and desktop picture, and lists your passwords to check. Laplink PCmover is a paid program that can also move installed programs; Techies Move lists your programs instead, and Windows can install many of them again on the new PC."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What size USB stick do I need to move to a new computer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Open Techies Move on the old PC and choose <strong>This is my OLD computer</strong>: it counts your files and tells you, for example &ldquo;This needs 41 GB, so a 64 GB USB stick or bigger is enough&rdquo;. As a rough guide, up to about 12 GB fits a 16 GB stick, 25 GB a 32 GB stick, 50 GB a 64 GB stick and 100 GB a 128 GB stick; more than about 400 GB needs a portable hard drive. Buy a size up if you&rsquo;ll keep the stick as your backup."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will Techies Move copy my passwords?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, on purpose: it never reads or copies passwords. It lists the email addresses and browser sign-ins you&rsquo;ll need passwords for, with a button to check each email password in your webmail while the old PC still works. Chrome and Edge bring back saved passwords when you sign in with sync on; Techies Move tells you if yours are only on the old PC, and how to take them with Chrome&rsquo;s own export."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will my emails move to the new computer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Emails kept by your email company (BT, Sky, Gmail, Outlook.com, Virgin Media and most others) come back as soon as you add your address in Outlook on the new PC: Techies Move lists each address with its settings and what to know. Emails of older POP accounts kept in Outlook data files (.pst) are copied across for you to open in Outlook, and classic Outlook&rsquo;s signatures are put back too."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it move my programs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Programs can&rsquo;t be copied from one PC to another; they need installing fresh. Techies Move lists every program on the old PC, and on the new one it can have Windows install many of them again: you tick the ones you want. Microsoft Office, Microsoft 365 and antivirus are installed by signing in on that company&rsquo;s website."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I move my Chrome bookmarks to a new computer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If you sign in to Chrome with your Google account and sync is on, your bookmarks come back when you sign in on the new PC; Techies Move tells you which account. It also saves every browser&rsquo;s favourites, including the ones Chrome keeps in your Google account, as a bookmarks file, and on the new PC shows you Chrome&rsquo;s or Edge&rsquo;s import page to bring them in."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use the USB stick as a backup afterwards?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. On the new PC, press <strong>Use this drive as my backup</strong>: the copy already on the stick becomes your backup. After that, press <strong>Back up now</strong> whenever the stick is plugged in, and Techies Move adds what&rsquo;s new or changed, keeps the previous copy of any changed file, and never deletes anything from the stick. A Windows notification reminds you every week."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it delete anything from my old computer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Everything is copied, not moved: the old PC keeps all its files, and nothing on it is changed. On the new PC nothing is written over either; a different file with the same name is kept alongside, with &ldquo;(from old PC)&rdquo; on its name."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to install it on both computers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, on the old one to pack up and on the new one to put it back. It&rsquo;s a small, free download that needs no administrator password, and you can uninstall it afterwards without losing anything on the stick."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Techies Move work on Windows 7 or 8?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Both PCs need Windows 10 or 11 (64-bit). If your old PC runs Windows 7 or 8, copy your folders onto a USB stick by hand, or ring us and we&rsquo;ll move them for you."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Techies Move really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes: no trial, no adverts, no account and no limit on how much it moves. If you&rsquo;d rather we did the move for you, that&rsquo;s a paid job, and we agree the price with you before we start."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+            <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+            <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+            <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/games/">Free Games &mdash; no adverts</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/services/">All Services &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Everyday support</span>
+              <a href="/remote-it-support/">Remote IT Support</a>
+              <a href="/computer-repairs/">Computer Repairs</a>
+              <a href="/preventative-maintenance/">Preventative Maintenance</a>
+              <a href="/cybersecurity-support/">Cybersecurity</a>
+              <a href="/backup-support/">Backup Support</a>
+              <a href="/printer-support/">Printer Support</a>
+              <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email &amp; Microsoft 365</span>
+              <a href="/email-support/">Email Support</a>
+              <a href="/microsoft-365-support/">Microsoft 365</a>
+              <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+              <a href="/email-migration/">Email Migration</a>
+              <span class="dropdown__label dropdown__label--sep">Computers</span>
+              <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+              <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Wi-Fi &amp; internet</span>
+              <a href="/wifi-support/">Wi-Fi Support</a>
+              <a href="/starlink-internet/">Starlink Internet</a>
+              <a href="/emergency-internet/">365 Emergency Internet</a>
+              <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+              <a href="/ai/">AI &amp; Automation</a>
+              <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+              <a href="/web-care/">365 Web Care</a>
+              <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+              <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/free-tools/">All Free Tools &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Games</span>
+              <a href="/games/">Free Games &mdash; no adverts</a>
+              <span class="dropdown__label dropdown__label--sep">Check your computer</span>
+              <a href="/computer-spec-checker/">PC Spec Checker</a>
+              <a href="/pc-benchmark/">PC Speed Test</a>
+              <a href="/how-to-check-laptop-battery-health/">Laptop Battery Health Check</a>
+              <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+              <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+              <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
+              <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+              <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Internet &amp; signal</span>
+              <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+              <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+              <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+              <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+              <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+              <a href="/is-it-down/">Is It Down? Live Status</a>
+              <a href="/website-checker/">Website Speed Checker</a>
+              <span class="dropdown__label dropdown__label--sep">Documents</span>
+              <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+              <span class="dropdown__label dropdown__label--sep">New computer</span>
+              <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Stay safe online</span>
+              <a href="/email-security-checker/">Email Security Checker</a>
+              <a href="/password-breach-checker/">Password Breach Checker</a>
+              <a href="/link-safety-checker/">Link Safety Checker</a>
+              <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+              <a href="/online-safety-course/">Free Online Safety Course</a>
+              <span class="dropdown__label dropdown__label--sep">Email</span>
+              <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <span class="dropdown__label dropdown__label--sep">On the road</span>
+              <a href="/fuel-prices/">UK Fuel Prices</a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/contact/">Contact Us &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Help right now</span>
+              <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+              <a href="/remote-support/">Start Remote Support</a>
+              <a href="/emergency-it-help/">Emergency IT Help</a>
+              <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+              <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+              <a href="/book-service/">Book a Service</a>
+              <a href="/book-a-collection/">Book a Collection</a>
+              <a href="/quick-quote/">Quick Quote</a>
+              <a href="/pay/">Pay Us</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email changes</span>
+              <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+              <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+              <span class="dropdown__label dropdown__label--sep">Plans</span>
+              <a href="/monthly-it-support/">Monthly IT Support</a>
+              <a href="/plan-finder/">Plan Finder</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Fix it yourself</span>
+              <a href="/printer-support/">Printer Problems</a>
+              <a href="/outlook-problems/">Outlook Problems</a>
+              <a href="/onedrive-problems/">OneDrive Problems</a>
+              <a href="/windows-11-support/">Windows 11 Help</a>
+              <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+              <a href="/broadband-down/">Broadband Down?</a>
+              <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
+            </div>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+          <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+          <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+          <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/games/">Free Games &mdash; no adverts</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/backup-support/">Backup Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+          <span class="dropdown__label dropdown__label--sep">Email &amp; Microsoft 365</span>
+          <a href="/email-support/">Email Support</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+          <a href="/email-migration/">Email Migration</a>
+          <span class="dropdown__label dropdown__label--sep">Computers</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Wi-Fi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Games</span>
+          <a href="/games/">Free Games &mdash; no adverts</a>
+          <span class="dropdown__label dropdown__label--sep">Check your computer</span>
+          <a href="/computer-spec-checker/">PC Spec Checker</a>
+          <a href="/pc-benchmark/">PC Speed Test</a>
+          <a href="/how-to-check-laptop-battery-health/">Laptop Battery Health Check</a>
+          <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+          <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+          <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
+          <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+          <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+          <span class="dropdown__label dropdown__label--sep">Internet &amp; signal</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+          <a href="/is-it-down/">Is It Down? Live Status</a>
+          <a href="/website-checker/">Website Speed Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Documents</span>
+          <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+          <span class="dropdown__label dropdown__label--sep">New computer</span>
+          <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe online</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Email</span>
+          <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <span class="dropdown__label dropdown__label--sep">On the road</span>
+          <a href="/fuel-prices/">UK Fuel Prices</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Help right now</span>
+          <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Email changes</span>
+          <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+          <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+          <span class="dropdown__label dropdown__label--sep">Plans</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/printer-support/">Printer Problems</a>
+          <a href="/outlook-problems/">Outlook Problems</a>
+          <a href="/onedrive-problems/">OneDrive Problems</a>
+          <a href="/windows-11-support/">Windows 11 Help</a>
+          <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+          <a href="/broadband-down/">Broadband Down?</a>
+          <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <style>
+      .tmv{--tmedge:rgba(92,211,201,.26);--tmfill:rgba(92,211,201,.06)}
+      .tmv [id]{scroll-margin-top:96px}
+      .tmv-shot{margin:0;border:1px solid var(--tmedge);border-radius:14px;overflow:hidden;background:#f3f4f4;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+      .tmv-shot img{display:block;width:100%;height:auto}
+      .tmv-cap{margin:.5rem 0 0;font-size:.82rem;color:var(--muted);text-align:center}
+      .tmv-dl{max-width:880px;margin:0 auto;border:1px solid var(--tmedge);border-radius:16px;background:var(--tmfill);padding:clamp(1.1rem,3vw,1.8rem);display:flex;flex-direction:column;gap:.8rem}
+      .tmv-dl h2,.tmv h2{margin:0}
+      .tmv-dl p{margin:0}
+      .tmv-btns{display:flex;flex-wrap:wrap;gap:.6rem}
+      .tmv-btns .button{flex:1 1 15rem;text-align:center}
+      .tmv-meta{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
+      .tmv-steps{margin:0;padding:0;list-style:none;display:grid;gap:.45rem}
+      .tmv-steps li{line-height:1.5}
+      .tmv details{border:1px solid var(--tmedge);border-radius:10px;padding:.6rem .9rem}
+      .tmv details summary{cursor:pointer;font-weight:600}
+      .tmv details p{margin:.5rem 0 0}
+      .tmv-wrap{max-width:1100px;margin:0 auto}
+      .tmv-lede{max-width:46rem;color:var(--muted);font-size:1.05rem;line-height:1.6;margin:.4rem 0 1.4rem}
+      .tmv p a:not([class]),.tmv li a:not([class]),.tmv td a:not([class]){color:var(--cyan);text-decoration:underline;text-underline-offset:2px}
+      .tmv p a:not([class]):hover,.tmv li a:not([class]):hover,.tmv td a:not([class]):hover{color:#fff}
+      .tmv-parts{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}
+      @media (max-width:860px){.tmv-parts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media (max-width:300px){.tmv-parts{grid-template-columns:1fr}}
+      .tmv-parts a{display:flex;flex-direction:column;gap:.35rem;height:100%;box-sizing:border-box;border:1px solid var(--tmedge);border-radius:12px;padding:.85rem .9rem;background:var(--tmfill);color:inherit;text-decoration:none;transition:border-color .2s ease,background .2s ease}
+      .tmv-parts a:hover,.tmv-parts a:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}
+      .tmv-parts svg{width:1.9rem;height:1.9rem;color:#5cd3c9}
+      .tmv-parts b{font-size:1.05rem}
+      .tmv-parts span{color:var(--muted);font-size:.9rem;line-height:1.4}
+      .tmv-feats{display:grid;gap:clamp(1.6rem,4vw,2.8rem)}
+      .tmv-feat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(1rem,3vw,2.2rem);align-items:center}
+      .tmv-feat:nth-child(even) .tmv-feat__txt{order:2}
+      .tmv-feat h3{margin:0 0 .4rem;font-size:clamp(1.2rem,2.4vw,1.5rem)}
+      .tmv-feat p{margin:0 0 .5rem;line-height:1.6}
+      .tmv-feat .tmv-prob{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:#5cd3c9;margin:0 0 .35rem}
+      .tmv-list{margin:0;padding-left:1.2rem;display:grid;gap:.4rem;max-width:52rem}
+      .tmv-list li{line-height:1.55}
+      .tmv-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:1.2rem}
+      .tmv-card{border:1px solid var(--tmedge);border-radius:14px;padding:1.1rem 1.2rem;background:var(--tmfill)}
+      .tmv-card h3{margin:0 0 .5rem;font-size:1.15rem}
+      .tmv-table{width:100%;max-width:40rem;border-collapse:collapse;margin:.4rem 0 1rem}
+      .tmv-table th,.tmv-table td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--tmedge)}
+      .tmv-table th{font-size:.85rem;letter-spacing:.04em;color:var(--muted);font-weight:600}
+      .tmv-tm{font-size:.78rem;color:var(--muted);max-width:60rem;margin:1.6rem auto 0;text-align:center;line-height:1.5}
+      @media (max-width:860px){.tmv-feat{grid-template-columns:1fr}.tmv-feat:nth-child(even) .tmv-feat__txt{order:0}}
+    </style>
+    <section class="page-hero dh dh-hero tmv" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/free-tools/">Free Tools</a> <span>/</span> <span aria-current="page">Techies Move</span></nav>
+          <p class="eyebrow mono">// FREE FOR WINDOWS 11 &amp; 10 &middot; BY USB STICK &middot; NOTHING UPLOADED &middot; SIGNED BY 365 TECHIES LTD</p>
+          <h1><em class="grad grad--cyan">Techies Move</em>: the free way to move everything from your old PC to your new one</h1>
+          <p class="lede"><strong>Techies Move</strong> is a free program for Windows 11 and 10 from 365 Techies, the family-run IT firm in Bournemouth. It copies your <strong>photos, documents, desktop, music, videos and downloads</strong>, your <strong>favourites</strong> from Edge, Chrome or Firefox, your <strong>Outlook email files and signatures</strong> and your desktop picture onto a USB stick or external hard drive, then puts them all in the right places on the new PC. It tells you <strong>what size of USB stick to buy</strong>, lists the <strong>passwords you&rsquo;ll need</strong> before you switch the old PC off, and afterwards can <strong>keep the stick as your backup</strong>. Nothing is deleted, nothing on the new PC is written over, and nothing goes on the internet.</p>
+          <div class="page-hero__cta">
+            <a href="#download" class="button primary button--lg">Download it free</a>
+            <a href="tel:+441202775566" class="button secondary button--lg">Rather we did the move? 01202 775566</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Our firm is rated 4.9 on Google</strong></span><span>365 Techies &middot; family-run since 1995</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 22 October 2026</p>
+        </div>
+        <figure style="margin:0">
+          <div class="tmv-shot"><img src="/images/tmove-pack-v1-720.webp" srcset="/images/tmove-pack-v1-720.webp 720w, /images/tmove-pack-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="Techies Move on the old computer: Pack up your old computer, with This needs 267 MB, so a 16 GB USB stick or bigger is enough, the drive chosen and marked Room for all of it, and Desktop, Documents, Pictures, Videos, Music and Downloads ticked with how many files each holds" decoding="async"></div>
+          <figcaption class="tmv-cap">The real program in a fresh Windows 11, with a made-up person&rsquo;s files. A test drive stands in for the USB stick.</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="dh dh-sec dh-proof" aria-label="The deal, in four facts">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-care"><b>&pound;0</b><span>for the program, with no adverts and no account</span></li>
+          <li class="hp-c-fix"><b>Nothing lost</b><span>the old PC isn&rsquo;t changed, and nothing on the new one is written over</span></li>
+          <li class="hp-c-buy"><b>Signed</b><span>by 365 Techies Ltd, checked by Windows</span></li>
+          <li class="hp-c-biz"><b>A person</b><span>to ring: 01202 775566, Mon to Fri 9 to 5; any paid work is priced first</span></li>
+        </ul>
+      </div>
+    </section>
+    <section class="section tmv" id="download" aria-label="Download Techies Move">
+      <div class="wrap">
+        <div class="tmv-dl">
+          <p class="eyebrow mono">// DOWNLOAD &middot; FREE &middot; WINDOWS 10 &amp; 11</p>
+          <h2>Get Techies Move</h2>
+          <p>The program is free for everyone, at home or at work: no trial, no account to make with us, no adverts and no limit on how much it moves. You&rsquo;ll need a USB stick or external hard drive with enough room; Techies Move tells you how much.</p>
+          <div class="tmv-btns">
+            <a class="button primary button--lg" href="/downloads/tmove/TechiesMove-Setup-0.2.0.exe" download>Download Techies Move (Windows)</a>
+            <a class="button secondary button--lg" href="tel:+441202775566">Rather we did the move? 01202 775566</a>
+          </div>
+          <p class="tmv-meta mono">FOR WINDOWS 10 AND 11 (64-BIT)<span class="tmv-v"> &middot; VERSION 0.2.0 &middot; 12 MB</span> &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
+          <ol class="tmv-steps"><li><strong>1. Download it on both computers.</strong> Press the Download button on the old PC, and again on the new one. The file is called TechiesMove-Setup-0.2.0.exe and is signed by 365 Techies Ltd. It installs in a few seconds and needs no administrator password.</li><li><strong>2. On the old PC, plug in a USB stick and pack up.</strong> Choose <strong>This is my OLD computer</strong>. Techies Move counts what you have and says what size of stick you need. Choose the stick, untick anything you don&rsquo;t want, and press <strong>Start copying</strong>. Your old PC isn&rsquo;t changed.</li><li><strong>3. On the new PC, put it back.</strong> Plug the stick into the new PC, open Techies Move, choose <strong>This is my NEW computer</strong> and press <strong>Put it on this PC</strong>. Your pictures go into Pictures, your documents into Documents, and so on, and it shows you what to do next for your favourites, Chrome and email.</li></ol>
+          <details>
+            <summary>What will Windows say when I open it?</summary>
+            <p>Usually nothing: it&rsquo;s digitally signed by 365 Techies Ltd. But a brand-new program can get a warning or two while Windows gets to know it. <strong>When downloading</strong>, Edge may say the file &ldquo;isn&rsquo;t commonly downloaded&rdquo;: press the three dots next to it, choose <strong>Keep</strong>, then <strong>Show more</strong> and <strong>Keep anyway</strong>. <strong>When you open it</strong>, you may see a blue &ldquo;Windows protected your PC&rdquo; box: choose <strong>More info</strong>, check that the Publisher line says <strong>365 Techies Ltd</strong>, then choose <strong>Run anyway</strong>. If the publisher says anything else, don&rsquo;t run it, and ring us.</p>
+          </details>
+          <details>
+            <summary>Does it need the internet?</summary>
+            <p>Only to download it. The move itself goes through the USB stick, so the two PCs don&rsquo;t need to be connected to each other, or to anything else, and your files never go online.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt tmv" id="features" aria-labelledby="tmv-features">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// WHAT IT MOVES</p>
+        <h2 id="tmv-features">Everything people ask us to move, in one free program</h2>
+        <p class="tmv-lede">When we set up a new computer for someone, these are the things they miss if they&rsquo;re left behind. Techies Move takes them across in plain steps, and tells you plainly about the few things no program can copy.</p>
+        <figure style="margin:0;max-width:880px"><div class="tmv-shot"><img src="/images/tmove-home-v1-720.webp" srcset="/images/tmove-home-v1-720.webp 720w, /images/tmove-home-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="The Techies Move start screen: Moving to a new computer? with two big buttons, This is my OLD computer and This is my NEW computer, and Back up this PC to a USB stick underneath" loading="lazy" decoding="async"></div></figure>
+        <ul class="tmv-parts"><li><a href="#pack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 13h8"/></svg><b>Your folders</b><span>Desktop, Documents, Pictures, Videos, Music, Downloads, and any folder you add</span></a></li><li><a href="#done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><b>Favourites</b><span>From Edge, Chrome (including your Google account&rsquo;s), Brave and Firefox</span></a></li><li><a href="#email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><b>Email</b><span>Outlook files, signatures, and every address with its settings</span></a></li><li><a href="#passwords"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/></svg><b>Passwords to check</b><span>Which you&rsquo;ll need on the new PC, checked while the old one works</span></a></li><li><a href="#pack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="9" width="10" height="13" rx="2"/><path d="M9 9V3h6v6M10.5 5.5h.01M13.5 5.5h.01"/></svg><b>The right size stick</b><span>It works out what size of USB stick to buy, and checks yours has room</span></a></li><li><a href="#setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M7 12h4M7 16h7"/></svg><b>Your programs</b><span>A list of them all, and Windows can install many again for you</span></a></li><li><a href="#setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="9" r="1.3"/></svg><b>Desktop picture</b><span>Your desktop picture, put on the new PC&rsquo;s desktop too</span></a></li><li><a href="#keep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/><path d="M12 8v4l3 2"/></svg><b>Then a backup</b><span>Keep the stick as your backup, with a reminder every week</span></a></li></ul>
+      </div>
+    </section>
+    <section class="section tmv" aria-labelledby="tmv-how">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// HOW A MOVE WORKS, WITH PICTURES</p>
+        <h2 id="tmv-how">How to move to a new computer with Techies Move</h2>
+        <p class="tmv-lede">The pictures are the real program in a fresh copy of Windows 11, moving a made-up person&rsquo;s files: &ldquo;Jean&rdquo;, her laptop and her new PC. A test drive stands in for the USB stick.</p>
+        <div class="tmv-feats">
+          <div class="tmv-feat" id="pack">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">&ldquo;What size of USB stick do I need?&rdquo;</p>
+              <h3>It works out the size for you, then checks your stick has room</h3>
+              <p>On the old PC, Techies Move counts everything in your folders and tells you straight away, for example <strong>&ldquo;This needs 41 GB, so a 64 GB USB stick or bigger is enough&rdquo;</strong>, and a size up if you&rsquo;d like to keep the stick as your backup afterwards. Plug a stick in and each one says <strong>Room for all of it</strong>, or how much more room it needs. Older sticks formatted as FAT32 can&rsquo;t take a single file of 4 GB or more (a long home video, say), and it warns you about that too.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-pack-v1-720.webp" srcset="/images/tmove-pack-v1-720.webp 720w, /images/tmove-pack-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="Pack up your old computer: This needs 267 MB, so a 16 GB USB stick or bigger is enough, the drive marked Room for all of it, and the six folders ticked with their file counts (a made-up person&rsquo;s files)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="extras">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">The things that aren&rsquo;t in your folders</p>
+              <h3>Favourites, email, your desktop picture and lists of what&rsquo;s installed</h3>
+              <p>Tick what to take: your <strong>favourites</strong> from every browser on the PC (Edge, Chrome, Brave and Firefox, including the favourites Chrome keeps in your Google account), <strong>Outlook data files</strong> (where the emails of older POP accounts live), your <strong>email signatures</strong> and a list of your email accounts and their settings, your <strong>desktop picture</strong>, and lists of your <strong>programs, printers and Wi-Fi networks</strong>. Got photos in another folder, or on a second drive? Press <strong>Add another folder</strong>.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-extras-v1-720.webp" srcset="/images/tmove-extras-v1-720.webp 720w, /images/tmove-extras-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="And these, all ticked: Email: Outlook files, signatures and your account settings, with 2 email addresses (BT Email, Gmail) and 1 signature; Your desktop picture; Lists of your programs, printers and Wi-Fi; then the start of Before you switch this PC off: your passwords (a made-up person&rsquo;s PC)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="passwords">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">The thing that catches most people out</p>
+              <h3>Your passwords: checked while the old PC still works</h3>
+              <p>Techies Move <strong>never reads or copies passwords</strong>. Instead it lists every <strong>email address</strong> on the PC (from Outlook, the new Outlook and Thunderbird) and every browser you&rsquo;re signed in to, so you can check you know each password before the old PC goes. Each email address has a <strong>Check the password works</strong> button that opens your provider&rsquo;s webmail, and plain advice for BT, Sky, Virgin Media, TalkTalk, Plusnet, Gmail, Outlook.com and more. For Chrome it tells you whether your passwords are already saved in your Google account, and if not, how to take them.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-passwords-v1-720.webp" srcset="/images/tmove-passwords-v1-720.webp 720w, /images/tmove-passwords-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="Before you switch this PC off: your passwords. A BT address with Outlook uses your BT email password, BT has no app passwords; a Gmail address with In the new Outlook, choose to sign in with Google; each with Check the password works (webmail) and Our guide; and Google Chrome (Jean): signed in with sync on, so favourites and saved passwords come back on the new computer (made-up addresses)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="setup">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">On the new computer</p>
+              <h3>Put it all on the new PC, in the right places</h3>
+              <p>Plug the stick into the new PC and press <strong>Put it on this PC</strong>. Pictures go into Pictures, documents into Documents, and a folder you added goes into Documents in a folder named after the old PC. If the new PC already has a <em>different</em> file with the same name, both are kept: the old PC&rsquo;s gets &ldquo;(from old PC)&rdquo; on its name. Files keep their dates, so your photos stay in order.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-setup-v1-720.webp" srcset="/images/tmove-setup-v1-720.webp 720w, /images/tmove-setup-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="Set up your new computer: the move from JEANS-LAPTOP on the drive, with the folders to put back ticked, and Favourites, Email and Your desktop picture underneath (a made-up person&rsquo;s files)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="done">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">Afterwards</p>
+              <h3>Then it shows you what to do next</h3>
+              <p>When the copying&rsquo;s done, Techies Move shows the next steps for what can&rsquo;t simply be copied: how to add your <strong>favourites</strong> to Edge or Chrome (with a button to the right page), which Google account to <strong>sign in to Chrome</strong> with (and a button to install Chrome if it isn&rsquo;t on the new PC), how to <strong>set up each email address</strong> in Outlook with its settings, and the programs <strong>Windows can install again</strong> for you, ticked one by one.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-done-v1-720.webp" srcset="/images/tmove-done-v1-720.webp 720w, /images/tmove-done-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="Done: your files are on this PC. 9 files copied, 1 kept alongside a different file of the same name, then Add your favourites to your browser, with buttons for Edge&rsquo;s import page and Show the files (a made-up person&rsquo;s files)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="email">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">&ldquo;Will my emails come across?&rdquo;</p>
+              <h3>Your email, set up again in minutes</h3>
+              <p>Most email today (BT, Sky, Gmail, Outlook.com, Virgin Media and more) is kept by your email company, so it all comes back as soon as you add your address in Outlook on the new PC. Techies Move lists each address with what to know (BT has no app passwords; Virgin Media needs an app password, and making a new one stops the old one working on your phone) and the settings, in case Outlook asks. Older POP accounts keep their emails in Outlook files on the PC: those are copied across and opened in Outlook on the new PC. Classic Outlook&rsquo;s signatures go straight back where it looks for them.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-email-v1-720.webp" srcset="/images/tmove-email-v1-720.webp 720w, /images/tmove-email-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="600" alt="Set up your email on the new PC: the BT address&rsquo;s settings (incoming mail.btinternet.com:993, outgoing mail.btinternet.com:465), a Gmail address with In the new Outlook, choose to sign in with Google, and Your email signatures: 1 signature is back in place for classic Outlook (made-up addresses)" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="keep">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">&ldquo;What do I do with the stick now?&rdquo;</p>
+              <h3>Keep the stick as your backup</h3>
+              <p>The stick already holds a copy of your files, so press <strong>Use this drive as my backup</strong> and it becomes your backup in seconds. From then on, plug it in and press <strong>Back up now</strong> on the start screen: Techies Move adds what&rsquo;s new or changed. If a file has changed, the copy from last time is kept in <strong>Earlier versions</strong>, and nothing on the stick is ever deleted. A Windows notification reminds you every week. To get files back, the same <strong>This is my NEW computer</strong> button puts a backup back, or just copy what you need off the stick.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-keep-v1-720.webp" srcset="/images/tmove-keep-v1-720.webp 720w, /images/tmove-keep-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="498" alt="The full list of programs from the old PC, then Keep this drive as your backup: the drive already holds a copy of your files, so it can be your backup from now on, with the button Use this drive as my backup" loading="lazy" decoding="async"></div></figure>
+          </div>
+          <div class="tmv-feat" id="backup-card">
+            <div class="tmv-feat__txt">
+              <p class="tmv-prob mono">Every week after</p>
+              <h3>Back up now: one button, then unplug it</h3>
+              <p>The start screen says when you last backed up and whether your backup drive is plugged in. Press <strong>Back up now</strong>, wait a moment, then unplug the stick and keep it away from the PC, so it can&rsquo;t be harmed along with it. Want to back up a PC that isn&rsquo;t moving anywhere? Choose <strong>Back up this PC to a USB stick</strong> on the start screen.</p>
+            </div>
+            <figure style="margin:0"><div class="tmv-shot"><img src="/images/tmove-backup-card-v1-720.webp" srcset="/images/tmove-backup-card-v1-720.webp 720w, /images/tmove-backup-card-v1-1440.webp 1440w" sizes="(max-width:880px) 100vw, 640px" width="1440" height="1098" alt="The start screen with Your backup: Last backed up today, your backup drive is plugged in, and the buttons Back up now and Change" loading="lazy" decoding="async"></div></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt tmv" id="what-size-usb-stick" aria-labelledby="tmv-size">
+      <div class="wrap tmv-wrap">
+        <div class="tmv-two">
+          <div>
+            <p class="eyebrow mono">// WHAT SIZE OF STICK?</p>
+            <h2 id="tmv-size">What size USB stick do I need to move to a new PC?</h2>
+            <p style="line-height:1.6">It depends on how many photos and videos you have: a PC of letters and a few hundred photos may need 16 GB, while years of phone videos can need a portable hard drive. Techies Move counts it for you before you buy anything: open it on the old PC, choose <strong>This is my OLD computer</strong>, and it says how much there is and the size of stick that&rsquo;s enough. Untick Videos, say, and it works it out again.</p>
+            <p style="line-height:1.6">If you&rsquo;d like to keep the stick as your backup afterwards, buy the next size up, so there&rsquo;s room to grow. A stick sold as 64 GB holds a little less than 64 GB in Windows, and the table allows for that.</p>
+          </div>
+          <div class="tmv-card">
+            <h3>A rough guide</h3>
+            <table class="tmv-table"><thead><tr><th>To move</th><th>Enough</th></tr></thead><tbody><tr><td>Up to about 12 GB</td><td>16 GB USB stick</td></tr><tr><td>Up to about 25 GB</td><td>32 GB USB stick</td></tr><tr><td>Up to about 50 GB</td><td>64 GB USB stick</td></tr><tr><td>Up to about 100 GB</td><td>128 GB USB stick</td></tr><tr><td>Up to about 200 GB</td><td>256 GB USB stick</td></tr><tr><td>Up to about 400 GB</td><td>512 GB USB stick</td></tr><tr><td>More than that</td><td>1 TB or 2 TB portable hard drive</td></tr></tbody></table>
+            <p style="margin:0;color:var(--muted);font-size:.95rem">A stick formatted as FAT32 (common on older or smaller ones) can&rsquo;t hold a single file of 4 GB or more. Techies Move tells you if any of yours are that big.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section tmv" id="why" aria-labelledby="tmv-why">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// DOESN&rsquo;T WINDOWS DO THIS?</p>
+        <h2 id="tmv-why">Doesn&rsquo;t Windows 11 move your files for you?</h2>
+        <p class="tmv-lede">Not any more, unless you pay for OneDrive space. Windows Easy Transfer was left out of Windows 10, and in September 2026 Microsoft took away the PC-to-PC Migration it had added to Windows 11&rsquo;s Windows Backup app. What&rsquo;s left is Windows Backup, which brings your files back from OneDrive.</p>
+        <div class="tmv-two">
+          <div class="tmv-card"><h3>Techies Move</h3><ul class="tmv-list">
+            <li>Moves everything through a USB stick or hard drive you plug in: no cloud space to pay for, however much you have.</li>
+            <li>Your files never go online, and the two PCs don&rsquo;t need to be connected.</li>
+            <li>Takes your favourites from every browser, your Outlook files and signatures, and lists the passwords you&rsquo;ll need.</li>
+            <li>Then keeps the stick as your backup, if you like. Free, from a firm in Dorset you can ring.</li>
+          </ul></div>
+          <div class="tmv-card"><h3>Windows Backup (OneDrive)</h3><ul class="tmv-list">
+            <li>Backs your folders up to OneDrive, then brings them back when you sign in on the new PC.</li>
+            <li>The free OneDrive gives 5 GB; most people&rsquo;s photos need more, which means paying Microsoft for more space.</li>
+            <li>Only files that have finished uploading come back.</li>
+            <li>Good if you already pay for Microsoft 365 and your files are in OneDrive. If they are, Techies Move says so and leaves them to OneDrive.</li>
+          </ul></div>
+        </div>
+        <p style="margin-top:1rem;max-width:52rem;line-height:1.6">Paid programs such as Laplink PCmover can also move installed programs. Techies Move doesn&rsquo;t: programs need installing fresh on the new PC, and Techies Move lists them and has Windows install the ones it can. You may be offered a paid move in the shop where you bought the new PC, too. Prefer us to do it? We move people&rsquo;s files and set up new computers every week: <a href="/transfer-photos-to-a-new-computer-bournemouth/">see how we do it</a>, or read our guide to <a href="/how-to-transfer-files-to-a-new-computer/">every way to transfer files to a new computer</a>.</p>
+      </div>
+    </section>
+    <section class="section section--alt tmv" id="safe" aria-labelledby="tmv-safe">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// SAFE TO USE</p>
+        <h2 id="tmv-safe">Is it safe? Will it delete anything?</h2>
+        <div class="tmv-two">
+          <div class="tmv-card"><h3>Your files</h3><ul class="tmv-list">
+            <li>Nothing on the old PC is moved off it, changed or deleted: everything is <em>copied</em>. Keep the old PC as it is for a few weeks, until you&rsquo;re sure everything&rsquo;s there.</li>
+            <li>Nothing on the new PC is written over: if a different file with the same name is already there, both are kept.</li>
+            <li>Each file is copied under a temporary name and checked before it&rsquo;s given its real one, so a stick pulled out half way never leaves a broken file. Start again and it carries on where it stopped.</li>
+            <li>Nothing is ever deleted from the stick, including when you uninstall Techies Move.</li>
+          </ul></div>
+          <div class="tmv-card"><h3>Your privacy</h3><ul class="tmv-list">
+            <li>Your files go from one PC to the other on your own stick. Nothing is uploaded, to us or anyone.</li>
+            <li>Passwords are never read or copied: not your email&rsquo;s, not your browser&rsquo;s.</li>
+            <li>Techies Move doesn&rsquo;t check in with us, count you, or send anything anywhere. The only web pages it opens are the ones you press a button for, such as your webmail.</li>
+            <li>The installer is digitally signed by 365 Techies Ltd, so Windows can check it&rsquo;s really ours. It doesn&rsquo;t update itself: new versions will be on this page.</li>
+          </ul></div>
+        </div>
+        <p style="margin-top:1rem;max-width:52rem;line-height:1.6">A USB stick with your photos and letters on it is worth looking after: keep it somewhere safe, and if you&rsquo;re giving the old PC away or recycling it, have it wiped properly first.</p>
+      </div>
+    </section>
+    <section class="section tmv" id="limits" aria-labelledby="tmv-limits">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// HONEST LIMITS</p>
+        <h2 id="tmv-limits">What it can&rsquo;t do (yet)</h2>
+        <ul class="tmv-list">
+          <li><strong>Programs can&rsquo;t be copied</strong> from one PC to another; they need installing fresh. Techies Move lists every program on the old PC, and on the new one Windows can install many of them for you. Programs that come from an account, such as Microsoft Office, Microsoft 365 or your antivirus, are installed from that company&rsquo;s website by signing in.</li>
+          <li><strong>Passwords aren&rsquo;t copied,</strong> on purpose. It lists the ones you&rsquo;ll need and how to check them first; Chrome and Edge passwords come back when you sign in to the browser with sync on.</li>
+          <li><strong>It needs a USB stick or external hard drive.</strong> It can&rsquo;t yet move straight from one PC to the other over Wi-Fi or a cable.</li>
+          <li><strong>Both computers need Windows 10 or 11 (64-bit).</strong> It won&rsquo;t run on a Windows 7 or 8 PC. No Mac, iPhone or Android version.</li>
+          <li><strong>It moves the folders of the person signed in to Windows.</strong> If two people have their own Windows accounts on the old PC, run it in each one.</li>
+          <li><strong>Files that are only in OneDrive</strong> (shown with a cloud) aren&rsquo;t copied: they come back when you sign in to OneDrive on the new PC.</li>
+          <li><strong>Email:</strong> it brings Outlook&rsquo;s data files, signatures and your account settings. Emails kept by your email company come back when you add the address. Thunderbird and Windows Mail accounts are listed, not moved.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="section section--alt tmv" id="whats-new" aria-labelledby="tmv-new">
+      <div class="wrap tmv-wrap">
+        <div class="tmv-two">
+          <div>
+            <p class="eyebrow mono">// IT KEEPS GETTING BETTER</p>
+            <h2 id="tmv-new">Built by us, improved on request</h2>
+            <p style="line-height:1.6">Techies Move is made and looked after by 365 Techies in Dorset, and it grows with what people ask for, as our other programs have. Want it to do something it doesn&rsquo;t? Ring 01202 775566 or <a href="/contact/">send us a message</a>. New versions are put on this page.</p>
+          </div>
+          <div class="tmv-card">
+            <h3>What&rsquo;s in it</h3>
+            <p style="margin:0 0 .4rem"><strong>Version 0.2.0.</strong> The first public version: moves your folders, favourites (Edge, Chrome, Brave, Firefox), Outlook files and signatures, desktop picture and lists of programs, printers and Wi-Fi by USB stick; says what size of stick you need; lists the passwords to check; and keeps the stick as your backup with a weekly reminder.</p>
+            <p style="margin:0;color:var(--muted);font-size:.95rem">Things we&rsquo;d like to add (no dates yet): moving straight from PC to PC over your Wi-Fi, and finding photos kept outside the usual folders.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section tmv" aria-labelledby="tmv-who">
+      <div class="wrap tmv-wrap">
+        <p class="eyebrow mono">// WHO MAKES IT</p>
+        <h2 id="tmv-who">Who makes Techies Move?</h2>
+        <p style="max-width:52rem;line-height:1.6">365 Techies Ltd, a family-run IT support firm looking after homes and businesses in Bournemouth, Christchurch and Poole since 1995, and across the UK remotely. Moving people to new computers is one of the jobs we do most, and Techies Move is how we&rsquo;d want it done: nothing lost, nothing overwritten, nothing uploaded. We also make <a href="/free-pc-health-check/">365 PC Manager</a>, a free health check for Windows PCs, <a href="/techies-one-mail/">Techies One</a>, a free program for email and photos, and <a href="/techies-pdf/">Techies PDF</a>, a free PDF program. Ring 01202 775566, Monday to Friday, 9am to 5pm, or read <a href="/about/">more about us</a>.</p>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>How do I transfer files from my old computer to my new one?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Install Techies Move on both computers. On the old one, plug in a USB stick, choose <strong>This is my OLD computer</strong> and press <strong>Start copying</strong>. Then plug the stick into the new one, choose <strong>This is my NEW computer</strong> and press <strong>Put it on this PC</strong>. Your photos, documents, desktop, music, videos, downloads, favourites and Outlook files go into the right places. It&rsquo;s free, and nothing is uploaded.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does Windows 11 have a transfer tool?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Not one that copies PC to PC any more. Microsoft removed the PC-to-PC Migration from Windows 11&rsquo;s Windows Backup app in September 2026. Windows Backup still backs your folders up to OneDrive and brings them back on the new PC, but the free OneDrive only holds 5 GB. Techies Move does the move through a USB stick instead, with no cloud space needed.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What happened to Windows Easy Transfer?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Windows Easy Transfer was left out of Windows 10, so it isn&rsquo;t on Windows 10 or 11 PCs. Techies Move does the same job for Windows 10 and 11, free: it copies your files, favourites and Outlook files onto a USB stick and puts them back on the new PC.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Is there a free alternative to PCmover?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes: Techies Move is free and moves your folders, favourites, email files and signatures, and desktop picture, and lists your passwords to check. Laplink PCmover is a paid program that can also move installed programs; Techies Move lists your programs instead, and Windows can install many of them again on the new PC.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What size USB stick do I need to move to a new computer?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Open Techies Move on the old PC and choose <strong>This is my OLD computer</strong>: it counts your files and tells you, for example &ldquo;This needs 41 GB, so a 64 GB USB stick or bigger is enough&rdquo;. As a rough guide, up to about 12 GB fits a 16 GB stick, 25 GB a 32 GB stick, 50 GB a 64 GB stick and 100 GB a 128 GB stick; more than about 400 GB needs a portable hard drive. Buy a size up if you&rsquo;ll keep the stick as your backup.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will Techies Move copy my passwords?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No, on purpose: it never reads or copies passwords. It lists the email addresses and browser sign-ins you&rsquo;ll need passwords for, with a button to check each email password in your webmail while the old PC still works. Chrome and Edge bring back saved passwords when you sign in with sync on; Techies Move tells you if yours are only on the old PC, and how to take them with Chrome&rsquo;s own export.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will my emails move to the new computer?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Emails kept by your email company (BT, Sky, Gmail, Outlook.com, Virgin Media and most others) come back as soon as you add your address in Outlook on the new PC: Techies Move lists each address with its settings and what to know. Emails of older POP accounts kept in Outlook data files (.pst) are copied across for you to open in Outlook, and classic Outlook&rsquo;s signatures are put back too.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will it move my programs?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Programs can&rsquo;t be copied from one PC to another; they need installing fresh. Techies Move lists every program on the old PC, and on the new one it can have Windows install many of them again: you tick the ones you want. Microsoft Office, Microsoft 365 and antivirus are installed by signing in on that company&rsquo;s website.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How do I move my Chrome bookmarks to a new computer?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>If you sign in to Chrome with your Google account and sync is on, your bookmarks come back when you sign in on the new PC; Techies Move tells you which account. It also saves every browser&rsquo;s favourites, including the ones Chrome keeps in your Google account, as a bookmarks file, and on the new PC shows you Chrome&rsquo;s or Edge&rsquo;s import page to bring them in.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can I use the USB stick as a backup afterwards?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes. On the new PC, press <strong>Use this drive as my backup</strong>: the copy already on the stick becomes your backup. After that, press <strong>Back up now</strong> whenever the stick is plugged in, and Techies Move adds what&rsquo;s new or changed, keeps the previous copy of any changed file, and never deletes anything from the stick. A Windows notification reminds you every week.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Will it delete anything from my old computer?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. Everything is copied, not moved: the old PC keeps all its files, and nothing on it is changed. On the new PC nothing is written over either; a different file with the same name is kept alongside, with &ldquo;(from old PC)&rdquo; on its name.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Do I need to install it on both computers?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes, on the old one to pack up and on the new one to put it back. It&rsquo;s a small, free download that needs no administrator password, and you can uninstall it afterwards without losing anything on the stick.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does Techies Move work on Windows 7 or 8?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>No. Both PCs need Windows 10 or 11 (64-bit). If your old PC runs Windows 7 or 8, copy your folders onto a USB stick by hand, or ring us and we&rsquo;ll move them for you.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Is Techies Move really free?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes: no trial, no adverts, no account and no limit on how much it moves. If you&rsquo;d rather we did the move for you, that&rsquo;s a paid job, and we agree the price with you before we start.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Rather we did the move for you?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We move people&rsquo;s photos, documents, email and favourites to new computers every week, remotely or at our Bournemouth base. It&rsquo;s a paid job, and we agree the price before we start.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+          <a href="/transfer-photos-to-a-new-computer-bournemouth/" class="button secondary button--lg">How we do it</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+    <section class="section tmv" aria-label="Trademarks">
+      <div class="wrap"><p class="tmv-tm">Microsoft, Windows, Microsoft Edge, Outlook, OneDrive and Microsoft 365 are trademarks of the Microsoft group of companies. Google, Chrome and Gmail are trademarks of Google LLC. Laplink and PCmover are trademarks of Laplink Software. Mozilla, Firefox and Thunderbird are trademarks of the Mozilla Foundation. Brave is a trademark of Brave Software. BT, Sky, Virgin Media, TalkTalk and Plusnet are trademarks of their owners. Mac, iPhone and iPad are trademarks of Apple Inc. Android is a trademark of Google LLC. Techies Move is made by 365 Techies Ltd and is not made, endorsed or supported by any company named here.</p></div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <details class="footer-fold" open>
+      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+      </details>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" role="group" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SUPPORT</summary>
+        <div class="footer-fold__body">
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Free tools links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">FREE TOOLS</summary>
+        <div class="footer-fold__body">
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+        <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+        <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+        <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+        <a href="/games/">Free Games &mdash; no adverts</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+        <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/fuel-prices/">UK Fuel Prices</a>
+        <a href="/pc-benchmark/">PC Speed Test</a>
+        <a href="/website-checker/">Website Speed Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+        <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+        <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Live Status</a>
+        <a href="/computer-spec-checker/">PC Spec Checker</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Services links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SERVICES</summary>
+        <div class="footer-fold__body">
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/ai/agents/">AI Agents</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Who we help links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">WHO WE HELP</summary>
+        <div class="footer-fold__body">
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Company links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">COMPANY</summary>
+        <div class="footer-fold__body">
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+        </div>
+        </details>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+    <script>
+    /* Below 768px the areas list and the five link columns fold into accordions. They ship open, so with
+       no script (and to crawlers) every link is in plain view; this closes them on phones only. From 768px
+       up they stay open and each summary is inert: out of the tab order, a click on it does nothing, and
+       CSS draws it as the plain column heading it replaced, so the desktop footer is unchanged. */
+    (function () {
+      var f = document.currentScript.parentNode, m = matchMedia("(max-width: 767px)"),
+          d = f.querySelectorAll("details.footer-fold");
+      function fold() {
+        for (var i = 0; i < d.length; i++) {
+          d[i].open = !m.matches;
+          if (m.matches) d[i].firstElementChild.removeAttribute("tabindex");
+          else d[i].firstElementChild.setAttribute("tabindex", "-1");
+        }
+      }
+      fold();
+      if (m.addEventListener) m.addEventListener("change", fold); else if (m.addListener) m.addListener(fold);
+      f.addEventListener("click", function (e) {
+        if (!m.matches && e.target.closest && e.target.closest(".footer-fold > summary")) e.preventDefault();
+      });
+    })();
+    </script>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=27"></script>
+  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/forms.min.js?v=13" defer></script>
+  <script src="/js/search.min.js?v=654de821" defer></script>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(ev.defaultPrevented&&/\.exe([?#]|$)/i.test(h))return;if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);else if(/TechiesOneMail-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);else if(/TechiesPDF-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/tpdf"+location.pathname);else if(/TechiesMove-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/tmove"+location.pathname);else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1"||p==="tpdf"||p==="tmove")tap("/~send/"+p+location.pathname);});}catch(e){}})();</script>
+</body>
+</html>

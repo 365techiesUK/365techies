@@ -402,6 +402,7 @@ NAV_MENUS = [
         ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
         ("Techies One Mail &mdash; free email app", "/techies-one-mail/"),   # 10 Oct 2026
         ("Techies PDF &mdash; free PDF app", "/techies-pdf/"),   # 18 Oct 2026
+        ("Techies Move &mdash; free PC move app", "/techies-move/"),   # 22 Oct 2026
         ("Help for Seniors", "/computer-help-for-seniors/"),
         ("Families", "/family-it-support/"),
         ("Home Workers", "/it-support-for-home-workers/"),
@@ -476,6 +477,8 @@ NAV_MENUS = [
             ("Website Speed Checker", "/website-checker/"),
         ]), ("Documents", [
             ("Techies PDF &mdash; free PDF app", "/techies-pdf/"),   # 18 Oct 2026
+        ]), ("New computer", [
+            ("Techies Move &mdash; free PC move app", "/techies-move/"),   # 22 Oct 2026
         ])],
         [("Stay safe online", [
             ("Email Security Checker", "/email-security-checker/"),
@@ -835,6 +838,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
         <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
         <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+        <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
         <a href="/games/">Free Games &mdash; no adverts</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
@@ -1089,10 +1093,12 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'else if(/TechiesOneMail-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);'
     # 18 Oct 2026: a Techies PDF download is /~dl/tpdf/
     'else if(/TechiesPDF-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/tpdf"+location.pathname);'
+    # 22 Oct 2026: a Techies Move download is /~dl/tmove/
+    'else if(/TechiesMove-Setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/tmove"+location.pathname);'
     'else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);'
     'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
     # 14 Oct 2026: that panel's Send / Email / Copy (js/interior.js fires tt:send) is /~send/<app><page>
-    'document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1"||p==="tpdf")tap("/~send/"+p+location.pathname);});'
+    'document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1"||p==="tpdf"||p==="tmove")tap("/~send/"+p+location.pathname);});'
     '}catch(e){}})();</script>\n')
 
 
@@ -1307,7 +1313,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
       <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
     </div>
   </div>
-  <script type="module" src="/js/interior.min.js?v=26"></script>
+  <script type="module" src="/js/interior.min.js?v=27"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
@@ -3331,6 +3337,7 @@ TOOLS = {
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
   "pcmapp":       ("365 PC Manager app", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, it installs in a couple of clicks and uninstalls just as easily."),
   "tpdfapp":      ("Techies PDF app", "/techies-pdf/", "Techies PDF &mdash; our free Windows PDF program. Fill in and sign forms, join, shrink and rearrange PDFs and turn photos into a PDF, all on your own PC: nothing is uploaded. <strong>Digitally signed</strong>."),   # 18 Oct 2026
+  "tmoveapp":     ("Techies Move app", "/techies-move/", "Techies Move &mdash; our free Windows program for moving to a new PC. Copies your photos, documents, favourites and Outlook files across on a USB stick, says what size of stick you need, then keeps it as your backup. <strong>Digitally signed</strong>."),   # 22 Oct 2026
   "faultcheck":   ("Computer Fault Checker", "/computer-fault-checker/", "Tell us what&rsquo;s playing up and get the likely cause and best next step."),
   "repairreplace":("Repair or Replace?", "/repair-or-replace-advisor/", "Answer four questions for an honest verdict on your ageing computer."),
   "w10":          ("Windows 10 End of Life", "/windows-10-end-of-life/", "Support has ended &mdash; find out in 30 seconds if you&rsquo;re affected, and your options."),

@@ -361,6 +361,7 @@ if (WANT_BG) {
     pcm: { re: /365-pc-manager-setup[^/?#]*\.exe([?#]|$)/i, name: "365 PC Manager", page: "/free-pc-health-check/#download" },
     t1: { re: /TechiesOneMail-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies One Mail", page: "/techies-one-mail/#download" },
     tpdf: { re: /TechiesPDF-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies PDF", page: "/techies-pdf/#download" },
+    tmove: { re: /TechiesMove-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies Move", page: "/techies-move/#download" },
   };
   const device = /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "iPad"
     : /iPhone|iPod/.test(ua) ? "iPhone"
@@ -502,6 +503,8 @@ if (WANT_BG) {
       last: "<b>Type your email address.</b> It fills in the settings itself for BT, Sky, Plusnet, Gmail, Yahoo, AOL and Outlook.com." },
     tpdf: { re: /TechiesPDF-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies PDF", help: "/techies-pdf/#download",
       last: "<b>Open a PDF, or choose a job.</b> Fill in and sign, join, shrink for email: each has its own big button." },
+    tmove: { re: /TechiesMove-Setup[^/?#]*\.exe([?#]|$)/i, name: "Techies Move", help: "/techies-move/#download",
+      last: "<b>Choose OLD or NEW computer.</b> On the old PC it says what size of USB stick you need; on the new one it puts it all back." },
   };
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   let card = null;

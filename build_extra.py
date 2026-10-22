@@ -15705,7 +15705,7 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcmapp","speccheck","pcbench","battcheck","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["pcmapp","tmoveapp","speccheck","pcbench","battcheck","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Everyday help", "Simple free helpers for home.",
        ["tpdfapp","dclock","vtimer"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
@@ -15725,7 +15725,7 @@ def free_tools_hub():
             pos += 1
     faqs = [
       ("Are these tools really free?", "Yes &mdash; every tool here is completely free to use, with no sign-up, no account and no catch. They&rsquo;re our way of being genuinely useful; when you&rsquo;d rather a friendly techie just sorted the problem for you, that&rsquo;s what our monthly plans are for."),
-      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The exceptions are our two free Windows programs on this page, <a href=\"/free-pc-health-check/\">365 PC Manager</a> (a PC health check) and <a href=\"/techies-pdf/\">Techies PDF</a> (fill in, sign, join and shrink PDFs): both are <strong>free and digitally signed</strong>, install in a couple of clicks and uninstall just as easily."),
+      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The exceptions are our three free Windows programs on this page, <a href=\"/free-pc-health-check/\">365 PC Manager</a> (a PC health check), <a href=\"/techies-pdf/\">Techies PDF</a> (fill in, sign, join and shrink PDFs) and <a href=\"/techies-move/\">Techies Move</a> (move your files to a new PC): all are <strong>free and digitally signed</strong>, install in a couple of clicks and uninstall just as easily."),
       ("Do my passwords, files or data leave my browser?", "No. The privacy-sensitive tools &mdash; the password checks, the hardware and spec checkers and the benchmarks &mdash; run on your own device and don&rsquo;t send your data to us. Where a tool needs a live lookup (like the website or broadband checks) it only sends the address or URL you type, never personal data."),
       ("What can I check with these free tools?", "Plenty: test your website&rsquo;s speed and security, run a live broadband speed test, see if your password has leaked, benchmark your PC and graphics card, check what&rsquo;s inside your computer, make a Wi-Fi QR code, check whether a link is a scam, look up DNS and SSL records, and more &mdash; all free, all in your browser."),
       ("Do the tools work on phones and Macs?", "Yes &mdash; anything with a modern browser. A few are tuned with Windows PCs in mind (we&rsquo;re Windows and Android specialists), but they run on phones, tablets and Macs too."),
