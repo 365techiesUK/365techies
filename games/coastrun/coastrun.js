@@ -2,8 +2,8 @@
  * (window.CREngine); the 3D picture is world3d.js (three.js); this file puts the arcade cabinet together
  * (../common/arcade.js), draws the dashboard over the 3D picture (time, score, where you are, speed, boost, the lights,
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
- * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
- * gets a short note instead of the game. */
+ * car, and the music: a track for each place (music/, Settings > Music, on unless switched off); in the Getaway, the police radio
+ * (radio/, with its subtitles). A browser without 3D graphics gets a short note instead of the game. */
 import { createWorld } from './world3d.js?v=78';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
@@ -104,7 +104,7 @@ function glowDot(col) {
 const SM = { W: null, n: 0, acc: 0, last: 0, mode: '', p: {}, cur: {}, on: !/[?&]nolerp/.test(location.search) };
 const SMK = ['s', 'x', 'h', 'psi', 'phi', 'steer', 'v'], STEPMS = 1000 / 60;
 function smoothSnap(W) { SM.W = W; for (const k of SMK) SM.p[k] = W[k]; for (const c of W.cars) { c.ls = c.s; c.lx = c.x; } SM.n++; }   // before a step: where everything was
-function smoothStep(W, inp) { smoothSnap(W); return E.step(W, inp); }
+function smoothStep(W, inp) { smoothSnap(W); const r = E.step(W, inp); if (W.cop && !W.demo) radioStep(W); return r; }   // (the Getaway: the step's events to the police radio too)
 function smoothAlpha(t, mode) {   // how far this picture falls between the last step and the next
   const dt = SM.last && SM.mode === 'play' ? Math.min(250, t - SM.last) : 0; SM.last = t;   // (the loop starts its clock afresh on the first frame of a game)
   if (mode === 'play') { SM.acc += dt - SM.n * STEPMS; if (SM.n >= 8) SM.acc = 0; SM.acc = Math.max(0, Math.min(STEPMS, SM.acc)); } else SM.acc = 0;   // (out of step it puts itself right: a frame with no step, or two, pins it)
@@ -222,7 +222,7 @@ function copAlert(g, W, t, near) {
     const col = (left ? on : !on) ? '60,110,255' : '255,50,60', x0 = left ? 0 : GW - 46, gr = g.createLinearGradient(left ? 0 : GW, 0, left ? 46 : GW - 46, 0);
     gr.addColorStop(0, 'rgba(' + col + ',' + (0.45 * k).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(' + col + ',0)'); g.fillStyle = gr; g.fillRect(x0, 0, 46, GH);
   }
-  hudText(g, near < 4 ? 'POLICE ALONGSIDE!' : 'POLICE ' + Math.round(near) + ' M BEHIND', GW / 2, GH - 24, 8, on ? '#ff7b7b' : '#8fb4ff', 'center');
+  if (!CAP.low) hudText(g, near < 4 ? 'POLICE ALONGSIDE!' : 'POLICE ' + Math.round(near) + ' M BEHIND', GW / 2, GH - 24, 8, on ? '#ff7b7b' : '#8fb4ff', 'center');   // (not under a police radio caption tall enough to cover it)
 }
 function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
@@ -254,7 +254,7 @@ function hud(g, W, t, mode) {
   routeMap(g, W, 8, GH - 46, t);
   powers(g, W, t);
   speedo(g, W, t);
-  if (W.drift) hudText(g, 'DRIFT', GW / 2, GH - 12, 9, '#ffb347', 'center');
+  if (W.drift && !CAP.strip) hudText(g, 'DRIFT', GW / 2, GH - 12, 9, '#ffb347', 'center');   // (a police radio caption sits there while it's up)
   if (W.count > 0 || (R.goT >= 0 && W.t - R.goT < 50)) lights(g, W);
   if (W.count <= 0 && R.goT < 0) R.goT = W.t;
   if (mode !== 'title') request(g, W, t);
@@ -268,12 +268,12 @@ function hud(g, W, t, mode) {
     g.fillStyle = 'rgba(255,255,255,0.4)'; g.fillRect(GW / 2 - 0.5, 55, 1, 12);
     if (her) heart(g, her < 0 ? GW / 2 - 144 : GW / 2 + 144, 61, 4 + Math.sin(t / 120) * 0.6, '#ff4d7a');
   }
-  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && document.body.classList.contains('touchy')) {   // the same for thumbs
+  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !CAP.low && document.body.classList.contains('touchy')) {   // the same for thumbs
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
     hudText(g, W.jet ? (TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  BOOST  LIFT  RIGHT THUMB' : 'TOUCH LEFT ◀  ▶ TOUCH RIGHT   BOTH: BOOST   LIFT BUTTON: FLY') : TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  NITRO  RIGHT THUMB' : 'TOUCH LEFT ◀     ▶ TOUCH RIGHT     BOTH AT ONCE: NITRO', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');
     g.globalAlpha = 1;
   }
-  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
+  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !CAP.low && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
     hudText(g, W.jet ? (W.autoDrift ? 'STEER ◀ ▶   BOOST  SPACE   LIFT  SHIFT (HOLD TO HOVER)' : 'STEER ◀ ▶   DRIFT  TAP ▼   BOOST  SPACE   LIFT  SHIFT') : W.autoDrift ? 'STEER ◀ ▶     NITRO  SPACE     RADIO  R' : 'STEER ◀ ▶   DRIFT  TAP ▼   NITRO  SPACE   RADIO  R', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');   // (between the map and the nitro bottles: across them it covered the NITRO label)
     g.globalAlpha = 1;
@@ -568,6 +568,64 @@ function sound(name, S, e) {
     case 'busted': [494, 466, 440, 330].forEach((f, k) => S.tone(f, 0.34, 0.07, { type: 'sawtooth', when: k * 0.26, verb: 0.45 })); [0.1, 0.65].forEach((w) => S.tone(760, 0.5, 0.03, { type: 'sawtooth', to: 940, when: w, verb: 0.5 })); break;
   }
 }
+// ---------------------------------------------------------------- the police radio (the Getaway, 22 Oct 2026; the owner, having heard it over his own
+// run: "put that into it, and I'll play it"): Control, the sergeant and young Dobbs of Unit Four on their channel, an exchange at a time, about what
+// you've just done to them. The lines are radio/ (tools/coastrun/make_radio.py: each one's squelch and beep in it); Settings > Police radio, Radio subtitles.
+// RADIO DIRECTOR {   (pure: tools/coastrun/radio_director.test.mjs lifts this block out and runs the owner's recorded escape through it)
+// The rules the owner heard in the demo (C:/claude-voices/chase_demo.py): one exchange at a time, a breath (1.2 s) after each; a moment waits at most
+// 1.5 s for the channel or is dropped, the bigger moment winning; each moment's cool-down so a joke doesn't come round every few seconds; each moment's
+// exchanges in turn (from the first again each race), so the run builds. tab: trigger -> exchanges; durOf(k, v): seconds on air; ready(k, v): its clips in
+function radioDirector(tab, durOf, ready) {
+  const PRI = { escaped: 10, busted: 10, siren_start: 9, cleared: 8, stinger: 7, pileup: 6, alarm: 6, check: 5, ram: 5, squeeze: 5, copdown: 4, ambush: 4, nitro: 2 };
+  const COOL = { nitro: 45, copdown: 18, pileup: 25, ambush: 25, ram: 15, squeeze: 15, check: 20 };   // (seconds before the same moment speaks again)
+  const WAIT = 1.5, AFTER = 1.2, HOLD = 0.5, PAY = { escaped: 1, busted: 1 };
+  let mom = [], free = 0, ended = false, sirens = 0, pileT = -1e9;
+  const last = {}, nextv = {};
+  const add = (k, t, hold) => { if (tab[k] && !ended) mom.push({ k: k, t: t, hold: hold ? t + HOLD : 0 }); };
+  const D = {
+    // one of W.events: its name, the event, the game's clock (seconds), and what the step did (pile: a pile-up, sq: the squeeze, escaped)
+    event(nm, e, t, info) {
+      if (ended) return;
+      switch (nm) {
+        case 'siren': add(sirens++ ? 'ambush' : 'siren_start', t); break;   // (the first: the two on the grid behind you; the rest pull out of lay-bys)
+        case 'copdown':   // one of them down - a pile-up when another goes within half a second either side (so a lone one waits that long to see)
+          if (info.pile) { pileT = t; for (const m of mom) if (m.k === 'copdown' && m.t >= t - HOLD) { m.k = 'pileup'; m.hold = 0; } add('pileup', t); }
+          else add(t - pileT <= HOLD ? 'pileup' : 'copdown', t, t - pileT > HOLD);
+          break;
+        case 'jetBoost': if (e.n === 1) add('nitro', t); break;   // (the rocket lit from cold: n 0 is the next charge feeding in)
+        case 'near': if (e.n === 3 && info.sq) add('squeeze', t); break;   // (the squeeze comes as a near miss x3 - so does a third near miss in a row)
+        case 'goal': if (info.escaped) { add('escaped', t); D.end(); } break;
+        case 'busted': add('busted', t); D.end(); break;
+        case 'stinger': case 'ram': case 'alarm': case 'cleared': case 'check': add(nm, t); break;
+      }
+    },
+    end() { ended = true; mom = mom.filter((m) => PAY[m.k]); },   // the race over: only the last word left to say
+    // every step: the exchange to start now ({ k, v, t }), or null
+    tick(t) {
+      for (const m of mom) if (m.hold && t >= m.hold) m.hold = 0;
+      if (!mom.length || mom[0].t > t) return null;
+      if (t < free) { const p = mom.find((m) => PAY[m.k]); if (!p || t - p.t < WAIT) return null; }   // (the last word never waits longer than that: it cuts in)
+      if (mom.some((m) => m.t <= t && m.hold)) return null;   // (a crash still waiting to see if it's a pile-up)
+      const pend = mom.filter((m) => m.t <= t && (PAY[m.k] || (t - m.t <= WAIT && t - (m.k in last ? last[m.k] : -1e9) >= (COOL[m.k] || 0))));
+      if (!pend.length) { mom = mom.filter((m) => m.t > t); return null; }   // (all too late, or said too lately)
+      let win = null;
+      for (const m of pend) if ((!win || PRI[m.k] > PRI[win.k]) && ready(m.k, (nextv[m.k] || 0) % tab[m.k].length)) win = m;   // (the bigger; of two the same, the first)
+      if (!win) { mom = mom.filter((m) => m.t > t || t - m.t <= WAIT || PAY[m.k]); return null; }   // (its words still loading: it waits, as for the channel)
+      mom = mom.filter((m) => m.t > t);   // (the rest up to now: said, or dropped)
+      const v = (nextv[win.k] || 0) % tab[win.k].length; nextv[win.k] = v + 1; last[win.k] = t;
+      free = t + durOf(win.k, v) + AFTER;
+      return { k: win.k, v: v, t: t };
+    },
+    cut(t) { free = Math.min(free, t + AFTER); },   // the exchange on air stopped short (a pause): the channel's free after a breath
+    get free() { return free; }
+  };
+  return D;
+}
+function radioFeed(dir, W) {   // a step's W.events (the same the sound handler gets) to the director, with what the engine's police kept of the step
+  const C = W.cop, t = W.t / 60, info = { pile: C.pileN > 1 && C.pileT === W.t, sq: C.sqT === W.t, escaped: !!C.escaped };
+  for (const e of W.events) { const nm = typeof e === 'string' ? e : e && e.sfx; if (nm) dir.event(nm, typeof e === 'object' ? e : {}, t, info); }
+}
+// } RADIO DIRECTOR
 let AU = null;
 // the engine: a high-revving flat-plane V8 - exhaust pulses at the firing rate (four a revolution) with a rich, rasping
 // harmonic stack, a growl an octave down, pulsed exhaust noise, soft clipping and the pipes' resonances; the throttle opens
@@ -989,7 +1047,7 @@ function music(W, S, mode, SET) {
   MUS.on = SET.music !== false && SET.sound;
   const a = SET.sound ? S.ctx() : S.existing();
   if (!a) return;
-  if (!MUS.gain) { MUS.gain = a.createGain(); MUS.gain.gain.value = 0.0001; MUS.gain.connect(S.bus() || a.destination); }
+  if (!MUS.gain) { MUS.gain = a.createGain(); MUS.gain.gain.value = 0.0001; MUS.dk = a.createGain(); MUS.gain.connect(MUS.dk); MUS.dk.connect(S.bus() || a.destination); }   // (dk: the duck under the police radio)
   const now = a.currentTime, demo = !W || W.demo;
   let want = null;
   if (MUS.on) {
@@ -1015,6 +1073,125 @@ function sting(name) {   // the goal jingle / the time-up sting, in place of the
   MUS.sting = name; MUS.stingEnd = MUS.gain.context.currentTime + MBUF[name].duration - 0.3;
   return true;
 }
+// ---- the police radio's player: its lines loaded as a Getaway race starts (four at a time - a hundred fetches at once ran this game out of
+// buffer space), played through their own level, the music ducked 8 dB under them; quiet at once on a pause, a new race, the results or Settings
+const RADIO_V = 1, RADIO_GAIN = 1, RADIO_DUCK = 0.4, RADIO_GAP = 0.22;   // (0.4: the music 8 dB down; the lines of an exchange 0.22 s apart)
+const PR = { tab: null, tabP: null, buf: {}, q: null, live: 0, fail: {}, lost: 0, W: null, dir: null, a: null, out: null, bus: null, tap: null, on: [], cues: [], log: [], pay: false };
+const radioOn = () => !!(RAD.set && RAD.set.sound !== false && RAD.set.policeradio !== false);
+const radioName = (k, v, i) => k + '-' + (v + 1) + '-' + (i + 1);
+function radioReady(k, v) { return !!PR.tab && PR.tab.t[k][v].every((ln, i) => PR.buf[radioName(k, v, i)]); }
+function radioDur(k, v) { return PR.tab.t[k][v].reduce((d, ln, i) => { const b = PR.buf[radioName(k, v, i)]; return d + (b ? b.duration : ln[2]) + (i ? RADIO_GAP : 0); }, 0); }
+function radioLoad(a) {
+  if (!PR.tabP) PR.tabP = fetch('radio/radio.json?v=' + RADIO_V).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((j) => { PR.tab = j; }).catch(() => { setTimeout(() => { PR.tabP = null; }, 5000); });
+  if (!PR.tab) return;
+  if (!PR.q) {   // each moment's first exchange (the opening one before them all), then each one's second, and so on
+    PR.q = []; const ks = Object.keys(PR.tab.t).sort((x, y) => (y === 'siren_start') - (x === 'siren_start'));
+    for (let v = 0; v < 9; v++) for (const k of ks) if (PR.tab.t[k][v]) PR.tab.t[k][v].forEach((ln, i) => PR.q.push(radioName(k, v, i)));
+  }
+  while (PR.live < 4 && PR.q.length) {
+    const n = PR.q.shift(); if (PR.buf[n]) continue;
+    PR.live++;
+    fetch('radio/' + n + '.mp3?v=' + RADIO_V).then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b))
+      .then((buf) => { PR.buf[n] = buf; }, () => { PR.fail[n] = (PR.fail[n] || 0) + 1; if (PR.fail[n] < 3) setTimeout(() => PR.q.push(n), 1500 * PR.fail[n]); else PR.lost++; })   // (twice more, a moment later, then without it)
+      .then(() => { PR.live--; });
+  }
+}
+function radioHush(d) {   // whatever's on air, faded out over d seconds, and the music back up
+  const a = PR.a || (PR.bus && PR.bus.context); PR.cues = [];
+  if (a) for (const o of PR.on) { try { o.g.gain.cancelScheduledValues(a.currentTime); o.g.gain.setValueAtTime(o.g.gain.value, a.currentTime); o.g.gain.linearRampToValueAtTime(0, a.currentTime + d); o.s.stop(a.currentTime + d + 0.02); } catch (e) {} }
+  PR.on = [];
+  if (a && MUS.dk) { const g = MUS.dk.gain; g.cancelScheduledValues(a.currentTime); g.setValueAtTime(g.value, a.currentTime); g.setTargetAtTime(1, a.currentTime, 0.25); }
+}
+function radioPlay(p) {   // an exchange: its lines one after another, the captions with them, the music ducked from just before to just after
+  radioHush(0.08);
+  const a = PR.a; if (!a || !radioOn() || !PR.tab) return;
+  if (!PR.bus) { PR.bus = a.createGain(); PR.bus.gain.value = RADIO_GAIN; PR.bus.connect(PR.out || a.destination); PR.tap = a.createAnalyser(); PR.tap.fftSize = 2048; PR.bus.connect(PR.tap); }
+  const now = a.currentTime; let at = now + 0.06;
+  PR.tab.t[p.k][p.v].forEach((ln, i) => {
+    const b = PR.buf[radioName(p.k, p.v, i)]; if (!b) return;
+    const s = a.createBufferSource(), g = a.createGain(); s.buffer = b; s.connect(g); g.connect(PR.bus); s.start(at);
+    PR.on.push({ s: s, g: g }); PR.cues.push({ a: at, b: at + b.duration, who: ln[0], txt: ln[1] });
+    at += b.duration + RADIO_GAP;
+  });
+  if (MUS.dk) { const g = MUS.dk.gain; g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); g.setTargetAtTime(RADIO_DUCK, now, 0.07); g.setTargetAtTime(1, at - RADIO_GAP + 0.15, 0.35); }   // (a ramp both ways, not a jump)
+  PR.pay = p.k === 'busted' || p.k === 'escaped'; PR.log.push({ k: p.k, v: p.v + 1, t: +p.t.toFixed(2) });
+}
+function radioStep(W) {   // after each step of a Getaway race: what happened, to the director; an exchange to start, started
+  try {
+    if (PR.W !== W) { radioHush(0.08); PR.W = W; PR.dir = null; PR.log = []; }   // (a new race: a fresh channel, each moment's exchanges from the first)
+    if (!PR.dir) { if (!PR.tab) return; PR.dir = radioDirector(PR.tab.t, radioDur, radioReady); }
+    radioFeed(PR.dir, W);
+    const p = PR.dir.tick(W.t / 60); if (p) radioPlay(p);
+  } catch (e) { if (window.console) console.warn('365 Coast Run: radio', e); }
+}
+function radioFrame(W, S, mode, SET) {   // each picture: quiet unless a Getaway race is under way (the last word may finish over its results); its lines loading; the caption
+  const a = S.existing(); PR.a = SET.sound ? a : null; PR.out = S.bus();
+  const last = mode === 'over' && W === PR.W && PR.pay && radioOn();   // (busted / escaped: the punchline isn't cut off by the results coming up)
+  if ((PR.on.length || PR.cues.length) && (mode !== 'play' || W !== PR.W || !radioOn()) && !last) { radioHush(0.1); if (PR.dir && W === PR.W) PR.dir.cut(W.t / 60); }
+  if (W && W.cop && !W.demo && mode === 'play' && radioOn() && PR.a) radioLoad(PR.a);
+  caption(PR.a, mode, SET);
+}
+// the words, at the bottom (and never over the car): under the picture when there's room (a phone held upright); otherwise in the picture - under
+// the car with the Close camera, between the map and the gauges; to the left of it, over the map, with the others (a phone held sideways: under it
+// still, clear of the buttons). One line of words at a time, the speaker's name before it in their colour, slanted like the dashboard
+const CAP = { el: null, key: '', mode: '', strip: false, low: false, who: '', txt: '', hist: [] };
+const CAP_COL = { CONTROL: '#c9d6e6', SARGE: '#ffc23a', DOBBS: '#7fe8ff' };
+function caption(a, mode, SET) {
+  let cue = null;
+  if (a && mode === 'play' && SET.radiosubs !== false && radioOn()) { const now = a.currentTime; for (const c of PR.cues) if (now >= c.a - 0.02 && now < c.b + 0.25) cue = c; }   // (a line stays up a moment after it's said)
+  if (!cue) { if (CAP.el && CAP.el.style.display !== 'none') { CAP.el.style.display = 'none'; CAP.key = ''; } CAP.strip = CAP.low = false; CAP.mode = ''; return; }
+  if (!CAP.el) {
+    const css = document.createElement('style');
+    css.textContent = '#crCap{position:fixed;z-index:5;pointer-events:none;text-align:center;display:none}'
+      + '#crCap>span{display:inline-block;max-width:100%;box-sizing:border-box;text-align:left;padding:.18em .62em .2em .7em;background:rgba(6,10,18,.62);border-left:.2em solid var(--c,#fff);'
+      + 'color:#fff;font:600 1em/1.12 "Clash Display",Archivo,"Segoe UI",Arial,sans-serif;letter-spacing:.02em;text-shadow:.03em .07em 0 rgba(0,0,0,.38),0 0 .08em rgba(0,0,0,.6);transform:skewX(-9deg)}'
+      + '#crCap b{color:var(--c,#fff);font-weight:600;font-size:.74em;letter-spacing:.1em;margin-right:.55em}';
+    document.head.appendChild(css);
+    CAP.el = document.createElement('div'); CAP.el.id = 'crCap'; CAP.el.setAttribute('aria-hidden', 'true'); CAP.el.appendChild(document.createElement('span'));
+    document.body.appendChild(CAP.el);
+  }
+  const el = CAP.el, sp = el.firstChild, cv = document.getElementById('screen'); if (!cv) return;
+  const r = cv.getBoundingClientRect(), touch = document.body.classList.contains('cr-race'), cam = (SET && SET.cam) || 'near';
+  const key = [cue.who, cue.txt, r.left, r.top, r.width, r.height, innerWidth, innerHeight, touch, cam].join('|');
+  if (key === CAP.key) return;
+  CAP.key = key;
+  if (CAP.who !== cue.who || CAP.txt !== cue.txt) {
+    CAP.who = cue.who; CAP.txt = cue.txt; sp.textContent = ''; CAP.hist.push([+a.currentTime.toFixed(2), cue.who, cue.txt]); if (CAP.hist.length > 12) CAP.hist.shift();
+    const b = document.createElement('b'); b.textContent = cue.who; sp.appendChild(b); sp.appendChild(document.createTextNode(cue.txt));
+    sp.style.setProperty('--c', CAP_COL[cue.who] || '#ffffff');
+  }
+  el.style.display = 'block';
+  const u = r.height / GH, gw = r.width / u, fit = (fs, x0, x1) => { el.style.fontSize = fs.toFixed(1) + 'px'; el.style.left = x0.toFixed(1) + 'px'; el.style.width = Math.max(40, x1 - x0).toFixed(1) + 'px'; return sp.offsetHeight; };
+  let top, low = false, strip = false;
+  if (innerHeight - r.bottom >= 64) {   // room under the picture: there, between the touch buttons if they're beside it
+    top = r.bottom + 8; let x0 = r.left + 8, x1 = r.right - 8;
+    if (touch && TOUCH.el) for (const q of TOUCH.el.querySelectorAll('.tb')) { const bq = q.getBoundingClientRect(); if (!bq.width || bq.bottom < top || bq.top > top + 80) continue; if (bq.right < innerWidth / 2) x0 = Math.max(x0, bq.right + 8); else x1 = Math.min(x1, bq.left - 8); }
+    if (x1 - x0 > 620) { const c = (x0 + x1) / 2; x0 = c - 310; x1 = c + 310; }
+    fit(Math.max(13, Math.min(17, r.width * 0.038)), x0, x1); CAP.mode = 'below';
+  } else if (cam === 'driver' && !touch) {   // from the driver's seat: just above the bonnet
+    const h = fit(Math.max(12, Math.min(19, u * 6.2)), r.left + r.width * 0.25, r.left + r.width * 0.75); top = r.top + r.height * 0.7 - h; CAP.mode = 'bonnet';
+  } else if (cam === 'far' && !touch) {   // the High camera's car fills the bottom: to its left, just over the route map
+    el.style.textAlign = 'left';
+    const h = fit(Math.max(12, Math.min(19, u * 6.2)), r.left + 8 * u, r.left + (gw * 0.27 - 6) * u); top = r.bottom - 50 * u - h; CAP.mode = 'side';
+  } else {   // under the car (it ends 37 units up): between the route map and the gauges, the dashboard's words just above it kept clear when it fits
+    let fs = Math.max(12, Math.min(19, u * 6.2)), h = 0; const x0 = r.left + 77 * u, x1 = r.left + (gw - 158) * u;
+    for (let k = 0; k < 4; k++) { h = fit(fs, x0, x1); if (h <= 19.5 * u || fs <= 11) break; fs -= 1; }
+    low = h > 19.5 * u; top = r.bottom - 2 * u - h; strip = true; CAP.mode = 'strip';
+  }
+  if (CAP.mode !== 'side') el.style.textAlign = 'center';
+  el.style.top = top.toFixed(1) + 'px'; CAP.strip = strip; CAP.low = low;
+}
+// for checking (the tests): what the radio has loaded and said, what's on air and on screen, the music's duck, the level going out
+window.CRradio = () => {
+  let lev = null; if (PR.tap) { const d = new Float32Array(PR.tap.fftSize); PR.tap.getFloatTimeDomainData(d); let s = 0; for (let i = 0; i < d.length; i++) s += d[i] * d[i]; lev = +(10 * Math.log10(s / d.length + 1e-12)).toFixed(1); }
+  const sp = CAP.el && CAP.el.style.display !== 'none' ? CAP.el.firstChild.getBoundingClientRect() : null;
+  const a = PR.a, last = PR.cues[PR.cues.length - 1];
+  return { on: radioOn(), table: !!PR.tab, loaded: Object.keys(PR.buf).length, pending: PR.q ? PR.q.length + PR.live : null, lost: PR.lost, failed: Object.keys(PR.fail).filter((n) => !PR.buf[n]),
+    said: PR.log.slice(), onAir: PR.on.length, endsIn: a && last ? +(last.b - a.currentTime).toFixed(2) : null, chanFreeIn: PR.dir && PR.W ? +(PR.dir.free - PR.W.t / 60).toFixed(2) : null,
+    cap: sp ? CAP.el.textContent : '', caps: CAP.hist.slice(), capMode: CAP.mode, capBox: sp && { x: sp.left, y: sp.top, w: sp.width, h: sp.height, fs: parseFloat(CAP.el.style.fontSize) },
+    duck: MUS.dk ? +MUS.dk.gain.value.toFixed(3) : null, level: lev };
+};
+window.CRradioRms = () => { const o = {}; for (const n in PR.buf) { const d = PR.buf[n].getChannelData(0); let s = 0; for (let i = 0; i < d.length; i++) s += d[i] * d[i]; o[n] = +(10 * Math.log10(s / d.length + 1e-12)).toFixed(1); } return o; };
 window.CRengineOn = () => (AU ? (AU.race ? 'race engine' : 'oscillator engine') : WL ? (WLdone ? 'loaded, not started' : 'loading') : 'not loaded');   // which engine is running (for checking)
 // the Getaway's sirens: the nearest police car's two-tone (hi-lo, about a second a pair), louder as it closes, over on its side, a touch higher
 // coming at you and lower going away; quiet once you're caught, escaped, or there's none about
@@ -1037,6 +1214,7 @@ function sirenSet(W, a, now, S) {
 }
 function frameAudio(W, S, mode, SET) {
   music(W, S, mode, SET);
+  radioFrame(W, S, mode, SET);
   { const a0 = S.existing && S.existing(); if (a0) loadWorklet(a0); }
   const playing = !!(W && !W.demo && mode === 'play' && SET.sound);
   const a = playing ? S.ctx() : S.existing();
@@ -1113,6 +1291,8 @@ A.start({
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
+    { key: 'policeradio', type: 'switch', label: 'Police radio', small: 'The Getaway: listen in on the police radio as they chase you - Control, the sergeant and young Dobbs. The music dips while they talk.', def: true },
+    { key: 'radiosubs', type: 'switch', label: 'Radio subtitles', small: 'The Getaway: what the police say on their radio, written along the bottom of the picture as they say it.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
     { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
     { key: 'touch', type: 'seg', label: 'Touch steering', small: 'Phones and tablets. Sides: touch anywhere on the left of the screen to steer left, the right to steer right, both at once for nitro. Buttons: ◀ ▶ under your left thumb, Brake and Nitro under your right.', options: [['sides', 'Sides'], ['buttons', 'Buttons']], def: 'sides' },
@@ -1131,7 +1311,7 @@ A.start({
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
   touchText: 'Touch the <b>left</b> or <b>right</b> of the screen to steer, <b>both at once</b> for nitro; <b>Brake</b> and <b>Nitro</b> at the sides too &mdash; the car goes by itself. Settings &gt; Touch steering for buttons instead.',
   help: [
-    '<b>NEW - the Getaway:</b> pick it like a car. You built the only flying car in Dorset - and the police think you stole it. There&rsquo;s no clock: they chase you down with sirens going, draw alongside and ram you, wait in lay-bys to pull out after you, and block the road with roadblocks and stingers. Rocket away from them (Space), hop the roadblocks (a tap of Shift, X or B), and make them crash into the traffic and each other. Too much damage, or boxed in at a standstill, and you&rsquo;re <b>BUSTED</b>; each checkpoint patches the car up a little. Reach the end of the coast road and you&rsquo;ve <b>ESCAPED</b>. It has its own Hall of Fame.',
+    '<b>NEW - the Getaway:</b> pick it like a car. You built the only flying car in Dorset - and the police think you stole it. There&rsquo;s no clock: they chase you down with sirens going, draw alongside and ram you, wait in lay-bys to pull out after you, and block the road with roadblocks and stingers. Rocket away from them (Space), hop the roadblocks (a tap of Shift, X or B), and make them crash into the traffic and each other. Too much damage, or boxed in at a standstill, and you&rsquo;re <b>BUSTED</b>; each checkpoint patches the car up a little. Reach the end of the coast road and you&rsquo;ve <b>ESCAPED</b>. Listen in on the <b>police radio</b> as they try (Settings to switch it, or its subtitles, off). It has its own Hall of Fame.',
     '<b>The aim:</b> reach a <b>goal</b> before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time &mdash; a little less each time. Five stretches make a run: reach one of the five goals for a time bonus, a love bonus and a rank, and the game is won. Or press <b>Space</b> at the goal to carry on into round 2, back through the town &mdash; busier and quicker.',
     '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over, unless you roll over the next checkpoint before the car stops: <b>JUST MADE IT!</b> Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
