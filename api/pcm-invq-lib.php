@@ -469,6 +469,50 @@ function invq_pay_how($p) {
     return 'Bank transfer / other';
 }
 
+/* ---- 23 Oct 2026: told when anyone pays --------------------------------------------------------------------------------
+   Owner: "If somebody pays, after we've sent them the email, can it let us know that they've paid in the portal?" Any
+   payment QuickBooks records - the pay page, a bank transfer once it is matched in the bank feed, David's own Receive
+   payment, Direct Debit - becomes one Slack line (the pay page posts its own, so its payments are not posted twice) and a
+   NEW mark in the portal for INVQ_NEW_DAYS. */
+define('INVQ_NEW_DAYS', 2);
+define('INVQ_PAID_LINES_RUN', 10);   // Slack lines per check at most; the rest are summed in one more line
+function invq_paid_from_pay_page($p) { return stripos((string)(isset($p['PrivateNote']) ? $p['PrivateNote'] : ''), '365techies.co.uk pay page') !== false; }
+/* When QuickBooks recorded it (not the payment's own date: a bank transfer is matched days after it arrives) */
+function invq_payment_recorded($p) {
+    $t = strtotime((string)(isset($p['MetaData']['CreateTime']) ? $p['MetaData']['CreateTime'] : ''));
+    return $t === false ? 0 : (int)$t;
+}
+/* The invoice ids a payment paid */
+function invq_payment_invoice_ids($p) {
+    $ids = array();
+    foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
+        foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt)
+            if (is_array($lt) && (isset($lt['TxnType']) ? $lt['TxnType'] : '') === 'Invoice' && preg_match('/^\d+$/', (string)(isset($lt['TxnId']) ? $lt['TxnId'] : ''))) $ids[(string)$lt['TxnId']] = true;
+    return array_map('strval', array_keys($ids));   // numeric keys come back as ints
+}
+/* The payments not yet seen, recorded since the watch began - oldest first */
+function invq_paid_new($payments, $seen, $since) {
+    $out = array();
+    foreach ((array)$payments as $p) {
+        if (!is_array($p) || empty($p['Id']) || isset($seen[(string)$p['Id']])) continue;
+        if (invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0) <= 0) continue;
+        if (invq_payment_recorded($p) < (int)$since) continue;
+        $out[] = $p;
+    }
+    usort($out, function ($a, $b) { return invq_payment_recorded($a) - invq_payment_recorded($b); });
+    return $out;
+}
+/* The Slack line for one payment. $nums = the invoice numbers it paid. */
+function invq_paid_line($p, $nums, $portal = 'https://365techies.co.uk/portal/') {
+    $how = invq_pay_how($p);
+    $amt = invq_money(round(invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0), 2));
+    $who = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80); if ($who === '') $who = 'a customer';
+    $for = $nums ? ' for #' . implode(', #', $nums) : '';
+    if ($how === 'Direct Debit') return ':moneybag: *Paid by Direct Debit:* ' . $who . ' ' . $amt . $for . ' (GoCardless) - nothing to do.';
+    $word = $how === 'Bank transfer / other' ? 'bank transfer' : strtolower($how);
+    return ':moneybag: *Paid:* ' . $who . ' ' . $amt . $for . ' (' . $word . ') - recorded in QuickBooks. Send them a thank-you from the portal: ' . $portal;
+}
+
 /* The money in for one month, week by week (Monday to Sunday):
    - invoices paid: QuickBooks Payments dated in the month, with the invoice numbers they paid ($docs = invoice id =>
      number) and how they were paid;
@@ -497,7 +541,8 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
         $weeks[$w]['invoices'] += $amt; $weeks[$w]['n']++; $inv += $amt;
         $rows[] = array('date' => $date, 'customer' => invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80),
                         'amount' => $amt, 'invoices' => array_values(array_unique($nums)), 'how' => invq_pay_how($p), 'week' => $w,
-                        'id' => (string)$p['Id'], 'inv_ids' => array_values(array_unique($tids)));   // for "Send a thank-you" (23 Oct 2026)
+                        'id' => (string)$p['Id'], 'inv_ids' => array_values(array_unique($tids)),   // for "Send a thank-you" (23 Oct 2026)
+                        'recorded' => invq_payment_recorded($p));                                    // when QuickBooks got it: the portal's NEW mark
     }
     foreach ((array)$deposits as $d) {
         if (!is_array($d)) continue;

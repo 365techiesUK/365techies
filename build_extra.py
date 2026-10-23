@@ -31681,6 +31681,8 @@ def write_portal_page():
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
   }
   function invqAgo(t) { return invqWhen(Math.max(0, Math.floor((Date.now() / 1000 - t) / 86400))); }
+  /* 23 Oct 2026: paid in the last couple of days (when QuickBooks recorded it) -> a NEW mark */
+  function invqNew(t, days) { return t && t >= Date.now() / 1000 - (days || 2) * 86400 ? ' <span class="invqnew" style="background:#1f6f4a;color:#d6ffe9;border-radius:6px;padding:0 .35rem;font-size:.72rem;font-weight:700;letter-spacing:.03em">NEW</span>' : ''; }
   function loadInvqUnpaid() {
     var el = document.getElementById('invqunpaid'); if (!el) return;
     post(INVQ, { action: 'unpaid', stoken: S.stoken, machine: mid() }).then(function (r) {
@@ -31728,7 +31730,7 @@ def write_portal_page():
         return '<tr><td style="white-space:nowrap">w/c ' + invqDate(w.start) + '</td><td style="text-align:right">' + invqMoney(w.invoices) + (w.n ? ' <span class="quiet" style="font-size:.8rem">(' + w.n + ')</span>' : '') + '</td><td style="text-align:right">' + invqMoney(w.plans) + '</td><td style="text-align:right"><strong>' + invqMoney(w.total) + '</strong></td></tr>';
       }).join('');
       var pay = rows.map(function (x) {
-        return '<tr><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td><strong>' + esc(x.customer || 'Unnamed') + '</strong></td><td>' + (x.invoices && x.invoices.length ? x.invoices.map(function (n) { return '#' + esc(n); }).join(', ') : '<span class="quiet">\\u2014</span>') + '</td><td>' + esc(x.how) + '</td><td style="text-align:right;white-space:nowrap">' + invqMoney(x.amount) + '</td>'
+        return '<tr><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td><strong>' + esc(x.customer || 'Unnamed') + '</strong>' + invqNew(x.recorded) + '</td><td>' + (x.invoices && x.invoices.length ? x.invoices.map(function (n) { return '#' + esc(n); }).join(', ') : '<span class="quiet">\\u2014</span>') + '</td><td>' + esc(x.how) + '</td><td style="text-align:right;white-space:nowrap">' + invqMoney(x.amount) + '</td>'
           + '<td style="white-space:nowrap">' + (x.thanked ? '<span class="quiet" style="font-size:.8rem">\\u2713 thank-you sent ' + esc(invqAgo(x.thanked)) + '</span>'
             : (x.id ? '<button class="sm ghost invqthank" data-id="' + esc(x.id) + '" data-amt="' + esc(x.amount) + '" data-no="' + esc((x.invoices || []).filter(function (n) { return n.indexOf('id ') !== 0; }).join(', ')) + '" data-who="' + esc(x.customer || '') + '" style="margin:0;padding:.2rem .5rem;font-size:.78rem">\\ud83d\\ude4f Send a thank-you</button>' : ''))
           + '<div class="invqtmsg quiet" style="font-size:.78rem"></div></td></tr>';
@@ -31753,6 +31755,11 @@ def write_portal_page():
     var note = (r.stale ? '<p class="quiet">QuickBooks didn\\u2019t answer just now \\u2014 this is the last picture it gave us.</p>' : '')
       + (r.live === false ? '<p class="quiet">\\u26a0 QuickBooks is in dry-run on the server, so invoices can\\u2019t be raised from here yet.</p>' : '')
       + (r.only_key ? '<p class="quiet">\\u26a0 QuickBooks is limited to one test customer on the server (QBO_ONLY_KEY), so nothing is raised automatically yet.</p>' : '');
+    /* 23 Oct 2026: who has paid in the last couple of days, however they paid - QuickBooks' word, once it has the payment */
+    var rp = r.recent_paid || [];
+    if (rp.length) note = '<p style="margin:.15rem 0 .45rem"><span style="color:#7ee0a2;font-weight:700">\\ud83d\\udcb7 Paid in the last ' + (r.new_days || 2) + ' days:</span> '
+      + rp.map(function (x) { return '<strong>' + esc(x.who || 'a customer') + '</strong> ' + invqMoney(x.amount) + ((x.nums || []).length ? ' <span class="quiet">#' + x.nums.map(esc).join(', #') + '</span>' : '') + ' <span class="quiet">(' + esc(String(x.how || '').toLowerCase().replace('bank transfer / other', 'bank transfer')) + ')</span>'; }).join(' \\u00b7 ')
+      + '</p>' + note;
     var sk = r.slack || {};
     var skWhen = sk.last ? ' <span class="quiet">(last tried ' + esc(new Date(sk.last * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })) + '; it retries every 15 minutes)</span>' : '';
     if (sk.error === 'not_in_channel') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack said the 365 techies app was not in the jobs channel \\u2014 if you have invited it since, wait for the next read; if not, type /invite @365 techies app in #sos-jobs-in-out.' + skWhen + '</p>';
@@ -31880,7 +31887,7 @@ def write_portal_page():
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') {
-        chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Paid' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>' + (inv && inv.thanked ? ' <span class="quiet">\\u00b7 thank-you sent ' + esc(invqAgo(inv.thanked)) + '</span>' : '');
+        chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Paid' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>' + invqNew(inv && inv.paid_at, r.new_days) + (inv && inv.thanked ? ' <span class="quiet">\\u00b7 thank-you sent ' + esc(invqAgo(inv.thanked)) + '</span>' : '');
         if (inv && inv.id && !inv.thanked) btns = '<button class="sm ghost invqthank" data-inv="' + esc(inv.id) + '" data-amt="' + esc(inv.total) + '" data-no="' + esc(inv.number || '') + '" data-to="' + esc(inv.email || '') + '" data-who="' + esc(j.customer || '') + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="QuickBooks emails its payment receipt, confirming they\\u2019ve paid">\\ud83d\\ude4f Send a thank-you</button>';
       }
       else if (st === 'sent') {

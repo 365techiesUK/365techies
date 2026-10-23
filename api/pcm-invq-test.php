@@ -455,5 +455,32 @@ ok($rcBlock !== '' && strpos($rcBlock, "invq_receipt(\$c, \$id, \$invId, \$who)"
    'the request names a payment or an invoice - nothing else');
 ok(strpos($EP, "\$o['jobs'][\$ji]['invoice']['thanked'] = \$thankedInv[") !== false, 'a paid job row says whether its thank-you went (from the store, so a cached list is right too)');
 
+echo "-- 23 Oct 2026 (later still): told when anyone pays - a Slack line and a NEW mark\n";
+$bankP = array('Id' => '701', 'TotalAmt' => 60, 'MetaData' => array('CreateTime' => '2026-10-24T09:15:00+01:00'), 'CustomerRef' => array('value' => '11', 'name' => 'Tom Wilson'),
+               'Line' => array(array('Amount' => 60, 'LinkedTxn' => array(array('TxnId' => '12808', 'TxnType' => 'Invoice')))));
+$cardP = array('Id' => '702', 'TotalAmt' => 95, 'MetaData' => array('CreateTime' => '2026-10-24T08:00:00+01:00'), 'CustomerRef' => array('name' => 'Hanna'),
+               'PaymentRefNum' => 'pi_123', 'PrivateNote' => 'Paid by card through Stripe on the 365techies.co.uk pay page - payment pi_123');
+$ddP = array('Id' => '703', 'TotalAmt' => 21.45, 'MetaData' => array('CreateTime' => '2026-10-24T07:00:00+01:00'), 'CustomerRef' => array('name' => 'Media Friendly Ltd'), 'PaymentRefNum' => 'PM01ABCDEF12');
+$oldP = array('Id' => '600', 'TotalAmt' => 30, 'MetaData' => array('CreateTime' => '2026-10-20T10:00:00+01:00'), 'CustomerRef' => array('name' => 'Old'));
+$since = strtotime('2026-10-23T20:00:00Z');
+$newP = invq_paid_new(array($bankP, $oldP, $cardP, $ddP, array('Id' => '704', 'TotalAmt' => 0, 'MetaData' => array('CreateTime' => '2026-10-24T09:00:00Z'))), array('703' => array('at' => 1)), $since);
+ok(array_map(function ($p) { return $p['Id']; }, $newP) === array('702', '701'), 'new = not seen before, recorded since the watch began, more than 0 - oldest first (a payment from before the watch is never announced)', json_encode(array_map(function ($p) { return $p['Id']; }, $newP)));
+ok(invq_payment_recorded($bankP) === strtotime('2026-10-24T08:15:00Z') && invq_payment_invoice_ids($bankP) === array('12808'), 'when QuickBooks recorded it, and the invoices it paid');
+ok(invq_paid_from_pay_page($cardP) === true && invq_paid_from_pay_page($bankP) === false, 'a pay-page payment is known (it posts its own Slack line, so the watch does not repeat it)');
+$lb = invq_paid_line($bankP, array('4905/808'));
+ok(strpos($lb, '*Paid:* Tom Wilson £60.00 for #4905/808 (bank transfer) - recorded in QuickBooks. Send them a thank-you from the portal: https://365techies.co.uk/portal/') !== false, 'a bank transfer: who, how much, the invoice, and the thank-you prompt', $lb);
+ok(strpos(invq_paid_line($ddP, array()), '*Paid by Direct Debit:* Media Friendly Ltd £21.45 (GoCardless) - nothing to do.') !== false, 'a Direct Debit: said, with nothing to do', invq_paid_line($ddP, array()));
+$pw0 = strpos($SW, 'function invq_paid_watch('); $pw1 = $pw0 !== false ? strpos($SW, '/* ---- the cron tick: create what', $pw0) : false;
+$pwFn = ($pw0 !== false && $pw1 > $pw0) ? substr($SW, $pw0, $pw1 - $pw0) : '';
+ok($pwFn !== '' && strpos($pwFn, "if (empty(\$w['since'])) {") < strpos($pwFn, 'invq_connect()') && strpos($pwFn, "\$out['skipped'] = 'started'; return \$out;") !== false,
+   'the first run only starts the clock - nothing old is ever announced');
+ok(strpos($pwFn, "if (invq_paid_from_pay_page(\$p)) continue;") !== false && strpos($pwFn, 'INVQ_PAID_LINES_RUN') !== false && strpos($pwFn, "'POST'") === false && strpos($pwFn, 'array_slice($seen, 0, 300, true)') !== false,
+   'the pay page\'s own payments are not posted twice; at most 10 lines a check (the rest summed); read-only against QuickBooks; the store keeps the last 300');
+$CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
+ok(strpos($CR, "try { \$iqp = invq_paid_watch(); } catch (Throwable \$e) { \$iqp = array('error' => 'exception'); }") !== false, 'the 15-minute cron runs the watch, and a failure there never stops the rest of the tick');
+ok(strpos($EP, "'recent_paid' => \$recentPaid, 'new_days' => INVQ_NEW_DAYS") !== false && strpos($EP, "\$o['jobs'][\$ji]['invoice']['paid_at'] = \$paidAt[") !== false, 'the portal gets who paid in the last 2 days, and each paid job row when');
+$sumN = invq_paid_summary(array(array_merge($bankP, array('TxnDate' => '2026-10-21'))), array('12808' => '4905/808'), array(), '2026-10');
+ok($sumN['rows'][0]['recorded'] === strtotime('2026-10-24T08:15:00Z'), 'Money in rows carry when QuickBooks recorded each payment (a bank transfer matched days after it arrived still shows NEW)');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

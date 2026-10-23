@@ -114,6 +114,8 @@ try { $lc = lc_sweep(); } catch (Throwable $e) { $lc = array('ok' => false, 'err
 
 require_once __DIR__ . '/pcm-invq-sweep.php';
 $iq = invq_morning();
+/* 23 Oct 2026: any payment QuickBooks has recorded since the last tick -> a Slack line, and the portal's NEW marks */
+try { $iqp = invq_paid_watch(); } catch (Throwable $e) { $iqp = array('error' => 'exception'); }
 
 /* Pay-page card payments (19 Oct 2026, pcm-paystripe-lib.php): every 10 minutes, the pay page's paid Stripe checkouts of the
    last 3 days that the webhook hasn't finished with - each marks its QuickBooks invoice paid (or says in Slack why it
@@ -171,12 +173,14 @@ if ($CLI) {
        . ", pay links " . json_encode($pl)
        . ", slack jobs " . json_encode($sj)
        . ", invoices " . json_encode($iq)
+       . ", paid watch " . json_encode($iqp)
        . ", ebay " . json_encode($eb[1]) . "\n";
 } else {
     $res['comms'] = $cm;
     $res['paylinks'] = $pl;
     $res['slackjobs'] = $sj;
     $res['invq'] = $iq;
+    $res['invq_paid'] = $iqp;
     $res['ebay'] = $eb[1];
     echo json_encode($res);
 }

@@ -972,7 +972,7 @@ function invq_receipt($c, $payId, $invId, $who) {
         invq_log('thank-you FAILED payment ' . $pid . ' ' . $why . ' by ' . $who);
         return array('ok' => false, 'error' => 'send_failed', 'why' => $why);
     }
-    $inv = array_keys($tids);
+    $inv = array_map('strval', array_keys($tids));
     invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt) {
         $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt);
         return array('ok' => true, 'data' => $d);
@@ -1086,6 +1086,63 @@ function invq_slack($text) {
         CURLOPT_POSTFIELDS => json_encode(array('text' => $text, 'unfurl_links' => false), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
     @curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE); curl_close($ch);
     return $code >= 200 && $code < 300;
+}
+
+/* ---- the cron tick: any payment QuickBooks has recorded since the last tick (23 Oct 2026) ----------------------------
+   One Slack line each (not the pay page's own - it posts its own line), and kept in the store for the portal's NEW
+   marks: payment id => when recorded, the invoices it paid, who, how much, how. The first run only starts the clock, so
+   nothing old is ever announced. Read-only against QuickBooks. */
+function invq_paid_watch($now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $out = array('new' => 0, 'posted' => 0, 'skipped' => '');
+    $store = invq_store_read();
+    $w = (isset($store['paid_watch']) && is_array($store['paid_watch'])) ? $store['paid_watch'] : array();
+    if (empty($w['since'])) {
+        invq_store_locked(function ($d) use ($now) { $d['paid_watch'] = array('since' => $now, 'seen' => array()); return array('ok' => true, 'data' => $d); });
+        $out['skipped'] = 'started'; return $out;
+    }
+    $seen = (isset($w['seen']) && is_array($w['seen'])) ? $w['seen'] : array();
+    $c = invq_connect();
+    if (empty($c['ok'])) { $out['skipped'] = $c['why']; return $out; }
+    $from = gmdate('Y-m-d\TH:i:s', max((int)$w['since'], $now - 3 * 86400) - 3600) . '+00:00';
+    $pr = invq_api($c, 'GET', '/query?query=' . rawurlencode("select * from Payment where MetaData.CreateTime >= '" . $from . "' maxresults 200"));
+    if (!qbo_lib_ok($pr)) { $out['skipped'] = 'qbo_' . (int)$pr['code']; return $out; }
+    $new = invq_paid_new(isset($pr['json']['QueryResponse']['Payment']) ? $pr['json']['QueryResponse']['Payment'] : array(), $seen, (int)$w['since']);
+    if (!$new) return $out;
+    // the invoice numbers they paid, in one read
+    $ids = array();
+    foreach ($new as $p) foreach (invq_payment_invoice_ids($p) as $tid) $ids[$tid] = true;
+    $docs = array();
+    foreach (array_chunk(array_keys($ids), 50) as $chunk) {
+        $ir = invq_api($c, 'GET', '/query?query=' . rawurlencode("select * from Invoice where Id in ('" . implode("','", $chunk) . "')"));
+        if (qbo_lib_ok($ir)) foreach ((array)(isset($ir['json']['QueryResponse']['Invoice']) ? $ir['json']['QueryResponse']['Invoice'] : array()) as $inv)
+            if (is_array($inv) && !empty($inv['Id'])) $docs[(string)$inv['Id']] = invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 20);
+    }
+    $add = array(); $lines = 0; $more = 0; $moreAmt = 0.0;
+    foreach ($new as $p) {
+        $tids = invq_payment_invoice_ids($p);
+        $nums = array(); foreach ($tids as $tid) if (!empty($docs[$tid])) $nums[] = $docs[$tid];
+        $amt = round(invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0), 2);
+        $add[(string)$p['Id']] = array('at' => invq_payment_recorded($p), 'inv' => $tids, 'nums' => $nums, 'amount' => $amt,
+                                       'who' => invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80), 'how' => invq_pay_how($p));
+        $out['new']++;
+        if (invq_paid_from_pay_page($p)) continue;   // the pay page has said so already
+        if ($lines >= INVQ_PAID_LINES_RUN) { $more++; $moreAmt += $amt; continue; }
+        if (invq_slack(invq_paid_line($p, $nums))) $out['posted']++;
+        $lines++;
+    }
+    if ($more) invq_slack(':moneybag: ...and ' . $more . ' more payment' . ($more === 1 ? '' : 's') . ' (' . invq_money($moreAmt) . ') - see Money in on the portal.');
+    invq_store_locked(function ($d) use ($add) {
+        $w = (isset($d['paid_watch']) && is_array($d['paid_watch'])) ? $d['paid_watch'] : array('since' => time(), 'seen' => array());
+        $seen = (isset($w['seen']) && is_array($w['seen'])) ? $w['seen'] : array();
+        foreach ($add as $id => $row) $seen[$id] = $row;
+        uasort($seen, function ($a, $b) { return (int)$b['at'] - (int)$a['at']; });
+        $w['seen'] = array_slice($seen, 0, 300, true);
+        $d['paid_watch'] = $w;
+        return array('ok' => true, 'data' => $d);
+    });
+    invq_log('paid watch: ' . $out['new'] . ' new payment' . ($out['new'] === 1 ? '' : 's') . ', ' . $out['posted'] . ' posted');
+    return $out;
 }
 
 /* ---- the cron tick: create what this month's jobs are owed, then one line -- */
