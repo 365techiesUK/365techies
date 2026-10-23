@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-22"
+      "dateModified": "2026-10-23"
     }
   ]
 }
@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 22 Oct 2026 &middot; 3a71fa7b82</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; dbbc141ad0</p><script>
 (function () {
-  var P365BUILD = '3a71fa7b82';
+  var P365BUILD = 'dbbc141ad0';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7316,6 +7316,82 @@
       var b = el.querySelector('.invqrecent60'); if (b) b.onclick = function () { b.disabled = true; loadInvqRecent(r.days >= 60 ? 14 : 60); };
     }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for recent invoices.</p>'; });
   }
+  /* 23 Oct 2026 (owner: "Tom Wilson ... he's been sent the invoice, but I don't think he's paid ... send the invoice again
+     with the payment details"): every invoice QuickBooks has emailed that still owes money, most overdue first. "Send it
+     again" has QuickBooks email the same invoice once more - its email carries the bank details and the pay link. */
+  function invqDate(ymd) { var p = (ymd || '').split('-'); return p.length === 3 ? esc(parseInt(p[2], 10) + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1]) : esc(ymd); }
+  function loadInvqUnpaid() {
+    var el = document.getElementById('invqunpaid'); if (!el) return;
+    post(INVQ, { action: 'unpaid', stoken: S.stoken, machine: mid() }).then(function (r) {
+      if (!r || !r.ok) { el.innerHTML = '<p class="quiet">Couldn\u2019t read the unpaid invoices from QuickBooks' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</p>'; return; }
+      if (r.connected === false) { el.innerHTML = ''; return; }
+      var rows = r.rows || [], owed = 0;
+      rows.forEach(function (x) { owed += x.balance; });
+      var body = rows.map(function (x) {
+        var st = x.overdue > 0 ? '<span style="color:#ffb4a2">' + x.overdue + ' day' + (x.overdue === 1 ? '' : 's') + ' overdue</span>' : '<span class="quiet">due ' + invqDate(x.due) + '</span>';
+        if (x.resent_at) st += '<br><span class="quiet" style="font-size:.8rem">sent again ' + invqWhen(Math.max(0, Math.floor((Date.now() / 1000 - x.resent_at) / 86400))) + '</span>';
+        return '<tr class="invqurow"><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td>' + (x.number ? '#' + esc(x.number) : '<span class="quiet">no no.</span>') + '</td>'
+          + '<td><strong>' + esc(x.customer || 'Unnamed') + '</strong>' + (x.email ? '<br><span class="quiet" style="font-size:.82rem">' + esc(x.email) + '</span>' : '<br><span style="color:#ffb4a2;font-size:.82rem">no email on the customer</span>') + '</td>'
+          + '<td style="text-align:right;white-space:nowrap">' + invqMoney(x.balance) + (x.balance < x.total ? '<br><span class="quiet" style="font-size:.8rem">of ' + invqMoney(x.total) + '</span>' : '') + '</td>'
+          + '<td style="font-size:.88rem">' + st + '</td>'
+          + '<td style="white-space:nowrap"><button class="sm ghost invqupdf" data-id="' + esc(x.id) + '" style="margin:0;padding:.25rem .55rem;font-size:.8rem">\ud83d\udc41 Preview</button> '
+          + '<button class="sm invqresend" data-id="' + esc(x.id) + '" data-to="' + esc(x.email) + '" data-no="' + esc(x.number) + '" data-amt="' + esc(x.balance) + '" style="margin:0;padding:.25rem .6rem;font-size:.8rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\ud83d\udce8 Send it again</button>'
+          + '<div class="invqumsg quiet" style="font-size:.8rem;margin:.2rem 0 0"></div></td></tr>';
+      }).join('');
+      el.innerHTML = '<p style="margin:0 0 .35rem"><strong>Sent but not paid yet</strong> <span class="quiet">' + rows.length + ' invoice' + (rows.length === 1 ? '' : 's') + ' \u00b7 ' + invqMoney(owed) + ' owed</span></p>'
+        + (rows.length ? '<div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Date</th><th>No.</th><th>Customer</th><th style="text-align:right">Owed</th><th>Due</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>' : '<p class="quiet">Nothing is owed on an invoice QuickBooks has sent.</p>')
+        + '<p class="quiet" style="margin:.4rem 0 0;font-size:.82rem">\u201cSend it again\u201d has QuickBooks email the same invoice once more, with our bank details and the link to pay by card or PayPal. Monthly-plan invoices collected by Direct Debit never appear here. A bank transfer only counts as paid once it\u2019s matched in QuickBooks.</p>';
+      Array.prototype.forEach.call(el.querySelectorAll('.invqupdf'), function (b) { b.onclick = function () { invqPdf(b.getAttribute('data-id'), b); }; });
+      Array.prototype.forEach.call(el.querySelectorAll('.invqresend'), function (b) {
+        b.onclick = function () {
+          var msg = b.closest('tr') ? b.closest('tr').querySelector('.invqumsg') : null;
+          if (!confirm('QuickBooks will email invoice ' + (b.getAttribute('data-no') ? '#' + b.getAttribute('data-no') + ' ' : '') + 'to ' + b.getAttribute('data-to') + ' again now, with ' + invqMoney(parseFloat(b.getAttribute('data-amt')) || 0) + ' still owed, our bank details and the pay link.\n\nSend it again?')) return;
+          b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
+          post(INVQ, { action: 'resend', stoken: S.stoken, machine: mid(), id: b.getAttribute('data-id') }).then(function (j) {
+            if (!j || !j.ok) {
+              b.disabled = false;
+              var e = j && j.error;
+              if (msg) msg.innerHTML = '<span style="color:#ffb4a2">' + (e === 'recently_resent' ? 'Already sent again in the last day.' : e === 'nothing_owed' ? 'QuickBooks says it\u2019s paid now.' : e === 'not_sent_yet' ? 'QuickBooks hasn\u2019t sent this one yet \u2014 use Approve &amp; send above.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
+              return;
+            }
+            if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent again to ' + esc(j.to) + '</span>';
+          }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
+        };
+      });
+    }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for the unpaid invoices.</p>'; });
+  }
+  /* 23 Oct 2026 (owner: "see what invoices have been paid that month, so then basically we can see how much we've made per
+     week"): the money in for a month, week by week - invoice payments in QuickBooks, and the monthly-plan Direct Debit
+     payouts as the bank feed posted them (after GoCardless's fees). */
+  function invqThisMonth() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); }
+  function invqMonthStep(m, by) { var p = m.split('-'), d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1 + by, 1); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); }
+  function loadInvqPaid(month) {
+    var el = document.getElementById('invqpaid'); if (!el) return;
+    var MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var p0 = month.split('-'), label = MON[parseInt(p0[1], 10) - 1] + ' ' + p0[0];
+    el.innerHTML = '<p class="quiet">Adding up ' + esc(label) + '\u2019s payments from QuickBooks\u2026</p>';
+    post(INVQ, { action: 'paid', stoken: S.stoken, machine: mid(), month: month }).then(function (r) {
+      if (!r || !r.ok) { el.innerHTML = '<p class="quiet">Couldn\u2019t read the payments from QuickBooks' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</p>'; return; }
+      if (r.connected === false) { el.innerHTML = ''; return; }
+      var weeks = r.weeks || [], rows = r.rows || [], isNow = month === invqThisMonth();
+      var nav = '<button class="sm ghost invqpprev" style="padding:.15rem .5rem;font-size:.76rem">\u2039 ' + esc(MON[parseInt(invqMonthStep(month, -1).split('-')[1], 10) - 1]) + '</button>'
+        + (isNow ? '' : ' <button class="sm ghost invqpnext" style="padding:.15rem .5rem;font-size:.76rem">' + esc(MON[parseInt(invqMonthStep(month, 1).split('-')[1], 10) - 1]) + ' \u203a</button>');
+      var wk = weeks.map(function (w) {
+        return '<tr><td style="white-space:nowrap">w/c ' + invqDate(w.start) + '</td><td style="text-align:right">' + invqMoney(w.invoices) + (w.n ? ' <span class="quiet" style="font-size:.8rem">(' + w.n + ')</span>' : '') + '</td><td style="text-align:right">' + invqMoney(w.plans) + '</td><td style="text-align:right"><strong>' + invqMoney(w.total) + '</strong></td></tr>';
+      }).join('');
+      var pay = rows.map(function (x) {
+        return '<tr><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td><strong>' + esc(x.customer || 'Unnamed') + '</strong></td><td>' + (x.invoices && x.invoices.length ? x.invoices.map(function (n) { return '#' + esc(n); }).join(', ') : '<span class="quiet">\u2014</span>') + '</td><td>' + esc(x.how) + '</td><td style="text-align:right;white-space:nowrap">' + invqMoney(x.amount) + '</td></tr>';
+      }).join('');
+      el.innerHTML = '<p style="margin:0 0 .35rem"><strong>Money in \u2014 ' + esc(label) + '</strong> <span class="quiet">' + invqMoney(r.total) + ' so far</span> ' + nav + '</p>'
+        + (weeks.length ? '<div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Week</th><th style="text-align:right">Invoices paid</th><th style="text-align:right">Plans (Direct Debit)</th><th style="text-align:right">Total</th></tr></thead><tbody>' + wk
+          + '<tr><td><strong>' + esc(MON[parseInt(p0[1], 10) - 1]) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.invoices) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.plans) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.total) + '</strong></td></tr></tbody></table></div>' : '<p class="quiet">Nothing paid in ' + esc(label) + ' yet.</p>')
+        + (rows.length ? '<p style="margin:.6rem 0 .3rem"><button class="sm ghost invqplist" style="padding:.2rem .6rem;font-size:.8rem">Show the ' + rows.length + ' invoice payment' + (rows.length === 1 ? '' : 's') + '</button></p><div id="invqplist" style="display:none"><div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Date</th><th>Customer</th><th>Invoice</th><th>How</th><th style="text-align:right">Amount</th></tr></thead><tbody>' + pay + '</tbody></table></div></div>' : '')
+        + '<p class="quiet" style="margin:.4rem 0 0;font-size:.82rem">Invoices paid = payments recorded against invoices in QuickBooks: card and PayPal from the pay page straight away, a bank transfer once it\u2019s matched in the bank feed. Plans = the GoCardless payouts posted from the bank feed, after GoCardless\u2019s fees' + (r.plans_read === false ? ' (couldn\u2019t be read just now)' : '') + '.</p>';
+      var pb = el.querySelector('.invqpprev'); if (pb) pb.onclick = function () { loadInvqPaid(invqMonthStep(month, -1)); };
+      var nb = el.querySelector('.invqpnext'); if (nb) nb.onclick = function () { loadInvqPaid(invqMonthStep(month, 1)); };
+      var lb = el.querySelector('.invqplist'); if (lb) lb.onclick = function () { var d = document.getElementById('invqplist'); d.style.display = d.style.display === 'none' ? '' : 'none'; };
+    }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for the payments.</p>'; });
+  }
   function invqMoney(v) { return '\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
   function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
   var INVQ_WHY = { no_email: 'needs an email address \u2014 type it here, or add it to the Slack post or its thread and it will pick it up', bad_email: 'that email address doesn\u2019t look right', no_desc: 'needs a description of the work', large: 'over \u00a32,000 \u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \u2014 left alone' };
@@ -7436,8 +7512,13 @@
     /* "Did they go?" - every invoice of the last fortnight with QuickBooks' own sent / not-sent
        word, loaded live after the queue so a slow QuickBooks read never delays the queue. */
     html += '<div id="invqrecent" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Reading the last fortnight\u2019s invoices from QuickBooks\u2026</p></div>';
+    /* 23 Oct 2026: sent but not paid (with a Send it again button), and the money in for the month, week by week. */
+    html += '<div id="invqunpaid" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Reading the unpaid invoices from QuickBooks\u2026</p></div>';
+    html += '<div id="invqpaid" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Adding up this month\u2019s payments\u2026</p></div>';
     box.innerHTML = html;
     loadInvqRecent(14);
+    loadInvqUnpaid();
+    loadInvqPaid(invqThisMonth());
     var fb = box.querySelector('.invqfresh'); if (fb) fb.onclick = function () { fb.disabled = true; fb.textContent = 'checking\u2026'; loadInvq(true); };
     var ob = box.querySelector('.invqolder'); if (ob) ob.onclick = function () { var d = document.getElementById('invqolder'); d.style.display = d.style.display === 'none' ? '' : 'none'; };
     var all = jobs.map(function (j) { return j.invoice; }).filter(Boolean).concat(waiting, older);
