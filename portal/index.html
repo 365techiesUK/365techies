@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; ee8e9c4aa2</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; dffbd1baed</p><script>
 (function () {
-  var P365BUILD = 'ee8e9c4aa2';
+  var P365BUILD = 'dffbd1baed';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7320,6 +7320,21 @@
      with the payment details"): every invoice QuickBooks has emailed that still owes money, most overdue first. "Send it
      again" has QuickBooks email the same invoice once more - its email carries the bank details and the pay link. */
   function invqDate(ymd) { var p = (ymd || '').split('-'); return p.length === 3 ? esc(parseInt(p[2], 10) + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1]) : esc(ymd); }
+  /* 23 Oct 2026: "Send it again" - QuickBooks emails a sent, unpaid invoice once more (bank details and the pay link
+     with it). Used by the unpaid list and by a sent job row that still owes money. */
+  function invqResend(b, msg) {
+    if (!confirm('QuickBooks will email invoice ' + (b.getAttribute('data-no') ? '#' + b.getAttribute('data-no') + ' ' : '') + 'to ' + b.getAttribute('data-to') + ' again now, with ' + invqMoney(parseFloat(b.getAttribute('data-amt')) || 0) + ' still owed, our bank details and the pay link.\n\nSend it again?')) return;
+    b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
+    post(INVQ, { action: 'resend', stoken: S.stoken, machine: mid(), id: b.getAttribute('data-id') }).then(function (j) {
+      if (!j || !j.ok) {
+        b.disabled = false;
+        var e = j && j.error;
+        if (msg) msg.innerHTML = '<span style="color:#ffb4a2">' + (e === 'recently_resent' ? 'Already sent again in the last day.' : e === 'nothing_owed' ? 'QuickBooks says it\u2019s paid now.' : e === 'not_sent_yet' ? 'QuickBooks hasn\u2019t sent this one yet \u2014 use Approve &amp; send above.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
+        return;
+      }
+      if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent again to ' + esc(j.to) + '</span>';
+    }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
+  }
   function loadInvqUnpaid() {
     var el = document.getElementById('invqunpaid'); if (!el) return;
     post(INVQ, { action: 'unpaid', stoken: S.stoken, machine: mid() }).then(function (r) {
@@ -7343,20 +7358,7 @@
         + '<p class="quiet" style="margin:.4rem 0 0;font-size:.82rem">\u201cSend it again\u201d has QuickBooks email the same invoice once more, with our bank details and the link to pay by card or PayPal. Monthly-plan invoices collected by Direct Debit never appear here. A bank transfer only counts as paid once it\u2019s matched in QuickBooks.</p>';
       Array.prototype.forEach.call(el.querySelectorAll('.invqupdf'), function (b) { b.onclick = function () { invqEmailPreview(b.getAttribute('data-id'), b); }; });
       Array.prototype.forEach.call(el.querySelectorAll('.invqresend'), function (b) {
-        b.onclick = function () {
-          var msg = b.closest('tr') ? b.closest('tr').querySelector('.invqumsg') : null;
-          if (!confirm('QuickBooks will email invoice ' + (b.getAttribute('data-no') ? '#' + b.getAttribute('data-no') + ' ' : '') + 'to ' + b.getAttribute('data-to') + ' again now, with ' + invqMoney(parseFloat(b.getAttribute('data-amt')) || 0) + ' still owed, our bank details and the pay link.\n\nSend it again?')) return;
-          b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
-          post(INVQ, { action: 'resend', stoken: S.stoken, machine: mid(), id: b.getAttribute('data-id') }).then(function (j) {
-            if (!j || !j.ok) {
-              b.disabled = false;
-              var e = j && j.error;
-              if (msg) msg.innerHTML = '<span style="color:#ffb4a2">' + (e === 'recently_resent' ? 'Already sent again in the last day.' : e === 'nothing_owed' ? 'QuickBooks says it\u2019s paid now.' : e === 'not_sent_yet' ? 'QuickBooks hasn\u2019t sent this one yet \u2014 use Approve &amp; send above.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
-              return;
-            }
-            if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent again to ' + esc(j.to) + '</span>';
-          }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
-        };
+        b.onclick = function () { invqResend(b, b.closest('tr') ? b.closest('tr').querySelector('.invqumsg') : null); };
       });
     }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for the unpaid invoices.</p>'; });
   }
@@ -7511,7 +7513,13 @@
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Paid</span>';
-      else if (st === 'sent') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
+      else if (st === 'sent') {
+        /* 23 Oct 2026 (owner: "Tom Wilson's invoice ... hasn't paid it ... we need it that we can basically resend invoices from here") */
+        var owes = !!(inv && inv.balance > 0);
+        chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>' + (owes ? ' <span style="color:#ffb4a2">\u00b7 not paid yet: ' + invqMoney(inv.balance) + ' owed</span>' : '');
+        if (owes) btns = '<button class="sm invqresend" data-id="' + esc(inv.id) + '" data-to="' + esc(inv.email || '') + '" data-no="' + esc(inv.number || '') + '" data-amt="' + esc(inv.balance) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (inv.email ? '' : ' disabled title="No email address on the customer"') + '>\ud83d\udce8 Send it again</button>'
+          + '<button class="sm ghost invqprev" data-id="' + esc(inv.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="The email QuickBooks will send again, and the PDF with it">\ud83d\udc41 Preview the email</button>';
+      }
       else if (st === 'unsent') {
         /* 23 Oct 2026 (owner: "can we close down the preview and then go back and edit it some more?") */
         chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \u2014 now check it, then send it</span>' + (j.can_change ? ' <span class="quiet">\u00b7 not right? Change it, then preview it again</span>' : ' <span class="quiet">\u00b7 changes to this one go on in QuickBooks</span>');
@@ -7768,6 +7776,7 @@
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqpdf'), function (b) { b.onclick = function () { invqPdf(b.getAttribute('data-id'), b); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqprev'), function (b) { b.onclick = function () { invqEmailPreview(b.getAttribute('data-id'), b); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqrow .invqresend'), function (b) { b.onclick = function () { invqResend(b, msgOf(b)); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqsend'), function (b) {
       b.onclick = function () {
         var id = b.getAttribute('data-id'), x = invOf(id), msg = msgOf(b);
@@ -7811,12 +7820,15 @@
         + '<div style="font-size:.88rem;line-height:1.5"><span class="quiet">To:</span> ' + (e.to ? esc(e.to) : '<span style="color:#ffb4a2">no email address on the customer</span>')
         + '<br><span class="quiet">From:</span> 365 Techies Ltd, through QuickBooks'
         + '<br><span class="quiet">Subject:</span> ' + (e.subject ? esc(e.subject) : '<span class="quiet">QuickBooks\u2019 own</span>') + '</div>'
-        + '<div style="white-space:pre-wrap;font-size:.9rem;margin:.45rem 0;padding:.6rem .7rem;border-radius:8px;background:rgba(255,255,255,.05)">' + (e.greeting ? esc(e.greeting) + '\n\n' : '') + (e.have_wording ? esc(e.body) : '<span class="quiet">QuickBooks didn\u2019t give its email wording just now \u2014 the PDF below is what goes with it.</span>') + '</div>'
+        + '<div style="white-space:pre-wrap;font-size:.9rem;margin:.45rem 0;padding:.6rem .7rem;border-radius:8px;background:rgba(255,255,255,.05)">' + (e.greeting ? esc(e.greeting) + '\n\n' : '') + (e.have_wording ? invqLinkify(esc(e.body)) : '<span class="quiet">QuickBooks didn\u2019t give its email wording just now \u2014 the PDF below is what goes with it.</span>') + '</div>'
         + (rows ? '<table class="cmp-table" style="font-size:.86rem;width:100%;margin:.2rem 0"><tbody>' + rows + (e.discount > 0 ? '<tr><td class="quiet">Full price</td><td style="text-align:right">' + invqMoney(e.subtotal) + '</td></tr><tr><td>Discount' + (e.discount_pct > 0 ? ' (' + esc(e.discount_pct) + '%)' : '') + '</td><td style="text-align:right">\u2212' + invqMoney(e.discount) + '</td></tr>' : '') + '<tr><td><strong>Total</strong>' + (e.due ? ' <span class="quiet">\u00b7 due ' + invqDate(e.due) + '</span>' : '') + '</td><td style="text-align:right"><strong>' + invqMoney(e.total) + '</strong></td></tr></tbody></table>' : '')
         + (e.memo ? '<div style="font-size:.86rem;margin:.3rem 0 0"><span class="quiet">Note on the invoice:</span><div style="white-space:pre-wrap;margin:.1rem 0 0">' + esc(e.memo) + '</div></div>' : '')
         + '<div style="margin:.35rem 0 0;font-size:.86rem">\ud83d\udcce With it: the invoice PDF' + (e.number ? ' #' + esc(e.number) : '') + ' <button class="sm ghost invqprevpdf" style="margin:0 0 0 .3rem;padding:.2rem .55rem;font-size:.8rem">Open the PDF</button></div>';
       var pb = target.querySelector('.invqprevpdf'); if (pb) pb.onclick = function () { invqPdf(id, pb); };
     }).catch(function () { target.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
+  }
+  function invqLinkify(h) {
+    return h.replace(/https?:\/\/[^\s<]*[^\s<.,)]/g, function (u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; });
   }
   function invqPdf(id, btn) {
     var lbl = btn.textContent, tab = window.open('', '_blank');
