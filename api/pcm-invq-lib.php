@@ -518,6 +518,12 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
    Owner: "we can only add 1 product ... collection delivery, and with this particular one, we've loaned him a hard drive
    as well" and "before we send it, can we preview the email with the invoice and everything?" */
 define('INVQ_MAX_LINES', 12);
+/* When an invoice is due (owner, 23 Oct 2026: "we only want it to be like, give them like, about 2 or 3 days to pay ...
+   rather than like a couple of weeks"). Set on the invoice itself, so QuickBooks' own default terms never decide it. */
+define('INVQ_DUE_DAYS', 3);
+function invq_due_date($now = null) {
+    return gmdate('Y-m-d', ($now === null ? time() : (int)$now) + INVQ_DUE_DAYS * 86400);
+}
 /* Later the same day (owner: "you've got the product, but then ... a description ... so it's more personalised to what
    we've actually done for them"): a line's own wording can say what was done, at length, and the invoice can carry a
    note of its own - QuickBooks' "Message on invoice", printed on the PDF under the lines. */

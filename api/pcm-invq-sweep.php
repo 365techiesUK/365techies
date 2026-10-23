@@ -693,7 +693,7 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     else $iLines = array($line);
     if (!empty($job['lines']) && is_array($job['lines']) && ($dl = invq_qbo_discount_line(isset($job['discount']) ? $job['discount'] : null, invq_lines_total($job['lines']), $c['tax']))) $iLines[] = $dl;   // full prices, then the discount agreed
     $inv = array('CustomerRef' => array('value' => $cid), 'Line' => $iLines, 'TxnDate' => gmdate('Y-m-d'),
-                 'BillEmail' => array('Address' => $email));
+                 'BillEmail' => array('Address' => $email), 'DueDate' => invq_due_date());   // due in INVQ_DUE_DAYS
     if (!empty($job['memo'])) $inv['CustomerMemo'] = array('value' => invq_text($job['memo'], INVQ_MEMO_MAX));   // the note typed for it: "Message on invoice", on the PDF
     $doc = invq_next_docnumber($c);            // 4905/NNN, David's sequence, so the console's invoices are numbered like his
     if ($doc !== '') $inv['DocNumber'] = $doc;
@@ -743,6 +743,7 @@ function invq_change_for_job($c, $jobId, $who, $lines, $memo, $discount) {
     if ($dl = invq_qbo_discount_line($discount, $sub, $c['tax'])) $iLines[] = $dl;
     $upd = array('Id' => $invId, 'SyncToken' => (string)(isset($inv['SyncToken']) ? $inv['SyncToken'] : '0'), 'sparse' => true, 'Line' => $iLines);
     if ($memo !== '' || !empty($inv['CustomerMemo']['value'])) $upd['CustomerMemo'] = array('value' => (string)$memo);
+    $upd['DueDate'] = invq_due_date();   // changed before it goes: due INVQ_DUE_DAYS from now, not from when it was first raised
     $res = invq_api($c, 'POST', '/invoice', $upd);
     if (!qbo_lib_ok($res) || empty($res['json']['Invoice']['Id'])) {
         invq_log('invoice change FAILED for job ' . $jobId . ' ' . invq_why($res));

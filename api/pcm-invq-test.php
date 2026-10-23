@@ -402,5 +402,10 @@ ok(strpos($chgFn, "if (\$total > INVQ_MAX_AMOUNT) return array('ok' => false, 'e
 ok(strpos($chgBlock, "invq_discount_clean(\$in['discount'], invq_lines_total(\$lines))") !== false && strpos($chgBlock, 'invq_change_for_job($c, $job, $who, $lines, $memo, $discount)') !== false && strpos($chgBlock, "\$in['id']") === false,
    'the change request names the job (never an invoice id), its lines and discount checked as for Raise');
 
+echo "-- 23 Oct 2026 (later still): due in 3 days, not whatever QuickBooks' terms make it\n";
+ok(INVQ_DUE_DAYS === 3 && invq_due_date(strtotime('2026-10-23 19:57:00 UTC')) === '2026-10-26' && invq_due_date(strtotime('2026-12-30 09:00:00 UTC')) === '2027-01-02', 'raised on 23 Oct -> due 26 Oct (3 days), across the year end too');
+ok(strpos($SW, "'BillEmail' => array('Address' => \$email), 'DueDate' => invq_due_date());") !== false, 'a new invoice carries its due date');
+ok(strpos($chgFn, "\$upd['DueDate'] = invq_due_date();") !== false, 'Change it moves the due date to 3 days from the change');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);
