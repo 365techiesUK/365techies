@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 70a011289b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; cb5f8f3c16</p><script>
 (function () {
-  var P365BUILD = '70a011289b';
+  var P365BUILD = 'cb5f8f3c16';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7467,21 +7467,32 @@
       var useShort = shortItems.length > 0 && !(picked && shortIds.indexOf(picked) < 0);
       return '<select class="invqlitem" style="margin:0;max-width:230px;font-size:.82rem;padding:.3rem .4rem" title="The service, from your QuickBooks products and services">' + itemOptions(useShort ? shortItems : items, picked || '', useShort) + '</select>';
     }
+    /* Later on 23 Oct (owner: "you've got the product, but then ... a description ... so it's more personalised to what
+       we've actually done for them"): the line's wording box is for what was done. The service's own wording is shown as
+       the fallback, not typed in for them - left empty, the line says that. */
+    function descHint(it) {
+      return 'What we did for them \u2014 goes on the invoice under the service' + (it ? '. Left empty, it says \u201c' + (it.desc || it.name) + '\u201d' : '');
+    }
     function lineHtml(ln, first) {
-      return '<div class="invqline" style="display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin:.3rem 0 0">'
+      var it = ln.item ? items.filter(function (x) { return x.id === ln.item; })[0] : null;
+      return '<div class="invqline" style="margin:.4rem 0 0;padding:.4rem .5rem;border:1px solid rgba(125,170,220,.2);border-radius:8px">'
+        + '<div style="display:flex;gap:.35rem;flex-wrap:wrap;align-items:center">'
         + lineSelect(ln.item)
-        + '<input class="invqldesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" value="' + esc(ln.desc || '') + '" style="flex:1;min-width:190px;margin:0">'
         + '<input class="invqlqty" type="text" inputmode="numeric" maxlength="2" value="' + esc(ln.qty || 1) + '" title="How many" aria-label="How many" style="width:3rem;margin:0;text-align:center">'
         + '<span class="quiet" style="font-size:.8rem">\u00d7 \u00a3</span><input class="invqlrate" type="text" inputmode="decimal" placeholder="0.00" value="' + (ln.rate > 0 ? esc(Number(ln.rate).toFixed(2)) : '') + '" title="Price of one (0 = wording only)" aria-label="Price of one" style="width:5.5rem;margin:0">'
         + (first ? '' : '<button class="sm ghost invqlrm" title="Take this line off" aria-label="Take this line off" style="margin:0;padding:.2rem .5rem;font-size:.8rem">\u2715</button>')
+        + '</div>'
+        + '<textarea class="invqldesc" rows="2" maxlength="1000" aria-label="What we did for them" placeholder="' + esc(descHint(it)) + '" style="margin:.35rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(ln.desc || '') + '</textarea>'
         + '</div>';
     }
     function linesEditor(j) {
       var lines = (j.lines && j.lines.length) ? j.lines : [{ item: j.item || '', desc: j.desc || '', qty: 1, rate: j.amount > 0 ? j.amount : 0 }];
       return '<div class="invqlines" style="margin:.35rem 0 0">'
-        + '<div class="quiet" style="font-size:.82rem">The invoice\u2019s lines \u2014 pick a service or type what was done, how many and the price of one. A price of 0 goes on as wording only (a loan, a note).</div>'
+        + '<div class="quiet" style="font-size:.82rem">The invoice\u2019s lines \u2014 pick the service, how many and the price of one, then underneath say what you actually did for them: that goes on the invoice under the service. A price of 0 goes on as wording only (a loan, a note).</div>'
         + '<div class="invqllist">' + lines.map(function (ln, i) { return lineHtml(ln, i === 0); }).join('') + '</div>'
         + '<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.35rem 0 0"><button class="sm ghost invqladd" style="margin:0;padding:.25rem .6rem;font-size:.8rem">+ Add a line</button><span class="invqltotal" style="font-weight:700"></span></div>'
+        + '<label style="display:block;margin:.55rem 0 0;font-size:.82rem"><span class="quiet">A note on the invoice (optional) \u2014 printed on it under the lines, for the personal touch</span>'
+        + '<textarea class="invqlmemo" rows="2" maxlength="1000" placeholder="e.g. Thanks for bringing it in. Your photos were copied off first and are all on the new drive." style="margin:.2rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(j.memo || '') + '</textarea></label>'
         + '<div style="margin:.4rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
         + (j.email ? '' : '<input class="invqemail" type="email" maxlength="120" placeholder="Customer email" style="width:220px;margin:0">')
         + '<button class="sm invqlraise" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="They have told us what they want: the invoice with these lines. Then check the email and the PDF, and send it from here.">\ud83e\uddfe Raise the invoice</button>'
@@ -7551,9 +7562,10 @@
       var sel = ln.querySelector('.invqlitem'), wrap = ln.closest('.invqlines');
       if (sel) sel.onchange = function () {
         if (sel.value === '__more') { sel.innerHTML = itemOptions(items, '', false); sel.focus(); return; }
-        var it = items.filter(function (x) { return x.id === sel.value; })[0]; if (!it) return;
-        var d = ln.querySelector('.invqldesc'), r = ln.querySelector('.invqlrate');
-        if (!d.value.trim() || d.getAttribute('data-auto') === '1') { d.value = it.desc || it.name; d.setAttribute('data-auto', '1'); }
+        var it = items.filter(function (x) { return x.id === sel.value; })[0];
+        ln.querySelector('.invqldesc').setAttribute('placeholder', descHint(it || null));
+        if (!it) return;
+        var r = ln.querySelector('.invqlrate');
         if (it.price > 0 && (!r.value.trim() || r.getAttribute('data-auto') === '1')) { r.value = it.price.toFixed(2); r.setAttribute('data-auto', '1'); }
         lineTotal(wrap);
       };
@@ -7583,7 +7595,8 @@
           var total = lineTotal(wrap);
           if (!lines.length) bad = 'Add a line first.';
           else if (!quote && !(total > 0)) bad = 'Type a price on at least one line.';
-          var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), lines: lines };
+          var mm = wrap.querySelector('.invqlmemo');
+          var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), lines: lines, memo: mm ? mm.value.trim() : '' };
           var em = wrap.querySelector('.invqemail');
           if (em) { if (!em.value.trim()) { msg.textContent = 'Type the customer\u2019s email first.'; em.focus(); return; } body.email = em.value.trim(); }
           if (bad) { msg.textContent = bad; return; }
@@ -7715,13 +7728,14 @@
     target.innerHTML = '<span class="quiet" style="font-size:.85rem">Reading the email from QuickBooks\u2026</span>';
     post(INVQ, { action: 'emailpreview', stoken: S.stoken, machine: mid(), id: id }).then(function (e) {
       if (!e || !e.ok) { target.innerHTML = '<span class="quiet">Couldn\u2019t read the email from QuickBooks' + (e && e.error ? ' (' + esc(e.error) + ')' : '') + '.</span>'; return; }
-      var rows = (e.lines || []).map(function (l) { return '<tr><td>' + esc(l.desc || '') + (l.qty > 1 ? ' <span class="quiet">\u00d7 ' + esc(l.qty) + '</span>' : '') + '</td><td style="text-align:right;white-space:nowrap">' + (l.amount > 0 ? invqMoney(l.amount) : '') + '</td></tr>'; }).join('');
+      var rows = (e.lines || []).map(function (l) { return '<tr><td>' + (l.item ? '<strong>' + esc(l.item) + '</strong><br>' : '') + '<span style="white-space:pre-wrap">' + esc(l.desc || '') + '</span>' + (l.qty > 1 ? ' <span class="quiet">\u00d7 ' + esc(l.qty) + '</span>' : '') + '</td><td style="text-align:right;white-space:nowrap">' + (l.amount > 0 ? invqMoney(l.amount) : '') + '</td></tr>'; }).join('');
       target.innerHTML = '<div style="font-size:.85rem;margin:0 0 .35rem"><strong>The email QuickBooks will send</strong>' + (e.sent ? ' <span class="quiet">(sent once already \u2014 \u201cSend it again\u201d sends this)</span>' : '') + '</div>'
         + '<div style="font-size:.88rem;line-height:1.5"><span class="quiet">To:</span> ' + (e.to ? esc(e.to) : '<span style="color:#ffb4a2">no email address on the customer</span>')
         + '<br><span class="quiet">From:</span> 365 Techies Ltd, through QuickBooks'
         + '<br><span class="quiet">Subject:</span> ' + (e.subject ? esc(e.subject) : '<span class="quiet">QuickBooks\u2019 own</span>') + '</div>'
         + '<div style="white-space:pre-wrap;font-size:.9rem;margin:.45rem 0;padding:.6rem .7rem;border-radius:8px;background:rgba(255,255,255,.05)">' + (e.greeting ? esc(e.greeting) + '\n\n' : '') + (e.have_wording ? esc(e.body) : '<span class="quiet">QuickBooks didn\u2019t give its email wording just now \u2014 the PDF below is what goes with it.</span>') + '</div>'
         + (rows ? '<table class="cmp-table" style="font-size:.86rem;width:100%;margin:.2rem 0"><tbody>' + rows + '<tr><td><strong>Total</strong>' + (e.due ? ' <span class="quiet">\u00b7 due ' + invqDate(e.due) + '</span>' : '') + '</td><td style="text-align:right"><strong>' + invqMoney(e.total) + '</strong></td></tr></tbody></table>' : '')
+        + (e.memo ? '<div style="font-size:.86rem;margin:.3rem 0 0"><span class="quiet">Note on the invoice:</span><div style="white-space:pre-wrap;margin:.1rem 0 0">' + esc(e.memo) + '</div></div>' : '')
         + '<div style="margin:.35rem 0 0;font-size:.86rem">\ud83d\udcce With it: the invoice PDF' + (e.number ? ' #' + esc(e.number) : '') + ' <button class="sm ghost invqprevpdf" style="margin:0 0 0 .3rem;padding:.2rem .55rem;font-size:.8rem">Open the PDF</button></div>';
       var pb = target.querySelector('.invqprevpdf'); if (pb) pb.onclick = function () { invqPdf(id, pb); };
     }).catch(function () { target.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
