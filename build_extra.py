@@ -22315,6 +22315,7 @@ def pay_page():
                      style="width:8.5rem;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.35);background:transparent;color:inherit;font:inherit" />
               <a class="button primary" id="pp-go" href="{PAY_CONFIG["paypal_url"]}" target="_blank" rel="noopener">Pay with PayPal &#8594;</a>
             </p>
+            <p id="pp-msg" hidden role="alert" style="margin:.2rem 0 .4rem;color:#ffb066">Please type the amount on your invoice in the box first, then press Pay with PayPal.</p>
             <p style="color:var(--muted);font-size:.85rem;margin:.8rem 0 0">The amount is optional &mdash; leave it blank and you can type it on PayPal&rsquo;s page instead. Handled by PayPal; the payment page will say <strong>365 Techies Ltd</strong>.</p>
             <script>(function(){{var a=document.getElementById("pp-amt"),g=document.getElementById("pp-go"),base="{PAY_CONFIG["paypal_url"]}";function u(){{var v=parseFloat(a.value);g.href=(isFinite(v)&&v>=1&&v<=20000)?base+"/"+v.toFixed(2)+"GBP":base;}}a.addEventListener("input",u);u();}})();</script>
           </div>''')
@@ -22391,25 +22392,51 @@ into();try{{history.replaceState(null,"","/pay/");}}catch(e){{}}}}
 function ask(){{var x=new XMLHttpRequest();x.open("POST","/api/pay-pp.php");x.setRequestHeader("Content-Type","application/json");x.timeout=45000;
 x.onload=function(){{var j=null;try{{j=JSON.parse(x.responseText);}}catch(e){{}}show(j);}};x.onerror=x.ontimeout=function(){{show(null);}};x.send(JSON.stringify({{"do":"done",order:t[1]}}));}}
 if(!t){{show(null);return;}}ask();}})();</script>
+        <!-- 23 Oct 2026 (owner: "we want it to be able to automate it from the staff portal"): the QuickBooks invoice email links
+             /pay/?ref=[Invoice No.] - so a link can carry the invoice number WITHOUT the amount, written 4905/815 (QuickBooks' own
+             form). Without a link, an optional invoice-number box does the same. With a number, the card link carries it to
+             Stripe and the PayPal button makes our own PayPal order with it (amount from the PayPal box). With NO number, PayPal
+             is still our own order whenever an amount is typed, so the payment reaches the server and is matched by the payer's
+             email (pst_email_pick) or handed to a person - PayPal.Me only when no amount is typed. -->
+        <div id="pay-inv" hidden style="max-width:74ch;margin:0 auto 1rem;text-align:center">
+          <label for="pay-inv-no" style="color:var(--muted)">Paying an invoice? Type its number here and we&rsquo;ll match your payment to it:</label>
+          <input id="pay-inv-no" type="text" autocomplete="off" spellcheck="false" maxlength="24" placeholder="e.g. 4905/815"
+                 style="display:block;margin:.5rem auto 0;width:11rem;max-width:100%;box-sizing:border-box;padding:.55rem .7rem;border-radius:8px;border:1px solid rgba(125,170,220,.35);background:transparent;color:inherit;font:inherit;text-align:center" />
+        </div>
         <div id="pay-due" hidden style="max-width:74ch;margin:0 auto 1.2rem;text-align:center;border:2px solid rgba(29,151,227,.55);border-radius:14px;padding:1rem 1.2rem">
-          <p style="margin:0;font-size:1.2rem">Amount to pay: <strong id="pay-due-amt"></strong><span id="pay-due-refw"> &middot; Reference: <strong class="mono" id="pay-due-ref"></strong></span></p>
+          <p style="margin:0;font-size:1.2rem"><span id="pay-due-amtw">Amount to pay: <strong id="pay-due-amt"></strong></span><span id="pay-due-refw"><span id="pay-due-sep"> &middot; </span><span id="pay-due-reflbl">Reference</span>: <strong class="mono" id="pay-due-ref"></strong></span></p>
           <p style="margin:.4rem 0 0;color:var(--muted);font-size:.92rem">Choose whichever way suits you below &mdash; bank transfer, card or PayPal. Please use the reference so we know it&rsquo;s you.</p>
         </div>
         <div class="split-2">
 {tiles_html}
         </div>
-        <script>(function(){{var q=location.search,m=/[?&]amount=([0-9]{{1,5}}(?:[.][0-9]{{1,2}})?)(?:&|$)/.exec(q);if(!m)return;var a=parseFloat(m[1]);if(!(a>=1&&a<=20000))return;
-var r=/[?&]ref=([A-Za-z0-9-]{{1,24}})(?:&|$)/.exec(q),ref=r?r[1]:"",money="&pound;"+a.toFixed(2),box=document.getElementById("pay-due");if(!box)return;
-document.getElementById("pay-due-amt").innerHTML=money;if(ref)document.getElementById("pay-due-ref").textContent=ref;else document.getElementById("pay-due-refw").style.display="none";box.hidden=false;
-if(ref){{var w=document.querySelectorAll(".pay-refword");for(var i=0;i<w.length;i++)w[i].textContent=ref;}}
-var c=document.querySelector(".pay-card-amt");if(c){{c.innerHTML="On the next page, type <strong>"+money+"</strong> as the amount"+(ref?" and <strong>"+ref+"</strong> as the invoice number":"")+".";c.hidden=false;}}
-var g=document.getElementById("pay-card-go");if(g&&ref)g.href=g.href.split("?")[0]+"?client_reference_id="+ref;
-var p=document.getElementById("pp-amt");if(p){{p.value=a.toFixed(2);var ev;try{{ev=new Event("input");}}catch(e){{ev=document.createEvent("Event");ev.initEvent("input",true,true);}}p.dispatchEvent(ev);}}
-var go=document.getElementById("pp-go");if(go&&ref){{go.removeAttribute("target");go.addEventListener("click",function(e){{e.preventDefault();if(go.getAttribute("data-busy"))return;go.setAttribute("data-busy","1");
-var fb=go.href,v=parseFloat((p&&p.value)||""),amt=(isFinite(v)&&v>=1&&v<=5000)?v.toFixed(2):a.toFixed(2);go.textContent="Opening PayPal…";
+        <script>(function(){{var q=location.search;
+function prm(n){{var m=new RegExp("[?&]"+n+"=([^&#]*)").exec(q);if(!m)return "";try{{return decodeURIComponent(m[1].replace(/[+]/g," "));}}catch(e){{return "";}}}}
+function clean(r){{r=String(r||"").replace(/[ ]+/g,"").replace(/[/]/g,"-");return /^[A-Za-z0-9-]{{1,24}}$/.test(r)?r:"";}}
+function disp(r){{return /^4905-[0-9]{{1,6}}$/.test(r)?r.replace("-","/"):r;}}
+function money(v){{return "&pound;"+v.toFixed(2);}}
+var s=prm("amount"),a=/^[0-9]{{1,5}}([.][0-9]{{1,2}})?$/.test(s)?parseFloat(s):NaN;if(!(a>=1&&a<=20000))a=NaN;
+var REF=clean(prm("ref")),FROMURL=REF!=="",box=document.getElementById("pay-due"),inv=document.getElementById("pay-inv"),invIn=document.getElementById("pay-inv-no");
+var g=document.getElementById("pay-card-go"),base=g?g.href.split("?")[0]:"",c=document.querySelector(".pay-card-amt");
+var p=document.getElementById("pp-amt"),go=document.getElementById("pp-go"),ppMsg=document.getElementById("pp-msg"),golbl=go?go.innerHTML:"";
+var w=document.querySelectorAll(".pay-refword"),w0=[];for(var i=0;i<w.length;i++)w0.push(w[i].textContent);
+function paint(){{var has=!isNaN(a);
+if(box){{document.getElementById("pay-due-amtw").style.display=has?"":"none";if(has)document.getElementById("pay-due-amt").innerHTML=money(a);
+document.getElementById("pay-due-refw").style.display=REF?"":"none";document.getElementById("pay-due-sep").style.display=(has&&REF)?"":"none";
+document.getElementById("pay-due-reflbl").textContent=/^4905-/.test(REF)?"Invoice":"Reference";document.getElementById("pay-due-ref").textContent=disp(REF);box.hidden=!(has||REF);}}
+for(var k=0;k<w.length;k++)w[k].textContent=REF?disp(REF):w0[k];
+if(c){{if(has||REF){{c.innerHTML="On the next page, type "+(has?"<strong>"+money(a)+"</strong>":"the amount on your invoice")+" as the amount"+(REF?" and <strong>"+disp(REF)+"</strong> as the invoice number":"")+".";c.hidden=false;}}else c.hidden=true;}}
+if(g)g.href=REF?base+"?client_reference_id="+REF:base;if(ppMsg&&!REF)ppMsg.hidden=true;}}
+if(p&&!isNaN(a)){{p.value=a.toFixed(2);var ev;try{{ev=new Event("input");}}catch(e){{ev=document.createEvent("Event");ev.initEvent("input",true,true);}}p.dispatchEvent(ev);}}
+if(inv&&invIn&&!FROMURL){{inv.hidden=false;var typed=function(){{REF=clean(invIn.value);paint();}};invIn.addEventListener("input",typed);if(invIn.value)typed();}}
+if(go){{window.addEventListener("pageshow",function(){{go.removeAttribute("data-busy");go.innerHTML=golbl;}});
+go.addEventListener("click",function(e){{var v=parseFloat((p&&p.value)||""),amt=(isFinite(v)&&v>=1&&v<=5000)?v.toFixed(2):((!isNaN(a)&&a<=5000)?a.toFixed(2):"");
+if(!amt){{if(REF){{e.preventDefault();if(ppMsg)ppMsg.hidden=false;if(p)p.focus();}}return;}}
+e.preventDefault();if(go.getAttribute("data-busy"))return;go.setAttribute("data-busy","1");var fb=go.href;go.textContent="Opening PayPal…";
 var x=new XMLHttpRequest();x.open("POST","/api/pay-pp.php");x.setRequestHeader("Content-Type","application/json");x.timeout=20000;
 x.onload=function(){{var j=null;try{{j=JSON.parse(x.responseText);}}catch(err){{}}var u=j&&j.ok?String(j.url||""):"";location.href=(u.indexOf("https://www.paypal.com/")===0||u.indexOf("https://www.sandbox.paypal.com/")===0)?u:fb;}};
-x.onerror=x.ontimeout=function(){{location.href=fb;}};x.send(JSON.stringify({{"do":"start",amount:amt,ref:ref}}));}});}}}})();</script>
+x.onerror=x.ontimeout=function(){{location.href=fb;}};x.send(JSON.stringify({{"do":"start",amount:amt,ref:REF}}));}});}}
+paint();}})();</script>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Monthly plans" style="padding-top:0">

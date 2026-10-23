@@ -97,7 +97,31 @@ function pst_invoice_check($inv, $pence, $kind) {
     if ($owed <= 0) return 'that invoice is already paid in QuickBooks - check this isn\'t a second payment';
     if ($pence > $owed) return 'they paid ' . pl_money($pence / 100) . ' but the invoice only owes ' . pl_money($owed / 100);
     if ($kind === 'id' && $pence !== $owed && $pence !== $total) return 'the amount doesn\'t match that invoice';
+    if ($kind === 'email' && $pence !== $owed) return 'the amount isn\'t exactly what that invoice owes';
     return '';
+}
+/* 23 Oct 2026 (owner: "PayPal payments ... are going to be basically from the same email address. So maybe it could be
+   matched up with the person's email address"). A payment with no usable invoice number is matched by the payer's email
+   instead - only when exactly ONE open invoice for that email owes exactly what was paid. Anything less certain stays a
+   Slack "needs a look", which now names the open invoices that email has. */
+function pst_email_clean($e) { $e = strtolower(trim((string)$e)); return filter_var($e, FILTER_VALIDATE_EMAIL) ? $e : ''; }
+/* $open = QuickBooks invoices with a balance; $cids = the QuickBooks customers whose own email it is.
+   -> array(the invoice | null, why not) */
+function pst_email_pick($open, $cids, $email, $pence) {
+    $email = pst_email_clean($email);
+    if ($email === '') return array(null, 'the payer\'s email wasn\'t there to match it by');
+    $mine = array();
+    foreach ((array)$open as $inv) {
+        if (!is_array($inv) || empty($inv['Id']) || (float)($inv['Balance'] ?? 0) <= 0) continue;
+        $cid = (string)($inv['CustomerRef']['value'] ?? '');
+        if (pst_email_clean($inv['BillEmail']['Address'] ?? '') === $email || ($cid !== '' && in_array($cid, (array)$cids, true))) $mine[] = $inv;
+    }
+    if (!$mine) return array(null, 'no open invoice has their email (' . $email . ')');
+    $exact = array_values(array_filter($mine, function ($inv) use ($pence) { return (int)round(((float)$inv['Balance']) * 100) === (int)$pence; }));
+    if (count($exact) === 1) return array($exact[0], '');
+    $list = implode(', ', array_map(function ($inv) { return pst_inv_label($inv) . ' (' . pl_money((float)$inv['Balance']) . ' owed)'; }, array_slice($mine, 0, 4)));
+    if ($exact) return array(null, 'their email (' . $email . ') has ' . count($exact) . ' open invoices for exactly that amount: ' . $list);
+    return array(null, 'their email (' . $email . ') has open invoice' . (count($mine) === 1 ? ' ' : 's ') . $list . ', but none owes exactly ' . pl_money($pence / 100));
 }
 /* The day it was paid, as the business counts days. */
 function pst_day($ts) { return (new DateTime('@' . (int)$ts))->setTimezone(new DateTimeZone('Europe/London'))->format('Y-m-d'); }
@@ -110,8 +134,8 @@ function pst_stripe_pay($s) {
     $pi = is_array($s['payment_intent'] ?? null) ? (string)($s['payment_intent']['id'] ?? '') : (string)($s['payment_intent'] ?? '');
     $sid = (string)($s['id'] ?? '');
     return array('key' => $sid, 'prov' => 'stripe', 'pence' => (int)($s['amount_total'] ?? 0), 'ref' => pst_ref_of($s),
-        'who' => trim((string)($s['customer_details']['name'] ?? '')), 'when' => (int)($s['created'] ?? time()),
-        'txn' => $pi !== '' ? $pi : $sid, 'mark' => $sid,
+        'who' => trim((string)($s['customer_details']['name'] ?? '')), 'email' => pst_email_clean($s['customer_details']['email'] ?? ''),
+        'when' => (int)($s['created'] ?? time()), 'txn' => $pi !== '' ? $pi : $sid, 'mark' => $sid,
         'note' => 'Paid by card through Stripe on the 365techies.co.uk pay page - payment ' . ($pi !== '' ? $pi : '?')
             . ', checkout ' . $sid . '. Recorded automatically by the website.');
 }
@@ -143,6 +167,7 @@ function pst_paid_text($pay, $inv) {
     $head = ($pay['prov'] ?? '') === 'paypal' ? '💰 *Paid with PayPal:* ' : '💳 *Paid by card:* ';
     return $head . pl_money($pence / 100) . ' from ' . pst_who($pay, $inv) . ' on the pay page (' . pst_prov($pay) . '). '
         . 'QuickBooks invoice *' . pst_inv_label($inv) . '* is marked paid automatically'
+        . (($pay['matched'] ?? '') === 'email' ? ' (no invoice number on it - matched by their email address)' : '')
         . ($owedAfter > 0.004 ? ' - part payment, ' . pl_money($owedAfter) . ' still owed.' : ' - nothing to do.');
 }
 function pst_flag_text($pay, $why) {
@@ -213,6 +238,19 @@ function pst_find_invoice($c, $ref, $row) {
     if ($kind === 'id') { list($inv, $why) = $byId($val); return array($inv, 'id', $why); }
     return array(null, '', '');
 }
+/* For pst_email_pick: the open invoices, and the customers whose own email this is (read only).
+   -> array(open invoices, customer ids, why-if-it-could-not-ask) */
+function pst_email_lookup($c, $email) {
+    $email = pst_email_clean($email);
+    if ($email === '') return array(array(), array(), '');
+    $res = invq_api($c, 'GET', '/query?query=' . rawurlencode("select * from Invoice where Balance > '0' orderby TxnDate desc maxresults 300"));
+    if (!qbo_lib_ok($res)) return array(array(), array(), invq_why($res));
+    $cr = invq_api($c, 'GET', '/query?query=' . rawurlencode("select Id from Customer where PrimaryEmailAddr = '" . qbo_lib_qesc($email) . "'"));
+    if (!qbo_lib_ok($cr)) return array(array(), array(), invq_why($cr));
+    $cids = array();
+    foreach ((array)($cr['json']['QueryResponse']['Customer'] ?? array()) as $cu) if (is_array($cu) && !empty($cu['Id'])) $cids[] = (string)$cu['Id'];
+    return array((array)($res['json']['QueryResponse']['Invoice'] ?? array()), $cids, '');
+}
 /* Is this checkout already on the invoice? A run that died after QuickBooks took the payment (or a 5xx that QuickBooks had
    in fact saved) must not record it a second time: the invoice's own payments are read and their note searched for the
    checkout id. -> the QuickBooks payment id | '' (not there) | null (couldn't ask - try again later) */
@@ -262,12 +300,22 @@ function pst_book($pay, $via = 'cron') {
     if ($deposit === '' || (!empty($q['realm']) && (string)$q['realm'] !== (string)$c['realm']))
         return $flag($prov === 'paypal' ? 'the account PayPal pays into isn\'t chosen yet (portal: shop books)'
                                         : 'the account Stripe pays into isn\'t chosen yet (portal: shop books, "card sales are paid into")');
-    if ($ref === '') return $flag('there was no invoice number on it');
-
-    $row = pst_link_row($ref, $pence);
-    list($inv, $kind, $why) = pst_find_invoice($c, $ref, $row);
-    if ($why !== '' && !$inv) return (strpos($why, 'two QuickBooks') === 0) ? $flag($why) : $retry('QuickBooks didn\'t answer (' . $why . ')');
-    if ($kind === '') return $flag('the reference isn\'t an invoice number');
+    $row = null; $inv = null; $kind = '';
+    if ($ref !== '') {
+        $row = pst_link_row($ref, $pence);
+        list($inv, $kind, $why) = pst_find_invoice($c, $ref, $row);
+        if ($why !== '' && !$inv) return (strpos($why, 'two QuickBooks') === 0) ? $flag($why) : $retry('QuickBooks didn\'t answer (' . $why . ')');
+    }
+    if (!$inv) {   // no usable invoice number: the payer's email, if it points at exactly one invoice owing exactly this
+        $why0 = $ref === '' ? 'there was no invoice number on it' : ($kind === '' ? 'the reference isn\'t an invoice number' : 'no QuickBooks invoice has that number');
+        $email = pst_email_clean($pay['email'] ?? '');
+        list($open, $cids, $qwhy) = pst_email_lookup($c, $email);
+        if ($qwhy !== '') return $retry('QuickBooks didn\'t answer (' . $qwhy . ')');
+        list($inv, $ewhy) = pst_email_pick($open, $cids, $email, $pence);
+        if (!$inv) return $flag($why0 . ', and ' . $ewhy);
+        $kind = 'email'; $pay['matched'] = 'email';
+        $pay['note'] = (string)$pay['note'] . ' No invoice number on it: matched to this invoice by the payer\'s email (' . $email . ').';
+    }
     $was = $inv ? pst_already_on($c, $inv, (string)$pay['mark']) : '';
     if ($was === null) return $retry('QuickBooks didn\'t answer about the invoice\'s payments');
     if ($was !== '') {   // recorded by an earlier run that never got to write it down

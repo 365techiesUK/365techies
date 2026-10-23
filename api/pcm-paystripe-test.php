@@ -38,6 +38,8 @@ function invq_api($c, $m, $path, $body = null) {
         $q = urldecode(substr($path, 13)); $G['queries'][] = $q;
         $out = array();
         if (preg_match("/DocNumber = '([^']+)'/", $q, $mm)) foreach ($G['inv'] as $inv) if (($inv['DocNumber'] ?? '') === $mm[1]) $out[] = $inv;
+        if (strpos($q, "from Invoice where Balance > '0'") !== false) foreach ($G['inv'] as $inv) if ((float)($inv['Balance'] ?? 0) > 0) $out[] = $inv;
+        if (strpos($q, 'from Customer where PrimaryEmailAddr') !== false) return array('code' => 200, 'json' => array('QueryResponse' => array()));
         return array('code' => 200, 'json' => array('QueryResponse' => $out ? array('Invoice' => $out) : array()));
     }
     if ($m === 'GET' && strpos($path, '/payment/') === 0) {
@@ -196,6 +198,15 @@ $G['payfail'] = false;
 $G['payments']['P901'] = array('Id' => 'P901', 'PrivateNote' => 'Bank transfer');
 reset_g(); $r = pst_handle($CR, 'cs_live_tTTTTTTTTTT1');
 check($r[0] === 'done' && count($G['posts']) === 1, '... next time: the earlier payment was someone else\'s, so this one is recorded', json_encode($r));
+
+// 6b. 23 Oct 2026: a card payment with no invoice number typed -> matched by the email they gave Stripe, when exactly one
+//     open invoice for it owes exactly that
+$G['inv']['13030'] = array('Id' => '13030', 'DocNumber' => '4905/175', 'Balance' => 75, 'TotalAmt' => 75, 'BillEmail' => array('Address' => 'card@example.com'), 'CustomerRef' => array('value' => '94', 'name' => 'Card Payer'));
+$G['sessions']['cs_live_wWWWWWWWWWW1'] = sess('cs_live_wWWWWWWWWWW1', array('client_reference_id' => null, 'amount_total' => 7500, 'customer_details' => array('email' => 'Card@Example.com')));
+reset_g(); $r = pst_handle($CR, 'cs_live_wWWWWWWWWWW1');
+check($r[0] === 'done' && ($G['posts'][0]['Line'][0]['LinkedTxn'][0]['TxnId'] ?? '') === '13030' && strpos($G['slack'][0] ?? '', 'matched by their email address') !== false,
+      'card, no number, their email has exactly one £75 invoice -> booked on 4905/175, Slack says how', json_encode($r) . ' ' . ($G['slack'][0] ?? ''));
+$G['inv']['13030']['Balance'] = 0;
 
 // 7. the cron: Hanna (done) skipped, a new one handled, then quiet for 10 minutes
 $G['sessions']['cs_live_rRRRRRRRRRR1'] = sess('cs_live_rRRRRRRRRRR1', array('client_reference_id' => '4905-140', 'amount_total' => 1500));

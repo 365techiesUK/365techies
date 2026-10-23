@@ -32,6 +32,11 @@ function invq_api($c, $m, $path, $body = null) {
     if ($m === 'GET' && strpos($path, '/query?query=') === 0) {
         $q = urldecode(substr($path, 13)); $out = array();
         if (preg_match("/DocNumber = '([^']+)'/", $q, $mm)) foreach ($G['inv'] as $inv) if (($inv['DocNumber'] ?? '') === $mm[1]) $out[] = $inv;
+        if (strpos($q, "from Invoice where Balance > '0'") !== false) foreach ($G['inv'] as $inv) if ((float)($inv['Balance'] ?? 0) > 0) $out[] = $inv;
+        if (preg_match("/from Customer where PrimaryEmailAddr = '([^']+)'/", $q, $mm)) {   // customers whose own email it is
+            $cs = array(); foreach ((array)($G['cust'][$mm[1]] ?? array()) as $cid) $cs[] = array('Id' => $cid);
+            return array('code' => 200, 'json' => array('QueryResponse' => $cs ? array('Customer' => $cs) : array()));
+        }
         return array('code' => 200, 'json' => array('QueryResponse' => $out ? array('Invoice' => $out) : array()));
     }
     if ($m === 'POST' && $path === '/payment') { $G['qposts'][] = $body; return array('code' => 200, 'json' => array('Payment' => array('Id' => 'P' . count($G['qposts'])))); }
@@ -57,7 +62,7 @@ function pp_api($cr, $m, $path, $body = null, $h = array()) {
         if ($how === 'ALREADY') return array(422, array('details' => array(array('issue' => 'ORDER_ALREADY_CAPTURED'))));
         if ($how === 'FAIL') return array(503, null);
         $G['pp'][$id]['status'] = 'COMPLETED';
-        $G['pp'][$id]['payer'] = array('name' => array('given_name' => 'Pat', 'surname' => 'Payer'));
+        $G['pp'][$id]['payer'] = array('name' => array('given_name' => 'Pat', 'surname' => 'Payer'), 'email_address' => $G['payer_email'][$id] ?? '');
         $G['pp'][$id]['purchase_units'][0]['payments']['captures'][0] = array('id' => 'CAP' . $id, 'status' => $how, 'amount' => $G['pp'][$id]['purchase_units'][0]['amount'], 'create_time' => '2026-10-19T18:30:00Z');
         return array(201, $G['pp'][$id]);
     }
@@ -95,7 +100,7 @@ check(ppay_approve_link(array('links' => array(array('rel' => 'approve', 'href' 
 
 // 2. start
 reset_g();
-check(ppay_start($CR, 'abc', '4905-816') === array(false, 'bad_amount') && ppay_start($CR, '60', '') === array(false, 'no_ref') && !$G['creates'], 'start: a bad amount or no reference -> nothing asked of PayPal');
+check(ppay_start($CR, 'abc', '4905-816') === array(false, 'bad_amount') && !$G['creates'], 'start: a bad amount -> nothing asked of PayPal');
 list($ok, $url) = ppay_start($CR, '60', '4905/816');
 $oid = 'ORD' . str_pad('1', 10, '0', STR_PAD_LEFT);
 $o = ppay_seen($oid);
@@ -171,6 +176,47 @@ reset_g();
 $sw = ppay_sweep($now);
 check(($sw['handled'][$o8] ?? '') === 'paid' && count($G['qposts']) === 1 && !isset($sw['handled'][$o9]) && ($sw['handled'][$o10] ?? '') === 'gone', 'cron: the approved-but-abandoned order is taken and booked, the new one left alone, the 4-hour unapproved one let go', json_encode($sw));
 check(($sw2 = ppay_sweep($now + 60)) && ($sw2['skipped'] ?? '') === 'recent', 'cron: quiet for the next 10 minutes');
+
+// 9. 23 Oct 2026: no usable invoice number (the plain pay page, or a number QuickBooks doesn't have) -> the payer's email,
+//    only when exactly ONE open invoice for that email owes exactly what was paid; anything else is a person's job
+check(ppay_desc('') === '365 Techies - payment', 'no reference: PayPal\'s page says "365 Techies - payment"');
+$b = ppay_order_body('45.00', '', 1760900000);
+check($b['purchase_units'][0]['custom_id'] === 'pay:' && preg_match('/^PAY-WEB-251019-[0-9A-F]{6}$/', $b['purchase_units'][0]['invoice_id']) === 1
+      && $b['application_context']['cancel_url'] === 'https://365techies.co.uk/pay/?amount=45.00', 'no reference: still our own order (custom_id "pay:"), a WEB invoice id, cancel back to the amount',
+      json_encode($b['purchase_units'][0]) . ' ' . $b['application_context']['cancel_url']);
+$G['inv']['20950'] = array('Id' => '20950', 'DocNumber' => '4905/950', 'Balance' => 45, 'TotalAmt' => 45, 'BillEmail' => array('Address' => 'dave@example.com'), 'CustomerRef' => array('value' => '95', 'name' => 'Dave Smith'));
+$G['inv']['20951'] = array('Id' => '20951', 'DocNumber' => '4905/951', 'Balance' => 30, 'TotalAmt' => 30, 'CustomerRef' => array('value' => '96', 'name' => 'Eve Jones'));
+$G['cust']['eve@example.com'] = array('96');
+$G['inv']['20952'] = array('Id' => '20952', 'DocNumber' => '4905/952', 'Balance' => 20, 'TotalAmt' => 20, 'BillEmail' => array('Address' => 'fay@example.com'), 'CustomerRef' => array('value' => '97'));
+$G['inv']['20962'] = array('Id' => '20962', 'DocNumber' => '4905/962', 'Balance' => 20, 'TotalAmt' => 40, 'BillEmail' => array('Address' => 'fay@example.com'), 'CustomerRef' => array('value' => '97'));
+$G['inv']['20953'] = array('Id' => '20953', 'DocNumber' => '4905/953', 'Balance' => 50, 'TotalAmt' => 50, 'BillEmail' => array('Address' => 'gus@example.com'), 'CustomerRef' => array('value' => '98'));
+$G['inv']['20954'] = array('Id' => '20954', 'DocNumber' => '4905/954', 'Balance' => 70, 'TotalAmt' => 70, 'BillEmail' => array('Address' => 'hal@example.com'), 'CustomerRef' => array('value' => '99', 'name' => 'Hal Brown'));
+check(pst_email_pick(array($G['inv']['20950'], $G['inv']['20953']), array(), ' Dave@Example.COM ', 4500)[0]['Id'] === '20950', 'pick: the one open invoice for that email (any case/spaces) owing exactly that');
+check(pst_email_pick(array($G['inv']['20950']), array(), 'not-an-email', 4500)[0] === null && pst_email_pick(array($G['inv']['20950']), array(), 'dave@example.com', 4000)[0] === null, 'pick: no real email, or not exactly what it owes -> no invoice');
+$pp = function ($amount, $ref, $email) {
+    list(, $u) = ppay_start($GLOBALS['CR'], $amount, $ref); $o = substr($u, strpos($u, 'token=') + 6);
+    approve($o); $GLOBALS['G']['payer_email'][$o] = $email; reset_g();
+    return array($o, ppay_finish($GLOBALS['CR'], $o, 'page'));
+};
+list(, $r) = $pp('45', '', 'Dave@Example.com');
+$p = $G['qposts'][0] ?? array();
+check($r[0] === 'paid' && count($G['qposts']) === 1 && ($p['Line'][0]['LinkedTxn'][0]['TxnId'] ?? '') === '20950' && strpos($p['PrivateNote'] ?? '', 'by the payer\'s email (dave@example.com)') !== false,
+      'plain page, no number: £45 from dave@ -> booked on his invoice 4905/950, the note says how', json_encode($p));
+check(strpos($G['slack'][0] ?? '', 'matched by their email address') !== false && strpos($G['slack'][0] ?? '', '4905/950') !== false, '... and Slack says it was matched by email', $G['slack'][0] ?? '');
+list(, $r) = $pp('30', '', 'eve@example.com');
+check($r[0] === 'paid' && ($G['qposts'][0]['Line'][0]['LinkedTxn'][0]['TxnId'] ?? '') === '20951', 'the invoice carries no email but the QuickBooks customer\'s own email is hers -> booked on it', json_encode($G['qposts']));
+list(, $r) = $pp('20', '', 'fay@example.com');
+check($r[0] === 'paid' && !$G['qposts'] && strpos($G['slack'][0] ?? '', '2 open invoices for exactly that amount') !== false && strpos($G['slack'][0] ?? '', '4905/952') !== false,
+      'two invoices for that email both owe £20 -> nothing booked, Slack names both for a person', $G['slack'][0] ?? '');
+list(, $r) = $pp('40', '', 'gus@example.com');
+check($r[0] === 'paid' && !$G['qposts'] && strpos($G['slack'][0] ?? '', 'none owes exactly £40.00') !== false && strpos($G['slack'][0] ?? '', '4905/953 (£50.00 owed)') !== false,
+      'his only invoice owes £50 and he paid £40 -> nothing booked, Slack says what he owes', $G['slack'][0] ?? '');
+list(, $r) = $pp('45', '', '');
+check($r[0] === 'paid' && !$G['qposts'] && strpos($G['slack'][0] ?? '', 'no invoice number on it, and the payer\'s email wasn\'t there') !== false, 'no number and no email -> a person', $G['slack'][0] ?? '');
+list(, $r) = $pp('70', '4905-999', 'hal@example.com');
+check($r[0] === 'paid' && ($G['qposts'][0]['Line'][0]['LinkedTxn'][0]['TxnId'] ?? '') === '20954', 'a number QuickBooks doesn\'t have, but his email has exactly one £70 invoice -> booked on it', json_encode($G['qposts']));
+list(, $r) = $pp('45', '4905-951', 'dave@example.com');
+check($r[0] === 'paid' && !$G['qposts'] && strpos($G['slack'][0] ?? '', 'only owes') !== false, 'a number QuickBooks DOES have wins over the email (and its checks still apply)', $G['slack'][0] ?? '');
 
 array_map('unlink', glob($tmp . '/*')); @rmdir($tmp);
 echo "pay-pp: $pass passed, $fail failed\n";

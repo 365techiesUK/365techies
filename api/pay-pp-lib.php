@@ -47,6 +47,7 @@ function ppay_amount($v) {
 }
 /* What PayPal's page says the payment is for */
 function ppay_desc($ref) {
+    if ($ref === '') return '365 Techies - payment';
     list($kind, $val) = pst_ref_kind($ref);
     return $kind === 'doc' ? '365 Techies - invoice ' . $val : '365 Techies - reference ' . $ref;
 }
@@ -55,12 +56,12 @@ function ppay_order_body($amount, $ref, $now) {
     return array('intent' => 'CAPTURE',
         'purchase_units' => array(array('reference_id' => 'pay', 'custom_id' => 'pay:' . $ref,
             // unique per payment (PayPal can refuse a repeated invoice_id): the reference, the day, a little randomness
-            'invoice_id' => 'PAY-' . $ref . '-' . gmdate('ymd', $now) . '-' . strtoupper(bin2hex(random_bytes(3))),
+            'invoice_id' => 'PAY-' . ($ref !== '' ? $ref : 'WEB') . '-' . gmdate('ymd', $now) . '-' . strtoupper(bin2hex(random_bytes(3))),
             'description' => ppay_desc($ref),
             'amount' => array('currency_code' => 'GBP', 'value' => $amount))),
         'application_context' => array('brand_name' => '365 Techies', 'shipping_preference' => 'NO_SHIPPING', 'user_action' => 'PAY_NOW',
             'locale' => 'en-GB', 'return_url' => PPAY_SITE . '/pay/?ppdone=1',
-            'cancel_url' => PPAY_SITE . '/pay/?amount=' . $amount . '&ref=' . $ref));
+            'cancel_url' => PPAY_SITE . '/pay/?amount=' . $amount . ($ref !== '' ? '&ref=' . $ref : '')));
 }
 /* PayPal's page for the customer, and nowhere else */
 function ppay_approve_link($j) {
@@ -85,6 +86,7 @@ function ppay_pay($oid, $o, $j, $cap) {
     $when = strtotime((string)($cap['create_time'] ?? ''));
     return array('key' => 'pp:' . $oid, 'prov' => 'paypal', 'pence' => (int)round(((float)($cap['amount']['value'] ?? 0)) * 100),
         'ref' => (string)$o['ref'], 'who' => trim((string)($payer['name']['given_name'] ?? '') . ' ' . (string)($payer['name']['surname'] ?? '')),
+        'email' => pst_email_clean($payer['email_address'] ?? ''),
         'when' => $when ? $when : time(), 'txn' => $capId !== '' ? $capId : $oid, 'mark' => $oid,
         'note' => 'Paid with PayPal on the 365techies.co.uk pay page - capture ' . ($capId !== '' ? $capId : '?') . ', order ' . $oid
             . '. Recorded automatically by the website.');
@@ -108,13 +110,14 @@ function ppay_put($oid, $rec) {
 }
 
 /* ---- talking to PayPal ------------------------------------------------------------------------------------------------- */
-/* The PayPal button on a pay link: an order for this amount and reference. -> array(ok, PayPal's page | error)
-   errors: bad_amount | no_ref | paypal_failed | busy */
+/* The PayPal button: an order for this amount and reference. -> array(ok, PayPal's page | error)
+   errors: bad_amount | paypal_failed | busy
+   23 Oct 2026: a payment with no reference (the plain pay page, nothing typed in the invoice-number box) is an order too,
+   not PayPal.Me, so it reaches the server: pst_book then matches it by the payer's email (pst_email_pick) or asks a person. */
 function ppay_start($cr, $amount, $ref, $now = null) {
     $now = $now === null ? time() : (int)$now;
     $amount = ppay_amount($amount); $ref = pst_ref_clean($ref);
     if ($amount === '') return array(false, 'bad_amount');
-    if ($ref === '') return array(false, 'no_ref');
     list($c, $j) = pp_api($cr, 'POST', '/v2/checkout/orders', ppay_order_body($amount, $ref, $now), array('PayPal-Request-Id: pay-' . bin2hex(random_bytes(8))));
     $oid = ppay_order_id($j['id'] ?? ''); $url = ppay_approve_link($j);
     if (($c !== 200 && $c !== 201) || $oid === '' || $url === '') { ppay_log('start FAILED http ' . $c . ' ' . pp_why($j)); return array(false, 'paypal_failed'); }
