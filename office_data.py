@@ -747,6 +747,143 @@ OFFICE_PAGES = [
    "tel:+441202775566"
   ]
  },
+
+ {
+  "slug": "download-classic-outlook",
+  "title": "Classic Outlook Missing? How to Download It From Microsoft | 365 Techies",
+  "metaDesc": "New PC with only the new Outlook? Classic Outlook is a free download from Microsoft if you have Microsoft 365 or Office Home &amp; Business. The steps, the UK English link, and the Microsoft Store search that won&rsquo;t find it.",
+  "ogTitle": "Classic Outlook missing on your new PC? Download it from Microsoft",
+  "eyebrow": "Outlook guide | Windows 11 | classic Outlook",
+  "h1": "Classic Outlook missing? How to <em class=\"grad grad--cyan\">download it</em> from Microsoft",
+  "lede": "Since 2024 many new PCs come with only the <strong>new Outlook</strong>, and a fresh Microsoft 365 install no longer adds classic Outlook either. It hasn&rsquo;t gone: Microsoft still offers it as a separate download. Open Microsoft&rsquo;s page <strong>Install or reinstall classic Outlook on a Windows PC</strong>, choose <strong>English (United Kingdom)</strong>, then <strong>Download</strong>, open the file and say <strong>Yes</strong>. The download is free, but classic Outlook needs <strong>Microsoft 365</strong> (Personal, Family or a business plan with the desktop apps) or <strong>Office Home &amp; Business</strong> to run. We filmed every step on a new Windows 11 PC on 23 October 2026.",
+  "chips": [
+   "Microsoft&rsquo;s own download, never a lookalike",
+   "Checked on Windows 11, 23 Oct 2026",
+   "Rather we did it? Remote, from &pound;20"
+  ],
+  "ctaHead": "Rather we put classic Outlook back for you?",
+  "ctaSub": "We&rsquo;ll install classic Outlook, sign it in and set up your email in one remote session, from &pound;20, quoted before we start &mdash; and you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset.",
+  "sections": [
+   {
+    "eyebrow": "Answer first",
+    "h2": "Why classic Outlook isn&rsquo;t on your PC",
+    "html": "<p>Microsoft puts it plainly on its own help page: <em>&ldquo;Starting in 2024, many new devices are preinstalled with new Outlook for Windows and the classic Outlook app isn&rsquo;t included.&rdquo;</em> On a new Windows 11 PC the Start menu shows a single app called just <strong>Outlook</strong>. That&rsquo;s the <em>new</em> Outlook.</p><figure class=\"ff-fig\" style=\"margin:1.1rem 0 .7rem;max-width:620px\"><img style=\"display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)\" src=\"/images/classic-outlook-start-new-only.webp\" width=\"1000\" height=\"677\" alt=\"Windows 11 Start menu search for outlook on a new PC: the best match is a single app called Outlook, which is the new Outlook; there is no Outlook (classic)\" loading=\"lazy\" decoding=\"async\"><figcaption style=\"font-size:.8rem;color:var(--muted);margin-top:.45rem;line-height:1.5\">A new Windows 11 PC: Start finds one app, called just &ldquo;Outlook&rdquo;. That&rsquo;s the new one. Real screenshot, 23 October 2026.</figcaption></figure><p>Installing Microsoft 365 doesn&rsquo;t always fix it any more, either. On a customer&rsquo;s laptop this week, a fresh Microsoft 365 Family install from their Microsoft account gave Word, Excel and the new Outlook, but no classic Outlook. Classic Outlook arrived only once we ran Microsoft&rsquo;s separate classic Outlook download, the one below.</p><p>Classic Outlook hasn&rsquo;t been withdrawn. Microsoft still supports it until at least 2029, and putting it back took us about five minutes.</p><p><strong>Check first that it isn&rsquo;t already there:</strong> click <strong>Start</strong> and type <strong>Outlook</strong>. If you see <strong>Outlook (classic)</strong>, it&rsquo;s installed: open it, and if the new Outlook keeps taking over, our <a href=\"/how-to-go-back-to-classic-outlook/\">go back to classic Outlook</a> guide has the switch. If you only see <strong>Outlook</strong> or <strong>Outlook (new)</strong>, carry on.</p>"
+   },
+   {
+    "eyebrow": "Before you download",
+    "h2": "Will classic Outlook work for you? Check your Microsoft 365 or Office",
+    "html": "<p>The download is free, but classic Outlook only runs with a licence that includes it. Unlike the new Outlook, it isn&rsquo;t free with Windows.</p><ul><li><strong>Works:</strong> Microsoft 365 Personal and Family; Microsoft 365 Business Standard, Business Premium and Apps for business; Office Home &amp; Business 2021 or 2024, bought once.</li><li><strong>Doesn&rsquo;t include it:</strong> Microsoft 365 Basic (that&rsquo;s storage only); Microsoft 365 Business Basic (web and phone apps only); Office Home 2024 and Office Home &amp; Student 2021, which don&rsquo;t include Outlook at all.</li></ul><p><strong>Bought Office Home &amp; Business outright?</strong> Classic Outlook comes with that Office install. Sign in at <strong>account.microsoft.com</strong>, open <strong>Services &amp; subscriptions</strong> and install Office from there.</p><p>Not sure what you&rsquo;ve got? <a href=\"/which-microsoft-365-plan/\">Which Microsoft 365 plan?</a> explains the plans in plain English. If Office already says &ldquo;Unlicensed product&rdquo;, see <a href=\"/microsoft-office-unlicensed-product-error/\">that fix</a> first.</p>"
+   },
+   {
+    "eyebrow": "Step by step",
+    "h2": "Download classic Outlook from Microsoft&rsquo;s own page",
+    "html": "<p>This is Microsoft&rsquo;s official download, the one we use on customers&rsquo; PCs. On our test PC it took about four minutes from Download to the finished install.</p><ol><li>Open your web browser (Edge or Chrome), search for <strong>install classic Outlook</strong>, and open Microsoft&rsquo;s page <a href=\"https://support.microsoft.com/en-gb/outlook/install-or-reinstall-classic-outlook-on-a-windows-pc\" rel=\"noopener\" target=\"_blank\"><strong>Install or reinstall classic Outlook on a Windows PC</strong></a>. Check the address starts <strong>support.microsoft.com</strong>.</li><li>Scroll down the list of languages to <strong>English (United Kingdom)</strong> and choose <strong>Download</strong> on that row. (English at the top of the list is American English: it works, but you&rsquo;d get &ldquo;color&rdquo; and US date formats.)</li><li>When the browser shows the downloaded file, <strong>OfficeSetup.exe</strong> (about 7 MB, from Microsoft), choose <strong>Open file</strong>.</li><li>Windows asks <em>&ldquo;Do you want to allow this app to make changes to your device?&rdquo;</em> Check it says <strong>Microsoft</strong>, then choose <strong>Yes</strong>.</li><li>It says <em>&ldquo;Please stay online while Microsoft 365 and Office downloads&rdquo;</em>. Don&rsquo;t worry about the name: on our test PC it installed classic Outlook and nothing else. You can carry on using the PC. When it says <strong>You&rsquo;re all set!</strong>, choose <strong>Close</strong>.</li></ol><figure class=\"ff-fig\" style=\"margin:1.1rem 0 .7rem;max-width:760px\"><img style=\"display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)\" src=\"/images/classic-outlook-uk-download.webp\" width=\"1100\" height=\"211\" alt=\"Microsoft support page Install or reinstall classic Outlook on a Windows PC: the English (United Kingdom) row, culture en-gb, with its Download link\" loading=\"lazy\" decoding=\"async\"><figcaption style=\"font-size:.8rem;color:var(--muted);margin-top:.45rem;line-height:1.5\">Microsoft&rsquo;s page: the English (United Kingdom) row and its Download link.</figcaption></figure><p>Nothing here removes the new Outlook or touches your email: the two sit side by side, and your email stays with your provider.</p>"
+   },
+   {
+    "eyebrow": "The trap",
+    "h2": "Don&rsquo;t search the Microsoft Store for it",
+    "html": "<p>The obvious place to look is the <strong>Microsoft Store</strong>, but on our test PC its search for <strong>outlook classic</strong> didn&rsquo;t show classic Outlook at all. It showed the new Outlook (already installed) and a row of email apps from other companies, one of them paid. None of them is classic Outlook.</p><figure class=\"ff-fig\" style=\"margin:1.1rem 0 .7rem;max-width:760px\"><img style=\"display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)\" src=\"/images/classic-outlook-store-search.webp\" width=\"1200\" height=\"390\" alt=\"Microsoft Store search results for outlook classic: Outlook for Windows (the new Outlook, already installed), then Mail Apps, Mail and Easy Office Suite from other companies; no classic Outlook\" loading=\"lazy\" decoding=\"async\"><figcaption style=\"font-size:.8rem;color:var(--muted);margin-top:.45rem;line-height:1.5\">The Microsoft Store&rsquo;s search for &ldquo;outlook classic&rdquo;: the new Outlook and other companies&rsquo; apps, no classic Outlook. 23 October 2026.</figcaption></figure><p>Microsoft does list <strong>Outlook for Windows (classic)</strong> in the Store, but the search doesn&rsquo;t find it: you can only reach it from Microsoft&rsquo;s own link, <a href=\"https://apps.microsoft.com/detail/xp9mhd8pgh9n47?hl=en-gb&amp;gl=GB\" rel=\"noopener\" target=\"_blank\">apps.microsoft.com/detail/xp9mhd8pgh9n47</a>. The download page above is simpler.</p><p><strong>Got the error &ldquo;We couldn&rsquo;t verify and install this because it is not available in the Microsoft Store&rdquo;?</strong> Microsoft says this can appear on new PCs when a classic Outlook icon is there but the app isn&rsquo;t. Ignore the icon and use the download above.</p>"
+   },
+   {
+    "eyebrow": "After the install",
+    "h2": "Find it, sign in, and pin it to the taskbar",
+    "html": "<ol><li>Click <strong>Start</strong> and type <strong>Outlook</strong>. Now there are two: <strong>Outlook (classic)</strong>, and plain <strong>Outlook</strong>, which is the new one.</li><li>Open <strong>Outlook (classic)</strong>. It opens on a box asking for your <strong>Email address</strong>: type yours and choose <strong>Connect</strong>. If Office asks you to sign in, use the Microsoft account you pay for Microsoft 365 with.</li><li>Add your email address. Classic Outlook takes BT, Sky, Virgin Media, Plusnet, Gmail and work addresses. Our guides have the settings for <a href=\"/btinternet-email-wont-add-to-new-outlook/\">BT</a>, <a href=\"/sky-email-wont-add-to-new-outlook/\">Sky</a>, <a href=\"/virgin-media-email-wont-add-to-new-outlook/\">Virgin Media</a>, <a href=\"/plusnet-email-wont-add-to-new-outlook/\">Plusnet</a> and <a href=\"/how-to-add-gmail-to-outlook/\">Gmail</a>.</li><li>To keep it handy, right-click <strong>Outlook (classic)</strong> in Start and choose <strong>Pin to taskbar</strong>. You can unpin the new Outlook&rsquo;s icon the same way.</li></ol><figure class=\"ff-fig\" style=\"margin:1.1rem 0 .7rem;max-width:620px\"><img style=\"display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)\" src=\"/images/classic-outlook-start-after.webp\" width=\"1000\" height=\"677\" alt=\"Windows 11 Start menu search for outlook after the install: the best match is Outlook (classic), with plain Outlook, the new one, listed under Apps; Pin to taskbar is on the right\" loading=\"lazy\" decoding=\"async\"><figcaption style=\"font-size:.8rem;color:var(--muted);margin-top:.45rem;line-height:1.5\">After the install: <strong>Outlook (classic)</strong> at the top, the new Outlook under it. <strong>Pin to taskbar</strong> is on the right.</figcaption></figure><figure class=\"ff-fig\" style=\"margin:1.1rem 0 .7rem;max-width:380px\"><img style=\"display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)\" src=\"/images/classic-outlook-first-screen.webp\" width=\"640\" height=\"733\" alt=\"Classic Outlook opening for the first time: the Outlook window asks for an Email address, with Advanced options and a Connect button\" loading=\"lazy\" decoding=\"async\"><figcaption style=\"font-size:.8rem;color:var(--muted);margin-top:.45rem;line-height:1.5\">Classic Outlook&rsquo;s first screen: your email address, then Connect. (Our test address is blurred.)</figcaption></figure>"
+   },
+   {
+    "eyebrow": "Keep it",
+    "h2": "Stop Microsoft switching you back to the new Outlook",
+    "html": "<p>Microsoft moves some home users across to the new Outlook automatically, mainly people whose email is a Microsoft address (Outlook.com, Hotmail, Live) and who have Microsoft 365 Family or Personal. To stop it, in classic Outlook go to <strong>File</strong> &gt; <strong>Options</strong> &gt; <strong>General</strong>, find <strong>New Outlook options</strong> and untick <strong>Automatically switch me to new Outlook</strong>.</p><p>Leave the <strong>New Outlook</strong> switch at the top right of classic Outlook turned off. If someone keeps flicking it on by mistake, our <a href=\"/how-to-go-back-to-classic-outlook/\">go back to classic Outlook</a> guide shows how to hide it.</p><p><strong>Is it worth it if classic Outlook is going away?</strong> Yes. Microsoft has committed to supporting classic Outlook until at least 2029 on Microsoft 365 and Office 2024. (Outlook 2016 and 2019 support ended in October 2025, and Outlook 2021&rsquo;s ended on 13 October 2026.)</p>"
+   },
+   {
+    "eyebrow": "No Microsoft 365?",
+    "h2": "No Microsoft 365 or Office? Your honest options",
+    "html": "<p>Without a licence that includes it, classic Outlook won&rsquo;t run, and nothing in the Microsoft Store turns into it. Your real choices:</p><ul><li><strong>Keep the new Outlook.</strong> It&rsquo;s free with Windows and works with most email. If your address won&rsquo;t go in, we have fixes for <a href=\"/outlook-cant-add-account-new-outlook/\">the new Outlook refusing an account</a>, <a href=\"/new-outlook-emails-stuck-in-drafts/\">emails stuck in Drafts</a> and <a href=\"/new-outlook-missing-features/\">the features it&rsquo;s missing</a>.</li><li><strong>Get Microsoft 365 Personal or Family.</strong> That brings classic Outlook plus Word and Excel. <a href=\"/which-microsoft-365-plan/\">Which plan?</a> helps you choose.</li><li><strong>Use a simpler email program.</strong> Our free Techies One Mail, below, is an email program in the old style for Windows PCs.</li></ul>"
+   }
+  ],
+  "faqs": [
+   {
+    "q": "Is classic Outlook free?",
+    "a": "The download from Microsoft is free, but classic Outlook only works with a licence that includes it: Microsoft 365 Personal, Family, Business Standard, Business Premium or Apps for business, or Office Home &amp; Business 2021 or 2024. The new Outlook is the one that&rsquo;s free with Windows."
+   },
+   {
+    "q": "Why doesn&rsquo;t my new PC have classic Outlook?",
+    "a": "Microsoft stopped putting it on new PCs in 2024: they come with the new Outlook only, and the Start menu just calls it &ldquo;Outlook&rdquo;. Fresh Microsoft 365 installs often leave classic Outlook out too. Microsoft&rsquo;s separate classic Outlook download puts it back."
+   },
+   {
+    "q": "I pay for Microsoft 365. Why didn&rsquo;t installing it give me classic Outlook?",
+    "a": "Microsoft has been leaving classic Outlook out of new Microsoft 365 installs for home users (we saw it again on a customer&rsquo;s Microsoft 365 Family install in October 2026). Your subscription still includes it: run Microsoft&rsquo;s classic Outlook download and sign in with the same Microsoft account."
+   },
+   {
+    "q": "How do I tell classic Outlook from the new Outlook?",
+    "a": "Classic Outlook shows in the Start menu as &ldquo;Outlook (classic)&rdquo;. The new one is plain &ldquo;Outlook&rdquo; (on some PCs &ldquo;Outlook (new)&rdquo;), and that&rsquo;s the only one a new PC has. Classic Outlook has File, Home, Send / Receive and View tabs across the top; the new one has a toggle marked New Outlook at the top right."
+   },
+   {
+    "q": "Can I get classic Outlook from the Microsoft Store?",
+    "a": "Not by searching: on our test PC (23 October 2026) a Store search for &ldquo;outlook classic&rdquo; showed the new Outlook and other companies&rsquo; email apps, not classic Outlook. Microsoft&rsquo;s listing, &ldquo;Outlook for Windows (classic)&rdquo;, only opens from a direct link. Microsoft&rsquo;s download page is the reliable way."
+   },
+   {
+    "q": "What does &ldquo;We couldn&rsquo;t verify and install this because it is not available in the Microsoft Store&rdquo; mean?",
+    "a": "Microsoft says it can appear on new PCs when there&rsquo;s a classic Outlook icon but not the app itself. Use Microsoft&rsquo;s download instead: search for &ldquo;install classic Outlook&rdquo;, open Microsoft&rsquo;s page, choose English (United Kingdom) and Download."
+   },
+   {
+    "q": "Will installing classic Outlook delete my emails or the new Outlook?",
+    "a": "No. Classic Outlook installs alongside the new Outlook, and your email stays with your provider. You add your address to classic Outlook once, and your messages download into it."
+   },
+   {
+    "q": "Which language should I pick on Microsoft&rsquo;s page?",
+    "a": "English (United Kingdom). The &ldquo;English&rdquo; at the top of the list is American English: it works, but menus and spelling are American and dates show month first."
+   },
+   {
+    "q": "How long will classic Outlook be supported?",
+    "a": "Microsoft has committed to supporting classic Outlook until at least 2029 on Microsoft 365 and Office 2024. Outlook 2016 and 2019 support ended in October 2025, and Outlook 2021&rsquo;s ended on 13 October 2026."
+   },
+   {
+    "q": "Microsoft keeps switching me to the new Outlook. How do I stop it?",
+    "a": "In classic Outlook go to File, Options, General, find New Outlook options and untick &ldquo;Automatically switch me to new Outlook&rdquo;. Leave the New Outlook toggle at the top right turned off."
+   },
+   {
+    "q": "Can you install classic Outlook for me?",
+    "a": "Yes, it&rsquo;s a quick remote job. From &pound;20, quoted before we start, we&rsquo;ll install classic Outlook, sign it in and set up your email while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
+   }
+  ],
+  "schemaKind": "service",
+  "serviceName": "Classic Outlook Installation Help, Dorset",
+  "howToName": "How to download and install classic Outlook on a Windows 11 PC",
+  "howToSteps": [
+   {
+    "name": "Check classic Outlook isn&rsquo;t already there",
+    "text": "Click Start and type Outlook. If you see Outlook (classic), it&rsquo;s installed: open it. If you only see Outlook or Outlook (new), carry on."
+   },
+   {
+    "name": "Open Microsoft&rsquo;s download page",
+    "text": "In your web browser, search for install classic Outlook and open Microsoft&rsquo;s page Install or reinstall classic Outlook on a Windows PC, on support.microsoft.com. Don&rsquo;t search the Microsoft Store: it shows the new Outlook and other companies&rsquo; apps instead."
+   },
+   {
+    "name": "Download the English (United Kingdom) version",
+    "text": "Scroll down the languages to English (United Kingdom) and choose Download. When OfficeSetup.exe has downloaded, choose Open file, check Windows names Microsoft, and choose Yes."
+   },
+   {
+    "name": "Let it install",
+    "text": "It downloads and installs classic Outlook by itself: about four minutes on our test PC. It says Please stay online while Microsoft 365 and Office downloads, then You&rsquo;re all set! Choose Close."
+   },
+   {
+    "name": "Open Outlook (classic) and sign in",
+    "text": "Click Start, type Outlook and open Outlook (classic). Type your email address and choose Connect; if Office asks you to sign in, use the Microsoft account that has your Microsoft 365. Right-click it in Start and choose Pin to taskbar.",
+    "ask": "Is classic Outlook open?"
+   }
+  ],
+  "crossLinksHtml": "<ul><li><a href=\"/how-to-go-back-to-classic-outlook/\">Go back to classic Outlook</a> &mdash; when classic Outlook is installed and the new one keeps taking over.</li><li><a href=\"/outlook-problems/\">Outlook problems &amp; fixes</a> &mdash; the full triage hub for classic and new Outlook.</li><li><a href=\"/new-outlook-missing-features/\">What the new Outlook is missing</a> &mdash; the reasons people want classic back.</li><li><a href=\"/which-microsoft-365-plan/\">Which Microsoft 365 plan?</a> &mdash; Personal, Family or Business, in plain English.</li><li><a href=\"/microsoft-office-unlicensed-product-error/\">&ldquo;Unlicensed product&rdquo; in Office</a> &mdash; when Office says it isn&rsquo;t activated.</li><li><a href=\"/btinternet-email-wont-add-to-new-outlook/\">BT email and Outlook</a> &mdash; the settings that work.</li></ul>",
+  "crumbName": "Download Classic Outlook",
+  "primaryCta": [
+   "Get It Done Remotely",
+   "/remote-support/"
+  ],
+  "secondaryCta": [
+   "Call 01202 775566",
+   "tel:+441202775566"
+  ]
+ },
+
  {
   "slug": "excel-onedrive-sync-conflicts",
   "title": "Excel &ldquo;We Couldn&rsquo;t Merge the Changes&rdquo; &mdash; Fix OneDrive Sync Conflicts &amp; Recover Your Edits | 365 Techies",

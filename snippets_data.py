@@ -817,6 +817,14 @@ SNIPPETS = {
         "title": "OneDrive Taking Up Space on Your PC? Free It Up Safely",
         "desc": "OneDrive filling your hard drive? Right-click, Free up space: files stay in OneDrive but leave the PC. Then set Files On-Demand and Storage Sense.",
     },
+    "download-classic-outlook": {
+        "title": "Classic Outlook Missing? Download It From Microsoft",
+        "desc": "New PC with only the new Outlook? Classic Outlook is a free Microsoft download if you have Microsoft 365. The UK steps, and the Store search to avoid.",
+    },
+    "download-classic-outlook": {
+        "title": "Classic Outlook Missing? Download It From Microsoft",
+        "desc": "New PC with only the new Outlook? Classic Outlook is a free Microsoft download if you have Microsoft 365. The UK steps, and the Store search to avoid.",
+    },
     "onedrive-full-cant-send-email": {
         "title": "OneDrive Full and Can't Send Email? The Fix, Step by Step",
     },

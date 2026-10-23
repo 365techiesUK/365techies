@@ -826,6 +826,14 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'cloud', 'Free up the space now', 'Right-click, Free up space: nothing is deleted', 'TRY THIS FIRST', '#s2'),
   ('hp-c-care', 'shield', 'A work or shared OneDrive?', 'The same fix, and the one thing never to do', 'WORK ACCOUNTS', '#s5'),
  ],
+ 'download-classic-outlook': [
+  ('hp-c-fix', 'mail', 'Download it from Microsoft', 'English (UK), Download, Yes: about four minutes', 'TRY THIS FIRST', '#s3'),
+  ('hp-c-care', 'shield', 'Will it work for you?', 'The Microsoft 365 and Office plans that include it', 'CHECK FIRST', '#s2'),
+ ],
+ 'download-classic-outlook': [
+  ('hp-c-fix', 'mail', 'Download it from Microsoft', 'English (UK), Download, Yes: about four minutes', 'TRY THIS FIRST', '#s3'),
+  ('hp-c-care', 'shield', 'Will it work for you?', 'The Microsoft 365 and Office plans that include it', 'CHECK FIRST', '#s2'),
+ ],
  'stop-word-saving-to-onedrive': [
   ('hp-c-biz', 'cloud', 'Where did my files go?', 'They&rsquo;re in the OneDrive of the signed-in account', 'FIND THEM FIRST', '#s2'),
   ('hp-c-buy', 'shield', 'Before you switch it off', 'What you give up: AutoSave and version history', 'WORTH KNOWING', '#s5'),

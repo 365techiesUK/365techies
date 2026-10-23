@@ -171,14 +171,21 @@ PAGES["outlook-cant-add-account-new-outlook"] = (ALT, "The new Outlook won&rsquo
 PAGES["how-to-go-back-to-classic-outlook"] = (ALT, "No classic Outlook to go back to?",
     "If the new Outlook came with Windows and there&rsquo;s no classic Outlook on your PC, our free Techies One Mail is a "
     "simple email program in the old style, for Windows PCs.",
-    "If you pay for Microsoft 365 or Office, the switch above is the easier answer. Gmail, Yahoo, AOL and Virgin Media need "
+    "Pay for Microsoft 365? Classic Outlook is a free download from Microsoft: <a href=\"/download-classic-outlook/\">here&rsquo;s how</a>. Gmail, "
+    "Yahoo, AOL and Virgin Media need "
     "an app password.")
 PAGES["outlook-search-not-finding-old-emails"] = (ALT, "Want your search to reach the old emails?",
     "Our free Techies One Mail for Windows PCs searches your mailbox on your provider&rsquo;s server, a folder at a time, "
     "so older emails turn up too.",
     "It finds email that&rsquo;s still with your provider: it can&rsquo;t open old .pst archive files. A work Microsoft 365 "
     "address may need your IT person to approve it.")
-CLIPS["simple"] = CLIPS["simple"] + ("outlook-not-showing-new-emails", "outlook-not-responding",
+# 23 Oct 2026: the classic Outlook download page, for people without Microsoft 365
+PAGES["download-classic-outlook"] = (ALT, "No Microsoft 365 for classic Outlook?",
+    "Classic Outlook needs Microsoft 365 or Office Home &amp; Business. Without either, our free Techies One Mail is a "
+    "simple email program in the old style, for Windows PCs.",
+    "It reads the email kept with your provider: it doesn&rsquo;t open Outlook&rsquo;s .pst files, so keep Outlook if you "
+    "need add-ins, shared mailboxes or old archives. Gmail, Yahoo, AOL and Virgin Media need an app password.")
+CLIPS["simple"] = CLIPS["simple"] + ("outlook-not-showing-new-emails", "outlook-not-responding", "download-classic-outlook",
     "outlook-cant-add-account-new-outlook", "how-to-go-back-to-classic-outlook", "outlook-search-not-finding-old-emails")
 CLIP_OF.update({s: "simple" for s in CLIPS["simple"]})
 
@@ -238,7 +245,9 @@ def latest():
 
 
 # Pages without a "Fix it with me" section put the box after one of their own sections instead (its id="sN").
-PLACE_AFTER = {"eircom-email-price-increase": "s4", "comcast-email-moving-to-yahoo": "s4"}
+PLACE_AFTER = {"eircom-email-price-increase": "s4", "comcast-email-moving-to-yahoo": "s4",
+               "download-classic-outlook": "s7"}   # 23 Oct 2026: under "No Microsoft 365?", which points to it;
+# a page listed here keeps its box there even when it has a "Fix it with me" section
 # Pages written for readers abroad: no "Rather we set it up?" phone button (we don't do set-ups overseas).
 NO_SETUP = {"eircom-email-price-increase", "comcast-email-moving-to-yahoo"}
 
@@ -283,7 +292,7 @@ def insert(slug, html):
     """The page filter: the box straight after "Fix it with me" on the chosen pages; every other page untouched."""
     if slug not in PAGES or 'id="techies-one-mail"' in html:
         return html
-    i = html.find('<section class="section" aria-label="Fix it with me" id="fixflow"')
+    i = -1 if slug in PLACE_AFTER else html.find('<section class="section" aria-label="Fix it with me" id="fixflow"')
     if i < 0 and slug in PLACE_AFTER:
         m = re.search(r'<section\b[^>]*\bid="%s"' % PLACE_AFTER[slug], html)
         i = m.start() if m else -1

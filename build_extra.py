@@ -22574,6 +22574,8 @@ _SOS_EXCLUDE = {
     'laptop-wont-turn-on-no-lights', 'laptop-clicking-noise-wont-turn-on',  # dead hardware
     'dell-caps-lock-light-blinking-wont-turn-on', 'dell-optiplex-fan-error-f1-fix',  # Dell hardware faults: no screen to share (26 Sep 2026); they get the Dell panel instead
     'how-to-add-gmail-to-outlook', 'how-to-go-back-to-classic-outlook',      # unhurried guides
+    'download-classic-outlook',
+    'download-classic-outlook',
     'move-plusnet-email-to-gmail', 'move-virgin-media-email-to-gmail',
     'wifi-in-a-granny-annexe', 'worried-about-a-parent-being-scammed',
 }
@@ -23447,6 +23449,18 @@ FIX_FLOW_OVERRIDES['onedrive-taking-up-space'] = {'mode': 'seq', 'ask': 'Done th
     'lede': 'The five steps from this guide, one at a time. None of them deletes a file. Tick each one off and it shows the next. Nothing here leaves your device.',
     'tip': 'Look at the C: drive again in a week: with Storage Sense on, it should stay that way.', 'h3s': 'Stuck at a step? That is a quick remote job.',
     'h3f': 'Done{mins}. The room is yours again.', 'plan_lead': 'Rather have it done for you?'}
+# 23 Oct 2026: the classic Outlook download page runs in order (check, Microsoft's page, download, install, open)
+FIX_FLOW_OVERRIDES['download-classic-outlook'] = {'mode': 'seq', 'ask': 'Done that step?', 'yes': 'Done, next step', 'no': 'I am stuck here',
+    'last_yes': 'Yes, classic Outlook is open', 'h2': 'Get classic Outlook back with me, one step at a time', 'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP',
+    'lede': 'The five steps from this guide, one at a time. None of them removes the new Outlook or touches your email. Tick each one off and it shows the next. Nothing here leaves your device.',
+    'tip': 'Pin Outlook (classic) to the taskbar, so you open the right one next time.', 'h3s': 'Stuck at a step? That is a quick remote job.',
+    'h3f': 'Done{mins}. Classic Outlook is back.', 'plan_lead': 'Rather have it done for you?'}
+# 23 Oct 2026: the classic Outlook download page runs in order (check, Microsoft's page, download, install, open)
+FIX_FLOW_OVERRIDES['download-classic-outlook'] = {'mode': 'seq', 'ask': 'Done that step?', 'yes': 'Done, next step', 'no': 'I am stuck here',
+    'last_yes': 'Yes, classic Outlook is open', 'h2': 'Get classic Outlook back with me, one step at a time', 'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP',
+    'lede': 'The five steps from this guide, one at a time. None of them removes the new Outlook or touches your email. Tick each one off and it shows the next. Nothing here leaves your device.',
+    'tip': 'Pin Outlook (classic) to the taskbar, so you open the right one next time.', 'h3s': 'Stuck at a step? That is a quick remote job.',
+    'h3f': 'Done{mins}. Classic Outlook is back.', 'plan_lead': 'Rather have it done for you?'}
 for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11'):
     FIX_FLOW_OVERRIDES[_k] = {'h2': 'Check this Dell for Windows 11 with me, step by step', 'eyebrow': '// CHECK IT WITH ME &middot; STEP BY STEP',
         'h3f': 'Checked{mins}. Now you know where this Dell stands.', 'tip': 'If it passes, the upgrade is free; if it fails, the last section of the guide lays out the honest options.',

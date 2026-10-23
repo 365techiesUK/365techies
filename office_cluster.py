@@ -7,6 +7,8 @@ _OFFICE_CLUSTER = [
    ("outlook-problems", "Outlook problems &amp; fixes", "The full triage hub &mdash; classic Outlook, new Outlook, Outlook.com and Android."),
    ("common-outlook-problems-and-fixes", "Common Outlook problems", "The everyday faults and their plain-English fixes."),
    ("how-to-go-back-to-classic-outlook", "Go back to classic Outlook", "New Outlook not for you? The honest way back."),
+   ("download-classic-outlook", "Download classic Outlook", "Missing on a new PC? Microsoft&rsquo;s own download, step by step."),
+   ("download-classic-outlook", "Download classic Outlook", "Missing on a new PC? Microsoft&rsquo;s own download, step by step."),
    ("recreate-outlook-profile-without-losing-emails", "Rebuild an Outlook profile", "Without losing a single email."),
    ("btinternet-email-wont-add-to-new-outlook", "BT email won&rsquo;t add", "The new Outlook and a BT Internet mailbox, step by step."),
    ("cant-send-btinternet-email-new-outlook", "BT email won&rsquo;t send", "Receives but will not send from the new Outlook."),
