@@ -357,6 +357,7 @@ function invq_job_row($job, $invRow, $now = null) {
         'item'     => (string)(isset($job['item_id']) ? $job['item_id'] : ''),          // the QuickBooks Product/Service picked for it
         'item_name' => invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100),
         'lines'    => (isset($job['lines']) && is_array($job['lines'])) ? array_values($job['lines']) : array(),   // several lines typed in the portal (23 Oct 2026)
+        'memo'     => invq_text(isset($job['memo']) ? $job['memo'] : '', INVQ_MEMO_MAX),   // the note for the invoice, typed in the portal
         'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
@@ -510,6 +511,22 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
    Owner: "we can only add 1 product ... collection delivery, and with this particular one, we've loaned him a hard drive
    as well" and "before we send it, can we preview the email with the invoice and everything?" */
 define('INVQ_MAX_LINES', 12);
+/* Later the same day (owner: "you've got the product, but then ... a description ... so it's more personalised to what
+   we've actually done for them"): a line's own wording can say what was done, at length, and the invoice can carry a
+   note of its own - QuickBooks' "Message on invoice", printed on the PDF under the lines. */
+define('INVQ_DESC_MAX', 1000);   // a line's wording (QuickBooks takes 4,000)
+define('INVQ_MEMO_MAX', 1000);   // the note on the invoice (QuickBooks' own limit for "Message on invoice")
+
+/* Wording typed for the invoice itself: line breaks kept (QuickBooks prints them), any other control character turned
+   into a space, never more than one blank line in a row. */
+function invq_text($v, $max = 1000) {
+    $s = str_replace(array("\r\n", "\r"), "\n", (string)$v);
+    $s = preg_replace('/[\x00-\x09\x0B-\x1F\x7F]+/', ' ', $s);
+    $s = preg_replace('/[ ]+\n/', "\n", $s);
+    $s = trim(preg_replace("/\n{3,}/", "\n\n", $s));
+    $s = function_exists('mb_substr') ? mb_substr($s, 0, $max) : substr($s, 0, $max);
+    return rtrim($s);
+}
 
 /* Typed invoice lines -> array(clean lines | null, error word). Each line: a service from QuickBooks' own list (or none),
    what was done, how many, the price of one. A line with a price of 0 goes on as wording only (a loan, a note). A line
@@ -522,7 +539,7 @@ function invq_lines_clean($raw, $items) {
         $itemId = preg_replace('/[^0-9]/', '', (string)(isset($ln['item']) ? $ln['item'] : ''));
         $it = $itemId !== '' ? invq_item_find($items, $itemId) : null;
         if ($itemId !== '' && !$it) return array(null, 'bad_item');
-        $desc = invq_str(isset($ln['desc']) ? $ln['desc'] : '', 200);
+        $desc = invq_text(isset($ln['desc']) ? $ln['desc'] : '', INVQ_DESC_MAX);
         $rateRaw = preg_replace('/[^0-9.]/', '', (string)(isset($ln['rate']) ? $ln['rate'] : ''));
         if ($rateRaw !== '' && !is_numeric($rateRaw)) return array(null, 'bad_amount');
         $rate = $rateRaw === '' ? 0.0 : round((float)$rateRaw, 2);
@@ -532,7 +549,7 @@ function invq_lines_clean($raw, $items) {
         if (!preg_match('/^\d{1,2}$/', $qtyRaw) || (int)$qtyRaw < 1) return array(null, 'bad_qty');
         $qty = (int)$qtyRaw;
         if ($desc === '' && !$it && $rate <= 0) continue;                       // nothing typed on this line
-        if ($desc === '' && $it) $desc = invq_str($it['desc'] !== '' ? $it['desc'] : $it['name'], 200);
+        if ($desc === '' && $it) $desc = invq_text($it['desc'] !== '' ? $it['desc'] : $it['name'], INVQ_DESC_MAX);   // left empty: the service's own wording
         if ($desc === '') return array(null, 'no_desc');
         $out[] = array('item' => $it ? (string)$it['id'] : '', 'item_name' => $it ? (string)$it['name'] : '', 'desc' => $desc, 'qty' => $qty, 'rate' => $rate);
         $sum += $qty * $rate;
@@ -552,7 +569,7 @@ function invq_qbo_lines($lines, $defaultItem, $tax) {
     $out = array();
     foreach ((array)$lines as $ln) {
         if (!is_array($ln)) continue;
-        $desc = invq_str(isset($ln['desc']) ? $ln['desc'] : '', 200);
+        $desc = invq_text(isset($ln['desc']) ? $ln['desc'] : '', INVQ_DESC_MAX);
         $qty = max(1, (int)(isset($ln['qty']) ? $ln['qty'] : 1));
         $rate = round(invq_num(isset($ln['rate']) ? $ln['rate'] : 0), 2);
         if ($rate <= 0) { $out[] = array('DetailType' => 'DescriptionOnly', 'Description' => $desc, 'DescriptionLineDetail' => new stdClass()); continue; }
@@ -583,7 +600,8 @@ function invq_email_fill($tpl, $inv, $company, $first) {
         if (!is_array($ln)) continue;
         $dt = (string)(isset($ln['DetailType']) ? $ln['DetailType'] : '');
         if ($dt !== 'SalesItemLineDetail' && $dt !== 'DescriptionOnly') continue;
-        $lines[] = array('desc' => invq_str(isset($ln['Description']) ? $ln['Description'] : '', 200),
+        $lines[] = array('item' => $dt === 'SalesItemLineDetail' ? invq_str(isset($ln['SalesItemLineDetail']['ItemRef']['name']) ? $ln['SalesItemLineDetail']['ItemRef']['name'] : '', 100) : '',
+                         'desc' => invq_text(isset($ln['Description']) ? $ln['Description'] : '', INVQ_DESC_MAX),
                          'qty' => $dt === 'SalesItemLineDetail' ? (float)(isset($ln['SalesItemLineDetail']['Qty']) ? $ln['SalesItemLineDetail']['Qty'] : 1) : 0,
                          'amount' => $dt === 'SalesItemLineDetail' ? round(invq_num(isset($ln['Amount']) ? $ln['Amount'] : 0), 2) : 0);
     }
@@ -593,6 +611,7 @@ function invq_email_fill($tpl, $inv, $company, $first) {
         'greeting' => $first !== '' ? 'Dear ' . $first . ',' : '',
         'body' => is_array($tpl) ? str_replace("\r\n", "\n", $fill(isset($tpl['Message']) ? $tpl['Message'] : '')) : '',
         'number' => $no, 'lines' => $lines,
+        'memo' => invq_text(isset($inv['CustomerMemo']['value']) ? $inv['CustomerMemo']['value'] : '', INVQ_MEMO_MAX),   // the note printed on the PDF
         'total' => round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2),
         'balance' => round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2),
         'due' => (string)(isset($inv['DueDate']) ? $inv['DueDate'] : ''),

@@ -126,9 +126,12 @@ if ($action === 'setjob') {
         list($lines, $lerr) = invq_lines_clean($in['lines'], invq_items($c));
         if ($lines === null) fail($lerr);
     }
-    $r = invq_job_set($job, $amount, $desc, $who, $item, $email, $lines);
+    /* The note on the invoice (owner, later on 23 Oct: "a note on the invoice ... so it's more personalised to what we've
+       actually done for them"): QuickBooks' "Message on invoice", printed on the PDF. Plain text; sent empty, it comes off. */
+    $memo = (isset($in['memo']) && is_string($in['memo'])) ? invq_text($in['memo'], INVQ_MEMO_MAX) : null;
+    $r = invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo);
     if (empty($r['ok'])) fail($r['error']);
-    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ' by ' . $who);
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ($memo !== null ? ' note' : '') . ' by ' . $who);
     out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
 }
 

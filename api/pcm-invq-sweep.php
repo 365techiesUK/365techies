@@ -149,15 +149,16 @@ function invq_kind_sync($c, $now = null) {
     return !empty($r['n']) ? (int)$r['n'] : 0;
 }
 
-function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null, $lines = null) {
+function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null, $lines = null, $memo = null) {
     $amount = ($amount === null) ? null : round(invq_num($amount), 2);
     if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
     $desc = ($desc === null) ? null : invq_str($desc, 200);
     if ($desc !== null && $desc === '') return array('ok' => false, 'error' => 'no_desc');
     $email = ($email === null) ? null : invq_email_ok($email);
     if ($email !== null && $email === '') return array('ok' => false, 'error' => 'bad_email');
-    if ($amount === null && $desc === null && $item === null && $email === null && $lines === null) return array('ok' => false, 'error' => 'nothing_to_set');
-    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email, $lines) {
+    $memo = ($memo === null) ? null : invq_text($memo, INVQ_MEMO_MAX);
+    if ($amount === null && $desc === null && $item === null && $email === null && $lines === null && $memo === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email, $lines, $memo) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
@@ -172,10 +173,13 @@ function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null,
                 if ($lines) {
                     $d['jobs'][$i]['lines'] = array_values($lines);
                     $d['jobs'][$i]['amount'] = invq_lines_total($lines); $d['jobs'][$i]['amount_by'] = 'staff';
-                    $d['jobs'][$i]['desc'] = $lines[0]['desc']; $d['jobs'][$i]['desc_by'] = 'staff';
+                    $d['jobs'][$i]['desc'] = invq_str($lines[0]['desc'], 200); $d['jobs'][$i]['desc_by'] = 'staff';
                     $d['jobs'][$i]['item_id'] = $lines[0]['item']; $d['jobs'][$i]['item_name'] = $lines[0]['item_name'];
                 } else unset($d['jobs'][$i]['lines']);
             }
+            /* the note for the invoice: 'memo', never 'note' - that one is the Slack post's own line and a re-poll
+               rewrites it. Sent empty, it comes off. */
+            if ($memo !== null) { if ($memo !== '') $d['jobs'][$i]['memo'] = $memo; else unset($d['jobs'][$i]['memo']); }
             $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
             return array('ok' => true, 'data' => $d);
         }
@@ -550,6 +554,7 @@ function invq_quote_for_job($c, $jobId, $who) {
     $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => $qLines, 'TxnDate' => gmdate('Y-m-d'),
                  'ExpirationDate' => gmdate('Y-m-d', time() + 30 * 86400), 'BillEmail' => array('Address' => $email),
                  'PrivateNote' => 'Started from the staff portal by ' . $who . ' (job ' . $jobId . ')');
+    if (!empty($job['memo'])) $est['CustomerMemo'] = array('value' => invq_text($job['memo'], INVQ_MEMO_MAX));   // the note typed for it, on the PDF
     /* Its number: the 4905/NNN sequence if quotes already carry it, else the next in whatever
        plain running number the quotes use, else blank (QuickBooks' "custom transaction
        numbers" leaves it blank, and the row says so). */
@@ -681,6 +686,7 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     else $iLines = array($line);
     $inv = array('CustomerRef' => array('value' => $cid), 'Line' => $iLines, 'TxnDate' => gmdate('Y-m-d'),
                  'BillEmail' => array('Address' => $email));
+    if (!empty($job['memo'])) $inv['CustomerMemo'] = array('value' => invq_text($job['memo'], INVQ_MEMO_MAX));   // the note typed for it: "Message on invoice", on the PDF
     $doc = invq_next_docnumber($c);            // 4905/NNN, David's sequence, so the console's invoices are numbered like his
     if ($doc !== '') $inv['DocNumber'] = $doc;
     $res = invq_api($c, 'POST', '/invoice', $inv);

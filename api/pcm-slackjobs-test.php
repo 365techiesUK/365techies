@@ -235,5 +235,9 @@ ok(sj_clean('NR Sharland &amp; Co') === 'NR Sharland & Co', 'an ampersand Slack 
 ok(sj_clean('Fix &lt;urgent&gt; &amp;amp; test') === 'Fix <urgent> &amp; test', '&lt; &gt; undone once only (the portal escapes again when it shows them)');
 ok(sj_clean('<mailto:a@b.co|a@b.co> &amp; <https://x.example|site>') === 'a@b.co & site', 'links are still turned into text first');
 
+echo "-- 23 Oct 2026 (later still): the note typed for the invoice survives a re-poll\n";
+$mg3 = sj_merge(array_merge($old, array('memo' => 'Thanks for bringing it in')), $fresh);
+ok($mg3['memo'] === 'Thanks for bringing it in' && $mg3['note'] === $fresh['note'], 'the job keeps its invoice note (memo) while the Slack line (note) is refreshed');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

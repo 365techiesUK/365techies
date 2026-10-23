@@ -309,5 +309,31 @@ ok(substr_count($EP, "\$in['lines']") === substr_count($setjobBlock2, "\$in['lin
 ok(strpos($SW, "invq_qbo_lines(\$job['lines'], \$c['item'], \$c['tax'])") !== false && substr_count($SW, "invq_qbo_lines(\$job['lines']") === 2, 'the invoice and the estimate are both made from the job\'s lines when it has them');
 ok(strpos($EP, "invq_email_preview(\$c, \$id)") !== false && strpos($SW, "'/preferences'") !== false, 'the email preview reads QuickBooks\' own wording; the request names only the invoice');
 
+echo "-- 23 Oct 2026 (later still): what we did, at length, under the service; and a note on the invoice\n";
+$t = invq_text("Removed the scam pop-ups\r\nReset Chrome\r\n\r\n\r\n\tChecked for remote apps \x07");
+ok($t === "Removed the scam pop-ups\nReset Chrome\n\n Checked for remote apps", 'typed wording keeps its line breaks (one blank line at most); other control characters go', json_encode($t));
+ok(strlen(invq_text(str_repeat('a', 1500), INVQ_DESC_MAX)) === 1000 && invq_text('  ') === '', 'at most 1,000 characters; blank is blank');
+$items2 = array(array('id' => '7', 'name' => 'Computer Repair', 'desc' => 'Computer repair', 'price' => 115.0),
+                array('id' => '1174', 'name' => 'Online Remote Support Services', 'desc' => '', 'price' => 60.0));
+$did = "Removed the scam pop-ups\nTook off the remote-access app they put on\nChecked your bank's website is the real one";
+list($L2, $e2) = invq_lines_clean(array(array('item' => '1174', 'desc' => $did, 'qty' => '1', 'rate' => '60'),
+                                        array('item' => '7', 'desc' => '', 'qty' => '1', 'rate' => '115')), $items2);
+ok($e2 === '' && $L2[0]['desc'] === $did && $L2[0]['item'] === '1174' && $L2[1]['desc'] === 'Computer repair', 'a service with what we did under it, line breaks and all; one left empty says the service\'s own wording', json_encode(array($L2, $e2)));
+$Q3 = invq_qbo_lines($L2, '1174', '20');
+ok($Q3[0]['Description'] === $did && $Q3[0]['SalesItemLineDetail']['ItemRef']['value'] === '1174', 'QuickBooks gets the service and, as its description, what we did');
+ok(invq_job_row(array('id' => 'M1', 'memo' => "Thanks for your patience\r\nSee you soon"), null)['memo'] === "Thanks for your patience\nSee you soon" && invq_job_row(array('id' => 'M2'), null)['memo'] === '', 'the job row carries its invoice note back to the portal');
+$ef2 = invq_email_fill(null, $mk(902, array('Line' => array(
+          array('DetailType' => 'SalesItemLineDetail', 'Amount' => 60, 'Description' => $did, 'SalesItemLineDetail' => array('Qty' => 1, 'ItemRef' => array('value' => '1174', 'name' => 'Online Remote Support Services'))),
+          array('DetailType' => 'DescriptionOnly', 'Description' => 'Loan of a hard drive'),
+          array('DetailType' => 'SubTotalLineDetail', 'Amount' => 60)), 'CustomerMemo' => array('value' => 'Thanks for your patience'))), '', '');
+ok($ef2['lines'][0]['item'] === 'Online Remote Support Services' && $ef2['lines'][0]['desc'] === $did && $ef2['lines'][1]['item'] === '' && $ef2['memo'] === 'Thanks for your patience', 'the preview shows each line\'s service above what was done, and the note on the invoice', json_encode($ef2));
+ok(invq_email_fill(null, $mk(903), '', '')['memo'] === '', 'no note on the invoice -> none in the preview');
+ok(strpos($SW, "\$inv['CustomerMemo'] = array('value' => invq_text(\$job['memo'], INVQ_MEMO_MAX))") !== false && strpos($SW, "\$est['CustomerMemo'] = array('value' => invq_text(\$job['memo'], INVQ_MEMO_MAX))") !== false,
+   'the note goes on the invoice and the estimate as QuickBooks\' "Message on invoice"');
+ok(strpos($SW, "\$d['jobs'][\$i]['memo'] = \$memo") !== false && strpos($SW, "\$d['jobs'][\$i]['note'] = \$memo") === false && strpos($SW, "&& \$memo === null) return array('ok' => false, 'error' => 'nothing_to_set')") !== false,
+   'kept on the job as memo, never note (the Slack line a re-poll rewrites); a note alone is something to save');
+ok(strpos($EP, "(isset(\$in['memo']) && is_string(\$in['memo'])) ? invq_text(\$in['memo'], INVQ_MEMO_MAX) : null") !== false && strpos($EP, 'invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo)') !== false,
+   'the request\'s note is plain text only, cleaned, and reaches the job through setjob');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);
