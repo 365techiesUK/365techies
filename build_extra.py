@@ -31789,7 +31789,7 @@ def write_portal_page():
     function lineSelect(picked) {
       if (!items.length) return '';
       var useShort = shortItems.length > 0 && !(picked && shortIds.indexOf(picked) < 0);
-      return '<select class="invqlitem" style="margin:0;max-width:230px;font-size:.82rem;padding:.3rem .4rem" title="The service from your QuickBooks Products &amp; Services list">' + itemOptions(useShort ? shortItems : items, picked || '', useShort) + '</select>';
+      return '<select class="invqlitem" style="margin:0;max-width:230px;font-size:.82rem;padding:.3rem .4rem" title="The service, from your QuickBooks products and services">' + itemOptions(useShort ? shortItems : items, picked || '', useShort) + '</select>';
     }
     function lineHtml(ln, first) {
       return '<div class="invqline" style="display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin:.3rem 0 0">'

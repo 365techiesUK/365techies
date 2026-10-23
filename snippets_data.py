@@ -821,10 +821,6 @@ SNIPPETS = {
         "title": "Classic Outlook Missing? Download It From Microsoft",
         "desc": "New PC with only the new Outlook? Classic Outlook is a free Microsoft download if you have Microsoft 365. The UK steps, and the Store search to avoid.",
     },
-    "download-classic-outlook": {
-        "title": "Classic Outlook Missing? Download It From Microsoft",
-        "desc": "New PC with only the new Outlook? Classic Outlook is a free Microsoft download if you have Microsoft 365. The UK steps, and the Store search to avoid.",
-    },
     "onedrive-full-cant-send-email": {
         "title": "OneDrive Full and Can't Send Email? The Fix, Step by Step",
     },
