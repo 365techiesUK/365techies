@@ -330,10 +330,45 @@ ok($ef2['lines'][0]['item'] === 'Online Remote Support Services' && $ef2['lines'
 ok(invq_email_fill(null, $mk(903), '', '')['memo'] === '', 'no note on the invoice -> none in the preview');
 ok(strpos($SW, "\$inv['CustomerMemo'] = array('value' => invq_text(\$job['memo'], INVQ_MEMO_MAX))") !== false && strpos($SW, "\$est['CustomerMemo'] = array('value' => invq_text(\$job['memo'], INVQ_MEMO_MAX))") !== false,
    'the note goes on the invoice and the estimate as QuickBooks\' "Message on invoice"');
-ok(strpos($SW, "\$d['jobs'][\$i]['memo'] = \$memo") !== false && strpos($SW, "\$d['jobs'][\$i]['note'] = \$memo") === false && strpos($SW, "&& \$memo === null) return array('ok' => false, 'error' => 'nothing_to_set')") !== false,
+ok(strpos($SW, "\$d['jobs'][\$i]['memo'] = \$memo") !== false && strpos($SW, "\$d['jobs'][\$i]['note'] = \$memo") === false && strpos($SW, "&& \$memo === null && \$discount === null) return array('ok' => false, 'error' => 'nothing_to_set')") !== false,
    'kept on the job as memo, never note (the Slack line a re-poll rewrites); a note alone is something to save');
-ok(strpos($EP, "(isset(\$in['memo']) && is_string(\$in['memo'])) ? invq_text(\$in['memo'], INVQ_MEMO_MAX) : null") !== false && strpos($EP, 'invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo)') !== false,
+ok(strpos($EP, "(isset(\$in['memo']) && is_string(\$in['memo'])) ? invq_text(\$in['memo'], INVQ_MEMO_MAX) : null") !== false && strpos($EP, 'invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo, $discount)') !== false,
    'the request\'s note is plain text only, cleaned, and reaches the job through setjob');
+
+echo "-- 23 Oct 2026 (later still): full prices on the lines, then the discount agreed\n";
+ok(invq_discount_clean('', 100) === array(null, '') && invq_discount_clean(null, 100) === array(null, '') && invq_discount_clean(array('kind' => 'pct', 'value' => ''), 100) === array(null, ''), 'no discount typed -> none');
+list($D1, $e) = invq_discount_clean(array('kind' => 'pct', 'value' => '10%'), 155);
+ok($e === '' && $D1 === array('kind' => 'pct', 'value' => 10.0) && invq_discount_amount($D1, 155) === 15.5, '10% off £155 -> £15.50 off', json_encode(array($D1, $e)));
+list($D2, $e) = invq_discount_clean(array('kind' => 'total', 'value' => '£80'), 100);
+ok($e === '' && $D2 === array('kind' => 'total', 'value' => 80.0) && invq_discount_amount($D2, 100) === 20.0, 'the price agreed: £80 on a full £100 -> £20 off', json_encode(array($D2, $e)));
+ok(invq_discount_clean(array('kind' => 'total', 'value' => '100.00'), 100) === array(null, ''), 'an agreed price the same as the full price is no discount');
+$badD = 0;
+foreach (array(array('pct', '100'), array('pct', '0'), array('pct', '150'), array('total', '120'), array('total', '0'), array('pct', '1.2.3'), array('half', '5')) as $bd)
+    if (invq_discount_clean(array('kind' => $bd[0], 'value' => $bd[1]), 100)[1] !== 'bad_discount') $badD++;
+ok($badD === 0 && invq_discount_clean('ten', 100)[1] === 'bad_discount' && invq_discount_clean(array('kind' => 'pct', 'value' => '10'), 0)[1] === 'bad_discount',
+   'refused: 100% or more, nothing off, an agreed price above the full price, nonsense, an unknown kind, or a discount on lines with no price');
+$DL = invq_qbo_discount_line($D2, 100, '20');
+ok($DL['DetailType'] === 'DiscountLineDetail' && $DL['Amount'] === 20.0 && $DL['DiscountLineDetail']['PercentBased'] === true && $DL['DiscountLineDetail']['DiscountPercent'] === 20.0 && $DL['DiscountLineDetail']['TaxCodeRef']['value'] === '20',
+   '£100 agreed at £80 goes to QuickBooks as "Discount 20%", No VAT code like the lines', json_encode($DL));
+$DL2 = invq_qbo_discount_line(array('kind' => 'total', 'value' => 140), 155, '');
+ok($DL2['Amount'] === 15.0 && $DL2['DiscountLineDetail'] === array('PercentBased' => false), 'an agreed price that is no whole percentage off goes on as the money off (£155 agreed at £140 -> £15)', json_encode($DL2));
+$DL3 = invq_qbo_discount_line($D1, 155, '20');
+ok($DL3['DiscountLineDetail']['DiscountPercent'] === 10.0 && $DL3['Amount'] === 15.5, '10% typed goes on as 10% (£15.50)');
+ok(invq_qbo_discount_line(null, 100, '20') === null && invq_qbo_discount_line(array(), 100, '20') === null, 'no discount -> no discount line');
+$discInv = array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 100, 'Description' => 'Repair', 'SalesItemLineDetail' => array('Qty' => 1, 'ItemRef' => array('value' => '7', 'name' => 'Computer Repair'))),
+                 array('DetailType' => 'SubTotalLineDetail', 'Amount' => 100),
+                 array('DetailType' => 'DiscountLineDetail', 'Amount' => 20, 'DiscountLineDetail' => array('PercentBased' => true, 'DiscountPercent' => 20)));
+$L3 = invq_lines($mk(904, array('Line' => $discInv, 'TotalAmt' => 80, 'Balance' => 80)));
+ok(count($L3) === 2 && $L3[1]['desc'] === 'Discount (20%)' && $L3[1]['amount'] === -20.0, 'the rows show QuickBooks\' discount line as "Discount (20%)", money off', json_encode($L3));
+$fl = invq_flags($mk(904, array('Line' => $discInv, 'TotalAmt' => 80, 'Balance' => 80)), 'g@example.com');
+ok(!in_array('generic', array_map(function ($f) { return $f['code']; }, $fl), true), 'a discount line never trips the "Work carried out / no description" warning', json_encode($fl));
+$ef3 = invq_email_fill(null, $mk(905, array('Line' => $discInv, 'TotalAmt' => 80, 'Balance' => 80)), '', '');
+ok($ef3['subtotal'] === 100.0 && $ef3['discount'] === 20.0 && $ef3['discount_pct'] === 20.0 && $ef3['total'] === 80.0 && count($ef3['lines']) === 1, 'the email preview: full price £100, discount 20% (£20), total £80', json_encode($ef3));
+ok($ef2['discount'] === 0.0 && $ef2['discount_pct'] === 0.0, 'no discount on the invoice -> none in the preview');
+ok(invq_job_row(array('id' => 'D1', 'discount' => array('kind' => 'total', 'value' => 80)), null)['discount'] === array('kind' => 'total', 'value' => 80.0) && invq_job_row(array('id' => 'D2'), null)['discount'] === null, 'the job row carries its discount back to the editor');
+ok(substr_count($SW, "invq_qbo_discount_line(isset(\$job['discount']) ? \$job['discount'] : null, invq_lines_total(\$job['lines']), \$c['tax'])") === 2, 'the invoice and the estimate both get the discount line after the full-price lines');
+ok(strpos($SW, "round(\$sub - invq_discount_amount(\$disc, \$sub), 2)") !== false, 'the job\'s price is what they pay (so the invoice is found again by its total)');
+ok(strpos($EP, "if (\$lines === null) fail('bad_discount');") !== false && strpos($EP, "invq_discount_clean(\$in['discount'], invq_lines_total(\$lines))") !== false, 'a discount is only taken with the lines it comes off, and checked against them');
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

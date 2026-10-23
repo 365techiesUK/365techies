@@ -78,6 +78,11 @@ function invq_lines($inv) {
     $out = array();
     foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $l) {
         if (!is_array($l) || (isset($l['DetailType']) && $l['DetailType'] === 'SubTotalLineDetail')) continue;
+        if (isset($l['DetailType']) && $l['DetailType'] === 'DiscountLineDetail') {   // money off the whole invoice (23 Oct 2026)
+            $pc = !empty($l['DiscountLineDetail']['PercentBased']) ? invq_num(isset($l['DiscountLineDetail']['DiscountPercent']) ? $l['DiscountLineDetail']['DiscountPercent'] : 0) : 0;
+            $out[] = array('desc' => 'Discount' . ($pc > 0 ? ' (' . rtrim(rtrim(number_format($pc, 2, '.', ''), '0'), '.') . '%)' : ''), 'amount' => -invq_num(isset($l['Amount']) ? $l['Amount'] : 0));
+            continue;
+        }
         $d = invq_str(isset($l['Description']) ? $l['Description'] : '', 120);
         $a = invq_num(isset($l['Amount']) ? $l['Amount'] : 0);
         if ($d === '' && $a == 0.0) continue;
@@ -358,6 +363,7 @@ function invq_job_row($job, $invRow, $now = null) {
         'item_name' => invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100),
         'lines'    => (isset($job['lines']) && is_array($job['lines'])) ? array_values($job['lines']) : array(),   // several lines typed in the portal (23 Oct 2026)
         'memo'     => invq_text(isset($job['memo']) ? $job['memo'] : '', INVQ_MEMO_MAX),   // the note for the invoice, typed in the portal
+        'discount' => (isset($job['discount']['kind'], $job['discount']['value'])) ? array('kind' => (string)$job['discount']['kind'], 'value' => invq_num($job['discount']['value'])) : null,
         'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
@@ -582,6 +588,48 @@ function invq_qbo_lines($lines, $defaultItem, $tax) {
     return $out;
 }
 
+/* A discount on the whole invoice (owner, 23 Oct 2026: "David likes to put in the products at the price that they actually
+   are ... we've agreed a price of £80, the invoice will show that it's £100, and then the final total ... with a
+   discount"). Typed as a percentage off, or as the price agreed with them; the lines keep their full prices and QuickBooks'
+   own discount line (Settings > Sales > Discount is On) takes the difference off. -> array(array(kind, value) | null for
+   none, error word). An agreed price equal to the full price is no discount. */
+function invq_discount_clean($raw, $subtotal) {
+    if ($raw === null || (is_string($raw) && trim($raw) === '')) return array(null, '');
+    if (!is_array($raw)) return array(null, 'bad_discount');
+    $kind = (string)(isset($raw['kind']) ? $raw['kind'] : '');
+    $vRaw = preg_replace('/[^0-9.]/', '', (string)(isset($raw['value']) ? $raw['value'] : ''));
+    if ($kind === '' || $vRaw === '') return array(null, '');
+    if (($kind !== 'pct' && $kind !== 'total') || !is_numeric($vRaw)) return array(null, 'bad_discount');
+    $v = round((float)$vRaw, 2); $sub = round(invq_num($subtotal), 2);
+    if ($kind === 'total' && abs($v - $sub) < 0.005) return array(null, '');
+    if ($v <= 0 || ($kind === 'pct' && $v >= 100) || ($kind === 'total' && $v > $sub)) return array(null, 'bad_discount');
+    $d = array('kind' => $kind, 'value' => $v);
+    if (invq_discount_amount($d, $sub) <= 0) return array(null, 'bad_discount');
+    return array($d, '');
+}
+/* Money off the full price, to the penny */
+function invq_discount_amount($disc, $subtotal) {
+    if (!is_array($disc) || !isset($disc['kind'], $disc['value'])) return 0.0;
+    $sub = round(invq_num($subtotal), 2); $v = invq_num($disc['value']);
+    $off = $disc['kind'] === 'pct' ? round($sub * $v / 100, 2) : ($disc['kind'] === 'total' ? round($sub - $v, 2) : 0.0);
+    return max(0.0, min($sub, $off));
+}
+/* The discount as QuickBooks' own line. An agreed price that is a whole percentage off ("£100, agreed £80") goes on as
+   that percentage, so the invoice says "Discount 20%"; any other agreed price goes on as the money off. VAT code as the
+   other lines (No VAT). */
+function invq_qbo_discount_line($disc, $subtotal, $tax) {
+    $off = invq_discount_amount($disc, $subtotal);
+    if ($off <= 0) return null;
+    $sub = round(invq_num($subtotal), 2);
+    $pct = 0.0;
+    if ($disc['kind'] === 'pct') $pct = round(invq_num($disc['value']), 2);
+    else { $p = round($off / $sub * 100); if ($p >= 1 && abs(round($sub * $p / 100, 2) - $off) < 0.005) $pct = (float)$p; }
+    $l = array('DetailType' => 'DiscountLineDetail', 'Amount' => $off,
+               'DiscountLineDetail' => $pct > 0 ? array('PercentBased' => true, 'DiscountPercent' => $pct) : array('PercentBased' => false));
+    if ((string)$tax !== '') $l['DiscountLineDetail']['TaxCodeRef'] = array('value' => (string)$tax);
+    return $l;
+}
+
 /* The invoice email as QuickBooks will send it: its own wording (Settings > Sales > Messages, read through the API) with
    [Invoice No.] and [Company Name] filled in, the "Dear <first name>," greeting, and the invoice's lines, total and due
    date as its short summary. $tpl = array(Subject, Message) | null (QuickBooks did not say). */
@@ -595,11 +643,17 @@ function invq_first_name($givenName, $displayName) {
 function invq_email_fill($tpl, $inv, $company, $first) {
     $no = invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 30);
     $fill = function ($s) use ($no, $company) { return str_replace(array('[Invoice No.]', '[Company Name]'), array($no, (string)$company), (string)$s); };
-    $lines = array();
+    $lines = array(); $sub = 0.0; $off = 0.0; $offPct = 0.0;
     foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $ln) {
         if (!is_array($ln)) continue;
         $dt = (string)(isset($ln['DetailType']) ? $ln['DetailType'] : '');
+        if ($dt === 'DiscountLineDetail') {
+            $off += invq_num(isset($ln['Amount']) ? $ln['Amount'] : 0);
+            if (!empty($ln['DiscountLineDetail']['PercentBased'])) $offPct = invq_num(isset($ln['DiscountLineDetail']['DiscountPercent']) ? $ln['DiscountLineDetail']['DiscountPercent'] : 0);
+            continue;
+        }
         if ($dt !== 'SalesItemLineDetail' && $dt !== 'DescriptionOnly') continue;
+        if ($dt === 'SalesItemLineDetail') $sub += invq_num(isset($ln['Amount']) ? $ln['Amount'] : 0);
         $lines[] = array('item' => $dt === 'SalesItemLineDetail' ? invq_str(isset($ln['SalesItemLineDetail']['ItemRef']['name']) ? $ln['SalesItemLineDetail']['ItemRef']['name'] : '', 100) : '',
                          'desc' => invq_text(isset($ln['Description']) ? $ln['Description'] : '', INVQ_DESC_MAX),
                          'qty' => $dt === 'SalesItemLineDetail' ? (float)(isset($ln['SalesItemLineDetail']['Qty']) ? $ln['SalesItemLineDetail']['Qty'] : 1) : 0,
@@ -612,6 +666,7 @@ function invq_email_fill($tpl, $inv, $company, $first) {
         'body' => is_array($tpl) ? str_replace("\r\n", "\n", $fill(isset($tpl['Message']) ? $tpl['Message'] : '')) : '',
         'number' => $no, 'lines' => $lines,
         'memo' => invq_text(isset($inv['CustomerMemo']['value']) ? $inv['CustomerMemo']['value'] : '', INVQ_MEMO_MAX),   // the note printed on the PDF
+        'subtotal' => round($sub, 2), 'discount' => round($off, 2), 'discount_pct' => $off > 0 ? round($offPct, 2) : 0.0,   // full price and money off, as QuickBooks has them
         'total' => round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2),
         'balance' => round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2),
         'due' => (string)(isset($inv['DueDate']) ? $inv['DueDate'] : ''),

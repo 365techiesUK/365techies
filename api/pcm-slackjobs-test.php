@@ -239,5 +239,8 @@ echo "-- 23 Oct 2026 (later still): the note typed for the invoice survives a re
 $mg3 = sj_merge(array_merge($old, array('memo' => 'Thanks for bringing it in')), $fresh);
 ok($mg3['memo'] === 'Thanks for bringing it in' && $mg3['note'] === $fresh['note'], 'the job keeps its invoice note (memo) while the Slack line (note) is refreshed');
 
+$mg4 = sj_merge(array_merge($old, array('discount' => array('kind' => 'pct', 'value' => 10.0))), $fresh);
+ok($mg4['discount'] === array('kind' => 'pct', 'value' => 10.0) && $mg4['amount'] === 60.0, 'and its discount, with the price a person set');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

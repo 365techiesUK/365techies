@@ -149,7 +149,7 @@ function invq_kind_sync($c, $now = null) {
     return !empty($r['n']) ? (int)$r['n'] : 0;
 }
 
-function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null, $lines = null, $memo = null) {
+function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null, $lines = null, $memo = null, $discount = null) {
     $amount = ($amount === null) ? null : round(invq_num($amount), 2);
     if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
     $desc = ($desc === null) ? null : invq_str($desc, 200);
@@ -157,8 +157,8 @@ function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null,
     $email = ($email === null) ? null : invq_email_ok($email);
     if ($email !== null && $email === '') return array('ok' => false, 'error' => 'bad_email');
     $memo = ($memo === null) ? null : invq_text($memo, INVQ_MEMO_MAX);
-    if ($amount === null && $desc === null && $item === null && $email === null && $lines === null && $memo === null) return array('ok' => false, 'error' => 'nothing_to_set');
-    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email, $lines, $memo) {
+    if ($amount === null && $desc === null && $item === null && $email === null && $lines === null && $memo === null && $discount === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email, $lines, $memo, $discount) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
@@ -172,7 +172,11 @@ function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null,
             if (is_array($lines)) {
                 if ($lines) {
                     $d['jobs'][$i]['lines'] = array_values($lines);
-                    $d['jobs'][$i]['amount'] = invq_lines_total($lines); $d['jobs'][$i]['amount_by'] = 'staff';
+                    /* the job's price is what they pay: the full price less any discount (an array() discount = none;
+                       not sent = the one the job already has). Kept, so invq_match_job finds the invoice by it. */
+                    $disc = is_array($discount) ? $discount : (isset($j['discount']) ? $j['discount'] : null);
+                    $sub = invq_lines_total($lines);
+                    $d['jobs'][$i]['amount'] = round($sub - invq_discount_amount($disc, $sub), 2); $d['jobs'][$i]['amount_by'] = 'staff';
                     $d['jobs'][$i]['desc'] = invq_str($lines[0]['desc'], 200); $d['jobs'][$i]['desc_by'] = 'staff';
                     $d['jobs'][$i]['item_id'] = $lines[0]['item']; $d['jobs'][$i]['item_name'] = $lines[0]['item_name'];
                 } else unset($d['jobs'][$i]['lines']);
@@ -180,6 +184,7 @@ function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null,
             /* the note for the invoice: 'memo', never 'note' - that one is the Slack post's own line and a re-poll
                rewrites it. Sent empty, it comes off. */
             if ($memo !== null) { if ($memo !== '') $d['jobs'][$i]['memo'] = $memo; else unset($d['jobs'][$i]['memo']); }
+            if (is_array($discount)) { if ($discount && !empty($d['jobs'][$i]['lines'])) $d['jobs'][$i]['discount'] = $discount; else unset($d['jobs'][$i]['discount']); }
             $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
             return array('ok' => true, 'data' => $d);
         }
@@ -551,6 +556,7 @@ function invq_quote_for_job($c, $jobId, $who) {
         $line = array('DetailType' => 'DescriptionOnly', 'Description' => $desc, 'DescriptionLineDetail' => new stdClass());
     }
     $qLines = (!empty($job['lines']) && is_array($job['lines'])) ? invq_qbo_lines($job['lines'], $c['item'], $c['tax']) : array($line);   // several lines typed in the portal
+    if (!empty($job['lines']) && is_array($job['lines']) && ($dl = invq_qbo_discount_line(isset($job['discount']) ? $job['discount'] : null, invq_lines_total($job['lines']), $c['tax']))) $qLines[] = $dl;   // full prices, then the discount
     $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => $qLines, 'TxnDate' => gmdate('Y-m-d'),
                  'ExpirationDate' => gmdate('Y-m-d', time() + 30 * 86400), 'BillEmail' => array('Address' => $email),
                  'PrivateNote' => 'Started from the staff portal by ' . $who . ' (job ' . $jobId . ')');
@@ -684,6 +690,7 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
     if (!empty($job['lines']) && is_array($job['lines'])) $iLines = invq_qbo_lines($job['lines'], $c['item'], $c['tax']);   // several lines typed in the portal (23 Oct 2026)
     else $iLines = array($line);
+    if (!empty($job['lines']) && is_array($job['lines']) && ($dl = invq_qbo_discount_line(isset($job['discount']) ? $job['discount'] : null, invq_lines_total($job['lines']), $c['tax']))) $iLines[] = $dl;   // full prices, then the discount agreed
     $inv = array('CustomerRef' => array('value' => $cid), 'Line' => $iLines, 'TxnDate' => gmdate('Y-m-d'),
                  'BillEmail' => array('Address' => $email));
     if (!empty($job['memo'])) $inv['CustomerMemo'] = array('value' => invq_text($job['memo'], INVQ_MEMO_MAX));   // the note typed for it: "Message on invoice", on the PDF

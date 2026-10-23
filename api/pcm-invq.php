@@ -129,9 +129,18 @@ if ($action === 'setjob') {
     /* The note on the invoice (owner, later on 23 Oct: "a note on the invoice ... so it's more personalised to what we've
        actually done for them"): QuickBooks' "Message on invoice", printed on the PDF. Plain text; sent empty, it comes off. */
     $memo = (isset($in['memo']) && is_string($in['memo'])) ? invq_text($in['memo'], INVQ_MEMO_MAX) : null;
-    $r = invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo);
+    /* A discount (owner, 23 Oct 2026: full prices on the lines, then the price agreed): a percentage off or the agreed
+       price, checked against the lines in this same request - never on its own. Sent empty, any old one comes off. */
+    $discount = null;
+    if (array_key_exists('discount', $in)) {
+        if ($lines === null) fail('bad_discount');
+        list($dc, $derr) = invq_discount_clean($in['discount'], invq_lines_total($lines));
+        if ($derr !== '') fail($derr);
+        $discount = $dc === null ? array() : $dc;
+    }
+    $r = invq_job_set($job, $amount, $desc, $who, $item, $email, $lines, $memo, $discount);
     if (empty($r['ok'])) fail($r['error']);
-    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ($memo !== null ? ' note' : '') . ' by ' . $who);
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ($memo !== null ? ' note' : '') . ($discount ? ' discount ' . $discount['kind'] . ' ' . $discount['value'] : '') . ' by ' . $who);
     out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
 }
 
