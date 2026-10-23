@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 1b50e149a7</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 1cc468f269</p><script>
 (function () {
-  var P365BUILD = '1b50e149a7';
+  var P365BUILD = '1cc468f269';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7485,7 +7485,7 @@
         + '<textarea class="invqldesc" rows="2" maxlength="1000" aria-label="What we did for them" placeholder="' + esc(descHint(it)) + '" style="margin:.35rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(ln.desc || '') + '</textarea>'
         + '</div>';
     }
-    function linesEditor(j) {
+    function linesEditor(j, change) {
       var lines = (j.lines && j.lines.length) ? j.lines : [{ item: j.item || '', desc: j.desc || '', qty: 1, rate: j.amount > 0 ? j.amount : 0 }];
       var disc = j.discount || {}, dk = disc.kind || '', dv = disc.value || 0;
       return '<div class="invqlines" style="margin:.35rem 0 0">'
@@ -7500,16 +7500,24 @@
         + '<label style="display:block;margin:.55rem 0 0;font-size:.82rem"><span class="quiet">A note on the invoice (optional) \u2014 printed on it under the lines, for the personal touch</span>'
         + '<textarea class="invqlmemo" rows="2" maxlength="1000" placeholder="e.g. Thanks for bringing it in. Your photos were copied off first and are all on the new drive." style="margin:.2rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(j.memo || '') + '</textarea></label>'
         + '<div style="margin:.4rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
-        + (j.email ? '' : '<input class="invqemail" type="email" maxlength="120" placeholder="Customer email" style="width:220px;margin:0">')
-        + '<button class="sm invqlraise" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="They have told us what they want: the invoice with these lines. Then check the email and the PDF, and send it from here.">\ud83e\uddfe Raise the invoice</button>'
-        + (j.quote && j.quote.id ? '' : ' <span class="quiet" style="font-size:.8rem">or</span> <button class="sm invqlraise invqlq" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="An estimate (quote) in QuickBooks with these lines. Nothing is emailed by this button.">\ud83d\udcdd Raise an estimate</button>')
+        + (change
+          ? '<button class="sm invqlraise invqlchg" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="Writes these lines, the discount and the note over the same invoice in QuickBooks: same number, nothing is sent.">\ud83d\udcbe Save the changes</button>'
+            + ' <button class="sm ghost invqlcancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button>'
+          : (j.email ? '' : '<input class="invqemail" type="email" maxlength="120" placeholder="Customer email" style="width:220px;margin:0">')
+            + '<button class="sm invqlraise" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="They have told us what they want: the invoice with these lines. Then check the email and the PDF, and send it from here.">\ud83e\uddfe Raise the invoice</button>'
+            + (j.quote && j.quote.id ? '' : ' <span class="quiet" style="font-size:.8rem">or</span> <button class="sm invqlraise invqlq" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="An estimate (quote) in QuickBooks with these lines. Nothing is emailed by this button.">\ud83d\udcdd Raise an estimate</button>'))
         + '<span class="quiet invqlmsg"></span></div></div>';
     }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Paid</span>';
       else if (st === 'sent') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
-      else if (st === 'unsent') { chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \u2014 now check it, then send it</span> <span class="quiet">\u00b7 more products or lines go on in QuickBooks first</span>'; body = warnHtml(inv); btns = invButtons(inv); }
+      else if (st === 'unsent') {
+        /* 23 Oct 2026 (owner: "can we close down the preview and then go back and edit it some more?") */
+        chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \u2014 now check it, then send it</span>' + (j.can_change ? ' <span class="quiet">\u00b7 not right? Change it, then preview it again</span>' : ' <span class="quiet">\u00b7 changes to this one go on in QuickBooks</span>');
+        body = warnHtml(inv) + (j.can_change ? '<div class="invqchg" style="display:none">' + linesEditor(j, true) + '</div>' : '');
+        btns = (j.can_change ? '<button class="sm ghost invqedit" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="Change the lines, the discount or the note on this invoice before it goes">\u270f\ufe0f Change it</button>' : '') + invButtons(inv);
+      }
       else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\u00b7 job not marked done in Slack yet</span>');
@@ -7615,7 +7623,7 @@
       };
       Array.prototype.forEach.call(wrap.querySelectorAll('.invqlraise'), function (b) {
         b.onclick = function () {
-          var quote = b.classList.contains('invqlq'), msg = wrap.querySelector('.invqlmsg'), lines = [], bad = '';
+          var quote = b.classList.contains('invqlq'), change = b.classList.contains('invqlchg'), msg = wrap.querySelector('.invqlmsg'), lines = [], bad = '';
           Array.prototype.forEach.call(wrap.querySelectorAll('.invqline'), function (ln) {
             var sel = ln.querySelector('.invqlitem'), item = sel && sel.value && sel.value !== '__more' ? sel.value : '';
             var d = ln.querySelector('.invqldesc').value.trim(), q = ln.querySelector('.invqlqty').value.trim() || '1', r = ln.querySelector('.invqlrate').value.trim();
@@ -7645,6 +7653,16 @@
           if (bad) { msg.textContent = bad; return; }
           var btns2 = wrap.querySelectorAll('.invqlraise');
           function enable(on) { Array.prototype.forEach.call(btns2, function (x) { x.disabled = !on; }); }
+          if (change) {
+            body.action = 'change';
+            enable(false); msg.textContent = 'Changing the invoice in QuickBooks\u2026';
+            post(INVQ, body).then(function (j) {
+              if (!j || !j.ok) { enable(true); msg.innerHTML = invqErr(j); return; }
+              msg.textContent = 'Changed \u2014 preview the email again before you send it.';
+              loadInvq(true);
+            }).catch(function () { enable(true); msg.textContent = 'Couldn\u2019t reach the server.'; });
+            return;
+          }
           enable(false); msg.textContent = 'Saving\u2026';
           post(INVQ, body).then(function (j) {
             if (!j || !j.ok) { enable(true); msg.innerHTML = invqErr(j); return; }
@@ -7656,6 +7674,23 @@
           }).catch(function () { enable(true); msg.textContent = 'Couldn\u2019t reach the server.'; });
         };
       });
+    });
+    function chgToggle(row, open) {
+      var w = row.querySelector('.invqchg'), b = row.querySelector('.invqedit'), snd = row.querySelector('.invqsend');
+      if (!w || !b) return;
+      w.style.display = open ? '' : 'none';
+      b.textContent = open ? '\u2715 Close without changing' : '\u270f\ufe0f Change it';
+      if (snd) {
+        if (open && !snd.disabled) { snd.disabled = true; snd.setAttribute('data-chg', '1'); }
+        else if (!open && snd.getAttribute('data-chg')) { snd.disabled = false; snd.removeAttribute('data-chg'); }
+      }
+      var nx = row.nextElementSibling; if (open && nx && nx.classList.contains('invqprevbox')) nx.parentNode.removeChild(nx);
+    }
+    Array.prototype.forEach.call(box.querySelectorAll('.invqedit'), function (b) {
+      b.onclick = function () { var row = b.closest('.invqrow'), w = row && row.querySelector('.invqchg'); if (w) chgToggle(row, w.style.display === 'none'); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqlcancel'), function (b) {
+      b.onclick = function () { var row = b.closest('.invqrow'); if (row) chgToggle(row, false); };
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqcreate'), function (b) {
       b.onclick = function () {
@@ -7809,6 +7844,9 @@
     if (e === 'no_such_job') return 'That job isn\u2019t in the record any more.';
     if (e === 'bad_amount') return 'That price doesn\u2019t look right \u2014 between \u00a31 and \u00a32,000.';
     if (e === 'bad_qty') return 'How many must be a number from 1 to 99.';
+    if (e === 'changed_in_qbo') return 'This invoice has been changed in QuickBooks since the portal made it \u2014 make the change there (Open in QuickBooks), so nothing done there is lost.';
+    if (e === 'part_paid') return 'Money has already been paid against this invoice \u2014 change it in QuickBooks.';
+    if (e === 'no_invoice') return 'This job has no invoice to change \u2014 re-check.';
     if (e === 'bad_discount') return 'That discount doesn\u2019t add up \u2014 a percentage under 100, or an agreed price below the full price.';
     if (e === 'bad_item') return 'That service isn\u2019t on the QuickBooks list any more \u2014 re-check.';
     if (e === 'bad_lines') return 'Those lines didn\u2019t come through \u2014 try again.';
