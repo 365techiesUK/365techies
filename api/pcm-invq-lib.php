@@ -363,6 +363,12 @@ function invq_job_row($job, $invRow, $now = null) {
         'item_name' => invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100),
         'lines'    => (isset($job['lines']) && is_array($job['lines'])) ? array_values($job['lines']) : array(),   // several lines typed in the portal (23 Oct 2026)
         'memo'     => invq_text(isset($job['memo']) ? $job['memo'] : '', INVQ_MEMO_MAX),   // the note for the invoice, typed in the portal
+        /* their contact details, for "Edit contact details" (23 Oct 2026) - staff-only, like everything on this card */
+        'contact'  => array('name' => invq_str(isset($job['name']) ? $job['name'] : '', 90), 'email' => invq_email_ok(isset($job['email']) ? $job['email'] : ''),
+                            'company' => invq_str(isset($job['company']) ? $job['company'] : '', 90), 'addr' => invq_str(isset($job['addr']) ? $job['addr'] : '', 200),
+                            'postcode' => invq_str(isset($job['postcode']) ? $job['postcode'] : '', 10), 'phone' => invq_str(isset($job['phone']) ? $job['phone'] : '', 30),
+                            'mobile' => invq_str(isset($job['mobile']) ? $job['mobile'] : '', 30)),
+        'contact_edited' => !empty($job['contact_by']),
         'discount' => (isset($job['discount']['kind'], $job['discount']['value'])) ? array('kind' => (string)$job['discount']['kind'], 'value' => invq_num($job['discount']['value'])) : null,
         'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
@@ -518,6 +524,30 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
    Owner: "we can only add 1 product ... collection delivery, and with this particular one, we've loaned him a hard drive
    as well" and "before we send it, can we preview the email with the invoice and everything?" */
 define('INVQ_MAX_LINES', 12);
+/* A job's contact details as staff correct them on the row (owner, 23 Oct 2026: "Paul Southern ... Southern's the road he
+   lives in ... his surname was Barber" and "Davina's email address is slightly different. David took it and it was
+   slightly wrong"). -> array(clean details | null, error word). A name is needed; the rest may be blank. */
+function invq_contact_fields() { return array('name', 'email', 'company', 'addr', 'postcode', 'phone', 'mobile'); }
+function invq_contact_clean($raw) {
+    if (!is_array($raw)) return array(null, 'bad_contact');
+    $g = function ($k, $max) use ($raw) { return invq_str(isset($raw[$k]) && is_string($raw[$k]) ? $raw[$k] : '', $max); };
+    $out = array('name' => $g('name', 90));
+    if ($out['name'] === '') return array(null, 'no_name');
+    $em = $g('email', 120);
+    if ($em !== '') { $em = invq_email_ok($em); if ($em === '') return array(null, 'bad_email'); }
+    $out['email'] = $em;
+    $out['company'] = $g('company', 90);
+    $out['addr'] = $g('addr', 200);
+    $pc = strtoupper(preg_replace('/\s+/', ' ', $g('postcode', 10)));
+    if ($pc !== '' && !preg_match('/^[A-Z0-9][A-Z0-9 ]{1,9}$/', $pc)) return array(null, 'bad_postcode');
+    $out['postcode'] = $pc;
+    foreach (array('phone', 'mobile') as $k) {
+        $p = $g($k, 30);
+        if ($p !== '' && !preg_match('/^[+(]?[0-9][0-9 ()\-]{5,29}$/', $p)) return array(null, 'bad_phone');
+        $out[$k] = $p;
+    }
+    return array($out, '');
+}
 /* When an invoice is due (owner, 23 Oct 2026: "we only want it to be like, give them like, about 2 or 3 days to pay ...
    rather than like a couple of weeks"). Set on the invoice itself, so QuickBooks' own default terms never decide it. */
 define('INVQ_DUE_DAYS', 3);

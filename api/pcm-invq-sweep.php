@@ -93,6 +93,36 @@ function invq_jobs_locked($fn) {
     flock($h, LOCK_UN); fclose($h);
     return $r;
 }
+/* Contact details corrected on a job (23 Oct 2026). Only fields that differ are written; each is marked in contact_by
+   (field => who) so sj_merge() keeps it over the Slack post and its thread on every later read; a corrected email is
+   also email_by 'staff' (the older rule). Not once the job has an invoice: its QuickBooks customer exists by then.
+   -> array(ok, changed[]) */
+function invq_job_contact_set($jobId, $contact, $who) {
+    $r = invq_jobs_locked(function ($d) use ($jobId, $contact, $who) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
+            $by = (isset($j['contact_by']) && is_array($j['contact_by'])) ? $j['contact_by'] : array();
+            $changed = array();
+            foreach (invq_contact_fields() as $k) {
+                if (!array_key_exists($k, $contact)) continue;
+                if ((string)(isset($j[$k]) ? $j[$k] : '') === (string)$contact[$k]) continue;
+                $d['jobs'][$i][$k] = (string)$contact[$k];
+                $by[$k] = (string)$who !== '' ? (string)$who : 'staff';
+                $changed[] = $k;
+            }
+            if (!$changed) return array('ok' => true, 'changed' => array());
+            if (in_array('email', $changed, true)) $d['jobs'][$i]['email_by'] = 'staff';
+            $d['jobs'][$i]['contact_by'] = $by;
+            $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
+            return array('ok' => true, 'data' => $d, 'changed' => $changed);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    if (!empty($r['ok']) && !empty($r['changed'])) invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
+    return array('ok' => !empty($r['ok']), 'error' => isset($r['error']) ? $r['error'] : '', 'changed' => isset($r['changed']) ? $r['changed'] : array());
+}
+
 /* Write the invoice id onto a job, once. Returns false if the job already had one. */
 function invq_job_link($jobId, $invId, $url, $how, $fp = '') {
     $r = invq_jobs_locked(function ($d) use ($jobId, $invId, $url, $how, $fp) {
@@ -493,6 +523,8 @@ function invq_ensure_customer($c, $job, $jobId) {
     if ($m === null) return array('ok' => false, 'error' => 'busy');
     $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
     if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
+    $mobile = invq_str(isset($job['mobile']) ? $job['mobile'] : '', 30);   // 23 Oct 2026: the mobile too, as QuickBooks' own Mobile field
+    if ($mobile !== '') $body['Mobile'] = array('FreeFormNumber' => $mobile);
     // 6 Oct 2026: the business the job is for (the card's Company box) - QuickBooks' own company field, for the invoice
     $company = invq_str(isset($job['company']) ? $job['company'] : '', 90);
     if ($company !== '') $body['CompanyName'] = $company;

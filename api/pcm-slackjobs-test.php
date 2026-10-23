@@ -242,5 +242,13 @@ ok($mg3['memo'] === 'Thanks for bringing it in' && $mg3['note'] === $fresh['note
 $mg4 = sj_merge(array_merge($old, array('discount' => array('kind' => 'pct', 'value' => 10.0))), $fresh);
 ok($mg4['discount'] === array('kind' => 'pct', 'value' => 10.0) && $mg4['amount'] === 60.0, 'and its discount, with the price a person set');
 
+echo "-- 23 Oct 2026: contact details corrected in the portal stand over the Slack post\n";
+$fixed = array_merge($old, array('name' => 'Gordon Barber', 'phone' => '01202 000000', 'email' => 'gordon@example.com',
+                                 'contact_by' => array('name' => 'Steve', 'phone' => 'Steve', 'email' => 'Steve')));
+$mg5 = sj_merge($fixed, $fresh);
+ok($mg5['name'] === 'Gordon Barber' && $mg5['phone'] === '01202 000000' && $mg5['email'] === 'gordon@example.com', 'a re-read keeps the corrected name, landline and email', json_encode(array($mg5['name'], $mg5['phone'], $mg5['email'])));
+ok($mg5['postcode'] === $fresh['postcode'] && $mg5['addr'] === $fresh['addr'] && $mg5['contact_by'] === $fixed['contact_by'], '... the fields nobody corrected still come from Slack, and the marks stay');
+ok(sj_merge(array_merge($old, array('name' => 'Typo Name')), $fresh)['name'] === $fresh['name'], 'without a mark, Slack\'s name is used as before');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

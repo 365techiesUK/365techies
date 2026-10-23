@@ -407,5 +407,28 @@ ok(INVQ_DUE_DAYS === 3 && invq_due_date(strtotime('2026-10-23 19:57:00 UTC')) ==
 ok(strpos($SW, "'BillEmail' => array('Address' => \$email), 'DueDate' => invq_due_date());") !== false, 'a new invoice carries its due date');
 ok(strpos($chgFn, "\$upd['DueDate'] = invq_due_date();") !== false, 'Change it moves the due date to 3 days from the change');
 
+echo "-- 23 Oct 2026 (later still): Edit contact details on a job, before its invoice\n";
+list($C1, $e) = invq_contact_clean(array('name' => ' Paul Barber ', 'email' => 'Davina.G@Example.com ', 'company' => '', 'addr' => '12 Southern Road, Poole', 'postcode' => 'bh14  8aa', 'phone' => '(01202) 775566', 'mobile' => '+44 7700 900123'));
+ok($e === '' && $C1 === array('name' => 'Paul Barber', 'email' => 'davina.g@example.com', 'company' => '', 'addr' => '12 Southern Road, Poole', 'postcode' => 'BH14 8AA', 'phone' => '(01202) 775566', 'mobile' => '+44 7700 900123'),
+   'cleaned: trimmed name, lower-case email, upper-case postcode, numbers as typed', json_encode(array($C1, $e)));
+ok(invq_contact_clean(array('name' => '', 'email' => 'a@b.co'))[1] === 'no_name' && invq_contact_clean(array('name' => 'X', 'email' => 'not an email'))[1] === 'bad_email'
+   && invq_contact_clean(array('name' => 'X', 'postcode' => 'BH1#1AA'))[1] === 'bad_postcode' && invq_contact_clean(array('name' => 'X', 'phone' => 'call me'))[1] === 'bad_phone'
+   && invq_contact_clean('Paul')[1] === 'bad_contact' && invq_contact_clean(array('name' => array('x')))[1] === 'no_name',
+   'refused: no name, a bad email, postcode or phone, or not a set of details at all');
+ok(invq_contact_clean(array('name' => 'Davina Gahan'))[0] === array('name' => 'Davina Gahan', 'email' => '', 'company' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => ''), 'only a name is needed; the rest may be blank');
+$jr = invq_job_row(array('id' => 'P1', 'name' => 'Paul Southern', 'email' => 'p@example.com', 'addr' => '1 Road', 'postcode' => 'BH1 1AA', 'phone' => '01202 1', 'mobile' => '07700 1', 'company' => '', 'contact_by' => array('name' => 'Steve')), null);
+ok($jr['contact'] === array('name' => 'Paul Southern', 'email' => 'p@example.com', 'company' => '', 'addr' => '1 Road', 'postcode' => 'BH1 1AA', 'phone' => '01202 1', 'mobile' => '07700 1') && $jr['contact_edited'] === true
+   && invq_job_row(array('id' => 'P2'), null)['contact_edited'] === false, 'the job row carries its contact details (and whether they were corrected) to the editor');
+$cs0 = strpos($SW, 'function invq_job_contact_set('); $cs1 = $cs0 !== false ? strpos($SW, '/* Write the invoice id onto a job', $cs0) : false;
+$csFn = ($cs0 !== false && $cs1 > $cs0) ? substr($SW, $cs0, $cs1 - $cs0) : '';
+ok(strpos($csFn, "if (!empty(\$j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');") !== false && strpos($csFn, "\$by[\$k] =") !== false && strpos($csFn, "\$d['jobs'][\$i]['contact_by'] = \$by;") !== false
+   && strpos($csFn, "if (in_array('email', \$changed, true)) \$d['jobs'][\$i]['email_by'] = 'staff';") !== false && strpos($csFn, 'invq_api') === false,
+   'saved on the job as staff-set (contact_by, email_by), never once it has an invoice, and nothing goes to QuickBooks from here');
+$ct0 = strpos($EP, "if (\$action === 'contact')"); $ct1 = $ct0 !== false ? strpos($EP, "if (\$action === 'hold'", $ct0) : false;
+$ctBlock = ($ct0 !== false && $ct1 > $ct0) ? substr($EP, $ct0, $ct1 - $ct0) : '';
+ok($ctBlock !== '' && strpos($ctBlock, "invq_contact_clean(isset(\$in['contact']) ? \$in['contact'] : null)") !== false && strpos($ctBlock, 'invq_connect') === false && $ct0 < strpos($EP, "\n\$c = invq_connect();"),
+   'the request\'s details are cleaned before they reach the job; it needs no QuickBooks connection');
+ok(strpos($SW, "if (\$mobile !== '') \$body['Mobile'] = array('FreeFormNumber' => \$mobile);") !== false, 'a new QuickBooks customer gets the mobile as well as the landline');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

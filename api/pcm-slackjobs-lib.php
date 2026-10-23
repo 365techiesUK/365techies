@@ -442,5 +442,11 @@ function sj_merge($old, $new) {
         if (empty($keep['invoiced_in_slack']) && !empty($old['invoiced_in_slack'])) $keep['invoiced_in_slack'] = true;
     }
     if (!empty($old['invoice_no'])) { $keep['invoice_no'] = $old['invoice_no']; $keep['invoice_url'] = isset($old['invoice_url']) ? $old['invoice_url'] : ''; }
+    /* 23 Oct 2026: contact details a person corrected in the portal (contact_by) stand over the post and its thread -
+       a re-read never puts "Paul Southern" (his road) back as his name. Last, so nothing above undoes it. */
+    if (isset($old['contact_by']) && is_array($old['contact_by'])) {
+        foreach (array_keys($old['contact_by']) as $f)
+            if (in_array($f, array('name', 'email', 'company', 'addr', 'postcode', 'phone', 'mobile'), true)) $keep[$f] = isset($old[$f]) ? $old[$f] : '';
+    }
     return $keep;
 }

@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change', 'contact'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -142,6 +142,20 @@ if ($action === 'setjob') {
     if (empty($r['ok'])) fail($r['error']);
     invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ($memo !== null ? ' note' : '') . ($discount ? ' discount ' . $discount['kind'] . ' ' . $discount['value'] : '') . ' by ' . $who);
     out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
+}
+
+/* Contact details corrected on the job (owner, 23 Oct 2026: a road written down as a surname, an email taken down
+   wrong): name, email, company, address, postcode, landline, mobile - checked, kept on the job as staff-set so the next
+   read of the Slack post never puts the old ones back, and used when the invoice is raised (the QuickBooks customer is
+   made from them). Not once the job has an invoice. The Slack post itself is not changed. */
+if ($action === 'contact') {
+    if ($job === '') fail('bad_job');
+    list($ct, $cerr) = invq_contact_clean(isset($in['contact']) ? $in['contact'] : null);
+    if ($ct === null) fail($cerr);
+    $r = invq_job_contact_set($job, $ct, $who);
+    if (empty($r['ok'])) fail($r['error']);
+    if ($r['changed']) invq_log('contact details for job ' . $job . ' (' . implode(', ', $r['changed']) . ') by ' . $who);
+    out(array('ok' => true, 'changed' => $r['changed']));
 }
 
 if ($action === 'hold' || $action === 'unhold') {

@@ -31811,6 +31811,23 @@ def write_portal_page():
         + '<textarea class="invqldesc" rows="2" maxlength="1000" aria-label="What we did for them" placeholder="' + esc(descHint(it)) + '" style="margin:.35rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(ln.desc || '') + '</textarea>'
         + '</div>';
     }
+    /* 23 Oct 2026 (owner: "Paul Southern ... his surname was Barber" / "Davina's email address is slightly different"):
+       their contact details, corrected on the row before the invoice is raised. Saved on the job as staff-set, so the next
+       read of the Slack post keeps them; the QuickBooks customer is made from them. */
+    function contactForm(j) {
+      var c = j.contact || {}, MAX = { name: 90, email: 120, company: 90, addr: 200, postcode: 10, phone: 30, mobile: 30 };
+      function f(k, label, ph, type, w) {
+        return '<label style="display:flex;flex-direction:column;gap:.1rem;font-size:.78rem;flex:1;min-width:' + (w || 150) + 'px"><span class="quiet">' + label + '</span>'
+          + '<input class="invqc" data-k="' + k + '" type="' + (type || 'text') + '" maxlength="' + MAX[k] + '" value="' + esc(c[k] || '') + '" placeholder="' + esc(ph || '') + '" style="margin:0"></label>';
+      }
+      return '<div class="invqcform" style="display:none;margin:.4rem 0 0;padding:.5rem .6rem;border:1px dashed rgba(125,170,220,.45);border-radius:10px">'
+        + '<div class="quiet" style="font-size:.82rem;margin:0 0 .3rem">Their details as they go on the invoice and into QuickBooks. Saved here, the next read of the Slack post won\\u2019t put the old ones back (the Slack post itself isn\\u2019t changed).</div>'
+        + '<div style="display:flex;gap:.4rem;flex-wrap:wrap">' + f('name', 'Name', '', 'text', 190) + f('email', 'Email', 'name@example.com', 'email', 210) + f('company', 'Company (if a business)', '') + '</div>'
+        + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0 0">' + f('addr', 'Address', 'House, street, town', 'text', 260) + f('postcode', 'Postcode', 'BH1 1AA', 'text', 90) + '</div>'
+        + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0 0">' + f('phone', 'Landline', '01202 ...', 'tel') + f('mobile', 'Mobile', '07...', 'tel') + '</div>'
+        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><button class="sm invqcsave" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udcbe Save their details</button>'
+        + '<button class="sm ghost invqccancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqcmsg" style="font-size:.82rem"></span></div></div>';
+    }
     function linesEditor(j, change) {
       var lines = (j.lines && j.lines.length) ? j.lines : [{ item: j.item || '', desc: j.desc || '', qty: 1, rate: j.amount > 0 ? j.amount : 0 }];
       var disc = j.discount || {}, dk = disc.kind || '', dv = disc.value || 0;
@@ -31855,7 +31872,10 @@ def write_portal_page():
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
         if (j.can_create || j.why_not === 'no_amount' || j.why_not === 'no_desc' || j.why_not === 'no_email') body = linesEditor(j);
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
-        body += '<div style="margin:.3rem 0 0"><button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \\u2014 hide it</button></div>';
+        body = contactForm(j) + body;
+        body += '<div style="margin:.3rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><button class="sm ghost invqcedit" style="padding:.15rem .5rem;font-size:.76rem" title="Name, email, address, landline, mobile">\\u270f\\ufe0f Edit contact details</button>'
+          + (j.contact_edited ? '<span class="quiet" style="font-size:.76rem">details corrected in the portal</span>' : '')
+          + '<button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \\u2014 hide it</button></div>';
       }
       body = quoteHtml(j) + body;
       return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (inv && inv.held ? ';opacity:.7' : '') + '">'
@@ -32018,6 +32038,30 @@ def write_portal_page():
       }
       var nx = row.nextElementSibling; if (open && nx && nx.classList.contains('invqprevbox')) nx.parentNode.removeChild(nx);
     }
+    Array.prototype.forEach.call(box.querySelectorAll('.invqcedit'), function (b) {
+      b.onclick = function () {
+        var f = b.closest('.invqrow').querySelector('.invqcform'); if (!f) return;
+        var open = f.style.display === 'none'; f.style.display = open ? '' : 'none';
+        b.textContent = open ? '\\u2715 Close their details' : '\\u270f\\ufe0f Edit contact details';
+        if (open) { var n = f.querySelector('.invqc[data-k="name"]'); if (n) n.focus(); }
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqccancel'), function (b) {
+      b.onclick = function () { var e = b.closest('.invqrow').querySelector('.invqcedit'); if (e) e.click(); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqcsave'), function (b) {
+      b.onclick = function () {
+        var f = b.closest('.invqcform'), msg = f.querySelector('.invqcmsg'), ct = {};
+        Array.prototype.forEach.call(f.querySelectorAll('.invqc'), function (inp) { ct[inp.getAttribute('data-k')] = inp.value.trim(); });
+        if (!ct.name) { msg.textContent = 'Type their name.'; return; }
+        b.disabled = true; msg.textContent = 'Saving\\u2026';
+        post(INVQ, { action: 'contact', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), contact: ct }).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
+          msg.textContent = j.changed && j.changed.length ? 'Saved.' : 'Nothing had changed.';
+          if (j.changed && j.changed.length) loadInvq(true); else b.disabled = false;
+        }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
     Array.prototype.forEach.call(box.querySelectorAll('.invqedit'), function (b) {
       b.onclick = function () { var row = b.closest('.invqrow'), w = row && row.querySelector('.invqchg'); if (w) chgToggle(row, w.style.display === 'none'); };
     });
@@ -32183,6 +32227,10 @@ def write_portal_page():
     if (e === 'changed_in_qbo') return 'This invoice has been changed in QuickBooks since the portal made it \\u2014 make the change there (Open in QuickBooks), so nothing done there is lost.';
     if (e === 'part_paid') return 'Money has already been paid against this invoice \\u2014 change it in QuickBooks.';
     if (e === 'no_invoice') return 'This job has no invoice to change \\u2014 re-check.';
+    if (e === 'no_name') return 'Type their name.';
+    if (e === 'bad_email') return 'That email address doesn\\u2019t look right.';
+    if (e === 'bad_postcode') return 'That postcode doesn\\u2019t look right.';
+    if (e === 'bad_phone') return 'A phone number is digits (with spaces, + or brackets) only.';
     if (e === 'bad_discount') return 'That discount doesn\\u2019t add up \\u2014 a percentage under 100, or an agreed price below the full price.';
     if (e === 'bad_item') return 'That service isn\\u2019t on the QuickBooks list any more \\u2014 re-check.';
     if (e === 'bad_lines') return 'Those lines didn\\u2019t come through \\u2014 try again.';
