@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -116,9 +116,19 @@ if ($action === 'setjob') {
         $item = invq_item_find(invq_items($c), $itemId);
         if (!$item) fail('bad_item');
     }
-    $r = invq_job_set($job, $amount, $desc, $who, $item, $email);
+    /* Several lines (23 Oct 2026, owner: "we can only add 1 product ... collection delivery ... we've loaned him a hard
+       drive as well"): each one's service id must be on QuickBooks' own list, quantities and prices are checked, and
+       the lines go on the JOB like a typed price - the invoice is made from them by create. */
+    $lines = null;
+    if (isset($in['lines'])) {
+        $c = invq_connect();
+        if (empty($c['ok'])) fail($c['why']);
+        list($lines, $lerr) = invq_lines_clean($in['lines'], invq_items($c));
+        if ($lines === null) fail($lerr);
+    }
+    $r = invq_job_set($job, $amount, $desc, $who, $item, $email, $lines);
     if (empty($r['ok'])) fail($r['error']);
-    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ' by ' . $who);
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ($lines !== null ? ' ' . count($lines) . ' lines' : '') . ' by ' . $who);
     out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
 }
 
@@ -234,6 +244,14 @@ if ($action === 'resend') {
     $r = invq_resend($c, $id, $who);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
     out(array('ok' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount']));
+}
+/* 23 Oct 2026 (owner: "before we send it, can we preview the email with the invoice and everything?"): the email
+   QuickBooks will send for this invoice, with its wording filled in and the address it goes to. Read only. */
+if ($action === 'emailpreview') {
+    if ($id === '') fail('bad_id');
+    $e = invq_email_preview($c, $id);
+    if (empty($e['ok'])) fail($e['why']);
+    out($e);
 }
 /* 23 Oct 2026: the money in for a month, week by week (read only; see invq_paid()). */
 if ($action === 'paid') {

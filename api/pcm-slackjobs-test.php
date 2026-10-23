@@ -230,5 +230,10 @@ foreach (array('pcm-slackjobs-lib.php', 'pcm-slackjobs-sweep.php', 'pcm-slackjob
 $gi = (string)file_get_contents(__DIR__ . '/../.gitignore');
 ok(strpos($gi, 'api/pcm-slackjobs-status.json') !== false && strpos($gi, 'api/pcm-slackjobs.log') !== false, 'status and log are gitignored');
 
+echo "-- 23 Oct 2026: Slack's &amp; &lt; &gt; are undone\n";
+ok(sj_clean('NR Sharland &amp; Co') === 'NR Sharland & Co', 'an ampersand Slack escaped comes back as & (NR Sharland & Co)');
+ok(sj_clean('Fix &lt;urgent&gt; &amp;amp; test') === 'Fix <urgent> &amp; test', '&lt; &gt; undone once only (the portal escapes again when it shows them)');
+ok(sj_clean('<mailto:a@b.co|a@b.co> &amp; <https://x.example|site>') === 'a@b.co & site', 'links are still turned into text first');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

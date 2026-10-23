@@ -356,6 +356,7 @@ function invq_job_row($job, $invRow, $now = null) {
         'done'     => ((string)(isset($job['status']) ? $job['status'] : '') === 'done'),
         'item'     => (string)(isset($job['item_id']) ? $job['item_id'] : ''),          // the QuickBooks Product/Service picked for it
         'item_name' => invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100),
+        'lines'    => (isset($job['lines']) && is_array($job['lines'])) ? array_values($job['lines']) : array(),   // several lines typed in the portal (23 Oct 2026)
         'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
@@ -503,4 +504,98 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
     foreach ($weeks as $w) $wl[] = array('start' => $w['start'], 'n' => $w['n'], 'invoices' => round($w['invoices'], 2), 'plans' => round($w['plans'], 2), 'total' => round($w['invoices'] + $w['plans'], 2));
     return array('month' => $month, 'rows' => $rows, 'weeks' => $wl,
                  'invoices' => round($inv, 2), 'plans' => round($plans, 2), 'total' => round($inv + $plans, 2));
+}
+
+/* ---- 23 Oct 2026 (later): several lines on one invoice, and the email seen before it goes ----------------------------
+   Owner: "we can only add 1 product ... collection delivery, and with this particular one, we've loaned him a hard drive
+   as well" and "before we send it, can we preview the email with the invoice and everything?" */
+define('INVQ_MAX_LINES', 12);
+
+/* Typed invoice lines -> array(clean lines | null, error word). Each line: a service from QuickBooks' own list (or none),
+   what was done, how many, the price of one. A line with a price of 0 goes on as wording only (a loan, a note). A line
+   with nothing typed is dropped. $items = invq_items() - an id not on it is refused, never invented. */
+function invq_lines_clean($raw, $items) {
+    if (!is_array($raw)) return array(null, 'bad_lines');
+    $out = array(); $sum = 0.0;
+    foreach (array_slice(array_values($raw), 0, INVQ_MAX_LINES) as $ln) {
+        if (!is_array($ln)) continue;
+        $itemId = preg_replace('/[^0-9]/', '', (string)(isset($ln['item']) ? $ln['item'] : ''));
+        $it = $itemId !== '' ? invq_item_find($items, $itemId) : null;
+        if ($itemId !== '' && !$it) return array(null, 'bad_item');
+        $desc = invq_str(isset($ln['desc']) ? $ln['desc'] : '', 200);
+        $rateRaw = preg_replace('/[^0-9.]/', '', (string)(isset($ln['rate']) ? $ln['rate'] : ''));
+        if ($rateRaw !== '' && !is_numeric($rateRaw)) return array(null, 'bad_amount');
+        $rate = $rateRaw === '' ? 0.0 : round((float)$rateRaw, 2);
+        if ($rate > INVQ_MAX_AMOUNT) return array(null, 'bad_amount');
+        $qtyRaw = trim((string)(isset($ln['qty']) ? $ln['qty'] : '1'));
+        if ($qtyRaw === '') $qtyRaw = '1';
+        if (!preg_match('/^\d{1,2}$/', $qtyRaw) || (int)$qtyRaw < 1) return array(null, 'bad_qty');
+        $qty = (int)$qtyRaw;
+        if ($desc === '' && !$it && $rate <= 0) continue;                       // nothing typed on this line
+        if ($desc === '' && $it) $desc = invq_str($it['desc'] !== '' ? $it['desc'] : $it['name'], 200);
+        if ($desc === '') return array(null, 'no_desc');
+        $out[] = array('item' => $it ? (string)$it['id'] : '', 'item_name' => $it ? (string)$it['name'] : '', 'desc' => $desc, 'qty' => $qty, 'rate' => $rate);
+        $sum += $qty * $rate;
+    }
+    if (round($sum, 2) > INVQ_MAX_AMOUNT) return array(null, 'large');
+    return array($out, '');
+}
+/* What a job's lines come to */
+function invq_lines_total($lines) {
+    $t = 0.0;
+    foreach ((array)$lines as $ln) if (is_array($ln)) $t += (int)(isset($ln['qty']) ? $ln['qty'] : 1) * invq_num(isset($ln['rate']) ? $ln['rate'] : 0);
+    return round($t, 2);
+}
+/* A job's lines as QuickBooks invoice/estimate lines: a priced line on its service (else the default service), a 0-price
+   line as wording only. */
+function invq_qbo_lines($lines, $defaultItem, $tax) {
+    $out = array();
+    foreach ((array)$lines as $ln) {
+        if (!is_array($ln)) continue;
+        $desc = invq_str(isset($ln['desc']) ? $ln['desc'] : '', 200);
+        $qty = max(1, (int)(isset($ln['qty']) ? $ln['qty'] : 1));
+        $rate = round(invq_num(isset($ln['rate']) ? $ln['rate'] : 0), 2);
+        if ($rate <= 0) { $out[] = array('DetailType' => 'DescriptionOnly', 'Description' => $desc, 'DescriptionLineDetail' => new stdClass()); continue; }
+        $item = (string)(isset($ln['item']) ? $ln['item'] : '') !== '' ? (string)$ln['item'] : (string)$defaultItem;
+        $l = array('DetailType' => 'SalesItemLineDetail', 'Amount' => round($qty * $rate, 2), 'Description' => $desc,
+                   'SalesItemLineDetail' => array('ItemRef' => array('value' => $item), 'Qty' => $qty, 'UnitPrice' => $rate));
+        if ((string)$tax !== '') $l['SalesItemLineDetail']['TaxCodeRef'] = array('value' => (string)$tax);
+        $out[] = $l;
+    }
+    return $out;
+}
+
+/* The invoice email as QuickBooks will send it: its own wording (Settings > Sales > Messages, read through the API) with
+   [Invoice No.] and [Company Name] filled in, the "Dear <first name>," greeting, and the invoice's lines, total and due
+   date as its short summary. $tpl = array(Subject, Message) | null (QuickBooks did not say). */
+function invq_first_name($givenName, $displayName) {
+    $g = trim((string)$givenName);
+    if ($g !== '') return invq_str($g, 40);
+    $w = preg_split('/\s+/', trim((string)$displayName));
+    $w = array_values(array_filter((array)$w, function ($x) { return $x !== '' && !preg_match('/^(mr|mrs|ms|miss|dr|mx)\.?$/i', $x); }));
+    return $w ? invq_str($w[0], 40) : '';
+}
+function invq_email_fill($tpl, $inv, $company, $first) {
+    $no = invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 30);
+    $fill = function ($s) use ($no, $company) { return str_replace(array('[Invoice No.]', '[Company Name]'), array($no, (string)$company), (string)$s); };
+    $lines = array();
+    foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $ln) {
+        if (!is_array($ln)) continue;
+        $dt = (string)(isset($ln['DetailType']) ? $ln['DetailType'] : '');
+        if ($dt !== 'SalesItemLineDetail' && $dt !== 'DescriptionOnly') continue;
+        $lines[] = array('desc' => invq_str(isset($ln['Description']) ? $ln['Description'] : '', 200),
+                         'qty' => $dt === 'SalesItemLineDetail' ? (float)(isset($ln['SalesItemLineDetail']['Qty']) ? $ln['SalesItemLineDetail']['Qty'] : 1) : 0,
+                         'amount' => $dt === 'SalesItemLineDetail' ? round(invq_num(isset($ln['Amount']) ? $ln['Amount'] : 0), 2) : 0);
+    }
+    return array(
+        'have_wording' => is_array($tpl),
+        'subject' => is_array($tpl) ? invq_str($fill(isset($tpl['Subject']) ? $tpl['Subject'] : ''), 200) : '',
+        'greeting' => $first !== '' ? 'Dear ' . $first . ',' : '',
+        'body' => is_array($tpl) ? str_replace("\r\n", "\n", $fill(isset($tpl['Message']) ? $tpl['Message'] : '')) : '',
+        'number' => $no, 'lines' => $lines,
+        'total' => round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2),
+        'balance' => round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2),
+        'due' => (string)(isset($inv['DueDate']) ? $inv['DueDate'] : ''),
+        'sent' => invq_email_status($inv) === 'EmailSent',
+    );
 }

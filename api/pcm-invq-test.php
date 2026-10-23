@@ -267,5 +267,47 @@ ok($rsBlock !== '' && strpos($rsBlock, "invq_email_status(\$inv) !== 'EmailSent'
 ok($rsBlock !== '' && strpos($rsBlock, '$to = invq_send_address($c, $inv);') !== false && strpos($SW, 'function invq_send_address($c, $inv)') !== false, 'sending again goes to the address QuickBooks holds, like the first send');
 ok(strpos($EP, "invq_resend(\$c, \$id, \$who)") !== false && strpos($EP, "invq_paid(\$c, (string)(isset(\$in['month'])") !== false, 'the endpoint passes only an invoice id to a send again, and only a month to the money-in read');
 
+echo "-- 23 Oct 2026 (later): several lines on one invoice, and the email seen before it goes\n";
+$items = array(array('id' => '7', 'name' => 'Computer Repair', 'desc' => 'Computer repair', 'price' => 115.0),
+               array('id' => '9', 'name' => 'Collection & Delivery', 'desc' => '', 'price' => 20.0));
+list($L, $e) = invq_lines_clean(array(
+    array('item' => '7', 'desc' => 'Repair: new SSD and Windows reinstalled', 'qty' => '1', 'rate' => '115'),
+    array('item' => '9', 'desc' => '', 'qty' => '2', 'rate' => '£20.00'),
+    array('item' => '', 'desc' => 'Loan of an external hard drive while the PC was here', 'qty' => '', 'rate' => ''),
+    array('item' => '', 'desc' => '', 'qty' => '1', 'rate' => ''),
+), $items);
+ok($e === '' && count($L) === 3 && $L[1]['desc'] === 'Collection & Delivery' && $L[1]['qty'] === 2 && $L[1]['rate'] === 20.0 && $L[2]['rate'] === 0.0 && $L[2]['qty'] === 1,
+   'three lines kept (a blank one dropped); a service with no wording takes its name; a 0-price line stays as wording', json_encode(array($L, $e)));
+ok(invq_lines_total($L) === 155.0, 'the job\'s price is what the lines come to (£115 + 2 x £20 + £0 = £155)');
+ok(invq_lines_clean(array(array('item' => '99', 'desc' => 'x', 'rate' => '5')), $items)[1] === 'bad_item', 'a service not on QuickBooks\' own list is refused');
+ok(invq_lines_clean(array(array('desc' => 'x', 'qty' => '0', 'rate' => '5')), $items)[1] === 'bad_qty' && invq_lines_clean(array(array('desc' => 'x', 'qty' => '100', 'rate' => '5')), $items)[1] === 'bad_qty', 'how many: 1 to 99');
+ok(invq_lines_clean(array(array('desc' => 'x', 'qty' => '1', 'rate' => '1.2.3')), $items)[1] === 'bad_amount' && invq_lines_clean(array(array('desc' => 'x', 'qty' => '3', 'rate' => '900')), $items)[1] === 'large', 'a nonsense price is refused; over £2,000 in all is "large"');
+ok(invq_lines_clean(array(array('desc' => '', 'qty' => '1', 'rate' => '50')), $items)[1] === 'no_desc', 'a priced line needs wording');
+$Q = invq_qbo_lines($L, '1174', '20');
+ok(count($Q) === 3 && $Q[0]['SalesItemLineDetail']['ItemRef']['value'] === '7' && $Q[1]['Amount'] === 40.0 && $Q[1]['SalesItemLineDetail']['Qty'] === 2 && $Q[1]['SalesItemLineDetail']['UnitPrice'] === 20.0
+   && $Q[1]['SalesItemLineDetail']['TaxCodeRef']['value'] === '20' && $Q[2]['DetailType'] === 'DescriptionOnly' && $Q[2]['Description'] === $L[2]['desc'],
+   'QuickBooks lines: each on its own service, qty x price, No VAT code; the 0-price loan as wording only', json_encode($Q));
+$Q2 = invq_qbo_lines(array(array('item' => '', 'desc' => 'Something', 'qty' => 1, 'rate' => 30)), '1174', '');
+ok($Q2[0]['SalesItemLineDetail']['ItemRef']['value'] === '1174' && !isset($Q2[0]['SalesItemLineDetail']['TaxCodeRef']), 'a priced line with no service goes on the default service');
+ok(invq_job_row(array('id' => 'L1', 'lines' => $L, 'amount' => 155, 'desc' => $L[0]['desc'], 'email' => 'x@example.com'), null)['lines'] === $L, 'the job row carries its lines back to the portal');
+ok(invq_first_name('', 'Mr Tayfun Kaptanoglu') === 'Tayfun' && invq_first_name('Hanna', 'Hanna Knight') === 'Hanna' && invq_first_name('', 'NR Sharland & Co') === 'NR', 'first name for "Dear ...": QuickBooks\' given name, else the display name without Mr/Mrs');
+$tpl = array('Subject' => 'Invoice [Invoice No.] from 365 Techies Ltd', 'Message' => "Please find enclosed your invoice [Invoice No.].\r\nReference: [Invoice No.]\r\nhttps://365techies.co.uk/pay/?ref=[Invoice No.]\r\nFrom [Company Name]");
+$ef = invq_email_fill($tpl, $mk(900, array('DocNumber' => '4905/900', 'EmailStatus' => 'NotSet', 'Line' => array(
+          array('DetailType' => 'SalesItemLineDetail', 'Amount' => 115, 'Description' => 'Repair', 'SalesItemLineDetail' => array('Qty' => 1)),
+          array('DetailType' => 'DescriptionOnly', 'Description' => 'Loan of a hard drive'),
+          array('DetailType' => 'SubTotalLineDetail', 'Amount' => 115)), 'TotalAmt' => 115, 'Balance' => 115)), '365 Techies Ltd', 'Tayfun');
+ok($ef['subject'] === 'Invoice 4905/900 from 365 Techies Ltd' && $ef['greeting'] === 'Dear Tayfun,' && strpos($ef['body'], "Reference: 4905/900\nhttps://365techies.co.uk/pay/?ref=4905/900\nFrom 365 Techies Ltd") !== false && strpos($ef['body'], '[') === false,
+   'the email: subject and body with the invoice number and company filled in, "Dear Tayfun,"', json_encode($ef));
+ok(count($ef['lines']) === 2 && $ef['lines'][1]['desc'] === 'Loan of a hard drive' && $ef['total'] === 115.0 && $ef['sent'] === false, 'its summary: the invoice\'s own lines (not the subtotal) and total');
+ok(invq_email_fill(null, $mk(901), '', '')['have_wording'] === false, 'no wording from QuickBooks -> the preview says so rather than inventing it');
+$sj0 = strpos($EP, "if (\$action === 'setjob')"); $sj1 = strpos($EP, "if (\$action === 'hold'");
+$setjobBlock2 = ($sj0 !== false && $sj1 > $sj0) ? substr($EP, $sj0, $sj1 - $sj0) : '';
+$pq0 = strpos($EP, "if (\$action === 'pcquote')"); $pq1 = strpos($EP, "if (\$action === 'quote')");
+$pcqBlock = ($pq0 !== false && $pq1 > $pq0) ? substr($EP, $pq0, $pq1 - $pq0) : '';
+ok(substr_count($EP, "\$in['lines']") === substr_count($setjobBlock2, "\$in['lines']") + substr_count($pcqBlock, "\$in['lines']") && substr_count($setjobBlock2, "\$in['lines']") > 0 && strpos($setjobBlock2, "invq_lines_clean(\$in['lines'], invq_items(\$c))") !== false,
+   'typed lines reach only the job record (setjob), checked against QuickBooks\' own service list');
+ok(strpos($SW, "invq_qbo_lines(\$job['lines'], \$c['item'], \$c['tax'])") !== false && substr_count($SW, "invq_qbo_lines(\$job['lines']") === 2, 'the invoice and the estimate are both made from the job\'s lines when it has them');
+ok(strpos($EP, "invq_email_preview(\$c, \$id)") !== false && strpos($SW, "'/preferences'") !== false, 'the email preview reads QuickBooks\' own wording; the request names only the invoice');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

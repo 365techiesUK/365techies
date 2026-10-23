@@ -149,15 +149,15 @@ function invq_kind_sync($c, $now = null) {
     return !empty($r['n']) ? (int)$r['n'] : 0;
 }
 
-function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null) {
+function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null, $lines = null) {
     $amount = ($amount === null) ? null : round(invq_num($amount), 2);
     if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
     $desc = ($desc === null) ? null : invq_str($desc, 200);
     if ($desc !== null && $desc === '') return array('ok' => false, 'error' => 'no_desc');
     $email = ($email === null) ? null : invq_email_ok($email);
     if ($email !== null && $email === '') return array('ok' => false, 'error' => 'bad_email');
-    if ($amount === null && $desc === null && $item === null && $email === null) return array('ok' => false, 'error' => 'nothing_to_set');
-    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email) {
+    if ($amount === null && $desc === null && $item === null && $email === null && $lines === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email, $lines) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
@@ -165,6 +165,17 @@ function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null)
             if ($desc !== null)   { $d['jobs'][$i]['desc'] = $desc; $d['jobs'][$i]['desc_by'] = 'staff'; }
             if ($email !== null)  { $d['jobs'][$i]['email'] = $email; $d['jobs'][$i]['email_by'] = 'staff'; }   // kept through re-polls by sj_merge()
             if (is_array($item))  invq_job_apply_item($d['jobs'][$i], $item);   // after the typed values, so it never overrides them
+            /* several lines (23 Oct 2026): the job's price is what they come to and its wording the first line's - both
+               staff-set, so a re-poll of the Slack post keeps them (sj_merge keeps the lines themselves as it keeps
+               any field it does not know). An empty list goes back to the one price and wording. */
+            if (is_array($lines)) {
+                if ($lines) {
+                    $d['jobs'][$i]['lines'] = array_values($lines);
+                    $d['jobs'][$i]['amount'] = invq_lines_total($lines); $d['jobs'][$i]['amount_by'] = 'staff';
+                    $d['jobs'][$i]['desc'] = $lines[0]['desc']; $d['jobs'][$i]['desc_by'] = 'staff';
+                    $d['jobs'][$i]['item_id'] = $lines[0]['item']; $d['jobs'][$i]['item_name'] = $lines[0]['item_name'];
+                } else unset($d['jobs'][$i]['lines']);
+            }
             $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
             return array('ok' => true, 'data' => $d);
         }
@@ -535,7 +546,8 @@ function invq_quote_for_job($c, $jobId, $who) {
     } else {
         $line = array('DetailType' => 'DescriptionOnly', 'Description' => $desc, 'DescriptionLineDetail' => new stdClass());
     }
-    $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
+    $qLines = (!empty($job['lines']) && is_array($job['lines'])) ? invq_qbo_lines($job['lines'], $c['item'], $c['tax']) : array($line);   // several lines typed in the portal
+    $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => $qLines, 'TxnDate' => gmdate('Y-m-d'),
                  'ExpirationDate' => gmdate('Y-m-d', time() + 30 * 86400), 'BillEmail' => array('Address' => $email),
                  'PrivateNote' => 'Started from the staff portal by ' . $who . ' (job ' . $jobId . ')');
     /* Its number: the 4905/NNN sequence if quotes already carry it, else the next in whatever
@@ -665,7 +677,9 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     $line = array('DetailType' => 'SalesItemLineDetail', 'Amount' => $amount, 'Description' => $desc,
                   'SalesItemLineDetail' => array('ItemRef' => array('value' => $itemRef), 'Qty' => 1, 'UnitPrice' => $amount));
     if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
-    $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
+    if (!empty($job['lines']) && is_array($job['lines'])) $iLines = invq_qbo_lines($job['lines'], $c['item'], $c['tax']);   // several lines typed in the portal (23 Oct 2026)
+    else $iLines = array($line);
+    $inv = array('CustomerRef' => array('value' => $cid), 'Line' => $iLines, 'TxnDate' => gmdate('Y-m-d'),
                  'BillEmail' => array('Address' => $email));
     $doc = invq_next_docnumber($c);            // 4905/NNN, David's sequence, so the console's invoices are numbered like his
     if ($doc !== '') $inv['DocNumber'] = $doc;
@@ -789,6 +803,31 @@ function invq_resend($c, $id, $who) {
     invq_log('sent again ' . $id . ($num !== '' ? ' #' . $num : '') . ' ' . invq_money($bal) . ' owed, to ' . $to . ' by ' . $who);
     invq_slack(':outbox_tray: *Invoice sent again* - ' . invq_customer_name($inv) . ', ' . invq_money($bal) . ' still owed' . ($num !== '' ? ' (#' . $num . ')' : '') . ', by ' . $who . '.');
     return array('ok' => true, 'to' => $to, 'number' => $num, 'amount' => round($bal, 2));
+}
+
+/* The email QuickBooks will send for an invoice, seen before it goes (read only): QuickBooks' own invoice wording from
+   its Preferences, the company name, the customer's first name for "Dear ...,", the address it will go to, and the
+   invoice's lines and total. See invq_email_fill(). The PDF that goes with it is action=pdf. */
+function invq_email_preview($c, $id) {
+    if (!preg_match('/^\d+$/', (string)$id)) return array('ok' => false, 'why' => 'bad_id');
+    $one = invq_api($c, 'GET', '/invoice/' . $id);
+    if (!qbo_lib_ok($one) || empty($one['json']['Invoice']['Id'])) return array('ok' => false, 'why' => 'not_found');
+    $inv = $one['json']['Invoice'];
+    $pr = invq_api($c, 'GET', '/preferences');
+    $tpl = (qbo_lib_ok($pr) && isset($pr['json']['Preferences']['EmailMessagesPrefs']['InvoiceMessage']) && is_array($pr['json']['Preferences']['EmailMessagesPrefs']['InvoiceMessage']))
+        ? $pr['json']['Preferences']['EmailMessagesPrefs']['InvoiceMessage'] : null;
+    $ci = invq_api($c, 'GET', '/companyinfo/' . rawurlencode($c['realm']));
+    $company = qbo_lib_ok($ci) ? invq_str(isset($ci['json']['CompanyInfo']['CompanyName']) ? $ci['json']['CompanyInfo']['CompanyName'] : '', 80) : '';
+    $first = '';
+    $cid = invq_customer_id($inv);
+    if (preg_match('/^\d+$/', $cid)) {
+        $cr = invq_api($c, 'GET', '/customer/' . $cid);
+        if (qbo_lib_ok($cr)) $first = invq_first_name(isset($cr['json']['Customer']['GivenName']) ? $cr['json']['Customer']['GivenName'] : '',
+                                                      isset($cr['json']['Customer']['DisplayName']) ? $cr['json']['Customer']['DisplayName'] : '');
+    }
+    $out = invq_email_fill($tpl, $inv, $company, $first);
+    $out['ok'] = true; $out['to'] = invq_send_address($c, $inv); $out['customer'] = invq_customer_name($inv);
+    return $out;
 }
 
 /* Customers' own emails, for invoices that carry none (read only). -> customer id => email */

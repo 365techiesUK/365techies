@@ -77,6 +77,9 @@ function sj_clean($v, $max = 200) {
     $s = preg_replace('/:[a-z0-9_+-]+:/', ' ', $s);                    // :red_circle: :inbox_tray:
     $s = str_replace(array('`', '*', '_'), '', $s);                     // mrkdwn emphasis + fences
     $s = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/', ' ', $s);
+    /* Slack escapes &, < and > in message text (23 Oct 2026: "NR Sharland &amp; Co" on the invoice card). Undone last,
+       after the <...> links above, so a typed "&lt;" can't become a link; the portal escapes it again when it shows it. */
+    $s = str_replace(array('&lt;', '&gt;', '&amp;'), array('<', '>', '&'), $s);
     $s = trim(preg_replace('/[ \t]+/', ' ', $s));
     return function_exists('mb_substr') ? mb_substr($s, 0, $max) : substr($s, 0, $max);
 }
