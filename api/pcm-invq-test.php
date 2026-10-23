@@ -413,9 +413,10 @@ ok($e === '' && $C1 === array('name' => 'Paul Barber', 'email' => 'davina.g@exam
    'cleaned: trimmed name, lower-case email, upper-case postcode, numbers as typed', json_encode(array($C1, $e)));
 ok(invq_contact_clean(array('name' => '', 'email' => 'a@b.co'))[1] === 'no_name' && invq_contact_clean(array('name' => 'X', 'email' => 'not an email'))[1] === 'bad_email'
    && invq_contact_clean(array('name' => 'X', 'postcode' => 'BH1#1AA'))[1] === 'bad_postcode' && invq_contact_clean(array('name' => 'X', 'phone' => 'call me'))[1] === 'bad_phone'
-   && invq_contact_clean('Paul')[1] === 'bad_contact' && invq_contact_clean(array('name' => array('x')))[1] === 'no_name',
+   && invq_contact_clean('Paul')[1] === 'bad_contact' && invq_contact_clean(array('name' => array('x')))[1] === 'bad_contact' && invq_contact_clean(array())[1] === 'bad_contact',
    'refused: no name, a bad email, postcode or phone, or not a set of details at all');
-ok(invq_contact_clean(array('name' => 'Davina Gahan'))[0] === array('name' => 'Davina Gahan', 'email' => '', 'company' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => ''), 'only a name is needed; the rest may be blank');
+ok(invq_contact_clean(array('name' => 'Paul Barber'))[0] === array('name' => 'Paul Barber') && invq_contact_clean(array('email' => 'davina.new@example.com'))[0] === array('email' => 'davina.new@example.com')
+   && invq_contact_clean(array('mobile' => ''))[0] === array('mobile' => ''), 'only the fields sent come back (the portal sends just what was changed); a field may be emptied on purpose');
 $jr = invq_job_row(array('id' => 'P1', 'name' => 'Paul Southern', 'email' => 'p@example.com', 'addr' => '1 Road', 'postcode' => 'BH1 1AA', 'phone' => '01202 1', 'mobile' => '07700 1', 'company' => '', 'contact_by' => array('name' => 'Steve')), null);
 ok($jr['contact'] === array('name' => 'Paul Southern', 'email' => 'p@example.com', 'company' => '', 'addr' => '1 Road', 'postcode' => 'BH1 1AA', 'phone' => '01202 1', 'mobile' => '07700 1') && $jr['contact_edited'] === true
    && invq_job_row(array('id' => 'P2'), null)['contact_edited'] === false, 'the job row carries its contact details (and whether they were corrected) to the editor');

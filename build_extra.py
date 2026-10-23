@@ -31818,7 +31818,7 @@ def write_portal_page():
       var c = j.contact || {}, MAX = { name: 90, email: 120, company: 90, addr: 200, postcode: 10, phone: 30, mobile: 30 };
       function f(k, label, ph, type, w) {
         return '<label style="display:flex;flex-direction:column;gap:.1rem;font-size:.78rem;flex:1;min-width:' + (w || 150) + 'px"><span class="quiet">' + label + '</span>'
-          + '<input class="invqc" data-k="' + k + '" type="' + (type || 'text') + '" maxlength="' + MAX[k] + '" value="' + esc(c[k] || '') + '" placeholder="' + esc(ph || '') + '" style="margin:0"></label>';
+          + '<input class="invqc" data-k="' + k + '" data-orig="' + esc(c[k] || '') + '" type="' + (type || 'text') + '" maxlength="' + MAX[k] + '" value="' + esc(c[k] || '') + '" placeholder="' + esc(ph || '') + '" style="margin:0"></label>';
       }
       return '<div class="invqcform" style="display:none;margin:.4rem 0 0;padding:.5rem .6rem;border:1px dashed rgba(125,170,220,.45);border-radius:10px">'
         + '<div class="quiet" style="font-size:.82rem;margin:0 0 .3rem">Their details as they go on the invoice and into QuickBooks. Saved here, the next read of the Slack post won\\u2019t put the old ones back (the Slack post itself isn\\u2019t changed).</div>'
@@ -31872,8 +31872,9 @@ def write_portal_page():
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
         if (j.can_create || j.why_not === 'no_amount' || j.why_not === 'no_desc' || j.why_not === 'no_email') body = linesEditor(j);
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
-        body = contactForm(j) + body;
-        body += '<div style="margin:.3rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><button class="sm ghost invqcedit" style="padding:.15rem .5rem;font-size:.76rem" title="Name, email, address, landline, mobile">\\u270f\\ufe0f Edit contact details</button>'
+        /* only when this list carries their details (a list cached before 23 Oct 2026 did not) - never an empty form */
+        if (j.contact) body = contactForm(j) + body;
+        body += '<div style="margin:.3rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + (j.contact ? '<button class="sm ghost invqcedit" style="padding:.15rem .5rem;font-size:.76rem" title="Name, email, address, landline, mobile">\\u270f\\ufe0f Edit contact details</button>' : '')
           + (j.contact_edited ? '<span class="quiet" style="font-size:.76rem">details corrected in the portal</span>' : '')
           + '<button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \\u2014 hide it</button></div>';
       }
@@ -32051,9 +32052,13 @@ def write_portal_page():
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqcsave'), function (b) {
       b.onclick = function () {
-        var f = b.closest('.invqcform'), msg = f.querySelector('.invqcmsg'), ct = {};
-        Array.prototype.forEach.call(f.querySelectorAll('.invqc'), function (inp) { ct[inp.getAttribute('data-k')] = inp.value.trim(); });
-        if (!ct.name) { msg.textContent = 'Type their name.'; return; }
+        var f = b.closest('.invqcform'), msg = f.querySelector('.invqcmsg'), ct = {}, n = 0, nm = f.querySelector('.invqc[data-k="name"]');
+        if (!nm || !nm.value.trim()) { msg.textContent = 'Type their name.'; return; }
+        /* only what was changed goes, so nothing the form was not shown can be blanked */
+        Array.prototype.forEach.call(f.querySelectorAll('.invqc'), function (inp) {
+          var v = inp.value.trim(); if (v !== (inp.getAttribute('data-orig') || '').trim()) { ct[inp.getAttribute('data-k')] = v; n++; }
+        });
+        if (!n) { msg.textContent = 'Nothing has changed.'; return; }
         b.disabled = true; msg.textContent = 'Saving\\u2026';
         post(INVQ, { action: 'contact', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), contact: ct }).then(function (j) {
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }

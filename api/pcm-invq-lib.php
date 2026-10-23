@@ -526,26 +526,25 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
 define('INVQ_MAX_LINES', 12);
 /* A job's contact details as staff correct them on the row (owner, 23 Oct 2026: "Paul Southern ... Southern's the road he
    lives in ... his surname was Barber" and "Davina's email address is slightly different. David took it and it was
-   slightly wrong"). -> array(clean details | null, error word). A name is needed; the rest may be blank. */
+   slightly wrong"). -> array(clean details | null, error word). Only the fields sent are cleaned and come back - the
+   portal sends only what was changed, so a row read from an older list can never blank what it did not show. A name,
+   when sent, can't be empty; the rest may be. */
 function invq_contact_fields() { return array('name', 'email', 'company', 'addr', 'postcode', 'phone', 'mobile'); }
 function invq_contact_clean($raw) {
     if (!is_array($raw)) return array(null, 'bad_contact');
-    $g = function ($k, $max) use ($raw) { return invq_str(isset($raw[$k]) && is_string($raw[$k]) ? $raw[$k] : '', $max); };
-    $out = array('name' => $g('name', 90));
-    if ($out['name'] === '') return array(null, 'no_name');
-    $em = $g('email', 120);
-    if ($em !== '') { $em = invq_email_ok($em); if ($em === '') return array(null, 'bad_email'); }
-    $out['email'] = $em;
-    $out['company'] = $g('company', 90);
-    $out['addr'] = $g('addr', 200);
-    $pc = strtoupper(preg_replace('/\s+/', ' ', $g('postcode', 10)));
-    if ($pc !== '' && !preg_match('/^[A-Z0-9][A-Z0-9 ]{1,9}$/', $pc)) return array(null, 'bad_postcode');
-    $out['postcode'] = $pc;
-    foreach (array('phone', 'mobile') as $k) {
-        $p = $g($k, 30);
-        if ($p !== '' && !preg_match('/^[+(]?[0-9][0-9 ()\-]{5,29}$/', $p)) return array(null, 'bad_phone');
-        $out[$k] = $p;
+    $max = array('name' => 90, 'email' => 120, 'company' => 90, 'addr' => 200, 'postcode' => 10, 'phone' => 30, 'mobile' => 30);
+    $out = array();
+    foreach (invq_contact_fields() as $k) {
+        if (!array_key_exists($k, $raw)) continue;
+        if (!is_string($raw[$k])) return array(null, 'bad_contact');
+        $v = invq_str($raw[$k], $max[$k]);
+        if ($k === 'name' && $v === '') return array(null, 'no_name');
+        if ($k === 'email' && $v !== '') { $v = invq_email_ok($v); if ($v === '') return array(null, 'bad_email'); }
+        if ($k === 'postcode') { $v = strtoupper(preg_replace('/\s+/', ' ', $v)); if ($v !== '' && !preg_match('/^[A-Z0-9][A-Z0-9 ]{1,9}$/', $v)) return array(null, 'bad_postcode'); }
+        if (($k === 'phone' || $k === 'mobile') && $v !== '' && !preg_match('/^[+(]?[0-9][0-9 ()\-]{5,29}$/', $v)) return array(null, 'bad_phone');
+        $out[$k] = $v;
     }
+    if (!$out) return array(null, 'bad_contact');
     return array($out, '');
 }
 /* When an invoice is due (owner, 23 Oct 2026: "we only want it to be like, give them like, about 2 or 3 days to pay ...
