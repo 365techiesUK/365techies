@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 50069282b4</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 00a1ee6583</p><script>
 (function () {
-  var P365BUILD = '50069282b4';
+  var P365BUILD = '00a1ee6583';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7335,6 +7335,28 @@
       if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent again to ' + esc(j.to) + '</span>';
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
   }
+  /* 23 Oct 2026 (owner: "when they pay, we normally send like a thank you sort of email, to confirm they've paid ... from
+     QuickBooks"): QuickBooks emails its own payment receipt. Asks first; the address is QuickBooks' own. Used by Money in
+     (a payment, by its id) and by a paid job row (its invoice: the newest payment on it). */
+  function invqThank(b, msg) {
+    var no = b.getAttribute('data-no') || '', amt = parseFloat(b.getAttribute('data-amt')) || 0, to = b.getAttribute('data-to') || '';
+    if (!confirm('QuickBooks will email its payment receipt \u2014 a thank-you confirming ' + (amt > 0 ? invqMoney(amt) + ' ' : '') + 'received'
+      + (no ? ' for invoice #' + no.split(', ').join(', #') : '') + ' \u2014 to ' + (to || 'the email QuickBooks has for ' + (b.getAttribute('data-who') || 'them')) + '.\n\nSend it?')) return;
+    b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
+    var body = { action: 'receipt', stoken: S.stoken, machine: mid() };
+    if (b.getAttribute('data-id')) body.id = b.getAttribute('data-id'); else body.invoice = b.getAttribute('data-inv');
+    post(INVQ, body).then(function (j) {
+      if (!j || !j.ok) {
+        b.disabled = false;
+        var e = j && j.error;
+        if (msg) msg.innerHTML = '<span style="color:#ffb4a2">' + (e === 'recently_thanked' ? 'A thank-you already went for this payment today.' : e === 'no_payment' ? 'QuickBooks has no payment recorded against it yet.' : e === 'no_email' ? 'QuickBooks has no email address for them.' : e === 'rate_limited' ? 'A lot have gone this hour \u2014 try again shortly.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
+        return;
+      }
+      b.style.display = 'none';
+      if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Thank-you sent to ' + esc(j.to) + '</span>';
+    }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
+  }
+  function invqAgo(t) { return invqWhen(Math.max(0, Math.floor((Date.now() / 1000 - t) / 86400))); }
   function loadInvqUnpaid() {
     var el = document.getElementById('invqunpaid'); if (!el) return;
     post(INVQ, { action: 'unpaid', stoken: S.stoken, machine: mid() }).then(function (r) {
@@ -7382,16 +7404,20 @@
         return '<tr><td style="white-space:nowrap">w/c ' + invqDate(w.start) + '</td><td style="text-align:right">' + invqMoney(w.invoices) + (w.n ? ' <span class="quiet" style="font-size:.8rem">(' + w.n + ')</span>' : '') + '</td><td style="text-align:right">' + invqMoney(w.plans) + '</td><td style="text-align:right"><strong>' + invqMoney(w.total) + '</strong></td></tr>';
       }).join('');
       var pay = rows.map(function (x) {
-        return '<tr><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td><strong>' + esc(x.customer || 'Unnamed') + '</strong></td><td>' + (x.invoices && x.invoices.length ? x.invoices.map(function (n) { return '#' + esc(n); }).join(', ') : '<span class="quiet">\u2014</span>') + '</td><td>' + esc(x.how) + '</td><td style="text-align:right;white-space:nowrap">' + invqMoney(x.amount) + '</td></tr>';
+        return '<tr><td style="white-space:nowrap">' + invqDate(x.date) + '</td><td><strong>' + esc(x.customer || 'Unnamed') + '</strong></td><td>' + (x.invoices && x.invoices.length ? x.invoices.map(function (n) { return '#' + esc(n); }).join(', ') : '<span class="quiet">\u2014</span>') + '</td><td>' + esc(x.how) + '</td><td style="text-align:right;white-space:nowrap">' + invqMoney(x.amount) + '</td>'
+          + '<td style="white-space:nowrap">' + (x.thanked ? '<span class="quiet" style="font-size:.8rem">\u2713 thank-you sent ' + esc(invqAgo(x.thanked)) + '</span>'
+            : (x.id ? '<button class="sm ghost invqthank" data-id="' + esc(x.id) + '" data-amt="' + esc(x.amount) + '" data-no="' + esc((x.invoices || []).filter(function (n) { return n.indexOf('id ') !== 0; }).join(', ')) + '" data-who="' + esc(x.customer || '') + '" style="margin:0;padding:.2rem .5rem;font-size:.78rem">\ud83d\ude4f Send a thank-you</button>' : ''))
+          + '<div class="invqtmsg quiet" style="font-size:.78rem"></div></td></tr>';
       }).join('');
       el.innerHTML = '<p style="margin:0 0 .35rem"><strong>Money in \u2014 ' + esc(label) + '</strong> <span class="quiet">' + invqMoney(r.total) + ' so far</span> ' + nav + '</p>'
         + (weeks.length ? '<div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Week</th><th style="text-align:right">Invoices paid</th><th style="text-align:right">Plans (Direct Debit)</th><th style="text-align:right">Total</th></tr></thead><tbody>' + wk
           + '<tr><td><strong>' + esc(MON[parseInt(p0[1], 10) - 1]) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.invoices) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.plans) + '</strong></td><td style="text-align:right"><strong>' + invqMoney(r.total) + '</strong></td></tr></tbody></table></div>' : '<p class="quiet">Nothing paid in ' + esc(label) + ' yet.</p>')
-        + (rows.length ? '<p style="margin:.6rem 0 .3rem"><button class="sm ghost invqplist" style="padding:.2rem .6rem;font-size:.8rem">Show the ' + rows.length + ' invoice payment' + (rows.length === 1 ? '' : 's') + '</button></p><div id="invqplist" style="display:none"><div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Date</th><th>Customer</th><th>Invoice</th><th>How</th><th style="text-align:right">Amount</th></tr></thead><tbody>' + pay + '</tbody></table></div></div>' : '')
+        + (rows.length ? '<p style="margin:.6rem 0 .3rem"><button class="sm ghost invqplist" style="padding:.2rem .6rem;font-size:.8rem">Show the ' + rows.length + ' invoice payment' + (rows.length === 1 ? '' : 's') + '</button></p><div id="invqplist" style="display:none"><div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Date</th><th>Customer</th><th>Invoice</th><th>How</th><th style="text-align:right">Amount</th><th></th></tr></thead><tbody>' + pay + '</tbody></table></div></div>' : '')
         + '<p class="quiet" style="margin:.4rem 0 0;font-size:.82rem">Invoices paid = payments recorded against invoices in QuickBooks: card and PayPal from the pay page straight away, a bank transfer once it\u2019s matched in the bank feed. Plans = the GoCardless payouts posted from the bank feed, after GoCardless\u2019s fees' + (r.plans_read === false ? ' (couldn\u2019t be read just now)' : '') + '.</p>';
       var pb = el.querySelector('.invqpprev'); if (pb) pb.onclick = function () { loadInvqPaid(invqMonthStep(month, -1)); };
       var nb = el.querySelector('.invqpnext'); if (nb) nb.onclick = function () { loadInvqPaid(invqMonthStep(month, 1)); };
       var lb = el.querySelector('.invqplist'); if (lb) lb.onclick = function () { var d = document.getElementById('invqplist'); d.style.display = d.style.display === 'none' ? '' : 'none'; };
+      Array.prototype.forEach.call(el.querySelectorAll('.invqthank'), function (b) { b.onclick = function () { invqThank(b, b.closest('tr').querySelector('.invqtmsg')); }; });
     }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for the payments.</p>'; });
   }
   function invqMoney(v) { return '\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
@@ -7529,7 +7555,10 @@
     }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
-      if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Paid</span>';
+      if (st === 'paid') {
+        chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Paid' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>' + (inv && inv.thanked ? ' <span class="quiet">\u00b7 thank-you sent ' + esc(invqAgo(inv.thanked)) + '</span>' : '');
+        if (inv && inv.id && !inv.thanked) btns = '<button class="sm ghost invqthank" data-inv="' + esc(inv.id) + '" data-amt="' + esc(inv.total) + '" data-no="' + esc(inv.number || '') + '" data-to="' + esc(inv.email || '') + '" data-who="' + esc(j.customer || '') + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="QuickBooks emails its payment receipt, confirming they\u2019ve paid">\ud83d\ude4f Send a thank-you</button>';
+      }
       else if (st === 'sent') {
         /* 23 Oct 2026 (owner: "Tom Wilson's invoice ... hasn't paid it ... we need it that we can basically resend invoices from here") */
         var owes = !!(inv && inv.balance > 0);
@@ -7826,6 +7855,7 @@
     Array.prototype.forEach.call(box.querySelectorAll('.invqpdf'), function (b) { b.onclick = function () { invqPdf(b.getAttribute('data-id'), b); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqprev'), function (b) { b.onclick = function () { invqEmailPreview(b.getAttribute('data-id'), b); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqrow .invqresend'), function (b) { b.onclick = function () { invqResend(b, msgOf(b)); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqrow .invqthank'), function (b) { b.onclick = function () { invqThank(b, msgOf(b)); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqsend'), function (b) {
       b.onclick = function () {
         var id = b.getAttribute('data-id'), x = invOf(id), msg = msgOf(b);
