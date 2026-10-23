@@ -211,5 +211,61 @@ ok(invq_next_number(array('4905/80a', '4905/', '4905/802')) === '4905/803', 'a t
 ok(invq_next_number(array()) === '' && invq_next_number(array('INV-7')) === '', 'nothing in the sequence = blank, never an invented start');
 ok(invq_next_number(array('7/12'), '7/') === '7/13', 'the prefix is a parameter');
 
+echo "-- 23 Oct 2026: sent but not paid, sending one again, and the money in\n";
+$t = strtotime('2026-10-23 16:00:00 UTC');
+$inv = function ($id, $over = array()) use ($mk) { return $mk($id, array_merge(array('EmailStatus' => 'EmailSent', 'TxnDate' => '2026-09-25', 'DueDate' => '2026-10-09'), $over)); };
+$list = array(
+    $inv(808, array('CustomerRef' => array('value' => '21', 'name' => 'Tom Wilson'), 'BillEmail' => array('Address' => ''), 'TotalAmt' => 60, 'Balance' => 60, 'DeliveryInfo' => array('DeliveryTime' => '2026-09-25T10:00:00Z'))),
+    $inv(800, array('CustomerRef' => array('value' => '22', 'name' => 'Alex Barnes'), 'TxnDate' => '2026-09-22', 'DueDate' => '2026-09-22', 'TotalAmt' => 150, 'Balance' => 150)),
+    $inv(815, array('EmailStatus' => 'NotSet', 'TxnDate' => '2026-10-14', 'DueDate' => '2026-11-01')),
+    $inv(811, array('EmailStatus' => 'NotSet', 'CustomerRef' => array('value' => '23', 'name' => 'Media Friendly Ltd'), 'Balance' => 21.45)),
+    $inv(816, array('Balance' => 0)),
+    $inv(820, array('TxnDate' => '2026-10-20', 'DueDate' => '2026-11-03', 'TotalAmt' => 95, 'Balance' => 45)),
+    'junk',
+);
+$ur = invq_unpaid_rows($list, array('21' => 'tom@example.com'), array('808' => $t - 3600), 'https://qbo.example', $t);
+$ids = array_map(function ($r) { return $r['id']; }, $ur);
+ok($ids === array('800', '808', '820'), 'only invoices QuickBooks emailed that still owe: plan (NotSet), unsent and paid ones are left out; most overdue first', json_encode($ids));
+ok($ur[0]['overdue'] === 31 && $ur[1]['overdue'] === 14 && $ur[2]['overdue'] === 0, 'days overdue counted from the due date (31, 14, not yet due)', json_encode(array_map(function ($r) { return $r['overdue']; }, $ur)));
+ok($ur[1]['email'] === 'tom@example.com' && $ur[1]['resent_at'] === $t - 3600 && $ur[1]['url'] === 'https://qbo.example/app/invoice?txnId=808', 'no email on the invoice -> the customer\'s own; when it was last sent again; the QuickBooks link');
+ok($ur[2]['balance'] === 45.0 && $ur[2]['total'] === 95.0, 'a part-paid invoice shows what is still owed and the total');
+ok(invq_month_ok('2026-10') === '2026-10' && invq_month_ok('2026-13') === '' && invq_month_ok("2026-10'") === '' && invq_month_ok('26-10') === '', 'month: YYYY-MM only (nothing else reaches a query)');
+ok(invq_week_start('2026-10-23') === '2026-10-19' && invq_week_start('2026-10-19') === '2026-10-19' && invq_week_start('2026-10-25') === '2026-10-19' && invq_week_start('2026-10-01') === '2026-09-28', 'weeks run Monday to Sunday');
+ok(invq_pay_how(array('PaymentRefNum' => 'pi_3USK55JIknzx9gfe0y')) === 'Card' && invq_pay_how(array('PrivateNote' => 'Paid with PayPal on the 365techies.co.uk pay page')) === 'PayPal'
+   && invq_pay_how(array('PaymentRefNum' => 'PM01XW34J5FQ3WDP3EXC2A31PJ6A')) === 'Direct Debit' && invq_pay_how(array('PaymentMethodRef' => array('value' => '1', 'name' => 'Cash'))) === 'Cash'
+   && invq_pay_how(array()) === 'Bank transfer / other', 'how it was paid: card (Stripe pi_), PayPal, Direct Debit (GoCardless PM), cash, else bank transfer / other');
+$pays = array(
+    array('Id' => 'P1', 'TxnDate' => '2026-10-19', 'TotalAmt' => 60, 'PaymentRefNum' => 'pi_3USK55JIknzx9gfe0y', 'CustomerRef' => array('value' => '77', 'name' => 'Hanna Knight'),
+          'Line' => array(array('Amount' => 60, 'LinkedTxn' => array(array('TxnId' => '12838', 'TxnType' => 'Invoice'))))),
+    array('Id' => 'P2', 'TxnDate' => '2026-10-13', 'TotalAmt' => 21.45, 'PaymentRefNum' => 'PM01XW34J5FQ3WDP3EXC2A31PJ6A', 'CustomerRef' => array('value' => '23', 'name' => 'Media Friendly Ltd'),
+          'Line' => array(array('Amount' => 21.45, 'LinkedTxn' => array(array('TxnId' => '12066', 'TxnType' => 'Invoice'))))),
+    array('Id' => 'P3', 'TxnDate' => '2026-10-22', 'TotalAmt' => 30, 'CustomerRef' => array('value' => '30', 'name' => 'Mr Barry Cross'),
+          'Line' => array(array('Amount' => 30, 'LinkedTxn' => array(array('TxnId' => '99999', 'TxnType' => 'Invoice'))))),
+    array('Id' => 'P4', 'TxnDate' => '2026-09-30', 'TotalAmt' => 50, 'CustomerRef' => array('name' => 'Last month')),
+    array('Id' => 'P5', 'TxnDate' => '2026-10-05', 'TotalAmt' => 0, 'CustomerRef' => array('name' => 'Zero')),
+);
+$deps = array(
+    array('Id' => 'D1', 'TxnDate' => '2026-10-19', 'Line' => array(
+        array('Amount' => 21.45, 'LinkedTxn' => array(array('TxnId' => 'P2', 'TxnType' => 'Payment'))),
+        array('Amount' => 222.03, 'DepositLineDetail' => array('AccountRef' => array('value' => '9', 'name' => '365 Gocardless Service/Fee Income'))))),
+    array('Id' => 'D2', 'TxnDate' => '2026-10-12', 'Line' => array(array('Amount' => 930.40, 'DepositLineDetail' => array('AccountRef' => array('value' => '9', 'name' => '365 Gocardless Service/Fee Income'))))),
+    array('Id' => 'D3', 'TxnDate' => '2026-10-22', 'Line' => array(array('Amount' => 37.45, 'DepositLineDetail' => array('AccountRef' => array('value' => '5', 'name' => 'Facebook income'))))),
+    array('Id' => 'D4', 'TxnDate' => '2026-10-22', 'Line' => array(array('Amount' => -1.10, 'DepositLineDetail' => array('AccountRef' => array('value' => '6', 'name' => 'Stripe Fees'))))),
+);
+$ps = invq_paid_summary($pays, array('12838' => '4905/816', '12066' => '4905/811'), $deps, '2026-10');
+ok(count($ps['rows']) === 3 && $ps['rows'][0]['customer'] === 'Mr Barry Cross' && $ps['rows'][0]['invoices'] === array('id 99999') && $ps['rows'][1]['invoices'] === array('4905/816') && $ps['rows'][1]['how'] === 'Card',
+   'this month\'s invoice payments, newest first, with the invoice numbers they paid and how (last month and £0 left out)', json_encode($ps['rows']));
+ok($ps['invoices'] === 111.45 && $ps['plans'] === 1152.43 && $ps['total'] === 1263.88, 'totals: invoices £111.45 + plans £1,152.43 (GoCardless income lines only - not Facebook, fees or the invoice part of a payout)', json_encode(array($ps['invoices'], $ps['plans'], $ps['total'])));
+$wk = array(); foreach ($ps['weeks'] as $w) $wk[$w['start']] = array($w['invoices'], $w['plans'], $w['total'], $w['n']);
+ok(array_keys($wk) === array('2026-10-19', '2026-10-12') && $wk['2026-10-19'] === array(90.0, 222.03, 312.03, 2) && $wk['2026-10-12'] === array(21.45, 930.4, 951.85, 1),
+   'week by week, newest week first: w/c 19 Oct £90 + £222.03, w/c 12 Oct £21.45 + £930.40', json_encode($wk));
+$sw0 = strpos($SW, 'function invq_resend('); $sw1 = strpos($SW, 'function invq_customer_emails(');
+$rsBlock = ($sw0 !== false && $sw1 > $sw0) ? substr($SW, $sw0, $sw1 - $sw0) : '';
+ok($rsBlock !== '' && strpos($rsBlock, "invq_email_status(\$inv) !== 'EmailSent') return array('ok' => false, 'error' => 'not_sent_yet')") !== false
+   && strpos($rsBlock, "if (\$bal <= 0) return array('ok' => false, 'error' => 'nothing_owed')") !== false && strpos($rsBlock, 'INVQ_RESEND_GAP') !== false && strpos($rsBlock, 'INVQ_MAX_SENDS_HOUR') !== false,
+   'sending again: only an invoice QuickBooks has sent, only while money is owed, not twice in 20 hours, inside the hourly tripwire');
+ok($rsBlock !== '' && strpos($rsBlock, '$to = invq_send_address($c, $inv);') !== false && strpos($SW, 'function invq_send_address($c, $inv)') !== false, 'sending again goes to the address QuickBooks holds, like the first send');
+ok(strpos($EP, "invq_resend(\$c, \$id, \$who)") !== false && strpos($EP, "invq_paid(\$c, (string)(isset(\$in['month'])") !== false, 'the endpoint passes only an invoice id to a send again, and only a month to the money-in read');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

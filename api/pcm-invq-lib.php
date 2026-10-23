@@ -387,3 +387,120 @@ function invq_slack_line($jobRows, $invRows, $consoleUrl = 'https://365techies.c
     }
     return ':receipt: ' . implode(' · ', $parts) . '. Staff console: ' . $consoleUrl;
 }
+
+/* ---- 23 Oct 2026: sent but not paid, and the money in ------------------------------------------------------------------
+   Owner: "Tom Wilson ... he's been sent the invoice, but I don't think he's paid ... do we send the invoice again with the
+   payment details?" and "a list ... what invoices have been paid that month, so then basically we can see how much we've
+   sort of made per week". */
+
+/* 'YYYY-MM' or '' */
+function invq_month_ok($m) {
+    $m = trim((string)$m);
+    if (!preg_match('/^(20\d\d)-(0[1-9]|1[0-2])$/', $m)) return '';
+    return $m;
+}
+/* The Monday of the week a date falls in (weeks run Monday to Sunday) -> 'YYYY-MM-DD', or '' */
+function invq_week_start($ymd) {
+    $t = strtotime((string)$ymd . ' 12:00:00 UTC');
+    if ($t === false) return '';
+    return gmdate('Y-m-d', $t - ((int)gmdate('N', $t) - 1) * 86400);
+}
+
+/* Invoices QuickBooks has emailed that still owe money, most overdue first, then the oldest. A plan invoice collected by
+   GoCardless is never emailed (EmailStatus NotSet), so it never shows here. $emails = customer id => email, for invoices
+   that carry none of their own; $resent = invoice id => unix time it was last sent again from the console. */
+function invq_unpaid_rows($invoices, $emails, $resent, $host, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $today = gmdate('Y-m-d', $now);
+    $rows = array();
+    foreach ((array)$invoices as $inv) {
+        if (!is_array($inv) || empty($inv['Id']) || invq_email_status($inv) !== 'EmailSent') continue;
+        $bal = round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2);
+        if ($bal <= 0) continue;
+        $id = (string)$inv['Id'];
+        $due = (string)(isset($inv['DueDate']) ? $inv['DueDate'] : '');
+        $over = ($due !== '' && $due < $today) ? (int)round((strtotime($today . ' 12:00:00 UTC') - strtotime($due . ' 12:00:00 UTC')) / 86400) : 0;
+        $email = invq_bill_email($inv);
+        if ($email === '') { $cid = invq_customer_id($inv); $email = isset($emails[$cid]) ? (string)$emails[$cid] : ''; }
+        $di = isset($inv['DeliveryInfo']) && is_array($inv['DeliveryInfo']) ? $inv['DeliveryInfo'] : array();
+        $rows[] = array(
+            'id' => $id, 'number' => invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 20),
+            'date' => (string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : ''), 'due' => $due, 'overdue' => $over,
+            'customer' => invq_customer_name($inv), 'email' => $email,
+            'total' => round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2), 'balance' => $bal,
+            'sent_at' => (string)(isset($di['DeliveryTime']) ? $di['DeliveryTime'] : ''),
+            'resent_at' => (int)(isset($resent[$id]) ? $resent[$id] : 0),
+            'url' => $host . '/app/invoice?txnId=' . rawurlencode($id),
+        );
+    }
+    usort($rows, function ($a, $b) {
+        if ($a['overdue'] !== $b['overdue']) return $b['overdue'] - $a['overdue'];
+        return strcmp($a['date'], $b['date']);
+    });
+    return $rows;
+}
+
+/* How a QuickBooks Payment was made, in a word the owner uses. The pay page's card and PayPal payments say so in their
+   note (and a card one carries Stripe's pi_ number); a GoCardless one carries GoCardless's PM payment number. */
+function invq_pay_how($p) {
+    $ref = (string)(isset($p['PaymentRefNum']) ? $p['PaymentRefNum'] : '');
+    $note = strtolower((string)(isset($p['PrivateNote']) ? $p['PrivateNote'] : ''));
+    $meth = strtolower(trim((string)(isset($p['PaymentMethodRef']['name']) ? $p['PaymentMethodRef']['name'] : '')));
+    if (strpos($ref, 'pi_') === 0 || strpos($note, 'stripe') !== false) return 'Card';
+    if (strpos($note, 'paypal') !== false || strpos($meth, 'paypal') !== false) return 'PayPal';
+    if (preg_match('/^PM[0-9A-Z]{8,}$/', $ref) || strpos($note, 'gocardless') !== false) return 'Direct Debit';
+    if ($meth === 'cash') return 'Cash';
+    if ($meth !== '') return ucfirst(invq_str($meth, 30));
+    return 'Bank transfer / other';
+}
+
+/* The money in for one month, week by week (Monday to Sunday):
+   - invoices paid: QuickBooks Payments dated in the month, with the invoice numbers they paid ($docs = invoice id =>
+     number) and how they were paid;
+   - plans: the monthly-plan Direct Debits as the bank feed posted them - Deposit lines on the GoCardless income account,
+     so after GoCardless's fees. A GoCardless payout that also held an invoice payment counts that part under invoices. */
+function invq_paid_summary($payments, $docs, $deposits, $month) {
+    $rows = array(); $weeks = array(); $inv = 0.0; $plans = 0.0;
+    $wk = function ($ymd) use (&$weeks) {
+        $w = invq_week_start($ymd);
+        if (!isset($weeks[$w])) $weeks[$w] = array('start' => $w, 'invoices' => 0.0, 'plans' => 0.0, 'n' => 0);
+        return $w;
+    };
+    foreach ((array)$payments as $p) {
+        if (!is_array($p) || empty($p['Id'])) continue;
+        $date = (string)(isset($p['TxnDate']) ? $p['TxnDate'] : '');
+        $amt = round(invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0), 2);
+        if (substr($date, 0, 7) !== $month || $amt <= 0) continue;
+        $nums = array();
+        foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
+            foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt) {
+                if (!is_array($lt) || (isset($lt['TxnType']) ? $lt['TxnType'] : '') !== 'Invoice' || empty($lt['TxnId'])) continue;
+                $tid = (string)$lt['TxnId'];
+                $nums[] = (isset($docs[$tid]) && $docs[$tid] !== '') ? (string)$docs[$tid] : 'id ' . $tid;
+            }
+        $w = $wk($date);
+        $weeks[$w]['invoices'] += $amt; $weeks[$w]['n']++; $inv += $amt;
+        $rows[] = array('date' => $date, 'customer' => invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80),
+                        'amount' => $amt, 'invoices' => array_values(array_unique($nums)), 'how' => invq_pay_how($p), 'week' => $w);
+    }
+    foreach ((array)$deposits as $d) {
+        if (!is_array($d)) continue;
+        $date = (string)(isset($d['TxnDate']) ? $d['TxnDate'] : '');
+        if (substr($date, 0, 7) !== $month) continue;
+        $sum = 0.0;
+        foreach ((array)(isset($d['Line']) ? $d['Line'] : array()) as $ln) {
+            if (!is_array($ln)) continue;
+            $acct = (string)(isset($ln['DepositLineDetail']['AccountRef']['name']) ? $ln['DepositLineDetail']['AccountRef']['name'] : '');
+            if (stripos($acct, 'gocardless') !== false && stripos($acct, 'income') !== false) $sum += invq_num(isset($ln['Amount']) ? $ln['Amount'] : 0);
+        }
+        if (abs($sum) < 0.005) continue;
+        $w = $wk($date);
+        $weeks[$w]['plans'] += $sum; $plans += $sum;
+    }
+    usort($rows, function ($a, $b) { return strcmp($b['date'], $a['date']); });
+    krsort($weeks);
+    $wl = array();
+    foreach ($weeks as $w) $wl[] = array('start' => $w['start'], 'n' => $w['n'], 'invoices' => round($w['invoices'], 2), 'plans' => round($w['plans'], 2), 'total' => round($w['invoices'] + $w['plans'], 2));
+    return array('month' => $month, 'rows' => $rows, 'weeks' => $wl,
+                 'invoices' => round($inv, 2), 'plans' => round($plans, 2), 'total' => round($inv + $plans, 2));
+}

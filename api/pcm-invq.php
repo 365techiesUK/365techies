@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -220,6 +220,26 @@ if ($action === 'send') {
     $r = invq_send($c, $id, $who);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
     out(array('ok' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount']));
+}
+
+/* 23 Oct 2026: sent but not paid (read only), and QuickBooks emailing one of those again (WRITE 2b - the same send,
+   to the address QuickBooks holds; see invq_resend()). */
+if ($action === 'unpaid') {
+    $u = invq_unpaid($c);
+    if (empty($u['ok'])) fail($u['why']);
+    out(array('ok' => true, 'rows' => $u['rows']));
+}
+if ($action === 'resend') {
+    if ($id === '') fail('bad_id');
+    $r = invq_resend($c, $id, $who);
+    if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
+    out(array('ok' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount']));
+}
+/* 23 Oct 2026: the money in for a month, week by week (read only; see invq_paid()). */
+if ($action === 'paid') {
+    $p = invq_paid($c, (string)(isset($in['month']) ? $in['month'] : gmdate('Y-m')));
+    if (empty($p['ok'])) fail($p['why']);
+    out($p);
 }
 
 fail('bad_action');
