@@ -31732,8 +31732,8 @@ def write_portal_page():
     else if (sk.error === 'not_configured') note += '<p class="quiet">Slack bot token isn\\u2019t on the server, so Slack jobs can\\u2019t be read yet.</p>';
     else if (sk.error && sk.error !== 'recent') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack read failed: ' + esc(sk.error) + '.' + skWhen + '</p>';
     else if (sk.last) note += '<p class="quiet">Slack read ' + esc(new Date(sk.last * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })) + ' \\u00b7 ' + (sk.jobs || 0) + ' job post' + (sk.jobs === 1 ? '' : 's') + ' in the channel' + (sk.threads ? ' \\u00b7 ' + sk.threads + ' thread' + (sk.threads === 1 ? '' : 's') + ' read for a missing price or email' : '') + '.</p>';
-    if (sk.thread_error) note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack refused to read the replies under a job post (' + esc(sk.thread_error) + ') \\u2014 a price or email typed as a reply cannot arrive until that is fixed. Type it on the job here instead.</p>';
     else note += '<p class="quiet">Slack hasn\\u2019t been read yet \\u2014 the cron does that within about 15 minutes of the app joining the channel.</p>';
+    if (sk.thread_error) note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack refused to read the replies under a job post (' + esc(sk.thread_error) + ') \\u2014 a price or email typed as a reply cannot arrive until that is fixed. Type it on the job here instead.</p>';
     function warnHtml(x) { return (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(f.text) + '</div>'; }).join(''); }
     function invButtons(x) {
       return '<button class="sm ghost invqprev" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="The email QuickBooks will send, and the PDF with it">\\ud83d\\udc41 2 \\u00b7 Preview the email</button>'
