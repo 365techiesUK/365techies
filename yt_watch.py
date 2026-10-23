@@ -92,6 +92,10 @@ EE_SHORT = ("cX0HoFSRIfI", 27, None, "Printer says your EE wifi password is wron
 TPDF_FILM = ("Jd0PrHSWJQc", 186, None, 'Free PDF Editor for Windows 11: Sign, Merge, Split & Compress PDFs')
 
 
+# 23 Oct 2026: the classic Outlook Short, under the film on /download-classic-outlook/ and the switch-back page
+CLASSIC_OUTLOOK_SHORT = ("v-rXygnZhak", 25, None, "No Classic Outlook on Your New PC? Here's Where to Get It")
+
+
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""
     return "%d-second" % secs if secs < 90 else "%d-minute" % round(secs / 60)

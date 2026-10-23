@@ -34,6 +34,9 @@ studio) on /onedrive-taking-up-space/, straight after the guided steps, as on th
 22 Oct 2026 (owner: "do what's left, all of that"): the ten 21 Oct how-tos filmed in the Hyper-V studio, each on the page
 it answers, scheduled: every film goes public at 11:00 on its day (23 Oct - 1 Nov) and its Short at 12:00. The clipboard
 film has no page that answers it yet, so it is in VIDEOS only. Transcripts are the films' own voice scripts.
+23 Oct 2026 (owner: "link them all to the page"): the classic Outlook film (2:02, 4K, filmed in the Hyper-V studio) on
+/download-classic-outlook/ after the guided steps and on /how-to-go-back-to-classic-outlook/ after "No toggle?", with its
+25-second Short as a button underneath. Both public before this went live.
 """
 import datetime
 import json
@@ -161,6 +164,17 @@ VIDEOS = {
         cap="2 min 3 s &middot; a spoken guide with captions &middot; real Windows 11 and OneDrive, our own demo files",
         says="OneDrive filling up your PC? You don&rsquo;t have to switch it off, and you won&rsquo;t lose a single file. Here&rsquo;s how to get the space back, safely. OneDrive keeps your files in the cloud. But every file you open is downloaded to your PC as well, and it stays there. Over time, that fills the drive. On this PC, OneDrive is using 1.3 GB. Open File Explorer, and right-click OneDrive. Choose Free up space. The green ticks turn into blue clouds. The files are still there, and still in OneDrive. They just stop taking room on your PC. Back in Settings, OneDrive has gone from the list, and the free space has gone up by the same amount. Double-click any file, and it downloads the moment you need it. OneDrive&rsquo;s own settings can do the same for every file at once. Open Sync and backup, then Advanced settings. Under Files On-Demand, choose Free up disk space. To keep it that way, open Windows Settings, then System, then Storage, and switch on Storage Sense. Under Locally available cloud content, 30 days is a good choice. When the drive gets low, files you haven&rsquo;t opened in a month go back to the cloud, all by themselves. On a work computer, it&rsquo;s the same for the company&rsquo;s shared folders. Just never delete files to make room: that deletes them for everyone. That&rsquo;s it. Your files are safe in OneDrive, and your PC has its room back. Want us to do it for you? We&rsquo;ll sort it remotely. The full guide is at 365techies.co.uk.",
         tools=[]),
+    "classic-outlook": dict(
+        id="YeceTYrnp0s", secs=122, uploaded="2026-10-23", poster="/images/howto-classic-outlook-poster-v1.jpg",
+        name="How to Download Classic Outlook on Windows 11 (Missing on a New PC?)",
+        desc=("A 2-minute guide from 365 Techies, filmed on a new Windows 11 PC that had only the new Outlook: why classic "
+              "Outlook is missing, why the Microsoft Store search won't find it, and Microsoft's own download - English "
+              "(United Kingdom), Download, Yes - then Outlook (classic) in the Start menu, pinned and set up."),
+        cap="2 min 2 s &middot; a spoken guide with captions &middot; a real Windows 11 PC, account names hidden",
+        says="New PC, and no classic Outlook? Lots of new PCs now come with only the new Outlook. Here&rsquo;s how to get classic Outlook back, straight from Microsoft. First, check. Click Start, and type Outlook. This one, called just Outlook, is the new one. There&rsquo;s no classic Outlook here. And don&rsquo;t search the Microsoft Store for it. It shows the new Outlook, and email apps from other companies, but not classic Outlook. Instead, open your web browser, and search for install classic Outlook. Then open Microsoft&rsquo;s own page. Scroll down to English (United Kingdom), and choose Download. Open the file. When Windows asks, check it says Microsoft, and choose Yes. Now it downloads and installs by itself. You can carry on using your PC. When it says You&rsquo;re all set, choose Close. Click Start, and type Outlook again. Now there are two: Outlook (classic), and plain Outlook, which is the new one. Choose Pin to taskbar, so it&rsquo;s always to hand. Then open it, type your email address, and choose Connect. The download is free, but classic Outlook needs Microsoft 365, or Office Home and Business. So: Microsoft&rsquo;s page, English (United Kingdom), Download, and Yes. Need a hand? We&rsquo;ll set it up for you remotely. More free guides at 365techies.co.uk.",
+        tools=[],
+        extra=('        <p style="text-align:center;margin:.3rem 0 0"><style>.hvf a.ytw{color:inherit;text-decoration:none}</style>'
+               + yt_watch.button(yt_watch.CLASSIC_OUTLOOK_SHORT, "Or watch it in 25 seconds", shape="tall") + '</p>\n')),
     'clear-history': dict(
         id='AnK0qN4ZyNI', secs=88, uploaded='2026-10-23', live='2026-10-23T11:00:00+01:00', out='Fri 23 Oct, 11:00',
         poster='/images/howto-clear-history-poster-v1.jpg',
@@ -273,6 +287,12 @@ PLACES = {
     "onedrive-taking-up-space": ("onedrive-space", 'after:id="fixflow"', "Watch: free up the space, keep every file",
                                  "The whole fix in 2 minutes on a real OneDrive: Free up space, the one OneDrive setting, "
                                  "and Storage Sense, with Settings showing the space come back."),
+    "download-classic-outlook": ("classic-outlook", 'after:id="fixflow"', "Watch: classic Outlook back in 2 minutes",
+                                 "Every step on a new Windows 11 PC: the Store search that finds nothing, Microsoft's "
+                                 "own download, and Outlook (classic) in the Start menu."),
+    "how-to-go-back-to-classic-outlook": ("classic-outlook", 'after:id="s2"', "No classic Outlook to go back to? Watch this",
+                                          "New PCs often have only the new Outlook. Here's Microsoft's own download, "
+                                          "step by step, in 2 minutes."),
     'how-to-take-a-screenshot': ('screenshot', 'before:<h2>Snip just part of the screen</h2>', None,
         'Watch it done first: three ways to take a screenshot on Windows 11, and where to find it afterwards.'),
     'how-to-recover-deleted-files': ('recover-files', 'before:<h2>Where to look first</h2>', None,
