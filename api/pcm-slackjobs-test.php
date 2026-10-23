@@ -250,5 +250,12 @@ ok($mg5['name'] === 'Gordon Barber' && $mg5['phone'] === '01202 000000' && $mg5[
 ok($mg5['postcode'] === $fresh['postcode'] && $mg5['addr'] === $fresh['addr'] && $mg5['contact_by'] === $fixed['contact_by'], '... the fields nobody corrected still come from Slack, and the marks stay');
 ok(sj_merge(array_merge($old, array('name' => 'Typo Name')), $fresh)['name'] === $fresh['name'], 'without a mark, Slack\'s name is used as before');
 
+echo "-- 23 Oct 2026: a job hidden as 'not a job' stays hidden\n";
+$hid = array_merge($old, array('status' => 'dismissed', 'dismissed_by' => 'Steve', 'dismissed_at' => 1790000500));
+$mg6 = sj_merge($hid, $fresh);
+ok($mg6['status'] === 'dismissed' && $mg6['dismissed_by'] === 'Steve', 'a re-read of the Slack post no longer puts a hidden job back (status stays dismissed)', $mg6['status']);
+ok(sj_merge(array_merge($hid, array('out_ts' => '1790000600.1')), $fresh)['status'] === 'dismissed', '... even after a Job Out post was merged in');
+ok(sj_merge($old, $fresh)['status'] === $fresh['status'], 'a job nobody hid still takes Slack\'s status');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change', 'contact'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change', 'contact', 'receipt'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -180,6 +180,9 @@ if ($action === 'list') {
     $slack = array('last' => (int)(isset($st['last']) ? $st['last'] : 0), 'error' => (string)(isset($st['error']) ? $st['error'] : ''),
                    'jobs' => (int)(isset($st['jobs']) ? $st['jobs'] : 0), 'channels' => (array)(isset($st['channels']) ? $st['channels'] : array()),
                    'threads' => (int)(isset($st['threads']) ? $st['threads'] : 0), 'thread_error' => (string)(isset($st['thread_error']) ? $st['thread_error'] : ''));
+    /* a paid job's invoice says whether a thank-you went (from the store, so a cached list is still right) */
+    list(, $thankedInv) = invq_thanked_maps(invq_store_read()['receipts']);
+    foreach ($o['jobs'] as $ji => $jr) if (is_array($jr) && !empty($jr['invoice']['id']) && isset($thankedInv[(string)$jr['invoice']['id']])) $o['jobs'][$ji]['invoice']['thanked'] = $thankedInv[(string)$jr['invoice']['id']];
     out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
               'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
               'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack,
@@ -301,6 +304,16 @@ if ($action === 'emailpreview') {
     out($e);
 }
 /* 23 Oct 2026: the money in for a month, week by week (read only; see invq_paid()). */
+/* A thank-you (owner, 23 Oct 2026: "when they pay, we normally send like a thank you sort of email ... from
+   QuickBooks"): QuickBooks emails its payment receipt for a payment (id) or for the newest payment on an invoice
+   (invoice). The address is QuickBooks' own; nothing in the request chooses it. */
+if ($action === 'receipt') {
+    $invId = preg_replace('/[^0-9]/', '', (string)(isset($in['invoice']) ? $in['invoice'] : ''));
+    $r = invq_receipt($c, $id, $invId, $who);
+    if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
+    out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers']));
+}
+
 if ($action === 'paid') {
     $p = invq_paid($c, (string)(isset($in['month']) ? $in['month'] : gmdate('Y-m')));
     if (empty($p['ok'])) fail($p['why']);

@@ -55,7 +55,7 @@ function invq_log($m) { @file_put_contents(INVQ_LOG, '[' . gmdate('Y-m-d H:i:s')
 function invq_store_read() {
     $j = @json_decode((string)@file_get_contents(INVQ_STORE), true);
     if (!is_array($j)) $j = array();
-    foreach (array('held' => array(), 'sent' => array(), 'resent' => array(), 'created' => array(), 'cache' => null, 'last_morning' => '', 'items' => null) as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
+    foreach (array('held' => array(), 'sent' => array(), 'resent' => array(), 'receipts' => array(), 'created' => array(), 'cache' => null, 'last_morning' => '', 'items' => null) as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
     return $j;
 }
 function invq_store_locked($fn) {
@@ -65,7 +65,7 @@ function invq_store_locked($fn) {
     $r = $fn(invq_store_read());
     if (!empty($r['ok']) && isset($r['data'])) {
         $d = $r['data'];
-        foreach (array('sent', 'resent', 'created') as $k) if (isset($d[$k]) && count($d[$k]) > 500) $d[$k] = array_slice($d[$k], -500);
+        foreach (array('sent', 'resent', 'receipts', 'created') as $k) if (isset($d[$k]) && count($d[$k]) > 500) $d[$k] = array_slice($d[$k], -500);
         $tmp = INVQ_STORE . '.' . getmypid() . '.tmp';
         if (@file_put_contents($tmp, json_encode($d, JSON_UNESCAPED_SLASHES), LOCK_EX) === false || !@rename($tmp, INVQ_STORE)) { @unlink($tmp); $r = array('ok' => false, 'error' => 'store_write'); }
     }
@@ -904,6 +904,85 @@ function invq_resend($c, $id, $who) {
     return array('ok' => true, 'to' => $to, 'number' => $num, 'amount' => round($bal, 2));
 }
 
+/* ---- WRITE 2c: a thank-you - QuickBooks emails its payment receipt (23 Oct 2026) -----------------------------------
+   Owner: "when they pay, we normally send like a thank you sort of email, to confirm they've paid and everything, from
+   QuickBooks". The same email as David's Save and send on Receive payment: QuickBooks' own payment receipt, its own
+   wording. The payment is named by its id, or found as the newest payment against an invoice; the address is the
+   invoice's (else the customer's) as QuickBooks holds it - never from the request. Once a day per payment, inside the
+   hourly cap shared with sends. */
+function invq_qbo_send_payment($c, $id, $to) {
+    $url = $c['base'] . '/v3/company/' . rawurlencode($c['realm']) . '/payment/' . $id . '/send?sendTo=' . rawurlencode($to) . '&minorversion=' . INVQ_MINOR;
+    $ch = curl_init($url);
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '',
+        CURLOPT_CONNECTTIMEOUT => 5, CURLOPT_TIMEOUT => 25,
+        CURLOPT_HTTPHEADER => array('Accept: application/json', 'Authorization: Bearer ' . $c['access'], 'Content-Type: application/octet-stream')));
+    $r = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    $j = json_decode((string)$r, true);
+    if ($code < 200 || $code >= 300 || empty($j['Payment']['Id']))
+        return isset($j['Fault']['Error'][0]['Message']) ? invq_str($j['Fault']['Error'][0]['Message'], 120) : ('http ' . $code);
+    return '';
+}
+function invq_receipt($c, $payId, $invId, $who) {
+    if ($payId === '' && $invId === '') return array('ok' => false, 'error' => 'bad_id');
+    $store = invq_store_read();
+    $hourAgo = time() - 3600; $n = 0;
+    foreach (array_merge((array)$store['sent'], (array)$store['resent'], (array)$store['receipts']) as $s) if ((int)(isset($s['at']) ? $s['at'] : 0) > $hourAgo) $n++;
+    if ($n >= INVQ_MAX_SENDS_HOUR) return array('ok' => false, 'error' => 'rate_limited');
+    $p = null;
+    if ($payId !== '') {
+        $one = invq_api($c, 'GET', '/payment/' . $payId);
+        if (qbo_lib_ok($one) && !empty($one['json']['Payment']['Id'])) $p = $one['json']['Payment'];
+    } else {
+        $iv = invq_api($c, 'GET', '/invoice/' . $invId);
+        if (!qbo_lib_ok($iv) || empty($iv['json']['Invoice']['Id'])) return array('ok' => false, 'error' => 'not_found');
+        $cid = invq_customer_id($iv['json']['Invoice']);
+        if (!preg_match('/^\d+$/', $cid)) return array('ok' => false, 'error' => 'no_payment');
+        $pr = invq_api($c, 'GET', '/query?query=' . rawurlencode("select * from Payment where CustomerRef = '" . $cid . "' orderby TxnDate desc maxresults 100"));
+        if (qbo_lib_ok($pr)) $p = invq_payment_for_invoice(isset($pr['json']['QueryResponse']['Payment']) ? $pr['json']['QueryResponse']['Payment'] : array(), $invId);
+    }
+    if (!$p) return array('ok' => false, 'error' => 'no_payment');
+    $pid = (string)$p['Id'];
+    $amt = round(invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0), 2);
+    if ($amt <= 0) return array('ok' => false, 'error' => 'no_payment');
+    foreach ((array)$store['receipts'] as $s)
+        if ((string)(isset($s['id']) ? $s['id'] : '') === $pid && (int)(isset($s['at']) ? $s['at'] : 0) > time() - INVQ_RESEND_GAP)
+            return array('ok' => false, 'error' => 'recently_thanked');
+    // the invoices it paid, and the address: the first invoice's (else the customer's), as QuickBooks holds it
+    $tids = array(); $nums = array(); $to = '';
+    foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
+        foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt)
+            if (is_array($lt) && (isset($lt['TxnType']) ? $lt['TxnType'] : '') === 'Invoice' && preg_match('/^\d+$/', (string)(isset($lt['TxnId']) ? $lt['TxnId'] : ''))) $tids[(string)$lt['TxnId']] = true;
+    foreach (array_keys($tids) as $tid) {
+        $iv = invq_api($c, 'GET', '/invoice/' . $tid);
+        if (!qbo_lib_ok($iv) || empty($iv['json']['Invoice']['Id'])) continue;
+        $num = invq_str(isset($iv['json']['Invoice']['DocNumber']) ? $iv['json']['Invoice']['DocNumber'] : '', 30);
+        if ($num !== '') $nums[] = $num;
+        if ($to === '') $to = invq_send_address($c, $iv['json']['Invoice']);
+    }
+    if ($to === '') {
+        $cid = (string)(isset($p['CustomerRef']['value']) ? $p['CustomerRef']['value'] : '');
+        if (preg_match('/^\d+$/', $cid)) {
+            $cr = invq_api($c, 'GET', '/customer/' . $cid);
+            $to = invq_email_ok(isset($cr['json']['Customer']['PrimaryEmailAddr']['Address']) ? $cr['json']['Customer']['PrimaryEmailAddr']['Address'] : '');
+        }
+    }
+    if ($to === '') return array('ok' => false, 'error' => 'no_email');
+    $why = invq_qbo_send_payment($c, $pid, $to);
+    if ($why !== '') {
+        invq_log('thank-you FAILED payment ' . $pid . ' ' . $why . ' by ' . $who);
+        return array('ok' => false, 'error' => 'send_failed', 'why' => $why);
+    }
+    $inv = array_keys($tids);
+    invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt) {
+        $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt);
+        return array('ok' => true, 'data' => $d);
+    });
+    $name = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80);
+    invq_log('thank-you (payment receipt) for payment ' . $pid . ' ' . invq_money($amt) . ($nums ? ' #' . implode(', #', $nums) : '') . ' to ' . $to . ' by ' . $who);
+    invq_slack(':pray: *Thank-you sent* - ' . ($name !== '' ? $name : 'a customer') . ', ' . invq_money($amt) . ' received' . ($nums ? ' (#' . implode(', #', $nums) . ')' : '') . ', by ' . $who . '.');
+    return array('ok' => true, 'to' => $to, 'amount' => $amt, 'numbers' => $nums, 'payment' => $pid);
+}
+
 /* The email QuickBooks will send for an invoice, seen before it goes (read only): QuickBooks' own invoice wording from
    its Preferences, the company name, the customer's first name for "Dear ...,", the address it will go to, and the
    invoice's lines and total. See invq_email_fill(). The PDF that goes with it is action=pdf. */
@@ -981,6 +1060,8 @@ function invq_paid($c, $month) {
     $dr = invq_api($c, 'GET', '/query?query=' . rawurlencode('select * from Deposit where ' . $range . ' orderby TxnDate desc maxresults 500'));
     $deposits = qbo_lib_ok($dr) ? (array)(isset($dr['json']['QueryResponse']['Deposit']) ? $dr['json']['QueryResponse']['Deposit'] : array()) : array();
     $s = invq_paid_summary($payments, $docs, $deposits, $month);
+    list($byPay) = invq_thanked_maps(invq_store_read()['receipts']);
+    foreach ($s['rows'] as $i => $r) $s['rows'][$i]['thanked'] = isset($byPay[$r['id']]) ? $byPay[$r['id']] : 0;   // a thank-you already sent
     $s['ok'] = true; $s['plans_read'] = qbo_lib_ok($dr);
     return $s;
 }

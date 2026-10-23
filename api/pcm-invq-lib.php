@@ -486,17 +486,18 @@ function invq_paid_summary($payments, $docs, $deposits, $month) {
         $date = (string)(isset($p['TxnDate']) ? $p['TxnDate'] : '');
         $amt = round(invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0), 2);
         if (substr($date, 0, 7) !== $month || $amt <= 0) continue;
-        $nums = array();
+        $nums = array(); $tids = array();
         foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
             foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt) {
                 if (!is_array($lt) || (isset($lt['TxnType']) ? $lt['TxnType'] : '') !== 'Invoice' || empty($lt['TxnId'])) continue;
-                $tid = (string)$lt['TxnId'];
+                $tid = (string)$lt['TxnId']; $tids[] = $tid;
                 $nums[] = (isset($docs[$tid]) && $docs[$tid] !== '') ? (string)$docs[$tid] : 'id ' . $tid;
             }
         $w = $wk($date);
         $weeks[$w]['invoices'] += $amt; $weeks[$w]['n']++; $inv += $amt;
         $rows[] = array('date' => $date, 'customer' => invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80),
-                        'amount' => $amt, 'invoices' => array_values(array_unique($nums)), 'how' => invq_pay_how($p), 'week' => $w);
+                        'amount' => $amt, 'invoices' => array_values(array_unique($nums)), 'how' => invq_pay_how($p), 'week' => $w,
+                        'id' => (string)$p['Id'], 'inv_ids' => array_values(array_unique($tids)));   // for "Send a thank-you" (23 Oct 2026)
     }
     foreach ((array)$deposits as $d) {
         if (!is_array($d)) continue;
@@ -664,6 +665,30 @@ function invq_qbo_discount_line($disc, $subtotal, $tax) {
                'DiscountLineDetail' => $pct > 0 ? array('PercentBased' => true, 'DiscountPercent' => $pct) : array('PercentBased' => false));
     if ((string)$tax !== '') $l['DiscountLineDetail']['TaxCodeRef'] = array('value' => (string)$tax);
     return $l;
+}
+
+/* Thank-yous (owner, 23 Oct 2026: "when they pay, we normally send like a thank you sort of email, to confirm they've
+   paid ... from QuickBooks"): QuickBooks' own payment receipt, sent from the portal. The store keeps one entry per send
+   (payment id, the invoices it paid, when). -> payment id => when, invoice id => when (the latest of each). */
+function invq_thanked_maps($receipts) {
+    $byPay = array(); $byInv = array();
+    foreach ((array)$receipts as $r) {
+        if (!is_array($r) || empty($r['id'])) continue;
+        $at = (int)(isset($r['at']) ? $r['at'] : 0);
+        $byPay[(string)$r['id']] = max($at, isset($byPay[(string)$r['id']]) ? $byPay[(string)$r['id']] : 0);
+        foreach ((array)(isset($r['inv']) ? $r['inv'] : array()) as $iid) $byInv[(string)$iid] = max($at, isset($byInv[(string)$iid]) ? $byInv[(string)$iid] : 0);
+    }
+    return array($byPay, $byInv);
+}
+/* The newest payment that paid this invoice, from a list of the customer's payments (newest first). -> payment | null */
+function invq_payment_for_invoice($payments, $invId) {
+    foreach ((array)$payments as $p) {
+        if (!is_array($p) || empty($p['Id']) || invq_num(isset($p['TotalAmt']) ? $p['TotalAmt'] : 0) <= 0) continue;
+        foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
+            foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt)
+                if (is_array($lt) && (isset($lt['TxnType']) ? $lt['TxnType'] : '') === 'Invoice' && (string)(isset($lt['TxnId']) ? $lt['TxnId'] : '') === (string)$invId) return $p;
+    }
+    return null;
 }
 
 /* "Change it" (owner, 23 Oct 2026: "can we close down the preview and then go back and edit it some more?"): a raised

@@ -431,5 +431,29 @@ ok($ctBlock !== '' && strpos($ctBlock, "invq_contact_clean(isset(\$in['contact']
    'the request\'s details are cleaned before they reach the job; it needs no QuickBooks connection');
 ok(strpos($SW, "if (\$mobile !== '') \$body['Mobile'] = array('FreeFormNumber' => \$mobile);") !== false, 'a new QuickBooks customer gets the mobile as well as the landline');
 
+echo "-- 23 Oct 2026 (later still): a thank-you - QuickBooks' payment receipt, from the portal\n";
+$payA = array('Id' => '501', 'TxnDate' => '2026-10-21', 'TotalAmt' => 60, 'CustomerRef' => array('value' => '11', 'name' => 'Tom W'),
+              'Line' => array(array('Amount' => 60, 'LinkedTxn' => array(array('TxnId' => '12808', 'TxnType' => 'Invoice')))));
+$payB = array('Id' => '502', 'TxnDate' => '2026-10-22', 'TotalAmt' => 95, 'CustomerRef' => array('value' => '11', 'name' => 'Tom W'),
+              'Line' => array(array('Amount' => 95, 'LinkedTxn' => array(array('TxnId' => '12900', 'TxnType' => 'Invoice')))));
+$sumT = invq_paid_summary(array($payA, $payB), array('12808' => '4905/808', '12900' => '4905/830'), array(), '2026-10');
+$rowA = null; foreach ($sumT['rows'] as $r) if ($r['id'] === '501') $rowA = $r;
+ok($rowA && $rowA['inv_ids'] === array('12808') && $rowA['invoices'] === array('4905/808'), 'Money in rows carry the payment id and the invoices it paid', json_encode($rowA));
+list($byPay, $byInv) = invq_thanked_maps(array(array('id' => '501', 'inv' => array('12808'), 'at' => 100), array('id' => '501', 'inv' => array('12808'), 'at' => 300), array('id' => '777', 'inv' => array(), 'at' => 50), 'junk'));
+ok($byPay === array('501' => 300, '777' => 50) && $byInv === array('12808' => 300), 'thank-yous sent: the latest by payment and by invoice', json_encode(array($byPay, $byInv)));
+ok(invq_payment_for_invoice(array($payB, $payA), '12808')['Id'] === '501' && invq_payment_for_invoice(array($payB, $payA), '99999') === null
+   && invq_payment_for_invoice(array(array_merge($payA, array('TotalAmt' => 0))), '12808') === null, 'a paid invoice\'s payment is found among the customer\'s payments (never a 0 one)');
+$rc0 = strpos($SW, 'function invq_receipt('); $rc1 = $rc0 !== false ? strpos($SW, '/* The email QuickBooks will send for an invoice', $rc0) : false;
+$rcFn = ($rc0 !== false && $rc1 > $rc0) ? substr($SW, $rc0, $rc1 - $rc0) : '';
+ok($rcFn !== '' && strpos($rcFn, "if (\$n >= INVQ_MAX_SENDS_HOUR) return array('ok' => false, 'error' => 'rate_limited');") !== false && strpos($rcFn, "'error' => 'recently_thanked'") !== false
+   && strpos($rcFn, 'invq_send_address($c, $iv[') !== false && strpos($rcFn, "PrimaryEmailAddr") !== false && strpos($rcFn, '$in[') === false,
+   'a thank-you: inside the hourly cap, once a day per payment, to the address QuickBooks holds (never from the request)');
+ok(strpos($SW, "'/payment/' . \$id . '/send?sendTo=' . rawurlencode(\$to)") !== false && strpos($SW, "empty(\$j['Payment']['Id'])") !== false, 'it is Intuit\'s payment send (POST .../payment/{id}/send), counted only when QuickBooks answers with the payment');
+$rcB0 = strpos($EP, "if (\$action === 'receipt')"); $rcB1 = $rcB0 !== false ? strpos($EP, "if (\$action === 'paid')", $rcB0) : false;
+$rcBlock = ($rcB0 !== false && $rcB1 > $rcB0) ? substr($EP, $rcB0, $rcB1 - $rcB0) : '';
+ok($rcBlock !== '' && strpos($rcBlock, "invq_receipt(\$c, \$id, \$invId, \$who)") !== false && strpos($rcBlock, "\$in['email']") === false && strpos($rcBlock, "\$in['to']") === false,
+   'the request names a payment or an invoice - nothing else');
+ok(strpos($EP, "\$o['jobs'][\$ji]['invoice']['thanked'] = \$thankedInv[") !== false, 'a paid job row says whether its thank-you went (from the store, so a cached list is right too)');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);
