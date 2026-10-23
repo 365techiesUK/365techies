@@ -176,7 +176,12 @@ ok(strpos($SW, "'Content-Type: application/octet-stream'") !== false && strpos($
 ok(strpos($SW, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live')") !== false && strpos($SW, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key')") !== false, 'creating honours QBO_LIVE_ENABLED and QBO_ONLY_KEY');
 ok(strpos($SW, "if (!empty(\$job['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced'") !== false, 'a job with an invoice is never invoiced again');
 ok(strpos($SW, 'qbo_lib_custkey($email, $c[\'realm\'])') !== false && substr_count($SW, 'LOCK_EX | LOCK_NB') >= 3, 'the customer map is keyed like the other writers and read/written under their lock');
-ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 2 && !preg_match('/\/void|operation=void|sparse|\/customer\/\d/', $SW), 'exactly two creates (customer, invoice); nothing edits or voids');
+$chgFn0 = strpos($SW, 'function invq_change_for_job('); $chgFn1 = $chgFn0 !== false ? strpos($SW, '/* ---- WRITE 2:', $chgFn0) : false;
+$chgFn = ($chgFn0 !== false && $chgFn1 > $chgFn0) ? substr($SW, $chgFn0, $chgFn1 - $chgFn0) : '';
+ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 3 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $chgFn, $mm2) === 1
+   && substr_count($SW, 'sparse') === substr_count($chgFn, 'sparse') && strpos($chgFn, "'sparse' => true") !== false && !preg_match('/\/void|operation=void|operation=delete|\/customer\/\d/', $SW)
+   && strpos($chgFn, 'invq_change_blocked(') !== false && strpos($chgFn, 'invq_change_blocked(') < strpos($chgFn, "invq_api(\$c, 'POST'"),
+   'creates: a customer and an invoice; the ONE edit is "Change it" (a sparse update, only after its unsent / unpaid / untouched check); nothing voids or deletes');
 ok(strpos($SW, 'INVQ_MAX_SENDS_HOUR') !== false && strpos($SW, 'INVQ_MAX_CREATES_RUN') !== false, 'tripwires on sends and creates');
 ok(strpos($SW, "'BillEmail' => array('Address' => \$email)") !== false, 'a created invoice carries the customer email, so it can be sent');
 $gi = (string)file_get_contents(__DIR__ . '/../.gitignore');
@@ -304,7 +309,9 @@ $sj0 = strpos($EP, "if (\$action === 'setjob')"); $sj1 = strpos($EP, "if (\$acti
 $setjobBlock2 = ($sj0 !== false && $sj1 > $sj0) ? substr($EP, $sj0, $sj1 - $sj0) : '';
 $pq0 = strpos($EP, "if (\$action === 'pcquote')"); $pq1 = strpos($EP, "if (\$action === 'quote')");
 $pcqBlock = ($pq0 !== false && $pq1 > $pq0) ? substr($EP, $pq0, $pq1 - $pq0) : '';
-ok(substr_count($EP, "\$in['lines']") === substr_count($setjobBlock2, "\$in['lines']") + substr_count($pcqBlock, "\$in['lines']") && substr_count($setjobBlock2, "\$in['lines']") > 0 && strpos($setjobBlock2, "invq_lines_clean(\$in['lines'], invq_items(\$c))") !== false,
+$chg0 = strpos($EP, "if (\$action === 'change')"); $chg1 = $chg0 !== false ? strpos($EP, "if (\$action === 'pdf')", $chg0) : false;
+$chgBlock = ($chg0 !== false && $chg1 > $chg0) ? substr($EP, $chg0, $chg1 - $chg0) : '';
+ok(substr_count($EP, "\$in['lines']") === substr_count($setjobBlock2, "\$in['lines']") + substr_count($pcqBlock, "\$in['lines']") + substr_count($chgBlock, "\$in['lines']") && strpos($chgBlock, "invq_lines_clean(\$in['lines'], invq_items(\$c))") !== false && substr_count($setjobBlock2, "\$in['lines']") > 0 && strpos($setjobBlock2, "invq_lines_clean(\$in['lines'], invq_items(\$c))") !== false,
    'typed lines reach only the job record (setjob), checked against QuickBooks\' own service list');
 ok(strpos($SW, "invq_qbo_lines(\$job['lines'], \$c['item'], \$c['tax'])") !== false && substr_count($SW, "invq_qbo_lines(\$job['lines']") === 2, 'the invoice and the estimate are both made from the job\'s lines when it has them');
 ok(strpos($EP, "invq_email_preview(\$c, \$id)") !== false && strpos($SW, "'/preferences'") !== false, 'the email preview reads QuickBooks\' own wording; the request names only the invoice');
@@ -369,6 +376,31 @@ ok(invq_job_row(array('id' => 'D1', 'discount' => array('kind' => 'total', 'valu
 ok(substr_count($SW, "invq_qbo_discount_line(isset(\$job['discount']) ? \$job['discount'] : null, invq_lines_total(\$job['lines']), \$c['tax'])") === 2, 'the invoice and the estimate both get the discount line after the full-price lines');
 ok(strpos($SW, "round(\$sub - invq_discount_amount(\$disc, \$sub), 2)") !== false, 'the job\'s price is what they pay (so the invoice is found again by its total)');
 ok(strpos($EP, "if (\$lines === null) fail('bad_discount');") !== false && strpos($EP, "invq_discount_clean(\$in['discount'], invq_lines_total(\$lines))") !== false, 'a discount is only taken with the lines it comes off, and checked against them');
+
+echo "-- 23 Oct 2026 (later still): Change it - a raised invoice edited before it goes, never one changed in QuickBooks\n";
+$ci = $mk(906, array('Line' => $discInv, 'TotalAmt' => 80, 'Balance' => 80, 'SyncToken' => '0', 'CustomerMemo' => array('value' => 'Thanks')));
+$fp0 = invq_lines_fp($ci);
+ok(strlen($fp0) === 40 && invq_lines_fp($ci) === $fp0, 'an invoice\'s lines and note make one fingerprint');
+$ciB = $ci; $ciB['Line'][0]['Description'] = 'Repair and a new fan';
+$ciC = $ci; $ciC['Line'][0]['Amount'] = 110;
+$ciD = $ci; $ciD['CustomerMemo'] = array('value' => 'Thanks!');
+$ciE = $ci; $ciE['Line'][] = array('DetailType' => 'SalesItemLineDetail', 'Amount' => 20, 'Description' => 'Collection', 'SalesItemLineDetail' => array('ItemRef' => array('value' => '9')));
+$ciF = $ci; $ciF['Line'][1]['Amount'] = 999; $ciF['SyncToken'] = '3'; $ciF['EmailStatus'] = 'NeedToSend';
+ok(invq_lines_fp($ciB) !== $fp0 && invq_lines_fp($ciC) !== $fp0 && invq_lines_fp($ciD) !== $fp0 && invq_lines_fp($ciE) !== $fp0, 'new wording, a new price, a new note or an added line all change it');
+ok(invq_lines_fp($ciF) === $fp0, 'QuickBooks\' own subtotal row, its SyncToken and its email status do not');
+ok(invq_change_blocked($ci, $fp0) === '', 'unsent, unpaid and as the portal left it -> it can be changed');
+ok(invq_change_blocked(array_merge($ci, array('EmailStatus' => 'EmailSent')), $fp0) === 'already_sent', 'sent -> no');
+ok(invq_change_blocked(array_merge($ci, array('Balance' => 30)), $fp0) === 'part_paid', 'money paid against it -> no');
+ok(invq_change_blocked($ciB, $fp0) === 'changed_in_qbo' && invq_change_blocked($ci, '') === 'changed_in_qbo', 'altered in QuickBooks since, or never written by the portal -> change it in QuickBooks');
+$rowU = array('id' => '906', 'state' => 'unsent');
+ok(invq_job_row(array('id' => 'C1', 'inv_fp' => $fp0), $rowU)['can_change'] === true && invq_job_row(array('id' => 'C2'), $rowU)['can_change'] === false
+   && invq_job_row(array('id' => 'C3', 'inv_fp' => $fp0), array('id' => '906', 'state' => 'sent'))['can_change'] === false, 'the row offers "Change it" only for an unsent invoice the portal wrote');
+ok(strpos($SW, "invq_job_link(\$jobId, \$invId, \$url, \$auto ? 'auto' : 'staff', invq_lines_fp(\$res['json']['Invoice']))") !== false, 'raising an invoice keeps its fingerprint on the job');
+ok(strpos($chgFn, "\$d['jobs'][\$i]['inv_fp'] = \$fp;") !== false && strpos($chgFn, "\$fp = invq_lines_fp(\$res['json']['Invoice']);") !== false, 'changing it keeps the new one');
+ok(strpos($chgFn, "if (\$total > INVQ_MAX_AMOUNT) return array('ok' => false, 'error' => 'large');") !== false && strpos($chgFn, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live');") !== false && strpos($chgFn, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key');") !== false,
+   'a change is held to the same limits as raising (live only, the test-customer lock, £2,000)');
+ok(strpos($chgBlock, "invq_discount_clean(\$in['discount'], invq_lines_total(\$lines))") !== false && strpos($chgBlock, 'invq_change_for_job($c, $job, $who, $lines, $memo, $discount)') !== false && strpos($chgBlock, "\$in['id']") === false,
+   'the change request names the job (never an invoice id), its lines and discount checked as for Raise');
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

@@ -367,6 +367,7 @@ function invq_job_row($job, $invRow, $now = null) {
         'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
+        'can_change' => ($state === 'unsent' && !empty($job['inv_fp'])),   // raised by the portal, not sent: "Change it" (the server checks again)
         'why_not'  => ($state === 'none' ? $why : ''),
         'invoice'  => $invRow,
         /* a quote (QuickBooks estimate) started from the row, if any: id, number, link */
@@ -628,6 +629,34 @@ function invq_qbo_discount_line($disc, $subtotal, $tax) {
                'DiscountLineDetail' => $pct > 0 ? array('PercentBased' => true, 'DiscountPercent' => $pct) : array('PercentBased' => false));
     if ((string)$tax !== '') $l['DiscountLineDetail']['TaxCodeRef'] = array('value' => (string)$tax);
     return $l;
+}
+
+/* "Change it" (owner, 23 Oct 2026: "can we close down the preview and then go back and edit it some more?"): a raised
+   invoice the portal made can have its lines, note and discount written over until it is sent. What its lines say, as
+   one fingerprint - kind, money, service and wording of each line in order, and the note (QuickBooks' own subtotal row
+   left out) - is kept on the job each time the portal writes the invoice. A change goes ahead only while the invoice
+   still says exactly that: one somebody has altered in QuickBooks is changed there, never overwritten from here. */
+function invq_lines_fp($inv) {
+    $parts = array();
+    foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $l) {
+        if (!is_array($l)) continue;
+        $dt = (string)(isset($l['DetailType']) ? $l['DetailType'] : '');
+        if ($dt === '' || $dt === 'SubTotalLineDetail') continue;
+        $parts[] = $dt . '|' . number_format(invq_num(isset($l['Amount']) ? $l['Amount'] : 0), 2, '.', '')
+                 . '|' . (string)(isset($l['SalesItemLineDetail']['ItemRef']['value']) ? $l['SalesItemLineDetail']['ItemRef']['value'] : '')
+                 . '|' . invq_text(isset($l['Description']) ? $l['Description'] : '', 4000);
+    }
+    $parts[] = 'memo|' . invq_text(isset($inv['CustomerMemo']['value']) ? $inv['CustomerMemo']['value'] : '', INVQ_MEMO_MAX);
+    return sha1(implode("\n", $parts));
+}
+/* Why a raised invoice can't be changed from the portal ('' = it can): sent, money paid against it, or not as the
+   portal left it ($fp = the fingerprint kept on the job; none = the portal never wrote this one). */
+function invq_change_blocked($inv, $fp) {
+    if (!is_array($inv)) return 'not_found';
+    if (invq_email_status($inv) === 'EmailSent') return 'already_sent';
+    if (round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2) < round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2)) return 'part_paid';
+    if ((string)$fp === '' || invq_lines_fp($inv) !== (string)$fp) return 'changed_in_qbo';
+    return '';
 }
 
 /* The invoice email as QuickBooks will send it: its own wording (Settings > Sales > Messages, read through the API) with

@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -221,6 +221,27 @@ if ($action === 'create') {
     $r = invq_create_for_job($c, $job, $who, false);
     if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1, 'name' => 1, 'invoice' => 1)));
     out(array('ok' => true, 'invoice' => $r['invoice'], 'linked' => !empty($r['linked'])));
+}
+
+/* Change a raised invoice before it goes (owner, 23 Oct 2026: "can we close down the preview and then go back and edit it
+   some more?"): the lines, note and discount, checked exactly as for Raise, written over the invoice the portal made -
+   only while it is unsent, unpaid and as the portal left it. The request names the job, never the invoice. */
+if ($action === 'change') {
+    if ($job === '') fail('bad_job');
+    if (!isset($in['lines'])) fail('bad_lines');
+    list($lines, $lerr) = invq_lines_clean($in['lines'], invq_items($c));
+    if ($lines === null) fail($lerr);
+    if (!$lines) fail('bad_lines');
+    $discount = array();
+    if (array_key_exists('discount', $in)) {
+        list($dc, $derr) = invq_discount_clean($in['discount'], invq_lines_total($lines));
+        if ($derr !== '') fail($derr);
+        if ($dc !== null) $discount = $dc;
+    }
+    $memo = (isset($in['memo']) && is_string($in['memo'])) ? invq_text($in['memo'], INVQ_MEMO_MAX) : '';
+    $r = invq_change_for_job($c, $job, $who, $lines, $memo, $discount);
+    if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1)));
+    out(array('ok' => true, 'invoice' => $r['invoice'], 'total' => $r['total']));
 }
 
 if ($action === 'pdf') {

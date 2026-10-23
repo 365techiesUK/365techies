@@ -94,14 +94,15 @@ function invq_jobs_locked($fn) {
     return $r;
 }
 /* Write the invoice id onto a job, once. Returns false if the job already had one. */
-function invq_job_link($jobId, $invId, $url, $how) {
-    $r = invq_jobs_locked(function ($d) use ($jobId, $invId, $url, $how) {
+function invq_job_link($jobId, $invId, $url, $how, $fp = '') {
+    $r = invq_jobs_locked(function ($d) use ($jobId, $invId, $url, $how, $fp) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_linked');
             $d['jobs'][$i]['invoice_no'] = (string)$invId;
             $d['jobs'][$i]['invoice_url'] = (string)$url;
             $d['jobs'][$i]['invq'] = array('how' => $how, 'at' => time());
+            if ((string)$fp !== '') $d['jobs'][$i]['inv_fp'] = (string)$fp;   // what the portal wrote on it - see invq_lines_fp()
             return array('ok' => true, 'data' => $d);
         }
         return array('ok' => false, 'error' => 'no_such_job');
@@ -704,7 +705,7 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     $invId = (string)$res['json']['Invoice']['Id'];
     $docMade = (string)(isset($res['json']['Invoice']['DocNumber']) ? $res['json']['Invoice']['DocNumber'] : $doc);
     $url = $c['host'] . '/app/invoice?txnId=' . rawurlencode($invId);
-    invq_job_link($jobId, $invId, $url, $auto ? 'auto' : 'staff');
+    invq_job_link($jobId, $invId, $url, $auto ? 'auto' : 'staff', invq_lines_fp($res['json']['Invoice']));
     invq_store_locked(function ($d) use ($jobId, $invId, $amount, $who) {
         $d['created'][] = array('job' => (string)$jobId, 'id' => $invId, 'amount' => $amount, 'by' => $who, 'at' => time());
         $d['cache'] = null;
@@ -714,6 +715,58 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     invq_slack(':receipt: *Invoice created* - ' . $name . ', ' . invq_money($amount) . ' for ' . $desc . ($docMade !== '' ? ' (#' . $docMade . ', job ' . $jobId . ')' : ' (job ' . $jobId . ')')
              . ($auto ? ', automatically' : ', by ' . $who) . '. Waiting for your OK in the staff console.');
     return array('ok' => true, 'invoice' => $invId, 'linked' => false);
+}
+
+/* ---- WRITE 1b: change an invoice the portal raised, before it is sent (23 Oct 2026) ---------------------------------
+   Owner: "can we close down the preview and then go back and edit it some more?" The lines, note and discount (already
+   checked, as for Raise) are written over the same invoice - same number, no second invoice - only while it is unsent,
+   unpaid and exactly as the portal left it (invq_change_blocked). Then the job holds the new lines and fingerprint. */
+function invq_change_for_job($c, $jobId, $who, $lines, $memo, $discount) {
+    $job = null;
+    foreach (invq_jobs_read() as $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === (string)$jobId) { $job = $j; break; }
+    if (!$job) return array('ok' => false, 'error' => 'no_such_job');
+    $invId = (string)(isset($job['invoice_no']) ? $job['invoice_no'] : '');
+    if (!preg_match('/^\d+$/', $invId)) return array('ok' => false, 'error' => 'no_invoice');
+    if (empty($c['live'])) return array('ok' => false, 'error' => 'not_live');
+    if ($c['only'] !== '') return array('ok' => false, 'error' => 'only_key');
+    if (!is_array($lines) || !$lines) return array('ok' => false, 'error' => 'bad_lines');
+    $sub = invq_lines_total($lines);
+    $total = round($sub - invq_discount_amount($discount, $sub), 2);
+    if ($total <= 0) return array('ok' => false, 'error' => 'no_amount');
+    if ($total > INVQ_MAX_AMOUNT) return array('ok' => false, 'error' => 'large');
+    $one = invq_api($c, 'GET', '/invoice/' . $invId);
+    if (!qbo_lib_ok($one) || empty($one['json']['Invoice']['Id'])) return array('ok' => false, 'error' => 'not_found');
+    $inv = $one['json']['Invoice'];
+    $why = invq_change_blocked($inv, isset($job['inv_fp']) ? $job['inv_fp'] : '');
+    if ($why !== '') return array('ok' => false, 'error' => $why);
+    $iLines = invq_qbo_lines($lines, $c['item'], $c['tax']);
+    if ($dl = invq_qbo_discount_line($discount, $sub, $c['tax'])) $iLines[] = $dl;
+    $upd = array('Id' => $invId, 'SyncToken' => (string)(isset($inv['SyncToken']) ? $inv['SyncToken'] : '0'), 'sparse' => true, 'Line' => $iLines);
+    if ($memo !== '' || !empty($inv['CustomerMemo']['value'])) $upd['CustomerMemo'] = array('value' => (string)$memo);
+    $res = invq_api($c, 'POST', '/invoice', $upd);
+    if (!qbo_lib_ok($res) || empty($res['json']['Invoice']['Id'])) {
+        invq_log('invoice change FAILED for job ' . $jobId . ' ' . invq_why($res));
+        return array('ok' => false, 'error' => 'qbo_invoice', 'why' => invq_why($res));
+    }
+    $fp = invq_lines_fp($res['json']['Invoice']);
+    invq_jobs_locked(function ($d) use ($jobId, $lines, $memo, $discount, $total, $fp, $who) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            $d['jobs'][$i]['lines'] = array_values($lines);
+            $d['jobs'][$i]['amount'] = $total; $d['jobs'][$i]['amount_by'] = 'staff';
+            $d['jobs'][$i]['desc'] = invq_str($lines[0]['desc'], 200); $d['jobs'][$i]['desc_by'] = 'staff';
+            $d['jobs'][$i]['item_id'] = $lines[0]['item']; $d['jobs'][$i]['item_name'] = $lines[0]['item_name'];
+            if ($memo !== '') $d['jobs'][$i]['memo'] = $memo; else unset($d['jobs'][$i]['memo']);
+            if ($discount) $d['jobs'][$i]['discount'] = $discount; else unset($d['jobs'][$i]['discount']);
+            $d['jobs'][$i]['inv_fp'] = $fp;
+            $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
+    invq_log('changed invoice ' . $invId . ' to ' . invq_money($total) . ' (' . count($lines) . ' lines' . ($discount ? ', discount' : '') . ') for job ' . $jobId . ' by ' . $who);
+    return array('ok' => true, 'invoice' => $invId, 'total' => $total);
 }
 
 /* ---- WRITE 2: QuickBooks emails an invoice -------------------------------- */
