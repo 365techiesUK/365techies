@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; cb5f8f3c16</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 23 Oct 2026 &middot; 1b50e149a7</p><script>
 (function () {
-  var P365BUILD = 'cb5f8f3c16';
+  var P365BUILD = '1b50e149a7';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7487,10 +7487,16 @@
     }
     function linesEditor(j) {
       var lines = (j.lines && j.lines.length) ? j.lines : [{ item: j.item || '', desc: j.desc || '', qty: 1, rate: j.amount > 0 ? j.amount : 0 }];
+      var disc = j.discount || {}, dk = disc.kind || '', dv = disc.value || 0;
       return '<div class="invqlines" style="margin:.35rem 0 0">'
         + '<div class="quiet" style="font-size:.82rem">The invoice\u2019s lines \u2014 pick the service, how many and the price of one, then underneath say what you actually did for them: that goes on the invoice under the service. A price of 0 goes on as wording only (a loan, a note).</div>'
         + '<div class="invqllist">' + lines.map(function (ln, i) { return lineHtml(ln, i === 0); }).join('') + '</div>'
         + '<div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin:.35rem 0 0"><button class="sm ghost invqladd" style="margin:0;padding:.25rem .6rem;font-size:.8rem">+ Add a line</button><span class="invqltotal" style="font-weight:700"></span></div>'
+        + '<div style="display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;margin:.45rem 0 0;font-size:.85rem" title="The lines keep their full prices. The invoice then shows the discount and what they pay.">'
+        + '<span class="quiet">Discount (optional):</span>'
+        + '<input class="invqlpct" type="text" inputmode="decimal" maxlength="5" placeholder="10" value="' + (dk === 'pct' ? esc(dv) : '') + '" aria-label="Percent off the full price" style="width:3.6rem;margin:0;text-align:center"><span class="quiet">% off, or the agreed price \u00a3</span>'
+        + '<input class="invqlagreed" type="text" inputmode="decimal" maxlength="8" placeholder="0.00" value="' + (dk === 'total' ? esc(Number(dv).toFixed(2)) : '') + '" aria-label="The price agreed with them" style="width:5.5rem;margin:0">'
+        + '</div>'
         + '<label style="display:block;margin:.55rem 0 0;font-size:.82rem"><span class="quiet">A note on the invoice (optional) \u2014 printed on it under the lines, for the personal touch</span>'
         + '<textarea class="invqlmemo" rows="2" maxlength="1000" placeholder="e.g. Thanks for bringing it in. Your photos were copied off first and are all on the new drive." style="margin:.2rem 0 0;display:block;width:100%;box-sizing:border-box;padding:.4rem .55rem;border-radius:8px;border:1px solid rgba(125,170,220,.4);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:.88rem;line-height:1.4;resize:vertical">' + esc(j.memo || '') + '</textarea></label>'
         + '<div style="margin:.4rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
@@ -7549,14 +7555,34 @@
     var all = jobs.map(function (j) { return j.invoice; }).filter(Boolean).concat(waiting, older);
     function invOf(id) { return all.filter(function (y) { return y.id === id; })[0] || {}; }
     function msgOf(btn) { var row = btn.closest('.invqrow'); return row ? row.querySelector('.invqmsg') : null; }
-    function lineTotal(wrap) {
+    function lineSub(wrap) {
       var t = 0;
       Array.prototype.forEach.call(wrap.querySelectorAll('.invqline'), function (ln) {
         var q = parseInt(ln.querySelector('.invqlqty').value, 10) || 1, r = parseFloat((ln.querySelector('.invqlrate').value || '').replace(/[^0-9.]/g, '')) || 0;
         t += q * r;
       });
-      var el = wrap.querySelector('.invqltotal'); if (el) el.textContent = 'Total ' + invqMoney(t);
-      return t;
+      return Math.round(t * 100) / 100;
+    }
+    /* The discount (owner, 23 Oct: "put in the products at the price that they actually are ... we can edit the final
+       amount, which was agreed"): % off, or the agreed price. -> money off the full price, 0 when none or not yet
+       sensible. The server works it out again from the same lines. */
+    function discNum(el) { return el ? parseFloat((el.value || '').replace(/[^0-9.]/g, '')) : NaN; }
+    function discOff(wrap, sub) {
+      var pv = discNum(wrap.querySelector('.invqlpct')), av = discNum(wrap.querySelector('.invqlagreed'));
+      if (pv > 0 && pv < 100) return Math.round(sub * pv) / 100;
+      if (av > 0 && av < sub) return Math.round((sub - av) * 100) / 100;
+      return 0;
+    }
+    function discPct(wrap, off, sub) {
+      var pv = discNum(wrap.querySelector('.invqlpct'));
+      if (pv > 0 && pv < 100) return ' (' + pv + '%)';
+      var q = Math.round(off / sub * 100);
+      return q >= 1 && Math.abs(Math.round(sub * q) / 100 - off) < 0.005 ? ' (' + q + '%)' : '';
+    }
+    function lineTotal(wrap) {
+      var t = lineSub(wrap), off = discOff(wrap, t), el = wrap.querySelector('.invqltotal');
+      if (el) el.textContent = off > 0 ? 'Full price ' + invqMoney(t) + ' \u00b7 discount \u2212' + invqMoney(off) + discPct(wrap, off, t) + ' \u00b7 they pay ' + invqMoney(t - off) : 'Total ' + invqMoney(t);
+      return Math.round((t - off) * 100) / 100;
     }
     function bindLine(ln) {
       var sel = ln.querySelector('.invqlitem'), wrap = ln.closest('.invqlines');
@@ -7575,6 +7601,11 @@
     Array.prototype.forEach.call(box.querySelectorAll('.invqlines'), function (wrap) {
       Array.prototype.forEach.call(wrap.querySelectorAll('.invqline'), bindLine);
       lineTotal(wrap);
+      var pIn = wrap.querySelector('.invqlpct'), aIn = wrap.querySelector('.invqlagreed');
+      if (pIn && aIn) {
+        pIn.oninput = function () { if (pIn.value.trim()) aIn.value = ''; lineTotal(wrap); };
+        aIn.oninput = function () { if (aIn.value.trim()) pIn.value = ''; lineTotal(wrap); };
+      }
       wrap.querySelector('.invqladd').onclick = function () {
         var list = wrap.querySelector('.invqllist');
         if (list.querySelectorAll('.invqline').length >= 12) return;
@@ -7595,8 +7626,20 @@
           var total = lineTotal(wrap);
           if (!lines.length) bad = 'Add a line first.';
           else if (!quote && !(total > 0)) bad = 'Type a price on at least one line.';
+          var pv = (wrap.querySelector('.invqlpct') || {}).value || '', av = (wrap.querySelector('.invqlagreed') || {}).value || '', disc = '';
+          pv = pv.trim(); av = av.trim();
+          if (!bad && pv) {
+            if (!(discNum(wrap.querySelector('.invqlpct')) > 0 && discNum(wrap.querySelector('.invqlpct')) < 100)) bad = 'A discount is a percentage between 0 and 100.';
+            else if (!(lineSub(wrap) > 0)) bad = 'Put the full prices on the lines first, then the discount.';
+            else disc = { kind: 'pct', value: pv };
+          } else if (!bad && av) {
+            var sub = lineSub(wrap), a = discNum(wrap.querySelector('.invqlagreed'));
+            if (!(a > 0)) bad = 'Type the agreed price as a number, e.g. 80.';
+            else if (a > sub + 0.004) bad = 'The agreed price is more than the full price \u2014 change the line prices instead.';
+            else if (Math.abs(a - sub) >= 0.005) disc = { kind: 'total', value: av };
+          }
           var mm = wrap.querySelector('.invqlmemo');
-          var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), lines: lines, memo: mm ? mm.value.trim() : '' };
+          var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), lines: lines, memo: mm ? mm.value.trim() : '', discount: disc };
           var em = wrap.querySelector('.invqemail');
           if (em) { if (!em.value.trim()) { msg.textContent = 'Type the customer\u2019s email first.'; em.focus(); return; } body.email = em.value.trim(); }
           if (bad) { msg.textContent = bad; return; }
@@ -7734,7 +7777,7 @@
         + '<br><span class="quiet">From:</span> 365 Techies Ltd, through QuickBooks'
         + '<br><span class="quiet">Subject:</span> ' + (e.subject ? esc(e.subject) : '<span class="quiet">QuickBooks\u2019 own</span>') + '</div>'
         + '<div style="white-space:pre-wrap;font-size:.9rem;margin:.45rem 0;padding:.6rem .7rem;border-radius:8px;background:rgba(255,255,255,.05)">' + (e.greeting ? esc(e.greeting) + '\n\n' : '') + (e.have_wording ? esc(e.body) : '<span class="quiet">QuickBooks didn\u2019t give its email wording just now \u2014 the PDF below is what goes with it.</span>') + '</div>'
-        + (rows ? '<table class="cmp-table" style="font-size:.86rem;width:100%;margin:.2rem 0"><tbody>' + rows + '<tr><td><strong>Total</strong>' + (e.due ? ' <span class="quiet">\u00b7 due ' + invqDate(e.due) + '</span>' : '') + '</td><td style="text-align:right"><strong>' + invqMoney(e.total) + '</strong></td></tr></tbody></table>' : '')
+        + (rows ? '<table class="cmp-table" style="font-size:.86rem;width:100%;margin:.2rem 0"><tbody>' + rows + (e.discount > 0 ? '<tr><td class="quiet">Full price</td><td style="text-align:right">' + invqMoney(e.subtotal) + '</td></tr><tr><td>Discount' + (e.discount_pct > 0 ? ' (' + esc(e.discount_pct) + '%)' : '') + '</td><td style="text-align:right">\u2212' + invqMoney(e.discount) + '</td></tr>' : '') + '<tr><td><strong>Total</strong>' + (e.due ? ' <span class="quiet">\u00b7 due ' + invqDate(e.due) + '</span>' : '') + '</td><td style="text-align:right"><strong>' + invqMoney(e.total) + '</strong></td></tr></tbody></table>' : '')
         + (e.memo ? '<div style="font-size:.86rem;margin:.3rem 0 0"><span class="quiet">Note on the invoice:</span><div style="white-space:pre-wrap;margin:.1rem 0 0">' + esc(e.memo) + '</div></div>' : '')
         + '<div style="margin:.35rem 0 0;font-size:.86rem">\ud83d\udcce With it: the invoice PDF' + (e.number ? ' #' + esc(e.number) : '') + ' <button class="sm ghost invqprevpdf" style="margin:0 0 0 .3rem;padding:.2rem .55rem;font-size:.8rem">Open the PDF</button></div>';
       var pb = target.querySelector('.invqprevpdf'); if (pb) pb.onclick = function () { invqPdf(id, pb); };
@@ -7766,6 +7809,7 @@
     if (e === 'no_such_job') return 'That job isn\u2019t in the record any more.';
     if (e === 'bad_amount') return 'That price doesn\u2019t look right \u2014 between \u00a31 and \u00a32,000.';
     if (e === 'bad_qty') return 'How many must be a number from 1 to 99.';
+    if (e === 'bad_discount') return 'That discount doesn\u2019t add up \u2014 a percentage under 100, or an agreed price below the full price.';
     if (e === 'bad_item') return 'That service isn\u2019t on the QuickBooks list any more \u2014 re-check.';
     if (e === 'bad_lines') return 'Those lines didn\u2019t come through \u2014 try again.';
     if (e === 'nothing_to_set') return 'Nothing to save.';
