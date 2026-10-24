@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-11"
+      "dateModified": "2026-10-24"
     },
     {
       "@type": "FAQPage",
@@ -1220,7 +1220,7 @@
         <h1 class="taskhead__h">Free games, <em class="grad grad--cyan">no adverts</em></h1>
         <p class="taskhead__lede">Solitaire, Hearts, Cribbage, Whist and five more card games, plus our own arcade games &mdash; made by us in Bournemouth, for your PC, tablet or phone.</p>
         <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; Rated 4.9 on Google</a></span><span>No adverts</span><span>No sign-in</span><span>Nothing to install</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 11 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 24 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -1259,6 +1259,14 @@
         /* a phone with big text (6 Oct 2026, owner's Galaxy S22: Chrome turns the text size into page zoom, so this page can be
            180-250 px wide): the quick buttons one per row, one game per row, the PC Manager link wraps */
         @media (max-width:250px){.gh-qb{flex:1 1 100%;white-space:normal}.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-pcm a{white-space:normal}}
+        /* 24 Oct 2026: 365 Games is live in the Microsoft Store (9P9JT29Z4NGV) - Microsoft's own badge after the Play buttons, at
+           their height; on a phone it drops to a line of its own. Never inside the app itself (the Store app, or PC Manager's
+           games window): pcm-mode.js marks those html.pcm, and display-mode covers an app window if that script hasn't run */
+        .gh-quick .ms-store-badge{flex:none;display:inline-flex;align-items:center;max-width:100%}
+        .gh-quick .ms-store-badge img{display:block;height:50px;width:auto;max-width:100%}
+        html.pcm .gh-quick .ms-store-badge{display:none!important}
+        @media (display-mode:fullscreen),(display-mode:standalone){.gh-quick .ms-store-badge{display:none!important}}
+        @media (max-width:250px){.gh-quick .ms-store-badge{flex:1 1 100%}.gh-quick .ms-store-badge img{height:auto;width:100%;max-width:183px}}
         /* the "you" card */
         .gh-me{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;padding:1rem 1.2rem;border-radius:var(--r-lg);
           background:linear-gradient(120deg,rgba(29,151,227,.18),rgba(12,20,44,.75) 60%);border:1px solid rgba(108,196,245,.28)}
@@ -1395,6 +1403,7 @@
         <a class="gh-qb gh-qb--go" id="ghQ1" href="/games/solitaire/"><span aria-hidden="true">&#9654;</span> Solitaire</a>
         <a class="gh-qb gh-qb--go" href="/games/hearts/"><span aria-hidden="true">&#9654;</span> Hearts</a>
         <a class="gh-qb" href="#gh-card-games">All games <span aria-hidden="true">&darr;</span></a>
+        <a class="ms-store-badge" href="https://apps.microsoft.com/detail/9P9JT29Z4NGV?mode=direct" aria-label="Download from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
       </div>
       <div class="gh-me" id="ghMe">
         <span class="gh-av" id="ghAv" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m3.2 8.3 6-2 4.3 12.9-6 2z" opacity=".45"/><path d="m8.6 5.3 6.3.2-.4 13.6-6.3-.2z" opacity=".7"/><path d="m14 6.2 6.1 1.8-3.9 13-6.1-1.8z"/></svg></span>

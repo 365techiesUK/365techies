@@ -196,6 +196,7 @@ _QUICK = """      <div class="gh-quick" id="ghQuick">
         <a class="gh-qb gh-qb--go" id="ghQ1" href="/games/solitaire/"><span aria-hidden="true">&#9654;</span> Solitaire</a>
         <a class="gh-qb gh-qb--go" href="/games/hearts/"><span aria-hidden="true">&#9654;</span> Hearts</a>
         <a class="gh-qb" href="#gh-card-games">All games <span aria-hidden="true">&darr;</span></a>
+        <a class="ms-store-badge" href="https://apps.microsoft.com/detail/9P9JT29Z4NGV?mode=direct" aria-label="Download from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
       </div>"""
 
 # the "you" card: filled in by hub.js from this browser's own saves; a first-time visitor sees the welcome
@@ -228,6 +229,14 @@ _CSS = """      <style>
         /* a phone with big text (6 Oct 2026, owner's Galaxy S22: Chrome turns the text size into page zoom, so this page can be
            180-250 px wide): the quick buttons one per row, one game per row, the PC Manager link wraps */
         @media (max-width:250px){.gh-qb{flex:1 1 100%;white-space:normal}.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-pcm a{white-space:normal}}
+        /* 24 Oct 2026: 365 Games is live in the Microsoft Store (9P9JT29Z4NGV) - Microsoft's own badge after the Play buttons, at
+           their height; on a phone it drops to a line of its own. Never inside the app itself (the Store app, or PC Manager's
+           games window): pcm-mode.js marks those html.pcm, and display-mode covers an app window if that script hasn't run */
+        .gh-quick .ms-store-badge{flex:none;display:inline-flex;align-items:center;max-width:100%}
+        .gh-quick .ms-store-badge img{display:block;height:50px;width:auto;max-width:100%}
+        html.pcm .gh-quick .ms-store-badge{display:none!important}
+        @media (display-mode:fullscreen),(display-mode:standalone){.gh-quick .ms-store-badge{display:none!important}}
+        @media (max-width:250px){.gh-quick .ms-store-badge{flex:1 1 100%}.gh-quick .ms-store-badge img{height:auto;width:100%;max-width:183px}}
         /* the "you" card */
         .gh-me{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;padding:1rem 1.2rem;border-radius:var(--r-lg);
           background:linear-gradient(120deg,rgba(29,151,227,.18),rgba(12,20,44,.75) 60%);border:1px solid rgba(108,196,245,.28)}
