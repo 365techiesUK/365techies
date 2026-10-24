@@ -639,6 +639,12 @@ def pcm_landing():
     dl = (f'<a class="button primary button--lg" href="{PCM_DOWNLOAD_URL}" download data-pcm-cta="download">Download free for Windows &#8595;</a>'
           if PCM_DOWNLOAD_URL else
           '<a class="button primary button--lg" href="/contact/?topic=365-pc-manager" data-pcm-cta="ask">Ask us to set it up for you &#8594;</a>')
+    # 24 Oct 2026: live in the Microsoft Store (XP99J1CFV8W876) - Microsoft's official badge, self-hosted, beside the download button
+    # at its height; centred under it on phones. Same badge + wording as the Techies PDF / Move / One pages.
+    if PCM_DOWNLOAD_URL:
+        dl += ('<a class="ms-store-badge" href="https://apps.microsoft.com/detail/XP99J1CFV8W876?mode=direct" aria-label="Download from the Microsoft Store"'
+               ' style="display:inline-block;vertical-align:middle;margin:.5rem"><img src="/images/ms-store-badge-en-gb-dark.svg"'
+               ' alt="Download from the Microsoft Store" width="161" height="44" loading="lazy" style="display:block;height:4.15rem;width:auto"></a>')
     dlnote = ("Free for Windows 10 &amp; 11 &middot; no sign-up &middot; " + PCM_FILESIZE + " &middot; digitally signed by 365 Techies Ltd" if PCM_DOWNLOAD_URL
               else "We&rsquo;ll install it for you on any visit or remote session &mdash; and we can pop it on any refurbished Dell we supply, just say the word.")
     # Honest first-release note. A signed app from a NEW publisher can still get a
