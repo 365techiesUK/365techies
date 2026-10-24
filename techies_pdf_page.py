@@ -87,6 +87,14 @@ CSS = """    <style>
       .tpp-btns .ms-store-badge img{display:block;height:4.25rem;width:auto}
       @media (min-width:700px){.tpp-btns .button.primary{white-space:nowrap}}
       @media (max-width:699px){.tpp-btns .ms-store-badge{margin:0 auto}}
+      .tpp-new{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 .85rem;padding:.3rem .85rem .3rem .32rem;border-radius:999px;border:1px solid rgba(0,206,27,.38);background:rgba(0,206,27,.07);color:var(--ink);font-size:.86rem;font-weight:600;line-height:1.3;text-decoration:none;max-width:100%;transition:border-color .2s,background .2s}
+      .tpp-new b{flex:0 0 auto;padding:.16rem .55rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem var(--font-mono);letter-spacing:.08em}
+      .tpp-new span{min-width:0} .tpp-new__s{display:none} .tpp-new i{font-style:normal;color:#00ce1b;transition:transform .2s}
+      .tpp-new:hover{border-color:rgba(0,206,27,.7);background:rgba(0,206,27,.12)} .tpp-new:hover i{transform:translateX(3px)} .tpp-new:focus-visible{outline:2px solid #00ce1b;outline-offset:3px}
+      @media (max-width:600px){.tpp-new__l{display:none}.tpp-new__s{display:inline}}
+      @media (prefers-reduced-motion:reduce){.tpp-new i{transition:none}}
+      .tpp-hero-store{display:inline-flex;align-items:center;flex:none;max-width:100%}
+      .tpp-hero-store img{display:block;width:12.6rem;max-width:100%;height:auto}
       .tpp-meta{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
       .tpp-steps{margin:0;padding:0;list-style:none;display:grid;gap:.45rem}
       .tpp-steps li{line-height:1.5}
@@ -142,11 +150,13 @@ def hero():
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{bp.bc_sub("Free Tools", "/free-tools/", NAME)}</nav>
+          <a class="tpp-new" href="https://apps.microsoft.com/detail/XPDLXSHHH42Q88?mode=direct"><b>NEW</b><span class="tpp-new__l">Now on the Microsoft Store, checked by Microsoft</span><span class="tpp-new__s">Now on the Microsoft Store</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// FREE FOR WINDOWS 11 &amp; 10 &middot; WORKS OFFLINE &middot; NOTHING UPLOADED &middot; SIGNED BY 365 TECHIES LTD</p>
           <h1><em class="grad grad--cyan">Techies PDF</em>: the free PDF editor for Windows 11 and 10 that keeps your files on your PC</h1>
           <p class="lede"><strong>Techies PDF</strong> is a free program for Windows 11 and 10 from 365 Techies, the family-run IT firm in Bournemouth. <strong>Fill in and sign</strong> a PDF form without printing it, <strong>join (merge)</strong> PDFs into one, <strong>split</strong> off just the pages you need, <strong>turn, move or take out</strong> pages, <strong>shrink (compress)</strong> a PDF so it can be emailed, turn <strong>photos into a PDF</strong>, copy the words out (from <strong>scans</strong> too), turn a PDF into a <strong>Word</strong> document, <strong>change the words</strong> in one, and put a <strong>password</strong> on. All on your own computer, and it works offline: your documents are never uploaded anywhere. No adverts, no account, no watermark.</p>
           <div class="page-hero__cta">
             <a href="#download" class="button primary button--lg">Download it free</a>
+            <a class="ms-store-badge tpp-hero-store" href="https://apps.microsoft.com/detail/XPDLXSHHH42Q88?mode=direct" aria-label="Download Techies PDF from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44"></a>
             <a href="tel:+441202775566" class="button secondary button--lg">Rather we set it up? 01202 775566</a>
           </div>
           <p style="margin:0 0 .9rem">{yt_watch.button(yt_watch.TPDF_FILM, "Watch the 3-minute how-to: every job, start to finish")}</p>
