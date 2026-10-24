@@ -17351,7 +17351,7 @@ info_page(
 # publisher page in the Store, which lists all five. When the official Microsoft partner badge comes (AI Cloud Partner
 # Program, support request 2610240050000506), the Microsoft Partner card gets the same treatment.
 _ACC_STORE_URL = "https://apps.microsoft.com/search/publisher?name=365%20Techies"
-_ACC_STORE_TILE = ('        <div class="tile"><style>.tile-logo{display:inline-block;margin:0 0 1rem}.tile-logo img{display:block;height:2.75rem;width:auto}.tile-logo~p a{color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px}</style>'
+_ACC_STORE_TILE = ('        <div class="tile"><style>.tile-logo{display:inline-block;margin:0 0 1rem}.tile-logo img{display:block;height:2.75rem;width:auto}.tile p a{color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px}</style>'
     f'<a class="tile-logo" href="{_ACC_STORE_URL}" aria-label="365 Techies in the Microsoft Store: all our apps">'
     '<img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>'
     '<h3>Microsoft Store Publisher</h3><p>Our own free Windows programs &mdash; <a href="/free-pc-health-check/">365 PC Manager</a>, '
@@ -17364,7 +17364,7 @@ info_page(
   hero_cta1=('See our services', '/services/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Accreditations &amp; <em class="grad grad--cyan">partners</em>',
   lede="The accreditations, partnerships and standards behind 365 Techies — so you know your technology is in expert, trusted hands.",
-  desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, a Microsoft Store publisher, Dell specialists, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
+  desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, a Microsoft Store publisher, Dell specialists, a Victron Recommended Software Integrator, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
   chips=["Microsoft Partner","Dell reseller since 2001","Malwarebytes Partner"],
   pre='''    <section class="section section--alt" aria-label="Accreditations and partners">
       <div class="wrap">
@@ -17377,6 +17377,9 @@ info_page(
         ("windows","Microsoft Partner","A verified Microsoft partner &mdash; 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026 &mdash; and certified Microsoft Office Specialists. Deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
       ]) + "\n" + _ACC_STORE_TILE + "\n" + tiles([
         ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
+        # 24 Oct 2026 (owner: "how come it hasn't got any mention of our Victron ... we're listed on their website"): accepted 21 Jul
+        # 2026, same wording as the Victron pages. Text only: Victron publishes no badge for the program and its logo rules are unconfirmed
+        ("sun","Victron Recommended Software Integrator","Listed in Victron Energy&rsquo;s Recommended Software Integrator Program since July 2026. We build <a href=\"/custom-vrm-dashboards/\">custom VRM dashboards</a> and monitoring for Victron systems, and run our own off-grid van on Victron kit (<a href=\"/off-grid-victron-energy/\">see it live</a>). An independent company: not a Victron dealer, distributor or reseller."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
         ("battery","GoCardless &amp; SiteGround","We build on trusted, FCA-regulated Direct Debit and premium managed hosting."),
