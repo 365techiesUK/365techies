@@ -17346,6 +17346,19 @@ info_page(
 )
 
 # ---- Accreditations & Partners
+# 24 Oct 2026 (owner: "shouldn't it have the Microsoft Store logo there ... clicking on that links to our store ... so they can
+# see all our apps"): the Store card carries Microsoft's own badge (self-hosted, unaltered) in place of an icon, linked to our
+# publisher page in the Store, which lists all five. When the official Microsoft partner badge comes (AI Cloud Partner
+# Program, support request 2610240050000506), the Microsoft Partner card gets the same treatment.
+_ACC_STORE_URL = "https://apps.microsoft.com/search/publisher?name=365%20Techies"
+_ACC_STORE_TILE = ('        <div class="tile"><style>.tile-logo{display:inline-block;margin:0 0 1rem}.tile-logo img{display:block;height:2.75rem;width:auto}.tile-logo~p a{color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px}</style>'
+    f'<a class="tile-logo" href="{_ACC_STORE_URL}" aria-label="365 Techies in the Microsoft Store: all our apps">'
+    '<img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>'
+    '<h3>Microsoft Store Publisher</h3><p>Our own free Windows programs &mdash; <a href="/free-pc-health-check/">365 PC Manager</a>, '
+    '<a href="/techies-pdf/">Techies PDF</a>, <a href="/techies-move/">Techies Move</a> and <a href="/techies-one-mail/">Techies One</a> '
+    '&mdash; and our free card and arcade games, <a href="/games/">365 Games</a>, are published on the Microsoft Store under our own name: '
+    'five in all, each one checked by Microsoft before it was listed (October 2026). '
+    f'<a href="{_ACC_STORE_URL}">See all five in the Microsoft Store</a>.</p></div>')
 info_page(
   slug="accreditations", crumb_name="Accreditations & Partners", eyebrow="// ACCREDITATIONS",
   hero_cta1=('See our services', '/services/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
@@ -17362,7 +17375,7 @@ info_page(
         <div class="tile-grid" data-stagger>
 ''' + tiles([
         ("windows","Microsoft Partner","A verified Microsoft partner &mdash; 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026 &mdash; and certified Microsoft Office Specialists. Deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
-        ("check","Microsoft Store Publisher","Our own free Windows programs &mdash; <a href=\"/free-pc-health-check/\">365 PC Manager</a>, <a href=\"/techies-pdf/\">Techies PDF</a>, <a href=\"/techies-move/\">Techies Move</a> and <a href=\"/techies-one-mail/\">Techies One</a> &mdash; and our free card and arcade games, <a href=\"/games/\">365 Games</a>, are published on the Microsoft Store under our own name: five in all, each one checked by Microsoft before it was listed (October 2026)."),   # 24 Oct 2026
+      ]) + "\n" + _ACC_STORE_TILE + "\n" + tiles([
         ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
