@@ -483,6 +483,7 @@ def build():
             "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock"},
             "isAccessibleForFree": True, "inLanguage": "en-GB",
             "downloadUrl": REL["url"], "softwareVersion": REL["ver"], "fileSize": MB.replace(" ", ""),
+            "installUrl": "https://apps.microsoft.com/detail/XPFCXK6CK201FQ", "sameAs": ["https://apps.microsoft.com/detail/XPFCXK6CK201FQ"],   # its Microsoft Store listing (live 24 Oct 2026)
             "featureList": ["Moves Desktop, Documents, Pictures, Videos, Music, Downloads and any added folder to a new PC by USB stick",
                             "Says what size of USB stick is needed and whether a drive has room (and FAT32's 4 GB limit)",
                             "Favourites from Microsoft Edge, Google Chrome (including Google-account favourites), Brave and Firefox",

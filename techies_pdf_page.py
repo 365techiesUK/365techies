@@ -594,6 +594,7 @@ def build():
             "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock"},
             "isAccessibleForFree": True, "inLanguage": "en-GB",
             "downloadUrl": REL["url"], "softwareVersion": REL["ver"], "fileSize": MB.replace(" ", ""),
+            "installUrl": "https://apps.microsoft.com/detail/XPDLXSHHH42Q88", "sameAs": ["https://apps.microsoft.com/detail/XPDLXSHHH42Q88"],   # its Microsoft Store listing (live 24 Oct 2026)
             "featureList": ["Fill in PDF forms and sign them (typed, drawn or a photo of your signature)",
                             "Add text, highlights and drawings to any PDF", "Join (merge) PDFs into one",
                             "Turn (rotate), move and take out pages", "Split a PDF: some pages as a new PDF, or one PDF per page",

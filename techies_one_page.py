@@ -918,6 +918,7 @@ def build():
             "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": "https://schema.org/InStock"},
             "isAccessibleForFree": True, "inLanguage": "en-GB",
             "downloadUrl": REL["url"], "softwareVersion": REL["ver"], "fileSize": MB.replace(" ", ""),
+            "installUrl": "https://apps.microsoft.com/detail/XP8BVNHVZVMW0D", "sameAs": ["https://apps.microsoft.com/detail/XP8BVNHVZVMW0D"],   # its Microsoft Store listing (live 24 Oct 2026)
             "featureList": ["Email with plain-English scam warnings and a Scams folder", "All inboxes: every address in one list",
                             "One-press block sender", "Clean up: unsubscribe and remove old email in bulk",
                             "Address book that fills itself in, with groups", "Calendar with two-way Outlook.com sync and UK bank holidays",

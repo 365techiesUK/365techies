@@ -1280,6 +1280,7 @@ def pcm_landing():
                "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, network safety, programs, Windows Update and printer checks, drive (SMART) health on every drive, one-tap boost, live performance graphs, backup (including OneDrive folder backup) and startup checks, and an honest report - no fake errors, no scare tactics. Free tools to check a Virgin Media, blueyonder, ntlworld or virgin.net mailbox and move it to Gmail. Music, radio and videos in one window with an equaliser, Auto DJ and DJ decks, a wake-up alarm, and tools such as Lost a file?, a password maker and a QR code maker. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": ("https://schema.org/InStock" if PCM_LIVE else "https://schema.org/PreOrder")},
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
+               "installUrl": "https://apps.microsoft.com/detail/XP99J1CFV8W876", "sameAs": ["https://apps.microsoft.com/detail/XP99J1CFV8W876"],   # its Microsoft Store listing (live 24 Oct 2026)
                "screenshot": [SITE + "/images/pcm-laptop-home-v44.webp", SITE + "/images/pcm-laptop-safety-v44.webp", SITE + "/images/pcm-laptop-mypc-v44.webp", SITE + "/images/pcm-laptop-internet-v44.webp", SITE + "/images/pcm-laptop-photos-v44.webp", SITE + "/images/pcm-laptop-music-v44.webp", SITE + "/images/pcm-laptop-radio-v44.webp", SITE + "/images/pcm-laptop-decks-v44.webp", SITE + "/images/pcm-laptop-help-v44.webp", SITE + "/images/pcm-laptop-booking-v44.webp", SITE + "/images/pcm-laptop-games-v44.webp"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         # The six-weekly service is a real, priced service this page now sells; describe it
@@ -15701,7 +15702,26 @@ graphics_card_benchmark()
 def free_tools_hub():
     slug = "free-tools"
     desc = "Free IT tools that run entirely in your browser — no download, no sign-up, nothing installed. Check your website, test broadband live, see if a password has leaked, make Wi-Fi QR codes, benchmark your PC and more."
+    # 24 Oct 2026: our four Windows programs get their own group first, with a row of Microsoft Store buttons under the cards
+    # (all four live in the Store since 24 Oct; listing IDs as on their own pages)
+    APPS = ["pcmapp","tpdfapp","tmoveapp","t1app"]
+    STORE_ROW = '''      <style>
+      .ms-row{margin:.4rem 0 2.2rem;padding:1.1rem 1.2rem;border:1px solid rgba(125,170,220,.22);border-radius:16px;background:rgba(125,170,220,.05)}
+      .ms-row__lede{margin:0 0 .9rem;color:var(--muted)}
+      .ms-row__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:.9rem}
+      .ms-row__app{display:flex;flex-direction:column;align-items:flex-start;gap:.45rem;color:inherit;font-weight:700;text-decoration:none}
+      .ms-row__app img{display:block;height:2.75rem;width:auto}
+      </style>
+      <div class="ms-row" data-reveal>
+        <p class="ms-row__lede">Prefer the Microsoft Store? All four are there too: the same free programs, each one checked by Microsoft before it was listed.</p>
+        <div class="ms-row__grid">
+''' + "".join(f'''          <a class="ms-row__app" href="https://apps.microsoft.com/detail/{sid}?mode=direct" aria-label="Download {name} from the Microsoft Store"><span>{name}</span><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
+''' for name, sid in [("365 PC Manager", "XP99J1CFV8W876"), ("Techies PDF", "XPDLXSHHH42Q88"), ("Techies Move", "XPFCXK6CK201FQ"), ("Techies One", "XP8BVNHVZVMW0D")]) + '''        </div>
+      </div>
+'''
     GROUPS = [
+      ("Our free Windows apps", "Free, digitally signed programs we make ourselves &mdash; and all four are on the Microsoft Store.",
+       APPS),
       ("Learn something new", "Free, friendly courses for beginners and older learners &mdash; certificate included.",
        ["freecourses","safetycourse"]),
       ("Security &amp; privacy", "Check you&rsquo;re safe &mdash; and lock things down.",
@@ -15711,9 +15731,9 @@ def free_tools_hub():
       ("Website, domain &amp; email", "See how your website, domain and email really perform.",
        ["website","ssl","domainexp","dns","emailsig"]),
       ("Your computer", "Test it, diagnose it, and make smart decisions.",
-       ["pcmapp","tmoveapp","speccheck","pcbench","battcheck","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
+       ["speccheck","pcbench","battcheck","kbtest","spktest","deadpixel","rrtest","pcruncost","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Everyday help", "Simple free helpers for home.",
-       ["tpdfapp","dclock","vtimer"]),
+       ["dclock","vtimer"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
       ("On the road", "Fuel is costing everyone a fortune &mdash; find the cheapest.",
@@ -15725,13 +15745,14 @@ def free_tools_hub():
     for gtitle, glede, keys in GROUPS:
         sections += (f'      <div class="blog-cat-head" data-reveal><h2>{gtitle}</h2></div>\n'
                      f'      <div class="blog-grid" data-stagger>\n{tool_cards(keys)}      </div>\n')
+        if keys is APPS: sections += STORE_ROW
         for k in keys:
             name, href, _b = TOOLS[k]
             items.append({"@type": "ListItem", "position": pos, "name": name.replace("&amp;", "&").replace("&rsquo;", "'"), "url": SITE + href})
             pos += 1
     faqs = [
       ("Are these tools really free?", "Yes &mdash; every tool here is completely free to use, with no sign-up, no account and no catch. They&rsquo;re our way of being genuinely useful; when you&rsquo;d rather a friendly techie just sorted the problem for you, that&rsquo;s what our monthly plans are for."),
-      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The exceptions are our three free Windows programs on this page, <a href=\"/free-pc-health-check/\">365 PC Manager</a> (a PC health check), <a href=\"/techies-pdf/\">Techies PDF</a> (fill in, sign, join and shrink PDFs) and <a href=\"/techies-move/\">Techies Move</a> (move your files to a new PC): all are <strong>free and digitally signed</strong>, install in a couple of clicks and uninstall just as easily."),
+      ("Do I need to download or install anything?", "No &mdash; every tool on this page runs entirely in your web browser, so there&rsquo;s nothing to update and nothing that can slow your computer down. The exceptions are our four free Windows programs at the top of this page, <a href=\"/free-pc-health-check/\">365 PC Manager</a> (a PC health check), <a href=\"/techies-pdf/\">Techies PDF</a> (fill in, sign, join and shrink PDFs), <a href=\"/techies-move/\">Techies Move</a> (move your files to a new PC) and <a href=\"/techies-one-mail/\">Techies One</a> (email, photos, letters and sums): all are <strong>free and digitally signed</strong>, all four are on the Microsoft Store too, and they install in a couple of clicks and uninstall just as easily."),
       ("Do my passwords, files or data leave my browser?", "No. The privacy-sensitive tools &mdash; the password checks, the hardware and spec checkers and the benchmarks &mdash; run on your own device and don&rsquo;t send your data to us. Where a tool needs a live lookup (like the website or broadband checks) it only sends the address or URL you type, never personal data."),
       ("What can I check with these free tools?", "Plenty: test your website&rsquo;s speed and security, run a live broadband speed test, see if your password has leaked, benchmark your PC and graphics card, check what&rsquo;s inside your computer, make a Wi-Fi QR code, check whether a link is a scam, look up DNS and SSL records, and more &mdash; all free, all in your browser."),
       ("Do the tools work on phones and Macs?", "Yes &mdash; anything with a modern browser. A few are tuned with Windows PCs in mind (we&rsquo;re Windows and Android specialists), but they run on phones, tablets and Macs too."),
@@ -17323,7 +17344,7 @@ info_page(
   hero_cta1=('See our services', '/services/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Accreditations &amp; <em class="grad grad--cyan">partners</em>',
   lede="The accreditations, partnerships and standards behind 365 Techies — so you know your technology is in expert, trusted hands.",
-  desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, Dell specialists, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
+  desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, a Microsoft Store publisher, Dell specialists, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
   chips=["Microsoft Partner","Dell reseller since 2001","Malwarebytes Partner"],
   pre='''    <section class="section section--alt" aria-label="Accreditations and partners">
       <div class="wrap">
@@ -17334,6 +17355,7 @@ info_page(
         <div class="tile-grid" data-stagger>
 ''' + tiles([
         ("windows","Microsoft Partner","A verified Microsoft partner &mdash; 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026 &mdash; and certified Microsoft Office Specialists. Deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
+        ("check","Microsoft Store Publisher","Our own free Windows programs &mdash; <a href=\"/free-pc-health-check/\">365 PC Manager</a>, <a href=\"/techies-pdf/\">Techies PDF</a>, <a href=\"/techies-move/\">Techies Move</a> and <a href=\"/techies-one-mail/\">Techies One</a> &mdash; are published on the Microsoft Store under our own name, each one checked by Microsoft before it was listed (October 2026)."),   # 24 Oct 2026
         ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
