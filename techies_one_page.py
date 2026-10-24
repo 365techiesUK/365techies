@@ -124,6 +124,10 @@ CSS = """    <style>
       .t1p-dl p{margin:0}
       .t1p-btns{display:flex;flex-wrap:wrap;gap:.6rem}
       .t1p-btns .button{flex:1 1 15rem;text-align:center}
+      .t1p-btns .ms-store-badge{flex:0 0 auto;display:flex;align-items:center}
+      .t1p-btns .ms-store-badge img{display:block;height:4.25rem;width:auto}
+      @media (min-width:700px){.t1p-btns .button.primary{white-space:nowrap}}
+      @media (max-width:699px){.t1p-btns .ms-store-badge{margin:0 auto}}
       .t1p-meta{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
       .t1p-steps{margin:0;padding:0;list-style:none;display:grid;gap:.45rem}
       .t1p-swipe{display:none;font-size:.8rem;color:var(--muted);margin:0 0 .4rem}
@@ -274,6 +278,7 @@ def download():
           <p>The program is free for everyone, at home or at work, with as many email addresses as you like. Mail, Albums, Letters, Sums and Files come in the one download. No account to make with us, no trial, no adverts.</p>
           <div class="t1p-btns">
             <a class="button primary button--lg" href="{REL['path']}" download>Download Techies One (Windows)</a>
+            <a class="ms-store-badge" href="https://apps.microsoft.com/detail/XP8BVNHVZVMW0D?mode=direct" aria-label="Download from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
             <a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a>
           </div>
           <p class="t1p-meta mono">FOR WINDOWS 10 AND 11 (64-BIT)<span class="t1v"> &middot; VERSION {REL['ver']} &middot; {MB}</span> &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; NOT FOR MAC, IPHONE OR ANDROID</p>

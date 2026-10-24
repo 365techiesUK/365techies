@@ -83,6 +83,10 @@ CSS = """    <style>
       .tpp-dl p{margin:0}
       .tpp-btns{display:flex;flex-wrap:wrap;gap:.6rem}
       .tpp-btns .button{flex:1 1 15rem;text-align:center}
+      .tpp-btns .ms-store-badge{flex:0 0 auto;display:flex;align-items:center}
+      .tpp-btns .ms-store-badge img{display:block;height:4.25rem;width:auto}
+      @media (min-width:700px){.tpp-btns .button.primary{white-space:nowrap}}
+      @media (max-width:699px){.tpp-btns .ms-store-badge{margin:0 auto}}
       .tpp-meta{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
       .tpp-steps{margin:0;padding:0;list-style:none;display:grid;gap:.45rem}
       .tpp-steps li{line-height:1.5}
@@ -185,6 +189,7 @@ def download():
           <p>The program is free for everyone, at home or at work: no trial, no account to make with us, no adverts, no watermark on your PDFs and no daily limit.</p>
           <div class="tpp-btns">
             <a class="button primary button--lg" href="{REL['path']}" download>Download Techies PDF (Windows)</a>
+            <a class="ms-store-badge" href="https://apps.microsoft.com/detail/XPDLXSHHH42Q88?mode=direct" aria-label="Download from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
             <a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a>
           </div>
           <p class="tpp-meta mono">FOR WINDOWS 10 AND 11 (64-BIT)<span class="tpv"> &middot; VERSION {REL['ver']} &middot; {MB}</span> &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; NOT FOR MAC, IPHONE OR ANDROID</p>

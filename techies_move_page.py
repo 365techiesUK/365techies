@@ -88,6 +88,10 @@ CSS = """    <style>
       .tmv-dl p{margin:0}
       .tmv-btns{display:flex;flex-wrap:wrap;gap:.6rem}
       .tmv-btns .button{flex:1 1 15rem;text-align:center}
+      .tmv-btns .ms-store-badge{flex:0 0 auto;display:flex;align-items:center}
+      .tmv-btns .ms-store-badge img{display:block;height:4.25rem;width:auto}
+      @media (min-width:700px){.tmv-btns .button.primary{white-space:nowrap}}
+      @media (max-width:699px){.tmv-btns .ms-store-badge{margin:0 auto}}
       .tmv-meta{font-size:.78rem;letter-spacing:.04em;color:var(--muted)}
       .tmv-steps{margin:0;padding:0;list-style:none;display:grid;gap:.45rem}
       .tmv-steps li{line-height:1.5}
@@ -177,6 +181,7 @@ def download():
           <p>The program is free for everyone, at home or at work: no trial, no account to make with us, no adverts and no limit on how much it moves. You&rsquo;ll need a USB stick or external hard drive with enough room; Techies Move tells you how much.</p>
           <div class="tmv-btns">
             <a class="button primary button--lg" href="{REL['path']}" download>Download Techies Move (Windows)</a>
+            <a class="ms-store-badge" href="https://apps.microsoft.com/detail/XPFCXK6CK201FQ?mode=direct" aria-label="Download from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
             <a class="button secondary button--lg" href="tel:+441202775566">Rather we did the move? 01202 775566</a>
           </div>
           <p class="tmv-meta mono">FOR WINDOWS 10 AND 11 (64-BIT)<span class="tmv-v"> &middot; VERSION {REL['ver']} &middot; {MB}</span> &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
