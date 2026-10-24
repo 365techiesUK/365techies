@@ -15710,7 +15710,7 @@ def free_tools_hub():
     slug = "free-tools"
     desc = "Free IT tools that run entirely in your browser — no download, no sign-up, nothing installed. Check your website, test broadband live, see if a password has leaked, make Wi-Fi QR codes, benchmark your PC and more."
     # 24 Oct 2026: our four Windows programs get their own group first, with a row of Microsoft Store buttons under the cards
-    # (all four live in the Store since 24 Oct; listing IDs as on their own pages)
+    # (all four live in the Store since 24 Oct; listing IDs as on their own pages) - and 365 Games, live the same day, as a fifth button
     APPS = ["pcmapp","tpdfapp","tmoveapp","t1app"]
     STORE_ROW = '''      <style>
       .ms-row{margin:.4rem 0 2.2rem;padding:1.1rem 1.2rem;border:1px solid rgba(125,170,220,.22);border-radius:16px;background:rgba(125,170,220,.05)}
@@ -15720,10 +15720,10 @@ def free_tools_hub():
       .ms-row__app img{display:block;height:2.75rem;width:auto}
       </style>
       <div class="ms-row" data-reveal>
-        <p class="ms-row__lede">Prefer the Microsoft Store? All four are there too: the same free programs, each one checked by Microsoft before it was listed.</p>
+        <p class="ms-row__lede">Prefer the Microsoft Store? All four are there too, and so is 365 Games, our free card and arcade games: five in all, each one checked by Microsoft before it was listed.</p>
         <div class="ms-row__grid">
 ''' + "".join(f'''          <a class="ms-row__app" href="https://apps.microsoft.com/detail/{sid}?mode=direct" aria-label="Download {name} from the Microsoft Store"><span>{name}</span><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>
-''' for name, sid in [("365 PC Manager", "XP99J1CFV8W876"), ("Techies PDF", "XPDLXSHHH42Q88"), ("Techies Move", "XPFCXK6CK201FQ"), ("Techies One", "XP8BVNHVZVMW0D")]) + '''        </div>
+''' for name, sid in [("365 PC Manager", "XP99J1CFV8W876"), ("Techies PDF", "XPDLXSHHH42Q88"), ("Techies Move", "XPFCXK6CK201FQ"), ("Techies One", "XP8BVNHVZVMW0D"), ("365 Games", "9P9JT29Z4NGV")]) + '''        </div>
       </div>
 '''
     GROUPS = [
@@ -17362,7 +17362,7 @@ info_page(
         <div class="tile-grid" data-stagger>
 ''' + tiles([
         ("windows","Microsoft Partner","A verified Microsoft partner &mdash; 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026 &mdash; and certified Microsoft Office Specialists. Deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
-        ("check","Microsoft Store Publisher","Our own free Windows programs &mdash; <a href=\"/free-pc-health-check/\">365 PC Manager</a>, <a href=\"/techies-pdf/\">Techies PDF</a>, <a href=\"/techies-move/\">Techies Move</a> and <a href=\"/techies-one-mail/\">Techies One</a> &mdash; are published on the Microsoft Store under our own name, each one checked by Microsoft before it was listed (October 2026)."),   # 24 Oct 2026
+        ("check","Microsoft Store Publisher","Our own free Windows programs &mdash; <a href=\"/free-pc-health-check/\">365 PC Manager</a>, <a href=\"/techies-pdf/\">Techies PDF</a>, <a href=\"/techies-move/\">Techies Move</a> and <a href=\"/techies-one-mail/\">Techies One</a> &mdash; and our free card and arcade games, <a href=\"/games/\">365 Games</a>, are published on the Microsoft Store under our own name: five in all, each one checked by Microsoft before it was listed (October 2026)."),   # 24 Oct 2026
         ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner, delivering award-winning protection with VPN."),
         ("leaf","Sustainable Dorset Member","Proud members of Sustainable Dorset, committed to greener business."),
