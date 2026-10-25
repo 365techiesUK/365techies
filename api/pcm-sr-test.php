@@ -210,6 +210,11 @@ ok(strpos($html, 'Service report · ') !== false && strpos($html, '&amp;middot;'
 ok(strpos($html, 'writereview') === false && strpos($text, 'writereview') === false && stripos($html, 'review') === false, 'NO review ask anywhere in it');
 ok(strpos($html, 'first Computer Service &amp; Health Check free') !== false, 'the referral panel is present (lawful in a service email)');
 ok(strpos($html, 'pcm-review.php?u=') === false, 'no unsubscribe link - it is transactional');
+// 25 Oct 2026 (owner: "the LinkedIn link in the reports"): a quiet text link in both bodies, before the sign-off - never a second button
+$liU = 'https://www.linkedin.com/company/365techies/';
+ok(strpos($html, $liU) !== false && strpos($text, $liU) !== false && strpos($text, 'On LinkedIn? Follow 365 Techies') !== false && strpos($html, 'Follow 365 Techies</a>') !== false, 'both bodies carry the LinkedIn follow line');
+ok(strpos($text, $liU) < strpos($text, 'Steve & David') && strpos($html, $liU) < strpos($html, '<strong>Steve and David</strong>'), 'the LinkedIn line sits before the sign-off');
+ok(substr_count($html, 'background-color:#1d97e3;border-radius:9px;mso-padding-alt') === 1, 'still exactly one big button (the full report)');
 ok(stripos($html, ' vat') === false && stripos($html, 'safe to') === false, 'no VAT, no "safe"');
 ok(strpos($text, 'Hi Sofia,') === 0, 'text opens as every email does');
 $noscore = $ent; $noscore['score'] = null; $noscore['done'] = array(); $noscore['recs'] = array();

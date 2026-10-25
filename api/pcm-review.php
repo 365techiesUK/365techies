@@ -1376,6 +1376,15 @@ function rv_h_referral() {
       . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
 }
 
+/** The LinkedIn follow line (owner, 25 Oct 2026: "the LinkedIn link in the reports"). A plain text link, never a
+ *  second button - one big button per email. The same words in the text and the HTML body. */
+function rv_linkedin_url() { return 'https://www.linkedin.com/company/365techies/'; }
+function rv_t_linkedin() { return "On LinkedIn? Follow 365 Techies for PC tips and news from us:\r\n" . rv_linkedin_url() . "\r\n\r\n"; }
+function rv_h_linkedin() {
+    return '<p style="margin:4px 0 18px 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">On LinkedIn? '
+         . '<a href="' . rv_linkedin_url() . '" style="color:#1266a8;font-weight:600;text-decoration:none;">Follow 365 Techies</a> for PC tips and news from us.</p>';
+}
+
 /** "l j F" for a timestamp, or '' - the visit record needs a real date in it. */
 function rv_h_when($ts) { $ts = (int)$ts; return $ts > 0 ? date('l j F Y', $ts) : ''; }
 
@@ -2089,6 +2098,7 @@ function sr_body($first, $sr) {
         . "in an out-of-the-blue phone call or pop-up, and nobody rings on our behalf.\r\n"
         . "If anyone does, however official they sound, hang up and ring us on\r\n"
         . "01202 775566.\r\n\r\n"
+        . rv_t_linkedin()
         . "Steve & David\r\n"
         . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
         . "01202 775566 - https://365techies.co.uk\r\n";
@@ -2148,6 +2158,7 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
               . 'We will never ask for passwords or payment in an out-of-the-blue phone call or pop-up, and <strong style="color:#0b1226;">nobody rings on our behalf</strong>. '
               . 'If anyone does, however official they sound, hang up and ring us on '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
+    $blocks[] = rv_h_linkedin();
     // a relative's copy: the same report, with who asked for it on top and how to stop it underneath
     if ($famIntro !== '') array_unshift($blocks, rv_h_note($famIntro));
     if ($famFoot !== '') $blocks[] = '<p style="margin:14px 0 4px 0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">' . $famFoot . '</p>';
