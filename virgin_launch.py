@@ -37,6 +37,12 @@ GMAIL_PAGE = "/move-virgin-media-email-to-gmail/"
 # the free card on every Virgin page and as its own section on the tool page.
 EMAIL_MOVER_ADDON_URL = "https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd"   # approved and published (Unlisted) 5 Oct 2026; owner: "switch both on now"
 
+# 25 Oct 2026 (owner: the Store badge "builds trust"): 365 PC Manager is live in the Microsoft Store (XP99J1CFV8W876, 24 Oct,
+# an EXE listing - the same signed installer as our download). Microsoft's official badge, self-hosted, as on /free-pc-health-check/.
+PCM_STORE_BADGE = ('<a class="ms-store-badge vmc__store" href="https://apps.microsoft.com/detail/XP99J1CFV8W876?mode=direct" '
+                   'aria-label="Download 365 PC Manager from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" '
+                   'alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>')
+
 # the owner's GBP 60 move: what they get (the same promises the pages made before the free app, plus the PC service)
 VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
                "Works even if Virgin won&rsquo;t give you an app password",
@@ -96,6 +102,9 @@ _VMC_CSS = """
 .vmc__shotnote{margin:.8rem 0 0;font-size:.85rem;line-height:1.5;color:var(--hp-soft)}
 @media (max-width:600px){.vmc__shots{grid-template-columns:1fr}.vmc__shots figure+figure{display:none}}
 .vmc__dl-s{display:none}
+.vmc__store{display:inline-flex;align-items:center}
+.vmc__store img{display:block;height:3.3rem;width:auto}
+@media (max-width:600px){.vmc__store{margin:0 auto}}
 .vmc__form{position:relative;margin:.35rem 0 0;padding:.95rem 1rem 1rem;border-radius:18px;border:1px solid var(--hp-edge);background:color-mix(in srgb,var(--hp-card) 70%,#000)}
 .vmc__formh{margin:0 0 .7rem;font-weight:600;font-size:1rem;line-height:1.35;color:var(--hp-ink)}
 .vmc__fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem .8rem}
@@ -197,7 +206,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("monitor")}</span>FREE &middot; NO SIGN-UP &middot; FOR WINDOWS PCs</p>
           <{h} class="vmc__h">{diy_or} it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
-          <p class="vmc__cta"><a class="button {dl_btn} button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
+          <p class="vmc__cta"><a class="button {dl_btn} button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a>{PCM_STORE_BADGE}</p>
           <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. {_vmc_stuck()}</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
