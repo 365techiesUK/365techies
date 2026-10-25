@@ -46,6 +46,25 @@ VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
 VM_US_SMALL = "For Windows PCs &middot; agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
 # 1 Oct 2026: the card's ring-me-back form (js/forms.js posts it to the Slack lead relay; GA4 virgin_move_request)
 VM_FORM_OK = "&#10003; Got it, thank you. We&rsquo;ll ring you, Mon&ndash;Fri 9&ndash;5. Nothing is booked until we&rsquo;ve spoken."
+# 25 Oct 2026 (owner, after a month with ~2,100 Virgin-page clicks and few moves): most Virgin customers rightly take
+# Junara's free year (one enquirer texted back exactly that), so the GBP 60 card now says who it is worth doing NOW for -
+# the people who pay Junara from day one or several times over, or who are out of time. After the buttons, so the Text
+# button stays on a phone's first screen. Those waiting out the free year get the reminder box (junara_reminder_box).
+VM_NOW_LINES = ("<b>You&rsquo;ve already left Virgin.</b> Junara charges from the first day.",
+                "<b>There&rsquo;s more than one Virgin address in the house.</b> Each one is its own sign-up and its own bill.",
+                "<b>Your date is close.</b> Copying the mail out is far easier while the mailbox is fully open.")
+VM_NOW_CSS = (".vmc__nowh{margin:.15rem 0 .4rem;font-weight:600;color:var(--hp-ink)}"
+              ".vmc__now{margin:0 0 .75rem;padding:0 0 0 1.15rem;display:grid;gap:.35rem;font-size:.94rem;line-height:1.45;color:var(--hp-body)}"
+              ".vmc__now b{color:var(--hp-ink)}")
+# SHOW_MANX_PRECEDENT (below) also governs the sum: it is the only Junara price ever published, always attributed.
+VM_NOW_SUM = ("&pound;60 once, against about &pound;65 a year for each address kept with Junara (the only Junara price published so "
+              "far, from the Isle of Man; Virgin&rsquo;s may differ).")
+
+
+def _vm_now_html():
+    items = "".join("<li>%s</li>" % t for t in VM_NOW_LINES)
+    total = ('\n          <p class="vmc__d vmc__d--after">' + VM_NOW_SUM + '</p>') if SHOW_MANX_PRECEDENT else ""
+    return ('\n          <p class="vmc__nowh">Worth doing now if:</p>\n          <ul class="vmc__now">' + items + '</ul>' + total)
 
 _VMC_CSS = """
 .vmc{padding:1.3rem var(--pad-x) 2.4rem}
@@ -164,7 +183,8 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
         # price and the buttons; the description follows them. Six phone lines above the buttons became one.
         paid_d = "<b>For Windows PCs only.</b>"
         paid_after = ("\n          <p class=\"vmc__d vmc__d--after\">We move every folder into Gmail for you, remotely. No app "
-                      "passwords, no settings, nothing to learn, and the price includes a full service of your PC with a written report.</p>")
+                      "passwords, no settings, nothing to learn, and the price includes a full service of your PC with a written report.</p>"
+                      + _vm_now_html())
         paid_cta = ('<a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a>'
                     '<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>')
     else:
@@ -218,7 +238,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
 {cards}
       </div>{also}
     </div>
-    <style>{" ".join(l.strip() for l in _VMC_CSS.strip().splitlines())}</style>
+    <style>{" ".join(l.strip() for l in _VMC_CSS.strip().splitlines())}{VM_NOW_CSS if paid_first else ""}</style>
 {_VMC_JS}
     </section>'''
 
@@ -283,6 +303,91 @@ def junara_facts_html(after=""):
         <p style="text-align:center;font-size:.85rem;color:var(--muted);margin:.8rem 0 0">Checked against Virgin Media&rsquo;s, Virgin Media O2&rsquo;s and Junara&rsquo;s own pages. Updated 29 September 2026.</p>{after}
       </div>
       <style>.jfacts__src{{display:inline;font-size:.78rem;color:var(--muted)}}.jfacts__src a{{color:var(--muted)}}</style>
+    </section>'''
+
+
+# ============================================================ the free-year reminder (25 Oct 2026, owner: "free-year reminder")
+# Most Virgin customers will (sensibly) take Junara's free year, so the moment they might want the GBP 60 move is when it
+# ends. This box takes their email now through the Tips by email pipeline (api/t1-signup.php, double opt-in, kind=junara)
+# and Techies One Mail keeps the words they agreed to and the page - with the month they give - so the reminder can go to
+# exactly them. Techies One files every website sign-up as agreed to mailings, so the words cover the tips too (never the
+# reminder alone). They must match SU_CONSENT_JUNARA in api/t1-signup-lib.php word for word: the build checks.
+JUNARA_CONSENT = ("Yes, please email me a reminder before my Junara free year ends, and 365 Techies&rsquo; tips, news and offers "
+                  "about once a month. I can unsubscribe at any time.")
+JUNARA_MONTHS = ("September 2026", "October 2026", "November 2026", "December 2026", "January 2027", "February 2027",
+                 "March 2027", "April 2027")
+
+
+def _junara_consent_matches():
+    import os, re
+    php = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "api", "t1-signup-lib.php"), encoding="utf-8").read()
+    m = re.search(r"define\('SU_CONSENT_JUNARA', '[0-9-]+: \"(.*?)\"'\);", php)
+    return bool(m) and m.group(1).replace("\\'", "'") == JUNARA_CONSENT.replace("&rsquo;", "'")
+
+
+def junara_reminder_box():
+    assert _junara_consent_matches(), "JUNARA_CONSENT and SU_CONSENT_JUNARA (api/t1-signup-lib.php) must say the same words"
+    months = "".join("<option>%s</option>" % m for m in JUNARA_MONTHS)
+    field = ("width:100%;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(125,170,220,.32);"
+             "background:rgba(10,20,40,.5);color:inherit;font:inherit;box-sizing:border-box")
+    lab = "font-size:.68rem;letter-spacing:.06em;color:var(--muted)"
+    return f'''    <section class="section" id="remind" aria-labelledby="jrm-title" style="padding-top:.4rem">
+      <div class="wrap" style="max-width:680px">
+        <form id="jrm-form" novalidate style="max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:.7rem;background:rgba(125,170,220,.05);border:1px solid rgba(125,170,220,.22);border-radius:16px;padding:1.4rem">
+          <p class="mono" style="margin:0;color:var(--muted);font-size:.7rem;letter-spacing:.07em">// TAKING THE FREE YEAR? &middot; FREE REMINDER</p>
+          <h2 id="jrm-title" style="margin:0;font-size:1.35rem;line-height:1.25">We&rsquo;ll remind you before your free year ends</h2>
+          <p style="margin:0;color:var(--muted)">After the free year, each address is a paid plan. Leave your email and we&rsquo;ll write before then with your choices: keep paying Junara, move it to Gmail free with our app, or have us move it for &pound;60.</p>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+          <label for="jrm-email" class="mono" style="{lab}">YOUR EMAIL ADDRESS</label>
+          <input id="jrm-email" type="email" required autocomplete="email" maxlength="160" placeholder="you@example.com" style="{field}" />
+          <label for="jrm-month" class="mono" style="{lab}">WHEN DID (OR WILL) YOU SIGN UP WITH JUNARA? OPTIONAL</label>
+          <select id="jrm-month" style="{field}"><option value="">Not sure yet</option>{months}</select>
+          <label for="jrm-agree" style="display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;line-height:1.45;margin-top:.2rem">
+            <input id="jrm-agree" type="checkbox" style="flex:0 0 auto;width:1.25rem;height:1.25rem;margin:.12rem 0 0;accent-color:var(--cyan,#2bb3ff)" />
+            <span>{JUNARA_CONSENT}</span>
+          </label>
+          <button type="submit" id="jrm-go" class="button primary button--lg" style="width:100%;margin-top:.3rem">Remind me &#8594;</button>
+          <p id="jrm-msg" role="status" aria-live="polite" style="margin:0;min-height:1em;font-size:.95rem;text-align:center"></p>
+          <p style="margin:0;text-align:center;color:var(--muted);font-size:.85rem">We email you first to check it&rsquo;s really you. Your details stay with 365 Techies, never sold or shared. <a href="/privacy-policy/#tips-by-email" style="color:var(--cyan-soft,#6cc4f5);text-decoration:underline">How we look after them</a>.</p>
+        </form>
+      </div>
+    <script>
+      (function () {{
+        var f = document.getElementById('jrm-form'); if (!f) return;
+        f.addEventListener('submit', function (e) {{
+          e.preventDefault();
+          var em = document.getElementById('jrm-email'), mo = document.getElementById('jrm-month'), ag = document.getElementById('jrm-agree'),
+              btn = document.getElementById('jrm-go'), msg = document.getElementById('jrm-msg');
+          function say(t) {{ msg.textContent = t; msg.style.color = 'var(--pbad,#e8637e)'; }}
+          var ev = (em.value || '').trim();
+          if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(ev)) {{ say('Please pop in your email address.'); em.focus(); return; }}
+          if (!ag.checked) {{ say('Please tick the box to say yes.'); ag.focus(); return; }}
+          btn.disabled = true; var lbl = btn.textContent; btn.textContent = 'Sending…'; msg.textContent = '';
+          var page = location.pathname + (mo.value ? ' (signs up ' + mo.value + ')' : '');
+          fetch('/api/t1-signup.php', {{ method: 'POST', headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify({{ email: ev, agree: true, kind: 'junara', website: (f.website && f.website.value) || '', page: page }}) }})
+            .then(function (r) {{ return r.json(); }})
+            .then(function (d) {{
+              if (d && d.ok) {{
+                var box = document.createElement('div'); box.setAttribute('role', 'status'); box.style.cssText = 'text-align:center;padding:.4rem 0';
+                var big = document.createElement('p'); big.style.cssText = 'font-size:1.2rem;font-weight:700;margin:0 0 .4rem;color:var(--pgood,#00ce1b)'; big.textContent = 'Nearly there! Please check your email.';
+                var p1 = document.createElement('p'); p1.style.margin = '0 0 .4rem'; p1.appendChild(document.createTextNode('We’ve sent an email to '));
+                var b = document.createElement('strong'); b.textContent = ev; p1.appendChild(b); p1.appendChild(document.createTextNode('. Open it and press the button to say yes.'));
+                var p2 = document.createElement('p'); p2.style.cssText = 'margin:0;color:var(--muted);font-size:.92rem'; p2.textContent = 'Not there in a few minutes? Have a look in your junk or spam folder. Nothing is sent until you press that button.';
+                box.appendChild(big); box.appendChild(p1); box.appendChild(p2); f.replaceChildren(box);
+                try {{ if (typeof gtag === 'function') gtag('event', 'junara_reminder_signup', {{ page: location.pathname, month: mo.value || 'not sure' }}); }} catch (_e) {{}}
+              }} else {{
+                btn.disabled = false; btn.textContent = lbl;
+                say(d && d.error === 'email' ? 'That email address doesn’t look quite right. Please check it.'
+                  : d && d.error === 'agree' ? 'Please tick the box to say yes.'
+                  : d && d.error === 'rate' ? 'One moment, please try again shortly.'
+                  : 'Sorry, that didn’t go through. Please try again, or call us on 01202 775566.');
+              }}
+            }})
+            .catch(function () {{ btn.disabled = false; btn.textContent = lbl; say('Couldn’t reach us just now. Please try again.'); }});
+        }});
+      }})();
+    </script>
     </section>'''
 
 

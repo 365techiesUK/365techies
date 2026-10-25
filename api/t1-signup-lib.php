@@ -29,6 +29,10 @@ define('SU_PER_IP_HOUR', 5);                    // sign-ups per visitor (by addr
 define('SU_PER_HOUR', 60);                      // and for the whole site: a spam run stops here
 define('SU_MAX_PENDING', 2000);
 define('SU_CONSENT', '2026-10-10: "Yes, please send me 365 Techies\' tips, news and offers by email, about once a month. I can unsubscribe at any time."');
+// 25 Oct 2026 (owner: the free-year reminder on the Junara page): the same list, plus one promise - an email before the
+// Junara free year ends. Techies One Mail files every collected sign-up as "agreed" to mailings, so this box never asks for
+// the reminder alone: its words say both, and the app keeps the words and the page, which is how the reminder finds them.
+define('SU_CONSENT_JUNARA', '2026-10-25: "Yes, please email me a reminder before my Junara free year ends, and 365 Techies\' tips, news and offers about once a month. I can unsubscribe at any time."');
 define('SU_PAGE_URL', 'https://365techies.co.uk/api/t1-signup.php');
 
 function su_store() { return defined('SU_STORE') ? SU_STORE : __DIR__ . '/t1-signups.json'; }
@@ -92,14 +96,19 @@ function su_ip_hash($ip) { return substr(hash('sha256', 'su|' . (string)$ip . '|
 /* A sign-up from the website. Always the same answer whether or not the address is already on the list (no
    "already signed up" oracle). $send($to, $token) sends the confirm email and returns true/false.
    Returns array('ok' => bool, 'error' => ''|'email'|'rate'|'busy'). */
-function su_signup($email, $name, $page, $ip, $now, $send) {
+/* 'junara' (the Junara page's free-year reminder box) or 'tips' (everything else). */
+function su_kind_ok($kind) { return $kind === 'junara' ? 'junara' : 'tips'; }
+function su_consent_for($kind) { return $kind === 'junara' ? SU_CONSENT_JUNARA : SU_CONSENT; }
+
+function su_signup($email, $name, $page, $ip, $now, $send, $kind = 'tips') {
     $email = strtolower(su_clean($email, 160));
     $name = su_clean($name, 80);
     $page = su_clean($page, 200);
+    $kind = su_kind_ok($kind);
     if (!su_email_ok($email)) return array('ok' => false, 'error' => 'email');
     if (!su_rate_ok(su_ip_hash($ip), $now)) return array('ok' => false, 'error' => 'rate');
     $token = bin2hex(random_bytes(20));
-    $mail = su_with_store(function (&$db) use ($email, $name, $page, $now, $token) {
+    $mail = su_with_store(function (&$db) use ($email, $name, $page, $now, $token, $kind) {
         $db['list'] = array_values(array_filter($db['list'], function ($e) use ($now) {
             return !($e['status'] === 'pending' && $e['created'] < $now - SU_PENDING_DAYS * 86400);
         }));
@@ -110,18 +119,30 @@ function su_signup($email, $name, $page, $ip, $now, $send) {
             if (($e['last_sent'] ?? 0) > $now - SU_RESEND_GAP) return false;   // an email went a moment ago
             $e['token'] = hash('sha256', $token); $e['last_sent'] = $now; $e['sent'] = ($e['sent'] ?? 0) + 1;
             if ($name !== '') $e['name'] = $name;
+            // the fresh email asks about this box, so the button agrees to this box's words
+            $e['kind'] = $kind; $e['consent'] = su_consent_for($kind);
+            if ($page !== '') $e['page'] = $page;
             return true;
         }
         unset($e);
         if ($pending >= SU_MAX_PENDING) return 'busy';
         $db['list'][] = array('id' => 's' . bin2hex(random_bytes(6)), 'email' => $email, 'name' => $name, 'status' => 'pending',
                               'token' => hash('sha256', $token), 'created' => $now, 'confirmed' => null, 'page' => $page,
-                              'consent' => SU_CONSENT, 'last_sent' => $now, 'sent' => 1);
+                              'kind' => $kind, 'consent' => su_consent_for($kind), 'last_sent' => $now, 'sent' => 1);
         return true;
     });
     if ($mail === 'busy') return array('ok' => false, 'error' => 'busy');
-    if ($mail === true && !$send($email, $token)) return array('ok' => false, 'error' => 'send');
+    if ($mail === true && !$send($email, $token, $kind)) return array('ok' => false, 'error' => 'send');
     return array('ok' => true, 'error' => '');
+}
+
+/* Which box a confirm link came from, so its page says what the button agrees to ('tips' if unknown). */
+function su_kind($token) {
+    $h = hash('sha256', (string)$token);
+    return su_with_store(function (&$db) use ($h) {
+        foreach ($db['list'] as $e) if (hash_equals((string)$e['token'], $h)) return su_kind_ok($e['kind'] ?? 'tips');
+        return 'tips';
+    });
 }
 
 /* What a confirm link points at: 'pending' (show the button), 'confirmed' (already done) or 'gone'. */
@@ -188,33 +209,40 @@ function su_ack($ids) {
 }
 
 /* The "please confirm" email, in the same look as every other 365 Techies email when pcm-review.php is loaded. */
-function su_email_parts($token) {
+function su_email_parts($token, $kind = 'tips') {
     $link = SU_PAGE_URL . '?c=' . rawurlencode($token);
-    $text = "Hello,\n\nSomeone (we hope you) asked for 365 Techies' tips, news and offers by email on our website.\n\n"
+    $jn = su_kind_ok($kind) === 'junara';
+    $asked = $jn ? "a reminder before their Junara free year ends, and 365 Techies' tips, news and offers by email"
+                 : "365 Techies' tips, news and offers by email";
+    $text = "Hello,\n\nSomeone (we hope you) asked for " . $asked . " on our website.\n\n"
           . "To say yes, open this link and press the button:\n" . $link . "\n\n"
+          . ($jn ? "We'll email you before your free year with Junara ends, with your choices. " : "")
           . "It's about once a month: scams doing the rounds locally, simple fixes, news and offers from us. You can unsubscribe at any time.\n\n"
           . "Didn't ask? Just ignore this email: you won't hear from us, and we'll forget your address in a week.\n\n"
           . "Steve and David\n365 Techies, 01202 775566";
     $html = '';
     if (function_exists('rv_html_shell') && function_exists('rv_h_p') && function_exists('rv_h_cta')) {
         $html = rv_html_shell(array(
-            'title' => 'Please confirm: tips by email', 'preview' => 'One click to confirm your tips by email from 365 Techies.',
-            'eyebrow' => 'Tips by email', 'heading' => 'Please confirm your email address',
+            'title' => 'Please confirm: tips by email',
+            'preview' => $jn ? 'One click to confirm your Junara reminder from 365 Techies.' : 'One click to confirm your tips by email from 365 Techies.',
+            'eyebrow' => $jn ? 'Your Junara reminder' : 'Tips by email', 'heading' => 'Please confirm your email address',
             'blocks' => array(
-                rv_h_p('Someone (we hope you) asked for 365 Techies&rsquo; tips, news and offers by email on our website. To say yes, press the button and then <strong>Yes, send me the tips</strong> on the page that opens.'),
+                rv_h_p('Someone (we hope you) asked for ' . str_replace("'", '&rsquo;', $asked) . ' on our website. To say yes, press the button and then <strong>'
+                       . ($jn ? 'Yes, remind me' : 'Yes, send me the tips') . '</strong> on the page that opens.'),
                 rv_h_cta('Confirm my email address', $link),
                 rv_h_p('It&rsquo;s about once a month: scams doing the rounds locally, simple fixes, news and offers from us. You can unsubscribe at any time.'),
                 rv_h_note('Didn&rsquo;t ask? Just ignore this email. You won&rsquo;t hear from us, and we&rsquo;ll forget your address in a week.')),
             'legal' => 'You are receiving this one email because this address was entered on 365techies.co.uk.'));
     }
-    return array('subject' => 'Please confirm: tips by email from 365 Techies', 'text' => $text, 'html' => $html);
+    return array('subject' => $jn ? 'Please confirm: your Junara reminder from 365 Techies' : 'Please confirm: tips by email from 365 Techies',
+                 'text' => $text, 'html' => $html);
 }
 
 /* Needs pcm-review.php loaded first, at TOP-LEVEL scope by the caller (t1-signup.php does it): included from inside a
    function it would silently unset $RV_Q for the whole request (php-include-scope-trap). */
-function su_send_confirm($to, $token) {
+function su_send_confirm($to, $token, $kind = 'tips') {
     if (!function_exists('rv_send_raw')) return false;
-    $p = su_email_parts($token);
+    $p = su_email_parts($token, $kind);
     return (bool)rv_send_raw($to, $p['subject'], $p['text'], '', '', $p['html']);
 }
 

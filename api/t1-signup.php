@@ -4,6 +4,7 @@
  * How it works and why: see t1-signup-lib.php.
  *
  *   POST JSON {email, name, website (honeypot), page}     from the sign-up box: sends the "please confirm" email
+ *             + kind: 'junara'                           the Junara page's free-year reminder box (its own words)
  *   GET  ?c=<token>                                       the link in that email: a page with a "Yes" button
  *   POST c=<token>                                        the button: this is the agreement (double opt-in)
  *   GET  ?collect=1      + Authorization: Bearer <key>    Techies One Mail: confirmed sign-ups waiting
@@ -59,11 +60,15 @@ if ($key !== '' || isset($_GET['collect'])) {
 // ---------------------------------------------------------------- the link in the confirm email, and its button
 $token = preg_replace('/[^a-f0-9]/', '', (string)($_POST['c'] ?? ($_GET['c'] ?? '')));
 if ($token !== '') {
+    $jn = su_kind($token) === 'junara';   // the Junara page's reminder box: its page says what its button agrees to
+    $again = $jn ? '/virgin-media-email-moving-to-junara/#remind' : '/tips-by-email/';
     if ($method === 'POST') {
         $r = su_confirm($token, $now);
-        if ($r === 'gone') su_page('That link has expired', '<p>Confirm links last a week. If you&rsquo;d still like our tips, '
-            . 'please <a href="/tips-by-email/">sign up again</a>: it only takes a moment.</p>');
-        su_page('You’re on the list. Thank you!', '<p>You&rsquo;ll get our tips, news and offers by email, about once a month. '
+        if ($r === 'gone') su_page('That link has expired', '<p>Confirm links last a week. If you&rsquo;d still like '
+            . ($jn ? 'the reminder' : 'our tips') . ', please <a href="' . $again . '">sign up again</a>: it only takes a moment.</p>');
+        su_page('You’re on the list. Thank you!', '<p>'
+            . ($jn ? 'We&rsquo;ll email you before your free year with Junara ends, with your choices. You&rsquo;ll also get ' : 'You&rsquo;ll get ')
+            . 'our tips, news and offers by email, about once a month. '
             . 'Every email has an unsubscribe link, and you can always just reply STOP.</p>'
             . '<p class="small">Want help with something now? Call us on <a href="tel:+441202775566">01202 775566</a> or '
             . '<a href="/">visit our website</a>.</p>');
@@ -71,13 +76,15 @@ if ($token !== '') {
     $state = su_peek($token, $now);
     if ($state === 'confirmed') su_page('You’re already on the list', '<p>Thank you, this email address is already confirmed. '
         . 'There&rsquo;s nothing more to do.</p><p class="small"><a href="/">Back to 365techies.co.uk</a></p>');
-    if ($state === 'gone') su_page('That link has expired', '<p>Confirm links last a week. If you&rsquo;d still like our tips, '
-        . 'please <a href="/tips-by-email/">sign up again</a>.</p>');
+    if ($state === 'gone') su_page('That link has expired', '<p>Confirm links last a week. If you&rsquo;d still like '
+        . ($jn ? 'the reminder' : 'our tips') . ', please <a href="' . $again . '">sign up again</a>.</p>');
     $t = htmlspecialchars($token, ENT_QUOTES, 'UTF-8');
-    su_page('One last step', '<p>Press the button to start getting 365 Techies&rsquo; tips, news and offers by email, about once a month. '
+    su_page('One last step', '<p>Press the button to '
+        . ($jn ? 'get a reminder from us before your Junara free year ends, and 365 Techies&rsquo; tips, news and offers by email, about once a month. '
+               : 'start getting 365 Techies&rsquo; tips, news and offers by email, about once a month. ')
         . 'You can unsubscribe at any time.</p>'
         . '<form method="post" action="/api/t1-signup.php"><input type="hidden" name="c" value="' . $t . '">'
-        . '<button type="submit">Yes, send me the tips</button></form>'
+        . '<button type="submit">' . ($jn ? 'Yes, remind me' : 'Yes, send me the tips') . '</button></form>'
         . '<p class="small">Changed your mind? Just close this page: nothing happens, and we forget your address in a week.</p>');
 }
 
@@ -90,7 +97,8 @@ if (!is_array($in)) su_json(400, array('ok' => false, 'error' => 'bad-json'));
 if (!empty($in['website'])) su_json(200, array('ok' => true));   // the honeypot: only robots fill it in
 if (empty($in['agree'])) su_json(400, array('ok' => false, 'error' => 'agree'));
 try {
-    $r = su_signup($in['email'] ?? '', $in['name'] ?? '', $in['page'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '', $now, 'su_send_confirm');
+    $r = su_signup($in['email'] ?? '', $in['name'] ?? '', $in['page'] ?? '', $_SERVER['REMOTE_ADDR'] ?? '', $now, 'su_send_confirm',
+                   su_kind_ok((string)($in['kind'] ?? '')));
 } catch (Throwable $e) {
     su_json(500, array('ok' => false, 'error' => 'store'));
 }

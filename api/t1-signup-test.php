@@ -77,12 +77,40 @@ $p = su_email_parts('abc123');
 ok(strpos($p['text'], SU_PAGE_URL . '?c=abc123') !== false && strpos($p['text'], 'ignore this email') !== false, 'the link, and what to do if they didn\'t ask');
 ok(strpos($p['html'], 'abc123') !== false && strpos($p['html'], 'Confirm my email address') !== false, 'the HTML version, in the house template');
 
+echo "-- the Junara page's free-year reminder box\n";
+$jsent = array();
+$jsend = function ($to, $token, $kind = 'tips') use (&$jsent) { $jsent[] = array($to, $token, $kind); return true; };
+$r = su_signup('pat@example.com', 'Pat', '/virgin-media-email-moving-to-junara/ (moves Nov 2026)', '203.0.113.60', $now, $jsend, 'junara');
+ok($r['ok'] && count($jsent) === 1 && $jsent[0][2] === 'junara', 'a reminder sign-up sends one confirm email, told it is the Junara box', json_encode($jsent));
+$db = json_decode(file_get_contents(SU_STORE), true);
+$pat = array_values(array_filter($db['list'], function ($e) { return $e['email'] === 'pat@example.com'; }))[0];
+ok($pat['kind'] === 'junara' && $pat['consent'] === SU_CONSENT_JUNARA, 'kept with the reminder box\'s own words', $pat['consent']);
+ok(strpos(SU_CONSENT_JUNARA, 'tips, news and offers') !== false && strpos(SU_CONSENT_JUNARA, 'Junara free year') !== false, 'those words name both the reminder and the tips (the app files every sign-up as agreed to mailings)');
+ok(su_kind($jsent[0][1]) === 'junara' && su_kind(str_repeat('cd', 20)) === 'tips', 'a confirm link knows which box it came from; an unknown one reads as tips');
+$r = su_signup('pat@example.com', '', '', '203.0.113.60', $now + SU_RESEND_GAP + 1, $jsend, 'tips');
+$db = json_decode(file_get_contents(SU_STORE), true);
+$pat = array_values(array_filter($db['list'], function ($e) { return $e['email'] === 'pat@example.com'; }))[0];
+ok(count($jsent) === 2 && $pat['kind'] === 'tips' && $pat['consent'] === SU_CONSENT && $pat['page'] === '/virgin-media-email-moving-to-junara/ (moves Nov 2026)', 'asked again from the tips box: the new email and button agree to the tips words; the page is kept', json_encode($pat));
+su_signup('pat@example.com', '', '', '203.0.113.60', $now + 2 * SU_RESEND_GAP + 2, $jsend, 'made-up');
+ok(end($jsent)[2] === 'tips', 'an unknown kind is treated as the tips box');
+su_signup('pat@example.com', '', '', '203.0.113.60', $now + 3 * SU_RESEND_GAP + 3, $jsend, 'junara');
+ok(su_confirm(end($jsent)[1], $now + 3 * SU_RESEND_GAP + 60) === 'confirmed', 'the reminder sign-up confirms like any other');
+$c = su_collect($now + 3 * SU_RESEND_GAP + 61);
+$cp = array_values(array_filter($c, function ($e) { return $e['email'] === 'pat@example.com'; }));
+ok(count($cp) === 1 && $cp[0]['consent'] === SU_CONSENT_JUNARA && strpos($cp[0]['page'], 'junara') !== false, 'Techies One Mail collects the reminder words and the page with it', json_encode($cp));
+su_ack(array_map(function ($e) { return $e['id']; }, $c));
+$p = su_email_parts('abc123', 'junara');
+ok(strpos($p['subject'], 'Junara reminder') !== false && strpos($p['text'], 'Junara free year') !== false && strpos($p['text'], 'tips, news and offers') !== false, 'the reminder\'s confirm email says both things it agrees to');
+ok(strpos($p['html'], 'Yes, remind me') !== false, 'and names the right button');
+ok(strpos(su_email_parts('abc123')['text'], 'Junara') === false, 'the tips email is unchanged');
+
 echo "-- end to end through the endpoint\n";
 $srv = $tmp . '/srv';
 @mkdir($srv . '/api', 0777, true);
 $key = 'test-key-' . str_repeat('k', 40);
 $lib = str_replace("define('SU_KEY_SHA256', '" . SU_KEY_SHA256 . "')", "define('SU_KEY_SHA256', '" . hash('sha256', $key) . "')", file_get_contents(__DIR__ . '/t1-signup-lib.php'));
-$lib = str_replace("function su_send_confirm(\$to, \$token) {", "function su_send_confirm(\$to, \$token) { file_put_contents(__DIR__ . '/sent.txt', \$to . ' ' . \$token . \"\\n\", FILE_APPEND); return true; }\nfunction su_send_confirm_real(\$to, \$token) {", $lib);
+$lib = str_replace("function su_send_confirm(\$to, \$token, \$kind = 'tips') {", "function su_send_confirm(\$to, \$token, \$kind = 'tips') { file_put_contents(__DIR__ . '/sent.txt', \$to . ' ' . \$token . ' ' . \$kind . \"\\n\", FILE_APPEND); return true; }\nfunction su_send_confirm_real(\$to, \$token, \$kind = 'tips') {", $lib);
+if (strpos($lib, 'su_send_confirm_real') === false) { echo "  FAIL  the fake sender could not be put in (su_send_confirm's first line changed?)\n"; exit(1); }
 file_put_contents($srv . '/api/t1-signup-lib.php', $lib);
 copy(__DIR__ . '/t1-signup.php', $srv . '/api/t1-signup.php');
 copy(__DIR__ . '/pcm-review.php', $srv . '/api/pcm-review.php');   // the real mail library loads (the fake sender above means nothing is sent)
@@ -109,7 +137,7 @@ ok($code === 200 && !preg_match('/bot@example/', (string)@file_get_contents($srv
 list($code, $out) = http('POST', $base, json_encode(array('email' => 'y@example.com', 'agree' => true)), array_merge($json, array('Origin: https://evil.example')));
 ok($code === 403, 'another website can\'t post to it');
 $line = trim((string)@file_get_contents($srv . '/api/sent.txt'));
-$tok = substr($line, strpos($line, ' ') + 1);
+$tok = explode(' ', $line)[1] ?? '';   // each line: address, token, which box
 list($code, $out) = http('GET', $base . '?c=' . $tok);
 ok($code === 200 && strpos($out, 'Yes, send me the tips') !== false, 'the link shows the button', "$code");
 list($code, $out) = http('GET', $base . '?collect=1', null, array('Authorization: Bearer ' . $key));
@@ -123,6 +151,15 @@ $got = json_decode($out, true)['signups'] ?? array();
 ok($code === 200 && count($got) === 1 && $got[0]['email'] === 'web@example.com' && $got[0]['name'] === 'Web Person', 'Techies One Mail collects it (key in X-T1-Key works too)', "$code $out");
 list($code, $out) = http('POST', $base, json_encode(array('ack' => array($got[0]['id']))), array_merge($json, array('Authorization: Bearer ' . $key)));
 ok($code === 200 && json_decode($out, true)['removed'] === 1, 'and acknowledges it');
+list($code, $out) = http('POST', $base, json_encode(array('email' => 'remind@example.com', 'agree' => true, 'kind' => 'junara', 'page' => '/virgin-media-email-moving-to-junara/')), $json);
+ok($code === 200 && json_decode($out, true)['ok'] === true, 'the Junara reminder box', "$code $out");
+$lines = array_values(array_filter(explode("\n", trim((string)@file_get_contents($srv . '/api/sent.txt'))), function ($l) { return strpos($l, 'remind@example.com') === 0; }));
+$jp = explode(' ', trim($lines[0] ?? ''));
+ok(($jp[2] ?? '') === 'junara', 'its confirm email goes out as the reminder one', $lines[0] ?? '(none)');
+list($code, $out) = http('GET', $base . '?c=' . ($jp[1] ?? ''));
+ok($code === 200 && strpos($out, 'Yes, remind me') !== false && strpos($out, 'Junara free year') !== false, 'its link shows the reminder button and words', "$code");
+list($code, $out) = http('POST', $base, 'c=' . ($jp[1] ?? ''), array('Content-Type: application/x-www-form-urlencoded'));
+ok($code === 200 && strpos($out, 'before your free year with Junara ends') !== false, 'and its thank-you says so', "$code");
 $st = proc_get_status($proc);
 if ($st['running']) { if (stripos(PHP_OS, 'WIN') === 0) exec('taskkill /F /T /PID ' . (int)$st['pid'] . ' 2>NUL'); else proc_terminate($proc); }
 proc_close($proc);

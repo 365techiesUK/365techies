@@ -16901,6 +16901,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
 
           <h2 id="tips-by-email" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Our tips by email</h2>
           <p>If you sign up for our <a href="/tips-by-email/">tips by email</a> (tips, news and offers from us), we keep your email address, your first name if you give one, which page you signed up on, and when you agreed and the exact words you agreed to. We send one email first, asking you to confirm: you are only on the list once you press the button on the page it opens. If you don&rsquo;t, we delete your address after a week.</p>
+          <p>If you ask on our <a href="/virgin-media-email-moving-to-junara/#remind">Virgin Media and Junara page</a> for a reminder before your Junara free year ends, it works the same way, and we also keep the month you tell us you signed up with Junara, if you choose one, so that the reminder reaches you in time. The words you agree to there cover the reminder and our tips.</p>
           <ul>
             <li>Once you have confirmed, your details move from our website to our own email program on our office computer, and are deleted from the website. Our tips are sent from there, from our own email account, not through a mailing-list company.</li>
             <li>We send about one email a month. Each one has an unsubscribe link, and you can also reply &ldquo;STOP&rdquo;. We keep a note that you unsubscribed so that you are never added again by mistake.</li>
@@ -23962,7 +23963,10 @@ def junara_v2(d, crumbs):
     short = ('\n        <p style="text-align:center;margin:1rem 0 0">'
              + yt_watch.button(yt_watch.JUNARA_SHORT, "Watch it in 38 seconds: what&rsquo;s changing, and what to do", shape="tall")
              + '</p>')
-    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(after=short), ""
+    # 25 Oct 2026 (owner: "free-year reminder"): for the many taking Junara's free year, under the facts table, whose
+    # "Free period" row has just explained it. The 6 Oct first-screen measurements above are untouched.
+    return (head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(after=short)
+            + "\n" + _VL.junara_reminder_box()), ""
 
 
 # Plusnet (26 Sep 2026): same first screen and box; Greenby facts from Greenby's own FAQ, read 26 Sep 2026.

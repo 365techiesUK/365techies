@@ -6985,7 +6985,7 @@ NEW_PAGES.append({
            '<p><strong>A calm middle way</strong> if you are still a Virgin customer: sign up with Junara for the free '
            'year, then use that year to move to Gmail at your own pace, with the old address still working while the '
            'bank, the GP and the family are told. Before the free year ends, check what Junara will charge and decide '
-           'whether to carry on.</p>'
+           'whether to carry on. <a href="#remind">We can email you a reminder</a> before it ends.</p>'
            '<p>Moving is free with our <a href="/virgin-email-mover/">365 PC Manager app</a> for Windows: it checks your '
            'mailbox and moves it into Gmail for you, even if Virgin won&rsquo;t give you an app password, which is common for a '
            'second mailbox since the O2 ID change (<a href="/move-virgin-media-email-to-gmail/#s8">more about that</a>). A small '
