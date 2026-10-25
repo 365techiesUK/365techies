@@ -27,6 +27,7 @@ import techies_one_boxes    # Techies One Mail box on the 9 email fix pages it g
 import pcm_problem_boxes   # 365 PC Manager boxes on 12 existing problem pages (13 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)
 import techies_pdf_page     # /techies-pdf/ - the Techies PDF product page and download (18 Oct 2026)
+import tpdf_word_page      # /pdf-to-word-without-uploading/ - PDF to Word on your own PC, with Techies PDF (25 Oct 2026)
 import techies_move_page    # /techies-move/ - the Techies Move product page and download (22 Oct 2026)
 import techies_move_boxes   # Techies Move box + mentions on the new-computer and backup pages (22 Oct 2026; a write_all page filter)
 import video_watch_pages   # /videos/ + one watch page per film (13 Oct 2026: GSC "Video isn't on a watch page")

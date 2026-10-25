@@ -1615,8 +1615,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "dcd49bd5b889052b",
-  "last": "2026-10-22"
+  "h": "be1417e1376d09ff",
+  "last": "2026-10-25"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -3975,5 +3975,10 @@
   "first": "2026-09-05",
   "h": "5bd75e4c5d968752",
   "last": "2026-10-11"
+ },
+ "pdf-to-word-without-uploading": {
+  "first": "2026-10-25",
+  "h": "8d2e60209a2ed99f",
+  "last": "2026-10-25"
  }
 }
