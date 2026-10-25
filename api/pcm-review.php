@@ -135,6 +135,21 @@ $BF_PLAN_MAX = 150;
    -of-interest reviews are removable by Google. Lower-case, one per line. */
 $BF_EXCLUDE = array('info@365techies.co.uk');
 
+/* ---- "WE'RE NOW ON LINKEDIN" one-off email ---------------------------------
+   Owner, 25 Oct 2026: "go with the website mailer, but don't post anything out quite
+   yet, because we haven't even got any posts on our LinkedIn page". The backfill's
+   pattern exactly: plan customers only, a read-only seed, opt-outs honoured, a day cap,
+   and a census (no sends) while off. It is MARKETING, not mail about the service they
+   pay for, so every copy carries the one-click unsubscribe and overrides the shell's
+   legal line. Ships OFF until the owner says the page has posts worth visiting. It ends
+   by itself on $LA_UNTIL, so a customer who joins next spring is never told "we're now
+   on LinkedIn". */
+$LA_LIVE = false;          // HOLD (owner, 25 Oct): switch on only on his word, after a test to info@
+$LA_DAY_CAP = 10;          // per day, the same pace as the backfill
+$LA_UNTIL = 1798675200;    // 31 Dec 2026 00:00 UTC: no seeding or sending after this
+$LA_PLAN_MAX = 150;        // the same plausibility rail as $BF_PLAN_MAX
+$LA_EXCLUDE = array('info@365techies.co.uk');
+
 if (!function_exists('rvq_open')) {
 
 date_default_timezone_set('Europe/London');   // SimplyBook datetimes are company-local
@@ -178,6 +193,8 @@ function rvq_open() {
     if (!isset($q['bf']) || !is_array($q['bf'])) $q['bf'] = array();          // backfill ledger, keyed by customer key
     if (!isset($q['bf_day']) || !is_array($q['bf_day'])) $q['bf_day'] = array();   // date => sends, for the daily cap
     if (!isset($q['sr']) || !is_array($q['sr'])) $q['sr'] = array();            // six-weekly service report emails, keyed kh-machine-ts
+    if (!isset($q['la']) || !is_array($q['la'])) $q['la'] = array();            // "we're now on LinkedIn" ledger, keyed by customer key
+    if (!isset($q['la_day']) || !is_array($q['la_day'])) $q['la_day'] = array();   // date => sends, for its day cap
     /* Per-install salt for unsubscribe tokens, generated once on first use so the
        feature needs no new secret file and no owner step. Kept in the queue, which
        is already gitignored and .htaccess-denied. */
@@ -1367,6 +1384,199 @@ function bf_process($cap = 0) {
             . $failed . ' failed, ' . $due . ' still eligible.');
     return array('mode' => 'live', 'sent' => $sent, 'failed' => $failed, 'eligible_now' => $due,
                  'by_segment' => $counts, 'day_cap' => (int)$BF_DAY_CAP);
+}
+
+/* ==========================================================================
+   "WE'RE NOW ON LINKEDIN" (see $LA_LIVE). Words owner-approved 25 Oct 2026
+   (D:/claude/linkedin-2026-10-25/customer-email/LINKEDIN-EMAIL.md, home version;
+   the handful of business customers get the recommendation ask from the owner
+   personally). The referral lines are the service report's own panel, word for word.
+   ========================================================================== */
+
+function la_subject() { return "We're now on LinkedIn"; }
+function la_body($first, $to = '', $salt = '') {
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "A quick one from David and Steve at 365 Techies.\r\n\r\n"
+    . "We've started sharing short videos and tips on LinkedIn. First up: how to\r\n"
+    . "check a computer in about 20 seconds with our free 365 PC Manager app, and\r\n"
+    . "what our six-weekly service actually looks at.\r\n\r\n"
+    . "If you use LinkedIn, we'd love you to follow us:\r\n"
+    . rv_linkedin_url() . "\r\n\r\n"
+    . "Not on LinkedIn? There's nothing you need to do. Everything that matters\r\n"
+    . "about your computer still comes straight from us, as it always has.\r\n\r\n"
+    . "And if you know someone who is battling their computer, we would love an\r\n"
+    . "introduction: they get their first Computer Service & Health Check free, and\r\n"
+    . "you get a month free on your support plan. Just pass on our number and ask\r\n"
+    . "them to mention your name.\r\n\r\n"
+    . "Thank you, as ever, for being with us.\r\n\r\n"
+    . "David & Steve\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n\r\n"
+    . "(You're getting this because you're a 365 Techies customer. To hear nothing\r\n"
+    . "like this again, reply \"no thanks\""
+    . (($to !== '' && $salt !== '') ? " or click here:\r\n" . rv_unsub_url($to, $salt) . "\r\n" : ".\r\n")
+    . "It never affects your support.)\r\n";
+}
+/** HTML twin on the house shell. One button (the LinkedIn follow); the legal line is
+    overridden because the default ("it is about the service you pay for") is untrue here. */
+function la_body_html($first, $to = '', $salt = '') {
+    $unsub = ($to !== '' && $salt !== '') ? rv_unsub_url($to, $salt) : '';
+    return rv_html_shell(array(
+        'title' => "We're now on LinkedIn",
+        'eyebrow' => 'News from us',
+        'heading' => "We're now on LinkedIn",
+        'preview' => "Short tips and news from us - and nothing you need to do if you're not on it.",
+        'blocks' => array(
+            rv_h_p('Hi ' . rv_h($first) . ','),
+            rv_h_p('A quick one from David and Steve at 365 Techies.'),
+            rv_h_p('We&rsquo;ve started sharing short videos and tips on LinkedIn. First up: how to check a computer in about 20 seconds with our free <strong style="color:#0b1226;">365 PC Manager</strong> app, and what our six-weekly service actually looks at.'),
+            rv_h_p('If you use LinkedIn, we&rsquo;d love you to follow us:'),
+            rv_h_cta('Follow 365 Techies on LinkedIn', rv_linkedin_url()),
+            '<div style="height:14px;line-height:14px;font-size:0;">&nbsp;</div>',
+            rv_h_note('<strong style="color:#0b1226;">Not on LinkedIn?</strong> There&rsquo;s nothing you need to do. Everything that matters about your computer still comes straight from us, as it always has.'),
+            rv_h_p('Thank you, as ever, for being with us.'),
+        ),
+        'after' => rv_h_referral(),
+        'legal' => 'You are receiving this because you are a 365 Techies customer.',
+        'footnote' => 'Don&rsquo;t want emails like this? '
+            . ($unsub !== '' ? '<a href="' . rv_h($unsub) . '" style="color:#7c8aa5;">Unsubscribe</a>' : 'Reply &ldquo;no thanks&rdquo;')
+            . ' &ndash; it never affects your support.',
+    ));
+}
+function la_send($to, $nm) {
+    // the test suite's stub, so its live-path checks never reach a real mail server
+    if (isset($GLOBALS['LA_TEST_SEND']) && is_callable($GLOBALS['LA_TEST_SEND'])) return (bool)call_user_func($GLOBALS['LA_TEST_SEND'], $to, $nm);
+    $sl = rv_salt();
+    $f = rv_first($nm);
+    return rv_send_raw($to, la_subject(), la_body($f, $to, $sl), '', '', la_body_html($f, $to, $sl));
+}
+
+/* Adds plan customers to the LinkedIn ledger, reading the customer database READ-ONLY,
+   with bf_seed()'s defensive field reading and its 'plan' rule. Catalogue (no current
+   plan) customers are counted and left out: this goes to the paying relationship only. */
+function la_seed($dbFile = null) {
+    global $LA_EXCLUDE, $LA_UNTIL;
+    $out = array('scanned' => 0, 'no_email' => 0, 'already' => 0, 'optout' => 0,
+                 'excluded' => 0, 'not_plan' => 0, 'added' => 0);
+    if (time() >= (int)$LA_UNTIL) return array('skip' => 'campaign_over') + $out;
+    $db_file = $dbFile !== null ? $dbFile : __DIR__ . '/pcm-data.json';
+    if (!is_readable($db_file)) return array('error' => 'no_db') + $out;
+    $raw = (string)@file_get_contents($db_file);
+    if ($raw === '') return array('error' => 'db_empty') + $out;
+    $db = json_decode($raw, true);
+    if (!is_array($db) || !isset($db['customers']) || !is_array($db['customers']))
+        return array('error' => 'db_unreadable') + $out;
+
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('error' => 'locked') + $out;
+    $excl = array();
+    foreach ((array)$LA_EXCLUDE as $x) $excl[sha1(strtolower(trim($x)))] = true;
+    foreach ($db['customers'] as $ckey => $c) {
+        if (!is_array($c)) continue;
+        $out['scanned']++;
+        $em = '';
+        foreach (array('email', 'em', 'contact_email', 'sb_email') as $f)
+            if ($em === '' && !empty($c[$f]) && is_string($c[$f])) $em = strtolower(trim($c[$f]));
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) { $out['no_email']++; continue; }
+        $eh = sha1($em);
+        if (isset($excl[$eh]))           { $out['excluded']++; continue; }
+        if (isset($q['optout'][$eh]))    { $out['optout']++;   continue; }
+        if (isset($q['la'][$ckey]))      { $out['already']++;  continue; }
+        $tier = isset($c['tier']) ? strtolower((string)$c['tier']) : '';
+        if (!($tier === 'pro' || !empty($c['plan']) || !empty($c['gc_subscription'])
+              || !empty($c['subscription']) || !empty($c['dd_ref']))) { $out['not_plan']++; continue; }
+        $nm = '';
+        foreach (array('name', 'nm', 'customer', 'contact') as $f)
+            if ($nm === '' && !empty($c[$f]) && is_string($c[$f])) $nm = $c[$f];
+        $q['la'][$ckey] = array('em' => $em, 'nm' => rv_clean_name($nm), 'st' => 'pending', 'ts' => time(), 'tries' => 0);
+        $out['added']++;
+    }
+    rvq_save($q);
+    rvq_close($lk);
+    return $out;
+}
+
+/* Sends the LinkedIn email with bf_process()'s discipline: pick under the lock, RELEASE
+   it before SMTP, then transition. One email per ADDRESS, ever (two customer records can
+   share one inbox). While $LA_LIVE is false it only reports what it would do. */
+function la_process($cap = 0) {
+    global $LA_LIVE, $LA_DAY_CAP, $LA_PLAN_MAX, $LA_UNTIL, $RV_LIVE;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (time() >= (int)$LA_UNTIL) return array('skip' => 'campaign_over');
+    $cap = $cap > 0 ? $cap : 3;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['la_ts']) ? $q['la_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
+    $q['la_ts'] = time();
+
+    // the backfill's plausibility rail: far more "plan" customers than we have means the field guess is wrong
+    if (count($q['la']) > (int)$LA_PLAN_MAX) {
+        $warn = (isset($q['la_warn_ts']) ? $q['la_warn_ts'] : 0) < time() - 43200;
+        if ($warn) $q['la_warn_ts'] = time();
+        rvq_save($q);
+        rvq_close($lk);
+        if ($warn) rv_slack('LinkedIn email HELD: ' . count($q['la']) . ' customers classified as "plan" but the expected'
+            . ' figure is about 85-93. The plan guess in la_seed() is probably wrong, so nothing has been sent.');
+        return array('skip' => 'segment_implausible', 'in_ledger' => count($q['la']), 'max' => (int)$LA_PLAN_MAX);
+    }
+
+    $today = date('Y-m-d');
+    foreach ($q['la_day'] as $d => $n) if ($d < date('Y-m-d', time() - 2592000)) unset($q['la_day'][$d]);
+    $sentToday = isset($q['la_day'][$today]) ? (int)$q['la_day'][$today] : 0;
+    $room = max(0, (int)$LA_DAY_CAP - $sentToday);
+    $sentEh = array();
+    foreach ($q['la'] as $e0) if ((isset($e0['st']) ? $e0['st'] : '') === 'sent' && !empty($e0['em'])) $sentEh[sha1($e0['em'])] = true;
+
+    $picked = array(); $batchEm = array(); $due = 0;
+    foreach ($q['la'] as $ckey => $e) {
+        $st = isset($e['st']) ? $e['st'] : '';
+        $retryable = ($st === 'sending' && (isset($e['snd_ts']) ? $e['snd_ts'] : 0) < time() - 600
+                      && (isset($e['tries']) ? $e['tries'] : 0) < 3);
+        if ($st !== 'pending' && !$retryable) continue;
+        if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
+        $em = isset($e['em']) ? $e['em'] : '';
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        $eh = sha1($em);
+        if (isset($q['optout'][$eh]) || isset($sentEh[$eh]) || isset($batchEm[$eh])) continue;
+        $batchEm[$eh] = true;   // counted once per INBOX, picked or not, so the census matches what would really be sent
+        $due++;
+        if ($LA_LIVE && $RV_LIVE && count($picked) < min($cap, $room)) {
+            $q['la'][$ckey]['st'] = 'sending';
+            $q['la'][$ckey]['snd_ts'] = time();
+            $q['la'][$ckey]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
+            $picked[$ckey] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);
+    if (!$LA_LIVE || !$RV_LIVE)
+        return array('mode' => 'census', 'live' => false, 'eligible_now' => $due, 'day_cap' => (int)$LA_DAY_CAP, 'sent_today' => $sentToday);
+
+    $sent = 0; $failed = 0; $who = array();
+    foreach ($picked as $ckey => $p) {
+        $ok = la_send($p['em'], $p['nm']);
+        if ($ok) $who[] = ($p['nm'] !== '' ? $p['nm'] : $p['em']);
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        if (isset($q2['la'][$ckey]) && (isset($q2['la'][$ckey]['st']) ? $q2['la'][$ckey]['st'] : '') === 'sending') {
+            if ($ok) {
+                $q2['la'][$ckey]['st'] = 'sent';
+                $q2['la'][$ckey]['sent_ts'] = time();
+                $d2 = date('Y-m-d');
+                $q2['la_day'][$d2] = (isset($q2['la_day'][$d2]) ? (int)$q2['la_day'][$d2] : 0) + 1;
+                $sent++;
+            } else {
+                $q2['la'][$ckey]['st'] = ((isset($q2['la'][$ckey]['tries']) ? $q2['la'][$ckey]['tries'] : 1) >= 3) ? 'failed' : 'pending';
+                $failed++;
+            }
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    if ($sent > 0 || $failed > 0)
+        rv_slack('LinkedIn email: ' . $sent . ' sent' . rv_name_list($who) . ', ' . $failed . ' failed, ' . max(0, $due - $sent) . ' still to go.');
+    return array('mode' => 'live', 'sent' => $sent, 'failed' => $failed, 'eligible_now' => $due, 'day_cap' => (int)$LA_DAY_CAP);
 }
 
 // ---- transport: authenticated SMTP if api/pcm-smtp.php is configured, else mail().
@@ -3346,8 +3556,9 @@ if (!defined('RV_LIB')) {
            . 'background:#070d22;color:#eaf4ff;max-width:34rem;margin:0 auto;padding:3rem 1.2rem}'
            . 'a{color:#6cc4f5}</style></head><body>'
            . ($done
-              ? '<h1>Done - that is switched off</h1><p>We will not email you asking for a review again. '
-                . 'Nothing else changes: booking confirmations, reminders and anything you have asked us for still come through.</p>'
+              // one opt-out list covers the review asks AND the occasional news email (the LinkedIn one), so say both
+              ? '<h1>Done - that is switched off</h1><p>We will not email you asking for a review, or with occasional news like this, again. '
+                . 'Nothing else changes: booking confirmations, reminders, service reports and anything you have asked us for still come through.</p>'
               : '<h1>That link did not work</h1><p>It may have been broken by your email program. '
                 . 'Just reply &ldquo;no thanks&rdquo; to the email, or call us on 01202 775566, and we will switch it off by hand.</p>')
            . '<p style="margin-top:2rem"><a href="https://365techies.co.uk/">365techies.co.uk</a> &middot; 01202 775566</p>'
@@ -3460,7 +3671,7 @@ if (!defined('RV_LIB')) {
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
                       'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report',
-                      'series' => 'series', 'cancels' => 'cancels');
+                      'series' => 'series', 'cancels' => 'cancels', 'linkedin' => 'linkedin');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -3507,6 +3718,11 @@ if (!defined('RV_LIB')) {
                                   cx_body_html('Steve', '365 Techies Full Computer Service', $ls));
             }
         }
+        elseif ($tkind === 'linkedin') {
+            // ignores $LA_LIVE on purpose: the owner sees it in our own inbox BEFORE any customer does
+            $lsl = rv_salt();
+            $ok = rv_send_raw($tto, la_subject(), la_body('Steve', $tto, $lsl), '', '', la_body_html('Steve', $tto, $lsl));
+        }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
             $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts), '', '', rm_body_html('Steve', 'Computer Health Check', $rts));
@@ -3533,6 +3749,9 @@ if (!defined('RV_LIB')) {
         // whether anything is SENT is governed by $BF_LIVE, which ships false.
         $r6 = bf_seed();
         $r7 = bf_process(3);
+        // "We're now on LinkedIn": seeding is read-only and idempotent; sending is governed by $LA_LIVE (ships false)
+        $r10 = la_seed();
+        $r11 = la_process(3);
         $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after
         $r8 = sr_process(5);   // six-weekly service report emails, governed by $SR_LIVE
         // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
@@ -3547,7 +3766,8 @@ if (!defined('RV_LIB')) {
             'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4),
             'watchdog' => $r5,
             'report' => array('live' => (bool)$GLOBALS['SR_LIVE'], 'result' => $r8),
-            'backfill' => array('live' => (bool)$GLOBALS['BF_LIVE'], 'seed' => $r6, 'result' => $r7)));
+            'backfill' => array('live' => (bool)$GLOBALS['BF_LIVE'], 'seed' => $r6, 'result' => $r7),
+            'linkedin' => array('live' => (bool)$GLOBALS['LA_LIVE'], 'seed' => $r10, 'result' => $r11)));
         else echo json_encode(array('ok' => true));
         exit;
     }
