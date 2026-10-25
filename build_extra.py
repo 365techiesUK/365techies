@@ -23958,14 +23958,25 @@ def junara_v2(d, crumbs):
     also = ('Rather keep your Virgin address? <a href="#s3">What Junara costs</a> &middot; <a href="#s4">your deadline</a> &middot; '
             '<a href="#s5">keep it or move it?</a> &middot; <a href="#s6">is this Junara email real?</a> &middot; '
             '<a href="/move-virgin-media-email-to-gmail/">move it to Gmail by hand</a>')
-    # 19 Oct 2026 (owner: "publish the private Junara Short and add it to the page"): its button sits under the facts
-    # table, below the first screen (the 6 Oct first-screen measurements above are untouched). Plays from YouTube.
-    short = ('\n        <p style="text-align:center;margin:1rem 0 0">'
-             + yt_watch.button(yt_watch.JUNARA_SHORT, "Watch it in 38 seconds: what&rsquo;s changing, and what to do", shape="tall")
-             + '</p>')
+    # 19 Oct 2026 (owner: "publish the private Junara Short and add it to the page"): its button sat under the facts table.
+    # 25 Oct 2026 (owner: "that's a long way down the page ... we want to get as many views on that"): moved to the top, in
+    # the same row as interior.js's "Share this page" (inserted straight after the byline, so it lands before this) - on a
+    # phone the share button shows its icon only, so the row is no taller than before. That row (added 22 Oct) had pushed
+    # the Text button under the bottom bar (-23 px at 375 x 812, -52 px at 360 x 800); a smaller phone heading (3 lines,
+    # not 4) and two tighter margins bring it back: measured +1 px at 360 x 800 with the Short in place. Plays from YouTube.
+    short = ('\n        <p class="jvid-top">'
+             + yt_watch.button(yt_watch.JUNARA_SHORT, "Watch: what to do (38 s)", shape="tall") + '</p>'
+             '<style>.taskhead .tshare-top,.taskhead .jvid-top{display:inline-block;vertical-align:middle;margin:.7rem .55rem 0 0}'
+             '.taskhead .jvid-top .ytw{margin:0;min-height:2.75rem}'
+             '@media (max-width:600px){.taskhead .tshare-btn{width:2.75rem;padding:0;justify-content:center}'
+             '.taskhead .tshare-btn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
+             '.taskhead .taskhead__h{font-size:1.72rem}.taskhead .taskhead__lede{margin-bottom:.45rem}.taskhead .page-hero__byline{margin-top:.35rem}}</style>')
+    _by = 'Reviewed __LASTMOD_HUMAN__</p>'
+    assert head.count(_by) == 1, 'task_head byline changed'
+    head = head.replace(_by, _by + short)
     # 25 Oct 2026 (owner: "free-year reminder"): for the many taking Junara's free year, under the facts table, whose
     # "Free period" row has just explained it. The 6 Oct first-screen measurements above are untouched.
-    return (head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(after=short)
+    return (head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html()
             + "\n" + _VL.junara_reminder_box()), ""
 
 
