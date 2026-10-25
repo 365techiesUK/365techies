@@ -126,6 +126,11 @@ try { $pst = pst_sweep(); } catch (Throwable $e) { $pst = array('error' => 'exce
    PayPal was still checking. A clean no-op with no PayPal keys on the server. */
 require_once __DIR__ . '/pay-pp-lib.php';
 try { $ppy = ppay_sweep(); } catch (Throwable $e) { $ppy = array('error' => 'exception'); }
+/* ... and PayPal payments sent STRAIGHT to our PayPal, not through the pay page (25 Oct 2026, pay-ppts-lib.php): PayPal's
+   Transaction Search, the last 3 days' money in - each marks its QuickBooks invoice paid (by the invoice number in their
+   message, or their email), or Slack says why it couldn't. A clean no-op with no PayPal keys on the server. */
+require_once __DIR__ . '/pay-ppts-lib.php';
+try { $ppt = ppts_sweep(); } catch (Throwable $e) { $ppt = array('error' => 'exception'); }
 
 /* Dells bought on eBay (14 Oct 2026, shop-ebay-lib.php): at most hourly, asks eBay for the orders we bought, keeps each
    whole Latitude / OptiPlex / Precision for the staff portal's Shop tab, puts the new ones in QuickBooks and posts a line to
@@ -174,6 +179,7 @@ if ($CLI) {
        . ", slack jobs " . json_encode($sj)
        . ", invoices " . json_encode($iq)
        . ", paid watch " . json_encode($iqp)
+       . ", paypal direct " . json_encode($ppt)
        . ", ebay " . json_encode($eb[1]) . "\n";
 } else {
     $res['comms'] = $cm;
@@ -181,6 +187,7 @@ if ($CLI) {
     $res['slackjobs'] = $sj;
     $res['invq'] = $iq;
     $res['invq_paid'] = $iqp;
+    $res['paypal_direct'] = $ppt;
     $res['ebay'] = $eb[1];
     echo json_encode($res);
 }

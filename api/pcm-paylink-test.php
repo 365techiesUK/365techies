@@ -229,9 +229,10 @@ if (preg_match('/<FilesMatch "(\^\(pcm-paylink[^"]*)">/', $ht, $mm)) $deny = $mm
 ok($deny !== '', 'the pay-link deny rule is there to test', $deny);
 foreach (array('pcm-paylink.json', 'pcm-paylink.json.lock', 'pcm-paylink.json.123.tmp', 'pcm-paylink.log',
                'pcm-paylink-events.json', 'pcm-paylink-events.json.9.tmp',
-               'pcm-paylink-lib.php', 'pcm-paylink-test.php', 'pcm-paylink-sweep.php') as $f)
+               'pcm-paylink-lib.php', 'pcm-paylink-test.php', 'pcm-paylink-sweep.php',
+               'pay-pp-lib.php', 'pay-pp-test.php', 'pay-ppts-lib.php', 'pay-ppts-test.php') as $f)
     ok($deny !== '' && preg_match('#' . $deny . '#', $f) === 1, 'denied: ' . $f);
-foreach (array('pcm-paylink.php', 'gocardless-webhook.php') as $f)
+foreach (array('pcm-paylink.php', 'gocardless-webhook.php', 'pay-pp.php') as $f)
     ok($deny !== '' && preg_match('#' . $deny . '#', $f) !== 1, 'still served (it has to be): ' . $f);
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";

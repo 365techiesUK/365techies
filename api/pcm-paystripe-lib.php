@@ -96,7 +96,8 @@ function pst_invoice_check($inv, $pence, $kind) {
     $total = (int)round(((float)($inv['TotalAmt'] ?? 0)) * 100);
     if ($owed <= 0) return 'that invoice is already paid in QuickBooks - check this isn\'t a second payment';
     if ($pence > $owed) return 'they paid ' . pl_money($pence / 100) . ' but the invoice only owes ' . pl_money($owed / 100);
-    if ($kind === 'id' && $pence !== $owed && $pence !== $total) return 'the amount doesn\'t match that invoice';
+    // 'note': a number the payer typed on a payment sent straight to our PayPal (pay-ppts-lib.php) - as strict as 'id'
+    if (($kind === 'id' || $kind === 'note') && $pence !== $owed && $pence !== $total) return 'the amount doesn\'t match that invoice';
     if ($kind === 'email' && $pence !== $owed) return 'the amount isn\'t exactly what that invoice owes';
     return '';
 }
@@ -161,11 +162,13 @@ function pst_inv_label($inv) {
     $doc = trim((string)($inv['DocNumber'] ?? ''));
     return $doc !== '' ? $doc : 'id ' . (string)($inv['Id'] ?? '?');
 }
+/* Where it was paid: the pay page, or (25 Oct 2026, pay-ppts-lib.php) straight to our PayPal without it */
+function pst_where($pay) { return !empty($pay['direct']) ? 'straight to our PayPal (not the pay page)' : 'on the pay page (' . pst_prov($pay) . ')'; }
 function pst_paid_text($pay, $inv) {
     $pence = (int)$pay['pence'];
     $owedAfter = round((float)($inv['Balance'] ?? 0) - $pence / 100, 2);
     $head = ($pay['prov'] ?? '') === 'paypal' ? '💰 *Paid with PayPal:* ' : '💳 *Paid by card:* ';
-    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay, $inv) . ' on the pay page (' . pst_prov($pay) . '). '
+    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay, $inv) . ' ' . pst_where($pay) . '. '
         . 'QuickBooks invoice *' . pst_inv_label($inv) . '* is marked paid automatically'
         . (($pay['matched'] ?? '') === 'email' ? ' (no invoice number on it - matched by their email address)' : '')
         . ($owedAfter > 0.004 ? ' - part payment, ' . pl_money($owedAfter) . ' still owed.' : ' - nothing to do.');
@@ -173,10 +176,11 @@ function pst_paid_text($pay, $inv) {
 function pst_flag_text($pay, $why) {
     $pence = (int)$pay['pence']; $ref = (string)$pay['ref'];
     $head = ($pay['prov'] ?? '') === 'paypal' ? '💰 *PayPal payment needs a look:* ' : '💳 *Card payment needs a look:* ';
-    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay) . ' on the pay page (' . pst_prov($pay) . '), reference '
+    return $head . pl_money($pence / 100) . ' from ' . pst_who($pay) . ' ' . pst_where($pay) . ', reference '
         . ($ref !== '' ? '`' . $ref . '`' : '_none_') . '. I couldn\'t mark a QuickBooks invoice paid: ' . $why
         . '. The money is safe in ' . pst_prov($pay) . ' - please record it against the right invoice in QuickBooks by hand (Receive payment, '
-        . 'deposit to the ' . pst_prov($pay) . ' account).';
+        . 'deposit to the ' . pst_prov($pay) . ' account).'
+        . (!empty($pay['direct']) ? ' If it isn\'t for an invoice (a personal payment, a refund to us), ignore this.' : '');
 }
 
 /* ---- the part that talks to Stripe, QuickBooks and Slack ---------------------------------------------------------------- */
@@ -305,6 +309,7 @@ function pst_book($pay, $via = 'cron') {
         $row = pst_link_row($ref, $pence);
         list($inv, $kind, $why) = pst_find_invoice($c, $ref, $row);
         if ($why !== '' && !$inv) return (strpos($why, 'two QuickBooks') === 0) ? $flag($why) : $retry('QuickBooks didn\'t answer (' . $why . ')');
+        if ($inv && $kind === 'doc' && !empty($pay['direct'])) $kind = 'note';   // typed by the payer: the amount must match too
     }
     if (!$inv) {   // no usable invoice number: the payer's email, if it points at exactly one invoice owing exactly this
         $why0 = $ref === '' ? 'there was no invoice number on it' : ($kind === '' ? 'the reference isn\'t an invoice number' : 'no QuickBooks invoice has that number');
