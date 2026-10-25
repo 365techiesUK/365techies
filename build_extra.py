@@ -29379,7 +29379,9 @@ def write_portal_page():
       if (!freshJoiner) h += '<div class="card nx-review"><h2>Happy with us?</h2>'
         + '<p class="quiet" style="margin:0 0 .55rem">A quick Google review takes about thirty seconds, and it is genuinely how other local people find a firm that answers the phone. We read every single one.</p>'
         + '<div class="row" style="border:0"><a class="btn sm" href="/leave-a-review/" target="_blank" rel="noopener">Leave a review</a>'
-        + '<a class="btn sm ghost" href="/refer-a-friend/" target="_blank" rel="noopener">Recommend us to a friend</a></div>'
+        + '<a class="btn sm ghost" href="/refer-a-friend/" target="_blank" rel="noopener">Recommend us to a friend</a>'
+        // 25 Oct 2026 (owner: "do the portal link"): the LinkedIn follow, beside the other ways to back us - same page link as the service report email
+        + '<a class="btn sm ghost" href="https://www.linkedin.com/company/365techies/" target="_blank" rel="noopener">Follow us on LinkedIn</a></div>'
         + '<p class="quiet" style="margin:.55rem 0 0;font-size:.82rem">Something not right instead? Ring 01202 775566 and we will put it right.</p></div>';
             el.innerHTML = h;
       bindOut();
