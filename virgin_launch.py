@@ -423,9 +423,14 @@ VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
 VEM_VIDEO_SECS = 85   # the lede says "An 85-second video": mind the a/an if this changes
 VEM_VIDEO_DATE = "2026-10-08"
 # 19 Oct 2026 (owner: "make it public and switch the page to YouTube"): the same wide film on YouTube. Computers and
-# tablets play it from there (a play is a view on the channel); an upright phone keeps our phone-shaped cut, because the
-# wide film's text is tiny there and YouTube has no tall copy. Without the script the page plays our own wide copy.
+# tablets play it from there (a play is a view on the channel); an upright phone kept our phone-shaped cut, because the
+# wide film's text is tiny there (until 25 Oct: VEM_YT_SHORT). Without the script the page plays our own wide copy.
 VEM_YT = "QxO1TYRihkg"
+# 25 Oct 2026 (owner: "switch the Mover page to YouTube"): an upright phone now plays our tall Short from YouTube
+# ("Virgin Media Email Closing? Move It to Gmail Free", 31 s, public 25 Oct) - every play on the page is a channel view.
+# It shows the app half only, so a line under it on phones links the full 85-second film (which starts with the add-on).
+# Empty = phones go back to our own phone-shaped cut.
+VEM_YT_SHORT = "ctZLRm_2cyo"
 VEM_URL = "https://365techies.co.uk/" + VIRGIN_TOOL_SLUG + "/"
 VEM_SHARE_TEXT = "Moving off Virgin Media email? This free tool from 365 Techies moves it all into Gmail, and there's a short video showing how:"
 
@@ -602,6 +607,7 @@ def virgin_tool_page(setup_url):
           </video>
           <button type="button" class="vw__play" id="vemplay" aria-label="Play the how-to video ({VEM_VIDEO_SECS} seconds)"><span>&#9654;</span></button>
         </div>
+        <p class="vw__tallnote" id="vemtallnote" hidden>On a phone this plays our 30-second version. <a href="https://www.youtube.com/watch?v={VEM_YT}" target="_blank" rel="noopener">The full {VEM_VIDEO_SECS}-second walk-through</a> starts with the Chrome add-on.</p>
         <ol class="vw__three">
           <li><b>Copy it in Chrome</b> with the 365 Email Mover add-on</li>
           <li><b>Move it into Gmail</b> with 365 PC Manager</li>
@@ -644,6 +650,8 @@ def virgin_tool_page(setup_url):
         .vw a:not(.button){{color:var(--cyan-soft)}}
         @media (max-width:760px){{.vw__three{{grid-template-columns:1fr}}.vw__play span{{width:68px;height:68px;font-size:1.6rem}}}}
         .vw__box.is-tall{{max-width:420px;aspect-ratio:9/16}}
+        .vw__tallnote{{max-width:420px;margin:.7rem auto 0;text-align:center;font-size:.9rem;line-height:1.45;color:var(--hp-soft)}}
+        .vw__tallnote[hidden]{{display:none}}
         .vw__more{{max-width:980px;margin:1.5rem auto 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:1rem}}
         .vw__qr,.vw__share{{padding:1.1rem 1.2rem;border-radius:18px;border:1px solid var(--hp-edge);background:var(--hp-card)}}
         .vw__qr{{display:flex;align-items:center;gap:1.1rem}}
@@ -667,18 +675,20 @@ def virgin_tool_page(setup_url):
       <script>
         (function(){{
           var v=document.getElementById('vemvid'), b=document.getElementById('vemplay'); if(!v||!b) return;
-          var YT='{VEM_YT}', tall=false;
+          var YT='{VEM_YT}', YTS='{VEM_YT_SHORT}', tall=false;
           function hide(){{ b.style.display='none'; }}
-          /* a phone held upright gets the phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
+          /* a phone held upright gets a phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
           try{{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){{ tall=true;
             var sv=v.querySelector('source'); sv.src=v.getAttribute('data-tall'); v.poster=v.getAttribute('data-tallposter');
-            v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load(); }} }}catch(e){{}}
-          /* 19 Oct 2026: anywhere else the button plays the same film from YouTube (a view on our channel), in this box */
-          if(!tall&&YT) v.controls=false;
+            v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load();
+            if(YTS){{ var tn=document.getElementById('vemtallnote'); if(tn) tn.hidden=false; }} }} }}catch(e){{}}
+          /* 19 Oct 2026: the button plays the film from YouTube (a view on our channel), in this box; 25 Oct: upright phones get the Short */
+          var VID=tall?YTS:YT;
+          if(VID) v.controls=false;
           b.addEventListener('click',function(){{ hide();
-            try{{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{{page:location.pathname,src:tall?'own_tall':'youtube'}}); }}catch(e){{}}
-            if(!tall&&YT){{ var i=document.createElement('iframe');
-              i.src='https://www.youtube-nocookie.com/embed/'+YT+'?autoplay=1&rel=0&playsinline=1';
+            try{{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{{page:location.pathname,src:VID?(tall?'youtube_short':'youtube'):'own_tall'}}); }}catch(e){{}}
+            if(VID){{ var i=document.createElement('iframe');
+              i.src='https://www.youtube-nocookie.com/embed/'+VID+'?autoplay=1&rel=0&playsinline=1';
               i.title=v.getAttribute('aria-label')+' (YouTube)';
               i.setAttribute('allow','accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture');
               i.setAttribute('allowfullscreen',''); v.parentNode.replaceChild(i,v); return; }}

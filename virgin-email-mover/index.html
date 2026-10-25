@@ -1056,6 +1056,7 @@
           </video>
           <button type="button" class="vw__play" id="vemplay" aria-label="Play the how-to video (85 seconds)"><span>&#9654;</span></button>
         </div>
+        <p class="vw__tallnote" id="vemtallnote" hidden>On a phone this plays our 30-second version. <a href="https://www.youtube.com/watch?v=QxO1TYRihkg" target="_blank" rel="noopener">The full 85-second walk-through</a> starts with the Chrome add-on.</p>
         <ol class="vw__three">
           <li><b>Copy it in Chrome</b> with the 365 Email Mover add-on</li>
           <li><b>Move it into Gmail</b> with 365 PC Manager</li>
@@ -1098,6 +1099,8 @@
         .vw a:not(.button){color:var(--cyan-soft)}
         @media (max-width:760px){.vw__three{grid-template-columns:1fr}.vw__play span{width:68px;height:68px;font-size:1.6rem}}
         .vw__box.is-tall{max-width:420px;aspect-ratio:9/16}
+        .vw__tallnote{max-width:420px;margin:.7rem auto 0;text-align:center;font-size:.9rem;line-height:1.45;color:var(--hp-soft)}
+        .vw__tallnote[hidden]{display:none}
         .vw__more{max-width:980px;margin:1.5rem auto 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:1rem}
         .vw__qr,.vw__share{padding:1.1rem 1.2rem;border-radius:18px;border:1px solid var(--hp-edge);background:var(--hp-card)}
         .vw__qr{display:flex;align-items:center;gap:1.1rem}
@@ -1121,18 +1124,20 @@
       <script>
         (function(){
           var v=document.getElementById('vemvid'), b=document.getElementById('vemplay'); if(!v||!b) return;
-          var YT='QxO1TYRihkg', tall=false;
+          var YT='QxO1TYRihkg', YTS='ctZLRm_2cyo', tall=false;
           function hide(){ b.style.display='none'; }
-          /* a phone held upright gets the phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
+          /* a phone held upright gets a phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
           try{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){ tall=true;
             var sv=v.querySelector('source'); sv.src=v.getAttribute('data-tall'); v.poster=v.getAttribute('data-tallposter');
-            v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load(); } }catch(e){}
-          /* 19 Oct 2026: anywhere else the button plays the same film from YouTube (a view on our channel), in this box */
-          if(!tall&&YT) v.controls=false;
+            v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load();
+            if(YTS){ var tn=document.getElementById('vemtallnote'); if(tn) tn.hidden=false; } } }catch(e){}
+          /* 19 Oct 2026: the button plays the film from YouTube (a view on our channel), in this box; 25 Oct: upright phones get the Short */
+          var VID=tall?YTS:YT;
+          if(VID) v.controls=false;
           b.addEventListener('click',function(){ hide();
-            try{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{page:location.pathname,src:tall?'own_tall':'youtube'}); }catch(e){}
-            if(!tall&&YT){ var i=document.createElement('iframe');
-              i.src='https://www.youtube-nocookie.com/embed/'+YT+'?autoplay=1&rel=0&playsinline=1';
+            try{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{page:location.pathname,src:VID?(tall?'youtube_short':'youtube'):'own_tall'}); }catch(e){}
+            if(VID){ var i=document.createElement('iframe');
+              i.src='https://www.youtube-nocookie.com/embed/'+VID+'?autoplay=1&rel=0&playsinline=1';
               i.title=v.getAttribute('aria-label')+' (YouTube)';
               i.setAttribute('allow','accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture');
               i.setAttribute('allowfullscreen',''); v.parentNode.replaceChild(i,v); return; }
