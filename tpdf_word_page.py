@@ -39,10 +39,13 @@ def _box():
             f'<h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Techies PDF: a PDF&rsquo;s words into Word, on your PC</h3>'
             f'<p style="margin:0">Press <b>Turn a PDF into a Word document</b>, choose the PDF, then <b>Save as a Word document</b>. A scan? It reads the words '
             f'first with Windows&rsquo; own text reader. It also signs, joins, shrinks and fixes PDFs, all on your computer.</p>'
-            f'<p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="{rel["path"]}" download data-tpw-dl style="text-decoration:none">Download Techies PDF free &#8595;</a>'
-            f'<a class="button secondary" href="/techies-pdf/" style="text-decoration:none">Everything it does</a></p>'
-            f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Version {rel["ver"]}, {_tp.MB}, digitally signed by 365 Techies Ltd. Also on the '
-            f'<a href="{_STORE}">Microsoft Store</a>. Made by us, a family IT firm in Bournemouth since 1995.</p></div>'
+            # owner, 25 Oct 2026: the Store badge builds trust - Microsoft's official badge (self-hosted), as on /techies-pdf/
+            f'<p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem"><a class="button primary" href="{rel["path"]}" download data-tpw-dl style="text-decoration:none">Download Techies PDF free &#8595;</a>'
+            f'<a class="ms-store-badge" href="{_STORE}" aria-label="Download Techies PDF from the Microsoft Store" style="display:inline-block">'
+            f'<img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy" style="display:block;height:3.4rem;width:auto"></a></p>'
+            f'<p style="margin:.8rem 0 0"><a class="dh-link" href="/techies-pdf/">Everything it does &#8594;</a></p>'
+            f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">On the Microsoft Store, checked by Microsoft. Version {rel["ver"]}, {_tp.MB}, '
+            f'digitally signed by 365 Techies Ltd. Made by us, a family IT firm in Bournemouth since 1995.</p></div>'
             f'<figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);background:#f4f3f3">'
             f'{_tp.shot("word", _ALT)}</div>'
             f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real program, with a made-up letter.</figcaption></figure></div>'
@@ -60,7 +63,7 @@ PAGE = {
     'eyebrow': '// PDF TO WORD, ON YOUR OWN PC',
     'h1': 'Turn a PDF into <em class="grad grad--cyan">Word</em>, without uploading it',
     'lede': 'You need to change a letter, a form or a CV that you only have as a PDF. Search for &ldquo;PDF to Word&rdquo; and every answer wants you to upload it to a website first, which isn&rsquo;t great for a bank letter or anything from the doctor. Here are the free ways to do it on your own Windows PC, where the file never leaves it.',
-    'chips': ['Nothing uploaded', 'Free', 'Windows specialists since 1995'],
+    'chips': ['Nothing uploaded', 'Free app on the Microsoft Store', 'Windows specialists since 1995'],
     'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['No Word? Use our free app', '#s3'],
     'ctaHead': 'Still stuck with a PDF?', 'ctaSub': 'We sort it on your Windows PC while you watch. We work on Windows PCs only, not Macs. Call 01202 775566 or text 07520 615332.',
     'schemaKind': 'howto',
@@ -91,7 +94,7 @@ PAGE = {
                  '<p>Microsoft explains what happens: Word makes a copy of the PDF, converts it and tries to match the original layout, and your original PDF is kept. It works best with documents that are mostly words. A page that is mostly charts or pictures may come in as one picture, and some things are known to come out wrong, including tables with spaced-out cells, page borders and colours, footnotes that run over more than one page, and comments (' + _MS + '). Check it before you send it.</p>'
                  '<p>Microsoft lists this for Word for Microsoft 365, Word 2024, 2021, 2019 and 2016. Word on your PC does the job itself: you don&rsquo;t upload the PDF to a website.</p>'},
         {'eyebrow': '/03 &mdash; NO WORD? USE OUR FREE APP', 'h2': 'No Word? Get the words into a Word document with Techies PDF',
-         'html': '<p>We made <a href="/techies-pdf/">Techies PDF</a> for the PDF jobs our customers ring us about, and it&rsquo;s free. It runs on your Windows PC and doesn&rsquo;t send your files anywhere.</p>'
+         'html': '<p>We made <a href="/techies-pdf/">Techies PDF</a> for the PDF jobs our customers ring us about, and it&rsquo;s free. It runs on your Windows PC and doesn&rsquo;t send your files anywhere. Get it from the <a href="' + _STORE + '">Microsoft Store</a>, where Microsoft checked it before listing it, or straight from us (below).</p>'
                  '<ol>'
                  '<li>Open Techies PDF and press <strong>Turn a PDF into a Word document</strong>.</li>'
                  '<li>Choose the PDF.</li>'
