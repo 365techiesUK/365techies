@@ -17,13 +17,15 @@ import html
 # The 365 PC Manager 36.5 problem Shorts (reels/pcm-365-2026-10-18, the Chatterbox voice), keyed by the 9-second clip they
 # match (images/pcm-clip-<key>.mp4). Scheduled by the owner for 12:00 (checked in Studio, 18 Oct).
 # key: (YouTube id, seconds, live, title)
+# ⚠ 26 Oct 2026: startup, remote and windows were re-made (the v3 redo, reels/shorts-redo-2026-10-26) and swapped into the
+# same slots as NEW uploads; the old copies went private and the owner deletes them. A swap always means a new id here.
 PCM_SHORTS = {
     "battery": ("C4PH6jjz3M8", 23, "2026-10-21T12:00:00+01:00", "Laptop Battery Worn Out? See How Much Charge It Really Holds"),
     "isitdown": ("0Q6_z8NGpg4", 27, "2026-10-23T12:00:00+01:00", "Is It Down, or Just You? Check Both Ends at Once"),
     "printers": ("SU95a-qFKEQ", 27, "2026-10-25T12:00:00+00:00", "Printer Stuck? Clear the Print Queue in One Click"),
-    "startup": ("NozMHuCBf2A", 23, "2026-10-27T12:00:00+00:00", "PC Slow to Start? See What Starts With Windows"),
-    "remote": ("7qjQZr2NxXg", 26, "2026-10-29T12:00:00+00:00", "Is Someone Connected to Your PC? Check in Seconds"),
-    "windows": ("IJ9qlKCOEiI", 28, "2026-10-31T12:00:00+00:00", "Still on Windows 10? Check Where You Stand"),
+    "startup": ("bxOmIs-dENY", 28, "2026-10-27T12:00:00+00:00", "PC Slow to Start? See What Starts With Windows"),
+    "remote": ("jVAjtBp7Y0w", 31, "2026-10-29T12:00:00+00:00", "Is Someone Connected to Your PC? Check in Seconds"),
+    "windows": ("f-oSGkTWx58", 31, "2026-10-31T12:00:00+00:00", "Still on Windows 10? Check Where You Stand"),
     "devices": ("Q-PDQCw1D3E", 28, "2026-11-02T12:00:00+00:00", "What's Actually on Your Wi-Fi? Find Every Device"),
     "shares": ("fWhESteHDk8", 29, "2026-11-04T12:00:00+00:00", "Shared Folder or Network Drive Won't Open? Find Out Why"),
     "officelicence": ("DOPM26kIBfQ", 26, "2026-11-06T12:00:00+00:00", "Word or Excel Says \"Unlicensed Product\"? Here's Why"),

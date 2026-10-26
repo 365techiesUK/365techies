@@ -1575,8 +1575,8 @@
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
-  "h": "73bb1f1773fb65af",
-  "last": "2026-10-19"
+  "h": "e9de563694b0c93f",
+  "last": "2026-10-26"
  },
  "identity-theft": {
   "first": "2026-07-28",
@@ -1610,8 +1610,8 @@
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "5b51bd78a9d84d12",
-  "last": "2026-10-22"
+  "h": "196cf09d3ebea4cf",
+  "last": "2026-10-26"
  },
  "it-advice": {
   "first": "2026-07-28",
@@ -2070,8 +2070,8 @@
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
-  "h": "70eb0411b3c2ffed",
-  "last": "2026-10-19"
+  "h": "1de6455f1a6efde5",
+  "last": "2026-10-26"
  },
  "join": {
   "first": "2026-07-28",
@@ -2842,6 +2842,11 @@
   "h": "3fc7925263584a21",
   "last": "2026-10-18"
  },
+ "pdf-to-word-without-uploading": {
+  "first": "2026-10-25",
+  "h": "36bbeccdef7b2936",
+  "last": "2026-10-25"
+ },
  "phishing": {
   "first": "2026-07-28",
   "h": "f24413bbc3699a55",
@@ -3426,8 +3431,8 @@
  },
  "stop-programs-starting-with-windows": {
   "first": "2026-10-13",
-  "h": "1b39ee349d3afacb",
-  "last": "2026-10-19"
+  "h": "b2c624a80dec4d7e",
+  "last": "2026-10-26"
  },
  "stop-using-onedrive-without-losing-files": {
   "first": "2026-07-28",
@@ -3863,8 +3868,8 @@
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
-  "h": "6568066d89670307",
-  "last": "2026-10-19"
+  "h": "c1b1f78258c32093",
+  "last": "2026-10-26"
  },
  "windows-10-esu-business-cost": {
   "first": "2026-07-29",
@@ -3975,10 +3980,5 @@
   "first": "2026-09-05",
   "h": "5bd75e4c5d968752",
   "last": "2026-10-11"
- },
- "pdf-to-word-without-uploading": {
-  "first": "2026-10-25",
-  "h": "36bbeccdef7b2936",
-  "last": "2026-10-25"
  }
 }
