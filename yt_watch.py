@@ -97,6 +97,12 @@ TPDF_FILM = ("Jd0PrHSWJQc", 186, None, 'Free PDF Editor for Windows 11: Sign, Me
 # 23 Oct 2026: the classic Outlook Short, under the film on /download-classic-outlook/ and the switch-back page
 CLASSIC_OUTLOOK_SHORT = ("v-rXygnZhak", 25, None, "No Classic Outlook on Your New PC? Here's Where to Get It")
 
+# 27 Oct 2026 (owner: "build the first three" pages from the channel study): the Wi-Fi password Short (29 s, filmed on our
+# office Latitude, password + QR blurred; scheduled by the owner for Tue 27 Oct 08:00) on /how-to-find-your-wifi-password/,
+# and the v3 clipboard Short (27 s, Thu 29 Oct 12:00) under the clipboard film on /clipboard-history-windows/.
+WIFI_SHORT = ("goZCP5IjJWc", 29, "2026-10-27T08:00:00+00:00", "Forgot Your Wi-Fi Password? Your PC Already Knows It")
+CLIPBOARD_SHORT = ("Bhim_dE_C2g", 27, "2026-10-29T12:00:00+00:00", "Windows Can Remember Everything You Copy")
+
 
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""

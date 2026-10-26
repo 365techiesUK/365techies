@@ -33,7 +33,8 @@ Real screens from a customer's hub, network names hidden. Made public by the own
 studio) on /onedrive-taking-up-space/, straight after the guided steps, as on the EE page. Public before this went live.
 22 Oct 2026 (owner: "do what's left, all of that"): the ten 21 Oct how-tos filmed in the Hyper-V studio, each on the page
 it answers, scheduled: every film goes public at 11:00 on its day (23 Oct - 1 Nov) and its Short at 12:00. The clipboard
-film has no page that answers it yet, so it is in VIDEOS only. Transcripts are the films' own voice scripts.
+film had no page that answers it, so it was in VIDEOS only until 27 Oct 2026, when /clipboard-history-windows/ was built for
+it (with its v3 Short underneath). Transcripts are the films' own voice scripts.
 23 Oct 2026 (owner: "link them all to the page"): the classic Outlook film (2:02, 4K, filmed in the Hyper-V studio) on
 /download-classic-outlook/ after the guided steps and on /how-to-go-back-to-classic-outlook/ after "No toggle?", with its
 25-second Short as a button underneath. Both public before this went live.
@@ -230,7 +231,9 @@ VIDEOS = {
         desc='A 73-second guide from 365 Techies: turn on clipboard history in Windows 11 with Windows + V, paste from the list, pin things you use often and clear the rest.',
         cap='1 min 13 s &middot; a spoken guide with captions &middot; filmed on a clean copy of Windows 11',
         says='Copied something, then copied something else, and lost the first one? Windows can remember everything you copy. Here&rsquo;s how to use clipboard history. Press the Windows key and V. The first time, choose Turn on. Now copy things as normal, with Control and C. When you want to paste, press the Windows key and V, instead of Control and V. Everything you&rsquo;ve copied is listed. Click the one you want. Pin anything you use often, like a phone number. Pinned items stay, even after you restart. Everything else clears when the PC restarts. To wipe the list now, choose Clear all. So: Windows and V, turn it on once, then paste from the list. Need a hand with your PC? We&rsquo;ll sort it remotely. More free guides at 365techies.co.uk.',
-        tools=[]),
+        tools=[],
+        extra=('        <p style="text-align:center;margin:.3rem 0 0"><style>.hvf a.ytw{color:inherit;text-decoration:none}</style>'
+               + yt_watch.button(yt_watch.CLIPBOARD_SHORT, "Or watch it in 27 seconds", shape="tall") + '</p>\n')),
     'system-restore': dict(
         id='YmGqu9F-Ghc', secs=74, uploaded='2026-10-30', live='2026-10-30T11:00:00+00:00', out='Fri 30 Oct, 11:00',
         poster='/images/howto-system-restore-poster-v1.jpg',
@@ -313,6 +316,9 @@ PLACES = {
         'Got a .zip attachment? Right-click it and choose Extract all. And to send lots of files at once, zip them into one.'),
     'how-to-set-up-a-second-monitor': ('split-screen', 'before:<h2>Key points</h2>', None,
         'Watch: put two windows side by side in Windows 11, on one screen or across both.'),
+    # 27 Oct 2026: the clipboard film finally has its page (symptom_pages_data.py CLIPBOARD), after the guided steps
+    'clipboard-history-windows': ('clipboard', 'after:id="fixflow"', 'Watch: clipboard history in 73 seconds',
+        'Turning it on, pasting from the list, pinning and clearing, filmed on a clean copy of Windows 11.'),
 }
 
 STYLE = """    <style>

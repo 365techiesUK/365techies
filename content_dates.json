@@ -425,6 +425,10 @@
   "h": "cb57357df72d259e",
   "last": "2026-09-26"
  },
+ "clipboard-history-windows": {
+  "first": "2026-10-26",
+  "h": "b393fead4bfdd4d1"
+ },
  "cloud-backup": {
   "first": "2026-07-28",
   "h": "69d4679d43fecf7b",
@@ -1201,7 +1205,8 @@
  },
  "forgot-windows-password-or-pin": {
   "first": "2026-10-12",
-  "h": "4782e63e5175bbda"
+  "h": "d2af3c34e55b32ee",
+  "last": "2026-10-26"
  },
  "former-it-provider-controls-microsoft-365": {
   "first": "2026-07-28",
@@ -1404,6 +1409,10 @@
  "how-to-find-dell-service-tag-and-check-warranty": {
   "first": "2026-10-13",
   "h": "be9c1301085622f2"
+ },
+ "how-to-find-your-wifi-password": {
+  "first": "2026-10-26",
+  "h": "78b511b0a224005a"
  },
  "how-to-free-up-storage-space": {
   "first": "2026-06-16",
@@ -1615,8 +1624,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "be1417e1376d09ff",
-  "last": "2026-10-25"
+  "h": "0b9f2608e7abb7f9",
+  "last": "2026-10-26"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2965,8 +2974,8 @@
  },
  "printer-offline": {
   "first": "2026-10-12",
-  "h": "7ee88855bc86a8df",
-  "last": "2026-10-19"
+  "h": "0b0f4fb150c012df",
+  "last": "2026-10-26"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
@@ -3254,6 +3263,10 @@
   "first": "2026-07-28",
   "h": "ff6cf06a0ccfa2a3",
   "last": "2026-10-06"
+ },
+ "secure-boot-certificates-expired": {
+  "first": "2026-10-26",
+  "h": "bc3241113bdab3aa"
  },
  "secure-it-disposal": {
   "first": "2026-07-28",
@@ -3649,8 +3662,8 @@
  },
  "we-couldnt-update-the-system-reserved-partition": {
   "first": "2026-10-15",
-  "h": "b29bcbb7686bfb7b",
-  "last": "2026-10-17"
+  "h": "3b8fc39f20dccd7a",
+  "last": "2026-10-26"
  },
  "web-care": {
   "first": "2026-07-28",
@@ -3933,8 +3946,8 @@
  },
  "windows-update-stuck": {
   "first": "2026-10-12",
-  "h": "39184ef183e0c54e",
-  "last": "2026-10-17"
+  "h": "74775378b8dc7a74",
+  "last": "2026-10-26"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",

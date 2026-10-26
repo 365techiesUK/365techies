@@ -70,7 +70,7 @@ PRINTER = {
         {'eyebrow': '/04 &mdash; WI-FI PRINTERS', 'h2': 'Wi-Fi printer offline? Check it&rsquo;s on your network',
          'html': '<ul>'
                  '<li><strong>Print the printer&rsquo;s own network report</strong> (usually from its settings menu or a button combination in its manual): it shows the Wi-Fi name it&rsquo;s connected to. If it&rsquo;s not your network, or says not connected, run the printer&rsquo;s wireless set-up again.</li>'
-                 '<li><strong>New router, new broadband or a changed Wi-Fi password?</strong> The printer is still looking for the old one: see <a href="/printer-wont-connect-after-changing-broadband/">printer won&rsquo;t connect after changing broadband</a> and <a href="/printer-stopped-working-after-changing-wifi-password/">printer stopped after changing the Wi-Fi password</a>.</li>'
+                 '<li><strong>New router, new broadband or a changed Wi-Fi password?</strong> The printer is still looking for the old one: see <a href="/printer-wont-connect-after-changing-broadband/">printer won&rsquo;t connect after changing broadband</a> and <a href="/printer-stopped-working-after-changing-wifi-password/">printer stopped after changing the Wi-Fi password</a>. Don&rsquo;t know the Wi-Fi password? <a href="/how-to-find-your-wifi-password/">Your PC can show it</a>.</li>'
                  '<li><strong>It drops off every few days?</strong> The router may be giving it a new address. See <a href="/why-does-my-printer-keep-disconnecting/">why does my printer keep disconnecting</a>.</li>'
                  '<li><strong>Printer asleep?</strong> Some printers go so deeply to sleep that Windows can&rsquo;t see them. Press a button on the printer to wake it, then try again.</li>'
                  '</ul>'},
@@ -411,7 +411,7 @@ UPDATES = {
         {'q': 'Will I lose my files?', 'a': '<p>Not from the steps on this page. Back up before any repair, just in case.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC and get the updates through while you watch.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/reliability-monitor/">Reliability Monitor</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/we-couldnt-update-the-system-reserved-partition/">the yearly update undoing itself (system reserved partition)</a>, <a href="/why-windows-updates-break-things/">why Windows updates break things</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/secure-boot-certificates-expired/">Secure Boot certificates expired</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/reliability-monitor/">Reliability Monitor</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
 }
 
 # ============================================================ 6. Forgot Windows password or PIN (12 Oct 2026, round 2)
@@ -500,7 +500,7 @@ PASSWORD = {
         {'q': 'Is password removal software safe?', 'a': '<p>Usually not: programs advertised to remove or crack Windows passwords often carry malware. Stick to Microsoft&rsquo;s own routes.</p>'},
         {'q': 'Can you help remotely?', 'a': '<p>Not while nobody can sign in, but we can talk you through it on the phone, or collect the PC locally and help you back in.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/password-manager-setup/">password manager set-up</a>, <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>, <a href="/gave-a-scammer-remote-access/">gave a scammer remote access?</a> and <a href="/employee-left-dont-know-computer-password/">employee left, password unknown</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/password-manager-setup/">password manager set-up</a>, <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>, <a href="/how-to-find-your-wifi-password/">find your Wi-Fi password</a>, <a href="/gave-a-scammer-remote-access/">gave a scammer remote access?</a> and <a href="/employee-left-dont-know-computer-password/">employee left, password unknown</a>.</p>',
 }
 
 
@@ -600,14 +600,287 @@ RESERVED = {
         {'q': 'Will it come back next year?', 'a': '<p>It can, because yearly updates may restore the fonts and a 100 MB partition is always tight. Check the free space after each big update.</p>'},
         {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC, free the space safely and get the update installed while you watch. Enlarging a partition that is simply too small is a workshop job, and we can collect.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck or failing</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a>, <a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck or failing</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a>, <a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a>, <a href="/secure-boot-certificates-expired/">Secure Boot certificates expired</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> and <a href="/windows-11-support/">Windows 11 help</a>.</p>',
+}
+
+
+# ============================================================ 8-10. From the YouTube channel study (27 Oct 2026)
+# Owner, 26 Oct 2026, after the channel + competitor study (memory youtube-competitor-study-2026-10-26): "build the first
+# three". Each was checked against the live sitemap (790 URLs) and the nearest pages' H2s first: none had a page.
+#   - Wi-Fi password: the biggest topic in the niche on YouTube (two Shorts at ~4M views each); Bing "how to find wifi
+#     password" 11,327 UK / 59,648 world, 3 months to 21 Oct (seo-research/howto-batch-2026-10-21). Our own Short
+#     (yt_watch.WIFI_SHORT) is filmed on the office Latitude. Steps = Microsoft Support "Find your Wi-Fi network password
+#     in Windows" (KB 4023501, Windows 11 and 10 tabs), checked 27 Oct 2026; netsh is Windows' own command.
+#   - Clipboard history: Bing "clipboard history" 6,696 UK / 66,594 world; the only 21 Oct how-to film with no page.
+#     Facts = Microsoft Support "Clipboard in Windows" (checked 27 Oct 2026): Windows + V, Turn on, 25 items, 4 MB each,
+#     text/HTML/bitmap, cleared on restart except pinned, Settings > System > Clipboard, sync tied to the account.
+#   - Secure Boot certificates: new to us from the study (Zack Shutt's Short 561K in a day). Microsoft KB 5079373 (when the
+#     certificates expire), KB 5068008 (FAQ), KB 5087130 (the status in Windows Security), KB 5068202 (the registry value
+#     365 PC Manager's "Start-up certificates" row reads since v31), checked 27 Oct 2026: PCs keep starting and keep getting
+#     normal updates; without the 2023 certificates they get no new start-up (early boot) protections; most personal PCs
+#     get them automatically; some need maker firmware, perhaps only within the support period; never turn Secure Boot off;
+#     only supported Windows versions get them (Windows 10 = ESU only). The last 2011 certificate (Windows Production PCA
+#     2011) ran out on 19 Oct 2026, so the page speaks in the past tense.
+WIFI = {
+    'slug': 'how-to-find-your-wifi-password',
+    'title': 'How to Find Your Wi-Fi Password on Windows 11 and 10',
+    'metaDesc': 'Forgot your Wi-Fi password? If your Windows PC has joined the network before, it can show you. The steps for Windows 11 and 10, and where else to look.',
+    'ogTitle': 'Forgot your Wi-Fi password? Your PC already knows it',
+    'crumbName': 'Find Your Wi-Fi Password',
+    'eyebrow': '// FORGOTTEN YOUR WI-FI PASSWORD?',
+    'h1': 'Find your <em class="grad grad--cyan">Wi-Fi password</em> on your PC',
+    'lede': 'A visitor wants your Wi-Fi, a new printer is asking for the password, and nobody can remember it. If your Windows PC has joined that network before, it already knows the password and can show you in under a minute. Nothing to download, nothing to install.',
+    'chips': ['Under a minute', 'Windows 11 and 10', 'Nothing to install'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Show me the steps', '#s1'],
+    'ctaHead': 'Still can&rsquo;t find it?',
+    'ctaSub': 'We can find it with you remotely, connect the printer or tablet that needs it, or set a new password and reconnect everything. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Windows 11', 'Settings, Network &amp; internet, Wi-Fi, Manage known networks, your network, then Show next to Wi-Fi network password.'),
+        ('Windows 10', 'Network and Sharing Center, your Wi-Fi, Wireless Properties, the Security tab, then tick Show characters.'),
+        ('It works if', 'This PC has joined that network before: it remembers the password.'),
+        ('No PC on it?', 'The original password is on the sticker or pull-out card on your broadband hub.'),
+        ('Changed it and forgot?', 'Your broadband provider&rsquo;s app or the hub&rsquo;s own settings page can show it or set a new one.'),
+        ('Keep it private', 'Anyone with the password can use your broadband, so share it with people you trust.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WINDOWS 11', 'h2': 'Windows 11: Settings shows it',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>Network &amp; internet</strong>, then <strong>Wi-Fi</strong>.</li>'
+                 '<li>Choose <strong>Manage known networks</strong> and click your network&rsquo;s name. (Connected to it now? <strong>Network &amp; internet</strong>, then <strong>Properties</strong> at the top, gets you to the same place.)</li>'
+                 '<li>Next to <strong>Wi-Fi network password</strong>, choose <strong>Show</strong>. There&rsquo;s the password, and a QR code a phone can scan to join without typing anything.</li>'
+                 '</ol>'
+                 '<p>It works for any network this PC has joined before, even one it isn&rsquo;t connected to now. No <strong>Show</strong> button? Your copy of Windows 11 is an older version: the Windows 10 steps below work on it too.</p>'
+                 '<p style="margin:.2rem 0 0">__YT_WIFI__</p>'},
+        {'eyebrow': '/02 &mdash; WINDOWS 10', 'h2': 'Windows 10: the Wireless Properties box',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>Network &amp; Internet</strong>, then <strong>Status</strong>, and choose <strong>Network and Sharing Center</strong>. (On Windows 11, open <strong>Control Panel</strong> from the Start menu, then <strong>Network and Internet</strong>, then <strong>Network and Sharing Center</strong>.)</li>'
+                 '<li>Next to <strong>Connections</strong>, click your Wi-Fi network&rsquo;s name.</li>'
+                 '<li>In the Wi-Fi Status box, choose <strong>Wireless Properties</strong>.</li>'
+                 '<li>On the <strong>Security</strong> tab, tick <strong>Show characters</strong>. The password appears in the <strong>Network security key</strong> box.</li>'
+                 '</ol>'
+                 '<p>This way shows the network you&rsquo;re connected to now. If Windows asks for an administrator&rsquo;s password, sign in as the PC&rsquo;s main user, or ask whoever set the PC up.</p>'},
+        {'eyebrow': '/03 &mdash; NO PC ON IT?', 'h2': 'No computer on that network? Look on the hub',
+         'html': '<ul>'
+                 '<li><strong>The sticker or card on your broadband hub.</strong> BT, Sky, Virgin Media, EE, TalkTalk and most other providers print the Wi-Fi name and password on a sticker on the back or underneath, or on a card that pulls out. It&rsquo;s the password the hub came with.</li>'
+                 '<li><strong>A phone that&rsquo;s already connected.</strong> On most Android phones, open the Wi-Fi settings, tap the network you&rsquo;re on and choose <strong>Share</strong>: it shows a QR code another phone can scan, and many show the password underneath.</li>'
+                 '<li><strong>Your broadband provider&rsquo;s app,</strong> or the hub&rsquo;s own settings page, can usually show the password or let you set a new one.</li>'
+                 '</ul>'
+                 '<p>Changed the password since, so the sticker no longer works? Any PC that has joined since the change has the new one: use the steps above on that PC.</p>'},
+        {'eyebrow': '/04 &mdash; SHARE IT SAFELY', 'h2': 'Sharing it with visitors, safely',
+         'html': '<ul>'
+                 '<li><strong>Use the QR code.</strong> The one Windows 11 shows beside the password lets a visitor&rsquo;s phone join by pointing its camera at your screen, so you don&rsquo;t have to read the password out.</li>'
+                 '<li><strong>Print a card</strong> for the spare room or the fridge: our free <a href="/wifi-qr-code-generator/">Wi-Fi QR code maker</a> makes one in your browser.</li>'
+                 '<li><strong>Keep it to people you trust.</strong> Anyone with the password can use your broadband. Don&rsquo;t post it, or a photo of the sticker, online.</li>'
+                 '<li><strong>Given it to someone you&rsquo;d rather hadn&rsquo;t got it?</strong> Set a new one in your provider&rsquo;s app or the hub&rsquo;s settings. Every device then needs the new one, printers included: see <a href="/printer-stopped-working-after-changing-wifi-password/">printer stopped working after changing the Wi-Fi password</a>.</li>'
+                 '</ul>'
+                 '__APP_BOX_WIFICARD__'},
+        {'eyebrow': '/05 &mdash; STILL WON&rsquo;T CONNECT?', 'h2': 'Right password, but it still won&rsquo;t connect?',
+         'html': '<ul>'
+                 '<li><strong>A printer says the password is wrong</strong> when it isn&rsquo;t: usually the hub&rsquo;s newer security setting. See <a href="/printer-says-wifi-password-incorrect/">printer says the Wi-Fi password is incorrect</a>, and on an EE hub <a href="/printer-wont-connect-to-ee-smart-hub/">the Compatible Wi-Fi fix</a>.</li>'
+                 '<li><strong>Capital letters count,</strong> and 0 and O, or 1 and l, are easy to mix up on a sticker. The QR code avoids that.</li>'
+                 '<li><strong>It connects, then keeps dropping:</strong> see <a href="/wifi-keeps-dropping/">Wi-Fi keeps dropping</a>.</li>'
+                 '<li><strong>A work laptop</strong> may hide the password, or sign in a different way: ask your IT department.</li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We can find the password with you, connect the printer, tablet or smart TV that needs it, or set a new password and reconnect everything. For Wi-Fi that doesn&rsquo;t reach every room, see <a href="/wifi-support/">Wi-Fi help</a>.')},
+    ],
+    'howToName': 'How to find your Wi-Fi password on a Windows PC',
+    'howToSteps': [
+        {'name': 'Windows 11: show it in Settings', 'text': 'Open Settings, Network &amp; internet, Wi-Fi, Manage known networks, click your network, then choose Show next to Wi-Fi network password.'},
+        {'name': 'Windows 10, or no Show button', 'text': 'Open Network and Sharing Center, click your Wi-Fi, choose Wireless Properties, then on the Security tab tick Show characters.'},
+        {'name': 'Look on the broadband hub', 'text': 'The original password is printed on the sticker or pull-out card on the back or underneath.'},
+        {'name': 'Ask a connected phone or the provider&rsquo;s app', 'text': 'An Android phone on the network can share it as a QR code; your provider&rsquo;s app can usually show it or set a new one.'},
+    ],
+    'faqs': [
+        {'q': 'How do I find my Wi-Fi password on my laptop?', 'a': '<p>On Windows 11, open Settings, Network &amp; internet, Wi-Fi, Manage known networks, click the network and choose Show next to Wi-Fi network password. On Windows 10, use Network and Sharing Center, Wireless Properties, Security, Show characters.</p>'},
+        {'q': 'Can I see the password for a network I&rsquo;m not connected to?', 'a': '<p>Yes, if the PC has joined it before. On Windows 11, Manage known networks lists every saved network. On Windows 10, open Command Prompt and type <code>netsh wlan show profile name="Your network name" key=clear</code>: the password is next to Key Content. <code>netsh wlan show profiles</code> lists the saved names.</p>'},
+        {'q': 'Where is the Wi-Fi password on my router?', 'a': '<p>On most UK broadband hubs it&rsquo;s on a sticker on the back or underneath, or a card that pulls out, often labelled Wireless key, Wi-Fi password or Network key. That&rsquo;s the original one: if it has been changed since, the PC that has joined since knows the new one.</p>'},
+        {'q': 'Is it safe to show my Wi-Fi password?', 'a': '<p>On your own screen, yes. Just don&rsquo;t post it online or leave the QR code where strangers can scan it: anyone with the password can use your broadband.</p>'},
+        {'q': 'Why can&rsquo;t I see a Show button?', 'a': '<p>Older versions of Windows 11 don&rsquo;t have it in Settings. Use the Network and Sharing Center route instead: it works on Windows 11 too, from Control Panel.</p>'},
+        {'q': 'Can you help remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find the password with you and connect whatever needs it. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/wifi-qr-code-generator/">Wi-Fi QR code maker</a>, <a href="/printer-says-wifi-password-incorrect/">printer says the Wi-Fi password is incorrect</a>, <a href="/printer-stopped-working-after-changing-wifi-password/">printer stopped after changing the Wi-Fi password</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a> and <a href="/wifi-troubleshooting/">Wi-Fi troubleshooting</a>.</p>',
+}
+
+CLIPBOARD = {
+    'slug': 'clipboard-history-windows',
+    'title': 'Clipboard History in Windows 11 and 10 (Windows + V)',
+    'metaDesc': 'Copied something, then lost it? Windows can remember the last 25 things you copy. Turn on clipboard history with Windows + V, paste from it, pin and clear.',
+    'ogTitle': 'Clipboard history: Windows can remember everything you copy',
+    'crumbName': 'Clipboard History',
+    'eyebrow': '// COPIED SOMETHING, THEN LOST IT?',
+    'h1': 'Windows can remember <em class="grad grad--cyan">everything you copy</em>',
+    'lede': 'You copied a phone number, then copied something else, and the number&rsquo;s gone. Normally the clipboard holds one thing at a time, but Windows has a clipboard history that keeps the last 25. It&rsquo;s built in and free: you just switch it on once.',
+    'chips': ['Built into Windows', 'Windows 11 and 10', 'Two keys: Windows + V'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Turn it on', '#s1'],
+    'ctaHead': 'Want a hand with it?',
+    'ctaSub': 'We can set it up with you remotely, along with the other shortcuts that save time every day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Open it', 'Press the Windows key and V together.'),
+        ('First time', 'Choose Turn on. It remembers what you copy from then on.'),
+        ('Paste from it', 'Windows + V instead of Ctrl + V, then click the one you want.'),
+        ('How much', 'The last 25 things you copied: text, pictures and bits of web pages, up to 4 MB each.'),
+        ('Keep something', 'Pin it. Pinned items stay after a restart; the rest clear.'),
+        ('Clear it', 'Clear all at the top of the list, or Settings, System, Clipboard, Clear.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; TURN IT ON', 'h2': 'Turn clipboard history on',
+         'html': '<ol>'
+                 '<li>Press the <strong>Windows key</strong> and <strong>V</strong> together.</li>'
+                 '<li>The first time, it says clipboard history is off: choose <strong>Turn on</strong>.</li>'
+                 '</ol>'
+                 '<p>That&rsquo;s it. From now on Windows remembers what you copy, though it can&rsquo;t bring back anything copied before you switched it on. The same switch is in <strong>Settings</strong>, <strong>System</strong>, <strong>Clipboard</strong>, as <strong>Clipboard history</strong>.</p>'},
+        {'eyebrow': '/02 &mdash; USE IT', 'h2': 'Paste anything you copied earlier',
+         'html': '<ol>'
+                 '<li>Copy things as normal, with <strong>Ctrl + C</strong>, or right-click and <strong>Copy</strong>.</li>'
+                 '<li>When you want to paste, press <strong>Windows + V</strong> instead of Ctrl + V.</li>'
+                 '<li>Everything you&rsquo;ve copied is listed, newest at the top. Click the one you want and it goes in where your cursor is.</li>'
+                 '</ol>'
+                 '<p>It works in almost every program: emails, letters, web forms, even the search box. Ctrl + V still pastes the last thing you copied, as it always has.</p>'},
+        {'eyebrow': '/03 &mdash; PIN AND CLEAR', 'h2': 'Pin what you use often, clear the rest',
+         'html': '<ul>'
+                 '<li><strong>Pin it.</strong> Press Windows + V, point at an item and choose the <strong>pin</strong> (on some versions it&rsquo;s under the <strong>&hellip;</strong> button). Pinned items stay even after you restart, so your address or a reference number is always two keys away.</li>'
+                 '<li><strong>Delete one item:</strong> choose the <strong>&hellip;</strong> button next to it, then <strong>Delete</strong>.</li>'
+                 '<li><strong>Clear the lot:</strong> choose <strong>Clear all</strong> at the top of the list. Your pinned items stay.</li>'
+                 '<li><strong>A restart clears it too,</strong> apart from pinned items. It holds the last 25 things; older ones drop off as you copy more.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; PRIVACY', 'h2': 'Passwords, bank details and shared PCs',
+         'html': '<ul>'
+                 '<li><strong>Everything you copy goes in the list,</strong> including a password or card number, until you restart, clear it or it drops off the end. On a PC other people use, press Windows + V afterwards and delete it.</li>'
+                 '<li><strong>Many password managers</strong> keep the passwords they copy out of the history, and our free <a href="/free-pc-health-check/">365 PC Manager</a> app does the same with the passwords it makes.</li>'
+                 '<li><strong>Syncing to your other PCs is off unless you turn it on.</strong> <strong>Clipboard history across your devices</strong> in Settings, System, Clipboard sends what you copy to your other Windows PCs signed in to the same Microsoft account. Leave it off unless you need it.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; NOT WORKING?', 'h2': 'Windows + V does nothing?',
+         'html': '<ul>'
+                 '<li><strong>Check it&rsquo;s switched on:</strong> Settings, System, Clipboard, Clipboard history.</li>'
+                 '<li><strong>A work or school PC</strong> may have it switched off by the IT department, with the setting greyed out. Ask them.</li>'
+                 '<li><strong>The Windows key does nothing at all?</strong> Some keyboards, gaming ones especially, have a switch that turns it off. Check the keyboard for a lock key.</li>'
+                 '<li><strong>The item isn&rsquo;t in the list:</strong> things copied before you turned it on, items over 4 MB and files copied in File Explorer don&rsquo;t appear.</li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We can switch on clipboard history and the other time-savers, such as <a href="/how-to-take-a-screenshot/">screenshots</a> and <a href="/how-to-set-up-a-second-monitor/">two windows side by side</a>, and show you how they work.')},
+    ],
+    'howToName': 'How to use clipboard history in Windows',
+    'howToSteps': [
+        {'name': 'Open clipboard history', 'text': 'Press the Windows key and V together.'},
+        {'name': 'Turn it on', 'text': 'The first time, choose Turn on. Windows remembers what you copy from then on.'},
+        {'name': 'Copy as normal', 'text': 'Copy things with Ctrl + C, or right-click and Copy.'},
+        {'name': 'Paste from the list', 'text': 'Press Windows + V instead of Ctrl + V, and click the item you want.'},
+        {'name': 'Pin or clear', 'text': 'Pin things you use often; choose Clear all to wipe the rest.'},
+    ],
+    'faqs': [
+        {'q': 'How do I see my clipboard history?', 'a': '<p>Press the Windows key and V together. If it says clipboard history is off, choose Turn on: it lists what you copy from then on.</p>'},
+        {'q': 'Can I get back something I copied yesterday?', 'a': '<p>Only if clipboard history was already on and the PC hasn&rsquo;t restarted since, or you pinned it. A restart clears everything except pinned items.</p>'},
+        {'q': 'How many things does clipboard history keep?', 'a': '<p>The last 25 things you copied, each up to 4 MB: text, pictures and bits of web pages. Older ones drop off as you copy more, unless they&rsquo;re pinned.</p>'},
+        {'q': 'Does clipboard history work on Windows 10?', 'a': '<p>Yes. Windows + V works the same way on an up-to-date Windows 10 PC.</p>'},
+        {'q': 'Is clipboard history safe?', 'a': '<p>It stays on your PC unless you turn on syncing. Anything sensitive you copy sits in the list until you delete it, clear it or restart, so clear it on a shared PC.</p>'},
+        {'q': 'Where is the clipboard in Windows 11?', 'a': '<p>There&rsquo;s no folder for it: press Windows + V to see it, and Settings, System, Clipboard for its settings.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-take-a-screenshot/">how to take a screenshot</a>, <a href="/how-to-set-up-a-second-monitor/">two windows side by side</a>, <a href="/keyboard-test/">keyboard test</a>, <a href="/password-manager-setup/">password manager set-up</a> and <a href="/windows-11-course-for-beginners/">Windows 11 for beginners</a>.</p>',
+}
+
+SECBOOT = {
+    'slug': 'secure-boot-certificates-expired',
+    'title': 'Secure Boot Certificates Expired? What It Means for Your PC',
+    'metaDesc': 'Microsoft replaced the 2011 Secure Boot certificates in 2026. Your PC still starts, but needs the new ones for future protection. Check yours in a minute.',
+    'ogTitle': 'Secure Boot certificates expired: is my PC still safe?',
+    'crumbName': 'Secure Boot Certificates Expired',
+    'eyebrow': '// SECURE BOOT CERTIFICATES',
+    'h1': 'Secure Boot certificates <em class="grad grad--cyan">expired</em>: is my PC still safe?',
+    'lede': 'You&rsquo;ve seen a headline, a message in Windows Security, or a caller telling you your PC&rsquo;s security certificates have expired. Here&rsquo;s the calm version: your PC still starts and still gets Windows updates. What it needs is Microsoft&rsquo;s new certificates, and most PCs get them by themselves. You can check yours in a minute.',
+    'chips': ['Your PC still starts', 'Check in a minute', 'Windows 11 and 10'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Check my PC', '#s2'],
+    'ctaHead': 'Want us to check it?',
+    'ctaSub': 'With your permission we connect to your Windows PC, check Secure Boot and the certificates, install what Windows has waiting, and tell you plainly if it needs a BIOS update from the maker. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What expired', 'Microsoft&rsquo;s 2011 Secure Boot certificates: the first in June 2026, the last in October 2026.'),
+        ('Does my PC still start?', 'Yes. It keeps starting, and keeps getting its normal Windows updates.'),
+        ('What a PC without the new ones misses', 'Future security fixes for the start-up process, the part that stops hidden malware loading before Windows.'),
+        ('How to check', 'Windows Security, Device security, Secure Boot. Fully updated is what you want.'),
+        ('Most PCs', 'Get the new 2023 certificates by themselves through Windows Update. Some also need a BIOS update from the maker.'),
+        ('Never', 'Turn Secure Boot off to get round it, or let a caller &ldquo;fix&rdquo; it for you.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT HAPPENED', 'h2': 'What actually expired, in plain English',
+         'html': '<p>When a Windows PC switches on, <strong>Secure Boot</strong> checks that the first programs to load, before Windows itself, are genuine and haven&rsquo;t been tampered with. It does that with digital certificates from Microsoft, kept in the PC&rsquo;s own start-up software (the UEFI firmware).</p>'
+                 '<p>The certificates in most PCs date from 2011, and they ran out during 2026: the first in June, and the one that checks Windows&rsquo; own start-up files in October. Microsoft made new 2023 certificates to replace them, and has been sending them out through Windows Update since 2025.</p>'
+                 '<p><strong>A PC without the new ones still starts and still gets its normal Windows updates.</strong> What it can&rsquo;t get any more is new security fixes for the start-up process itself, so over time it&rsquo;s less protected against the rare kind of malware that hides there.</p>'},
+        {'eyebrow': '/02 &mdash; CHECK YOURS', 'h2': 'Check yours in a minute',
+         'html': '<ol>'
+                 '<li>Click Start, type <strong>Windows Security</strong> and open it.</li>'
+                 '<li>Choose <strong>Device security</strong>, then <strong>Secure Boot</strong>.</li>'
+                 '<li>Read what it says:'
+                 '<ul>'
+                 '<li><strong>Fully updated</strong>, with a green tick: nothing to do.</li>'
+                 '<li><strong>Not yet updated:</strong> the update should arrive by itself. Keep the PC online, install the latest Windows updates and restart when asked: see <a href="#s3">below</a>.</li>'
+                 '<li><strong>A yellow warning:</strong> something on the PC, often its firmware, is holding the update up: see <a href="#s4">when the PC maker needs to help</a>.</li>'
+                 '<li><strong>Requires action</strong>, in red: as it stands, the PC can no longer get start-up security updates. Microsoft&rsquo;s guidance is at aka.ms/getsecureboot, or ring us.</li>'
+                 '</ul></li>'
+                 '</ol>'
+                 '<p>The free <a href="/free-pc-health-check/">365 PC Manager</a> app shows the same thing in plain words on its <strong>This PC</strong> page, as <strong>Start-up certificates</strong>. No Secure Boot section at all, or it says Secure Boot is off? See <a href="#s5">Windows 10, and PCs with Secure Boot off</a>.</p>'},
+        {'eyebrow': '/03 &mdash; NOT YET UPDATED', 'h2': '&ldquo;Not yet updated&rdquo;? Let Windows Update finish',
+         'html': '<ul>'
+                 '<li><strong>Install every update:</strong> Settings, Windows Update, Check for updates. Install what&rsquo;s offered, including anything waiting for a restart.</li>'
+                 '<li><strong>Restart, then check again.</strong> Part of the change happens during a restart, so it can take more than one.</li>'
+                 '<li><strong>Give it time.</strong> Microsoft is sending the certificates out in stages, so a fully up-to-date PC may say Not yet updated for a while.</li>'
+                 '<li><strong>Leave Secure Boot on.</strong> Microsoft is clear that switching it off to get round this weakens the PC&rsquo;s protection.</li>'
+                 '</ul>'
+                 '<p>Updates failing or stuck? See <a href="/windows-update-stuck/">Windows Update stuck or failing</a>.</p>'},
+        {'eyebrow': '/04 &mdash; THE PC MAKER', 'h2': 'When the PC maker needs to help',
+         'html': '<p>On some PCs the new certificates also need an update to the PC&rsquo;s own start-up software (the BIOS or UEFI firmware) from its maker. Dell, HP, Lenovo, ASUS and the other big makers have published pages listing which models need one.</p>'
+                 '<ul>'
+                 '<li><strong>Use the maker&rsquo;s own update app</strong>, such as Dell SupportAssist, HP Support Assistant or Lenovo Vantage, or its support website with your model or service tag.</li>'
+                 '<li><strong>Have your BitLocker recovery key to hand</strong> before a BIOS update: some PCs ask for it on the next start. See <a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a>.</li>'
+                 '<li><strong>Plug a laptop in</strong> first, and don&rsquo;t switch off while a BIOS update runs.</li>'
+                 '<li><strong>Older PCs:</strong> Microsoft notes that makers may only offer firmware updates for models still in their support period. If yours isn&rsquo;t offered one, it keeps working; it just won&rsquo;t get new start-up protections. That&rsquo;s worth weighing up next time you think about <a href="/worth-repairing-old-laptop/">repairing or replacing it</a>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; WINDOWS 10 AND SECURE BOOT OFF', 'h2': 'Windows 10, and PCs with Secure Boot off',
+         'html': '<ul>'
+                 '<li><strong>Windows 10:</strong> Microsoft only sends the new certificates to versions of Windows it still supports, so a Windows 10 PC gets them while it&rsquo;s enrolled in Extended Security Updates: see <a href="/windows-10-esu-free-enrolment-help/">Windows 10 ESU help</a>. Not enrolled? It won&rsquo;t get them, and it&rsquo;s missing far more important security fixes as well: see <a href="/is-my-windows-still-supported/">is my Windows still supported?</a> or ask about <a href="/windows-11-upgrade-service/">moving it to Windows 11</a>.</li>'
+                 '<li><strong>Secure Boot off, or an older PC without it:</strong> the certificates don&rsquo;t come into it, and nothing changed for that PC in 2026. Secure Boot is worth having on, and Windows 11 expects it. Switching it on is a setting in the PC&rsquo;s start-up software that&rsquo;s best done with care: we can check whether yours can.</li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; AVOID THE SCAMS', 'h2': 'Calls and pop-ups about &ldquo;expired certificates&rdquo;',
+         'html': '<p>Scammers love a news story. Microsoft, your broadband provider and your bank will never ring you, or put up a pop-up with a phone number, to say your PC&rsquo;s certificates have expired. The real update comes through Windows Update, free, and nobody needs to connect to your computer for it.</p>'
+                 '<ul>'
+                 '<li><strong>Someone rings about it?</strong> Hang up. If you&rsquo;ve already let them connect, see <a href="/gave-a-scammer-remote-access/">gave a scammer remote access?</a></li>'
+                 '<li><strong>A pop-up with a number to call</strong> is a scam: close the browser and don&rsquo;t ring it. See <a href="/scam-pop-up-help-poole/">scam pop-up help</a>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' Not sure what yours says, stuck on Not yet updated, or showing a warning? We check Secure Boot and the certificates, install what Windows has waiting, and tell you plainly whether the PC needs a BIOS update from its maker.')},
+    ],
+    'howToName': 'How to check your PC has Microsoft&rsquo;s new Secure Boot certificates',
+    'howToSteps': [
+        {'name': 'Open Windows Security', 'text': 'Click Start, type Windows Security and open it.'},
+        {'name': 'Check the Secure Boot status', 'text': 'Choose Device security, then Secure Boot. Fully updated means it already has the new certificates.'},
+        {'name': 'Install updates and restart', 'text': 'Settings, Windows Update, Check for updates: install everything, and restart when asked.'},
+        {'name': 'Check for a BIOS update', 'text': 'Use the PC maker&rsquo;s update app or support website. Have your BitLocker recovery key to hand first.'},
+        {'name': 'On Windows 10', 'text': 'Enrol in Extended Security Updates, or move the PC to Windows 11: unsupported Windows doesn&rsquo;t get the certificates.'},
+    ],
+    'faqs': [
+        {'q': 'Will my PC stop working because the Secure Boot certificates expired?', 'a': '<p>No. Microsoft says a PC without the new certificates still starts and runs normally, and standard Windows updates keep installing. It just can&rsquo;t receive new security fixes for the start-up process.</p>'},
+        {'q': 'How do I know if my PC has the new certificates?', 'a': '<p>Open Windows Security, then Device security, then Secure Boot. Fully updated means it has them. The free 365 PC Manager app shows the same on its This PC page.</p>'},
+        {'q': 'Do I need to do anything?', 'a': '<p>Usually not: most home PCs get the new certificates automatically through Windows Update. Install your updates and restart when asked. If Windows Security shows a warning, the PC may need a BIOS update from its maker.</p>'},
+        {'q': 'Should I turn Secure Boot off?', 'a': '<p>No. Microsoft advises against switching Secure Boot off to get round the change: it weakens protection against malware that loads before Windows.</p>'},
+        {'q': 'Does this affect Windows 10?', 'a': '<p>Windows 10 PCs get the new certificates only while they&rsquo;re enrolled in Extended Security Updates, because Microsoft only sends them to supported versions of Windows.</p>'},
+        {'q': 'Someone rang to say my certificates have expired. Is it real?', 'a': '<p>No, it&rsquo;s a scam. The real update comes through Windows Update and nobody needs to connect to your PC. Hang up, and never let a cold caller connect to your computer.</p>'},
+        {'q': 'What are the new certificates called?', 'a': '<p>They&rsquo;re the 2023 certificates, such as Windows UEFI CA 2023, which replaces the Microsoft Windows Production PCA 2011 certificate and the other 2011 ones.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>, <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/windows-10-end-of-life/">Windows 10 end of life</a>, <a href="/windows-update-stuck/">Windows Update stuck</a> and <a href="/computer-spec-checker/">free PC spec checker</a>.</p>',
 }
 
 
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
+    import yt_watch
     boxes = {
+        # the same box and words as /wifi-qr-code-generator/ (pfp.tool_boxes)
+        '__APP_BOX_WIFICARD__': pfp._app_box('wificard', 'Print a guest Wi-Fi card from your PC',
+            '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
+        '__YT_WIFI__': yt_watch.button(yt_watch.WIFI_SHORT, 'Watch it done in %s' % yt_watch.length(yt_watch.WIFI_SHORT[1]).replace('-second', ' seconds'), shape='tall'),
         '__APP_BOX_PRINTER__': pfp._app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
             'It only reads, until you press a button.</p>', setup_url, clip='printers'),
@@ -619,7 +892,7 @@ def symptom_pages(setup_url):
             'It never installs, removes or changes anything.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -650,4 +923,21 @@ SYMPTOM_FLOWS = {
     RESERVED['slug']: {'h2': 'Free the space, step by step', 'ask': 'Did the update install?',
                        'tip': 'Check the free space again after the update, and before next year&rsquo;s.',
                        'h3s': 'Still under 15 MB free, or still failing? That is a remote job.'},
+    # each step is another place to look, so "Not yet" moves on and "Yes" ends it
+    WIFI['slug']: {'h2': 'Find the password, quickest way first', 'ask': 'Can you see the password?',
+                   'yes': 'Yes, got it', 'no': 'Not yet',
+                   'lede': 'One place to look at a time, quickest first. Tell it whether you found it and it shows the next place. Nothing here leaves your device.',
+                   'h3f': 'Found it{mins}. Nice work.', 'plan_lead': 'Rather we looked after the Wi-Fi and printers for you?',
+                   'tip': 'Use the QR code to get visitors on without reading the password out.',
+                   'h3s': 'Still can&rsquo;t find it? That is a quick remote job.'},
+    CLIPBOARD['slug']: {'h2': 'Set it up, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all set', 'ask': 'Done that step?',
+                        'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All set{mins}. Nice work.',
+                        'tip': 'Pin your address and phone number: they&rsquo;ll always be two keys away.',
+                        'h3s': 'Stuck at a step? We can set it up with you, remotely.'},
+    SECBOOT['slug']: {'h2': 'Check it and sort it, step by step', 'ask': 'Does it say Fully updated?',
+                      'yes': 'Yes, fully updated', 'no': 'Not yet',
+                      'tip': 'Look again after next month&rsquo;s updates, to be sure it stays that way.',
+                      'h3s': 'Still not updated after every step? That is a remote job.'},
 }
