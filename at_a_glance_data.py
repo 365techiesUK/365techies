@@ -48,7 +48,7 @@ AT_A_GLANCE = {
   ('DIY first step', 'Restart, tap F2 at the Dell logo, then look under Security for TPM 2.0/Intel PTT and Secure Boot.'),
   ('How long does it take?', 'A quick BIOS check often takes minutes &mdash; and there&rsquo;s no call-out fee.'),
   ('Will I lose my data?', 'We back up first if any disk conversion is involved, and it&rsquo;s done carefully so nothing is lost.'),
-  ('When it can&rsquo;t be fixed', 'If the processor is older than roughly Intel 8th generation (most machines from before 2018) &mdash; and forcing Windows 11 past it isn&rsquo;t recommended.'),
+  ('When the processor is older', 'Older than roughly Intel 8th generation (most machines from before 2018) isn&rsquo;t on Microsoft&rsquo;s list, but we can usually still put the latest Windows 11 on for &pound;60 &mdash; or tell you honestly if it&rsquo;s past it.'),
   ('If it&rsquo;s too old', 'A Windows-11-ready refurbished Dell from &pound;510, with your files and settings transferred across.'),
  ],
  'emails-on-computer-but-not-phone': [
@@ -229,7 +229,7 @@ AT_A_GLANCE = {
  ],
  'will-i-lose-files-upgrading-to-windows-11': [
   ('Files at risk?', 'No &mdash; the standard in-place upgrade keeps your files, apps and settings, and keeping everything is the default.'),
-  ('Only ways to lose data', 'Choosing &lsquo;Nothing&rsquo; during a manual install, or forcing Windows 11 onto an unsupported PC.'),
+  ('Only ways to lose data', 'Choosing &lsquo;Nothing&rsquo; during a manual install (a download in the wrong language only offers that), or a clean install instead of an upgrade.'),
   ('Do programs survive?', 'Most carry over intact; a few very old apps, antivirus or disk utilities may need reinstalling afterwards.'),
   ('DIY first step', 'Copy anything irreplaceable to OneDrive or an external drive, then plug the laptop into mains power before upgrading.'),
   ('Changed your mind?', 'You can go back to Windows 10 within 10 days of upgrading, with files and programs intact.'),
