@@ -153,6 +153,12 @@ if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lo
 // SimplyBook (phone bookings, which are most of them). Online bookings are skipped
 // here because the book action already posted them. This also makes the callback
 // itself VISIBLE: if these stop appearing, the callback has stopped working.
+// 27 Oct 2026: so are bookings staff made, moved or cancelled IN THE PORTAL, and jobs
+// logged there - the portal posts those itself, with who did it, and marks them in
+// pcm-bkann.php (pcm-bkann-lib.php). Checked here, last, so the portal's mark has
+// every possible moment to land. Only the Slack line is skipped; the emails above ran.
+require_once __DIR__ . '/pcm-bkann-lib.php';
+if (!$ours && bkann_recent($bid, $type)) $ours = true;
 if (!$ours) {
     $who = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', substr(($cnm !== '' ? $cnm : $email), 0, 80)));
     $whn = $ts ? date('D j M Y g:ia', $ts) : '';

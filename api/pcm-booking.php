@@ -2975,7 +2975,10 @@ if ($action === 'custlogjob') {
                 else {
                     $bid = (int)$res['id']; $sbOk = false; $sbId = (int)$res['cid'];
                     $sid = sb_status_id('completed');
-                    if ($sid > 0 && $bid > 0) { $r2 = sb_adm('setStatus', array($bid, $sid)); $sbOk = !sb_net($r2) && !empty($r2['result']); }
+                    if ($sid > 0 && $bid > 0) {
+                        bkann_mark($bid, 'change');   // the copy set Completed is announced here as "Done job logged" (pcm-bkann-lib.php)
+                        $r2 = sb_adm('setStatus', array($bid, $sid)); $sbOk = !sb_net($r2) && !empty($r2['result']);
+                    }
                     if ($bid > 0) {
                         list($lk, $db) = db_open();
                         if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
@@ -3058,6 +3061,11 @@ function staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce) {
     $bid = 0;
     if (isset($b['bookings'][0]['id'])) $bid = (int)$b['bookings'][0]['id'];
     elseif (isset($b['id'])) $bid = (int)$b['id'];
+    /* Both callers announce this booking in Slack themselves (staffbook "New booking", custlogjob "Done job logged"),
+       so SimplyBook's callback must not announce it again (pcm-bkann-lib.php). Marked the moment the id is known -
+       the callback has two SimplyBook round trips to make before it looks. ('create' only: a real change made in
+       SimplyBook straight afterwards must still be announced.) */
+    if ($bid > 0) { require_once __DIR__ . '/pcm-bkann-lib.php'; bkann_mark($bid, 'create'); }
     return array('ok' => true, 'id' => $bid, 'cid' => $cid, 'ts' => $startTs);
 }
 /* Today's next free start time for a service (HH:MM:SS), or '' and why. */
@@ -3875,6 +3883,8 @@ if ($action === 'staffcancel') {
     need_staff();
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
     if ($bid <= 0) fail('bad_request');
+    // marked BEFORE SimplyBook hears of it, so its callback can never beat the mark (see pcm-bkann-lib.php)
+    require_once __DIR__ . '/pcm-bkann-lib.php'; bkann_mark($bid, 'cancel');
     $r = sb_adm('cancelBooking', array($bid));
     if (sb_net($r)) fail('sb_unavailable');
     if (empty($r['result'])) fail('cancel_failed');
@@ -3902,6 +3912,7 @@ if ($action === 'staffmove') {
     $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
     if (!count($unitIds)) fail('slot_taken');
     $startTs = strtotime($date . ' ' . $time); $endTs = $startTs + sb_mins_for($eventId) * 60;
+    require_once __DIR__ . '/pcm-bkann-lib.php'; bkann_mark($bid, 'change');   // before SimplyBook hears of it
     $r = sb_adm('editBook', array($bid, $eventId, (int)$unitIds[0], $bClient,
         $date, $time, date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array()));
     if (sb_net($r) || !isset($r['result']) || !$r['result']) fail('change_failed');

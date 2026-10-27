@@ -277,6 +277,9 @@ api/pcm-sbwrite-ok.php
 api/pcm-sbwrite-log.php
 api/pcm-sbwrite-log.php.lock
 api/pcm-sbwrite-off.php
+# What the portal just announced in Slack, so SimplyBook's callback does not say it again (pcm-bkann-lib.php)
+api/pcm-bkann.php
+api/pcm-bkann.php.lock
 
 # Drafts are local-only: this repo is PUBLIC and master auto-deploys, so anything
 # committed here ships. Enforced here rather than left to the habit of never
