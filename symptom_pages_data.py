@@ -1076,7 +1076,9 @@ NTLWORLD = {
 #     forums and how-to blogs. Facts: Microsoft Learn "What's new in Windows 11, version 25H2" (the icon is part of Windows
 #     Spotlight); Microsoft Q&A (switching the background to Picture, Solid colour or Slideshow removes the icon; no
 #     supported setting keeps Spotlight and hides it); and the film-studio VM (Windows 11 Pro 26H2, 27 Oct 2026): clicking
-#     the icon opens a panel with the picture's story, four pictures to swap to, thumbs up / down and Learn more;
+#     the icon opens a Bing page about the picture in Edge; right-clicking it opens a panel with the picture's story, four
+#     pictures to swap to, thumbs up / down and Learn more; a selected photo in File Explorer has Set as background in the
+#     command bar;
 #     right-clicking the desktop offers Next background and Explore background; on an unactivated PC the Background page
 #     is greyed out ("You need to activate Windows before you can personalise your PC") but right-clicking a photo and
 #     choosing Set as desktop background still works.
@@ -1084,7 +1086,8 @@ NTLWORLD = {
 #     pointer" 4.0K (UK 457), "move taskbar to left" 1.0K (UK 225) + "how to move taskbar to left" 1.1K, "taskbar
 #     disappeared" 602; YouTube Shorts on moving the taskbar left 269K / 153K views. Facts: Microsoft Support "Customize the
 #     Windows Start menu" (Taskbar behaviours > Taskbar alignment); Microsoft's Insider blog 15 May 2026 (Recommended renamed
-#     Recent); the VM: Start's Recent ticks (Show recently added apps / Show recent and suggested files / Show tips and app
+#     Recent; the taskbar on any edge); the VM (26H2 26300.9711, a normal release, not Insider): Taskbar behaviours holds
+#     Taskbar position (Bottom / Top / Left / Right) and Taskbar icon alignment; Start's Recent ticks (Show recently added apps / Show recent and suggested files / Show tips and app
 #     recommendations), All with View: Category / Grid / List, Shift + right-click = the full menu. Built-in settings
 #     only: customising apps are named, not recommended (we fix the PCs they break after big updates).
 SPOTLIGHT = {
@@ -1103,7 +1106,7 @@ SPOTLIGHT = {
     'schemaKind': 'howto',
     'atAGlance': [
         ('What it is', 'Windows Spotlight: Microsoft puts a new photo on your desktop, and the icon tells you about it.'),
-        ('Is it safe?', 'Yes. It&rsquo;s part of Windows. Clicking it shows the picture&rsquo;s story; Learn more opens a web page in Edge.'),
+        ('Is it safe?', 'Yes. It&rsquo;s part of Windows. Clicking it only opens a web page about the photo, in Microsoft Edge.'),
         ('Quickest way to remove it', 'Right-click one of your own photos and choose <strong>Set as desktop background</strong>. The icon goes with Spotlight.'),
         ('The Settings way', 'Settings, Personalisation, Background: choose <strong>Picture</strong>, <strong>Solid colour</strong> or <strong>Slideshow</strong>.'),
         ('Keep Spotlight, lose the icon?', 'Windows has no setting for that: the icon comes with Spotlight.'),
@@ -1113,8 +1116,8 @@ SPOTLIGHT = {
         {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'It&rsquo;s Windows Spotlight, from Microsoft',
          'html': '<p><strong>Windows Spotlight</strong> swaps your desktop picture for a new photograph from Microsoft, usually a landscape somewhere in the world, and puts the <strong>Learn about this picture</strong> icon on the desktop to go with it. It&rsquo;s switched on by default on many new PCs, and some people find it turned on after an update, which is why it can seem to appear from nowhere.</p>'
                  '<ul>'
-                 '<li><strong>Click the icon</strong> and a small panel opens with the picture&rsquo;s story, a few other pictures to swap to, and a thumbs up or down to see more or fewer like it. On older versions of Windows, double-clicking it opens a web page about the picture instead.</li>'
-                 '<li><strong>Learn more</strong> opens a web page about the picture in Microsoft Edge, using Bing. That&rsquo;s all it does: it doesn&rsquo;t change your files or your settings.</li>'
+                 '<li><strong>Click the icon</strong> and Microsoft Edge opens a Bing page about the picture: where it was taken, and more like it. That&rsquo;s all it does: it doesn&rsquo;t change your files or your settings.</li>'
+                 '<li><strong>Right-click it</strong> on newer versions of Windows 11 and a small panel opens instead, with the picture&rsquo;s story, a few other pictures to swap to, and a thumbs up or down to see more or fewer like it.</li>'
                  '<li><strong>Right-click the desktop</strong> and you&rsquo;ll also see <strong>Next background</strong> and <strong>Explore background</strong>: they belong to Spotlight too.</li>'
                  '</ul>'
                  '<p>If you like a new picture every day, there&rsquo;s nothing to fix. If you&rsquo;d rather have your own photo back, read on.</p>'},
@@ -1122,7 +1125,7 @@ SPOTLIGHT = {
          'html': '<ol>'
                  '<li>Open <strong>File Explorer</strong> (the yellow folder on the taskbar) and go to <strong>Pictures</strong>, or wherever your photos are.</li>'
                  '<li><strong>Right-click</strong> the photo you&rsquo;d like on your desktop.</li>'
-                 '<li>Choose <strong>Set as desktop background</strong>.</li>'
+                 '<li>Choose <strong>Set as desktop background</strong>. (Or click the photo once and choose <strong>Set as background</strong> along the top of the window.)</li>'
                  '</ol>'
                  '<p>Your photo fills the desktop, Spotlight switches off, and the <strong>Learn about this picture</strong> icon disappears. A grandchild, the dog, a favourite view: it&rsquo;s your desktop. This way works even when the Settings page is greyed out.</p>'},
         {'eyebrow': '/03 &mdash; THE SETTINGS WAY', 'h2': 'Or switch Spotlight off in Settings',
@@ -1189,7 +1192,7 @@ W11LIKE10 = {
     'ctaSub': 'With your permission we connect to your Windows 11 PC and make these changes while you watch, then show you where everything is. Call 01202 775566 or text 07520 615332.',
     'schemaKind': 'howto',
     'atAGlance': [
-        ('Start button on the left', 'Settings, Personalisation, Taskbar, Taskbar behaviours, Taskbar alignment: <strong>Left</strong>.'),
+        ('Start button on the left', 'Settings, Personalisation, Taskbar, Taskbar behaviours, Taskbar (icon) alignment: <strong>Left</strong>.'),
         ('Dark mode off', 'Settings, Personalisation, Colours, Choose your mode: <strong>Light</strong>.'),
         ('Your programs on the taskbar', 'Open the program, right-click its icon on the taskbar, <strong>Pin to taskbar</strong>.'),
         ('A calmer Start menu', 'Settings, Personalisation, Start: switch off the tips and suggestions.'),
@@ -1201,10 +1204,10 @@ W11LIKE10 = {
          'html': '<ol>'
                  '<li><strong>Right-click</strong> an empty part of the taskbar (the bar along the bottom) and choose <strong>Taskbar settings</strong>.</li>'
                  '<li>Scroll down and click <strong>Taskbar behaviours</strong> to open it.</li>'
-                 '<li>Next to <strong>Taskbar alignment</strong>, change <strong>Centre</strong> to <strong>Left</strong>.</li>'
+                 '<li>Next to <strong>Taskbar alignment</strong> (on the newest Windows 11 it&rsquo;s called <strong>Taskbar icon alignment</strong>), change <strong>Centre</strong> to <strong>Left</strong>.</li>'
                  '</ol>'
                  '<p>The Start button and your taskbar icons slide into the bottom-left corner, where they were in Windows 10, and the Start menu opens from there. Changed your mind? Choose <strong>Centre</strong> again.</p>'
-},
+                 '<p><strong>Want the whole taskbar at the top, or down one side?</strong> The newest version of Windows 11 (the 2026 update) adds <strong>Taskbar position</strong> to the same section: <strong>Bottom</strong>, <strong>Top</strong>, <strong>Left</strong> or <strong>Right</strong>. If yours doesn&rsquo;t show it, the PC hasn&rsquo;t had that update yet.</p>'},
         {'eyebrow': '/02 &mdash; DARK MODE', 'h2': 'Turn dark mode off (or on)',
          'html': '<p>Black windows and menus where everything used to be white? That&rsquo;s dark mode. To change it:</p>'
                  '<ol>'
@@ -1225,6 +1228,7 @@ W11LIKE10 = {
                  '<ol>'
                  '<li>Open <strong>Settings</strong>, then <strong>Personalisation</strong>, then <strong>Start</strong>.</li>'
                  '<li>Switch off the suggestions. On newer PCs, untick <strong>Show tips and app recommendations</strong> (and <strong>Show recent and suggested files</strong>, if you&rsquo;d rather not see recent files) under <strong>Recent</strong>. On older ones, switch off <strong>Show recommendations for tips, shortcuts, new apps and more</strong>.</li>'
+                 '<li>Rather not have the section at all? On newer PCs, switch <strong>Recent</strong> itself off: Start then shows just your pinned programs and the list of everything.</li>'
                  '</ol>'
                  '<p><strong>Missing Windows 10&rsquo;s A to Z list of programs?</strong> On newer PCs, open Start, scroll to <strong>All</strong>, and change <strong>View</strong> to <strong>List</strong>. On older ones, click <strong>All apps</strong> at the top right of the Start menu.</p>'
                  '<p>The section is called <strong>Recommended</strong> on some PCs and <strong>Recent</strong> on newer ones: Microsoft renamed it in 2026. Same thing.</p>'},
@@ -1251,15 +1255,16 @@ W11LIKE10 = {
     ],
     'howToName': 'How to make Windows 11 look and feel like Windows 10',
     'howToSteps': [
-        {'name': 'Move the Start button to the left', 'text': 'Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours and set Taskbar alignment to Left.'},
+        {'name': 'Move the Start button to the left', 'text': 'Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours and set Taskbar alignment (Taskbar icon alignment on the newest Windows 11) to Left.'},
         {'name': 'Turn off dark mode', 'text': 'Settings, Personalisation, Colours: set Choose your mode to Light.'},
         {'name': 'Pin your programs', 'text': 'Open each program you use, right-click its taskbar icon and choose Pin to taskbar.'},
-        {'name': 'Tidy the Start menu', 'text': 'Settings, Personalisation, Start: switch off the tips and recommendations. In Start, set All to View: List for an A to Z list.'},
+        {'name': 'Tidy the Start menu', 'text': 'Settings, Personalisation, Start: switch off the tips and recommendations, or Recent altogether. In Start, set All to View: List for an A to Z list.'},
         {'name': 'Use the full right-click menu', 'text': 'Choose Show more options, or hold Shift while you right-click.'},
     ],
     'faqs': [
         {'q': 'Can I make Windows 11 look exactly like Windows 10?', 'a': '<p>Not exactly with the built-in settings, but they get you most of the way: Start on the left, a plain Start menu, a search box, light mode and the full right-click menu. Third-party apps such as Open-Shell or Start11 go further, at the risk of breaking after big updates.</p>'},
-        {'q': 'How do I move the Start button to the left in Windows 11?', 'a': '<p>Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours, and set Taskbar alignment to Left.</p>'},
+        {'q': 'How do I move the Start button to the left in Windows 11?', 'a': '<p>Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours, and set Taskbar alignment to Left. On the newest Windows 11 the setting is called Taskbar icon alignment.</p>'},
+        {'q': 'Can I move the taskbar to the top or the side in Windows 11?', 'a': '<p>Yes, on the newest version of Windows 11 (the 2026 update): Settings, Personalisation, Taskbar, Taskbar behaviours, then Taskbar position: Bottom, Top, Left or Right. Older versions only let it sit along the bottom.</p>'},
         {'q': 'How do I get the old right-click menu in Windows 11?', 'a': '<p>Choose Show more options at the bottom of the menu, or hold Shift while you right-click to open the full menu straight away.</p>'},
         {'q': 'How do I turn off dark mode in Windows 11?', 'a': '<p>Settings, Personalisation, Colours, then set Choose your mode to Light. Word, Excel and Outlook have their own Office Theme under File, Account.</p>'},
         {'q': 'Can I go back to Windows 10?', 'a': '<p>Only in the first 10 days after upgrading, from Settings, System, Recovery, Go back. After that, going back means wiping the PC and starting again, so changing Windows 11&rsquo;s settings is usually the better answer.</p>'},
