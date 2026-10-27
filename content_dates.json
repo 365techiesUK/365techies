@@ -1638,7 +1638,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "802f7c452bfb2eea",
+  "h": "697fc15073c5a174",
   "last": "2026-10-27"
  },
  "it-health-check-tool": {
@@ -2183,6 +2183,10 @@
   "h": "2805260ba8bd135d",
   "last": "2026-10-06"
  },
+ "learn-about-this-picture": {
+  "first": "2026-10-27",
+  "h": "bf212ba286f56704"
+ },
  "leave-a-review": {
   "first": "2026-07-28",
   "h": "ffa658ea2d39c8f1",
@@ -2216,6 +2220,11 @@
   "first": "2026-07-28",
   "h": "99bc0ee57f93ae93",
   "last": "2026-09-28"
+ },
+ "make-windows-11-look-like-windows-10": {
+  "first": "2026-10-27",
+  "h": "913a9d54567df165",
+  "last": "2026-10-27"
  },
  "make-your-house-look-lived-in-while-away": {
   "first": "2026-10-08",
@@ -3944,8 +3953,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "85da8d23e6c7e11b",
-  "last": "2026-10-17"
+  "h": "ff1ab33c71a3b07d",
+  "last": "2026-10-27"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
@@ -3954,8 +3963,8 @@
  },
  "windows-accessibility-features-guide": {
   "first": "2026-07-28",
-  "h": "b8e8f0da33cd1c39",
-  "last": "2026-10-12"
+  "h": "3b3f6d042bf05e08",
+  "last": "2026-10-27"
  },
  "windows-live-mail-not-working": {
   "first": "2026-10-12",

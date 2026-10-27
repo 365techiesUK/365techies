@@ -96,6 +96,8 @@ SPECIALIST = [
      ("/nas-drive-not-showing-after-windows-11-update/", "The NAS drive vanished after an update"),
      ("/scan-to-folder-stopped-working-after-windows-update/", "Scan to folder stopped working after an update"),
      ("/old-program-wont-open-on-windows-11/", "An old program will not open on Windows 11"),
+     ("/make-windows-11-look-like-windows-10/", "Windows 11 feels all wrong: make it look like Windows 10"),
+     ("/learn-about-this-picture/", "A &ldquo;Learn about this picture&rdquo; icon appeared on the desktop"),
      ("/monitor-stuck-at-60hz/", "A 144Hz monitor is stuck at 60Hz"),
      ("/bluetooth-headphones-sound-muffled-on-pc/", "Bluetooth headphones sound muffled or tinny"),
      ("/how-to-play-a-cd-on-windows-11/", "A CD will not play, or there is no CD drive"),
@@ -19734,12 +19736,13 @@ info_page(
           <ul>
             <li><strong>Reduce animations:</strong> Settings &rarr; Accessibility &rarr; Visual effects &mdash; turn off movement that can feel distracting.</li>
           </ul>
-          <h2>Switched one on by accident?</h2>
+          <h2 id="accidental">Switched one on by accident?</h2>
           <p>These shortcuts are easy to press without meaning to. To switch each one off again:</p>
           <ul>
             <li><strong>Everything zoomed in (Magnifier):</strong> <em>Windows</em> + <em>Esc</em>.</li>
             <li><strong>The computer is talking (Narrator):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>Enter</em>.</li>
             <li><strong>Black screen with bright text (high contrast):</strong> <em>Left Alt</em> + <em>Left Shift</em> + <em>Print Screen</em>.</li>
+            <li><strong>Black windows and menus where they used to be white (dark mode):</strong> not an accessibility setting, but easy to switch on without meaning to. Settings &rarr; Personalisation &rarr; Colours &rarr; Choose your mode &rarr; <strong>Light</strong>. See <a href="/make-windows-11-look-like-windows-10/#s2">turning dark mode off</a>.</li>
             <li><strong>Screen gone black and white, or odd colours (colour filters):</strong> <em>Windows</em> + <em>Ctrl</em> + <em>C</em>, or Settings &rarr; Accessibility &rarr; Colour filters.</li>
             <li><strong>Screen upside down or sideways:</strong> Settings &rarr; System &rarr; Display &rarr; Display orientation &rarr; Landscape. See <a href="/screen-upside-down-or-sideways/">screen upside down or sideways</a>.</li>
             <li><strong>Keys behaving strangely, or a box asking about Sticky Keys:</strong> pressing <em>Shift</em> five times asks about Sticky Keys, and holding the right <em>Shift</em> key for eight seconds asks about Filter Keys. Choose <strong>No</strong>, or switch them off in Settings &rarr; Accessibility &rarr; Keyboard. Our page on <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a> has every step, and how to stop it coming back.</li>

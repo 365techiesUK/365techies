@@ -1067,6 +1067,209 @@ NTLWORLD = {
 }
 
 
+# ============================================================ 13-14. From the Unknown Tech channel study (27 Oct 2026)
+# Owner, 27 Oct 2026: "build 1, 2 and 4 and do the Shorts" (seo-research/channel-ucunk-2026-10-27/FINDINGS.md). A Windows-
+# customisation YouTube channel gets millions of views making Windows "look like" something else; the home-user version of
+# that wish is what people search on Bing, and the site had no page for any of it:
+#   - Spotlight: Bing "learn about this picture" 19.0K in 3 months to 24 Oct (UK 985) + "this pic icon" 4.7K, "learn about
+#     this picture remove" 3.1K, "learn more about this picture" 2.3K; "windows spotlight" 15.9K (UK 882). Bing's top 10 is
+#     forums and how-to blogs. Facts: Microsoft Learn "What's new in Windows 11, version 25H2" (the icon is part of Windows
+#     Spotlight); Microsoft Q&A (switching the background to Picture, Solid colour or Slideshow removes the icon; no
+#     supported setting keeps Spotlight and hides it); and the film-studio VM (Windows 11 Pro 26H2, 27 Oct 2026): clicking
+#     the icon opens a panel with the picture's story, four pictures to swap to, thumbs up / down and Learn more;
+#     right-clicking the desktop offers Next background and Explore background; on an unactivated PC the Background page
+#     is greyed out ("You need to activate Windows before you can personalise your PC") but right-clicking a photo and
+#     choosing Set as desktop background still works.
+#   - Windows 11 like Windows 10: Bing "turn off dark mode" 4.9K (UK 488), "pin to taskbar" 6.0K (UK 503), "change mouse
+#     pointer" 4.0K (UK 457), "move taskbar to left" 1.0K (UK 225) + "how to move taskbar to left" 1.1K, "taskbar
+#     disappeared" 602; YouTube Shorts on moving the taskbar left 269K / 153K views. Facts: Microsoft Support "Customize the
+#     Windows Start menu" (Taskbar behaviours > Taskbar alignment); Microsoft's Insider blog 15 May 2026 (Recommended renamed
+#     Recent); the VM: Start's Recent ticks (Show recently added apps / Show recent and suggested files / Show tips and app
+#     recommendations), All with View: Category / Grid / List, Shift + right-click = the full menu. Built-in settings
+#     only: customising apps are named, not recommended (we fix the PCs they break after big updates).
+SPOTLIGHT = {
+    'slug': 'learn-about-this-picture',
+    'title': 'Learn About This Picture: What It Is and How to Remove It',
+    'metaDesc': 'The Learn about this picture icon on your desktop is Windows Spotlight, from Microsoft, not a virus. What it does, and how to remove it in a minute.',
+    'ogTitle': 'What is &ldquo;Learn about this picture&rdquo; on my desktop?',
+    'crumbName': 'Learn About This Picture',
+    'eyebrow': '// A NEW ICON ON YOUR DESKTOP?',
+    'h1': 'What is <em class="grad grad--cyan">&ldquo;Learn about this picture&rdquo;</em> on my desktop?',
+    'lede': 'An icon saying <strong>Learn about this picture</strong> has appeared on your desktop, and the picture behind it keeps changing. It isn&rsquo;t a virus, and nothing has been installed behind your back: it&rsquo;s <strong>Windows Spotlight</strong>, Microsoft&rsquo;s picture-of-the-day feature. Here&rsquo;s what it does, and how to get rid of it in under a minute.',
+    'chips': ['Part of Windows, not a virus', 'Gone in a minute', 'Windows 11 and 10'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Remove it', '#s2'],
+    'ctaHead': 'Rather we sorted it?',
+    'ctaSub': 'With your permission we connect to your Windows PC and put your own photo back on the desktop, the lock screen too, while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Windows Spotlight: Microsoft puts a new photo on your desktop, and the icon tells you about it.'),
+        ('Is it safe?', 'Yes. It&rsquo;s part of Windows. Clicking it shows the picture&rsquo;s story; Learn more opens a web page in Edge.'),
+        ('Quickest way to remove it', 'Right-click one of your own photos and choose <strong>Set as desktop background</strong>. The icon goes with Spotlight.'),
+        ('The Settings way', 'Settings, Personalisation, Background: choose <strong>Picture</strong>, <strong>Solid colour</strong> or <strong>Slideshow</strong>.'),
+        ('Keep Spotlight, lose the icon?', 'Windows has no setting for that: the icon comes with Spotlight.'),
+        ('The lock screen', 'It has its own Spotlight setting: Settings, Personalisation, Lock screen.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'It&rsquo;s Windows Spotlight, from Microsoft',
+         'html': '<p><strong>Windows Spotlight</strong> swaps your desktop picture for a new photograph from Microsoft, usually a landscape somewhere in the world, and puts the <strong>Learn about this picture</strong> icon on the desktop to go with it. It&rsquo;s switched on by default on many new PCs, and some people find it turned on after an update, which is why it can seem to appear from nowhere.</p>'
+                 '<ul>'
+                 '<li><strong>Click the icon</strong> and a small panel opens with the picture&rsquo;s story, a few other pictures to swap to, and a thumbs up or down to see more or fewer like it. On older versions of Windows, double-clicking it opens a web page about the picture instead.</li>'
+                 '<li><strong>Learn more</strong> opens a web page about the picture in Microsoft Edge, using Bing. That&rsquo;s all it does: it doesn&rsquo;t change your files or your settings.</li>'
+                 '<li><strong>Right-click the desktop</strong> and you&rsquo;ll also see <strong>Next background</strong> and <strong>Explore background</strong>: they belong to Spotlight too.</li>'
+                 '</ul>'
+                 '<p>If you like a new picture every day, there&rsquo;s nothing to fix. If you&rsquo;d rather have your own photo back, read on.</p>'},
+        {'eyebrow': '/02 &mdash; THE QUICKEST WAY', 'h2': 'Remove it: put one of your own photos on the desktop',
+         'html': '<ol>'
+                 '<li>Open <strong>File Explorer</strong> (the yellow folder on the taskbar) and go to <strong>Pictures</strong>, or wherever your photos are.</li>'
+                 '<li><strong>Right-click</strong> the photo you&rsquo;d like on your desktop.</li>'
+                 '<li>Choose <strong>Set as desktop background</strong>.</li>'
+                 '</ol>'
+                 '<p>Your photo fills the desktop, Spotlight switches off, and the <strong>Learn about this picture</strong> icon disappears. A grandchild, the dog, a favourite view: it&rsquo;s your desktop. This way works even when the Settings page is greyed out.</p>'},
+        {'eyebrow': '/03 &mdash; THE SETTINGS WAY', 'h2': 'Or switch Spotlight off in Settings',
+         'html': '<ol>'
+                 '<li><strong>Right-click</strong> an empty part of the desktop and choose <strong>Personalise</strong>, then <strong>Background</strong>. (Or Start, Settings, Personalisation, Background.)</li>'
+                 '<li>Next to <strong>Personalise your background</strong>, change <strong>Windows spotlight</strong> to one of these:'
+                 '<ul>'
+                 '<li><strong>Picture:</strong> one photo that stays put. Choose one of Windows&rsquo; own, or <strong>Browse photos</strong> for one of yours.</li>'
+                 '<li><strong>Solid colour:</strong> a plain background, the easiest for spotting your icons.</li>'
+                 '<li><strong>Slideshow:</strong> your own photos from a folder you pick, changing as often as you like.</li>'
+                 '</ul></li>'
+                 '</ol>'
+                 '<p>The icon goes as soon as you choose. Want Spotlight back one day? Choose <strong>Windows spotlight</strong> in the same list.</p>'
+                 '<p><strong>Greyed out, with a message about activating Windows?</strong> Windows won&rsquo;t change these settings until it&rsquo;s activated: use the photo way in <a href="#s2">step two</a>, and see <a href="#s6">why it might not be activated</a>. On a work PC, the IT department may have locked the background.</p>'},
+        {'eyebrow': '/04 &mdash; SPOTLIGHT WITHOUT THE ICON?', 'h2': 'Can I keep the pictures and lose the icon?',
+         'html': '<p>Not with a setting: Windows treats the icon as part of Spotlight, so it&rsquo;s both or neither. You can drag the icon to a corner where it&rsquo;s out of the way.</p>'
+                 '<p>Some websites suggest a registry change to hide it. We don&rsquo;t recommend that on a home PC: a slip in the registry can cause far more trouble than an icon, and an update can undo it anyway. If you like the changing pictures, a <strong>Slideshow</strong> of your own photos (above) gives you a different picture each day, with no icon.</p>'},
+        {'eyebrow': '/05 &mdash; THE LOCK SCREEN', 'h2': 'The lock screen picture keeps changing too?',
+         'html': '<p>The lock screen (the picture with the clock, before you sign in) has its own Spotlight setting, separate from the desktop:</p>'
+                 '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>Personalisation</strong>, then <strong>Lock screen</strong>.</li>'
+                 '<li>Next to <strong>Personalise your lock screen</strong>, choose <strong>Picture</strong> or <strong>Slideshow</strong> instead of <strong>Windows spotlight</strong>.</li>'
+                 '<li>Don&rsquo;t want the tips and facts written over it? Untick <strong>Get fun facts, tips, tricks and more on your lock screen</strong>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/06 &mdash; IS IT A VIRUS?', 'h2': 'Is it a virus or a scam?',
+         'html': '<p>No. The icon and the changing pictures are Microsoft&rsquo;s own, and clicking them only shows you information about the photo. Two things are worth knowing, though:</p>'
+                 '<ul>'
+                 '<li><strong>A pop-up that says your PC is infected</strong> and gives a phone number to call is a different thing altogether: that is a scam. Close the browser and never ring the number. See <a href="/scam-pop-up-help-poole/">scam pop-up help</a>.</li>'
+                 '<li><strong>&ldquo;You need to activate Windows&rdquo;</strong> on the Background page means Windows thinks it isn&rsquo;t licensed: often after a new motherboard, or when a key bought cheaply online has been blocked. We can check what&rsquo;s going on.</li>'
+                 '</ul>'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We put your own photo back on the desktop and the lock screen, tidy away the icons you don&rsquo;t use, and show you how to change it yourself next time.')},
+    ],
+    'howToName': 'How to remove Learn about this picture from the Windows desktop',
+    'howToSteps': [
+        {'name': 'Find a photo of your own', 'text': 'Open File Explorer and go to Pictures, or wherever your photos are.'},
+        {'name': 'Set it as the background', 'text': 'Right-click the photo and choose Set as desktop background. Spotlight switches off and the icon goes.'},
+        {'name': 'Or use Settings', 'text': 'Right-click the desktop, choose Personalise, then Background, and change Windows spotlight to Picture, Solid colour or Slideshow.'},
+        {'name': 'Do the lock screen too', 'text': 'Settings, Personalisation, Lock screen: choose Picture or Slideshow instead of Windows spotlight.'},
+    ],
+    'faqs': [
+        {'q': 'What is the Learn about this picture icon on my desktop?', 'a': '<p>It belongs to Windows Spotlight, Microsoft&rsquo;s feature that puts a new photo on your desktop. Clicking it tells you about the picture. It&rsquo;s part of Windows, not a virus.</p>'},
+        {'q': 'How do I remove Learn about this picture?', 'a': '<p>Right-click one of your own photos and choose Set as desktop background, or go to Settings, Personalisation, Background and change Windows spotlight to Picture, Solid colour or Slideshow. The icon disappears straight away.</p>'},
+        {'q': 'Can I delete the Learn about this picture icon?', 'a': '<p>Not on its own: there&rsquo;s no delete option, and Windows has no setting to keep Spotlight without it. Switching Spotlight off removes it.</p>'},
+        {'q': 'Why does my desktop picture change every day?', 'a': '<p>That&rsquo;s Windows Spotlight. Choose Picture instead of Windows spotlight in Settings, Personalisation, Background, and the picture stays put.</p>'},
+        {'q': 'Why can&rsquo;t I change my desktop background?', 'a': '<p>If the Background page is greyed out with a message about activating Windows, Windows won&rsquo;t change it until it&rsquo;s activated, but right-clicking a photo and choosing Set as desktop background still works. On a work PC, the IT department may have locked it.</p>'},
+        {'q': 'Can you sort it out for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and put your own photo back on the desktop and the lock screen. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/make-windows-11-look-like-windows-10/">make Windows 11 feel like Windows 10</a>, <a href="/how-to-back-up-your-photos/">back up your photos</a>, <a href="/phone-link-android/">get your phone&rsquo;s photos onto your PC</a>, <a href="/windows-accessibility-features-guide/">bigger text and pointer</a> and <a href="/windows-11-course-for-beginners/">Windows 11 for beginners</a>.</p>',
+}
+
+W11LIKE10 = {
+    'slug': 'make-windows-11-look-like-windows-10',
+    'title': 'Make Windows 11 Look Like Windows 10 (Nothing to Install)',
+    'metaDesc': 'Windows 11 feels all wrong? Put Start back on the left, turn off dark mode, tidy the Start menu and get the full right-click menu. Nothing to install.',
+    'ogTitle': 'Make Windows 11 feel like Windows 10, without installing anything',
+    'crumbName': 'Make Windows 11 Look Like Windows 10',
+    'eyebrow': '// WINDOWS 11 FEELS ALL WRONG?',
+    'h1': 'Make Windows 11 <em class="grad grad--cyan">feel like Windows 10</em>',
+    'lede': 'You&rsquo;ve moved to Windows 11, or a new PC came with it, and nothing is where it used to be: the Start button is in the middle, the menu is full of suggestions and right-clicking shows half the options. You don&rsquo;t need extra software to feel at home again. These settings are already in Windows, each takes under a minute, and each can be put back.',
+    'chips': ['Nothing to install', 'Each one under a minute', 'All can be undone'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the Start button', '#s1'],
+    'ctaHead': 'Rather we set it up the way you like?',
+    'ctaSub': 'With your permission we connect to your Windows 11 PC and make these changes while you watch, then show you where everything is. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Start button on the left', 'Settings, Personalisation, Taskbar, Taskbar behaviours, Taskbar alignment: <strong>Left</strong>.'),
+        ('Dark mode off', 'Settings, Personalisation, Colours, Choose your mode: <strong>Light</strong>.'),
+        ('Your programs on the taskbar', 'Open the program, right-click its icon on the taskbar, <strong>Pin to taskbar</strong>.'),
+        ('A calmer Start menu', 'Settings, Personalisation, Start: switch off the tips and suggestions.'),
+        ('The full right-click menu', '<strong>Show more options</strong> at the bottom, or hold <strong>Shift</strong> as you right-click.'),
+        ('Bigger pointer and text', 'Settings, Accessibility: Mouse pointer and touch, and Text size.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE START BUTTON', 'h2': 'Put the Start button back on the left',
+         'html': '<ol>'
+                 '<li><strong>Right-click</strong> an empty part of the taskbar (the bar along the bottom) and choose <strong>Taskbar settings</strong>.</li>'
+                 '<li>Scroll down and click <strong>Taskbar behaviours</strong> to open it.</li>'
+                 '<li>Next to <strong>Taskbar alignment</strong>, change <strong>Centre</strong> to <strong>Left</strong>.</li>'
+                 '</ol>'
+                 '<p>The Start button and your taskbar icons slide into the bottom-left corner, where they were in Windows 10, and the Start menu opens from there. Changed your mind? Choose <strong>Centre</strong> again.</p>'
+},
+        {'eyebrow': '/02 &mdash; DARK MODE', 'h2': 'Turn dark mode off (or on)',
+         'html': '<p>Black windows and menus where everything used to be white? That&rsquo;s dark mode. To change it:</p>'
+                 '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>Personalisation</strong>, then <strong>Colours</strong>.</li>'
+                 '<li>Next to <strong>Choose your mode</strong>, pick <strong>Light</strong> (or <strong>Dark</strong>, if you prefer it).</li>'
+                 '</ol>'
+                 '<p><strong>Custom</strong> lets you have Windows one way and your programs the other. Word, Excel and Outlook have their own setting, under <strong>File</strong>, <strong>Account</strong> (in Outlook, <strong>Office Account</strong>), <strong>Office Theme</strong>.</p>'
+                 '<p>Not dark mode, but a black screen with bright yellow or white text? That&rsquo;s high contrast, an accessibility setting: press <strong>Left Alt</strong> + <strong>Left Shift</strong> + <strong>Print Screen</strong> to switch it off. More in <a href="/windows-accessibility-features-guide/#accidental">switched one on by accident?</a></p>'},
+        {'eyebrow': '/03 &mdash; YOUR PROGRAMS', 'h2': 'Pin your programs to the taskbar, and hide what you don&rsquo;t use',
+         'html': '<ul>'
+                 '<li><strong>Pin a program:</strong> open it as normal, then right-click its icon on the taskbar and choose <strong>Pin to taskbar</strong>. It stays there after you close it, one click away.</li>'
+                 '<li><strong>Remove one:</strong> right-click it and choose <strong>Unpin from taskbar</strong>. The program isn&rsquo;t deleted, only the shortcut.</li>'
+                 '<li><strong>A search box like Windows 10&rsquo;s:</strong> Settings, Personalisation, Taskbar, then under <strong>Taskbar items</strong> set <strong>Search</strong> to <strong>Search box</strong>. Or hide it.</li>'
+                 '<li><strong>Widgets and Task view</strong> (the weather and news panel, and the button that shows every open window) can be switched off in the same place.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; THE START MENU', 'h2': 'A calmer Start menu, with a list of everything',
+         'html': '<p>Windows 11&rsquo;s Start menu mixes your programs with recent files and Microsoft&rsquo;s suggestions. To keep it to what you use:</p>'
+                 '<ol>'
+                 '<li>Open <strong>Settings</strong>, then <strong>Personalisation</strong>, then <strong>Start</strong>.</li>'
+                 '<li>Switch off the suggestions. On newer PCs, untick <strong>Show tips and app recommendations</strong> (and <strong>Show recent and suggested files</strong>, if you&rsquo;d rather not see recent files) under <strong>Recent</strong>. On older ones, switch off <strong>Show recommendations for tips, shortcuts, new apps and more</strong>.</li>'
+                 '</ol>'
+                 '<p><strong>Missing Windows 10&rsquo;s A to Z list of programs?</strong> On newer PCs, open Start, scroll to <strong>All</strong>, and change <strong>View</strong> to <strong>List</strong>. On older ones, click <strong>All apps</strong> at the top right of the Start menu.</p>'
+                 '<p>The section is called <strong>Recommended</strong> on some PCs and <strong>Recent</strong> on newer ones: Microsoft renamed it in 2026. Same thing.</p>'},
+        {'eyebrow': '/05 &mdash; RIGHT-CLICK', 'h2': 'Get the full right-click menu',
+         'html': '<p>Windows 11 shortens the menu you get when you right-click, and moves the rest out of sight. Three ways to get all of it:</p>'
+                 '<ul>'
+                 '<li>Choose <strong>Show more options</strong> at the bottom of the menu.</li>'
+                 '<li>Hold <strong>Shift</strong> while you right-click: the full Windows 10-style menu opens straight away.</li>'
+                 '<li>Select a file and press <strong>Shift</strong> + <strong>F10</strong> on the keyboard.</li>'
+                 '</ul>'
+                 '<p>There&rsquo;s no setting to make the full menu the normal one. Registry changes that claim to do it exist, but we don&rsquo;t recommend them on a home PC.</p>'},
+        {'eyebrow': '/06 &mdash; EASIER TO SEE', 'h2': 'A bigger pointer and bigger text',
+         'html': '<ul>'
+                 '<li><strong>Mouse pointer:</strong> Settings, <strong>Accessibility</strong>, <strong>Mouse pointer and touch</strong>. Drag <strong>Size</strong> to the right, and pick a colour that stands out if it helps.</li>'
+                 '<li><strong>Text:</strong> Settings, <strong>Accessibility</strong>, <strong>Text size</strong>. Drag the slider, then press <strong>Apply</strong>.</li>'
+                 '<li><strong>The desktop picture changes every day</strong>, with a <strong>Learn about this picture</strong> icon? That&rsquo;s Windows Spotlight: see <a href="/learn-about-this-picture/">how to put your own photo back</a>.</li>'
+                 '</ul>'
+                 '<p>More in our <a href="/windows-accessibility-features-guide/">Windows accessibility guide</a>.</p>'},
+        {'eyebrow': '/07 &mdash; APPS THAT PROMISE THE OLD LOOK', 'h2': 'What about apps that bring back Windows 10?',
+         'html': '<p>Programs such as <strong>Open-Shell</strong> (free, the successor to Classic Shell) and <strong>Start11</strong> (paid) go further than the settings above, right down to the old Start menu. They work by changing how Windows itself behaves, so a big Windows update can stop them working, and on the PCs we&rsquo;re asked to fix, that sometimes means a Start menu or taskbar that won&rsquo;t open.</p>'
+                 '<p>Try the built-in settings first: for most people they&rsquo;re enough. If you do install one, get it from the maker&rsquo;s own website, never a download site, and keep it updated.</p>'},
+        {'eyebrow': '/08 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We make these changes with you on your PC, pin the programs you use, and show you where everything lives now. Upgrading from Windows 10? See our <a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a>: your files come with you.')},
+    ],
+    'howToName': 'How to make Windows 11 look and feel like Windows 10',
+    'howToSteps': [
+        {'name': 'Move the Start button to the left', 'text': 'Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours and set Taskbar alignment to Left.'},
+        {'name': 'Turn off dark mode', 'text': 'Settings, Personalisation, Colours: set Choose your mode to Light.'},
+        {'name': 'Pin your programs', 'text': 'Open each program you use, right-click its taskbar icon and choose Pin to taskbar.'},
+        {'name': 'Tidy the Start menu', 'text': 'Settings, Personalisation, Start: switch off the tips and recommendations. In Start, set All to View: List for an A to Z list.'},
+        {'name': 'Use the full right-click menu', 'text': 'Choose Show more options, or hold Shift while you right-click.'},
+    ],
+    'faqs': [
+        {'q': 'Can I make Windows 11 look exactly like Windows 10?', 'a': '<p>Not exactly with the built-in settings, but they get you most of the way: Start on the left, a plain Start menu, a search box, light mode and the full right-click menu. Third-party apps such as Open-Shell or Start11 go further, at the risk of breaking after big updates.</p>'},
+        {'q': 'How do I move the Start button to the left in Windows 11?', 'a': '<p>Right-click the taskbar, choose Taskbar settings, open Taskbar behaviours, and set Taskbar alignment to Left.</p>'},
+        {'q': 'How do I get the old right-click menu in Windows 11?', 'a': '<p>Choose Show more options at the bottom of the menu, or hold Shift while you right-click to open the full menu straight away.</p>'},
+        {'q': 'How do I turn off dark mode in Windows 11?', 'a': '<p>Settings, Personalisation, Colours, then set Choose your mode to Light. Word, Excel and Outlook have their own Office Theme under File, Account.</p>'},
+        {'q': 'Can I go back to Windows 10?', 'a': '<p>Only in the first 10 days after upgrading, from Settings, System, Recovery, Go back. After that, going back means wiping the PC and starting again, so changing Windows 11&rsquo;s settings is usually the better answer.</p>'},
+        {'q': 'Why are the Personalisation settings greyed out?', 'a': '<p>Usually because Windows isn&rsquo;t activated: it won&rsquo;t change the background or colours until it is. On a work PC, the IT department may have locked them.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC and make these changes while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/learn-about-this-picture/">Learn about this picture on the desktop</a>, <a href="/windows-11-course-for-beginners/">Windows 11 for beginners</a>, <a href="/windows-accessibility-features-guide/">Windows accessibility guide</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a> and <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -1088,7 +1291,7 @@ def symptom_pages(setup_url):
             'It never installs, removes or changes anything.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -1145,4 +1348,14 @@ SYMPTOM_FLOWS = {
     NTLWORLD['slug']: {'h2': 'Get your email back, step by step', 'ask': 'Is your email working now?',
                        'tip': 'Find Virgin&rsquo;s email about Junara and note your sign-up date.',
                        'h3s': 'Still not working after every step? That is a remote job.'},
+    SPOTLIGHT['slug']: {'h2': 'Get rid of it, step by step', 'ask': 'Has the icon gone?',
+                        'yes': 'Yes, it&rsquo;s gone', 'no': 'Not yet',
+                        'tip': 'Do the lock screen too, in Settings, Personalisation, Lock screen.',
+                        'h3s': 'Still there, or the settings are greyed out? That is a quick remote job.'},
+    W11LIKE10['slug']: {'h2': 'Set it up, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all set', 'ask': 'Done that step?',
+                        'lede': 'Work through it one change at a time: press <strong>Done</strong> when you have finished each one, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All set{mins}. Welcome home.',
+                        'tip': 'Pin the programs you use most, so they are always one click away.',
+                        'h3s': 'Stuck at a step? We can set it up with you, remotely.'},
 }
