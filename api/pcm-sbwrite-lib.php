@@ -300,6 +300,46 @@ function sbw_fields_fingerprint($rest) {
     ksort($out);
     return $out;
 }
+/**
+ * One extra client field as REST describes it, reduced to what the safety test needs to fill it with something
+ * SimplyBook will ACCEPT. First live run (27 Oct 2026) died on "The input was not found in the haystack": a marker
+ * typed into a drop-down or tick box is refused. REST's exact shape is unproven, so every likely key is tried.
+ */
+function sbw_field_meta($f) {
+    $f = is_array($f) ? $f : array();
+    $type = strtolower((string)(isset($f['type']) ? $f['type'] : (isset($f['field_type']) ? $f['field_type'] : '')));
+    $opts = array();
+    foreach (array('values', 'options', 'field_options', 'select_values', 'items') as $k) {
+        if (!isset($f[$k])) continue;
+        $raw = $f[$k];
+        $list = is_string($raw) ? preg_split('/\r\n|\n|,/', $raw) : (is_array($raw) ? $raw : array());
+        foreach ($list as $o) {
+            if (is_array($o)) $o = isset($o['value']) ? $o['value'] : (isset($o['title']) ? $o['title'] : (isset($o['name']) ? $o['name'] : ''));
+            if (is_scalar($o) && trim((string)$o) !== '') $opts[] = (string)$o;
+        }
+        if ($opts) break;
+    }
+    $req = !empty($f['is_required']) || !empty($f['required']) || (array_key_exists('is_optional', $f) && !$f['is_optional']) || (array_key_exists('optional', $f) && !$f['optional']);
+    return array('title' => substr(preg_replace('/[^\x20-\x7E]/', '', (string)(isset($f['title']) ? $f['title'] : (isset($f['name']) ? $f['name'] : ''))), 0, 60),
+                 'type' => $type, 'opts' => array_slice($opts, 0, 3), 'req' => $req);
+}
+/** Values to try in a test client's extra field, in order; null = leave the box out. Never a real customer's data. */
+function sbw_canary_seeds($meta, $id) {
+    $t = isset($meta['type']) ? $meta['type'] : ''; $o = isset($meta['opts']) ? $meta['opts'] : array();
+    if ($o) $s = $o;                                                                   // a drop-down: its own choices
+    elseif (strpos($t, 'check') !== false || strpos($t, 'bool') !== false) $s = array('1', true);
+    elseif (strpos($t, 'date') !== false) $s = array(date('Y-m-d'));
+    elseif (strpos($t, 'digit') !== false || strpos($t, 'num') !== false || strpos($t, 'int') !== false) $s = array('12345');
+    elseif (strpos($t, 'select') !== false || strpos($t, 'radio') !== false) $s = array();   // a drop-down whose choices REST did not give
+    else $s = array('CANARY-' . substr((string)$id, 0, 6));
+    $s[] = '-'; $s[] = null;
+    return $s;
+}
+/** The extra field a SimplyBook error is about ('' when it does not say), wherever in the error it is named. */
+function sbw_error_field($r) {
+    $e = is_array($r) && isset($r['error']) ? json_encode($r['error']) : '';
+    return preg_match('#client_fields\\\\?/([a-f0-9]{32})#', (string)$e, $m) ? $m[1] : '';
+}
 /** The four consent flags, as REST reports them (missing ones absent), for a before/after comparison. */
 function sbw_consent($rest) {
     $out = array();

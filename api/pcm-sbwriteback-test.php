@@ -213,6 +213,22 @@ ok(sbw_check($bS, $x, '07425 249706') === 'the email/SMS consent ticks changed',
 ok(sbw_check($bS, $bS, '07425 249706') === 'the number did not land', 'a write that changed nothing is not "done"');
 ok(sbw_check($bS, array('getClient' => null), '07425 249706') !== '', 'an unreadable record after the write is never clean');
 
+/* the safety test's seeding: the first live run died on "The input was not found in the haystack" */
+$m = sbw_field_meta(array('id' => 'x', 'title' => 'Support Package', 'type' => 'select', 'values' => '1 PC NO Office,1 PC inc Office', 'is_optional' => false));
+ok($m['opts'] === array('1 PC NO Office', '1 PC inc Office') && $m['req'] === true, 'a drop-down given as a comma list: its choices, and required');
+$m2 = sbw_field_meta(array('title' => 'Payment Method', 'field_type' => 'select', 'options' => array(array('value' => 'GoCardless (Direct Debit)'))));
+ok($m2['opts'] === array('GoCardless (Direct Debit)') && $m2['req'] === false, 'a drop-down given as a list of {value}');
+$s = sbw_canary_seeds($m, 'x');
+ok($s[0] === '1 PC NO Office' && end($s) === null, 'a drop-down is seeded with its OWN first choice, ending in "leave it out"');
+$s = sbw_canary_seeds(array('type' => 'checkbox', 'opts' => array()), 'x');
+ok($s[0] === '1', 'a tick box is seeded 1, never a text marker');
+$s = sbw_canary_seeds(array('type' => 'select', 'opts' => array()), 'x');
+ok($s[0] === '-', 'a drop-down whose choices are unknown never gets a text marker');
+$s = sbw_canary_seeds(array(), 'abcdef0123');
+ok($s[0] === 'CANARY-abcdef', 'an unknown box gets the visible CANARY marker');
+ok(sbw_error_field(array('error' => array('data' => array('field' => 'client_fields/' . str_repeat('a', 32))))) === str_repeat('a', 32), 'the refused box is read from the error');
+ok(sbw_error_field(array('error' => array('message' => 'The input was not found in the haystack'))) === '', 'an error that names no box gives none');
+
 $bk = (string)file_get_contents(__DIR__ . '/pcm-booking.php');
 $fn = substr($bk, (int)strpos($bk, 'function sbw_staff_push('), 4000);
 $pG = strpos($fn, 'sbw_pass_ok('); $pO = strpos($fn, 'sbw_off_read('); $pS = strpos($fn, 'sbw_log_append('); $pE = strpos($fn, "'editClient'");

@@ -33998,6 +33998,7 @@ def write_portal_page():
       + '<button type="button" class="sm ghost" id="sbwok">I\\u2019ve checked them \\u2014 switch it on</button>';
     else h += 'off until its safety test passes. <button type="button" class="sm ghost" id="sbwrun">Run the safety test</button>'
       + ' <span class="quiet">(two made-up clients in SimplyBook; no real customer is touched)</span>';
+    if (!report && !d.on && d.last && d.last.length) { report = ['Last safety test, ' + new Date(d.last_ts * 1000).toLocaleString('en-GB') + ':'].concat(d.last); }
     if (report && report.length) h += '<pre class="sbw-rep" style="white-space:pre-wrap;font-size:.8rem;margin:.4rem 0 0">' + report.map(esc).join('\\n') + '</pre>';
     box.innerHTML = h;
     var act = function (id, action, busy) {

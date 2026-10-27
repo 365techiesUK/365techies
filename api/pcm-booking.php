@@ -2612,39 +2612,54 @@ function sbw_canary_run() {
     $rep = array(); $made = array();
     $tok = sbw_rest_tok();
     $rep[] = 'REST (to read the extra client fields back): ' . ($tok !== '' ? 'ok' : 'NOT AVAILABLE - the test cannot pass without it');
-    $ids = array();
+    $meta = array();   // field id => what it is (title, type, choices, required) - so each box gets a value it accepts
     if ($tok !== '') {
         $fl = sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/fields');
         foreach ((is_array($fl) && isset($fl['data']) && is_array($fl['data']) ? $fl['data'] : (array)$fl) as $f)
-            if (is_array($f) && isset($f['id']) && preg_match('/^[a-f0-9]{32}$/', (string)$f['id'])) $ids[(string)$f['id']] = 1;
+            if (is_array($f) && isset($f['id']) && preg_match('/^[a-f0-9]{32}$/', (string)$f['id'])) $meta[(string)$f['id']] = sbw_field_meta($f);
     }
-    if (!$ids) {
+    if (!$meta) {
         $cf = sb_adm('getCompanyParam', array('client_fields'));
         foreach ((isset($cf['result']) && is_array($cf['result']) ? $cf['result'] : array()) as $k => $v) {
             $id = is_array($v) && isset($v['id']) ? (string)$v['id'] : (string)$k;
-            if (preg_match('/^[a-f0-9]{32}$/', $id)) $ids[$id] = 1;
+            if (preg_match('/^[a-f0-9]{32}$/', $id)) $meta[$id] = sbw_field_meta(is_array($v) ? $v : array());
         }
     }
-    $rep[] = 'extra client fields to fill with test markers: ' . count($ids) . ($ids ? '' : ' (only the required ones will be found)');
+    $kinds = array(); foreach ($meta as $m) $kinds[] = ($m['title'] !== '' ? $m['title'] : '?') . ' (' . ($m['type'] !== '' ? $m['type'] : 'type?') . ($m['opts'] ? ', ' . count($m['opts']) . '+ choices' : '') . ($m['req'] ? ', required' : '') . ')';
+    $rep[] = 'extra client fields: ' . count($meta) . ($kinds ? ' - ' . implode('; ', $kinds) : ' (only the required ones will be found)');
     $stamp = date('His'); $NEW = '+447700900123';
     foreach (array('A', 'B') as $key) {
         $cd = array('name' => 'API CANARY ' . $key . ' - delete me', 'email' => 'apitest+canary' . strtolower($key) . $stamp . '@365techies.co.uk',
                     'phone' => '+441202775566', 'address1' => '1 Canary Street', 'city' => 'Bournemouth', 'zip' => 'BH1 1AA',
                     'is_email_unsubscribed' => true, 'is_sms_unsubscribed' => true);
-        $cf = array(); foreach ($ids as $id => $one) $cf[$id] = 'CANARY-' . substr($id, 0, 6);
+        /* Every box filled with the first value it is likely to accept; a box SimplyBook refuses moves to its next
+           candidate (sbw_canary_seeds: its own choices, '-', then left out). An error that names no box: start again
+           with only the boxes SimplyBook asks for. */
+        $cf = array(); $try = array(); $bare = false; $last = '';
+        foreach ($meta as $id => $m) { $s = sbw_canary_seeds($m, $id); $try[$id] = 0; if ($s[0] !== null) $cf[$id] = $s[0]; }
         $r = array('_net' => true);
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 40; $i++) {
             $p = $cd; if ($cf) $p['client_fields'] = $cf;
             $r = sb_adm('addClient', array($p, false));
             if (sb_net($r) || !empty($r['result'])) break;
-            $f = isset($r['error']['data']['field']) ? (string)$r['error']['data']['field'] : '';
-            if (preg_match('#^client_fields/([a-f0-9]{32})$#', $f, $m) && !isset($cf[$m[1]])) { $cf[$m[1]] = 'CANARY-' . substr($m[1], 0, 6); continue; }
-            break;
+            $fid = sbw_error_field($r);
+            if ($fid === '' && $last !== '') $fid = $last;   // an unnamed refusal straight after we changed one box: that box
+            if ($fid === '') { if ($bare || !$cf) break; $bare = true; $cf = array(); $try = array(); continue; }
+            $last = $fid;
+            $seeds = sbw_canary_seeds(isset($meta[$fid]) ? $meta[$fid] : array(), $fid);
+            $n = isset($try[$fid]) ? $try[$fid] + 1 : 0;
+            if ($n >= count($seeds)) break;   // every candidate for this box refused
+            $try[$fid] = $n;
+            if ($seeds[$n] === null) unset($cf[$fid]); else $cf[$fid] = $seeds[$n];
         }
         $cid = isset($r['result']) ? (int)(is_array($r['result']) && isset($r['result']['id']) ? $r['result']['id'] : $r['result']) : 0;
-        if ($cid <= 0) { $rep[] = 'could not create test client ' . $key . ': ' . sb_why($r); break; }
+        if ($cid <= 0) {
+            $fid = sbw_error_field($r);
+            $rep[] = 'could not create test client ' . $key . ': ' . sb_why($r) . ($fid !== '' ? ' (box: ' . (isset($meta[$fid]) && $meta[$fid]['title'] !== '' ? $meta[$fid]['title'] : $fid) . ')' : '');
+            break;
+        }
         $made[$key] = $cid;
-        $rep[] = 'created test client ' . $key . ': #' . $cid;
+        $rep[] = 'created test client ' . $key . ': #' . $cid . ' with ' . count($cf) . ' extra boxes filled' . ($bare ? ' (only the required ones - SimplyBook did not say which box it refused)' : '');
     }
     $res = array();
     if (count($made) === 2) foreach ($made as $key => $cid) {
@@ -2681,7 +2696,7 @@ function sbw_canary_run() {
         $rep[] = 'FAILED - the sync stays off. Nothing was written to any real customer.';
     }
     if ($made) $rep[] = 'Delete the test clients in SimplyBook afterwards: #' . implode(', #', $made) . ' ("API CANARY ... - delete me").';
-    sbw_log_append(SBW_LOG, array('ts' => time(), 'kind' => 'canary', 'pass' => $pass, 'made' => $made,
+    sbw_log_append(SBW_LOG, array('ts' => time(), 'kind' => 'canary', 'pass' => $pass, 'made' => $made, 'rep' => $rep,
         'res' => array_map(function ($x) { return array('bad' => $x['bad'], 'before' => sbw_log_safe($x['before']), 'after' => sbw_log_safe($x['after'])); }, $res)));
     return array($pass, $rep, array_values($made));
 }
@@ -2689,10 +2704,14 @@ function sbw_status() {
     global $SB_COMPANY;
     list($gate, $why) = sbw_pass_ok(SBW_OKF, $SB_COMPANY);
     $v = is_readable(SBW_OKF) ? @include SBW_OKF : null;
+    $last = null;   // the last safety test's report, so whoever looks next sees why it failed (27 Oct: it was only on screen)
+    foreach (sbw_log_read(SBW_LOG) as $r) if (isset($r['kind']) && $r['kind'] === 'canary') $last = $r;
     return array('on' => $gate && sbw_off_read(SBW_OFF) === '', 'why' => $gate ? '' : $why, 'off' => sbw_off_read(SBW_OFF),
         'tested' => is_array($v), 'checked' => is_array($v) && !empty($v['ui_checked']),
         'canaries' => is_array($v) && isset($v['canaries']) ? $v['canaries'] : array(),
-        'today' => sbw_sent_today(SBW_LOG), 'cap' => SBW_MAX_PER_DAY);
+        'today' => sbw_sent_today(SBW_LOG), 'cap' => SBW_MAX_PER_DAY,
+        'last' => $last && isset($last['rep']) ? (array)$last['rep'] : array(), 'last_ts' => $last ? (int)$last['ts'] : 0,
+        'last_made' => $last && isset($last['made']) ? array_values((array)$last['made']) : array());
 }
 /* The person's SimplyBook client, added to the rows when the ref or the person names one (else looked up by their
    exact email, unique on SimplyBook's side). Best effort: the card works without it. */
