@@ -281,7 +281,7 @@ foreach ($made as $p) {
         $results[$p['key']]['consent_moved'] = $moved;
     }
     $results[$p['key']]['lost'] = $lost;
-    $results[$p['key']]['phone_ok'] = (preg_replace('/[^0-9]/', '', $gotPhone) === preg_replace('/[^0-9]/', '', $NEW));
+    $results[$p['key']]['phone_ok'] = sbw_same_phone($gotPhone, $NEW);   // SimplyBook stores '+44...': digits alone never matched '07...'
     $results[$p['key']]['custom_ok'] = ($bf !== null && $af !== null && json_encode($bf) === json_encode($af));
 }
 

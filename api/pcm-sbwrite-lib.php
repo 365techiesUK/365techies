@@ -233,11 +233,93 @@ function sbw_pass_ok($file, $company) {
         return array(false, 'the canary verdict is over 90 days old - re-run it');
     if (empty($v['ui_checked']))
         return array(false, 'nobody has confirmed the canary clients in the SimplyBook UI yet'
-                          . ' - check them, then run: php api/pcm-sbclient-canary.php --ui-confirmed');
+                          . ' - check them, then confirm it (portal: SimplyBook sync, or php api/pcm-sbclient-canary.php --ui-confirmed)');
     foreach (array('standard', 'custom_fields', 'consent', 'phone_landed') as $k) {
         if (empty($v[$k])) return array(false, 'the canary FAILED on ' . $k . ' - do not write');
     }
     return array(true, '');
+}
+
+/* ---------------------------------------------------------------- the staff sync (27 Oct 2026)
+   Owner: "push it live and build the SimplyBook sync" - a number staff save on a customer's card (Find a customer ->
+   Edit details) goes into that customer's SimplyBook client as well. Same read-modify-write, same payload builder,
+   same probe gate as the backfill above, plus two guards of its own: a cut-out that switches the sync OFF the first
+   time a write moves anything but the phone, and the daily cap. Unlike the backfill, a staff save may replace a
+   number SimplyBook already holds - a person chose the new one. */
+
+/** The one form SimplyBook is sent and compared in: E.164 ('+447700900123'), or '' for anything not dialable. */
+function sbw_e164($s) {
+    $n = pcm_phone_norm($s);
+    return preg_match('/^\+\d{10,15}$/', $n) ? $n : '';
+}
+/** Same number? SimplyBook stores '+44...', staff type '07...': compared as E.164, never as text. */
+function sbw_same_phone($a, $b) {
+    $x = sbw_e164($a);
+    return $x !== '' && $x === sbw_e164($b);
+}
+/** sbw_writable() without the "already has a number" rule: for a number a member of staff saved on purpose. */
+function sbw_staff_writable($sb) {
+    if (!is_array($sb)) return array(false, 'no record read');
+    if (!empty($sb['is_blocked'])) return array(false, 'blocked in SimplyBook');
+    if (array_key_exists('can_be_edited', $sb) && !$sb['can_be_edited']) return array(false, 'not editable');
+    if (trim((string)(isset($sb['name']) ? $sb['name'] : '')) === '') return array(false, 'client record has no name');
+    return array(true, '');
+}
+/** The cut-out: '' while the sync may run, else why it was switched off. A .php that exits, like the log. */
+function sbw_off_read($file) {
+    if (!is_readable($file)) return '';
+    $raw = (string)@file_get_contents($file);
+    $j = json_decode(trim((string)substr($raw, (int)strpos($raw, "\n"))), true);
+    return is_array($j) && !empty($j['why']) ? (string)$j['why'] : 'switched off (no reason recorded)';
+}
+function sbw_off_set($file, $why) {
+    $j = json_encode(array('why' => (string)$why, 'ts' => time()), JSON_UNESCAPED_SLASHES);
+    return $j !== false && @file_put_contents($file, "<?php exit; ?>\n" . $j . "\n", LOCK_EX) !== false;
+}
+/** Writes actually SENT today (local day), for SBW_MAX_PER_DAY. Refusals and no-ops do not count. */
+function sbw_sent_today($file, $now = null) {
+    $day = date('Y-m-d', $now === null ? time() : $now); $n = 0;
+    foreach (sbw_log_read($file) as $r) if (!empty($r['sent']) && isset($r['ts']) && date('Y-m-d', (int)$r['ts']) === $day) $n++;
+    return $n;
+}
+/**
+ * The custom client fields as kept in the snapshot log: field id => sha256 of the value, so a before/after
+ * comparison works and the log never holds what is typed in them. On this account they include one called
+ * Passwords - a customer secret must never be copied into our files (the portal's rule). The cost: a wiped field
+ * cannot be retyped from our log, which is why the sync is gated on the canary and stops at the first bad write.
+ */
+function sbw_fields_fingerprint($rest) {
+    if (!is_array($rest)) return null;
+    $rows = isset($rest['data']) && is_array($rest['data']) ? $rest['data'] : $rest;
+    $out = array();
+    foreach ($rows as $k => $v) {
+        $id = is_array($v) && isset($v['id']) ? (string)$v['id'] : (is_array($v) && isset($v['field_id']) ? (string)$v['field_id'] : (string)$k);
+        $val = is_array($v) && array_key_exists('value', $v) ? $v['value'] : $v;
+        $out[$id] = hash('sha256', is_scalar($val) || $val === null ? (string)$val : json_encode($val));
+    }
+    ksort($out);
+    return $out;
+}
+/** The four consent flags, as REST reports them (missing ones absent), for a before/after comparison. */
+function sbw_consent($rest) {
+    $out = array();
+    if (!is_array($rest)) return null;
+    foreach (array('email_promo_subscribed', 'sms_promo_subscribed', 'is_email_unsubscribed', 'is_sms_unsubscribed') as $k)
+        if (array_key_exists($k, $rest)) $out[$k] = $rest[$k];
+    return $out;
+}
+/**
+ * Did a write move the phone and NOTHING else? Snapshots are array('getClient', 'fields', 'consent') - fields and
+ * consent null when REST could not be read. Returns '' when clean, else what moved (shown to staff, sent to Slack).
+ */
+function sbw_check($before, $after, $phone) {
+    if (!is_array($after) || !is_array($after['getClient'])) return 'the record could not be read back';
+    $lost = sbw_diff($before['getClient'], $after['getClient']);
+    if ($lost) return 'SimplyBook also changed ' . implode(', ', $lost);
+    if (!sbw_same_phone(isset($after['getClient']['phone']) ? $after['getClient']['phone'] : '', $phone)) return 'the number did not land';
+    if ($before['fields'] !== null && $after['fields'] !== null && $before['fields'] !== $after['fields']) return 'the extra client fields changed';
+    if ($before['consent'] !== null && $after['consent'] !== null && json_encode($before['consent']) !== json_encode($after['consent'])) return 'the email/SMS consent ticks changed';
+    return '';
 }
 
 }

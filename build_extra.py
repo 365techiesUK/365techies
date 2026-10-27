@@ -31187,7 +31187,8 @@ def write_portal_page():
       h += '<div class="card" id="custcard"><h2>\\ud83d\\udd0e Find a customer</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">Everyone we\\u2019ve written up a job for, everyone with PC Manager and everyone who has booked \\u2014 by name, company, phone, email or postcode.</p>'
         + '<input id="custq" type="search" placeholder="e.g. Jules, First Choice, 07595 691892, BH23" autocomplete="off" aria-label="Find a customer: name, company, phone, email or postcode" />'
-        + '<div id="custres" aria-live="polite"></div><div id="custview"></div></div>';
+        + '<div id="custres" aria-live="polite"></div><div id="custview"></div>'
+        + '<div id="sbwline" class="quiet" style="font-size:.85rem;margin-top:.8rem;border-top:1px solid var(--line, rgba(127,127,127,.25));padding-top:.6rem"></div></div>';
       h += '<div class="card"><h2>\\u26a1 Activate a customer\\u2019s PC Manager</h2>'
         + '<label>Customer name</label><input id="an" />'
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
@@ -32811,7 +32812,9 @@ def write_portal_page():
           /* Say where it came from. b.psrc==="ours" means SimplyBook had no number
              on the booking and this one is out of our own customer file - worth
              knowing, because SimplyBook still needs it adding. */
-          + (b.psrc === 'ours' ? ' <span class="quiet">from our records \\u2014 not in SimplyBook</span>' : '')
+          + (b.psrc === 'ours' ? ' <span class="quiet">from our records \\u2014 not in SimplyBook</span>'
+              // 27 Oct 2026: one press puts it there (custsbpush - the SimplyBook sync, off until its safety test passes)
+              + (b.cid ? ' <button class="sm ghost sbpush" data-ref="s:' + esc(String(b.cid)) + '">Put it in SimplyBook</button>' : '') : '')
         : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\\ud83d\\udccd Details</button>' : '')
@@ -32839,6 +32842,7 @@ def write_portal_page():
   function bindBookingButtons(container, list) {
     var byId = {};
     list.forEach(function (b) { byId[b.id] = b; });
+    sbwBind(container);
     function closeAll() { Array.prototype.forEach.call(container.querySelectorAll('.adrop'), function (x) { x.classList.remove('open'); }); Array.prototype.forEach.call(document.querySelectorAll('#p365app .zup'), function (x) { x.classList.remove('zup'); }); }
     Array.prototype.forEach.call(container.querySelectorAll('.ab2'), function (btn) {
       btn.onclick = function (ev) {
@@ -33836,6 +33840,7 @@ def write_portal_page():
   var CBK_FROM = { book: 'edited here', pcm: 'from their portal', job: 'from a job card', sb: 'from their booking' };
   function cbkSetup() {
     var q = document.getElementById('custq'); if (!q) return;
+    sbwStatus();
     q.addEventListener('input', function () { clearTimeout(CBK.t); var v = q.value.trim(); CBK.t = setTimeout(function () { cbkFind(v); }, 300); });
     q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { clearTimeout(CBK.t); cbkFind(q.value.trim()); } });
   }
@@ -33913,6 +33918,7 @@ def write_portal_page():
       + '<div class="cu-tags">' + cbkTags(p) + '</div></div>'
       + '<button type="button" class="sm ghost" id="cuclose" aria-label="Close this customer">\\u2715</button></div>'
       + (dl ? '<dl class="cu-dl">' + dl + '</dl>' : '<p class="quiet">No contact details yet \\u2014 add them with Edit details.</p>')
+      + cbkSbLine(p)
       + (p.aka && p.aka.length ? '<p class="quiet" style="font-size:.88rem">Also written up as: ' + p.aka.map(esc).join(', ') + '</p>' : '')
       + (last ? '<p class="quiet" style="font-size:.85rem">Last edited by ' + esc(String(last.by || '').split('@')[0]) + ', ' + esc(cbkWhen(last.at)) + ' (' + esc((last.fields || []).join(', ')) + ')</p>' : '')
       + '<div class="nc-act" style="margin-top:.6rem"><button type="button" id="cuedit">\\u270f\\ufe0f Edit details</button>'
@@ -33939,6 +33945,71 @@ def write_portal_page():
     document.getElementById('culog').onclick = function () { cbkLog(p); };
     bindPcmLic(box);
     bindContactCards(box);
+    sbwBind(box);
+  }
+  /* ---------- 27 Oct 2026 (owner: "build the SimplyBook sync"): a number saved here goes into their SimplyBook client
+     too (custsbpush). The card shows SimplyBook's own number when it differs from ours, with one press to fix it; a
+     save that changes the mobile or landline presses it for you. The server refuses until the sync's safety test has
+     passed (SimplyBook sync line under Find a customer), and says why - shown where the button was. ---------- */
+  function cbkNum(s) { var d = String(s || '').replace(/[^0-9]/g, ''); if (d.indexOf('44') === 0) d = '0' + d.slice(2); return d; }
+  function cbkSbLine(p) {
+    var f = p.fields, n = f.mobile || f.phone;
+    if (!p.sb || !n || cbkNum(n) === cbkNum(p.sbphone)) return '';
+    return '<p class="quiet" style="font-size:.88rem;margin:.5rem 0 0">SimplyBook has ' + (p.sbphone ? esc(p.sbphone) : 'no number') + ' for them. '
+      + '<button type="button" class="sm ghost sbpush" data-ref="' + esc(p.ref) + '">Put ' + esc(n) + ' in SimplyBook</button></p>';
+  }
+  var SBW_WHY = {
+    already: 'SimplyBook already has it.', no_sb_client: 'They aren\\u2019t in SimplyBook yet \\u2014 it gets the number when they\\u2019re booked.',
+    two_sb_clients: 'They have two SimplyBook records \\u2014 merge them in SimplyBook first.', no_number: 'There\\u2019s no number to send.',
+    daily_cap: 'Today\\u2019s limit of SimplyBook updates is used up \\u2014 try tomorrow.', sb_unavailable: 'SimplyBook didn\\u2019t answer \\u2014 try again.',
+    not_staff: 'Your staff session has expired \\u2014 sign out and in again.', no_snapshot: 'Couldn\\u2019t take the safety copy first, so nothing was sent.'
+  };
+  function sbwSaid(r) {
+    if (r && r.ok) return r.sb === 'already' ? SBW_WHY.already : '\\u2714 ' + esc(r.number || 'The number') + ' is in SimplyBook now.';
+    var e = (r && r.error) || '', w = r && r.why ? esc(r.why) : '';
+    if (e === 'not_on') return 'Not sent: the SimplyBook sync isn\\u2019t switched on yet' + (w ? ' (' + w + ')' : '') + '.';
+    if (e === 'switched_off') return 'Not sent: the SimplyBook sync switched itself off \\u2014 ' + w + '.';
+    if (e === 'tripped') return 'Stopped: ' + w + '. The sync is now off until someone checks that record in SimplyBook.';
+    if (e === 'refused') return 'SimplyBook said no: ' + w;
+    if (e === 'not_writable') return 'Not sent: ' + w + '.';
+    return SBW_WHY[e] ? esc(SBW_WHY[e]) : 'Not sent (' + esc(e || 'no answer') + ').';
+  }
+  function sbwBind(container) {
+    Array.prototype.forEach.call(container.querySelectorAll('.sbpush'), function (btn) {
+      btn.onclick = function (ev) {
+        ev.stopPropagation();
+        btn.disabled = true; btn.textContent = 'Sending to SimplyBook\\u2026';
+        var done = function (html) { var s = document.createElement('span'); s.className = 'quiet'; s.setAttribute('role', 'status'); s.innerHTML = html; if (btn.parentNode) btn.parentNode.replaceChild(s, btn); };
+        post(BK, { action: 'custsbpush', stoken: S.stoken, machine: mid(), ref: btn.getAttribute('data-ref') })
+          .then(function (r) { done(sbwSaid(r)); })
+          .catch(function () { done('No answer from the server \\u2014 nothing was sent.'); });
+      };
+    });
+  }
+  /* The sync's own line under Find a customer: on / off and why, and - while it is off - its safety test, run on two
+     made-up clients in SimplyBook, never a real customer (sbwcanary), then "I've checked them" (sbwcanaryok). */
+  function sbwStatus(d, report) {
+    var box = document.getElementById('sbwline'); if (!box) return;
+    if (!d) { post(BK, { action: 'sbwstatus', stoken: S.stoken, machine: mid() }).then(function (r) { if (r && r.ok) sbwStatus(r); }).catch(function () {}); return; }
+    var h = '<strong>SimplyBook sync:</strong> ';
+    if (d.on) h += 'on \\u2014 a mobile or landline saved on a customer\\u2019s card goes into SimplyBook too (' + d.today + ' of ' + d.cap + ' today).';
+    else if (d.off) h += 'switched itself off \\u2014 ' + esc(d.off) + '. <button type="button" class="sm ghost" id="sbwreset">I\\u2019ve checked that record \\u2014 switch it back on</button>';
+    else if (d.tested && !d.checked) h += 'the safety test passed. Look at the test clients #' + esc((d.canaries || []).join(', #')) + ' in SimplyBook (Client fields: every box still says CANARY\\u2026), then '
+      + '<button type="button" class="sm ghost" id="sbwok">I\\u2019ve checked them \\u2014 switch it on</button>';
+    else h += 'off until its safety test passes. <button type="button" class="sm ghost" id="sbwrun">Run the safety test</button>'
+      + ' <span class="quiet">(two made-up clients in SimplyBook; no real customer is touched)</span>';
+    if (report && report.length) h += '<pre class="sbw-rep" style="white-space:pre-wrap;font-size:.8rem;margin:.4rem 0 0">' + report.map(esc).join('\\n') + '</pre>';
+    box.innerHTML = h;
+    var act = function (id, action, busy) {
+      var b = document.getElementById(id); if (!b) return;
+      b.onclick = function () {
+        b.disabled = true; b.textContent = busy;
+        post(BK, { action: action, stoken: S.stoken, machine: mid() })
+          .then(function (r) { if (r && r.ok) sbwStatus(r, r.report); else { b.disabled = false; b.textContent = 'Try again'; box.insertAdjacentHTML('beforeend', '<p class="err">' + esc((r && r.error) || 'no answer') + '</p>'); } })
+          .catch(function () { b.disabled = false; b.textContent = 'Try again'; });
+      };
+    };
+    act('sbwrun', 'sbwcanary', 'Testing \\u2014 about half a minute\\u2026'); act('sbwok', 'sbwcanaryok', 'Switching on\\u2026'); act('sbwreset', 'sbwreset', 'Switching on\\u2026');
   }
   function cbkEdit() {
     var p = CBK.p, box = document.getElementById('custview'); if (!p || !box) return;
@@ -33950,7 +34021,7 @@ def write_portal_page():
         + (x[0] === 'website' ? ' placeholder="www.example.co.uk"' : '') + ' />' + err + '</div>';
     }).join('');
     box.innerHTML = '<div class="cu-view"><h3 style="margin:0">Edit ' + esc(cbkWho(p)) + '</h3>'
-      + '<p class="quiet" style="margin:.3rem 0 0">Saved in our customer book and shown everywhere in the portal. Their SimplyBook record and old job cards are left as they were.</p>'
+      + '<p class="quiet" style="margin:.3rem 0 0">Saved in our customer book and shown everywhere in the portal. A new mobile or landline also goes into their SimplyBook record while the SimplyBook sync is on; old job cards are left as they were.</p>'
       + '<div class="nc-grid">' + boxes + '</div><div class="err" id="cuerr" aria-live="polite"></div>'
       + '<div class="nc-act"><button type="button" id="cusave">Save details</button><button type="button" class="ghost" id="cucancel">Cancel</button></div></div>';
     document.getElementById('cucancel').onclick = function () { cbkShow(p); };
@@ -33962,6 +34033,8 @@ def write_portal_page():
         if (r && r.ok && r.person) {
           cbkShow(r.person, r.changed && r.changed.length ? '\\u2714 Saved: ' + r.changed.join(', ') + '.' : 'Nothing had changed.');
           if (CBK.q) cbkFind(CBK.q);
+          // a new mobile or landline goes into SimplyBook too: the card's own button, pressed for them
+          if ((r.changed || []).some(function (k) { return k === 'mobile' || k === 'phone'; })) { var sp = document.querySelector('#custview .sbpush'); if (sp) sp.click(); }
           return;
         }
         b.disabled = false; b.textContent = 'Save details';

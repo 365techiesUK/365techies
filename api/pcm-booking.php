@@ -2505,6 +2505,195 @@ function cb_card_phones($dbC) {
     }
     return $out;
 }
+
+// ---------------------------------------------------------------- the SimplyBook sync (27 Oct 2026)
+// Owner: "push it live and build the SimplyBook sync". A mobile or landline saved on a customer's card now goes into
+// their SimplyBook client too (custsbpush: the card calls it straight after a save; the diary's "from our records"
+// line has a button for it). Every write is the guarded read-modify-write of pcm-sbwrite-lib.php: nothing is sent
+// until the safety test (sbwcanary) has passed on THIS account and someone has looked at its two test clients in
+// SimplyBook's own screen (sbwcanaryok); each write is snapshotted first and read back after, and the first one that
+// moves anything but the phone switches the sync off (pcm-sbwrite-off.php) and says so in Slack. The host has no SSH,
+// which is why the test runs here as a staff action and not only as the CLI script pcm-sbclient-canary.php.
+define('SBW_OKF', __DIR__ . '/pcm-sbwrite-ok.php');
+define('SBW_LOG', __DIR__ . '/pcm-sbwrite-log.php');
+define('SBW_OFF', __DIR__ . '/pcm-sbwrite-off.php');
+function sbw_libs() { require_once __DIR__ . '/pcm-phone-lib.php'; require_once __DIR__ . '/pcm-sbwrite-lib.php'; }
+/* The verdict file is PHP that gets included: drop PHP's cached copy on every write, or the next read can be the old one. */
+function sbw_okf_write($v) {
+    $ok = @file_put_contents(SBW_OKF, "<?php return " . var_export($v, true) . ";\n", LOCK_EX) !== false;
+    if (function_exists('opcache_invalidate')) @opcache_invalidate(SBW_OKF, true);
+    return $ok;
+}
+/* The v2 REST token (REST is the only way to read the extra client fields back), cached beside the JSON-RPC one. */
+function sbw_rest_tok() {
+    global $CACHE, $SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY;
+    $c = cache_load($CACHE);
+    if (!empty($c['rest']['tok']) && time() - (int)(isset($c['rest']['ts']) ? $c['rest']['ts'] : 0) < 900) return (string)$c['rest']['tok'];
+    list($tok, ) = sbw_rest_token($SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY);
+    if ($tok === '') return '';
+    $c = cache_load($CACHE); $c['rest'] = array('tok' => $tok, 'ts' => time()); cache_save($CACHE, $c);
+    return $tok;
+}
+/* One client, read every way we can: the JSON-RPC record (what we echo back), and from REST a fingerprint of the
+   extra client fields plus the consent ticks (what the echo-back must not disturb). */
+function sbw_snap($cid) {
+    global $SB_COMPANY;
+    $gc = null;
+    foreach (array('getClient', 'getClientInfo') as $m) {
+        $r = sb_adm($m, array((int)$cid));
+        if (!sb_net($r) && !empty($r['result']) && is_array($r['result'])) { $gc = $r['result']; break; }
+    }
+    $tok = sbw_rest_tok();
+    return array('getClient' => $gc,
+        'fields' => $tok !== '' ? sbw_fields_fingerprint(sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/field-values/' . (int)$cid)) : null,
+        'consent' => $tok !== '' ? sbw_consent(sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/' . (int)$cid)) : null);
+}
+/* The title SimplyBook gives an extra client field ('' when REST cannot say). */
+function sbw_field_title($id) {
+    global $SB_COMPANY;
+    $tok = sbw_rest_tok(); if ($tok === '') return '';
+    $fl = sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/fields');
+    foreach ((is_array($fl) && isset($fl['data']) && is_array($fl['data']) ? $fl['data'] : (array)$fl) as $f)
+        if (is_array($f) && isset($f['id']) && (string)$f['id'] === (string)$id) return substr(preg_replace('/[^\x20-\x7E]/', '', (string)(isset($f['title']) ? $f['title'] : '')), 0, 60);
+    return '';
+}
+/* A snapshot as it goes into the log: never the extra fields' values (one is called Passwords) - their fingerprint. */
+function sbw_log_safe($snap) {
+    $gc = is_array($snap['getClient']) ? $snap['getClient'] : null;
+    if ($gc !== null) foreach (array_keys($gc) as $k) {
+        if ($k === 'client_fields') $gc[$k] = sbw_fields_fingerprint($gc[$k]);
+        elseif (stripos((string)$k, 'pass') !== false) unset($gc[$k]);
+    }
+    return array('getClient' => $gc, 'fields' => $snap['fields'], 'consent' => $snap['consent']);
+}
+/* Put $raw into SimplyBook client $cid. ok + sb 'done'|'already', or error (+ why). Never throws, never exits. */
+function sbw_staff_push($cid, $raw, $who) {
+    global $SB_COMPANY;
+    $phone = sbw_e164($raw);
+    if ($cid <= 0 || $phone === '') return array('error' => 'no_number');
+    list($gate, $why) = sbw_pass_ok(SBW_OKF, $SB_COMPANY);
+    if (!$gate) return array('error' => 'not_on', 'why' => $why);
+    $off = sbw_off_read(SBW_OFF);
+    if ($off !== '') return array('error' => 'switched_off', 'why' => $off);
+    if (sbw_sent_today(SBW_LOG) >= SBW_MAX_PER_DAY) return array('error' => 'daily_cap');
+    $before = sbw_snap($cid);
+    if (!is_array($before['getClient'])) return array('error' => 'sb_unavailable');
+    if (sbw_same_phone(isset($before['getClient']['phone']) ? $before['getClient']['phone'] : '', $phone)) return array('ok' => true, 'sb' => 'already');
+    list($can, $cwhy) = sbw_staff_writable($before['getClient']);
+    if (!$can) return array('error' => 'not_writable', 'why' => $cwhy);
+    if ($before['fields'] === null) return array('error' => 'not_on', 'why' => 'SimplyBook\'s REST API did not answer, so the extra client fields could not be checked - nothing was sent');
+    $snap = sbw_log_append(SBW_LOG, array('ts' => time(), 'cid' => (int)$cid, 'kind' => 'staff', 'by' => (string)$who, 'to' => $phone, 'before' => sbw_log_safe($before)));
+    if ($snap === '') return array('error' => 'no_snapshot');   // the snapshot is the only undo: no snapshot, no write
+    $w = sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], $phone)));
+    if (sb_net($w) || !isset($w['result']) || isset($w['error'])) {
+        $msg = sb_net($w) ? 'SimplyBook did not answer' : sb_why($w);
+        // "Client field is required" alone sends staff hunting: name the box (Support Package, on 27 Oct 2026)
+        $fld = isset($w['error']['data']['field']) ? (string)$w['error']['data']['field'] : '';
+        if (preg_match('#^client_fields/([a-f0-9]{32})$#', $fld, $fm)) { $t = sbw_field_title($fm[1]); if ($t !== '') $msg .= ' - "' . $t . '" on their Client fields tab in SimplyBook needs filling in first'; }
+        sbw_log_append(SBW_LOG, array('ts' => time(), 'cid' => (int)$cid, 'kind' => 'staff', 'of' => $snap, 'sent' => false, 'refused' => $msg));
+        return array('error' => sb_net($w) ? 'sb_unavailable' : 'refused', 'why' => $msg);
+    }
+    $after = sbw_snap($cid);
+    $bad = sbw_check($before, $after, $phone);
+    sbw_log_append(SBW_LOG, array('ts' => time(), 'cid' => (int)$cid, 'kind' => 'staff', 'of' => $snap, 'sent' => true, 'bad' => $bad, 'after' => sbw_log_safe($after)));
+    if ($bad === '') return array('ok' => true, 'sb' => 'done');
+    // Something besides the phone moved: stop the sync for everyone, put the standard fields back, say so.
+    sbw_off_set(SBW_OFF, 'client #' . (int)$cid . ': ' . $bad . ' (snapshot ' . $snap . ', ' . date('j M H:i') . ')');
+    sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], isset($before['getClient']['phone']) ? (string)$before['getClient']['phone'] : '')));
+    pcm_slack_say(':rotating_light: *SimplyBook sync switched itself off* - saving a number for client #' . (int)$cid . ' also changed something else (' . $bad
+        . '). Their name, email and address were put back; please check their record in SimplyBook. Snapshot ' . $snap . ' in api/pcm-sbwrite-log.php.');
+    return array('error' => 'tripped', 'why' => $bad);
+}
+/* The safety test, run on the live account with two synthetic clients ("API CANARY A/B - delete me"): A gets the
+   naive phone-only edit (does SimplyBook merge or replace?), B gets the exact payload production sends. Writes the
+   verdict file only when B moved the phone and nothing else on every channel; a failed run removes an old verdict. */
+function sbw_canary_run() {
+    global $SB_COMPANY;
+    $rep = array(); $made = array();
+    $tok = sbw_rest_tok();
+    $rep[] = 'REST (to read the extra client fields back): ' . ($tok !== '' ? 'ok' : 'NOT AVAILABLE - the test cannot pass without it');
+    $ids = array();
+    if ($tok !== '') {
+        $fl = sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/fields');
+        foreach ((is_array($fl) && isset($fl['data']) && is_array($fl['data']) ? $fl['data'] : (array)$fl) as $f)
+            if (is_array($f) && isset($f['id']) && preg_match('/^[a-f0-9]{32}$/', (string)$f['id'])) $ids[(string)$f['id']] = 1;
+    }
+    if (!$ids) {
+        $cf = sb_adm('getCompanyParam', array('client_fields'));
+        foreach ((isset($cf['result']) && is_array($cf['result']) ? $cf['result'] : array()) as $k => $v) {
+            $id = is_array($v) && isset($v['id']) ? (string)$v['id'] : (string)$k;
+            if (preg_match('/^[a-f0-9]{32}$/', $id)) $ids[$id] = 1;
+        }
+    }
+    $rep[] = 'extra client fields to fill with test markers: ' . count($ids) . ($ids ? '' : ' (only the required ones will be found)');
+    $stamp = date('His'); $NEW = '+447700900123';
+    foreach (array('A', 'B') as $key) {
+        $cd = array('name' => 'API CANARY ' . $key . ' - delete me', 'email' => 'apitest+canary' . strtolower($key) . $stamp . '@365techies.co.uk',
+                    'phone' => '+441202775566', 'address1' => '1 Canary Street', 'city' => 'Bournemouth', 'zip' => 'BH1 1AA',
+                    'is_email_unsubscribed' => true, 'is_sms_unsubscribed' => true);
+        $cf = array(); foreach ($ids as $id => $one) $cf[$id] = 'CANARY-' . substr($id, 0, 6);
+        $r = array('_net' => true);
+        for ($i = 0; $i < 8; $i++) {
+            $p = $cd; if ($cf) $p['client_fields'] = $cf;
+            $r = sb_adm('addClient', array($p, false));
+            if (sb_net($r) || !empty($r['result'])) break;
+            $f = isset($r['error']['data']['field']) ? (string)$r['error']['data']['field'] : '';
+            if (preg_match('#^client_fields/([a-f0-9]{32})$#', $f, $m) && !isset($cf[$m[1]])) { $cf[$m[1]] = 'CANARY-' . substr($m[1], 0, 6); continue; }
+            break;
+        }
+        $cid = isset($r['result']) ? (int)(is_array($r['result']) && isset($r['result']['id']) ? $r['result']['id'] : $r['result']) : 0;
+        if ($cid <= 0) { $rep[] = 'could not create test client ' . $key . ': ' . sb_why($r); break; }
+        $made[$key] = $cid;
+        $rep[] = 'created test client ' . $key . ': #' . $cid;
+    }
+    $res = array();
+    if (count($made) === 2) foreach ($made as $key => $cid) {
+        $before = sbw_snap($cid);
+        $payload = $key === 'A' ? array('phone' => $NEW) : sbw_push_payload($before['getClient'], $NEW);
+        $w = sb_adm('editClient', array($cid, $payload));
+        $after = sbw_snap($cid);
+        $bad = (sb_net($w) || isset($w['error'])) ? 'refused: ' . sb_why($w) : sbw_check($before, $after, $NEW);
+        $res[$key] = array('bad' => $bad, 'before' => $before, 'after' => $after, 'payload' => $payload);
+        $rep[] = 'test ' . $key . ' (' . ($key === 'A' ? 'phone only' : 'the payload the sync sends') . '): ' . ($bad === '' ? 'moved the phone and nothing else' : $bad);
+        if (is_array($before['getClient'])) $rep[] = '   SimplyBook\'s record has: ' . implode(', ', array_keys($before['getClient']));
+    }
+    $ok = isset($res['B']) && $res['B']['bad'] === '';
+    $chk = array('standard' => false, 'custom_fields' => false, 'consent' => false, 'phone_landed' => false);
+    if (isset($res['B'])) {
+        $b = $res['B'];
+        $chk['standard'] = is_array($b['after']['getClient']) && !sbw_diff($b['before']['getClient'], $b['after']['getClient']);
+        $chk['phone_landed'] = is_array($b['after']['getClient']) && sbw_same_phone(isset($b['after']['getClient']['phone']) ? $b['after']['getClient']['phone'] : '', $NEW);
+        $chk['custom_fields'] = $b['before']['fields'] !== null && $b['after']['fields'] !== null && $b['before']['fields'] === $b['after']['fields'] && count($b['before']['fields']) > 0;
+        $chk['consent'] = $b['before']['consent'] !== null && $b['after']['consent'] !== null && json_encode($b['before']['consent']) === json_encode($b['after']['consent']) && count($b['before']['consent']) > 0;
+        $w2 = sb_adm('editClient', array($made['B'], $b['payload']));
+        $rep[] = 'the same save again (SimplyBook limits email changes): ' . (isset($w2['result']) && !isset($w2['error']) ? 'ok' : sb_why($w2));
+        foreach ($chk as $k => $v) $rep[] = '   ' . $k . ': ' . ($v ? 'safe' : 'NOT PROVEN');
+    }
+    $pass = $ok && !in_array(false, $chk, true);
+    if ($pass) {
+        $v = array_merge(array('ts' => time(), 'company' => (string)$SB_COMPANY, 'shape' => SBW_SHAPE, 'ui_checked' => false,
+                               'canaries' => array_values($made), 'naive_lost' => isset($res['A']) ? $res['A']['bad'] : ''), $chk);
+        $okw = sbw_okf_write($v);
+        $rep[] = $okw ? 'PASSED. Now look at both test clients in SimplyBook (Client fields tab: every box still says CANARY-...), then confirm.' : 'passed, but the verdict file could not be written';
+        $pass = $okw;
+    } else {
+        @unlink(SBW_OKF); if (function_exists('opcache_invalidate')) @opcache_invalidate(SBW_OKF, true);
+        $rep[] = 'FAILED - the sync stays off. Nothing was written to any real customer.';
+    }
+    if ($made) $rep[] = 'Delete the test clients in SimplyBook afterwards: #' . implode(', #', $made) . ' ("API CANARY ... - delete me").';
+    sbw_log_append(SBW_LOG, array('ts' => time(), 'kind' => 'canary', 'pass' => $pass, 'made' => $made,
+        'res' => array_map(function ($x) { return array('bad' => $x['bad'], 'before' => sbw_log_safe($x['before']), 'after' => sbw_log_safe($x['after'])); }, $res)));
+    return array($pass, $rep, array_values($made));
+}
+function sbw_status() {
+    global $SB_COMPANY;
+    list($gate, $why) = sbw_pass_ok(SBW_OKF, $SB_COMPANY);
+    $v = is_readable(SBW_OKF) ? @include SBW_OKF : null;
+    return array('on' => $gate && sbw_off_read(SBW_OFF) === '', 'why' => $gate ? '' : $why, 'off' => sbw_off_read(SBW_OFF),
+        'tested' => is_array($v), 'checked' => is_array($v) && !empty($v['ui_checked']),
+        'canaries' => is_array($v) && isset($v['canaries']) ? $v['canaries'] : array(),
+        'today' => sbw_sent_today(SBW_LOG), 'cap' => SBW_MAX_PER_DAY);
+}
 /* The person's SimplyBook client, added to the rows when the ref or the person names one (else looked up by their
    exact email, unique on SimplyBook's side). Best effort: the card works without it. */
 function cb_with_sb($rows, $ref) {
@@ -2535,6 +2724,8 @@ function cb_ref_in() {
 function cb_card($rows, $g) {
     $p = cb_person($rows, $g);
     $p['joblist'] = cb_jobs_of($rows, $g);
+    $p['sbphone'] = '';   // 27 Oct 2026: SimplyBook's own number, so the card can offer to put the card's one in
+    foreach ($g as $i) if ($rows[$i]['src'] === 'sb' && $rows[$i]['phone'] !== '') { $p['sbphone'] = cb_phone_show($rows[$i]['phone']); break; }
     $hist = array();
     foreach ($g as $i) if ($rows[$i]['src'] === 'book') {
         $b = cb_book_read(); $rec = isset($b['people'][$rows[$i]['id']]) ? $b['people'][$rows[$i]['id']] : array();
@@ -2589,6 +2780,64 @@ if ($action === 'custsave') {
     $rows3 = array_merge(array_values(array_filter($rows, function ($r) { return $r['src'] !== 'book'; })), cb_rows_from_book(cb_book_read()));
     $g3 = cb_cluster_for($rows3, $ref2);
     out(array('ok' => true, 'changed' => $res['changed'], 'person' => $g3 !== null ? cb_card($rows3, $g3) : null));
+}
+/* 27 Oct 2026: the number on a customer's card -> their SimplyBook client (the sync above). The card's mobile, else its
+   landline; their ONE SimplyBook client (two = refuse: staff merge them in SimplyBook first). */
+if ($action === 'custsbpush') {
+    need_staff();
+    if (!$HAS_ADMIN) fail('not_configured');
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    sbw_libs();
+    $ref = cb_ref_in(); if ($ref === '') fail('bad_request');
+    $rows = cb_with_sb(cb_local_rows(), $ref);
+    $g = cb_cluster_for($rows, $ref);
+    if ($g === null) fail('unknown_customer');
+    $f = cb_person($rows, $g); $f = $f['fields'];
+    $num = $f['mobile'] !== '' ? $f['mobile'] : $f['phone'];
+    $sbIds = array(); foreach ($g as $i) if (!empty($rows[$i]['sb'])) $sbIds[(int)$rows[$i]['sb']] = 1;
+    if (!$sbIds) out(array('ok' => false, 'error' => 'no_sb_client'));
+    if (count($sbIds) > 1) out(array('ok' => false, 'error' => 'two_sb_clients'));
+    if (sbw_e164($num) === '') out(array('ok' => false, 'error' => 'no_number'));
+    $who = staff_first(); if ($who === '') $who = 'staff';
+    $res = sbw_staff_push((int)key($sbIds), $num, $who);
+    out(array_merge(array('ok' => !empty($res['ok']), 'number' => cb_phone_show($num)), $res));
+}
+if ($action === 'sbwstatus') {
+    need_staff();
+    sbw_libs();
+    out(array_merge(array('ok' => true), sbw_status()));
+}
+if ($action === 'sbwcanary') {
+    need_staff();
+    if (!$HAS_ADMIN) fail('not_configured');
+    sbw_libs();
+    @set_time_limit(150);
+    list($pass, $rep, $made) = sbw_canary_run();
+    pcm_slack_say(':test_tube: SimplyBook sync safety test ' . ($pass ? '*passed*' : '*failed*') . ' (run by ' . staff_first() . ').'
+        . ($made ? ' Test clients to delete in SimplyBook: #' . implode(', #', $made) . '.' : ''));
+    out(array_merge(array('ok' => true, 'pass' => $pass, 'report' => $rep), sbw_status()));
+}
+/* The human half of the test: someone looked at the two test clients in SimplyBook's own screen and every extra field
+   still said CANARY-... Only a PASSED verdict can be confirmed. Switches the sync on. */
+if ($action === 'sbwcanaryok') {
+    need_staff();
+    sbw_libs();
+    $v = is_readable(SBW_OKF) ? @include SBW_OKF : null;
+    if (!is_array($v)) fail('not_tested');
+    foreach (array('standard', 'custom_fields', 'consent', 'phone_landed') as $k) if (empty($v[$k])) fail('not_passed');
+    $v['ui_checked'] = true; $v['ui_by'] = staff_first(); $v['ui_ts'] = time();
+    if (!sbw_okf_write($v)) fail('store');
+    pcm_slack_say(':white_check_mark: SimplyBook sync switched ON by ' . staff_first() . ' - numbers saved on a customer\'s card in the portal now go into SimplyBook too.');
+    out(array_merge(array('ok' => true), sbw_status()));
+}
+/* After the cut-out fired and someone has checked the client it names: switch the sync back on. */
+if ($action === 'sbwreset') {
+    need_staff();
+    sbw_libs();
+    $was = sbw_off_read(SBW_OFF);
+    if ($was !== '' && !@unlink(SBW_OFF)) fail('store');
+    if ($was !== '') pcm_slack_say(':arrows_counterclockwise: SimplyBook sync switched back on by ' . staff_first() . ' (it had stopped: ' . $was . ').');
+    out(array_merge(array('ok' => true), sbw_status()));
 }
 
 /* "Log a job we've done" (owner, 6 Oct 2026: a quick remote 365 Quick Fix for a customer who is in the customer book but

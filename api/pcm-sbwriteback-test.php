@@ -169,6 +169,60 @@ ok(strpos($can, "require_once \$BASE . '/pcm-booking.php'") === false
 ok(strpos($can, 'sbw_push_payload(') !== false,
    'the canary probes the SAME payload builder production uses, so they cannot drift');
 
+/* ---------------- the staff sync (27 Oct 2026) --------------------------- */
+ok(sbw_e164('07425 249706') === '+447425249706' && sbw_e164('+44 7425 249706') === '+447425249706', 'numbers go to SimplyBook as E.164');
+ok(sbw_e164('ext 12') === '' && sbw_e164('') === '', 'anything not dialable is never sent');
+ok(sbw_same_phone('+447425249706', '07425 249706'), "SimplyBook's '+44' form and staff's '07' form are the same number");
+ok(!sbw_same_phone('', '') && !sbw_same_phone('07425 249706', '07425 249707'), 'blank never matches blank; one digit apart is different');
+list($w, ) = sbw_staff_writable(array('name' => 'A', 'phone' => '+441202775566'));
+ok($w === true, 'a staff save may replace a number SimplyBook already has (unlike the backfill)');
+list($w, ) = sbw_staff_writable(array('name' => 'A', 'is_blocked' => true));
+ok($w === false, '... but never on a blocked client');
+list($w, ) = sbw_staff_writable(array('name' => ''));
+ok($w === false, '... or one with no name');
+
+$OFF = $TMP . '/off.php';
+ok(sbw_off_read($OFF) === '', 'no cut-out file: the sync may run');
+ok(sbw_off_set($OFF, 'client #5: the extra client fields changed') && sbw_off_read($OFF) === 'client #5: the extra client fields changed', 'the cut-out keeps its reason');
+ok(strpos((string)file_get_contents($OFF), '<?php exit; ?>') === 0, 'and exits before it if fetched');
+file_put_contents($OFF, 'garbage');
+ok(sbw_off_read($OFF) !== '', 'a mangled cut-out file still means OFF (fail closed)');
+
+$L2 = $TMP . '/log2.php';
+sbw_log_append($L2, array('ts' => time(), 'sent' => true));
+sbw_log_append($L2, array('ts' => time(), 'sent' => false, 'refused' => 'x'));
+sbw_log_append($L2, array('ts' => time() - 3 * 86400, 'sent' => true));
+ok(sbw_sent_today($L2) === 1, 'the daily cap counts writes actually sent today - not refusals, not other days');
+
+$fpA = sbw_fields_fingerprint(array('data' => array(array('id' => 'f1', 'value' => 'hunter2'), array('id' => 'f2', 'value' => '1 PC NO Office'))));
+$fpB = sbw_fields_fingerprint(array('data' => array(array('id' => 'f2', 'value' => '1 PC NO Office'), array('id' => 'f1', 'value' => 'hunter2'))));
+ok($fpA === $fpB, 'the field fingerprint ignores order');
+ok(strpos(json_encode($fpA), 'hunter2') === false, 'and never contains a value (one field is called Passwords)');
+ok(sbw_fields_fingerprint(array('data' => array(array('id' => 'f1', 'value' => '')))) !== sbw_fields_fingerprint(array('data' => array(array('id' => 'f1', 'value' => 'x')))), 'a wiped field changes the fingerprint');
+ok(sbw_fields_fingerprint(null) === null && sbw_consent(null) === null, 'an unreadable REST answer is null, never "empty and fine"');
+
+$bS = array('getClient' => array('name' => 'A', 'email' => 'a@b.c', 'phone' => '', 'city' => 'Poole'), 'fields' => $fpA, 'consent' => array('is_sms_unsubscribed' => true));
+$aS = $bS; $aS['getClient']['phone'] = '+447425249706';
+ok(sbw_check($bS, $aS, '07425 249706') === '', 'a write that moved only the phone is clean');
+$x = $aS; $x['getClient']['city'] = '';
+ok(strpos(sbw_check($bS, $x, '07425 249706'), 'city') !== false, 'a lost standard field is named');
+$x = $aS; $x['fields'] = sbw_fields_fingerprint(array());
+ok(sbw_check($bS, $x, '07425 249706') === 'the extra client fields changed', 'wiped extra fields are caught');
+$x = $aS; $x['consent'] = array('is_sms_unsubscribed' => false);
+ok(sbw_check($bS, $x, '07425 249706') === 'the email/SMS consent ticks changed', 'a flipped consent tick is caught');
+ok(sbw_check($bS, $bS, '07425 249706') === 'the number did not land', 'a write that changed nothing is not "done"');
+ok(sbw_check($bS, array('getClient' => null), '07425 249706') !== '', 'an unreadable record after the write is never clean');
+
+$bk = (string)file_get_contents(__DIR__ . '/pcm-booking.php');
+$fn = substr($bk, (int)strpos($bk, 'function sbw_staff_push('), 4000);
+$pG = strpos($fn, 'sbw_pass_ok('); $pO = strpos($fn, 'sbw_off_read('); $pS = strpos($fn, 'sbw_log_append('); $pE = strpos($fn, "'editClient'");
+ok($pG !== false && $pO !== false && $pS !== false && $pE !== false && $pG < $pE && $pO < $pE && $pS < $pE,
+   'the staff push checks the gate and the cut-out, and snapshots, BEFORE it sends editClient');
+ok(strpos($fn, "if (\$snap === '') return") !== false, 'no snapshot, no write');
+ok(strpos($fn, 'sbw_off_set(') !== false && strpos($fn, 'pcm_slack_say(') !== false, 'a bad write switches the sync off and tells Slack');
+ok(strpos($fn, "'client_fields'") === false, 'the staff push never sends client_fields');
+ok(strpos($bk, "if (\$action === 'sbwcanaryok')") !== false && strpos($bk, "fail('not_passed')") !== false, 'only a PASSED test can be confirmed');
+
 $lib = (string)file_get_contents(__DIR__ . '/pcm-sbwrite-lib.php');
 ok(strpos($lib, "array('mobile', 'tel')") !== false, 'the library pins the two allowed source fields');
 ok(strpos($lib, 'X-Token: ') !== false, 'REST uses X-Token, not the JSON-RPC X-User-Token');
