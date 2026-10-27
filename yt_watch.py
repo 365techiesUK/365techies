@@ -111,6 +111,13 @@ COPILOT_SHORT = ("SelfuI8_jcs", 33, "2026-10-28T19:00:00+00:00", "How to Turn Of
 NTL_SHORT = ("J63XOIbbH8U", 38, "2026-10-29T19:00:00+00:00", "ntlworld or Blueyonder Email Stopped Working? Do This")
 PWOWN_SHORT = ("Bw9G75RI9cE", 32, "2026-10-30T19:00:00+00:00", "Make a Strong Password From Your Own Words")
 
+# 28 Oct 2026: the Shorts for the two pages from the Unknown Tech study (reels/youtube-uploads/look-shorts-2026-10-27), filmed
+# in the studio PC and scheduled by the owner one a day at 19:00 UK: Spotlight on /learn-about-this-picture/, Start on the left
+# and the four-change Short on /make-windows-11-look-like-windows-10/.
+SPOT_SHORT = ("3fCj7B-cjZ4", 26, "2026-11-02T19:00:00+00:00", "What Is 'Learn About This Picture' on My Desktop?")
+W11LEFT_SHORT = ("4XXplvdtUHg", 29, "2026-11-03T19:00:00+00:00", "Move the Windows 11 Start Button Back to the Left")
+W11LIKE10_SHORT = ("wooj75h4rYs", 31, "2026-11-04T19:00:00+00:00", "Make Windows 11 Feel Like Windows 10 in 30 Seconds")
+
 
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""

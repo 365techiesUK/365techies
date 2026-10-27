@@ -1127,7 +1127,8 @@ SPOTLIGHT = {
                  '<li><strong>Right-click</strong> the photo you&rsquo;d like on your desktop.</li>'
                  '<li>Choose <strong>Set as desktop background</strong>. (Or click the photo once and choose <strong>Set as background</strong> along the top of the window.)</li>'
                  '</ol>'
-                 '<p>Your photo fills the desktop, Spotlight switches off, and the <strong>Learn about this picture</strong> icon disappears. A grandchild, the dog, a favourite view: it&rsquo;s your desktop. This way works even when the Settings page is greyed out.</p>'},
+                 '<p>Your photo fills the desktop, Spotlight switches off, and the <strong>Learn about this picture</strong> icon disappears. A grandchild, the dog, a favourite view: it&rsquo;s your desktop. This way works even when the Settings page is greyed out.</p>'
+                 '<p style="margin:.2rem 0 0">__YT_SPOT__</p>'},
         {'eyebrow': '/03 &mdash; THE SETTINGS WAY', 'h2': 'Or switch Spotlight off in Settings',
          'html': '<ol>'
                  '<li><strong>Right-click</strong> an empty part of the desktop and choose <strong>Personalise</strong>, then <strong>Background</strong>. (Or Start, Settings, Personalisation, Background.)</li>'
@@ -1207,7 +1208,8 @@ W11LIKE10 = {
                  '<li>Next to <strong>Taskbar alignment</strong> (on the newest Windows 11 it&rsquo;s called <strong>Taskbar icon alignment</strong>), change <strong>Centre</strong> to <strong>Left</strong>.</li>'
                  '</ol>'
                  '<p>The Start button and your taskbar icons slide into the bottom-left corner, where they were in Windows 10, and the Start menu opens from there. Changed your mind? Choose <strong>Centre</strong> again.</p>'
-                 '<p><strong>Want the whole taskbar at the top, or down one side?</strong> The newest version of Windows 11 (the 2026 update) adds <strong>Taskbar position</strong> to the same section: <strong>Bottom</strong>, <strong>Top</strong>, <strong>Left</strong> or <strong>Right</strong>. If yours doesn&rsquo;t show it, the PC hasn&rsquo;t had that update yet.</p>'},
+                 '<p><strong>Want the whole taskbar at the top, or down one side?</strong> The newest version of Windows 11 (the 2026 update) adds <strong>Taskbar position</strong> to the same section: <strong>Bottom</strong>, <strong>Top</strong>, <strong>Left</strong> or <strong>Right</strong>. If yours doesn&rsquo;t show it, the PC hasn&rsquo;t had that update yet.</p>'
+                 '<p style="margin:.2rem 0 0">__YT_W11LEFT__</p>'},
         {'eyebrow': '/02 &mdash; DARK MODE', 'h2': 'Turn dark mode off (or on)',
          'html': '<p>Black windows and menus where everything used to be white? That&rsquo;s dark mode. To change it:</p>'
                  '<ol>'
@@ -1231,7 +1233,8 @@ W11LIKE10 = {
                  '<li>Rather not have the section at all? On newer PCs, switch <strong>Recent</strong> itself off: Start then shows just your pinned programs and the list of everything.</li>'
                  '</ol>'
                  '<p><strong>Missing Windows 10&rsquo;s A to Z list of programs?</strong> On newer PCs, open Start, scroll to <strong>All</strong>, and change <strong>View</strong> to <strong>List</strong>. On older ones, click <strong>All apps</strong> at the top right of the Start menu.</p>'
-                 '<p>The section is called <strong>Recommended</strong> on some PCs and <strong>Recent</strong> on newer ones: Microsoft renamed it in 2026. Same thing.</p>'},
+                 '<p>The section is called <strong>Recommended</strong> on some PCs and <strong>Recent</strong> on newer ones: Microsoft renamed it in 2026. Same thing.</p>'
+                 '<p style="margin:.2rem 0 0">__YT_W11LIKE__</p>'},
         {'eyebrow': '/05 &mdash; RIGHT-CLICK', 'h2': 'Get the full right-click menu',
          'html': '<p>Windows 11 shortens the menu you get when you right-click, and moves the rest out of sight. Three ways to get all of it:</p>'
                  '<ul>'
@@ -1285,6 +1288,10 @@ def symptom_pages(setup_url):
             '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
         '__YT_WIFI__': yt_watch.button(yt_watch.WIFI_SHORT, 'Watch it done in %s' % yt_watch.length(yt_watch.WIFI_SHORT[1]).replace('-second', ' seconds'), shape='tall'),
         '__YT_NTL__': yt_watch.button(yt_watch.NTL_SHORT, 'Watch the checks in %d seconds' % yt_watch.NTL_SHORT[1], shape='tall'),   # 27 Oct 2026, out 29 Oct
+        # 28 Oct 2026: out 2, 3 and 4 Nov at 19:00 (hidden until then)
+        '__YT_SPOT__': yt_watch.button(yt_watch.SPOT_SHORT, 'Watch it done in %d seconds' % yt_watch.SPOT_SHORT[1], shape='tall'),
+        '__YT_W11LEFT__': yt_watch.button(yt_watch.W11LEFT_SHORT, 'Watch it done in %d seconds' % yt_watch.W11LEFT_SHORT[1], shape='tall'),
+        '__YT_W11LIKE__': yt_watch.button(yt_watch.W11LIKE10_SHORT, 'Watch four changes in %d seconds' % yt_watch.W11LIKE10_SHORT[1], shape='tall'),
         '__APP_BOX_PRINTER__': pfp._app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
             'It only reads, until you press a button.</p>', setup_url, clip='printers'),
