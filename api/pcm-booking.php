@@ -2970,7 +2970,7 @@ if ($action === 'custlogjob') {
             else {
                 $ce = $f['email'];
                 $cp = substr(preg_replace('/[^0-9+]/', '', $f['mobile'] !== '' ? $f['mobile'] : $f['phone']), 0, 20);
-                $res = staff_book_core($eventId, date('Y-m-d'), $slot, $sbId, substr($name, 0, 60), $cp, $ce);
+                $res = staff_book_core($eventId, date('Y-m-d'), $slot, $sbId, substr($name, 0, 60), $cp, $ce, true);
                 if (empty($res['ok'])) { $bk['why'] = $res['error']; if (!empty($res['sberr'])) $bk['sberr'] = $res['sberr']; }
                 else {
                     $bid = (int)$res['id']; $sbOk = false; $sbId = (int)$res['cid'];
@@ -3032,7 +3032,7 @@ if ($action === 'staffclients') {
 /* The booking itself, shared by staffbook and custlogjob (6 Oct 2026): an existing SimplyBook client, or a new one made
    silently (addClient dedupes), then the ADMIN book method on a unit that is free at that time. Returns ok, id (the
    booking), cid (the client) - or ok false with error (+ sberr, SimplyBook's own complaint). */
-function staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce) {
+function staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce, $logged = false) {
     if ($cid <= 0) {
         $cdArr = array('name' => $cn);
         if ($ce !== '') $cdArr['email'] = $ce;
@@ -3065,7 +3065,8 @@ function staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce) {
        so SimplyBook's callback must not announce it again (pcm-bkann-lib.php). Marked the moment the id is known -
        the callback has two SimplyBook round trips to make before it looks. ('create' only: a real change made in
        SimplyBook straight afterwards must still be announced.) */
-    if ($bid > 0) { require_once __DIR__ . '/pcm-bkann-lib.php'; bkann_mark($bid, 'create'); }
+    // $logged (custlogjob): the work is already done - the callback must not send the customer a "Booked:" for it
+    if ($bid > 0) { require_once __DIR__ . '/pcm-bkann-lib.php'; bkann_mark($bid, $logged ? array('create', 'logged') : 'create'); }
     return array('ok' => true, 'id' => $bid, 'cid' => $cid, 'ts' => $startTs);
 }
 /* Today's next free start time for a service (HH:MM:SS), or '' and why. */

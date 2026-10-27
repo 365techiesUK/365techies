@@ -63,6 +63,10 @@ $DN_LIVE = true;    // LIVE 2026-07-25: SimplyBook has no equivalent email, so n
 $RM_LIVE = false;   // <-- day-before reminders. SimplyBook's own reminder MUST stay switched on
                     //     until ours has run clean for 2 weeks - if our cron dies silently and
                     //     theirs is already off, nobody gets reminded and people miss visits.
+$RM_SHADOW = true;  // 27 Oct 2026 (owner: "do the lot"): the 2-week trial. While $RM_LIVE is false, each reminder we
+                    //     WOULD send is marked 'shadow' and listed in Slack ("Reminder trial - nothing sent"), to
+                    //     check against SimplyBook's own reminders. Every upcoming booking is now in the queue
+                    //     (pcm-bkpoll.php seeds them), so the list should match SimplyBook's one for one.
 $CF_LIVE = true;    // LIVE 2026-09-07: ours run IN PARALLEL with SimplyBook's from today; the customer
                     //     had been getting only SimplyBook's (this flag sat false since July).
                     //     Original rule, still in force: when flipped, ours run IN
@@ -276,6 +280,17 @@ function rv_record($bid, $email, $name, $endTs, $type, $startTs = 0, $svc = '') 
 // Was this booking already queued, and when? Lets the SimplyBook callback tell a
 // booking WE just took (already announced in Slack by the book action) apart from one
 // entered in SimplyBook by hand, which nothing else would announce.
+/* The visit's start time as the queue holds it now, or null when we have never seen this booking. The callback reads
+   it BEFORE rv_record overwrites it, so cf_notify can tell a real move from an edit that changed nothing (27 Oct 2026). */
+function rv_peek_start($bid) {
+    $bid = preg_replace('/[^0-9]/', '', (string)$bid);
+    if ($bid === '') return null;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return null;
+    $e = isset($q['q'][$bid]) ? $q['q'][$bid] : null;
+    rvq_close($lk);
+    return ($e && !empty($e['bs'])) ? (int)$e['bs'] : null;
+}
 function rv_seen($bid) {
     $bid = preg_replace('/[^0-9]/', '', (string)$bid);
     if ($bid === '') return 0;
@@ -284,6 +299,47 @@ function rv_seen($bid) {
     $e = isset($q['q'][$bid]) ? $q['q'][$bid] : null;
     rvq_close($lk);
     return ($e && isset($e['ts'])) ? (int)$e['ts'] : 0;
+}
+
+/* Every upcoming SimplyBook booking, into the queue, so OUR day-before reminder covers them all (27 Oct 2026).
+   The queue only hears of a booking from the callback (made or changed since it went in) or a Completed status.
+   The six-weekly plan visits were booked as recurring series long before either, so our reminder would have
+   missed every one of them. pcm-bkpoll.php hands over the rows it already fetched and anything missing is added,
+   marked so that nothing but the reminder sees it:
+     st 'seeded'   rv_process asks only about 'pending' and dn_process skips 'seeded': no review ask, no job-done
+                   email. A webhook or a Completed status re-records it as a normal booking, as before.
+     cf cr/h       cf_notify reads these as already confirmed, so an edit that does not move it stays silent
+     ts a day ago  not "booked under 4h ago" for the reminder, not "ours" for the callback's Slack check
+   A seed whose time has changed in SimplyBook is moved with it (and reminded afresh); anything else already in
+   the queue is never touched. Returns how many were added. */
+function rv_seed($rows) {
+    if (!is_array($rows) || !$rows) return 0;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return 0;
+    $n = 0; $dirty = false; $now = time();
+    foreach ($rows as $r) {
+        $bid = preg_replace('/[^0-9]/', '', (string)(isset($r['bid']) ? $r['bid'] : ''));
+        $em = strtolower(trim((string)(isset($r['em']) ? $r['em'] : '')));
+        $bs = (int)(isset($r['start']) ? $r['start'] : 0);
+        if ($bid === '' || $bs <= $now || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        $end = (int)(isset($r['end']) ? $r['end'] : 0);
+        if ($end <= $bs) $end = $bs + 5400;
+        if (isset($q['q'][$bid])) {
+            $cur = $q['q'][$bid];
+            if ((isset($cur['st']) ? $cur['st'] : '') === 'seeded' && (int)(isset($cur['bs']) ? $cur['bs'] : 0) !== $bs) {
+                $q['q'][$bid]['bs'] = $bs; $q['q'][$bid]['end'] = $end; $q['q'][$bid]['rm'] = 'pending';
+                $q['q'][$bid]['cf']['h'] = $bs; $dirty = true;
+            }
+            continue;
+        }
+        $q['q'][$bid] = array('em' => $em, 'nm' => rv_clean_name(isset($r['nm']) ? $r['nm'] : ''), 'end' => $end, 'bs' => $bs,
+            'sv' => rv_clean_name(isset($r['sv']) ? $r['sv'] : ''), 'rm' => 'pending', 'ts' => $now - 86400, 'st' => 'seeded',
+            'tries' => 0, 'cf' => array('cr' => $now, 'h' => $bs), 'seed' => $now);
+        $n++; $dirty = true;
+    }
+    if ($dirty) rvq_save($q);
+    rvq_close($lk);
+    return $n;
 }
 
 /* ---- one-click unsubscribe ------------------------------------------------
@@ -334,7 +390,7 @@ function rv_body($first, $to = '', $salt = '') {
     . "01202 775566 and we'll sort it - we'd always rather hear it from you\r\n"
     . "first.\r\n\r\n"
     . "Thanks again,\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n\r\n"
     . "P.S. We've rebuilt our website, and it's full of free tools you can use\r\n"
@@ -408,7 +464,7 @@ function dn_body($first, $svc = '', $ts = 0) {
     . "should, just reply to this email or ring 01202 775566 and we'll make it\r\n"
     . "right. That's the point of using a family firm.\r\n\r\n"
     . "Thanks again,\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n\r\n"
     // NOTE: the referral offer lives HERE and must never appear in the review-ask
@@ -460,7 +516,9 @@ function rm_body($first, $svc, $ts) {
     . "Just a quick reminder of your appointment with us:\r\n\r\n"
     . '  What:  ' . ($svc !== '' ? $svc : 'your 365 Techies visit') . "\r\n"
     . '  When:  ' . $day . ' at ' . $tm . "\r\n\r\n"
-    . "A couple of things that help us get you sorted quickly:\r\n\r\n"
+    . "A few things that help us get you sorted quickly:\r\n\r\n"
+    . "  - Leave the computer switched on and connected to the internet, and\r\n"
+    . "    plug in your backup drive if you have one.\r\n"
     . "  - Have any passwords you know to hand (we will only ever ask for them\r\n"
     . "    in person, or during the appointment you booked with us - never in an\r\n"
     . "    out-of-the-blue phone call, whoever the caller says they are).\r\n"
@@ -472,20 +530,20 @@ function rm_body($first, $svc, $ts) {
     . "Need to move or cancel it? Your portal does both in a couple of taps -\r\n"
     . "https://365techies.co.uk/portal/ - or just ring 01202 775566.\r\n\r\n"
     . "See you then,\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n";
 }
 function rm_process($cap = 8) {
-    global $RM_LIVE;
+    global $RM_LIVE, $RM_SHADOW;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
     if ((isset($q['rmrun_ts']) ? $q['rmrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
     $q['rmrun_ts'] = time();
 
-    $picked = array(); $due = 0;
+    $picked = array(); $due = 0; $shadow = array();
     foreach ($q['q'] as $bid => $e) {
         $rm = isset($e['rm']) ? $e['rm'] : 'pending';
         if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') { if ($rm === 'pending') $q['q'][$bid]['rm'] = 'skipped'; continue; }
@@ -509,17 +567,25 @@ function rm_process($cap = 8) {
             $q['q'][$bid]['rm_tries'] = (isset($e['rm_tries']) ? $e['rm_tries'] : 0) + 1;
             $picked[$bid] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '',
                                   'sv' => isset($e['sv']) ? $e['sv'] : '', 'bs' => $bs);
+        } elseif (!$RM_LIVE && !empty($RM_SHADOW)) {   // the trial: write down who, send nothing
+            $q['q'][$bid]['rm'] = 'shadow';
+            $q['q'][$bid]['rm_ts'] = time();
+            $shadow[] = rv_clean_name(isset($e['nm']) && $e['nm'] !== '' ? $e['nm'] : 'someone') . ' (' . date('D j M g:ia', $bs) . ')';
         }
     }
     rvq_save($q);
     rvq_close($lk);
 
-    if (!$RM_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
+    if (!$RM_LIVE) {
+        if ($shadow) rv_slack(':ghost: *Reminder trial - nothing sent.* Ours would have reminded ' . count($shadow) . ': ' . implode(', ', array_slice($shadow, 0, 20))
+            . (count($shadow) > 20 ? ' and ' . (count($shadow) - 20) . ' more' : '') . '. SimplyBook sent its own - check they match.');
+        return array('mode' => !empty($RM_SHADOW) ? 'shadow' : 'safe', 'due_waiting' => $due, 'shadow' => count($shadow), 'sent' => 0);
+    }
 
     $sent = 0; $failed = 0;
     foreach ($picked as $bid => $p) {
         $when = (date('Y-m-d', $p['bs']) === date('Y-m-d')) ? 'today' : ((date('Y-m-d', $p['bs']) === date('Y-m-d', time() + 86400)) ? 'tomorrow' : ('on ' . date('l', $p['bs'])));
-        $ok = rv_send_raw($p['em'], rm_subject($when), rm_body(rv_first($p['nm']), $p['sv'], $p['bs']));
+        $ok = rv_send_raw($p['em'], rm_subject($when), rm_body(rv_first($p['nm']), $p['sv'], $p['bs']), '', '', rm_body_html(rv_first($p['nm']), $p['sv'], $p['bs']));
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
         if (isset($q2['q'][$bid]) && (isset($q2['q'][$bid]['rm']) ? $q2['q'][$bid]['rm'] : '') === 'sending') {
@@ -546,7 +612,7 @@ function cf_subject($kind, $sv, $ts) {
 }
 function cf_body($kind, $first, $sv, $ts, $code) {
     $when = cf_pretty($ts);
-    $sig = "Steve & David\r\n365 Techies - family-run IT support in Bournemouth since 1995\r\n01202 775566 - https://365techies.co.uk\r\n";
+    $sig = "David & Steve\r\n365 Techies - family-run IT support in Bournemouth since 1995\r\n01202 775566 - https://365techies.co.uk\r\n";
     $manage = "Need to move or cancel it? Your portal handles both in a couple of\r\ntaps - https://365techies.co.uk/portal/ - or just ring 01202 775566.\r\n\r\n";
     if ($kind === 'cancel') {
         return 'Hi ' . $first . ",\r\n\r\n"
@@ -573,6 +639,55 @@ function cf_body($kind, $first, $sv, $ts, $code) {
     . "into your phone or computer's calendar, reminder included.\r\n\r\n" . $manage
     . "See you then,\r\n" . $sig;
 }
+/* 27 Oct 2026 (owner: "the presentation of the emails"): the booking emails and the reminder in the house style.
+   Each says exactly what its text twin says; the text stays the first part of the email for clients without HTML
+   (Outlook strips line breaks from plain text, and most of our customers read in Outlook or Hotmail). */
+function cf_h_links() {
+    return array('<a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your 365 portal</a>',
+                 '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>');
+}
+function cf_body_html($kind, $first, $sv, $ts, $code) {
+    list($portal, $tel) = cf_h_links();
+    $when = cf_pretty($ts);
+    $facts = array('What' => $sv);
+    if ($when !== '') $facts[$kind === 'cancel' ? 'Was' : 'When'] = $when;
+    if ($code !== '' && $kind !== 'cancel') $facts['Reference'] = $code;
+    if ($kind === 'cancel') {
+        $head = 'Your booking is cancelled'; $eye = 'Booking cancelled';
+        $blocks = array(rv_h_p('Hi ' . rv_h($first) . ','), rv_h_p('Your booking is cancelled &ndash; this email is your confirmation:'),
+            rv_h_facts($facts),
+            rv_h_p('Nothing else is needed from you. If this wasn&rsquo;t you, or you&rsquo;d like to rebook, ring ' . $tel . ' or book online any time in ' . $portal . '.'));
+    } else {
+        $head = $kind === 'change' ? 'Your booking has a new time' : "You're booked in";
+        $eye = $kind === 'change' ? 'New time' : 'Booking confirmed';
+        $blocks = array(rv_h_p('Hi ' . rv_h($first) . ','),
+            rv_h_p($kind === 'change' ? 'Here are the updated details:' : 'Here&rsquo;s everything you need:'),
+            rv_h_facts($facts),
+            rv_h_note($kind === 'change'
+                ? '<strong style="color:#0b1226;">The attached calendar file replaces the old appointment.</strong> Open it and your calendar updates itself.'
+                : '<strong style="color:#0b1226;">A calendar file is attached.</strong> Open it and the appointment drops straight into your phone or computer&rsquo;s calendar, reminder included.'),
+            rv_h_p('Need to move or cancel it? Your portal handles both in a couple of taps &ndash; ' . $portal . ' &ndash; or just ring ' . $tel . '.'));
+    }
+    return rv_html_shell(array('title' => $head, 'eyebrow' => $eye, 'heading' => $head,
+        'preview' => $sv . ($when !== '' ? ' - ' . $when : ''), 'blocks' => $blocks,
+        'legal' => 'You are receiving this because you have a booking with 365 Techies.'));
+}
+function rm_body_html($first, $svc, $ts) {
+    list($portal, $tel) = cf_h_links();
+    $tip = function ($h) { return '<p style="margin:0 0 9px 0;font-size:16px;line-height:1.55;color:#3d4d6d !important;">&bull;&nbsp; ' . $h . '</p>'; };
+    $blocks = array(rv_h_p('Hi ' . rv_h($first) . ','), rv_h_p('Just a quick reminder of your appointment with us:'),
+        rv_h_facts(array('What' => $svc !== '' ? $svc : 'your 365 Techies visit', 'When' => date('l j F', $ts) . ' at ' . ltrim(date('g:ia', $ts), '0'))),
+        rv_h_panel('A few things that help us get you sorted quickly',
+            $tip('Leave the computer switched on and connected to the internet, and plug in your backup drive if you have one.')
+          . $tip('Have any passwords you know to hand. We will only ever ask for them in person, or during the appointment you booked with us &ndash; never in an out-of-the-blue phone call, whoever the caller says they are.')
+          . $tip('Jot down anything odd the machine has been doing, and roughly when it started. The little details often solve it fastest.')
+          . $tip('If it is a laptop, leave it plugged in so the battery is not flat.')),
+        rv_h_note('<strong style="color:#0b1226;">We will phone you before we arrive</strong> (or before we connect, for a remote session) &ndash; we never turn up or connect out of the blue.'),
+        rv_h_p('Need to move or cancel it? Your portal does both in a couple of taps &ndash; ' . $portal . ' &ndash; or just ring ' . $tel . '.'));
+    return rv_html_shell(array('title' => 'Your appointment reminder', 'eyebrow' => 'Appointment reminder', 'heading' => 'See you soon',
+        'preview' => ($svc !== '' ? $svc : 'Your 365 Techies visit') . ' - ' . date('l j F', $ts) . ' at ' . ltrim(date('g:ia', $ts), '0'),
+        'blocks' => $blocks, 'legal' => 'You are receiving this because you have a booking with 365 Techies.'));
+}
 function ics_build($summary, $st, $en, $uid, $seq) {
     $esc = function($s){ return preg_replace('/([\\\\,;])/', '\\\\$1', preg_replace('/[\r\n]+/', ' ', (string)$s)); };
     $tz = "BEGIN:VTIMEZONE\r\nTZID:Europe/London\r\n"
@@ -593,7 +708,37 @@ function ics_build($summary, $st, $en, $uid, $seq) {
 // (mark-under-lock before sending; unmarked again + Slack alert if the send fails,
 // so a retry can recover it). Change emails only fire when the START TIME actually
 // moved - admins editing notes must not email the customer.
-function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code) {
+/**
+ * What one booking webhook means for the customer's inbox, given what we already sent ($cf: 'cr' confirmed, 'ca'
+ * cancelled, 'h' the start we last told them). Pure, so the rules are tested on their own. Returns array($act, $cf):
+ *   'send'   - send $kind (confirm / change / cancel); $cf is already marked, to save BEFORE sending
+ *   'silent' - record $cf, send nothing (a never-confirmed booking adopted, or a visit that has already started)
+ *   'none'   - nothing to record or send (a webhook retry, or a "change" that did not move the time)
+ */
+function cf_decide($cf, $kind, $ts, $prevStart, $now) {
+    $cf = is_array($cf) ? $cf : array();
+    if ($kind === 'confirm' && isset($cf['cr'])) return array('none', $cf);           // webhook retry
+    if ($kind === 'cancel' && isset($cf['ca'])) return array('none', $cf);            // webhook retry
+    $silent = false;
+    if ($kind === 'change') {
+        if (!isset($cf['cr'])) {                                                      // a booking we never confirmed
+            $cf['cr'] = $now;                                                         // ...is ours from now on
+            if ($prevStart === null || (int)$prevStart === (int)$ts) $silent = true;  // unknown before, or not moved: adopt quietly
+        }
+        elseif ((isset($cf['h']) ? $cf['h'] : 0) === (int)$ts) return array('none', $cf);   // time didn't move
+    }
+    if ($ts && (int)$ts <= $now) $silent = true;   // the visit has started (or passed): too late for any booking email
+    if ($kind === 'confirm') $cf['cr'] = $now;
+    if ($kind === 'cancel') $cf['ca'] = $now;
+    $cf['h'] = (int)$ts;
+    return array($silent ? 'silent' : 'send', $cf);
+}
+// $prevStart (27 Oct 2026): the visit's start time as our queue held it BEFORE this webhook (null = we had never seen
+// this booking). A "change" to a booking we never confirmed used to be sent as a brand-new "Booked:" - so a long-
+// standing six-weekly booking edited in SimplyBook on the day got "You're booked in" at 10:44 for a 10:00 visit.
+// Now: never-confirmed + unknown before = adopt it silently; never-confirmed + known before = email only if the time
+// really moved, as a "New time". And no booking email at all once the visit's start has passed.
+function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code, $prevStart = null) {
     global $CF_LIVE;
     $bid = preg_replace('/[^0-9]/', '', (string)$bid);
     $email = strtolower(trim((string)$email));
@@ -611,27 +756,22 @@ function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code) {
     $cf = (isset($q['q'][$bid]['cf']) && is_array($q['q'][$bid]['cf'])) ? $q['q'][$bid]['cf'] : array();
     $prevH = isset($cf['h']) ? $cf['h'] : null;
     if (isset($q['optout'][sha1($email)])) { rvq_close($lk); return; }
-    if ($kind === 'confirm' && isset($cf['cr'])) { rvq_close($lk); return; }          // webhook retry
-    if ($kind === 'cancel' && isset($cf['ca'])) { rvq_close($lk); return; }           // webhook retry
-    if ($kind === 'change') {
-        if (!isset($cf['cr'])) $kind = 'confirm';                                     // change before we ever confirmed
-        elseif ((isset($cf['h']) ? $cf['h'] : 0) === (int)$ts) { rvq_close($lk); return; }   // time didn't move
-    }
+    list($act, $cf) = cf_decide($cf, $kind, $ts, $prevStart, time());
+    if ($act === 'none') { rvq_close($lk); return; }                                  // a webhook retry, or the time didn't move
+    $silent = ($act === 'silent');
     // mark BEFORE sending so a webhook retry seconds later can't double-send
-    if ($kind === 'confirm') $cf['cr'] = time();
-    if ($kind === 'cancel') $cf['ca'] = time();
-    $cf['h'] = (int)$ts;
     if (isset($q['q'][$bid])) { $q['q'][$bid]['cf'] = $cf; rvq_save($q); }
     rvq_close($lk);
 
-    if (!$CF_LIVE) return;   // safe mode: dedupe state still exercised, nothing sent
+    if (!$CF_LIVE || $silent) return;   // safe mode / nothing worth telling them: state recorded, nothing sent
 
     $icsN = ''; $icsD = '';
     if ($kind !== 'cancel' && $ts) {
         $icsN = '365-techies-booking.ics';
         $icsD = ics_build($sv, $ts, $ets, 'sb-' . $bid . '@365techies.co.uk', time());
     }
-    $ok = rv_send_raw($email, cf_subject($kind, $sv, $ts), cf_body($kind, rv_first($name), $sv, $ts, (string)$code), $icsN, $icsD);
+    $ok = rv_send_raw($email, cf_subject($kind, $sv, $ts), cf_body($kind, rv_first($name), $sv, $ts, (string)$code), $icsN, $icsD,
+                      cf_body_html($kind, rv_first($name), $sv, $ts, (string)$code));
     if (!$ok) {
         list($lk2, $q2) = rvq_open();
         if ($lk2) {
@@ -708,7 +848,7 @@ function bf_body($first, $to = '', $salt = '') {
     return 'Hi ' . $first . ",\r\n\r\n"
     // NEVER call us a shop here: there is no walk-in premises, and a customer who
     // reads "shop" may turn up at a door that isn't there (see the premises truth).
-    . "This is Steve and David at 365 Techies - the family-run team in\r\n"
+    . "This is David and Steve at 365 Techies - the family-run team in\r\n"
     . "Bournemouth who've been looking after your computers.\r\n\r\n"
     . "We've never got round to asking, so here it is: would you leave us a\r\n"
     . "Google review? It takes about 30 seconds, we read every one, and it is\r\n"
@@ -719,7 +859,7 @@ function bf_body($first, $to = '', $salt = '') {
     . "And if something hasn't been right, please reply to this email or call\r\n"
     . "01202 775566 instead, and we'll put it straight.\r\n\r\n"
     . "Thanks for being a customer,\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n\r\n"
     . "(This is a one-off ask, not a newsletter. To hear nothing like this again,\r\n"
@@ -794,7 +934,7 @@ function bf_seed() {
 function bf_process($cap = 0) {
     global $BF_LIVE, $BF_SEGMENTS, $BF_DAY_CAP, $BF_PLAN_MAX, $RV_LIVE, $RV_ASK_COOLDOWN;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
     $cap = $cap > 0 ? $cap : 3;                       // per run; the day cap is the real brake
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
@@ -916,10 +1056,25 @@ function rv_send($to, $first, $kind = 'review', $meta = array()) {
 // no $html, fall through to the plain-text branch below, and nothing about their send
 // changes. Only the welcome email uses it. The HTML part is base64'd because SMTP caps
 // a line at 998 chars (RFC 5321) and hand-written HTML blows straight through that.
-function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html = '') {
-    $to = strtolower(trim((string)$to));
-    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
-    if ($icsData !== '') {
+/** The message body and its Content-Type: the text, the HTML and a calendar file in the right nesting. Pure, so the
+ *  structure is tested without sending anything. */
+function rv_mime($body, $icsName = '', $icsData = '', $html = '') {
+    if ($icsData !== '' && $html !== '') {
+        /* 27 Oct 2026: the booking emails carry a calendar file AND the house HTML, so: mixed { alternative
+           { text, HTML }, calendar }. The branch below used to drop the HTML whenever a calendar was attached,
+           which is why our confirmations were plain text while every other email was designed. */
+        $bnd = 'b365' . bin2hex(random_bytes(8)); $alt = 'a365' . bin2hex(random_bytes(8));
+        $ctype = 'Content-Type: multipart/mixed; boundary="' . $bnd . '"';
+        $payload = '--' . $bnd . "\r\nContent-Type: multipart/alternative; boundary=\"" . $alt . "\"\r\n\r\n"
+                 . '--' . $alt . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $body
+                 . "\r\n--" . $alt . "\r\nContent-Type: text/html; charset=UTF-8\r\n"
+                 . "Content-Transfer-Encoding: base64\r\n\r\n"
+                 . chunk_split(base64_encode($html), 76, "\r\n")
+                 . '--' . $alt . "--\r\n"
+                 . '--' . $bnd . "\r\nContent-Type: text/calendar; charset=UTF-8; method=PUBLISH\r\n"
+                 . 'Content-Disposition: attachment; filename="' . $icsName . '"' . "\r\n\r\n" . $icsData
+                 . "\r\n--" . $bnd . "--\r\n";
+    } elseif ($icsData !== '') {
         $bnd = 'b365' . bin2hex(random_bytes(8));
         $ctype = 'Content-Type: multipart/mixed; boundary="' . $bnd . '"';
         $payload = '--' . $bnd . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $body
@@ -937,6 +1092,12 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html =
                  . chunk_split(base64_encode($html), 76, "\r\n")   // already ends in CRLF
                  . '--' . $bnd . "--\r\n";
     } else { $ctype = 'Content-Type: text/plain; charset=UTF-8'; $payload = $body; }
+    return array($ctype, $payload);
+}
+function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html = '') {
+    $to = strtolower(trim((string)$to));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+    list($ctype, $payload) = rv_mime($body, $icsName, $icsData, $html);
     $cfg = __DIR__ . '/pcm-smtp.php';
     if (is_readable($cfg)) {
         include $cfg;
@@ -1099,7 +1260,7 @@ function wc_body($first) {
     . "two people you always get.\r\n\r\n"
     . "If anything in there puzzles you, just reply to this email or ring us.\r\n"
     . "There is no such thing as a daft question.\r\n\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n";
 }
@@ -1168,7 +1329,7 @@ function wc_body_html($first) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>
 <p style="margin:22px 0 16px 0;font-size:16px;line-height:1.62;color:#3d4d6d !important;"><strong style="color:#0b1226;">Nothing changes unless you want it to.</strong> Your plan, your price and your visits carry on exactly as they are. The phone still works and always will &mdash; if you would rather ring us, ring us, and you will get the same two people you always get.</p>
 <p style="margin:0 0 20px 0;font-size:16px;line-height:1.62;color:#3d4d6d !important;">If anything in there puzzles you, just reply to this email or give us a ring. There is no such thing as a daft question.</p>
-<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>
+<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>David and Steve</strong></p>
 <p style="margin:0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">365 Techies &middot; family-run IT support in Bournemouth since 1995<br /><a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; <a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>
 </td></tr>
 
@@ -1222,7 +1383,7 @@ function wl_body($first) {
     . "six-digit code to let you in, and that device stays signed in too.\r\n\r\n"
     . "Thank you, genuinely, for being with us. We are a family firm and\r\n"
     . "everything we build gets built because people like you stayed with us.\r\n\r\n"
-    . "Steve & David\r\n"
+    . "David & Steve\r\n"
     . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
     . "01202 775566 - https://365techies.co.uk\r\n\r\n"
     . "P.S. There is more coming. We are finishing an app called 365 PC Manager\r\n"
@@ -1350,7 +1511,7 @@ function rv_html_shell($opts) {
     . '</td></tr>'
     . '<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:8px 32px 30px 32px;font-family:' . $F . ';">'
     . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>'
-    . '<p style="margin:22px 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>'
+    . '<p style="margin:22px 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>David and Steve</strong></p>'
     . '<p style="margin:0 0 ' . ($after !== '' ? '20px' : '0') . ' 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">'
     . '365 Techies &middot; family-run IT support in Bournemouth since 1995<br />'
     . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; '
@@ -1455,7 +1616,7 @@ function wl_body_html($first) {
 <tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:26px 32px 30px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e3eaf4;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr></table>
 <p style="margin:22px 0 18px 0;font-size:17px;line-height:1.62;color:#243352 !important;">Thank you, genuinely, for being with us. We are a family firm and everything we build gets built because people like you stayed with us.</p>
-<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>Steve and David</strong></p>
+<p style="margin:0 0 3px 0;font-size:17px;color:#0b1226 !important;"><strong>David and Steve</strong></p>
 <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">365 Techies &middot; family-run IT support in Bournemouth since 1995<br /><a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202 775566</a> &middot; <a href="mailto:info@365techies.co.uk" style="color:#1266a8;text-decoration:none;">info@365techies.co.uk</a></p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
 <td bgcolor="#fbfcfe" style="background-color:#fbfcfe;border:1px dashed #dbe5f2;border-radius:10px;padding:16px 20px;">
@@ -1561,7 +1722,7 @@ function wc_mark_sent($ckey) {
 function wc_process($cap = 5) {
     global $WC_LIVE, $WC_MAX_AGE, $WC_DELAY;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
     if (!isset($q['wc'])) { rvq_close($lk); return array('due' => 0, 'sent' => 0); }
@@ -1633,7 +1794,7 @@ function wc_process($cap = 5) {
 function rv_process($cap = 5) {
     global $RV_LIVE, $RV_ASK_WINDOW, $RV_ASK_DELAY, $RV_ASK_COOLDOWN;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');   // no 3am review asks
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only   // no 3am review asks
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
     if ((isset($q['run_ts']) ? $q['run_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
@@ -1721,7 +1882,7 @@ function rv_process($cap = 5) {
 function dn_process($cap = 5) {
     global $DN_LIVE;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
 
     // read the completed-status map BEFORE taking the queue lock (lock-order rule:
     // nothing in this file may ever hold the data lock and the queue lock together)
@@ -1748,6 +1909,7 @@ function dn_process($cap = 5) {
             if ($dn === 'pending') $q['q'][$bid]['dn'] = 'skipped';
             continue;
         }
+        if ((isset($e['st']) ? $e['st'] : '') === 'seeded') continue;   // there for the reminder only (rv_seed)
         $retryable = ($dn === 'sending' && (isset($e['dn_snd']) ? $e['dn_snd'] : 0) < time() - 600
                       && (isset($e['dn_tries']) ? $e['dn_tries'] : 0) < 3);
         if ($dn !== 'pending' && !$retryable) continue;
@@ -2027,13 +2189,23 @@ function sr_apps_updated($sr) {
     return false;
 }
 function sr_body($first, $sr) {
-    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
     $t = 'Hi ' . $first . ",\r\n\r\n"
        . (!empty($sr['selfrun'])
             ? "You ran your full 365 service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " yourself. Here is the\r\n"
             : "Today's six-weekly service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " is done. Here is the\r\n")
        . "short version - the full written report is one link away below, and it\r\n"
        . "is in your portal for good.\r\n\r\n";
+    return $t . sr_pc_text($sr) . "\r\n"
+        . 'Full report: ' . $sr['url'] . "\r\n"
+        . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
+        . sr_text_tail($sr);
+}
+/** One computer's part of the report email, the score down to the facts. Shared by the one-computer email and the
+ *  household email that carries several (27 Oct 2026, owner: "combine service reports for households with two or
+ *  more computers"). */
+function sr_pc_text($sr) {
+    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
+    $t = '';
     if ($score !== null) {
         $t .= '  365 HEALTH SCORE   ' . $score . '%  ' . sr_verdict($score) . "\r\n"
             . '  ' . sr_delta($score, $sr['prev'], $sr['prev_ts']) . "\r\n\r\n";
@@ -2087,22 +2259,22 @@ function sr_body($first, $sr) {
     // would promise a visit they do not pay for. A missing flag means NOT on a plan, so an
     // entry queued before this rule simply loses the line - the safe direction.
     if (!empty($sr['pro'])) $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n";
-    $t .= "\r\n"
-        . 'Full report: ' . $sr['url'] . "\r\n"
-        . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
-        . (!empty($sr['cc_to']) ? 'A copy of this report has gone to ' . $sr['cc_to'] . ", as you asked. Want that\r\nstopped? Reply to this email or ring 01202 775566.\r\n\r\n" : '')
+    return $t;
+}
+/** The end of every report email (text): who has a copy, how to reach us, who we are, the sign-off. */
+function sr_text_tail($sr) {
+    return (!empty($sr['cc_to']) ? 'A copy of this report has gone to ' . $sr['cc_to'] . ", as you asked. Want that\r\nstopped? Reply to this email or ring 01202 775566.\r\n\r\n" : '')
         . "Anything not behaving the way it should? Reply to this email or ring\r\n"
         . "01202 775566 and we will make it right.\r\n\r\n"
-        . "You know who we are: 365 Techies is a local family business - Steve and\r\n"
-        . "David, Bournemouth, since 1995. We will never ask for passwords or payment\r\n"
+        . "You know who we are: 365 Techies is a local family business - David and\r\n"
+        . "Steve, Bournemouth, since 1995. We will never ask for passwords or payment\r\n"
         . "in an out-of-the-blue phone call or pop-up, and nobody rings on our behalf.\r\n"
         . "If anyone does, however official they sound, hang up and ring us on\r\n"
         . "01202 775566.\r\n\r\n"
         . rv_t_linkedin()
-        . "Steve & David\r\n"
+        . "David & Steve\r\n"
         . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
         . "01202 775566 - https://365techies.co.uk\r\n";
-    return $t;
 }
 
 /** HTML twin, on the house shell. Says exactly what the text says. */
@@ -2116,6 +2288,14 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
                  : 'Today&rsquo;s six-weekly service on your <strong style="color:#0b1226;">' . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'computer') . '</strong> is done. ')
              . 'Here is the short version &ndash; the full written report is one tap away below, and it is in your portal for good.'),
     );
+    return sr_html_wrap($sr, array_merge($blocks, sr_pc_html($sr), sr_html_tail($sr)), $famIntro, $famFoot);
+}
+/** One computer's part of the report email (HTML), the score down to the facts, then the button - or, in the
+ *  household email ($multi), a plain link: one big button per email, never three. */
+function sr_pc_html($sr, $multi = false) {
+    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
+    $verdict = $score !== null ? sr_verdict($score) : '';
+    $blocks = array();
     if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
     if (!empty($sr['sec'])) $blocks[] = rv_h_security($sr['sec']);
     if (!empty($sr['progs'])) $blocks[] = rv_h_progs($sr['progs'], isset($sr['progs_more']) ? (int)$sr['progs_more'] : 0);
@@ -2143,9 +2323,20 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
     // support-plan customers only - see the note in sr_body()
     if (!empty($sr['pro'])) $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
     $blocks[] = rv_h_facts($facts);
+    if ($multi) {
+        $blocks[] = '<p style="margin:2px 0 6px 0;font-size:16px;line-height:1.6;">'
+                  . '<a href="' . rv_h($sr['url']) . '" style="color:#1266a8;font-weight:700;text-decoration:none;">View the full report for '
+                  . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'this computer') . ' &rarr;</a></p>';
+        return $blocks;
+    }
     $blocks[] = rv_h_cta('View the full report', $sr['url']);
     $blocks[] = '<p style="margin:14px 0 18px 0;font-size:14px;line-height:1.6;color:#7c8aa5 !important;text-align:center;">'
               . 'Also filed under Service reports in <a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your 365 portal</a>.</p>';
+    return $blocks;
+}
+/** The end of every report email (HTML): who has a copy, how to reach us, who we are, LinkedIn. */
+function sr_html_tail($sr) {
+    $blocks = array();
     if (!empty($sr['cc_to'])) $blocks[] = rv_h_p('A copy of this report has gone to <strong style="color:#0b1226;">' . rv_h($sr['cc_to']) . '</strong>, as you asked. Want that stopped? Reply to this email or ring '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
     $blocks[] = rv_h_p('Anything not behaving the way it should? Reply to this email or ring '
@@ -2154,11 +2345,17 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
     // the security line that matters most in a scam-heavy year: who we are, and that nobody
     // else ever rings on our behalf. A local family firm is the thing a cold caller cannot fake.
     $blocks[] = rv_h_panel('You know who we are',
-                '365 Techies is a <strong style="color:#0b1226;">local family business</strong> &ndash; Steve and David, Bournemouth, since 1995. '
+                '365 Techies is a <strong style="color:#0b1226;">local family business</strong> &ndash; David and Steve, Bournemouth, since 1995. '
               . 'We will never ask for passwords or payment in an out-of-the-blue phone call or pop-up, and <strong style="color:#0b1226;">nobody rings on our behalf</strong>. '
               . 'If anyone does, however official they sound, hang up and ring us on '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
     $blocks[] = rv_h_linkedin();
+    return $blocks;
+}
+/** The one-computer report email's shell: a relative's intro and stop line when it is their copy. */
+function sr_html_wrap($sr, $blocks, $famIntro = '', $famFoot = '') {
+    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
+    $verdict = $score !== null ? sr_verdict($score) : '';
     // a relative's copy: the same report, with who asked for it on top and how to stop it underneath
     if ($famIntro !== '') array_unshift($blocks, rv_h_note($famIntro));
     if ($famFoot !== '') $blocks[] = '<p style="margin:14px 0 4px 0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">' . $famFoot . '</p>';
@@ -2464,6 +2661,9 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'ts' => $ts, 'exp' => $exp,
         'url' => sr_link($kh, $machine, $ts, $exp, $q['salt']),
         'st' => 'pending', 'tries' => 0, 'made' => time(),
+        // 27 Oct 2026, the household email: which computer this is, and how many the customer has in use (seen in the
+        // last 60 days), so sr_process can wait a little for the others serviced the same day and send them together
+        'mach' => $machine, 'npc' => sr_active_pcs($cust),
     );
     // A copy for the relative the customer named (report_cc, set by staff once the customer has said yes).
     // It is queued as its own entry so it is sent, retried and stopped on its own, and the customer's email
@@ -2543,17 +2743,113 @@ function sr_fam_body_html($sr, $salt) {
     return sr_body_html($for !== '' ? $for : 'there', $sr, $intro, $foot);
 }
 
+/* ---- the household email (27 Oct 2026, owner: "combine service reports for households with two or more computers").
+   A customer whose computers are serviced on the same day used to get one email per computer, minutes apart. Now
+   sr_process sends their reports together: one email, one section per computer (the same blocks the one-computer email
+   uses), one link per report instead of one big button each, and the shared ending once. */
+function sr_multi_pcs($list) {
+    $n = array(); foreach ($list as $sr) $n[] = $sr['pc'] !== '' ? $sr['pc'] : 'a computer';
+    return $n;
+}
+function sr_multi_subject($list) {
+    return 'Your service reports - ' . count($list) . ' computers, ' . date('j F', (int)$list[0]['ts']);
+}
+function sr_multi_intro_t($list) {
+    $self = true; foreach ($list as $sr) if (empty($sr['selfrun'])) $self = false;
+    return ($self ? 'You ran your full 365 service on ' . count($list) . " computers yourself. Here is the short\r\n"
+                  : "Today's six-weekly service on your " . count($list) . " computers is done. Here is the short\r\n")
+         . "version for each - every full report is one link away, and they are all in\r\nyour portal for good.\r\n\r\n";
+}
+function sr_multi_body($first, $list) {
+    $t = 'Hi ' . $first . ",\r\n\r\n" . sr_multi_intro_t($list);
+    foreach ($list as $sr) {
+        $pc = $sr['pc'] !== '' ? $sr['pc'] : 'Computer';
+        $t .= strtoupper($pc) . "\r\n" . str_repeat('-', min(72, strlen($pc))) . "\r\n" . sr_pc_text($sr) . "\r\n" . 'Full report: ' . $sr['url'] . "\r\n\r\n";
+    }
+    return $t . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n" . sr_text_tail($list[0]);
+}
+function sr_multi_body_html($first, $list, $famIntro = '', $famFoot = '') {
+    $self = true; foreach ($list as $sr) if (empty($sr['selfrun'])) $self = false;
+    $blocks = array(rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p(($self ? 'You ran your full 365 service on <strong style="color:#0b1226;">' . count($list) . ' computers</strong> yourself. '
+                      : 'Today&rsquo;s six-weekly service on your <strong style="color:#0b1226;">' . count($list) . ' computers</strong> is done. ')
+             . 'Here is the short version for each &ndash; every full report is one tap away, and they are all in your portal for good.'));
+    foreach ($list as $sr) {
+        $blocks[] = '<h2 style="margin:28px 0 12px 0;padding-top:18px;border-top:1px solid #e3eaf4;font-size:21px;line-height:1.3;font-weight:700;color:#0b1226 !important;">'
+                  . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'Computer') . '</h2>';
+        $blocks = array_merge($blocks, sr_pc_html($sr, true));
+    }
+    $blocks[] = '<p style="margin:18px 0 18px 0;font-size:14px;line-height:1.6;color:#7c8aa5 !important;text-align:center;">'
+              . 'All filed under Service reports in <a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your 365 portal</a>.</p>';
+    $blocks = array_merge($blocks, sr_html_tail($list[0]));
+    if ($famIntro !== '') array_unshift($blocks, rv_h_note($famIntro));
+    if ($famFoot !== '') $blocks[] = '<p style="margin:14px 0 4px 0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">' . $famFoot . '</p>';
+    $scores = array(); foreach ($list as $sr) if (isset($sr['score']) && $sr['score'] !== null) $scores[] = ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . ' ' . (int)$sr['score'] . '%';
+    $whoFor = !empty($list[0]['fam']) ? rv_first(isset($list[0]['fam']['for']) ? $list[0]['fam']['for'] : '') : '';
+    if ($whoFor === 'there') $whoFor = '';
+    return rv_html_shell(array(
+        'title' => $famIntro !== '' ? 'A copy of service reports' : 'Your service reports',
+        'eyebrow' => 'Service reports · ' . date('j F Y', (int)$list[0]['ts']),
+        'heading' => $famIntro !== '' ? (($whoFor !== '' ? $whoFor . "'s " : 'The ') . 'six-weekly service is done') : ($self ? 'Your self-run service is done' : 'Your six-weekly service is done'),
+        'preview' => count($list) . ' computers' . ($scores ? ' - ' . implode(', ', $scores) : '') . '. What we did on each today.',
+        'blocks' => $blocks,
+        'after' => rv_h_referral(),
+    ));
+}
+function sr_fam_multi_subject($list) {
+    list($to, $for) = sr_fam_names($list[0]);
+    return ($for !== '' ? $for . "'s" : 'A') . ' service reports, sent at their request - ' . count($list) . ' computers, ' . date('j F', (int)$list[0]['ts']);
+}
+function sr_fam_multi_body($list, $salt) {
+    list($to, $for) = sr_fam_names($list[0]);
+    $who = $for !== '' ? $for : 'Our customer';
+    return 'Hi ' . $to . ",\r\n\r\n"
+         . $who . ' asked us to send you a copy of each service report for their computers, so you' . "\r\n"
+         . "can see they are being looked after. Here they are, exactly as we sent them to " . ($for !== '' ? $for : 'them') . ".\r\n\r\n"
+         . "------------------------------------------------------------------------\r\n\r\n"
+         . sr_multi_body($for !== '' ? $for : 'there', $list)
+         . "\r\n------------------------------------------------------------------------\r\n"
+         . 'You are getting this because ' . $who . " asked us to copy you in. To stop your copies\r\n"
+         . '(it only stops yours): ' . sr_fam_stop_url(isset($list[0]['em']) ? $list[0]['em'] : '', $salt) . "\r\n"
+         . "Or just reply to this email, or ring 01202 775566.\r\n";
+}
+function sr_fam_multi_body_html($list, $salt) {
+    list($to, $for) = sr_fam_names($list[0]);
+    $who = $for !== '' ? $for : 'Our customer';
+    $intro = 'Hi ' . rv_h($to) . '. <strong style="color:#0b1226;">' . rv_h($who) . '</strong> asked us to send you a copy of each service report for their computers, '
+           . 'so you can see they are being looked after. Here they are, exactly as we sent them to ' . rv_h($for !== '' ? $for : 'them') . '.';
+    $foot = 'You are getting this because ' . rv_h($who) . ' asked us to copy you in. '
+          . '<a href="' . rv_h(sr_fam_stop_url(isset($list[0]['em']) ? $list[0]['em'] : '', $salt)) . '" style="color:#1266a8;font-weight:600;">Stop my copies</a> '
+          . '(only yours stop), or reply to this email, or ring 01202&nbsp;775566.';
+    return sr_multi_body_html($for !== '' ? $for : 'there', $list, $intro, $foot);
+}
+/** How many of the customer's computers are in use: seen by PC Manager in the last 60 days (one with no date counts). */
+function sr_active_pcs($cust) {
+    $n = 0;
+    foreach ((is_array($cust) && isset($cust['machines']) && is_array($cust['machines']) ? $cust['machines'] : array()) as $m) {
+        if (!is_array($m)) continue;
+        $seen = isset($m['seen']) ? strtotime((string)$m['seen'] . ' UTC') : false;
+        if ($seen === false || $seen > time() - 5184000) $n++;
+    }
+    return max(1, $n);
+}
+/** Which computer a queued report is for: its own field, else the middle of its id (kh-machine-ts[-f]). */
+function sr_mach_of($id, $e) {
+    if (!empty($e['mach'])) return (string)$e['mach'];
+    return preg_match('/^[a-f0-9]+-([a-f0-9]+)-\d+/', (string)$id, $m) ? $m[1] : (string)$id;
+}
+
 /* ---- send them. Mirrors dn_process: quiet hours, mark-before-send, release the
    lock before SMTP, three tries, Slack heartbeat. Never opt-out gated (transactional). */
 function sr_process($cap = 5) {
     global $SR_LIVE, $SR_LIVE_SINCE;
     $h = (int)date('G');
-    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
     if ((isset($q['srrun_ts']) ? $q['srrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
     $q['srrun_ts'] = time();
-    $picked = array(); $due = 0; $held = 0;
+    $picked = array(); $due = 0; $held = 0; $waiting = 0; $super = 0; $cand = array();
     $salt = isset($q['salt']) ? (string)$q['salt'] : '';
     foreach ($q['sr'] as $id => $e) {
         $st = isset($e['st']) ? $e['st'] : 'pending';
@@ -2564,34 +2860,70 @@ function sr_process($cap = 5) {
         if ((isset($e['ts']) ? (int)$e['ts'] : 0) < (int)$SR_LIVE_SINCE) { $q['sr'][$id]['st'] = 'held'; $q['sr'][$id]['why'] = 'pre_flip'; $held++; continue; }   // arrived while dark: never sent
         if ((isset($e['ts']) ? (int)$e['ts'] : 0) < time() - 1209600) { $q['sr'][$id]['st'] = 'skipped'; continue; }   // >14 days: stale
         if (!isset($e['em']) || !filter_var($e['em'], FILTER_VALIDATE_EMAIL)) { $q['sr'][$id]['st'] = 'skipped'; continue; }
-        $due++;
+        $cand[strtolower(trim((string)$e['em'])) . (!empty($e['fam']) ? '|f' : '|o')][] = $id;   // by recipient, own copy or a relative's
+    }
+    /* 27 Oct 2026 (owner: no customer bombarded; "combine service reports for households with two or more computers"):
+       per recipient - one report per computer per day (the newest wins; one already emailed that day is not sent again),
+       and a household's computers in ONE email, waiting up to 90 minutes after the latest report for the others. */
+    foreach ($cand as $g => $ids) {
+        $keep = array();
+        foreach ($ids as $id) {
+            $e = $q['sr'][$id]; $mk = sr_mach_of($id, $e) . '|' . date('Y-m-d', (int)$e['ts']);
+            if (isset($keep[$mk]) && (int)$q['sr'][$keep[$mk]]['ts'] >= (int)$e['ts']) { $q['sr'][$id]['st'] = 'superseded'; $q['sr'][$id]['why'] = 'newer_report_same_day'; $super++; continue; }
+            if (isset($keep[$mk])) { $q['sr'][$keep[$mk]]['st'] = 'superseded'; $q['sr'][$keep[$mk]]['why'] = 'newer_report_same_day'; $super++; }
+            $keep[$mk] = $id;
+        }
+        foreach ($q['sr'] as $oid => $o) {
+            if ((isset($o['st']) ? $o['st'] : '') !== 'sent' || !isset($o['em'])) continue;
+            if (strtolower(trim((string)$o['em'])) . (!empty($o['fam']) ? '|f' : '|o') !== $g) continue;
+            $omk = sr_mach_of($oid, $o) . '|' . date('Y-m-d', (int)(isset($o['ts']) ? $o['ts'] : 0));
+            if (isset($keep[$omk])) { $q['sr'][$keep[$omk]]['st'] = 'skipped'; $q['sr'][$keep[$omk]]['why'] = 'already_sent_today'; unset($keep[$omk]); $super++; }
+        }
+        if (!$keep) continue;
+        $npc = 1; $last = 0;
+        foreach ($keep as $id) { $npc = max($npc, (int)(isset($q['sr'][$id]['npc']) ? $q['sr'][$id]['npc'] : 1)); $last = max($last, (int)(isset($q['sr'][$id]['made']) ? $q['sr'][$id]['made'] : 0)); }
+        if (count($keep) < $npc && $last > time() - 5400) { $waiting += count($keep); continue; }   // the other computers may be minutes away
+        $due += count($keep);
         if ($SR_LIVE && count($picked) < $cap) {
-            $q['sr'][$id]['st'] = 'sending';
-            $q['sr'][$id]['snd'] = time();
-            $q['sr'][$id]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
-            $picked[$id] = $q['sr'][$id];
+            $pg = array();
+            foreach ($keep as $id) {
+                $q['sr'][$id]['st'] = 'sending';
+                $q['sr'][$id]['snd'] = time();
+                $q['sr'][$id]['tries'] = (isset($q['sr'][$id]['tries']) ? $q['sr'][$id]['tries'] : 0) + 1;
+                $pg[$id] = $q['sr'][$id];
+            }
+            uasort($pg, function ($a, $b) { return strcmp((string)$a['pc'], (string)$b['pc']); });   // a steady order: by computer name
+            $picked[$g] = $pg;
         }
     }
     rvq_save($q);
     rvq_close($lk);   // NEVER hold the lock across slow SMTP
-    if (!$SR_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'held_pre_flip' => $held, 'sent' => 0);
+    if (!$SR_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'held_pre_flip' => $held, 'household_wait' => $waiting, 'superseded' => $super, 'sent' => 0);
     $sent = 0; $failed = 0; $names = array();
-    foreach ($picked as $id => $p) {
+    foreach ($picked as $g => $pg) {
+        $list = array_values($pg); $p = $list[0];
         $first = rv_first(isset($p['nm']) ? $p['nm'] : '');
-        $ok = !empty($p['fam'])
+        if (count($list) > 1) $ok = !empty($p['fam'])
+            ? rv_send_raw($p['em'], sr_fam_multi_subject($list), sr_fam_multi_body($list, $salt), '', '', sr_fam_multi_body_html($list, $salt))
+            : rv_send_raw($p['em'], sr_multi_subject($list), sr_multi_body($first, $list), '', '', sr_multi_body_html($first, $list));
+        else $ok = !empty($p['fam'])
             ? rv_send_raw($p['em'], sr_fam_subject($p), sr_fam_body($p, $salt), '', '', sr_fam_body_html($p, $salt))
             : rv_send_raw($p['em'], sr_subject($p), sr_body($first, $p), '', '', sr_body_html($first, $p));
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
-        if (isset($q2['sr'][$id]) && (isset($q2['sr'][$id]['st']) ? $q2['sr'][$id]['st'] : '') === 'sending') {
-            if ($ok) { $q2['sr'][$id]['st'] = 'sent'; $q2['sr'][$id]['sent_ts'] = time(); $sent++; $names[] = isset($p['nm']) ? $p['nm'] : ''; }
-            else { $q2['sr'][$id]['st'] = ((isset($q2['sr'][$id]['tries']) ? $q2['sr'][$id]['tries'] : 1) >= 3) ? 'failed' : 'pending'; $failed++; }
+        $n = 0;
+        foreach (array_keys($pg) as $id) {
+            if (!isset($q2['sr'][$id]) || (isset($q2['sr'][$id]['st']) ? $q2['sr'][$id]['st'] : '') !== 'sending') continue;
+            if ($ok) { $q2['sr'][$id]['st'] = 'sent'; $q2['sr'][$id]['sent_ts'] = time(); }
+            else $q2['sr'][$id]['st'] = ((isset($q2['sr'][$id]['tries']) ? $q2['sr'][$id]['tries'] : 1) >= 3) ? 'failed' : 'pending';
+            $n++;
         }
+        if ($n) { if ($ok) { $sent++; $names[] = (isset($p['nm']) ? $p['nm'] : '') . (count($list) > 1 ? ' (' . count($list) . ' computers)' : ''); } else $failed++; }
         rvq_save($q2);
         rvq_close($lk2);
     }
     if ($sent > 0 || $failed > 0) rv_slack_reports(':clipboard: 365 mail: service report emails sent ' . $sent . rv_name_list($names) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
-    return array('mode' => 'live', 'due' => $due, 'held_pre_flip' => $held, 'sent' => $sent, 'failed' => $failed);
+    return array('mode' => 'live', 'due' => $due, 'held_pre_flip' => $held, 'household_wait' => $waiting, 'sent' => $sent, 'failed' => $failed);
 }
 
 } // function_exists guard
@@ -2823,13 +3155,14 @@ if (!defined('RV_LIB')) {
         }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
-            $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
+            $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts), '', '', rm_body_html('Steve', 'Computer Health Check', $rts));
         } else {
             $sts = strtotime('next tuesday 10:00');
             $icsD = ($tkind === 'cancel') ? '' : ics_build('Computer Health Check', $sts, $sts + 5400, 'sb-sample@365techies.co.uk', time());
             $ok = rv_send_raw($tto, cf_subject($tkind, 'Computer Health Check', $sts),
                               cf_body($tkind, 'Steve', 'Computer Health Check', $sts, 'SAMPLE'),
-                              $icsD === '' ? '' : '365-techies-booking.ics', $icsD);
+                              $icsD === '' ? '' : '365-techies-booking.ics', $icsD,
+                              cf_body_html($tkind, 'Steve', 'Computer Health Check', $sts, 'SAMPLE'));
         }
         echo json_encode(array('ok' => (bool)$ok, 'mode' => 'test', 'kind' => $tkind, 'to' => $tto,
                                'note' => ($tnote !== '' ? $tnote : ($ok ? 'check the inbox (and spam folder on first send)' : 'send failed - check server mail config'))));

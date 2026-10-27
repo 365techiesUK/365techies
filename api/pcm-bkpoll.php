@@ -261,6 +261,19 @@ foreach ($toReview as $rr) {
     rv_record($rbid, $rem, $rnm, $rend, 'create', $rst, $rsvc);
     $rvQueued++;
 }
+// 27 Oct 2026: every upcoming booking into the reminder queue, plan-visit series included (rv_seed, pcm-review.php)
+$rvSeeded = 0;
+if (function_exists('rv_seed') && isset($br['result']) && is_array($br['result'])) {
+    $sd = array();
+    foreach ($rows as $b) {
+        $sbid = (int)(isset($b['id']) ? $b['id'] : 0); if ($sbid <= 0) continue;
+        $v = bp_visit_of($b);
+        if ($v['em'] === '' || $v['start'] <= time()) continue;
+        $sd[] = array('bid' => $sbid, 'em' => $v['em'], 'nm' => $v['nm'], 'start' => $v['start'], 'end' => $v['end'],
+                      'sv' => bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : '')));
+    }
+    $rvSeeded = rv_seed($sd);
+}
 
 // Slack AFTER releasing the lock (never hold the DB lock during outbound HTTP)
 $wh = ''; $swf = __DIR__ . '/slack-webhook.php';
@@ -290,5 +303,5 @@ $mailM = rm_process(5);
 $mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($DATA) : array('skip' => 'no_fn');
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'review_asks_queued' => $rvQueued,
+           'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded,
            'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));

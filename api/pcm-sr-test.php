@@ -104,15 +104,18 @@ ok(sr_token_verify('', $salt) === null && sr_token_verify('nonsense', $salt) ===
 
 echo "-- sending (safe mode)\n";
 $p = sr_process(5);
-ok(isset($p['mode']) && $p['mode'] === 'safe' && $p['due_waiting'] === 2 && $p['sent'] === 0, 'safe mode counts the due emails and sends none', json_encode($p));
+// 27 Oct 2026: $id (TS) and $r4 (TS+2) are the same computer, the same day - a re-upload. One email per computer per
+// day: the newest wins, the older is marked superseded and never sent.
+ok(isset($p['mode']) && $p['mode'] === 'safe' && $p['due_waiting'] === 1 && $p['superseded'] === 1 && $p['sent'] === 0, 'safe mode counts the due emails and sends none', json_encode($p));
 $e = q();
-ok($e['sr'][$id]['st'] === 'pending', 'the entry stays pending in safe mode');
+ok($e['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 2)]['st'] === 'pending', 'the newest report for that computer stays pending in safe mode');
+ok($e['sr'][$id]['st'] === 'superseded' && $e['sr'][$id]['why'] === 'newer_report_same_day', 'the older upload of the same computer that day is superseded, never sent');
 ok($p['held_pre_flip'] === 0, 'nothing made after the flip is held', json_encode($p));
 // a report that arrived while the feature was dark: held, never due, whatever the mode
 list($lkx, $qx) = rvq_open(); $qx['sr']['pre-flip-1'] = array('em' => 'someone@example.com', 'nm' => 'Old Report', 'st' => 'pending', 'ts' => $SR_LIVE_SINCE - 120, 'tries' => 0); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx);
 $p = sr_process(5);
 $e = q();
-ok($p['held_pre_flip'] === 1 && $p['due_waiting'] === 2 && $e['sr']['pre-flip-1']['st'] === 'held' && $e['sr']['pre-flip-1']['why'] === 'pre_flip', 'a report queued before the flip is held, not counted due, and marked why', json_encode($p) . ' ' . json_encode($e['sr']['pre-flip-1']));
+ok($p['held_pre_flip'] === 1 && $p['due_waiting'] === 1 && $e['sr']['pre-flip-1']['st'] === 'held' && $e['sr']['pre-flip-1']['why'] === 'pre_flip', 'a report queued before the flip is held, not counted due, and marked why', json_encode($p) . ' ' . json_encode($e['sr']['pre-flip-1']));
 list($lkx, $qx) = rvq_open(); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx);
 $p = sr_process(5);
 ok($p['held_pre_flip'] === 0 && q()['sr']['pre-flip-1']['st'] === 'held', 'a held report stays held on the next tick and is not re-counted');
@@ -213,7 +216,7 @@ ok(strpos($html, 'pcm-review.php?u=') === false, 'no unsubscribe link - it is tr
 // 25 Oct 2026 (owner: "the LinkedIn link in the reports"): a quiet text link in both bodies, before the sign-off - never a second button
 $liU = 'https://www.linkedin.com/company/365techies/';
 ok(strpos($html, $liU) !== false && strpos($text, $liU) !== false && strpos($text, 'On LinkedIn? Follow 365 Techies') !== false && strpos($html, 'Follow 365 Techies</a>') !== false, 'both bodies carry the LinkedIn follow line');
-ok(strpos($text, $liU) < strpos($text, 'Steve & David') && strpos($html, $liU) < strpos($html, '<strong>Steve and David</strong>'), 'the LinkedIn line sits before the sign-off');
+ok(strpos($text, $liU) < strpos($text, 'David & Steve') && strpos($html, $liU) < strpos($html, '<strong>David and Steve</strong>'), 'the LinkedIn line sits before the sign-off');
 ok(substr_count($html, 'background-color:#1d97e3;border-radius:9px;mso-padding-alt') === 1, 'still exactly one big button (the full report)');
 ok(stripos($html, ' vat') === false && stripos($html, 'safe to') === false, 'no VAT, no "safe"');
 ok(strpos($text, 'Hi Sofia,') === 0, 'text opens as every email does');
@@ -316,7 +319,9 @@ ok(!hash_equals(sr_fam_token($eh, $salt), rv_unsub_token($eh, $salt)), 'a review
 list($lk, $q) = rvq_open(); $q['famout'][$eh] = time(); $q['srrun_ts'] = 0; rvq_save($q); rvq_close($lk);
 $pr = sr_process(20);
 ok(q()['sr'][$fid . '-f']['st'] === 'skipped' && q()['sr'][$fid . '-f']['why'] === 'family_stopped', 'a relative who stopped their copies is skipped, never sent', json_encode($pr));
-ok(q()['sr'][$fid]['st'] === 'pending', "the customer's own report is untouched by the relative's stop");
+// (the customer's own $fid is a same-computer, same-day re-upload of the earlier fixtures, so the one-per-day rule may
+// supersede it - what matters here is that the RELATIVE's stop never touches it)
+ok(in_array(q()['sr'][$fid]['st'], array('pending', 'superseded'), true) && (isset(q()['sr'][$fid]['why']) ? q()['sr'][$fid]['why'] : '') !== 'family_stopped', "the customer's own report is untouched by the relative's stop");
 
 echo "\n-- running cost (PC Service Professional v4.4)\n";
 // the tool words it from Windows' own on/off record; the server only cleans, stores and prints it

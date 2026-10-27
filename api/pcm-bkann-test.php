@@ -50,7 +50,9 @@ ok(strpos($c, "bkann_mark(\$bid, 'cancel')") !== false && strpos($c, "bkann_mark
 $c = $seg("if (\$action === 'staffmove')", 2600);
 ok(strpos($c, "bkann_mark(\$bid, 'change')") !== false && strpos($c, "bkann_mark(") < strpos($c, "'editBook'"), 'a portal move is marked BEFORE SimplyBook hears of it');
 $c = $seg('function staff_book_core(', 2600);
-ok(strpos($c, "bkann_mark(\$bid, 'create')") !== false, 'every staff booking (Book a new job, Log a job we\'ve done) is marked create');
+ok(strpos($c, "bkann_mark(\$bid, \$logged ? array('create', 'logged') : 'create')") !== false, 'every staff booking (Book a new job, Log a job we\'ve done) is marked create, and a logged job also "logged"');
+$cb2 = (string)file_get_contents(__DIR__ . '/pcm-sb-callback.php');
+ok(strpos($cb2, "if (!bkann_recent(\$bid, 'logged')) cf_notify(") !== false, 'the callback sends no "Booked" email for a job logged as already done');
 $c = $seg("if (\$action === 'custlogjob')", 9000);
 ok(strpos($c, "bkann_mark(\$bid, 'change')") !== false && strpos($c, "bkann_mark(\$bid, 'change')") < strpos($c, "'setStatus'"), 'a logged job\'s SimplyBook copy is marked change before it is set Completed');
 

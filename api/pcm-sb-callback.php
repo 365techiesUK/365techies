@@ -109,12 +109,16 @@ if ($cph === '' && isset($b['client']) && is_array($b['client']) && !empty($b['c
 // announced in Slack by the book action), so we must not announce it twice
 $seenTs = rv_seen($bid);
 $ours = ($seenTs > 0 && $seenTs > time() - 300);
+$prevStart = rv_peek_start($bid);   // before rv_record overwrites it: did the time really move? (cf_notify)
 rv_record($bid, $email, $cnm, $ets, $type, $ts, $svcName);
 
 // immediate booking-lifecycle email (confirm/change/cancel) - see cf_notify's
 // dedupe rules; safe-mode gated by $CF_LIVE inside pcm-review.php
+// 27 Oct 2026: not for the SimplyBook copy of a job logged as already done in the portal ("Log a job we've done") -
+// it sits at the next free slot today, and "Booked: ... today 3:30pm" for finished work would only confuse.
+require_once __DIR__ . '/pcm-bkann-lib.php';
 $bcode = isset($b['code']) ? preg_replace('/[^A-Za-z0-9]/', '', (string)$b['code']) : '';
-cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode);
+if (!bkann_recent($bid, 'logged')) cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode, $prevStart);
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
