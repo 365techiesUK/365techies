@@ -872,6 +872,200 @@ SECBOOT = {
 }
 
 
+# ============================================================ 11-12. From the Bing read (27 Oct 2026)
+# Owner, 27 Oct 2026: "build all of them" (seo-research/site-optimise-2026-10-27/FINDINGS.md, proposals 2 and 5).
+#   - Phone Link: Bing UK "phone link" 17,663 in 3 months to 24 Oct (217K world); the biggest Windows how-to in the niche on
+#     YouTube (Microsoft Helps' Phone Link video 837K). Nothing on the site mentioned it. ANDROID ONLY (we give no Apple
+#     help). Facts = Microsoft Support, checked 27 Oct 2026: "Phone Link requirements and setup" (Windows 10 October 2022
+#     update or later, or Windows 11; Android 10 or later; same Wi-Fi; aka.ms/yourpc; same Microsoft account; QR code or
+#     Pair manually), "Introducing Microsoft Phone Link and Link to Windows" (Link to Windows preinstalled on select
+#     Samsung, HONOR, Surface Duo and OPPO phones; on Samsung it's in Quick Settings), "Manage mobile devices in Windows"
+#     (Settings > Bluetooth & devices > Mobile devices > Add device; Show mobile device in File Explorer, Use as a connected
+#     camera), "Troubleshooting photos in the Phone Link" (the 2,000 newest from Camera Roll and Screenshots, no videos) and
+#     "Import photos and videos from phone to PC" (USB cable + the Photos app's Import).
+#   - ntlworld / Blueyonder: Bing UK "ntlworld email login" ~9.7K + "ntlworld.com email login" 1.5K + "ntlworld email sign
+#     in" 1.1K + "blueyonder email" 2,234, nearly all UK; Copilot cites us for "ntlworld email not working" (~82). The
+#     Junara page covers the DECISION (owner, 27 Oct: leave that page alone); this one is the log-in / not-working page and
+#     links to it. Facts = memory virgin-media-app-password (Virgin's manage-email-settings + email-service-change pages,
+#     read 25-26 Sep 2026; Virgin Media O2 newsroom 9 Sep 2026): the four domains share Virgin Media Mail; webmail at
+#     mail.virginmedia.com with the normal password; Outlook / phones need the app password from My Virgin Media (a new one
+#     stops the old); IMAP imap.virginmedia.com 993 SSL, SMTP smtp.virginmedia.com 465 SSL, full address as user name; the
+#     Junara date at least 45 days after Virgin's first email, then suspended (old mail still viewable), 120 days to
+#     reactivate, then deleted; former customers go straight onto a paid plan; Virgin's emails have no sign-up link.
+PHONELINK = {
+    'slug': 'phone-link-android',
+    'title': 'Phone Link: Connect Your Android Phone to Windows',
+    'metaDesc': "Set up Phone Link to get your Android phone's photos, texts, calls and notifications on your Windows PC. Free, built into Windows, step by step.",
+    'ogTitle': 'Phone Link: your Android phone on your Windows PC',
+    'crumbName': 'Phone Link for Android',
+    'eyebrow': '// YOUR PHONE, ON YOUR PC',
+    'h1': 'Connect your Android phone with <em class="grad grad--cyan">Phone Link</em>',
+    'lede': 'Your photos are on your phone, the texts keep pinging, and you&rsquo;re sat at the computer. Phone Link is Microsoft&rsquo;s free app, already on your Windows PC, that puts your Android phone&rsquo;s photos, texts, calls and notifications on the PC screen. Here&rsquo;s how to set it up and get your photos across.',
+    'chips': ['Free, built into Windows', 'Android phones', 'About 5 minutes'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Set it up', '#s2'],
+    'ctaHead': 'Rather we set it up with you?',
+    'ctaSub': 'We do the PC side remotely while you hold the phone, and show you where your photos land. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Microsoft&rsquo;s free app for linking an Android phone to a Windows PC: photos, texts, calls and notifications on the PC.'),
+        ('You need', 'Windows 11, or Windows 10 with the October 2022 update or later; Android 10 or later; both on the same Wi-Fi.'),
+        ('On the PC', 'Phone Link is already there: type <strong>Phone Link</strong> in the Start menu.'),
+        ('On the phone', 'The <strong>Link to Windows</strong> app: already on many Samsung phones, otherwise free from Google Play.'),
+        ('Photos', 'The newest 2,000 photos and screenshots. Videos and older photos go across with a USB cable.'),
+        ('Changed your mind?', 'Remove the phone in Phone Link&rsquo;s settings and the link stops.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT DOES', 'h2': 'What Phone Link does',
+         'html': '<ul>'
+                 '<li><strong>Photos:</strong> the newest photos and screenshots from your phone, on the PC, ready to drag into a folder, an email or a document. No cable.</li>'
+                 '<li><strong>Messages:</strong> read and reply to your phone&rsquo;s text messages with the PC&rsquo;s keyboard.</li>'
+                 '<li><strong>Calls:</strong> make and answer phone calls through the PC&rsquo;s speakers and microphone (the PC needs Bluetooth).</li>'
+                 '<li><strong>Notifications:</strong> your phone&rsquo;s alerts pop up on the PC, so the phone can stay in your bag.</li>'
+                 '</ul>'
+                 '<p>Some Samsung, HONOR and OPPO phones get extras, such as opening the phone&rsquo;s apps on the PC. The phone does the calling and texting, on your own phone plan, as it always does: the PC just shows it.</p>'},
+        {'eyebrow': '/02 &mdash; SET IT UP', 'h2': 'Set up Phone Link, step by step',
+         'html': '<p>Have the phone unlocked and on the same Wi-Fi as the PC, and know your Microsoft account password (the one you sign in to Windows or Outlook.com with).</p>'
+                 '<ol>'
+                 '<li><strong>On the PC:</strong> open the Start menu, type <strong>Phone Link</strong> and open it. Choose <strong>Android</strong> and sign in with your Microsoft account if it asks.</li>'
+                 '<li><strong>On the phone:</strong> open the web browser and go to <strong>aka.ms/yourpc</strong>. It opens the <strong>Link to Windows</strong> app, or takes you to Google Play to get it free. On a Samsung phone it&rsquo;s often there already: swipe down from the top of the screen and look for <strong>Link to Windows</strong> in Quick Settings.</li>'
+                 '<li>In Link to Windows, sign in with the <strong>same Microsoft account</strong> as the PC.</li>'
+                 '<li><strong>On the PC,</strong> choose to pair with a <strong>QR code</strong>. Scan the code on the PC screen with the camera inside the Link to Windows app. (No camera handy? Choose <strong>Pair manually</strong> instead.)</li>'
+                 '<li>The phone asks for permissions, such as photos and messages. Allow the ones for what you want on the PC: that&rsquo;s what lets them appear.</li>'
+                 '<li>Press <strong>Done</strong> on the phone and go back to the PC. Your phone&rsquo;s name appears at the top of Phone Link.</li>'
+                 '</ol>'
+                 '<p><strong>Windows 11 shortcut:</strong> Settings, <strong>Bluetooth &amp; devices</strong>, <strong>Mobile devices</strong>, then <strong>Add device</strong> shows the QR code too. That route can also show the phone in File Explorer and use its camera as a webcam, under <strong>Manage devices</strong>.</p>'},
+        {'eyebrow': '/03 &mdash; YOUR PHOTOS', 'h2': 'Get your phone&rsquo;s photos onto your PC',
+         'html': '<ol>'
+                 '<li>In Phone Link, choose <strong>Photos</strong> at the top.</li>'
+                 '<li>Drag a photo onto the desktop or into a folder, or right-click it and choose <strong>Save as</strong>. Hold Ctrl to pick several.</li>'
+                 '</ol>'
+                 '<p>Phone Link shows the <strong>2,000 newest</strong> photos and screenshots from the phone&rsquo;s camera and Screenshots folders. It doesn&rsquo;t bring videos across. For videos, older photos or the whole lot at once, use the cable:</p>'
+                 '<ol>'
+                 '<li>Plug the phone into the PC with its charging cable (one that carries data, not a charge-only one).</li>'
+                 '<li>Unlock the phone, tap the <strong>USB</strong> notification and choose <strong>File transfer</strong> (sometimes <strong>Transfer files</strong>).</li>'
+                 '<li>On the PC, open the <strong>Photos</strong> app and choose <strong>Import</strong>, then your phone. Pick the photos and videos and import them.</li>'
+                 '</ol>'
+                 '<p>Then keep a second copy: a PC that holds the only copy of your photos is one fault away from losing them. See <a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>'},
+        {'eyebrow': '/04 &mdash; WON&rsquo;T CONNECT?', 'h2': 'Phone Link won&rsquo;t connect, or keeps dropping?',
+         'html': '<ul>'
+                 '<li><strong>Same Wi-Fi.</strong> Both need to be on the same network. A phone that has slipped onto mobile data, or the guest Wi-Fi, can&rsquo;t see the PC.</li>'
+                 '<li><strong>Same Microsoft account</strong> on the phone&rsquo;s Link to Windows app and in Phone Link on the PC.</li>'
+                 '<li><strong>Battery saving.</strong> Many phones stop apps in the background to save battery, and Link to Windows then drops off. In the phone&rsquo;s Settings, under Apps, Link to Windows, Battery, let it run in the background (the words vary by phone).</li>'
+                 '<li><strong>Permissions.</strong> No photos or texts showing? Check Link to Windows is allowed to see them, in the phone&rsquo;s Settings under Apps.</li>'
+                 '<li><strong>Updates.</strong> Update Link to Windows in Google Play and Phone Link in the Microsoft Store, then restart both.</li>'
+                 '<li><strong>Calls won&rsquo;t work</strong> but the rest does? Calls go over Bluetooth: the PC needs Bluetooth switched on.</li>'
+                 '<li><strong>A work PC</strong> may have Phone Link switched off by the IT department.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; PRIVACY', 'h2': 'Is it safe, and how do I stop it?',
+         'html': '<p>Phone Link is Microsoft&rsquo;s own app, and you choose what it can see when the phone asks for permissions. Two things to know:</p>'
+                 '<ul>'
+                 '<li><strong>Anyone using your PC</strong> can see your texts and photos while the phone is linked. On a shared family PC, think about whether that&rsquo;s what you want, or lock the PC when you walk away (Windows key + L).</li>'
+                 '<li><strong>To stop it,</strong> open Phone Link&rsquo;s settings (the cog), find <strong>My devices</strong> and remove the phone. On the phone, open Link to Windows and remove the PC, or uninstall the app.</li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We do the PC side and talk you through the phone side, and show you where your photos land. This guide is for Android phones: we help with Windows PCs, not iPhones or Macs.')},
+    ],
+    'howToName': 'How to connect an Android phone to a Windows PC with Phone Link',
+    'howToSteps': [
+        {'name': 'Open Phone Link on the PC', 'text': 'Open the Start menu, type Phone Link, open it and choose Android. Sign in with your Microsoft account if it asks.'},
+        {'name': 'Get Link to Windows on the phone', 'text': 'On the phone go to aka.ms/yourpc in the browser, open or install Link to Windows, and sign in with the same Microsoft account.'},
+        {'name': 'Pair with the QR code', 'text': 'Choose to pair with a QR code on the PC and scan it with the camera in the Link to Windows app, or choose Pair manually.'},
+        {'name': 'Allow the permissions', 'text': 'Allow the permissions the phone asks for, such as photos and messages, press Done, and go back to the PC.'},
+        {'name': 'Open your photos', 'text': 'In Phone Link choose Photos and drag the ones you want into a folder. Use a USB cable and the Photos app for videos and older photos.'},
+    ],
+    'faqs': [
+        {'q': 'Is Phone Link free?', 'a': '<p>Yes. Phone Link comes with Windows 11 and recent Windows 10, and the Link to Windows app is free on Google Play. Calls and texts use your own phone plan, as they always do.</p>'},
+        {'q': 'Why can&rsquo;t I see all my photos in Phone Link?', 'a': '<p>It shows the 2,000 newest photos and screenshots from the phone&rsquo;s camera and Screenshots folders. For older photos, other folders or videos, plug the phone in with a USB cable and use Import in the Photos app.</p>'},
+        {'q': 'Can I move videos with Phone Link?', 'a': '<p>No, Phone Link doesn&rsquo;t bring videos across. Plug the phone in with a USB cable, choose File transfer on the phone, and import them with the Photos app.</p>'},
+        {'q': 'Does the phone need to be on the same Wi-Fi?', 'a': '<p>Yes, Microsoft asks for the phone and the PC to be on the same Wi-Fi network. Most connection problems are a phone that has slipped onto mobile data or a different network.</p>'},
+        {'q': 'Does Phone Link work with an iPhone?', 'a': '<p>Microsoft makes an iPhone version with fewer features, but this guide covers Android phones, and our help is for Windows PCs, not iPhones or Macs.</p>'},
+        {'q': 'Can you set it up for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and do that side, and talk you through the phone: you scan the code and allow the permissions. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">back up your photos</a>, <a href="/android-phone-course-for-beginners/">Android phone course for beginners</a>, <a href="/how-to-sign-a-pdf/">sign a PDF without printing it</a>, <a href="/emails-on-computer-but-not-phone/">emails on the computer but not the phone</a> and <a href="/webcam-mic-test/">webcam and microphone test</a>.</p>',
+}
+
+NTLWORLD = {
+    'slug': 'ntlworld-blueyonder-email-not-working',
+    'title': 'ntlworld or Blueyonder Email Not Working? Log In and Fix',
+    'metaDesc': 'ntlworld, Blueyonder and virgin.net addresses are Virgin Media email. Where to log in, the app password Outlook and phones need, and the Junara change.',
+    'ogTitle': 'ntlworld or Blueyonder email not working? Here is why',
+    'crumbName': 'ntlworld &amp; Blueyonder Email',
+    'eyebrow': '// NTLWORLD, BLUEYONDER, VIRGIN.NET',
+    'h1': 'ntlworld or Blueyonder email <em class="grad grad--cyan">not working</em>?',
+    'lede': 'You&rsquo;ve had the same ntlworld or Blueyonder address for twenty years and today it won&rsquo;t open, won&rsquo;t send, or keeps asking for a password. These addresses are Virgin Media email, and two things catch people out: the app password that Outlook and phones need, and the move to Junara. Here&rsquo;s how to log in, find out which it is, and fix it.',
+    'chips': ['ntlworld, Blueyonder, virgin.net', 'Windows PCs', 'Quickest checks first'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the checks', '#s2'],
+    'ctaHead': 'Still can&rsquo;t get in?',
+    'ctaSub': 'We sort it on your Windows PC while you watch, or move the whole mailbox to Gmail for you. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Whose email is it?', 'ntlworld.com, blueyonder.co.uk and virgin.net are all Virgin Media Mail, the same system as virginmedia.com.'),
+        ('Log in on the web', 'mail.virginmedia.com, with the full email address and its password.'),
+        ('Web fine, Outlook not?', 'Outlook, phones and tablets need a Virgin Media Mail <strong>app password</strong>, not the normal one.'),
+        ('Moved to Junara?', 'Then you sign in at junara.com instead.'),
+        ('Missed the Junara date?', 'The mailbox is suspended; you have 120 days to sign up before it&rsquo;s deleted for good.'),
+        ('Emails about it', 'Virgin&rsquo;s emails have no sign-up link. Type junara.com yourself; never click one.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHOSE EMAIL IS IT?', 'h2': 'ntlworld and Blueyonder are Virgin Media email',
+         'html': '<p>ntlworld addresses began with NTL&rsquo;s broadband, and Blueyonder with Telewest&rsquo;s. The two firms joined to become Virgin Media, and their email, with virgin.net, now all runs on <strong>Virgin Media Mail</strong>, the same system as virginmedia.com addresses.</p>'
+                 '<p>So whatever the address says, the help, the settings and the log-in are Virgin Media&rsquo;s, and everything below applies to all of them.</p>'},
+        {'eyebrow': '/02 &mdash; CHECK ONE', 'h2': 'Log in on the web first',
+         'html': '<ol>'
+                 '<li>Open your web browser, type <strong>mail.virginmedia.com</strong> into the address bar yourself, and press Enter.</li>'
+                 '<li>Sign in with the <strong>whole email address</strong> (name@ntlworld.com, say, not just the name) and that mailbox&rsquo;s password.</li>'
+                 '<li>Forgotten the password? Use the forgotten-password link on the sign-in page and follow Virgin&rsquo;s steps.</li>'
+                 '</ol>'
+                 '<p><strong>If it opens and your emails are there,</strong> the mailbox is fine and the problem is in Outlook or the phone: go to check two. <strong>If it says the account is suspended or moved,</strong> go to check three. <strong>If you&rsquo;ve already signed up with Junara,</strong> your mail now lives there: sign in at <strong>junara.com</strong> instead.</p>'},
+        {'eyebrow': '/03 &mdash; CHECK TWO', 'h2': 'Works on the web, but not in Outlook or on the phone?',
+         'html': '<p>Outlook, phones and tablets don&rsquo;t use your normal Virgin Media Mail password. They need a <strong>Virgin Media Mail app password</strong>, made in your Virgin Media account:</p>'
+                 '<ol>'
+                 '<li>Sign in to <strong>My Virgin Media</strong> (the My Virgin Media app on a phone is the surest place).</li>'
+                 '<li>Go to <strong>Account settings</strong>, then <strong>Account details</strong>, and under Virgin Media Mail choose <strong>Manage</strong> next to <strong>Manage your Virgin Media Mail app password</strong>.</li>'
+                 '<li>Choose <strong>Generate new App password</strong> and type it into Outlook, or the phone, where it asks for the password.</li>'
+                 '</ol>'
+                 '<p><strong>Careful:</strong> making a new app password stops the old one. Every phone and tablet already reading that mailbox will need the new one too, so list them first.</p>'
+                 '<p>The settings, if Outlook asks: incoming <strong>imap.virginmedia.com</strong>, port 993, SSL; outgoing <strong>smtp.virginmedia.com</strong>, port 465, SSL; user name = the whole email address; password = the app password. Step-by-step for Outlook, including the second-mailbox trap: <a href="/virgin-media-email-wont-add-to-new-outlook/">Virgin Media email won&rsquo;t add to Outlook</a>.</p>'},
+        {'eyebrow': '/04 &mdash; CHECK THREE', 'h2': 'Stopped suddenly? The move to Junara',
+         'html': '<p>In September 2026 Virgin Media O2 announced it is handing all its email, ntlworld, Blueyonder and virgin.net included, to an email company called <strong>Junara</strong>. Virgin is emailing customers in batches, each with a sign-up date at least 45 days later. To keep the address, you sign up with Junara before that date.</p>'
+                 '<ul>'
+                 '<li><strong>If the date passed,</strong> the mailbox is suspended: Outlook shows send and receive errors, though old emails can still be seen. You then have <strong>120 days</strong> to sign up with Junara before the mailbox is deleted for good.</li>'
+                 '<li><strong>Left Virgin Media</strong> but still use the address? It&rsquo;s included, and former customers go straight onto a paid Junara plan.</li>'
+                 '<li><strong>Keep it or move it?</strong> That decision, with the costs, the deadlines and the fake-email warning, is on <a href="/virgin-media-email-moving-to-junara/">Virgin Media email moving to Junara</a>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; RATHER NOT DEPEND ON IT?', 'h2': 'Move it to Gmail, and keep every email',
+         'html': '<p>If you&rsquo;ve left Virgin, have several old addresses in the house, or just want an address that doesn&rsquo;t depend on your broadband, you can move to a free Gmail address and take your emails and folders with you, while the old mailbox is still open.</p>'
+                 '<p>Our free 365 PC Manager app does the copying on a Windows PC, or we do the whole move for &pound;60 per email address, agreed before we start: see <a href="/move-virgin-media-email-to-gmail/">move Virgin Media email to Gmail</a>.</p>'},
+        {'eyebrow': '/06 &mdash; WATCH OUT', 'h2': 'Fake &ldquo;your email is closing&rdquo; messages',
+         'html': '<p>Scammers know older ntlworld and Blueyonder addresses belong to people who&rsquo;d hate to lose them. Expect emails and texts saying your account closes today unless you click, pay or &ldquo;verify&rdquo;.</p>'
+                 '<ul>'
+                 '<li>Virgin&rsquo;s own emails about the change have <strong>no sign-up link</strong> in them.</li>'
+                 '<li>Never pay, or type your password, through a link in an email or text, or over the phone to someone who rang you.</li>'
+                 '<li>Type <strong>mail.virginmedia.com</strong> or <strong>junara.com</strong> into the browser yourself.</li>'
+                 '<li>Already clicked and typed your password? Change it straight away and see <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We can get Outlook working with the app password, check where you stand with Junara, or move the mailbox to Gmail for you. We work on Windows PCs: we don&rsquo;t support email on Macs, iPads or iPhones.')},
+    ],
+    'howToName': 'How to fix ntlworld or Blueyonder email that has stopped working',
+    'howToSteps': [
+        {'name': 'Log in on the web', 'text': 'Type mail.virginmedia.com into your browser and sign in with the whole email address and its password. Signed up with Junara already? Sign in at junara.com.'},
+        {'name': 'Fix Outlook or the phone with an app password', 'text': 'If the web works but Outlook or the phone does not, make a Virgin Media Mail app password in My Virgin Media and use it there. A new one stops the old one.'},
+        {'name': 'Check your Junara date', 'text': 'Find Virgin&rsquo;s email about the change. If the sign-up date has passed, the mailbox is suspended: sign up with Junara within 120 days, or it is deleted.'},
+        {'name': 'Keep it or move it', 'text': 'Sign up with Junara yourself at junara.com to keep the address, or move your emails to a free Gmail address while the mailbox is open.'},
+    ],
+    'faqs': [
+        {'q': 'How do I log in to my ntlworld email?', 'a': '<p>Type mail.virginmedia.com into your browser and sign in with your whole ntlworld address and its password. ntlworld is Virgin Media email, so it&rsquo;s the same sign-in as virginmedia.com. If you&rsquo;ve signed up with Junara, sign in at junara.com instead.</p>'},
+        {'q': 'Is Blueyonder email still working?', 'a': '<p>Yes, Blueyonder addresses still run on Virgin Media Mail, but they are part of Virgin&rsquo;s move to Junara. Each customer gets a sign-up date by email; after it, an address that hasn&rsquo;t been signed up is suspended and later deleted.</p>'},
+        {'q': 'Why has my ntlworld email stopped working in Outlook?', 'a': '<p>Usually because Outlook needs a Virgin Media Mail app password rather than your normal password, or because the mailbox has been suspended after a missed Junara sign-up date. Log in at mail.virginmedia.com first: if that works, it&rsquo;s the app password.</p>'},
+        {'q': 'Where do I get a Virgin Media app password?', 'a': '<p>In My Virgin Media (the app is the surest place): Account settings, Account details, then under Virgin Media Mail, Manage your Virgin Media Mail app password, Generate new App password. Making a new one stops the old one on every other device.</p>'},
+        {'q': 'Is ntlworld email closing?', 'a': '<p>Virgin Media is handing all its email, ntlworld included, to Junara. You can keep the address by signing up with Junara before your date, move to another provider such as Gmail, or let it close. See <a href="/virgin-media-email-moving-to-junara/">Virgin Media email moving to Junara</a>.</p>'},
+        {'q': 'Can you fix it for me remotely?', 'a': '<p>Yes, on a Windows PC. With your permission we connect while you watch, get Outlook working, or move the mailbox to Gmail for &pound;60 per address, agreed before we start.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/virgin-media-email-moving-to-junara/">Virgin Media email moving to Junara</a>, <a href="/virgin-media-email-wont-add-to-new-outlook/">Virgin Media email won&rsquo;t add to Outlook</a>, <a href="/move-virgin-media-email-to-gmail/">move Virgin Media email to Gmail</a>, <a href="/emails-on-computer-but-not-phone/">emails on the computer but not the phone</a> and <a href="/email-support/">email help</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -892,7 +1086,7 @@ def symptom_pages(setup_url):
             'It never installs, removes or changes anything.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -940,4 +1134,13 @@ SYMPTOM_FLOWS = {
                       'yes': 'Yes, fully updated', 'no': 'Not yet',
                       'tip': 'Look again after next month&rsquo;s updates, to be sure it stays that way.',
                       'h3s': 'Still not updated after every step? That is a remote job.'},
+    PHONELINK['slug']: {'h2': 'Set it up, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all set', 'ask': 'Done that step?',
+                        'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All linked{mins}. Nice work.',
+                        'tip': 'Copy your photos into a folder, and keep a second copy: see how to back up your photos.',
+                        'h3s': 'Stuck at a step? We can do the PC side with you, remotely.'},
+    NTLWORLD['slug']: {'h2': 'Get your email back, step by step', 'ask': 'Is your email working now?',
+                       'tip': 'Find Virgin&rsquo;s email about Junara and note your sign-up date.',
+                       'h3s': 'Still not working after every step? That is a remote job.'},
 }

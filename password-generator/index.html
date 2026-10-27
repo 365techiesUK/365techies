@@ -40,7 +40,7 @@
     })();
   </script>
   <title>Free Password Generator: Random or Three-Word Passphrase</title>
-  <meta name="description" content="Free password generator: make a strong random password or an easy-to-remember three-word passphrase in one click. Made in your browser, never sent." />
+  <meta name="description" content="Free password generator: a strong random password, an easy three-word passphrase, or one made from your own words. Made in your browser, never sent." />
   <link rel="canonical" href="https://365techies.co.uk/password-generator/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
@@ -55,13 +55,13 @@
   <meta property="og:locale" content="en_GB" />
   <meta property="og:url" content="https://365techies.co.uk/password-generator/" />
   <meta property="og:title" content="Free Password Generator | 365 Techies" />
-  <meta property="og:description" content="Free password generator: make a strong random password or an easy-to-remember three-word passphrase in one click. Made in your browser, never sent." />
+  <meta property="og:description" content="Free password generator: a strong random password, an easy three-word passphrase, or one made from your own words. Made in your browser, never sent." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Free Password Generator | 365 Techies" />
-  <meta name="twitter:description" content="Free password generator: make a strong random password or an easy-to-remember three-word passphrase in one click. Made in your browser, never sent." />
+  <meta name="twitter:description" content="Free password generator: a strong random password, an easy three-word passphrase, or one made from your own words. Made in your browser, never sent." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-08"
+      "dateModified": "2026-10-27"
     },
     {
       "@type": "WebApplication",
@@ -330,6 +330,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "A random password is strongest and perfect for a password manager to remember for you. A passphrase (like &lsquo;Otter-Lantern-River-42&rsquo;) is easier to type and recall &mdash; ideal for the few passwords you need to know by heart, such as your password manager itself."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I make a password from my own words?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes &mdash; choose the <em>My own words</em> tab and type two or three words you&rsquo;ll remember. It mixes them up, adds a random word of its own, capitals and a number, and shows how strong the result is. Pick words nobody could guess: not your name, a pet, your street or a date. Your words stay on the page and are never sent anywhere."
           }
         },
         {
@@ -903,9 +911,9 @@
       <div class="wrap"><div class="taskhead__in">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Password Generator</span></nav>
         <h1 class="taskhead__h">Create a <em class="grad grad--cyan">strong password</em> in one click</h1>
-        <p class="taskhead__lede">Generate a strong random password &mdash; or a passphrase you can actually remember &mdash; instantly and securely. Made in your browser, never sent anywhere.</p>
+        <p class="taskhead__lede">Generate a strong random password, a passphrase you can actually remember, or one built from your own words &mdash; instantly and securely. Made in your browser, never sent anywhere.</p>
         <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; Rated 4.9 on Google</a></span><span>Family-run since 1995</span><span>No fix, no fee</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 8 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 27 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -932,6 +940,7 @@
           <div class="pg-tabs" role="tablist">
             <button type="button" data-mode="random" class="is-active" role="tab">Random password</button>
             <button type="button" data-mode="phrase" role="tab">Memorable passphrase</button>
+            <button type="button" data-mode="own" role="tab">My own words</button>
           </div>
           <div class="pg-controls" id="pg-random">
             <div class="pg-field"><label>Length <output id="pg-len">16</output></label><input type="range" id="pg-len-r" min="8" max="40" value="16" aria-label="Password length"></div>
@@ -949,6 +958,20 @@
               <label><input type="checkbox" id="pg-cap" checked> Capitalise words</label>
               <label><input type="checkbox" id="pg-pnum" checked> Add a number</label>
               <label>Separator <select id="pg-sep"><option value="-">- (dash)</option><option value=".">. (dot)</option><option value="_">_ (underscore)</option><option value=" ">space</option></select></label>
+            </div>
+          </div>
+          <div class="pg-controls" id="pg-own" hidden>
+            <div class="pg-field"><label for="pg-own-in">Type two or three words you&rsquo;ll remember</label></div>
+            <input type="text" id="pg-own-in" class="pg-own-in" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" placeholder="e.g. kettle harbour tango">
+            <p class="pg-own-tip">Pick words that mean something to you but that nobody could guess: not your name, a pet, your street or a date. They stay on this page: nothing is sent.</p>
+            <p class="pg-own-warn" id="pg-own-warn" hidden></p>
+            <div class="pg-opts">
+              <label><input type="checkbox" id="pg-oadd" checked> Add a random word to them (recommended)</label>
+              <label><input type="checkbox" id="pg-omix" checked> Mix up the order</label>
+              <label><input type="checkbox" id="pg-ocap" checked> Capitalise words</label>
+              <label><input type="checkbox" id="pg-onum" checked> Add a number</label>
+              <label><input type="checkbox" id="pg-osym"> Add a symbol (for sites that insist on one)</label>
+              <label>Separator <select id="pg-osep"><option value="-">- (dash)</option><option value=".">. (dot)</option><option value="_">_ (underscore)</option><option value=" ">space</option></select></label>
             </div>
           </div>
           <div style="text-align:center;margin-top:1.2rem"><button type="button" class="button primary pg-go" id="pg-go">Generate</button></div>
@@ -979,6 +1002,11 @@
       #pg .pg-opts label{display:flex;align-items:center;gap:.5rem}
       #pg .pg-opts select{font:inherit;margin-left:auto;background:rgba(255,255,255,.06);color:inherit;border:1px solid rgba(255,255,255,.15);border-radius:7px;padding:.25rem .4rem}
       #pg .pg-opts input[type=checkbox]{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
+      #pg .pg-own-in{display:block;width:100%;box-sizing:border-box;font:inherit;font-size:1.05rem;padding:.7rem .85rem;margin:0 0 .6rem;border-radius:10px;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.28);color:#fff}
+      #pg .pg-own-in:focus{outline:2px solid var(--cyan,#37c2c2);outline-offset:1px}
+      #pg .pg-own-tip{font-size:.85rem;line-height:1.5;color:var(--muted,#9aa6c2);margin:0 0 .8rem}
+      #pg .pg-own-warn{font-size:.85rem;line-height:1.5;color:#f1c40f;margin:-.3rem 0 .8rem}
+      #pg .pg-copy:disabled{opacity:.45;cursor:default}
       #pg .pg-hint{text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);margin:1rem 0 0;line-height:1.5}
       #pgtool .pg-fix{max-width:640px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
       #pgtool .pg-fix h3{margin:0 0 .5rem;font-size:1.2rem}
@@ -989,16 +1017,17 @@
       <script>
       (function(){
         var root=document.getElementById('pg'); if(!root) return;
-        var WORDS=['apple','amber','anchor','apron','arrow','autumn','badge','banana','basket','beacon','blossom','bottle','branch','breeze','bridge','bronze','bubble','button','cabin','cactus','candle','canyon','carbon','castle','cedar','cherry','circle','clover','cobalt','comet','copper','coral','cotton','cricket','crown','crystal','daisy','dolphin','dragon','ember','engine','falcon','feather','ginger','glacier','granite','harbour','hazel','helmet','hollow','ivory','jacket','jasmine','jungle','kettle','lagoon','lantern','lemon','lily','lobster','lotus','magnet','mango','maple','marble','meadow','melon','meteor','mirror','mocha','monsoon','mountain','mushroom','nectar','needle','oasis','ocean','olive','onyx','orbit','otter','oyster','palace','pebble','pepper','pigeon','pillow','pirate','planet','pocket','pumpkin','quartz','rabbit','raccoon','ranch','ribbon','river','rocket','saddle','salmon','sapphire','shadow','shrimp','silver','sparrow','spruce','squirrel','sunset','temple','thunder','tiger','timber','tulip','turtle','velvet','violet','walnut','willow','wombat','zephyr'];
+        var WORDS=['apple','amber','anchor','apron','arrow','autumn','badge','banana','basket','beacon','blossom','bottle','branch','breeze','bridge','bronze','bubble','button','cabin','cactus','candle','canyon','carbon','castle','cedar','cherry','circle','clover','cobalt','comet','copper','coral','cotton','cricket','crown','crystal','daisy','dolphin','dragon','ember','engine','falcon','feather','ginger','glacier','granite','harbour','hazel','helmet','hollow','ivory','jacket','jasmine','jungle','kettle','lagoon','lantern','lemon','lily','lobster','lotus','magnet','mango','maple','marble','meadow','melon','meteor','mirror','mocha','monsoon','mountain','mushroom','nectar','needle','oasis','ocean','olive','onyx','orbit','otter','oyster','palace','pebble','pepper','pigeon','pillow','pirate','planet','pocket','pumpkin','quartz','rabbit','raccoon','ranch','ribbon','river','rocket','saddle','salmon','sapphire','shadow','shrimp','silver','sparrow','spruce','squirrel','sunset','temple','thunder','tiger','timber','tulip','turtle','velvet','violet','walnut','willow','wombat','zephyr','badger','beaver','bison','buffalo','camel','cheetah','chipmunk','cobra','condor','cougar','coyote','crane','donkey','dragonfly','eagle','ferret','finch','flamingo','gazelle','gecko','gerbil','giraffe','goose','gorilla','hamster','hedgehog','heron','hippo','hornet','husky','iguana','impala','jackal','jaguar','kangaroo','kestrel','kitten','koala','ladybird','lemur','leopard','lion','lizard','llama','magpie','mallard','mammoth','manatee','meerkat','moose','moth','mouse','narwhal','newt','ocelot','octopus','ostrich','panda','panther','parrot','peacock','pelican','penguin','pheasant','piglet','pony','poodle','puffin','puma','python','quail','raven','reindeer','robin','rooster','seagull','seal','shark','sheep','skylark','sloth','snail','spider','squid','starling','stoat','stork','swallow','swan','tadpole','terrier','toucan','tortoise','trout','turkey','walrus','weasel','whale','wolf','wren','zebra','beagle','collie','spaniel','lamb','foal','bunny','duckling','hare','deer','stag','owlet','fawn','cygnet','hound','mink','vole','lynx','bear','moorhen','kingfisher','woodpecker','bluebird','blackbird','thrush','lapwing','curlew','plover','osprey','buzzard','almond','apricot','avocado','bagel','barley','basil','biscuit','blueberry','bread','brownie','butter','cabbage','cake','carrot','cashew','celery','cheese','chestnut','chilli','chutney','cinnamon','clementine','cocoa','coconut','coffee','cookie','crumpet','cucumber','cupcake','currant','custard','damson','doughnut','dumpling','fudge','garlic','grape','gravy','hazelnut','honey','hummus','jelly','kiwi','lentil','lettuce','lime','marmalade','meringue','muffin','mustard','noodle','nutmeg','oatcake','onion','orange','pancake','papaya','parsnip','pasta','pastry','peach','peanut','pear','pickle','pistachio','pizza','plum','popcorn','porridge','potato','pretzel','pudding','quiche','radish','raisin','raspberry','rhubarb','risotto','saffron','sage','satsuma','scone','sesame','shortbread','sorbet','spinach','sponge','sprout','strawberry','sugar','sultana','sundae','swede','syrup','tangerine','toffee','tomato','trifle','truffle','turnip','vanilla','waffle','yoghurt','crumble','flapjack','gingerbread','teacake','kipper','sardine','mackerel','haddock','scampi','crouton','pesto','paprika','oregano','thyme','mint','lavender','honeycomb','marzipan','nougat','praline','caramel','lemonade','espresso','latte','cobnut','gooseberry','blackberry','cranberry','bramley','pippin','russet','granola','omelette','crepe','brioche','ciabatta','baguette','bloomer','muesli','acorn','avalanche','bamboo','beach','birch','blizzard','boulder','bramble','brook','buttercup','cascade','cloud','coast','cove','crater','creek','dawn','desert','drizzle','dune','dusk','earth','eclipse','estuary','fern','fjord','flower','forest','frost','galaxy','geyser','glade','gorge','grass','gravel','heather','hedge','hill','holly','horizon','iceberg','island','lake','larch','lava','leaf','lichen','magnolia','marsh','mist','moon','moss','nebula','orchard','orchid','petal','pine','pollen','pond','poppy','prairie','rain','rainbow','reef','ridge','rose','sand','sapling','savanna','shore','snow','snowdrop','spring','star','storm','stream','summer','sunrise','sunflower','thistle','tide','tundra','twig','valley','volcano','waterfall','wave','wind','winter','woodland','bluebell','primrose','foxglove','daffodil','crocus','bracken','heath','moorland','cliff','headland','rockpool','seashell','driftwood','starfish','tornado','hailstone','puddle','rainfall','sunbeam','moonlight','starlight','snowflake','icicle','meadowsweet','hawthorn','rowan','alder','aspen','poplar','sycamore','beech','elder','juniper','laurel','myrtle','cypress','redwood','seaweed','riverbank','waterlily','harebell','cowslip','clifftop','sandbank','shingle','armchair','atlas','backpack','balloon','banner','barrel','bell','bench','bicycle','blanket','bookcase','bracelet','brick','broom','bucket','buckle','cabinet','camera','canoe','canvas','carpet','chair','chalk','chimney','clock','compass','cushion','crayon','cupboard','curtain','desk','diamond','doorbell','drum','easel','envelope','fiddle','flag','flute','fountain','frame','funnel','garden','gate','glove','goblet','guitar','hammer','hammock','harp','hourglass','jigsaw','kite','ladder','lamp','locket','medal','mitten','napkin','necklace','notebook','paddle','paintbrush','parasol','pencil','piano','pinwheel','plate','postcard','pottery','puppet','quilt','radio','rucksack','ruler','sail','satchel','scarf','scissors','shovel','sledge','slipper','spoon','stamp','statue','suitcase','sweater','teapot','telescope','tent','thimble','ticket','toaster','torch','towel','trumpet','tuba','umbrella','vase','violin','wagon','wallet','whistle','windmill','teacup','saucer','trowel','wheelbarrow','rowboat','ferry','tram','train','tractor','scooter','skateboard','snowboard','surfboard','yacht','raft','glider','airship','carousel','lighthouse','cottage','bungalow','barn','chalet','igloo','pavilion','pier','tower','tunnel','market','museum','library','theatre','vineyard','bandstand','boathouse','treehouse','greenhouse','beehive','birdhouse','dovecote','haystack','signpost','postbox','phonebox','doorstep','porch','attic','cellar','pantry','larder','hallway','staircase','banister','skylight','bold','brave','bright','brisk','calm','cheerful','clever','cosy','crimson','crisp','curly','dapper','eager','emerald','fancy','fluffy','frosty','gentle','giant','glossy','golden','graceful','happy','humble','jolly','jumbo','keen','kind','lively','lucky','lunar','mellow','merry','mighty','misty','modest','nimble','noble','pastel','patient','plucky','polar','proud','purple','quick','quiet','radiant','rapid','rosy','royal','ruby','rustic','sandy','scarlet','shiny','silky','smooth','snug','solar','sparkly','speedy','spicy','steady','sturdy','sunny','swift','tidy','tiny','toasty','tranquil','vivid','warm','wise','witty','woolly','zesty','indigo','jade','lilac','maroon','mauve','navy','ochre','pearl','teal','topaz','turquoise','umber','beige','cheery','chirpy','dainty','fearless','friendly','gleaming','glowing','hearty','honest','hopeful','joyful','loyal','peaceful','perky','playful','plump','precious','rugged','sleepy','sparkling','spotty','stripy','sunlit','tender','thrifty','trusty','upbeat','vibrant','wavy','whimsical','wiggly','zippy','amble','bounce','build','carry','chase','climb','dance','dash','dive','doodle','drift','explore','fetch','float','giggle','glide','gallop','juggle','jump','knit','laugh','leap','march','mend','munch','nibble','paint','plant','potter','ramble','roam','scribble','sing','skate','skip','slide','splash','sprint','stroll','swim','swing','tiptoe','travel','tumble','twirl','wander','wiggle','yodel','bake','brew','cycle','hike','sketch','snooze','stretch','wobble','zoom','whittle','polish','gather','harvest','picnic','rummage','scamper','shuffle','sparkle','stomp','toddle','twinkle','waltz','whizz','yawn','adventure','anthem','ballad','banjo','bingo','cartoon','carnival','chorus','circus','concert','festival','fiesta','football','harmony','holiday','jubilee','legend','lullaby','marathon','melody','mystery','poem','puzzle','rhythm','riddle','rugby','safari','sonnet','story','symphony','tennis','treasure','trophy','voyage','whisper','wizard','knight','unicorn','phoenix','goblin','robot','astronaut','captain','sailor','farmer','baker','painter','poet','explorer','inventor','juggler','gardener','dancer','drummer','pilot','ranger','scholar','chef','cobbler','tailor','weaver','thatcher','blacksmith','shepherd','ferryman','lifeguard','postman','milkman','beekeeper','boatman','cricketer','bowler','skipper','referee','goalie','snooker','darts','croquet','badminton','netball','hockey','rounders','archery','fencing','rowing','sailing','gliding','kayak','marquee','bunting','sandcastle','seaside','promenade','boardwalk','deckchair','windbreak','cream','lolly','sherbet','bonbon','humbug','liquorice'];
         var mode='random';
         var val=root.querySelector('#pg-value'), copy=root.querySelector('#pg-copy'), bar=root.querySelector('#pg-bar'), strlabel=root.querySelector('#pg-strlabel');
         var lenR=root.querySelector('#pg-len-r'), lenO=root.querySelector('#pg-len'), wordsR=root.querySelector('#pg-words-r'), wordsO=root.querySelector('#pg-words');
         function q(id){ return root.querySelector(id); }
         function secRand(max){ var a=new Uint32Array(1); var lim=Math.floor(4294967296/max)*max; do{ crypto.getRandomValues(a); }while(a[0]>=lim); return a[0]%max; }
-        root.querySelectorAll('.pg-tabs button').forEach(function(b){ b.onclick=function(){ mode=b.getAttribute('data-mode'); root.querySelectorAll('.pg-tabs button').forEach(function(x){x.classList.toggle('is-active',x===b);}); q('#pg-random').hidden=(mode!=='random'); q('#pg-phrase').hidden=(mode!=='phrase'); generate(); }; });
+        root.querySelectorAll('.pg-tabs button').forEach(function(b){ b.onclick=function(){ mode=b.getAttribute('data-mode'); root.querySelectorAll('.pg-tabs button').forEach(function(x){x.classList.toggle('is-active',x===b);}); q('#pg-random').hidden=(mode!=='random'); q('#pg-phrase').hidden=(mode!=='phrase'); q('#pg-own').hidden=(mode!=='own'); if(mode==='own') newOwn(); generate(); }; });
         lenR.addEventListener('input',function(){ lenO.textContent=lenR.value; generate(); });
         wordsR.addEventListener('input',function(){ wordsO.textContent=wordsR.value; generate(); });
-        root.querySelectorAll('#pg-random input, #pg-phrase input, #pg-phrase select').forEach(function(el){ el.addEventListener('change',generate); });
+        root.querySelectorAll('#pg-random input, #pg-phrase input, #pg-phrase select, #pg-own input[type=checkbox], #pg-own select').forEach(function(el){ el.addEventListener('change',generate); });
+        q('#pg-own-in').addEventListener('input',generate);
         function genRandom(){
           var U='ABCDEFGHIJKLMNOPQRSTUVWXYZ',L='abcdefghijklmnopqrstuvwxyz',N='0123456789',S='!@#$%^&*-_=+?';
           if(q('#pg-ambig').checked){ U=U.replace(/[IO]/g,''); L=L.replace(/[lo]/g,''); N=N.replace(/[01]/g,''); }
@@ -1017,15 +1046,36 @@
           if(q('#pg-pnum').checked){ s+=sep+(secRand(90)+10); bits+=6; }
           return {v:s, bits:bits};
         }
+        var own=null;
+        function newOwn(){ own={w:WORDS[secRand(WORDS.length)], pos:secRand(1000), keys:[secRand(1000),secRand(1000),secRand(1000),secRand(1000),secRand(1000),secRand(1000)], n:secRand(90)+10, s:'!?#*+='.charAt(secRand(6))}; }
+        function genOwn(){
+          if(!own) newOwn();
+          var raw=(q('#pg-own-in').value||'').toLowerCase().match(/[a-z0-9\u00e0-\u00ff]+/g)||[];
+          raw=raw.slice(0,5);
+          var warn=q('#pg-own-warn'), msg='';
+          if(raw.some(function(w){ return /^\d+$/.test(w)||w.length<4; })) msg='Short words, years and numbers are easy to guess: swap them for longer words.';
+          warn.textContent=msg; warn.hidden=!msg;
+          if(raw.length<2) return {v:'', bits:0, empty:'Type two or three of your own words below'};
+          var words=raw.slice(), bits=raw.length*10;
+          if(q('#pg-oadd').checked){ words.splice(own.pos%(words.length+1),0,own.w); bits+=Math.log(WORDS.length)/Math.log(2); }
+          if(q('#pg-omix').checked){ words=words.map(function(w,i){ return [own.keys[i%6]+i/10,w]; }).sort(function(a,b){ return a[0]-b[0]; }).map(function(x){ return x[1]; }); }
+          if(q('#pg-ocap').checked) words=words.map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1); });
+          var sep=q('#pg-osep').value, out=words.join(sep);
+          if(q('#pg-onum').checked){ out+=sep+own.n; bits+=6.5; }
+          if(q('#pg-osym').checked){ out+=own.s; bits+=2.6; }
+          return {v:out, bits:Math.round(bits)};
+        }
         function showStrength(bits){
           var pct=Math.max(6,Math.min(100,Math.round(bits/1.28))), col, lab;
           if(bits<40){ col='#e74c3c'; lab='Weak'; } else if(bits<60){ col='#f1c40f'; lab='Fair'; } else if(bits<80){ col='#2ecc71'; lab='Strong'; } else { col='#2ecc71'; lab='Excellent'; }
           bar.style.width=pct+'%'; bar.style.background=col; strlabel.textContent=lab+' &middot; ~'+bits+' bits'; strlabel.innerHTML=lab+' &middot; ~'+bits+' bits of entropy';
         }
-        function generate(){ var r=mode==='random'?genRandom():genPhrase(); val.textContent=r.v; showStrength(r.bits); copy.textContent='Copy'; copy.classList.remove('done'); }
+        function generate(){ var r=mode==='random'?genRandom():(mode==='phrase'?genPhrase():genOwn()); copy.textContent='Copy'; copy.classList.remove('done');
+          if(!r.v){ val.textContent=r.empty; copy.disabled=true; bar.style.width='0'; strlabel.innerHTML='&nbsp;'; return; }
+          copy.disabled=false; val.textContent=r.v; showStrength(r.bits); }
         copy.addEventListener('click',function(){ var t=val.textContent; function ok(){ copy.textContent='Copied!'; copy.classList.add('done'); setTimeout(function(){ copy.textContent='Copy'; copy.classList.remove('done'); },1600); }
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(ok).catch(function(){}); } else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){} document.body.removeChild(ta); } });
-        q('#pg-go').addEventListener('click',generate);
+        q('#pg-go').addEventListener('click',function(){ if(mode==='own') newOwn(); generate(); });
         generate();
       })();
       </script>
@@ -1077,6 +1127,10 @@
         <details class="faq" data-reveal>
           <summary>Random password or memorable passphrase?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>A random password is strongest and perfect for a password manager to remember for you. A passphrase (like &lsquo;Otter-Lantern-River-42&rsquo;) is easier to type and recall &mdash; ideal for the few passwords you need to know by heart, such as your password manager itself.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can I make a password from my own words?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes &mdash; choose the <em>My own words</em> tab and type two or three words you&rsquo;ll remember. It mixes them up, adds a random word of its own, capitals and a number, and shows how strong the result is. Pick words nobody could guess: not your name, a pet, your street or a date. Your words stay on the page and are never sent anywhere.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>How do I keep track of all my passwords?<span class="faq__icon" aria-hidden="true"></span></summary>

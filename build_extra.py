@@ -165,6 +165,7 @@ SPECIALIST = [
      ("/virgin-media-email-wont-add-to-new-outlook/", "Virgin Media email won&rsquo;t add to the new Outlook"),
      ("/move-virgin-media-email-to-gmail/", "Moving your Virgin Media email to Gmail"),
      ("/virgin-media-email-moving-to-junara/", "Virgin Media email is moving to Junara: keep it or move it?"),
+     ("/ntlworld-blueyonder-email-not-working/", "ntlworld or Blueyonder email not working: logging in and the app password"),
      ("/virgin-email-mover/", "Move Virgin Media email to Gmail free, with our app"),
      ("/how-to-make-a-google-app-password/", "Making a Google app password"),
      ("/change-your-email-address-everywhere/", "Changed your email address? Update it everywhere"),
@@ -12693,13 +12694,14 @@ def password_generator():
       ("Is it safe to generate a password here?", "Yes &mdash; completely. The password is created <em>in your browser</em> using secure randomness, and it&rsquo;s never sent to us or anywhere else. Nothing is stored."),
       ("What makes a strong password?", "Length and unpredictability. A long random password (16+ characters) or a passphrase of several random words is far stronger than a short complicated one &mdash; and the golden rule is a <em>different</em> password for every account."),
       ("Random password or memorable passphrase?", "A random password is strongest and perfect for a password manager to remember for you. A passphrase (like &lsquo;Otter-Lantern-River-42&rsquo;) is easier to type and recall &mdash; ideal for the few passwords you need to know by heart, such as your password manager itself."),
+      ("Can I make a password from my own words?", "Yes &mdash; choose the <em>My own words</em> tab and type two or three words you&rsquo;ll remember. It mixes them up, adds a random word of its own, capitals and a number, and shows how strong the result is. Pick words nobody could guess: not your name, a pet, your street or a date. Your words stay on the page and are never sent anywhere."),
       ("How do I keep track of all my passwords?", "A password manager &mdash; it remembers them all behind one strong password and fills them in for you. We set them up for homes and businesses and show you how. <a href=\"/contact/\">Ask us</a>."),
       ("Should I check if my old passwords are safe?", "Good idea &mdash; try our <a href=\"/password-breach-checker/\">password breach checker</a> to see if any have appeared in a data breach, and change any that have."),
     ]
     content = "\n".join([
       hero(bc("Password Generator"), "// FREE PASSWORD GENERATOR",
            'Create a <em class="grad grad--cyan">strong password</em> in one click',
-           "Generate a strong random password &mdash; or a passphrase you can actually remember &mdash; instantly and securely. Made in your browser, never sent anywhere.",
+           "Generate a strong random password, a passphrase you can actually remember, or one built from your own words &mdash; instantly and securely. Made in your browser, never sent anywhere.",
            cta1=("Generate One", "#pgtool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
            chips=["Random or memorable","100% in your browser","No sign-up"]),
       PWGEN_TOOL,
@@ -18112,6 +18114,15 @@ info_page(
             <li><strong>Be careful with:</strong> anything factual you can&rsquo;t verify, or that affects money or safety.</li>
             <li><strong>Avoid:</strong> pasting in anything private, confidential or regulated.</li>
           </ul>
+          <h2 id="turn-off-copilot">Copilot on your PC: keep it, or switch it off</h2>
+          <p>Copilot is Microsoft&rsquo;s AI assistant, and it now turns up in Windows, in Word and Excel, and in the Edge browser. It only works on something when you ask it to, so it&rsquo;s fine to leave it be. If you&rsquo;d rather not have it, here&rsquo;s how to switch off each one:</p>
+          <ul>
+            <li><strong>The Copilot app in Windows 11:</strong> open Settings, then Apps, then Installed apps, find <strong>Copilot</strong>, choose the three dots next to it and <strong>Uninstall</strong>. It doesn&rsquo;t touch Word, Outlook or Edge, and you can get it back from the Microsoft Store any time.</li>
+            <li><strong>The Copilot key</strong> on newer keyboards: Settings, Personalisation, Text input, then <strong>Customise Copilot key on keyboard</strong>, and choose Search or another app instead.</li>
+            <li><strong>Word, Excel, PowerPoint and OneNote</strong> (Microsoft 365 at home, signed in with your own Microsoft account): File, Options, Copilot, untick <strong>Enable Copilot</strong>, press OK, then close the app and open it again. Do it in each app and on each PC. The phone and web versions can&rsquo;t be switched off this way, and on a work account your IT department decides.</li>
+            <li><strong>The Copilot button in Edge:</strong> right-click it and choose to hide it, or type &ldquo;Copilot&rdquo; into the search box in Edge&rsquo;s Settings. Hiding the button only hides it; Copilot itself is still there.</li>
+          </ul>
+          <p>Not sure what you&rsquo;ve got, or what it can see? <a href="/contact/">Ask us</a> and we&rsquo;ll go through it with you on your PC.</p>
           <h2>We&rsquo;ll help you use it well</h2>
           <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai/training/">AI training &amp; adoption</a> service, or our <a href="/ai/agents/">custom agentic AI systems</a> that automate real business tasks.</p>""",
   faqs=[
@@ -18119,6 +18130,7 @@ info_page(
     ("What is an AI &ldquo;hallucination&rdquo;?", "It&rsquo;s when an AI gives a confident answer that&rsquo;s actually wrong or made up. Always verify anything that matters before relying on it."),
     ("Can AI be used to scam me?", "Yes &mdash; criminals use AI to write convincing scam emails and even imitate voices, so be extra wary of urgent or unexpected requests. Our <a href=\"/spot-the-scam/\">Spot the Scam quiz</a> helps you practise spotting them."),
     ("Can you train our team to use AI safely?", "Absolutely &mdash; that&rsquo;s exactly what our <a href=\"/ai/training/\">AI training</a> service does, tailored to how your team works."),
+    ("How do I turn off Copilot?", "In Windows 11, uninstall the Copilot app in Settings, Apps, Installed apps. In Word, Excel, PowerPoint and OneNote at home, untick Enable Copilot under File, Options, Copilot, in each app. Hiding Edge&rsquo;s Copilot button only hides it. The steps are <a href=\"#turn-off-copilot\">above</a>."),
   ],
   cta_args=("Want to use AI with confidence?", "We&rsquo;ll show you and your team how to get real value from AI, safely.",
             ("Explore AI Training", "/ai/training/"), ("Talk to a Techie", "/contact/")),

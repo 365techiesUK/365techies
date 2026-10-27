@@ -69,7 +69,8 @@ SNIPPETS = {
         # GSC 17 Aug: "password generator" 528 imps at pos 4, 0 clicks - the old title
         # narrowed the tool to "three random words"; the page does both, so say so.
         "title": "Free Password Generator: Random or Three-Word Passphrase",
-        "desc": "Free password generator: make a strong random password or an easy-to-remember three-word passphrase in one click. Made in your browser, never sent.",
+        # 27 Oct 2026: + the "My own words" tab (GSC ~1,100 imps/3 mo at pos 28-38 for "generate password from words" etc.)
+        "desc": "Free password generator: a strong random password, an easy three-word passphrase, or one made from your own words. Made in your browser, never sent.",
     },
     "dell-optiplex-micro-sff-tower-which-to-buy": {
         "desc": "Micro hides behind the monitor, SFF still takes a graphics card, Tower upgrades for years. Choose by what you will add later, not just desk space.",
@@ -1202,7 +1203,7 @@ SNIPPETS = {
         "desc": "Free, plain-English IT guides from 365 Techies: every step-by-step fix by topic, for Windows, Microsoft 365, email, printers, Wi-Fi, security and more.",
     },
     "using-ai-safely": {
-        "desc": "A plain-English guide to using AI safely: what Copilot, ChatGPT, Gemini and Claude can and cannot do, the golden rules, and when not to trust the answer.",
+        "desc": "A plain-English guide to using AI safely: what Copilot, ChatGPT, Gemini and Claude can do, the golden rules, and how to switch Copilot off on your PC.",
     },
     "help-in-dorset": {
         "desc": "Where to get help in Dorset beyond computers: the trusted free services we point people to, from Citizens Advice and Age UK to the Samaritans.",

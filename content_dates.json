@@ -1115,8 +1115,8 @@
  },
  "email-support": {
   "first": "2026-07-28",
-  "h": "9e08455a4a714b7e",
-  "last": "2026-10-13"
+  "h": "091f0610c4efc107",
+  "last": "2026-10-27"
  },
  "emails-on-computer-but-not-phone": {
   "first": "2026-07-28",
@@ -1374,8 +1374,8 @@
  },
  "how-to-back-up-your-photos": {
   "first": "2026-06-16",
-  "h": "ec80518c7e70a6a3",
-  "last": "2026-09-13"
+  "h": "159ce0a4b4a8018b",
+  "last": "2026-10-27"
  },
  "how-to-block-nuisance-calls-and-texts": {
   "first": "2026-06-16",
@@ -1448,10 +1448,18 @@
   "h": "2df55c8d2bb89dd2",
   "last": "2026-09-29"
  },
+ "how-to-make-a-pdf-smaller": {
+  "first": "2026-10-27",
+  "h": "fc74716a38488a29"
+ },
  "how-to-make-your-laptop-battery-last-longer": {
   "first": "2026-06-16",
   "h": "1f4110a77893c320",
   "last": "2026-10-13"
+ },
+ "how-to-merge-pdf-files": {
+  "first": "2026-10-27",
+  "h": "7f5e986df089db0a"
  },
  "how-to-play-a-cd-on-windows-11": {
   "first": "2026-10-08",
@@ -1512,6 +1520,10 @@
   "first": "2026-07-28",
   "h": "72d910847d47fa25",
   "last": "2026-09-28"
+ },
+ "how-to-sign-a-pdf": {
+  "first": "2026-10-27",
+  "h": "dcda081106fc7619"
  },
  "how-to-speed-up-a-slow-computer": {
   "first": "2026-06-16",
@@ -1624,7 +1636,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "82acf77af673f547",
+  "h": "802f7c452bfb2eea",
   "last": "2026-10-27"
  },
  "it-health-check-tool": {
@@ -2407,6 +2419,10 @@
   "h": "fa3d127eaf22acf1",
   "last": "2026-10-06"
  },
+ "ntlworld-blueyonder-email-not-working": {
+  "first": "2026-10-27",
+  "h": "5e4a6375f614b704"
+ },
  "off-grid-holiday-let-monitoring": {
   "first": "2026-07-28",
   "h": "4fdd7f20c854a924",
@@ -2818,8 +2834,8 @@
  },
  "password-generator": {
   "first": "2026-07-28",
-  "h": "24922501dfe52f44",
-  "last": "2026-10-08"
+  "h": "72e1df28fe704dce",
+  "last": "2026-10-27"
  },
  "password-manager-setup": {
   "first": "2026-07-28",
@@ -2853,13 +2869,17 @@
  },
  "pdf-to-word-without-uploading": {
   "first": "2026-10-25",
-  "h": "36bbeccdef7b2936",
-  "last": "2026-10-25"
+  "h": "51c8ed621791141f",
+  "last": "2026-10-27"
  },
  "phishing": {
   "first": "2026-07-28",
   "h": "f24413bbc3699a55",
   "last": "2026-10-15"
+ },
+ "phone-link-android": {
+  "first": "2026-10-27",
+  "h": "893e5ea0036fbeba"
  },
  "plain-english": {
   "first": "2026-07-28",
@@ -3514,8 +3534,8 @@
  },
  "techies-pdf": {
   "first": "2026-10-18",
-  "h": "7520255d78117b61",
-  "last": "2026-10-24"
+  "h": "9c6082c7535d9762",
+  "last": "2026-10-27"
  },
  "terms": {
   "first": "2026-07-28",
@@ -3563,7 +3583,7 @@
  },
  "using-ai-safely": {
   "first": "2026-07-28",
-  "h": "02c232d3dfc4c041",
+  "h": "35397af95f3d02da",
   "last": "2026-10-27"
  },
  "van-signal-map": {
@@ -3633,8 +3653,8 @@
  },
  "virgin-media-email-wont-add-to-new-outlook": {
   "first": "2026-09-05",
-  "h": "7d42c6acb93ef80f",
-  "last": "2026-10-23"
+  "h": "ed85dc045550c6b0",
+  "last": "2026-10-27"
  },
  "virus-removal": {
   "first": "2026-07-28",

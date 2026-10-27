@@ -1313,6 +1313,8 @@ SEO_WAVE9_PAGES = [
                     'Gmail</a> &middot; <a href="/virgin-email-mover/">Move Virgin email to Gmail '
                     'free, with our app</a> &middot; <a href="/virgin-media-email-moving-to-junara/">Virgin '
                     'Media email is moving to Junara</a> &middot; <a '
+                    'href="/ntlworld-blueyonder-email-not-working/">ntlworld or Blueyonder email '
+                    'not working</a> &middot; <a '
                     'href="/how-to-go-back-to-classic-outlook/">Going back to classic Outlook</a> '
                     '&middot; <a href="/download-classic-outlook/">Download classic Outlook</a> '
                     '&middot; <a href="/outlook-cant-add-account-new-outlook/">New Outlook '

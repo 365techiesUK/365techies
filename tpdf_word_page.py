@@ -139,7 +139,7 @@ PAGE = {
         {'q': 'Are online PDF to Word converters safe?', 'a': '<p>Many work, but they all mean uploading your document to someone else&rsquo;s computer. For bank, medical or legal letters, read the site&rsquo;s privacy policy first, or convert it on your own PC instead.</p>'},
         {'q': 'Does it work on a Mac or an iPad?', 'a': '<p>Techies PDF is for Windows 10 and 11, and we help with Windows PCs only, not Macs, iPads or iPhones.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/techies-pdf/">Techies PDF, our free PDF program</a>, <a href="/heic-photos-wont-open-on-windows/">phone photos that won&rsquo;t open</a>, <a href="/how-to-take-a-screenshot/">taking a screenshot</a> and <a href="/remote-support/">remote help</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/techies-pdf/">Techies PDF, our free PDF program</a>, <a href="/how-to-sign-a-pdf/">sign a PDF</a>, <a href="/how-to-merge-pdf-files/">merge PDFs</a>, <a href="/how-to-make-a-pdf-smaller/">make a PDF smaller</a>, <a href="/heic-photos-wont-open-on-windows/">phone photos that won&rsquo;t open</a>, <a href="/how-to-take-a-screenshot/">taking a screenshot</a> and <a href="/remote-support/">remote help</a>.</p>',
 }
 
 _bx.build_new_page(PAGE)
