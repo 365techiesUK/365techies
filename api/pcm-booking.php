@@ -2483,12 +2483,27 @@ if ($action === 'staffpcmlic') {
 // details in the portal ... mobile numbers, telephone numbers, the company details". Search across the job list, the
 // PC Manager records, SimplyBook's clients and the book; open one person; save edits into the book (never into
 // SimplyBook - see the library's header). Staff only, like everything above.
-function cb_local_rows() {
-    list($lkC, $dbC) = db_open(); db_close($lkC);
+function cb_local_rows($dbC = null) {   // $dbC: the customer file when the caller has already loaded it
+    if ($dbC === null) { list($lkC, $dbC) = db_open(); db_close($lkC); }
     $jd = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-jobs.json'), true);
     return array_merge(cb_rows_from_jobs(isset($jd['jobs']) && is_array($jd['jobs']) ? $jd['jobs'] : array()),
                        cb_rows_from_pcm(isset($dbC['customers']) ? $dbC['customers'] : array()),
                        cb_rows_from_book(cb_book_read()));
+}
+/* The diary's numbers from the customer cards (27 Oct 2026): for every person, the number their card shows (mobile
+   first, then the other number - the same cb_person view Find a customer uses, so staff edits win), keyed by each of
+   their emails ('e:') and SimplyBook clients ('s:'). Local files only, no SimplyBook call. */
+function cb_card_phones($dbC) {
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    $rows = cb_local_rows($dbC);
+    $out = array();
+    foreach (cb_cluster($rows) as $g) {
+        $f = cb_person($rows, $g); $f = $f['fields'];
+        $num = $f['mobile'] !== '' ? $f['mobile'] : $f['phone'];
+        if ($num === '') continue;
+        foreach ($g as $i) foreach (cb_keys($rows[$i]) as $k) if (($k[0] === 'e' || $k[0] === 's') && !isset($out[$k])) $out[$k] = $num;
+    }
+    return $out;
 }
 /* The person's SimplyBook client, added to the rows when the ref or the person names one (else looked up by their
    exact email, unique on SimplyBook's side). Best effort: the card works without it. */
@@ -2805,6 +2820,11 @@ if ($action === 'agenda') {
             }
         }
     }
+    /* 27 Oct 2026 (owner): a new customer added in the portal, booked for the next morning, mobile saved on his card
+       (Find a customer -> Edit details) - and the diary still said "no number on file". The index above only knows the
+       PC Manager records; a number on a New job card or saved on the customer card was never looked at. The card's own
+       number now comes first (by their SimplyBook client, then exact email), built once and only if a booking needs it. */
+    $cardPhones = null;
     $stMap = null;   // SB status-id -> confirmed/completed, built lazily if rows carry status_id
     $list = array();
     foreach ($rows as $b) {
@@ -2821,16 +2841,23 @@ if ($action === 'agenda') {
         $em = '';
         foreach (array('client_email', 'email') as $ek) if (!empty($b[$ek])) { $em = (string)$b[$ek]; break; }
         if ($em === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['email'])) $em = (string)$b['client']['email'];
-        /* SimplyBook gave us nothing, so use the number we hold. EXACT email
-           only - the same rule the rest of the integration uses; never match on
-           name, because two Smiths must not be merged. psrc tells the portal
+        /* SimplyBook gave us nothing, so use the number we hold. Their SimplyBook
+           client or their EXACT email only - the same rule the rest of the
+           integration uses; never match on name, because two Smiths must not be
+           merged. psrc tells the portal
            where it came from, so staff can see SimplyBook still needs it. */
+        $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
         $psrc = '';
+        if ($ph === '' && ($cid > 0 || $em !== '')) {
+            if ($cardPhones === null) $cardPhones = cb_card_phones($dbA);
+            $lem = strtolower(trim($em));
+            foreach (array($cid > 0 ? 's:' . $cid : '', $lem !== '' ? 'e:' . $lem : '') as $ck)
+                if ($ck !== '' && isset($cardPhones[$ck])) { $ph = $cardPhones[$ck]; $psrc = 'ours'; break; }
+        }
         if ($ph === '' && $em !== '') {
             $lem = strtolower(trim($em));
             if (isset($ourPhones[$lem]) && $ourPhones[$lem] !== '') { $ph = $ourPhones[$lem]; $psrc = 'ours'; }
         }
-        $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
         $bid = (int)(isset($b['id']) ? $b['id'] : 0);
         // status: our staff marker first; else SimplyBook's own Status-feature id mapped by
         // name; else SB's legacy confirm flag. So the portal shows the truth from either side.

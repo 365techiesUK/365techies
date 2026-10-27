@@ -116,5 +116,52 @@ $portal = (string)@file_get_contents(dirname(__DIR__) . '/portal/index.html');
 ok($portal === '' || strpos($portal, "b.psrc === 'ours'") !== false,
    'the built portal shows where the number came from');
 
+// --- 8. the customer card's number (27 Oct 2026) ----------------------------
+// The owner's case: a new customer added in the portal with no number, booked for the next morning, then his mobile
+// saved on his card (Find a customer -> Edit details). The diary still said "no number on file". These run the REAL
+// cb_local_rows + cb_card_phones, lifted out of pcm-booking.php into a temp folder with the two libraries beside them,
+// so __DIR__ (the job list) and the book's store point at fixtures, never at live files.
+$tmp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'agcard' . getmypid();
+@mkdir($tmp);
+copy(__DIR__ . '/pcm-custbook-lib.php', $tmp . '/pcm-custbook-lib.php');
+copy(__DIR__ . '/pcm-phone-lib.php', $tmp . '/pcm-phone-lib.php');
+$got = preg_match('/^function cb_local_rows\(.*?^}\R.*?^function cb_card_phones\(.*?^}\R/ms', $src, $fm);
+ok($got === 1, 'pcm-booking.php still defines cb_local_rows and cb_card_phones');
+file_put_contents($tmp . '/fns.php', "<?php\nfunction db_open() { throw new Exception('the agenda must pass the file it already loaded'); }\n"
+    . "function db_close(\$l) {}\n" . ($got ? $fm[0] : ''));
+file_put_contents($tmp . '/pcm-jobs.json', json_encode(array('jobs' => array(
+    array('id' => 'j1', 'ts' => 100, 'name' => 'New Customer', 'email' => 'new.customer@example.com', 'phone' => '', 'mobile' => ''),
+    array('id' => 'j2', 'ts' => 200, 'name' => 'Job Only', 'email' => 'job.only@example.com', 'mobile' => '07700 900333'),
+    array('id' => 'j3', 'ts' => 300, 'name' => 'No Number', 'email' => 'no.number@example.com'),
+))));
+file_put_contents($tmp . '/pcm-custbook.json', json_encode(array('people' => array(
+    'p1' => array('mobile' => '07700 900444', 'updated' => 400,
+                  'links' => array('emails' => array('new.customer@example.com'), 'jobs' => array('j1'), 'sb' => 5001)),
+    'p2' => array('email' => 'edited@example.com', 'mobile' => '07700 900666', 'updated' => 500, 'links' => array()),
+))));
+$cust = array(
+    'k1' => array('email' => 'edited@example.com', 'mobile' => '+447700900555'),
+    'k2' => array('email' => 'app.user@example.com', 'tel' => '01202 000111', 'sb_client_id' => 6001),
+);
+if ($got) {
+    require $tmp . '/fns.php';
+    $cp = cb_card_phones(array('customers' => $cust));
+    $d = function ($k) use ($cp) { return isset($cp[$k]) ? preg_replace('/\D/', '', $cp[$k]) : ''; };
+    ok($d('e:new.customer@example.com') === '07700900444', "the mobile saved on the card is found by the booking's email");
+    ok($d('s:5001') === '07700900444', '... and by the SimplyBook client the card was saved against');
+    ok($d('e:job.only@example.com') === '07700900333', 'a number on a New job card is found');
+    ok($d('e:edited@example.com') === '07700900666', "a staff edit beats the number in the customer's own portal, as on the card");
+    ok($d('s:6001') === '01202000111', "a PC Manager customer's landline is found by their SimplyBook client");
+    ok(!isset($cp['e:no.number@example.com']), 'a person with no number anywhere adds nothing');
+    ok(!isset($cp['e:never.seen@example.com']) && !isset($cp['s:0']), 'nobody else is invented');
+}
+foreach (array('fns.php', 'pcm-custbook-lib.php', 'pcm-phone-lib.php', 'pcm-jobs.json', 'pcm-custbook.json') as $f) @unlink($tmp . '/' . $f);
+@rmdir($tmp);
+$ag = substr($src, (int)strpos($src, "if (\$action === 'agenda')"), 9000);
+ok(strpos($ag, '$cardPhones = cb_card_phones($dbA)') !== false, "the agenda reads the cards from the customer file it already loaded");
+ok(strpos($ag, 'cb_card_phones') < strpos($ag, 'isset($ourPhones[$lem])'), 'the card comes before the PC Manager index');
+ok(preg_match('/if \(\$ph === \x27\x27 && \(\$cid > 0 \|\| \$em !== \x27\x27\)\)/', $ag) === 1,
+   "and only when SimplyBook's booking carried no number");
+
 echo "\n" . ($fails ? "$fails FAILED" : "all passed") . "\n";
 exit($fails ? 1 : 0);
