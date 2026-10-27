@@ -1009,7 +1009,8 @@ NTLWORLD = {
     'sections': [
         {'eyebrow': '/01 &mdash; WHOSE EMAIL IS IT?', 'h2': 'ntlworld and Blueyonder are Virgin Media email',
          'html': '<p>ntlworld addresses began with NTL&rsquo;s broadband, and Blueyonder with Telewest&rsquo;s. The two firms joined to become Virgin Media, and their email, with virgin.net, now all runs on <strong>Virgin Media Mail</strong>, the same system as virginmedia.com addresses.</p>'
-                 '<p>So whatever the address says, the help, the settings and the log-in are Virgin Media&rsquo;s, and everything below applies to all of them.</p>'},
+                 '<p>So whatever the address says, the help, the settings and the log-in are Virgin Media&rsquo;s, and everything below applies to all of them.</p>'
+                 '<p style="margin:.2rem 0 0">__YT_NTL__</p>'},
         {'eyebrow': '/02 &mdash; CHECK ONE', 'h2': 'Log in on the web first',
          'html': '<ol>'
                  '<li>Open your web browser, type <strong>mail.virginmedia.com</strong> into the address bar yourself, and press Enter.</li>'
@@ -1075,6 +1076,7 @@ def symptom_pages(setup_url):
         '__APP_BOX_WIFICARD__': pfp._app_box('wificard', 'Print a guest Wi-Fi card from your PC',
             '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
         '__YT_WIFI__': yt_watch.button(yt_watch.WIFI_SHORT, 'Watch it done in %s' % yt_watch.length(yt_watch.WIFI_SHORT[1]).replace('-second', ' seconds'), shape='tall'),
+        '__YT_NTL__': yt_watch.button(yt_watch.NTL_SHORT, 'Watch the checks in %d seconds' % yt_watch.NTL_SHORT[1], shape='tall'),   # 27 Oct 2026, out 29 Oct
         '__APP_BOX_PRINTER__': pfp._app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
             'It only reads, until you press a button.</p>', setup_url, clip='printers'),

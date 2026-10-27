@@ -103,6 +103,14 @@ CLASSIC_OUTLOOK_SHORT = ("v-rXygnZhak", 25, None, "No Classic Outlook on Your Ne
 WIFI_SHORT = ("goZCP5IjJWc", 29, "2026-10-27T08:00:00+00:00", "Forgot Your Wi-Fi Password? Your PC Already Knows It")
 CLIPBOARD_SHORT = ("Bhim_dE_C2g", 27, "2026-10-29T12:00:00+00:00", "Windows Can Remember Everything You Copy")
 
+# 27 Oct 2026: Shorts for the pages built that day (reels/youtube-uploads/new-pages-shorts-2026-10-27), scheduled by the
+# owner one a day at 19:00 UK: Copilot (filmed in the studio PC) under /using-ai-safely/#turn-off-copilot, ntlworld (our own
+# cards) on /ntlworld-blueyonder-email-not-working/, own words (the live tool) in the password generator's own-words tab.
+# The two PDF re-makes the same week are in techies_pdf_page.SHORTS (join 31 Oct, shrink 1 Nov).
+COPILOT_SHORT = ("SelfuI8_jcs", 33, "2026-10-28T19:00:00+00:00", "How to Turn Off Copilot in Windows 11")
+NTL_SHORT = ("J63XOIbbH8U", 38, "2026-10-29T19:00:00+00:00", "ntlworld or Blueyonder Email Stopped Working? Do This")
+PWOWN_SHORT = ("Bw9G75RI9cE", 32, "2026-10-30T19:00:00+00:00", "Make a Strong Password From Your Own Words")
+
 
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""

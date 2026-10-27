@@ -322,12 +322,18 @@ SHORTS = {
     "sign": dict(id="B2MBn5KOo6k", slug="sign-a-pdf", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
                  name="How to sign a PDF without printing it (free, Windows)",
                  says="Need to sign a form? Don&rsquo;t print it. Open it in Techies PDF, and type straight into the boxes. Then add your signature. Type it, draw it, or use a photo. Put it on the line, and press Save."),
-    "shrink": dict(id="4R_94kkKYLM", slug="too-big-to-email", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
-                   name="PDF too big to email? Make it smaller in seconds",
-                   says="Is your PDF too big to email? Techies PDF makes it smaller, right here on your computer. Photos and scans come down the most. And your original stays just as it was."),
-    "join": dict(id="Zaj0lErSGkQ", slug="join-pdfs", secs=21, live="2026-10-19T09:00:00+01:00", out="Mon 19 Oct",
-                 name="How to join PDFs into one (free, no uploading)",
-                 says="Lots of PDFs to send? Send just one. Drop them into Techies PDF, and put them in order. Press Join, and they&rsquo;re one PDF. The ones you started with aren&rsquo;t changed."),
+    # 27 Oct 2026: shrink and join RE-MADE (v3 look; the 19 Oct ones lost viewers fastest) and scheduled by the owner. A
+    # new upload means a new id: "was" (the old Short, still public) plays here until "live", then the new one takes over.
+    "shrink": dict(id="YbVOkZlGlN0", slug="too-big-to-email", secs=31, live="2026-11-01T19:00:00+00:00", out="Sun 1 Nov",
+                   name="PDF too big to email? Make it smaller in seconds", end="",
+                   says="PDF too big to email? Make it smaller. In Techies PDF, choose Make a PDF smaller for email. Choose the PDF. This one is 27 MB of photos. Start with Good for email. The pictures stay sharp. Press Make it smaller. 27 MB, down to 1.3. A smaller copy is saved, and your original isn&rsquo;t changed. It&rsquo;s free, and nothing is uploaded.",
+                   was="4R_94kkKYLM", was_secs=21,
+                   was_says="Is your PDF too big to email? Techies PDF makes it smaller, right here on your computer. Photos and scans come down the most. And your original stays just as it was."),
+    "join": dict(id="xxYXqm0OJW8", slug="join-pdfs", secs=25, live="2026-10-31T19:00:00+00:00", out="Sat 31 Oct",
+                 name="How to join PDFs into one (free, no uploading)", end="",
+                 says="Lots of PDFs to send? Send just one. In Techies PDF, choose Join PDFs together. Drop your PDFs in, or choose them. Put them in order with the arrows. Press Join them into one PDF. One tidy PDF, and the ones you started with aren&rsquo;t changed. It&rsquo;s free, and nothing is uploaded.",
+                 was="Zaj0lErSGkQ", was_secs=21,
+                 was_says="Lots of PDFs to send? Send just one. Drop them into Techies PDF, and put them in order. Press Join, and they&rsquo;re one PDF. The ones you started with aren&rsquo;t changed."),
     "photos": dict(id="o0K6FKsCRKo", slug="photos-to-pdf", secs=21, live="2026-10-21T17:00:00+01:00", out="Wed 21 Oct",
                    name="Turn photos of a letter into one PDF (free)",
                    says="Photographed a letter or a receipt? Techies PDF turns your photos into one PDF, a page each. The right way up, on A4, ready to send or print. And nothing is uploaded. It all happens on your PC."),
@@ -367,17 +373,19 @@ def short_button(fid):
     if not v or not v["id"]:
         return ""
     base = "/images/tpdf-short-%s-v1" % v["slug"]
+    was = (' data-was="%s" data-was-secs="%d" data-was-says="%s"' % (v["was"], v["was_secs"], html.escape(html.unescape(v["was_says"] + SHORT_END)))
+           if v.get("was") else "")
     return ('\n              <a class="tpp-clip" id="short-%s" href="https://www.youtube.com/shorts/%s" target="_blank" rel="noopener" '
-            'data-yt="%s" data-live="%s" data-out="%s" data-label="%s: %d seconds, with a spoken guide and captions" data-says="%s">'
+            'data-yt="%s" data-live="%s" data-out="%s" data-label="%s: %d seconds, with a spoken guide and captions" data-says="%s"%s>'
             '<span class="tpp-clip__pic"><img src="%s-thumb.webp" width="72" height="72" alt="" loading="lazy" decoding="async">%s</span>'
             '<span><b>Watch it in %d seconds</b><small>The real program, with a spoken guide and captions</small></span></a>'
-            % (v["slug"], v["id"], v["id"], v["live"], v["out"], v["name"], v["secs"], html.escape(html.unescape(v["says"] + SHORT_END)),
+            % (v["slug"], v["id"], v["id"], v["live"], v["out"], v["name"], v["secs"], html.escape(html.unescape(v["says"] + v.get("end", SHORT_END))), was,
                base, PLAY, v["secs"]))
 
 
 def short_node(fid):
     v = SHORTS[fid]
-    words = v["says"] + SHORT_END
+    words = v["says"] + v.get("end", SHORT_END)
     for a, b in (("&rsquo;", "'"), ("&amp;", "&")):
         words = words.replace(a, b)
     return {"@context": "https://schema.org", "@type": "VideoObject", "@id": "%s/%s/#short-%s" % (bp.SITE, SLUG, v["slug"]),
@@ -399,7 +407,8 @@ def short_waiting():
 
 
 # One player for every reel: a modal dialog with the YouTube video in it (Esc, the X or a click outside closes it and
-# stops the video). A reel not out yet: its button says when, and does nothing.
+# stops the video). A reel not out yet: its button says when, and does nothing - or, if it replaces an older reel
+# (data-was, 27 Oct 2026), plays that one until its own time comes.
 CLIP_DIALOG = ('    <dialog class="tpp-dlg" id="tppclip" aria-label="Techies PDF video" aria-describedby="tppclip-says">'
                '<button class="tpp-dlg__x" type="button" aria-label="Close the video">&times;</button>'
                '<div class="tpp-dlg__v"></div><p class="tpp-dlg__says" id="tppclip-says"></p></dialog>\n'
@@ -408,7 +417,9 @@ CLIP_DIALOG = ('    <dialog class="tpp-dlg" id="tppclip" aria-label="Techies PDF
                'var j=document.createElement("script");j.type="application/ld+json";j.text=s.text;s.parentNode.replaceChild(j,s);}});'
                'var v=d&&d.querySelector(".tpp-dlg__v"),t=document.getElementById("tppclip-says");'
                'document.querySelectorAll("a.tpp-clip").forEach(function(a){var lv=Date.parse(a.getAttribute("data-live")),o=a.getAttribute("data-out");'
-               'if(Date.now()<lv){a.removeAttribute("href");a.removeAttribute("target");a.classList.add("tpp-clip--soon");a.setAttribute("aria-disabled","true");'
+               'var w=a.getAttribute("data-was");if(Date.now()<lv&&w){a.setAttribute("data-yt",w);a.href="https://www.youtube.com/shorts/"+w;'
+               'a.setAttribute("data-says",a.getAttribute("data-was-says"));a.querySelector("b").textContent="Watch it in "+a.getAttribute("data-was-secs")+" seconds";}'
+               'else if(Date.now()<lv){a.removeAttribute("href");a.removeAttribute("target");a.classList.add("tpp-clip--soon");a.setAttribute("aria-disabled","true");'
                'a.querySelector("b").textContent="New video, out "+o;return;}'
                'if(!d||!d.showModal)return;'
                'a.addEventListener("click",function(e){e.preventDefault();var i=document.createElement("iframe");'

@@ -12704,7 +12704,8 @@ def password_generator():
            "Generate a strong random password, a passphrase you can actually remember, or one built from your own words &mdash; instantly and securely. Made in your browser, never sent anywhere.",
            cta1=("Generate One", "#pgtool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
            chips=["Random or memorable","100% in your browser","No sign-up"]),
-      PWGEN_TOOL,
+      # 27 Oct 2026: the own-words Short (yt_watch.PWOWN_SHORT) inside the My own words tab, under its tip
+      PWGEN_TOOL.replace('<p class="pg-own-warn"', '<p style="margin:-.4rem 0 .8rem">' + yt_watch.button(yt_watch.PWOWN_SHORT, "Watch how in %d seconds" % yt_watch.PWOWN_SHORT[1], shape="tall") + '</p>\n            <p class="pg-own-warn"', 1),
       faq_html(faqs),
       cta("One strong password to rule them all",
           "A password manager remembers every login for you, behind a single strong password &mdash; we set it up and make it simple, for homes and businesses across Dorset.",
@@ -18122,7 +18123,7 @@ info_page(
             <li><strong>Word, Excel, PowerPoint and OneNote</strong> (Microsoft 365 at home, signed in with your own Microsoft account): File, Options, Copilot, untick <strong>Enable Copilot</strong>, press OK, then close the app and open it again. Do it in each app and on each PC. The phone and web versions can&rsquo;t be switched off this way, and on a work account your IT department decides.</li>
             <li><strong>The Copilot button in Edge:</strong> right-click it and choose to hide it, or type &ldquo;Copilot&rdquo; into the search box in Edge&rsquo;s Settings. Hiding the button only hides it; Copilot itself is still there.</li>
           </ul>
-          <p>Not sure what you&rsquo;ve got, or what it can see? <a href="/contact/">Ask us</a> and we&rsquo;ll go through it with you on your PC.</p>
+""" + '          <p style="margin:.2rem 0 0">' + yt_watch.button(yt_watch.COPILOT_SHORT, "Watch it done in %d seconds" % yt_watch.COPILOT_SHORT[1], shape="tall") + '</p>\n' + """          <p>Not sure what you&rsquo;ve got, or what it can see? <a href="/contact/">Ask us</a> and we&rsquo;ll go through it with you on your PC.</p>
           <h2>We&rsquo;ll help you use it well</h2>
           <p>We help homes and businesses adopt AI confidently and safely &mdash; see our <a href="/ai/training/">AI training &amp; adoption</a> service, or our <a href="/ai/agents/">custom agentic AI systems</a> that automate real business tasks.</p>""",
   faqs=[

@@ -29,9 +29,15 @@ _WIN_ONLY = '<p>We work on Windows PCs only, not Macs, iPads or iPhones.</p>'
 
 
 def _short(key, label=None):
-    """The job's 21-second Short (techies_pdf_page.SHORTS, public since 19 Oct) as a YouTube pop-up button."""
+    """The job's Short (techies_pdf_page.SHORTS) as a YouTube pop-up button. A re-made one (27 Oct 2026: join, shrink) is
+    written hidden with its time, and the old Short it replaces ("was") sits after it: once the new one shows, the CSS
+    sibling rule hides the old. The HTML is the same whenever it's built, before or after the day."""
     v = _tp.SHORTS[key]
-    return _yt.button((v["id"], v["secs"], None, v["name"]), label or "Watch it done in %d seconds" % v["secs"], shape="tall")
+    if not v.get("was"):
+        return _yt.button((v["id"], v["secs"], None, v["name"]), label or "Watch it done in %d seconds" % v["secs"], shape="tall")
+    new = _yt.button((v["id"], v["secs"], v["live"], v["name"]), label or "Watch it done in %d seconds" % v["secs"], shape="tall")
+    old = _yt.button((v["was"], v["was_secs"], None, v["name"]), "Watch it done in %d seconds" % v["was_secs"], shape="tall")
+    return new + old.replace('<a class="ytw"', '<a class="ytw ytw-was"', 1) + '<style>a.ytw:not([hidden])~a.ytw-was{display:none}</style>'
 
 
 def _box(place, h3, body, pic, alt):
