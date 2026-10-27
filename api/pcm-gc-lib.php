@@ -5,9 +5,11 @@
  *
  * GoCardless's GET /customers has NO email filter: its schema lists after, before, created_at, currency,
  * limit, sort_direction, sort_field and action_required, with additionalProperties:false. pcm.php and
- * pcm-invoice.php used to pass it an email= filter, which GoCardless either refuses (nobody found, for
- * everyone) or ignores (customers[0], the NEWEST customer - a different person - for everyone). So the
- * customer list is read in pages of 500 and matched on the lower-cased email here.
+ * pcm-invoice.php used to pass it an email= filter, and GoCardless refuses it: every one of the 107 portal
+ * plan-card lookups cached on the server from 26 Jul to 27 Oct 2026 had come back empty, so no customer's
+ * card ever showed their Direct Debit. (Had it been ignored instead, customers[0] - the NEWEST customer, a
+ * different person - would have been used for everyone.) So the customer list is read in pages of 500
+ * and matched on the lower-cased email here.
  *
  * One email can have several customer records (an abandoned sign-up leaves an empty one and the next link
  * makes another), so every id is kept and every record is read.
