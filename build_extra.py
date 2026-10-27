@@ -14669,6 +14669,34 @@ SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check 
     </section>
 """
 
+# 27 Oct 2026: "how to check my pc specs" and its cousins (how to check pc specs, how to see my pc specs, how do i check my
+# laptop specs...) showed this page ~2,500 times in 3 months at positions 7-9 for ~3 clicks: those searchers want the steps
+# in Windows itself. Same three ways as the 3-free-ways film (PC_SPECS_FILM), plus System Information for the motherboard.
+SPECCHECK_WINDOWS_BAND = """    <section class="section" aria-label="How to check your PC specs in Windows" id="check-in-windows">
+      <div class="wrap">
+      <style>
+      #check-in-windows .cw-grid{max-width:1080px;margin:1.4rem auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.8rem}
+      #check-in-windows .cw-way{display:flex;flex-direction:column;gap:.5rem;padding:1.15rem 1.2rem;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03)}
+      #check-in-windows .cw-way h3{margin:0;font-size:1.02rem;line-height:1.35}
+      #check-in-windows .cw-way p{margin:0;font-size:.9rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #check-in-windows .cw-way .cw-keys{font-family:var(--font-mono,monospace);font-size:.8rem;color:var(--cyan-soft,#6cc4f5)}
+      #check-in-windows .cw-film{margin:1.1rem auto 0;text-align:center}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NO WEBSITE NEEDED</p>
+          <h2 class="section-title section-title--center" data-title>How to check your PC specs <em class="grad grad--cyan">in Windows itself</em><span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A browser is only allowed to see some of your hardware. Windows can show you all of it, free, in three places.</p>
+        </div>
+        <div class="cw-grid">
+          <div class="cw-way"><span class="cw-keys">Windows key + I</span><h3>1. Settings &gt; System &gt; About</h3><p>The quick answer: your processor, installed RAM, whether Windows is 64-bit, and the Windows edition and version you are on (<a href="/is-my-windows-still-supported/">is it still supported?</a>). On Windows 10 it is the same: Settings &gt; System &gt; About.</p></div>
+          <div class="cw-way"><span class="cw-keys">Ctrl + Shift + Esc</span><h3>2. Task Manager &gt; Performance</h3><p>Live readings for the processor (with its speed and cores), memory (how much, how fast, and slots used), each drive (SSD or HDD, and its size; <a href="/how-to-check-ssd-health/">check its health</a>) and the graphics card with its own memory.</p></div>
+          <div class="cw-way"><span class="cw-keys">Start, type System Information</span><h3>3. System Information (or dxdiag)</h3><p>The full list: the exact model, BIOS version and the motherboard (shown as BaseBoard). For the graphics card&rsquo;s details, press Start, type <strong>dxdiag</strong>, press Enter and open the Display tab.</p></div>
+        </div>
+        <div class="cw-film">__SPECS_FILM__</div>
+      </div>
+    </section>
+"""
+
 # Mobile signal: the owner wants spec-check visitors to run the phone signal test. Desktop visitors get a
 # scan-me QR (drawn with the site's own vendored qrcode-generator, loaded only when the band is near);
 # phones get the button. Every claim mirrors /mobile-signal-check/ itself (download, upload, ping on a live
@@ -15134,6 +15162,7 @@ def computer_spec_checker():
       SPECCHECK_W11_BAND,
       SPECCHECK_NEXT_BAND,
       SPECCHECK_SIGNAL_BAND,
+      SPECCHECK_WINDOWS_BAND.replace("__SPECS_FILM__", yt_watch.button(yt_watch.PC_SPECS_FILM, "Watch all three ways on a real PC (under 2 minutes)")),
       faq_html(faqs),
       cta("Specs raising questions?",
           "Windows 10 warning, mystery slowness, or a machine that doesn&rsquo;t match what you thought you bought? Not on a plan? We check the fault free, then quote before we fix &mdash; usually within minutes, remotely. Or send us your spec sheet for an honest answer.",

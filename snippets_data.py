@@ -854,6 +854,7 @@ SNIPPETS = {
     },
     "windows-10-end-of-life": {
         "title": "Windows 10 End of Life (Oct 2025): What to Do Next",
+        "desc": "Free Windows 10 security updates ended on 14 October 2025. What that means for your PC, Extended Security Updates to October 2027, and three ways forward.",
     },
     "remote-access": {
         "title": "Remote Access: Work From Anywhere on Your Own PC",
@@ -899,8 +900,11 @@ SNIPPETS = {
     "it-jargon-buster/operating-system": {
         "title": "Operating System Explained in Plain English",
     },
+    # 27 Oct 2026: YouTube search brings "how to free up space on windows 11" (our channel's 5th search term), Bing UK
+    # "disk cleanup" 11.8K and "free up disk space" 2.2K a quarter; the page already carries the 90-second film.
     "how-to-free-up-storage-space": {
-        "title": "How to Free Up Storage Space on a Full Computer",
+        "title": "How to Free Up Space on Windows 11 (No Cleaner Apps)",
+        "desc": "C drive full? Free up space with Windows 11's own tools: temporary files, cleanup recommendations, Storage Sense and Disk Clean-up. No cleaner apps.",
     },
     "dell-it-support-dorset": {
         "title": "Dell Support &amp; Repair, Dorset (Home &amp; Business)",
@@ -1173,6 +1177,56 @@ SNIPPETS = {
     "laptop-set-up-for-elderly-parent": {
         "title": "Laptop Set Up for an Elderly Parent, Ready to Use",
         "desc": "Send us the laptop or choose a refurbished Dell from £510. We set up large text, email, video calls, the printer and security, with 30 days of help.",
+    },
+    # ================================================================
+    # 27 Oct 2026 site pass: pages whose description was cut short ("...") and that earn impressions (GSC 3 months),
+    # plus the Teams guide (586 impressions for "how to use microsoft teams" at pos 10, 0 clicks) and the fuel title (69 chars).
+    # ================================================================
+    "how-to-use-microsoft-teams": {
+        "desc": "How to use Microsoft Teams: sign in, chat and call from the left-hand bar, join a meeting from a link, mute, turn the camera on and share your screen.",
+    },
+    "fuel-prices": {
+        "title": "UK Fuel Prices Today: Cheapest Petrol &amp; Diesel Near You",
+        "desc": "UK fuel prices today from every forecourt: average petrol and diesel prices, the cheapest near you by postcode, and what a full tank costs.",
+    },
+    "dell-latitude-charging-on-the-go": {
+        "desc": "Why a Dell Latitude drains on a car USB-C adapter: it wants 65 W. Which models charge over USB-C, and the adapter, cable and power bank that keep up.",
+    },
+    "it-support-for-property-management": {
+        "desc": "IT support for property managers, managing agents and lettings teams in Dorset: software, tenant data, email and security looked after on a monthly plan.",
+    },
+    "web-design-hosting": {
+        "desc": "Web design and hosting in Bournemouth with proof, not promises: our own site scores 96-100 on Google Lighthouse. Test it live here, then compare any site.",
+    },
+    "it-advice": {
+        "desc": "Free, plain-English IT guides from 365 Techies: every step-by-step fix by topic, for Windows, Microsoft 365, email, printers, Wi-Fi, security and more.",
+    },
+    "using-ai-safely": {
+        "desc": "A plain-English guide to using AI safely: what Copilot, ChatGPT, Gemini and Claude can and cannot do, the golden rules, and when not to trust the answer.",
+    },
+    "help-in-dorset": {
+        "desc": "Where to get help in Dorset beyond computers: the trusted free services we point people to, from Citizens Advice and Age UK to the Samaritans.",
+    },
+    "outlook-not-sending-emails": {
+        "desc": "Outlook receiving emails but not sending? That is an outgoing (SMTP) problem. Check the server, port 587 and sign-in step by step, or let us fix it.",
+    },
+    "outlook-error-0x80042109": {
+        "desc": "Outlook error 0x80042109 means it cannot reach your outgoing (SMTP) server, often because of a VPN or the wrong port. Step-by-step fix for classic Outlook.",
+    },
+    "how-to-transfer-files-to-a-new-computer": {
+        "desc": "Got a new computer? Move your files across safely: the cloud way, the USB drive way, or our free Techies Move app, step by step and in plain English.",
+    },
+    "how-to-update-windows-safely": {
+        "desc": "Install Windows updates safely and on your terms: check for updates, set active hours so it never restarts mid-task, and what to do before a big update.",
+    },
+    "how-to-set-up-email-on-your-phone": {
+        "desc": "Set up your email on your phone in a few minutes: add the account, sign in, and check it sends and receives. Works for most email providers and phones.",
+    },
+    "how-to-spot-a-fake-website": {
+        "desc": "How to tell a fake shopping or login website from a real one: why the padlock proves nothing, the warning signs to check, and what to do if you have paid.",
+    },
+    "how-to-choose-a-laptop": {
+        "desc": "Choosing a laptop or desktop in plain English: the five things that matter (processor, RAM, SSD, screen, battery), which type, and mistakes to avoid.",
     },
 }
 
