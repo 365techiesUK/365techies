@@ -213,6 +213,24 @@ ok(sbw_check($bS, $x, '07425 249706') === 'the email/SMS consent ticks changed',
 ok(sbw_check($bS, $bS, '07425 249706') === 'the number did not land', 'a write that changed nothing is not "done"');
 ok(sbw_check($bS, array('getClient' => null), '07425 249706') !== '', 'an unreadable record after the write is never clean');
 
+/* v2 payload (27 Oct 2026, the live test: an edit is NOT a merge - it blanks what it leaves out) */
+$id1 = str_repeat('a', 32); $id2 = str_repeat('b', 32);
+$vals = sbw_field_values(array('data' => array(array('id' => $id1, 'value' => '1 PC NO Office'), array('id' => $id2, 'value' => null))));
+ok($vals === array($id1 => '1 PC NO Office', $id2 => ''), 'REST values under data[] are read; null becomes ""');
+ok(sbw_field_values(array('id' => 230, 'fields' => array(array('id' => 7, 'field' => array('id' => $id1), 'value' => 'x')))) === array($id1 => 'x'),
+   'a row with its OWN numeric id beside field.id: the field id wins');
+ok(sbw_field_values(array($id2 => '1', $id1 => 'y')) === array($id1 => 'y', $id2 => '1'), 'a plain map keyed by field id');
+ok(sbw_field_values(array('message' => 'not found')) === array() && sbw_field_values(null) === array(), 'nothing recognisable gives nothing (and the sync refuses)');
+$pv = sbw_push_payload($read + array('country_id' => 'GB', 'state_id' => null), '07700 900123', $vals,
+                       array('is_email_unsubscribed' => true, 'is_sms_unsubscribed' => false, 'email_promo_subscribed' => true));
+ok($pv['client_fields'] === $vals, 'the extra fields go back exactly as REST read them');
+ok($pv['country_id'] === 'GB' && !array_key_exists('state_id', $pv), 'country/state are echoed when the read has them (a null is not invented)');
+ok($pv['is_email_unsubscribed'] === true && $pv['is_sms_unsubscribed'] === false, 'both Unsubscribe ticks go back as they were');
+ok(!array_key_exists('email_promo_subscribed', $pv), 'a promo flag is never translated into an Unsubscribe tick');
+ok(sbw_push_payload($read, 'x', array(), null) === sbw_push_payload($read, 'x'), 'no values read = no client_fields key at all (never an empty map)');
+ok(strpos(sbw_shape(array('data' => array(array('id' => $id1, 'value' => 'hunter2')))), 'hunter2') === false, 'the shape shown in the report never holds a value');
+ok(sbw_fields_fingerprint(array('data' => array(array('id' => $id1, 'value' => 'v')))) === sbw_fields_fingerprint(array($id1 => 'v')), 'the fingerprint is of the values, whatever shape they came in');
+
 /* the safety test's seeding: the first live run died on "The input was not found in the haystack" */
 $m = sbw_field_meta(array('id' => 'x', 'title' => 'Support Package', 'type' => 'select', 'values' => '1 PC NO Office,1 PC inc Office', 'is_optional' => false));
 ok($m['opts'] === array('1 PC NO Office', '1 PC inc Office') && $m['req'] === true, 'a drop-down given as a comma list: its choices, and required');

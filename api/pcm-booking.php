@@ -2544,9 +2544,19 @@ function sbw_snap($cid) {
         if (!sb_net($r) && !empty($r['result']) && is_array($r['result'])) { $gc = $r['result']; break; }
     }
     $tok = sbw_rest_tok();
-    return array('getClient' => $gc,
-        'fields' => $tok !== '' ? sbw_fields_fingerprint(sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/field-values/' . (int)$cid)) : null,
+    $rf = $tok !== '' ? sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/field-values/' . (int)$cid) : null;
+    /* 'vals' (the extra fields' actual values) exists only to be sent straight back in the edit - SimplyBook blanks
+       what an edit leaves out. It never reaches the log: sbw_log_safe() keeps the fingerprint, not this. */
+    return array('getClient' => $gc, 'fields' => sbw_fields_fingerprint($rf), 'vals' => sbw_field_values($rf), 'fshape' => sbw_shape($rf),
         'consent' => $tok !== '' ? sbw_consent(sbw_rest_get($tok, $SB_COMPANY, '/admin/clients/' . (int)$cid)) : null);
+}
+/* Where a refusal points, for people: the extra field's title, else what SimplyBook names - never a submitted value. */
+function sbw_err_where($r, $meta = array()) {
+    $fid = sbw_error_field($r);
+    if ($fid !== '') return ' (box: ' . (isset($meta[$fid]) && $meta[$fid]['title'] !== '' ? $meta[$fid]['title'] : (($t = sbw_field_title($fid)) !== '' ? $t : $fid)) . ')';
+    $d = is_array($r) && isset($r['error']['data']) ? $r['error']['data'] : null;
+    if (is_array($d) && isset($d['field']) && is_scalar($d['field'])) return ' (field: ' . substr(preg_replace('/[^\x20-\x7E]/', '', (string)$d['field']), 0, 60) . ')';
+    return $d !== null ? ' (SimplyBook\'s detail: ' . substr(sbw_shape($d), 0, 120) . ')' : '';
 }
 /* The title SimplyBook gives an extra client field ('' when REST cannot say). */
 function sbw_field_title($id) {
@@ -2582,11 +2592,13 @@ function sbw_staff_push($cid, $raw, $who) {
     list($can, $cwhy) = sbw_staff_writable($before['getClient']);
     if (!$can) return array('error' => 'not_writable', 'why' => $cwhy);
     if ($before['fields'] === null) return array('error' => 'not_on', 'why' => 'SimplyBook\'s REST API did not answer, so the extra client fields could not be checked - nothing was sent');
+    if (!$before['vals']) return array('error' => 'not_on', 'why' => 'their extra client fields could not be read, and SimplyBook blanks what an edit leaves out - nothing was sent');
     $snap = sbw_log_append(SBW_LOG, array('ts' => time(), 'cid' => (int)$cid, 'kind' => 'staff', 'by' => (string)$who, 'to' => $phone, 'before' => sbw_log_safe($before)));
     if ($snap === '') return array('error' => 'no_snapshot');   // the snapshot is the only undo: no snapshot, no write
-    $w = sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], $phone)));
+    $w = sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], $phone, $before['vals'], $before['consent'])));
     if (sb_net($w) || !isset($w['result']) || isset($w['error'])) {
         $msg = sb_net($w) ? 'SimplyBook did not answer' : sb_why($w);
+        if (!sb_net($w) && sbw_error_field($w) === '') $msg .= sbw_err_where($w);
         // "Client field is required" alone sends staff hunting: name the box (Support Package, on 27 Oct 2026)
         $fld = isset($w['error']['data']['field']) ? (string)$w['error']['data']['field'] : '';
         if (preg_match('#^client_fields/([a-f0-9]{32})$#', $fld, $fm)) { $t = sbw_field_title($fm[1]); if ($t !== '') $msg .= ' - "' . $t . '" on their Client fields tab in SimplyBook needs filling in first'; }
@@ -2599,9 +2611,9 @@ function sbw_staff_push($cid, $raw, $who) {
     if ($bad === '') return array('ok' => true, 'sb' => 'done');
     // Something besides the phone moved: stop the sync for everyone, put the standard fields back, say so.
     sbw_off_set(SBW_OFF, 'client #' . (int)$cid . ': ' . $bad . ' (snapshot ' . $snap . ', ' . date('j M H:i') . ')');
-    sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], isset($before['getClient']['phone']) ? (string)$before['getClient']['phone'] : '')));
+    sb_adm('editClient', array((int)$cid, sbw_push_payload($before['getClient'], isset($before['getClient']['phone']) ? (string)$before['getClient']['phone'] : '', $before['vals'], $before['consent'])));
     pcm_slack_say(':rotating_light: *SimplyBook sync switched itself off* - saving a number for client #' . (int)$cid . ' also changed something else (' . $bad
-        . '). Their name, email and address were put back; please check their record in SimplyBook. Snapshot ' . $snap . ' in api/pcm-sbwrite-log.php.');
+        . '). Their record, including the extra client fields, was sent back as it was read; please check it in SimplyBook. Snapshot ' . $snap . ' in api/pcm-sbwrite-log.php.');
     return array('error' => 'tripped', 'why' => $bad);
 }
 /* The safety test, run on the live account with two synthetic clients ("API CANARY A/B - delete me"): A gets the
@@ -2628,7 +2640,15 @@ function sbw_canary_run() {
     $kinds = array(); foreach ($meta as $m) $kinds[] = ($m['title'] !== '' ? $m['title'] : '?') . ' (' . ($m['type'] !== '' ? $m['type'] : 'type?') . ($m['opts'] ? ', ' . count($m['opts']) . '+ choices' : '') . ($m['req'] ? ', required' : '') . ')';
     $rep[] = 'extra client fields: ' . count($meta) . ($kinds ? ' - ' . implode('; ', $kinds) : ' (only the required ones will be found)');
     $stamp = date('His'); $NEW = '+447700900123';
+    $prev = array();   // the last run's test clients, reused while they still exist: a re-run need not leave two more
+    foreach (sbw_log_read(SBW_LOG) as $lr) if (isset($lr['kind']) && $lr['kind'] === 'canary' && !empty($lr['made'])) $prev = (array)$lr['made'];
     foreach (array('A', 'B') as $key) {
+        if (!empty($prev[$key])) {
+            $old = sb_adm('getClient', array((int)$prev[$key]));
+            if (!sb_net($old) && isset($old['result']['name']) && strpos((string)$old['result']['name'], 'API CANARY ' . $key) === 0) {
+                $made[$key] = (int)$prev[$key]; $rep[] = 'reusing test client ' . $key . ': #' . $made[$key]; continue;
+            }
+        }
         $cd = array('name' => 'API CANARY ' . $key . ' - delete me', 'email' => 'apitest+canary' . strtolower($key) . $stamp . '@365techies.co.uk',
                     'phone' => '+441202775566', 'address1' => '1 Canary Street', 'city' => 'Bournemouth', 'zip' => 'BH1 1AA',
                     'is_email_unsubscribed' => true, 'is_sms_unsubscribed' => true);
@@ -2664,24 +2684,34 @@ function sbw_canary_run() {
     $res = array();
     if (count($made) === 2) foreach ($made as $key => $cid) {
         $before = sbw_snap($cid);
-        $payload = $key === 'A' ? array('phone' => $NEW) : sbw_push_payload($before['getClient'], $NEW);
+        // a reused client may already hold the test number from a run that worked: then change it to the next one
+        $new = sbw_same_phone(is_array($before['getClient']) && isset($before['getClient']['phone']) ? $before['getClient']['phone'] : '', $NEW) ? '+447700900124' : $NEW;
+        if ($key === 'B') $rep[] = 'extra field values read back for B: ' . count($before['vals']) . ' (REST answer shaped ' . substr((string)$before['fshape'], 0, 160) . ')';
+        if ($key === 'B' && !$before['vals']) {
+            $res['B'] = array('bad' => 'could not read its extra field values, so an edit could not send them back', 'before' => $before, 'after' => $before, 'payload' => null, 'new' => $new);
+            $rep[] = 'test B: ' . $res['B']['bad']; continue;
+        }
+        if ($key === 'B') $rep[] = 'consent ticks REST reports: ' . (is_array($before['consent']) && $before['consent'] ? implode(', ', array_keys($before['consent'])) : 'none') . ' (only is_email/sms_unsubscribed are sent back)';
+        $payload = $key === 'A' ? array('phone' => $new) : sbw_push_payload($before['getClient'], $new, $before['vals'], $before['consent']);
         $w = sb_adm('editClient', array($cid, $payload));
         $after = sbw_snap($cid);
-        $bad = (sb_net($w) || isset($w['error'])) ? 'refused: ' . sb_why($w) : sbw_check($before, $after, $NEW);
-        $res[$key] = array('bad' => $bad, 'before' => $before, 'after' => $after, 'payload' => $payload);
-        $rep[] = 'test ' . $key . ' (' . ($key === 'A' ? 'phone only' : 'the payload the sync sends') . '): ' . ($bad === '' ? 'moved the phone and nothing else' : $bad);
-        if (is_array($before['getClient'])) $rep[] = '   SimplyBook\'s record has: ' . implode(', ', array_keys($before['getClient']));
+        $bad = (sb_net($w) || isset($w['error'])) ? 'refused: ' . sb_why($w) . sbw_err_where($w, $meta) : sbw_check($before, $after, $new);
+        $res[$key] = array('bad' => $bad, 'before' => $before, 'after' => $after, 'payload' => $payload, 'new' => $new);
+        $rep[] = 'test ' . $key . ' (' . ($key === 'A' ? 'phone only - is an edit a merge?' : 'the whole record back, extra fields included, as the sync sends it') . '): '
+            . ($bad === '' ? 'moved the phone and nothing else' : $bad);
     }
     $ok = isset($res['B']) && $res['B']['bad'] === '';
     $chk = array('standard' => false, 'custom_fields' => false, 'consent' => false, 'phone_landed' => false);
     if (isset($res['B'])) {
         $b = $res['B'];
         $chk['standard'] = is_array($b['after']['getClient']) && !sbw_diff($b['before']['getClient'], $b['after']['getClient']);
-        $chk['phone_landed'] = is_array($b['after']['getClient']) && sbw_same_phone(isset($b['after']['getClient']['phone']) ? $b['after']['getClient']['phone'] : '', $NEW);
+        $chk['phone_landed'] = is_array($b['after']['getClient']) && sbw_same_phone(isset($b['after']['getClient']['phone']) ? $b['after']['getClient']['phone'] : '', $b['new']);
         $chk['custom_fields'] = $b['before']['fields'] !== null && $b['after']['fields'] !== null && $b['before']['fields'] === $b['after']['fields'] && count($b['before']['fields']) > 0;
         $chk['consent'] = $b['before']['consent'] !== null && $b['after']['consent'] !== null && json_encode($b['before']['consent']) === json_encode($b['after']['consent']) && count($b['before']['consent']) > 0;
-        $w2 = sb_adm('editClient', array($made['B'], $b['payload']));
-        $rep[] = 'the same save again (SimplyBook limits email changes): ' . (isset($w2['result']) && !isset($w2['error']) ? 'ok' : sb_why($w2));
+        if ($b['payload'] !== null) {
+            $w2 = sb_adm('editClient', array($made['B'], $b['payload']));
+            $rep[] = 'the same save again (SimplyBook limits email changes): ' . (isset($w2['result']) && !isset($w2['error']) ? 'ok' : sb_why($w2) . sbw_err_where($w2, $meta));
+        }
         foreach ($chk as $k => $v) $rep[] = '   ' . $k . ': ' . ($v ? 'safe' : 'NOT PROVEN');
     }
     $pass = $ok && !in_array(false, $chk, true);

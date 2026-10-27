@@ -35,7 +35,10 @@ if (!defined('SBW_SHAPE')) {
     /* Pinned into the probe's verdict file and re-checked before every write, so
        that changing the payload shape below can never silently reuse a probe
        that tested a different shape. */
-    define('SBW_SHAPE', 'echoback-v1:name,email,address1,address2,city,zip+phone');
+    /* v2, 27 Oct 2026: the live safety test showed editClient is NOT a merge - a phone-only edit was refused
+       ("Client name value is wrong") and the standard echo-back was refused for its required extra fields ("Value is
+       required and can't be empty"). So the record's country/state and every extra field (read via REST) go back too. */
+    define('SBW_SHAPE', 'echoback-v2:name,email,address1,address2,city,zip,country_id,state_id+client_fields(rest)+unsubscribed(rest)+phone');
     /* Deliberately small. A dry run cannot see the two failure modes that would
        actually hurt - custom fields and consent flags - so "it looked fine in the
        dry run" is not evidence. Five at a time buys everything ninety would. */
@@ -58,15 +61,53 @@ if (!function_exists('sbw_push_payload')) {
  * can_be_edited or is_blocked. Some of those cannot be read back reliably, and
  * a field you cannot read is a field you must not send.
  */
-function sbw_push_payload($sb, $phoneDisplay) {
+function sbw_push_payload($sb, $phoneDisplay, $vals = null, $consent = null) {
     $p = array();
-    foreach (array('name', 'email', 'address1', 'address2', 'city', 'zip') as $k) {
+    foreach (array('name', 'email', 'address1', 'address2', 'city', 'zip', 'country_id', 'state_id') as $k) {
         if (!is_array($sb) || !array_key_exists($k, $sb)) continue;
         if (!is_scalar($sb[$k])) continue;
         $p[$k] = $sb[$k];
     }
     $p['phone'] = (string)$phoneDisplay;
+    /* The extra fields ONLY from $vals - a REST read of this client's values (sbw_field_values) - and never from the
+       JSON-RPC record, which does not carry them reliably. SimplyBook treats an edit without them as blanking them. */
+    if (is_array($vals) && $vals) $p['client_fields'] = $vals;
+    /* The two "Unsubscribe client from" ticks, sent back as REST read them - but only under the SAME names the edit
+       takes. The promo flags REST may also report are a different thing, never translated into these. */
+    if (is_array($consent)) foreach (array('is_email_unsubscribed', 'is_sms_unsubscribed') as $k)
+        if (array_key_exists($k, $consent) && (is_bool($consent[$k]) || is_int($consent[$k]) || $consent[$k] === '0' || $consent[$k] === '1')) $p[$k] = (bool)$consent[$k];
     return $p;
+}
+/**
+ * A client's extra field values as REST returns them, reduced to field id => value. REST's exact shape is unproven,
+ * so the likely ones are all read: a list (bare, under 'data' or under 'fields') of {id|field_id|field:{id}, value},
+ * or a map keyed by the 32-hex field id. Empty array when nothing recognisable came back.
+ */
+function sbw_field_values($rest) {
+    if (!is_array($rest)) return array();
+    $rows = $rest;
+    foreach (array('data', 'fields', 'values') as $k) if (isset($rest[$k]) && is_array($rest[$k])) { $rows = $rest[$k]; break; }
+    $out = array();
+    foreach ($rows as $k => $e) {
+        if (is_array($e)) {
+            $id = '';   // the first candidate that IS a field id - a row may carry its own numeric id beside the field's
+            foreach (array(isset($e['id']) ? $e['id'] : null, isset($e['field_id']) ? $e['field_id'] : null, isset($e['field']['id']) ? $e['field']['id'] : null) as $cand)
+                if (is_scalar($cand) && preg_match('/^[a-f0-9]{32}$/', (string)$cand)) { $id = (string)$cand; break; }
+            if ($id !== '' && array_key_exists('value', $e) && (is_scalar($e['value']) || $e['value'] === null)) $out[$id] = $e['value'] === null ? '' : $e['value'];
+        } elseif (preg_match('/^[a-f0-9]{32}$/', (string)$k) && (is_scalar($e) || $e === null)) $out[(string)$k] = $e === null ? '' : $e;
+    }
+    ksort($out);
+    return $out;
+}
+/** What a JSON answer is shaped like - keys and types only, never a value - for the safety test's report. */
+function sbw_shape($x, $d = 0) {
+    if (!is_array($x)) return $x === null ? 'null' : gettype($x);
+    if ($d >= 3) return 'array';
+    $keys = array_keys($x);
+    if ($keys === array_keys(array_values($x))) return '[' . (count($x) ? sbw_shape($x[0], $d + 1) : '') . ' x' . count($x) . ']';
+    $o = array();
+    foreach (array_slice($keys, 0, 8) as $k) $o[] = (preg_match('/^[a-f0-9]{32}$/', (string)$k) ? '<id>' : $k) . ':' . sbw_shape($x[$k], $d + 1);
+    return '{' . implode(', ', $o) . (count($keys) > 8 ? ', ...' : '') . '}';
 }
 
 /**
@@ -290,6 +331,8 @@ function sbw_sent_today($file, $now = null) {
  */
 function sbw_fields_fingerprint($rest) {
     if (!is_array($rest)) return null;
+    $vals = sbw_field_values($rest);
+    if ($vals) { $out = array(); foreach ($vals as $id => $v) $out[$id] = hash('sha256', (string)$v); return $out; }
     $rows = isset($rest['data']) && is_array($rest['data']) ? $rest['data'] : $rest;
     $out = array();
     foreach ($rows as $k => $v) {
