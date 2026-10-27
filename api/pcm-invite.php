@@ -10,6 +10,8 @@
  *                   sent to the client.
  *   action=send  -> {plan, email, name?, note?} -> emails that plan's link,
  *                   logs it, and (if configured) posts a note to the jobs channel.
+ *   action=invites -> {fresh?} -> everyone invited in the last 120 days with where
+ *                   they have got to on GoCardless (pcm-invite-lib.php, read-only).
  *
  * SECURITY MODEL
  * The plan->link map is SERVER-SIDE ($PLANS below + optional pcm-invite-plans.json).
@@ -60,6 +62,8 @@ if (is_readable($PLANF)) {
             'link'   => (string)$v['link']);
     }
 }
+
+require_once $BASE . '/pcm-invite-lib.php';   // 27 Oct 2026: the invite record + GoCardless status (Plans tab)
 
 function out($a) { echo json_encode($a, JSON_UNESCAPED_SLASHES); exit; }
 function fail($e, $x = array()) { out(array_merge(array('ok' => false, 'error' => $e), $x)); }
@@ -238,11 +242,22 @@ if ($action === 'send') {
     $sent = inv_mail($email, $subject, $text, $html);
     lg(($sent ? 'sent' : 'FAILED') . ' ' . $planKey . ' to ' . $email . ' by ' . $who);
     if (!$sent) fail('send_failed');
+    inv_record($email, $name, $planKey, $label, $amount, $who);   // the Plans tab's list
 
     // Record ping (best effort) so the team knows to watch GoCardless for the mandate.
     invite_slack_ping($name !== '' ? $name : $email, $label, $amount, $who);
 
     out(array('ok' => true, 'plan' => $label, 'email' => $email));
+}
+
+// --- the Plans tab: who we invited, and where each has got to on GoCardless (read-only) ---
+if ($action === 'invites') {
+    $labels = array();
+    foreach ($PLANS as $k => $p) $labels[$k] = (string)$p['label'];
+    $gcT = gc_templates(); if (is_array($gcT)) foreach ($gcT as $id => $t) $labels[$id] = (string)$t['label'];
+    $rows = inv_history($LOGF, $labels);
+    $rows = inv_with_status($rows, gc_available() ? 'inv_gc_get' : null, !empty($in['fresh']));
+    out(array('ok' => true, 'invites' => $rows, 'gc' => gc_available()));
 }
 
 fail('bad_action');
@@ -366,6 +381,19 @@ function gc_templates() {
     $tmp = $GCACHE . '.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, json_encode(array('at' => time(), 'plans' => $plans)), LOCK_EX) !== false) @rename($tmp, $GCACHE);
     return $plans;
+}
+
+// One read-only GET to GoCardless for the Plans tab -> decoded JSON, or null on any failure.
+function inv_gc_get($path) {
+    global $GCF;
+    static $tok = null;
+    if ($tok === null) { $GC_TOKEN = ''; if (is_readable($GCF)) include $GCF; $tok = (string)$GC_TOKEN; }
+    if ($tok === '') return null;
+    $ch = curl_init('https://api.gocardless.com' . $path);
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_TIMEOUT => 8,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $tok, 'GoCardless-Version: 2015-07-06', 'Accept: application/json')));
+    $r = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    return ($r !== false && $code >= 200 && $code < 300) ? json_decode((string)$r, true) : null;
 }
 
 // Is a GoCardless reusable link still live? Archived subscription templates 410.

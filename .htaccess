@@ -278,6 +278,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-gc-templates\.json(\..*)?$">
   Require all denied
 </FilesMatch>
+# Plans tab (27 Oct 2026): who was invited to a plan (emails + names) and their GoCardless status. The library is
+# include-only, its test CLI-only; the stores name customers. pcm-invite.php stays the only URL.
+<FilesMatch "^(pcm-invite-(lib|test)\.php|pcm-invite-sent\.json(\..*)?|pcm-gc-(custidx|invstatus)\.json(\..*)?)$">
+  Require all denied
+</FilesMatch>
 # Per-job pay links (20 Sep 2026). The store holds SINGLE-USE GoCardless payment
 # links, each made for one named customer and each worth the money on it, plus
 # their name, email, phone and the amount - the most sensitive api/ store we have.

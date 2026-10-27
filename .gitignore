@@ -34,6 +34,12 @@ api/pcm-gc-live.json.*.tmp
 api/pcm-invite-allow.json.*.tmp
 api/pcm-gc-templates.json
 api/pcm-gc-templates.json.*.tmp
+api/pcm-invite-sent.json
+api/pcm-invite-sent.json.*
+api/pcm-gc-custidx.json
+api/pcm-gc-custidx.json.*
+api/pcm-gc-invstatus.json
+api/pcm-gc-invstatus.json.*
 # Per-job pay links: single-use GoCardless payment links + who they were made for
 api/pcm-paylink.json
 api/pcm-paylink.json.lock

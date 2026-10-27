@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-25"
+      "dateModified": "2026-10-27"
     }
   ]
 }
@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 25 Oct 2026 &middot; aced525baf</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Oct 2026 &middot; 938b605845</p><script>
 (function () {
-  var P365BUILD = 'aced525baf';
+  var P365BUILD = '938b605845';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -6079,10 +6079,12 @@
         appcmp = cardOf('appcmp'), t1inst = cardOf('t1ibox'),
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
         m365 = cardOf('m365card'),   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
-        shopc = cardOf('shopcard');   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on its own Shop tab
+        shopc = cardOf('shopcard'),   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on its own Shop tab
+        plans = cardOf('plancard');   // 27 Oct 2026: who we invited to a support plan + their GoCardless status, on its own Plans tab
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
     // 14 Oct 2026 (owner: the shop card was "right down the bottom ... you can barely find it"): its own Shop tab
-    var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['shop', 'Shop'], ['setup', 'Setup']];
+    // 27 Oct 2026 (owner: "an icon in the portal where we can manage it easily"): Plans, beside Invoices
+    var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['plans', 'Plans'], ['shop', 'Shop'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
     bar.innerHTML = '<nav class="nx-stabs" aria-label="Staff sections">' + TABS.map(function (x) { return '<button type="button" class="nx-stab" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav><div class="nx-cons"></div>';
     var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
@@ -6121,7 +6123,9 @@
     if (t1inst) panels.computers.appendChild(t1inst);
     if (invq) panels.invoices.appendChild(invq);
     if (shopc) panels.shop.appendChild(shopc);
-    [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
+    // the "which plans can staff invite to" picker moved from Setup to sit under the list it feeds
+    [plans, invp].forEach(function (c) { if (c) panels.plans.appendChild(c); });
+    [qbo, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
       var cons = bar.querySelector('.nx-cons');
@@ -6137,6 +6141,7 @@
       Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-tab') === tab ? 'true' : 'false'); });
       try { sessionStorage.setItem('p365tab', tab); } catch (e) {}
       nxlShown(tab);
+      if (tab === 'plans') plansShown();   // GoCardless is read only when the tab is opened
     }
     Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.onclick = function () { show(b.getAttribute('data-tab')); }; });
     Array.prototype.forEach.call(kp.querySelectorAll('.nx-kpi'), function (b) {
@@ -6714,6 +6719,13 @@
       h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
         + '<details class="nx-how"><summary>How this works</summary><p class="quiet" style="margin:.4rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \u2014 every row shows the step it is on and the button for it. The service drop-down is your QuickBooks Products &amp; Services list: pick one and its description and list price go on the invoice; a Slack job type that matches a service name does the same by itself. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p></details>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
+      /* 27 Oct 2026 (owner: a plan sign-up was raised as a one-off invoice, then "an icon in the portal where we can manage
+         it easily"): everyone invited to a support plan and where they have got to on GoCardless (api/pcm-invite.php
+         action=invites, read-only), plus an invite for someone with no customer card yet. Loaded when the tab opens. */
+      h += '<div class="card" id="plancard" style="border-left:4px solid #0a8f4c"><h2>\ud83d\udce8 Support plans \u2014 who we\u2019ve invited</h2>'
+        + '<details class="nx-how"><summary>How this works</summary><p class="quiet" style="margin:.4rem 0 .6rem">Everyone invited to a support plan in the last 120 days \u2014 from a customer\u2019s card, a job card or the button below \u2014 and where they\u2019ve got to on GoCardless: invited, Direct Debit being set up, set up, first payment on its way, paying, or a problem. A plan is a Direct Debit, so it never needs a one-off invoice. This only reads GoCardless: nothing here changes a plan or takes a payment. It re-reads every 10 minutes, or press re-check.</p></details>'
+        + '<div id="plannew" style="margin:.2rem 0 .7rem"><button class="sm" id="plannewb" style="margin:0;padding:.35rem .8rem;font-size:.85rem">\ud83d\udce8 Invite someone to a plan</button></div>'
+        + '<div id="planlist"><p class="quiet">Reading GoCardless\u2026</p></div></div>';
       /* 1 Oct 2026 (owner): voicemails and texts on Today, in the portal session - no passphrase. api/comms-api.php;
          the full inbox (history, review texts) stays a console button. */
       // 2 Oct 2026 (owner): "an inbox for everything" - Texts became Messages: the texts, emails from people (the company
@@ -6813,6 +6825,7 @@
       nxlLoad();
       qboSetup();
       invitePlansSetup();
+      planNewSetup();
       geoSetup();
       cbkSetup();
       loadInvq();
@@ -7239,7 +7252,7 @@
                          name: w.getAttribute('data-nm'), note: (w.querySelector('.invnote').value || '') })
             .then(function (j) {
               go.disabled = false;
-              if (j && j.ok) { w.innerHTML = '<span style="color:#7ee0a2">\u2713 Invite to <b>' + esc(j.plan) + '</b> emailed to ' + esc(j.email) + '. It\u2019ll appear in GoCardless once they set up the Direct Debit.</span>'; return; }
+              if (j && j.ok) { w.innerHTML = '<span style="color:#7ee0a2">\u2713 Invite to <b>' + esc(j.plan) + '</b> emailed to ' + esc(j.email) + '. Follow it on the Plans tab \u2014 it shows when their Direct Debit is set up.</span>'; return; }
               msg.innerHTML = inviteErr(j);
             })
             .catch(function () { go.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
@@ -7277,6 +7290,116 @@
           }).catch(function () { go.disabled = false; m.textContent = 'Couldn\u2019t reach the server.'; });
         };
       }).catch(function () { box.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
+    };
+  }
+  /* ---- Plans tab (27 Oct 2026): who we invited to a support plan and where each has got to on GoCardless.
+     api/pcm-invite.php action=invites reads GoCardless only (customers, mandates, plans, payments) and caches 10 minutes. */
+  var PLAN_ST = { invited: ['Invited', '#ffd76a'], started: ['Started, not finished', '#ffb066'], setup: ['Direct Debit being set up', '#9ecbff'],
+    active: ['Direct Debit set up', '#7ee0a2'], collecting: ['First payment on its way', '#7ee0a2'], paid: ['Paying', '#7ee0a2'],
+    problem: ['Problem', '#ffb4a2'], unknown: ['Not checked', '#8a94a6'] };
+  function plansShown() {   // again on each visit (an invite from a job card shows straight away); the server caches GoCardless
+    var box = document.getElementById('planlist'); if (!box) return;
+    var at = +(box.getAttribute('data-at') || 0); if (Date.now() - at < 20000) return;
+    box.setAttribute('data-at', String(Date.now()));
+    loadPlans(false);
+  }
+  function planRow(x) {
+    var g = x.gc || null, st = g ? g.status : '', k = PLAN_ST[st] || PLAN_ST.unknown;
+    var plan = (x.label ? esc(x.label) : 'a support plan') + (x.amount ? ' \u00b7 \u00a3' + esc(x.amount) + '/mo' : '');
+    var sent = 'Invited ' + invqWhen(x.days) + (x.by ? ' by ' + esc(x.by) : '') + (x.count > 1 ? ' \u00b7 ' + x.count + ' invites sent' : '');
+    var chip = g ? '<span style="color:' + k[1] + ';font-weight:600">' + (st === 'paid' ? '\u2713 ' : '') + esc(g.words || k[0]) + '</span>'
+                 : '<span class="quiet">GoCardless isn\u2019t connected on the server, so there\u2019s no status.</span>';
+    var notes = '';
+    if (x.chase) notes += '<div style="color:#ffd76a;font-size:.82rem;margin:.2rem 0 0">\u23f0 Nothing set up after ' + x.days + ' days \u2014 worth a friendly call, or send it again.</div>';
+    if (g && g.before) notes += '<div class="quiet" style="font-size:.8rem;margin:.2rem 0 0">They already had a Direct Debit with us before this invite \u2014 check in GoCardless that this one is the new plan.</div>';
+    var again = (st === 'invited' || st === 'started') && x.plan
+      ? '<button class="sm ghost plnagain" data-plan="' + esc(x.plan) + '" data-em="' + esc(x.email) + '" data-nm="' + esc(x.name || '') + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Send it again</button>' : '';
+    return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (st === 'problem' ? ';border-left:4px solid #ffb4a2' : '') + '">'
+      + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
+      + '<div style="min-width:0;overflow-wrap:anywhere"><strong>' + esc(x.name || x.email) + '</strong>' + (x.name ? ' <span class="quiet">' + esc(x.email) + '</span>' : '') + '</div>'
+      + '<div class="quiet" style="font-size:.85rem">' + plan + '</div></div>'
+      + '<div style="margin:.25rem 0 0;font-size:.9rem">' + chip + '</div>'
+      + '<div class="quiet" style="font-size:.8rem;margin:.15rem 0 0">' + sent + '</div>' + notes
+      + (again ? '<div style="margin:.4rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + again + '<span class="quiet plnmsg"></span></div>' : '')
+      + '</div>';
+  }
+  function loadPlans(fresh) {
+    var box = document.getElementById('planlist'); if (!box) return;
+    if (fresh) { var fb0 = box.querySelector('.plnfresh'); if (fb0) { fb0.disabled = true; fb0.textContent = 'checking\u2026'; } }
+    post(INVITE, { action: 'invites', stoken: S.stoken, machine: mid(), fresh: fresh ? 1 : 0 }).then(function (r) {
+      var again = '<button class="sm ghost plnfresh" style="padding:.2rem .5rem;font-size:.78rem">re-check</button>';
+      if (!r || !r.ok) { box.innerHTML = '<p class="quiet">Couldn\u2019t read the invites' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '. ' + again + '</p>'; planBind(box); return; }
+      var rows = r.invites || [];
+      if (!rows.length) { box.innerHTML = '<p class="quiet">Nobody has been invited to a plan in the last 120 days. Invite someone with the button above, or from a customer\u2019s card or a job card. ' + again + '</p>'; planBind(box); return; }
+      var n = {}; rows.forEach(function (x) { var s = x.gc ? x.gc.status : 'none'; n[s] = (n[s] || 0) + 1; });
+      var chase = rows.filter(function (x) { return x.chase; }).length;
+      var sum = [['problem', 'with a problem'], ['invited', 'invited, not set up yet'], ['started', 'started, not finished'], ['setup', 'Direct Debit being set up'],
+                 ['active', 'set up, no payment yet'], ['collecting', 'first payment on its way'], ['paid', 'paying']]
+        .filter(function (s) { return n[s[0]]; })
+        .map(function (s) { return '<span style="color:' + PLAN_ST[s[0]][1] + '">' + n[s[0]] + ' ' + s[1] + '</span>'; }).join(' \u00b7 ');
+      box.innerHTML = (sum ? '<p style="margin:0 0 .5rem;font-size:.9rem">' + sum + (chase ? ' \u00b7 <span style="color:#ffd76a">' + chase + ' worth a chase</span>' : '') + '</p>' : '')
+        + rows.map(planRow).join('')
+        + '<p class="quiet" style="margin:.4rem 0 0">' + (r.gc ? 'From GoCardless, at most 10 minutes old. ' : '') + again + '</p>';
+      planBind(box);
+    }).catch(function () { box.innerHTML = '<p class="quiet">Couldn\u2019t reach the server. <button class="sm ghost plnfresh" style="padding:.2rem .5rem;font-size:.78rem">try again</button></p>'; planBind(box); });
+  }
+  function planBind(box) {
+    var fb = box.querySelector('.plnfresh'); if (fb) fb.onclick = function () { loadPlans(true); };
+    /* "Send it again": two clicks, so a stray tap can't email a customer */
+    Array.prototype.forEach.call(box.querySelectorAll('.plnagain'), function (b) {
+      b.onclick = function () {
+        var msg = b.parentNode.querySelector('.plnmsg');
+        if (!b.getAttribute('data-sure')) { b.setAttribute('data-sure', '1'); b.className = 'sm plnagain'; b.textContent = 'Yes, email ' + b.getAttribute('data-em') + ' again'; return; }
+        b.disabled = true; msg.textContent = 'Sending\u2026';
+        post(INVITE, { action: 'send', stoken: S.stoken, machine: mid(), plan: b.getAttribute('data-plan'), email: b.getAttribute('data-em'), name: b.getAttribute('data-nm'), note: '' })
+          .then(function (j) {
+            if (j && j.ok) { msg.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent again.</span>'; setTimeout(function () { loadPlans(false); }, 1500); return; }
+            b.disabled = false; msg.innerHTML = inviteErr(j);
+          })
+          .catch(function () { b.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+    });
+  }
+  /* Invite someone with no customer card yet: name, email, plan. The first click only opens the form. */
+  function planNewSetup() {
+    var w = document.getElementById('plannew'), b = document.getElementById('plannewb'); if (!w || !b) return;
+    var start = w.innerHTML;
+    function reset() { w.innerHTML = start; planNewSetup(); }
+    b.onclick = function () {
+      b.disabled = true; b.textContent = 'Loading plans\u2026';
+      post(INVITE, { action: 'plans', stoken: S.stoken, machine: mid() }).then(function (r) {
+        if (!r || !r.ok || !r.plans || !r.plans.length) {
+          w.innerHTML = '<span class="quiet">' + (r && r.needs_curate ? 'No plans chosen for invites yet \u2014 tick them under <b>\ud83d\udce8 Invite plans</b> below first.' : 'No support plans are set up to invite to yet.') + '</span>';
+          return;
+        }
+        var opts = r.plans.map(function (p) { return '<option value="' + esc(p.key) + '">' + esc(p.label) + (p.amount ? ' \u2014 \u00a3' + esc(p.amount) + '/mo' : '') + '</option>'; }).join('');
+        var fw = ' style="min-width:0;width:100%;box-sizing:border-box"';   // shrink with a narrow phone, never push the page sideways
+        w.innerHTML = '<div style="display:grid;grid-template-columns:minmax(0,1fr);gap:.35rem;max-width:360px">'
+          + '<input class="plnname" type="text" maxlength="120" placeholder="Their name" aria-label="Their name" autocomplete="off"' + fw + '>'
+          + '<input class="plnem" type="email" maxlength="160" placeholder="Their email address" aria-label="Their email address" autocomplete="off"' + fw + '>'
+          + '<select class="plnsel" style="padding:.35rem;min-width:0;width:100%;box-sizing:border-box" aria-label="Which plan">' + opts + '</select>'
+          + '<input class="plnnote" type="text" maxlength="300" placeholder="A short note to add (optional)" aria-label="A short note to add"' + fw + '>'
+          + '</div><div style="margin:.4rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+          + '<button class="sm plngo" style="margin:0">\ud83d\udce8 Send the invite</button><button class="sm ghost plncancel" style="margin:0">Cancel</button><span class="quiet plnmsg"></span></div>';
+        var msg = w.querySelector('.plnmsg');
+        w.querySelector('.plncancel').onclick = reset;
+        w.querySelector('.plngo').onclick = function () {
+          var go = this, em = (w.querySelector('.plnem').value || '').trim(), nm = (w.querySelector('.plnname').value || '').trim();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.textContent = 'Type their email address first.'; return; }
+          go.disabled = true; msg.textContent = 'Sending\u2026';
+          post(INVITE, { action: 'send', stoken: S.stoken, machine: mid(), plan: w.querySelector('.plnsel').value, email: em, name: nm, note: (w.querySelector('.plnnote').value || '') })
+            .then(function (j) {
+              if (j && j.ok) {
+                w.innerHTML = '<span style="color:#7ee0a2">\u2713 Invite to <b>' + esc(j.plan) + '</b> emailed to ' + esc(j.email) + '.</span> <button class="sm ghost plnmore" style="padding:.2rem .55rem;font-size:.8rem">Invite someone else</button>';
+                w.querySelector('.plnmore').onclick = reset;
+                loadPlans(false);
+                return;
+              }
+              go.disabled = false; msg.innerHTML = inviteErr(j);
+            })
+            .catch(function () { go.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+        };
+      }).catch(function () { b.disabled = false; b.textContent = '\ud83d\udce8 Invite someone to a plan'; });
     };
   }
   function loadInvq(fresh) {
@@ -7426,6 +7549,26 @@
   }
   function invqMoney(v) { return '\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
   function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
+  /* 27 Oct 2026 (owner): a plan sign-up written up as a job ("support every 6 weeks at \u00a324.38 per month") was raised
+     as a one-off invoice. A job or invoice whose words read like a plan gets a warning, and every card with an email
+     gets the invite button (bindInvite, the customer card's two-step form). */
+  var INVQ_PLAN_RE = /\b(per|a) (month|mo)\b(?! ago)|\bmonthly\b|\/\s?(mo|month)\b|support plan|\bsubscri\w*|direct debit|\bevery \d+ (weeks?|months?)\b|\bon (a|our|the) plan\b|\bplan sign|\bsign(ed)? up (for|to) .{0,40}\b(support|plan|care)\b/i;
+  var INVQ_PLAN_SAY = [/\b(per|a) (month|mo)\b(?! ago)|\/\s?(mo|month)\b|\bmonthly\b/i, /\bevery \d+ (weeks?|months?)\b/i, /\bsubscri\w*|direct debit|support plan/i];
+  function invqPlanWord(texts) {   // the words quoted back: the clearest ("per month") before whatever matched first
+    var s = texts.filter(Boolean).join(' \u00b7 '), m = INVQ_PLAN_RE.exec(s); if (!m) return '';
+    for (var i = 0; i < INVQ_PLAN_SAY.length; i++) { var p = INVQ_PLAN_SAY[i].exec(s); if (p) return p[0]; }
+    return m[0];
+  }
+  function invqPlanBits(word, email, name, warn) {
+    var out = '';
+    if (word && warn) out += '<div style="margin:.35rem 0 0;padding:.45rem .6rem;border-radius:8px;background:rgba(255,215,106,.1);border:1px solid rgba(255,215,106,.45);font-size:.85rem">'
+      + '\ud83d\udce8 <b>This looks like a support plan</b> (it says \u201c' + esc(word) + '\u201d). Plans are paid by Direct Debit \u2014 '
+      + (email ? 'invite them with the button below' : 'add their email, then invite them to a plan') + ' instead of raising a one-off invoice. '
+      + 'If an invoice was already raised for it, don\u2019t send it: press Hold, and David can void it in QuickBooks.</div>';
+    if (email) out += '<div class="invwrap" data-em="' + esc(email) + '" data-nm="' + esc(name || '') + '" style="margin:.4rem 0 0">'
+      + '<button class="sm' + (word ? '' : ' ghost') + ' invb" style="margin:0;padding:.3rem .65rem;font-size:.82rem' + (word ? '' : ';opacity:.85') + '">\ud83d\udce8 Invite to a support plan</button></div>';
+    return out;
+  }
   var INVQ_WHY = { no_email: 'needs an email address \u2014 type it here, or add it to the Slack post or its thread and it will pick it up', bad_email: 'that email address doesn\u2019t look right', no_desc: 'needs a description of the work', large: 'over \u00a32,000 \u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \u2014 left alone' };
   function renderInvq(box, r) {
     var jobs = r.jobs || [], waiting = r.waiting || [], older = r.older || [];
@@ -7593,6 +7736,8 @@
           + '<button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \u2014 hide it</button></div>';
       }
       body = quoteHtml(j) + body;
+      var pw = invqPlanWord([j.desc].concat((j.lines || []).map(function (l) { return l && l.desc; }), ((inv && inv.lines) || []).map(function (l) { return l && l.desc; })));
+      body += invqPlanBits(pw, j.email, j.customer, st !== 'paid' && st !== 'invoiced');   // a paid one needs no warning, only the invite
       return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (inv && inv.held ? ';opacity:.7' : '') + '">'
         + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
         + '<div><strong>' + esc(j.customer || j.email || 'Unnamed') + '</strong> <span class="quiet">' + (j.desc ? esc(j.desc) + ' \u00b7 ' : '') + esc(invqWhen(j.days)) + (j.email ? ' \u00b7 ' + esc(j.email) : '') + (j.source === 'slack' ? ' \u00b7 <span title="' + esc(j.detail || '') + '">from Slack</span>' : j.source === 'pcm' ? ' \u00b7 <span title="' + esc(j.detail || '') + '">from PC Manager</span>' : '') + '</span></div>'
@@ -7608,6 +7753,7 @@
         + '<div style="font-weight:700;font-size:1.05rem">' + invqMoney(x.total) + '</div></div>'
         + ((x.lines || []).length ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + x.lines.slice(0, 4).map(function (l) { return esc(l.desc || '(no description)'); }).join('<br>') + (x.lines.length > 4 ? '<br>\u2026 and ' + (x.lines.length - 4) + ' more line' + (x.lines.length - 4 === 1 ? '' : 's') + ' \u2014 see the PDF' : '') + '</div>' : '')
         + warnHtml(x)
+        + invqPlanBits(invqPlanWord((x.lines || []).map(function (l) { return l && l.desc; })), x.email, x.customer, true)
         + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + invButtons(x) + '<span class="quiet invqmsg"></span></div></div>';
     }
     var html = note;
@@ -7622,6 +7768,7 @@
     html += '<div id="invqunpaid" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Reading the unpaid invoices from QuickBooks\u2026</p></div>';
     html += '<div id="invqpaid" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Adding up this month\u2019s payments\u2026</p></div>';
     box.innerHTML = html;
+    Array.prototype.forEach.call(box.querySelectorAll('.invqrow'), function (row) { bindInvite(row); });   // 27 Oct 2026
     loadInvqRecent(14);
     loadInvqUnpaid();
     loadInvqPaid(invqThisMonth());
