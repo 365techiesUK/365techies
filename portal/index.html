@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Oct 2026 &middot; f3cb5da166</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Oct 2026 &middot; 1117c7ab0c</p><script>
 (function () {
-  var P365BUILD = 'f3cb5da166';
+  var P365BUILD = '1117c7ab0c';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -9562,7 +9562,8 @@
     var h = '<strong>SimplyBook sync:</strong> ';
     if (d.on) h += 'on \u2014 a mobile or landline saved on a customer\u2019s card goes into SimplyBook too (' + d.today + ' of ' + d.cap + ' today).';
     else if (d.off) h += 'switched itself off \u2014 ' + esc(d.off) + '. <button type="button" class="sm ghost" id="sbwreset">I\u2019ve checked that record \u2014 switch it back on</button>';
-    else if (d.tested && !d.checked) h += 'the safety test passed. Look at the test clients #' + esc((d.canaries || []).join(', #')) + ' in SimplyBook (Client fields: every box still says CANARY\u2026), then '
+    else if (d.tested && !d.checked) h += 'the safety test passed. Look at the test clients #' + esc((d.canaries || []).join(', #')) + ' in SimplyBook: Client fields all still filled; '
+      + 'the first (A) with BOTH \u201cUnsubscribe client from\u201d boxes unticked, the second (B) with both ticked. Then '
       + '<button type="button" class="sm ghost" id="sbwok">I\u2019ve checked them \u2014 switch it on</button>';
     else h += 'off until its safety test passes. <button type="button" class="sm ghost" id="sbwrun">Run the safety test</button>'
       + ' <span class="quiet">(two made-up clients in SimplyBook; no real customer is touched)</span>';

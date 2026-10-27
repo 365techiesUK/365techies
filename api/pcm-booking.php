@@ -2699,12 +2699,30 @@ function sbw_canary_run() {
         $res[$key] = array('bad' => $bad, 'before' => $before, 'after' => $after, 'payload' => $payload, 'new' => $new);
         $rep[] = 'test ' . $key . ' (' . ($key === 'A' ? 'phone only - is an edit a merge?' : 'the whole record back, extra fields included, as the sync sends it') . '): '
             . ($bad === '' ? 'moved the phone and nothing else' : $bad);
+        // what SimplyBook's 'selector' is (a made-up client, so its value is safe to show): it follows the phone, or not
+        if ($key === 'B' && is_array($before['getClient']) && is_array($after['getClient']) && array_key_exists('selector', $before['getClient']))
+            $rep[] = '   selector before: ' . substr(json_encode($before['getClient']['selector']), 0, 120) . '  after: ' . substr(json_encode(isset($after['getClient']['selector']) ? $after['getClient']['selector'] : null), 0, 120);
+    }
+    /* The two "Unsubscribe client from" ticks: REST reports only the promo flags, so the sync cannot send them back.
+       B kept its ticks - but B was created ticked, and SimplyBook may simply default to ticked. So A has them set OFF,
+       then is saved again WITHOUT them (the sync's shape): in SimplyBook, A must still show both unticked. */
+    $ticks = false;
+    if (count($made) === 2 && isset($res['B']) && $res['B']['payload'] !== null) {
+        $sA = sbw_snap($made['A']);
+        if (is_array($sA['getClient']) && $sA['vals']) {
+            $base = sbw_push_payload($sA['getClient'], isset($sA['getClient']['phone']) ? (string)$sA['getClient']['phone'] : '', $sA['vals']);
+            $off = sb_adm('editClient', array($made['A'], array_merge($base, array('is_email_unsubscribed' => false, 'is_sms_unsubscribed' => false))));
+            $again = sb_adm('editClient', array($made['A'], $base));
+            $ticks = isset($off['result']) && !isset($off['error']) && isset($again['result']) && !isset($again['error']);
+            $rep[] = 'tick test on A (set both Unsubscribe ticks OFF, then saved without them): '
+                . ($ticks ? 'both saves accepted' : 'refused: ' . sb_why(isset($off['error']) ? $off : $again));
+        } else $rep[] = 'tick test on A: could not read A back';
     }
     $ok = isset($res['B']) && $res['B']['bad'] === '';
-    $chk = array('standard' => false, 'custom_fields' => false, 'consent' => false, 'phone_landed' => false);
+    $chk = array('standard' => false, 'custom_fields' => false, 'consent' => false, 'phone_landed' => false, 'ticks_test' => $ticks);
     if (isset($res['B'])) {
         $b = $res['B'];
-        $chk['standard'] = is_array($b['after']['getClient']) && !sbw_diff($b['before']['getClient'], $b['after']['getClient']);
+        $chk['standard'] = is_array($b['after']['getClient']) && !sbw_std_lost($b['before']['getClient'], $b['after']['getClient']);
         $chk['phone_landed'] = is_array($b['after']['getClient']) && sbw_same_phone(isset($b['after']['getClient']['phone']) ? $b['after']['getClient']['phone'] : '', $b['new']);
         $chk['custom_fields'] = $b['before']['fields'] !== null && $b['after']['fields'] !== null && $b['before']['fields'] === $b['after']['fields'] && count($b['before']['fields']) > 0;
         $chk['consent'] = $b['before']['consent'] !== null && $b['after']['consent'] !== null && json_encode($b['before']['consent']) === json_encode($b['after']['consent']) && count($b['before']['consent']) > 0;
@@ -2719,7 +2737,8 @@ function sbw_canary_run() {
         $v = array_merge(array('ts' => time(), 'company' => (string)$SB_COMPANY, 'shape' => SBW_SHAPE, 'ui_checked' => false,
                                'canaries' => array_values($made), 'naive_lost' => isset($res['A']) ? $res['A']['bad'] : ''), $chk);
         $okw = sbw_okf_write($v);
-        $rep[] = $okw ? 'PASSED. Now look at both test clients in SimplyBook (Client fields tab: every box still says CANARY-...), then confirm.' : 'passed, but the verdict file could not be written';
+        $rep[] = $okw ? 'PASSED. Now look at both test clients in SimplyBook: Client fields all still filled (CANARY-..., the drop-downs and the tick box);'
+            . ' A (#' . $made['A'] . ') shows BOTH Unsubscribe boxes UNticked, B (#' . $made['B'] . ') BOTH ticked. Then confirm.' : 'passed, but the verdict file could not be written';
         $pass = $okw;
     } else {
         @unlink(SBW_OKF); if (function_exists('opcache_invalidate')) @opcache_invalidate(SBW_OKF, true);

@@ -392,12 +392,31 @@ function sbw_consent($rest) {
     return $out;
 }
 /**
+ * Keys SimplyBook DERIVES from the others. 'selector' (third live test, 27 Oct 2026) changed when only the phone did.
+ * Such a key may differ only in phone-like characters (digits, +, spaces, brackets, dots, dashes); a random token, or
+ * any other letter changed, still counts as a change.
+ */
+function sbw_derived_same($a, $b) {
+    if (!is_scalar($a) || !is_scalar($b)) return false;
+    return preg_replace('/[0-9+\s().\-]/', '', (string)$a) === preg_replace('/[0-9+\s().\-]/', '', (string)$b);
+}
+/** sbw_diff() for a phone write: the derived 'selector' is allowed to follow the phone, and nothing else. */
+function sbw_std_lost($before, $after) {
+    $out = array();
+    foreach (sbw_diff($before, $after) as $k) {
+        if ($k === 'selector' && is_array($before) && is_array($after) && array_key_exists($k, $before) && array_key_exists($k, $after)
+            && sbw_derived_same($before[$k], $after[$k])) continue;
+        $out[] = $k;
+    }
+    return $out;
+}
+/**
  * Did a write move the phone and NOTHING else? Snapshots are array('getClient', 'fields', 'consent') - fields and
  * consent null when REST could not be read. Returns '' when clean, else what moved (shown to staff, sent to Slack).
  */
 function sbw_check($before, $after, $phone) {
     if (!is_array($after) || !is_array($after['getClient'])) return 'the record could not be read back';
-    $lost = sbw_diff($before['getClient'], $after['getClient']);
+    $lost = sbw_std_lost($before['getClient'], $after['getClient']);
     if ($lost) return 'SimplyBook also changed ' . implode(', ', $lost);
     if (!sbw_same_phone(isset($after['getClient']['phone']) ? $after['getClient']['phone'] : '', $phone)) return 'the number did not land';
     if ($before['fields'] !== null && $after['fields'] !== null && $before['fields'] !== $after['fields']) return 'the extra client fields changed';

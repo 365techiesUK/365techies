@@ -33994,7 +33994,8 @@ def write_portal_page():
     var h = '<strong>SimplyBook sync:</strong> ';
     if (d.on) h += 'on \\u2014 a mobile or landline saved on a customer\\u2019s card goes into SimplyBook too (' + d.today + ' of ' + d.cap + ' today).';
     else if (d.off) h += 'switched itself off \\u2014 ' + esc(d.off) + '. <button type="button" class="sm ghost" id="sbwreset">I\\u2019ve checked that record \\u2014 switch it back on</button>';
-    else if (d.tested && !d.checked) h += 'the safety test passed. Look at the test clients #' + esc((d.canaries || []).join(', #')) + ' in SimplyBook (Client fields: every box still says CANARY\\u2026), then '
+    else if (d.tested && !d.checked) h += 'the safety test passed. Look at the test clients #' + esc((d.canaries || []).join(', #')) + ' in SimplyBook: Client fields all still filled; '
+      + 'the first (A) with BOTH \\u201cUnsubscribe client from\\u201d boxes unticked, the second (B) with both ticked. Then '
       + '<button type="button" class="sm ghost" id="sbwok">I\\u2019ve checked them \\u2014 switch it on</button>';
     else h += 'off until its safety test passes. <button type="button" class="sm ghost" id="sbwrun">Run the safety test</button>'
       + ' <span class="quiet">(two made-up clients in SimplyBook; no real customer is touched)</span>';

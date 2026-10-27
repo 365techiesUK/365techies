@@ -231,6 +231,14 @@ ok(sbw_push_payload($read, 'x', array(), null) === sbw_push_payload($read, 'x'),
 ok(strpos(sbw_shape(array('data' => array(array('id' => $id1, 'value' => 'hunter2')))), 'hunter2') === false, 'the shape shown in the report never holds a value');
 ok(sbw_fields_fingerprint(array('data' => array(array('id' => $id1, 'value' => 'v')))) === sbw_fields_fingerprint(array($id1 => 'v')), 'the fingerprint is of the values, whatever shape they came in');
 
+/* 'selector' (third live test): allowed to follow the phone, nothing else */
+ok(sbw_derived_same('API CANARY B (+441202 775566)', 'API CANARY B (+447700900123)'), 'a selector that differs only in the phone is the same');
+ok(!sbw_derived_same('API CANARY B 0712', 'API CANARY C 0712'), 'a changed letter is a change');
+ok(!sbw_derived_same('9f3a1c02b7', '4d81e0aa93'), 'a random token (hex has letters) is a change');
+ok(sbw_std_lost(array('selector' => 'Jo 0770', 'name' => 'Jo'), array('selector' => 'Jo 0771', 'name' => 'Jo')) === array(), 'sbw_std_lost lets the derived selector follow the phone');
+ok(sbw_std_lost(array('selector' => 'Jo', 'name' => 'Jo'), array('selector' => 'Joe', 'name' => 'Jo')) === array('selector'), '... but not change otherwise');
+ok(sbw_std_lost(array('city' => '1 x'), array('city' => '2 x')) === array('city'), 'the allowance is for selector ONLY - a digit change in any other field still counts');
+
 /* the safety test's seeding: the first live run died on "The input was not found in the haystack" */
 $m = sbw_field_meta(array('id' => 'x', 'title' => 'Support Package', 'type' => 'select', 'values' => '1 PC NO Office,1 PC inc Office', 'is_optional' => false));
 ok($m['opts'] === array('1 PC NO Office', '1 PC inc Office') && $m['req'] === true, 'a drop-down given as a comma list: its choices, and required');
