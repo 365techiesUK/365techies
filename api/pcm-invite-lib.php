@@ -8,7 +8,8 @@
  * Nothing here creates a billing request, touches a mandate or moves money.
  *
  * GoCardless's GET /customers has NO email filter (its schema is additionalProperties:false), so the
- * customer list is read in pages and matched on the email here. The index keeps sha1(email) only -
+ * customer list is read in pages and matched on the email - in pcm-gc-lib.php since 27 Oct 2026, shared
+ * with the portal's plan card and the monthly invoice run. The index keeps sha1(email) only -
  * no plain email addresses at rest.
  *
  * Include-only (.htaccess denies it as a URL). Stores, all gitignored and denied over HTTP:
@@ -19,6 +20,8 @@
  */
 
 if (!defined('INV_DIR')) define('INV_DIR', __DIR__);
+if (!defined('GCL_DIR')) define('GCL_DIR', INV_DIR);   // the shared customer index sits beside the other stores
+require_once __DIR__ . '/pcm-gc-lib.php';
 define('INV_TTL', 600);          // GoCardless reads are cached this long (seconds)
 define('INV_KEEP', 400);         // invite records kept
 define('INV_DAYS', 120);         // invites older than this are not shown
@@ -32,7 +35,7 @@ function inv_write_json($f, $data) {
     if (@file_put_contents($tmp, json_encode($data, JSON_UNESCAPED_SLASHES), LOCK_EX) === false) return false;
     return @rename($tmp, $p);
 }
-function inv_ek($email) { return sha1(strtolower(trim((string)$email))); }
+function inv_ek($email) { return gcl_ek($email); }
 
 // ---- the record of each invite sent ------------------------------------------
 function inv_record($email, $name, $plan, $label, $amount, $by, $at = null) {
@@ -87,23 +90,9 @@ function inv_history($logf, $labels, $now = null) {
 }
 
 // ---- GoCardless (read-only) ----------------------------------------------------
-// sha1(email) -> array of customer ids, from GET /customers in pages of 500. null = could not read.
-function inv_gc_index($get, $fresh = false) {
-    $c = inv_read_json('pcm-gc-custidx.json');
-    if (!$fresh && isset($c['at'], $c['idx']) && (int)$c['at'] > time() - INV_TTL) return $c['idx'];
-    $idx = array(); $after = ''; $pages = 0;
-    do {
-        $j = call_user_func($get, '/customers?limit=500' . ($after !== '' ? '&after=' . rawurlencode($after) : ''));
-        if (!is_array($j)) return (isset($c['idx']) && is_array($c['idx'])) ? $c['idx'] : null;   // a blip: the last good index
-        foreach ((array)(isset($j['customers']) ? $j['customers'] : array()) as $cu) {
-            if (empty($cu['id']) || empty($cu['email'])) continue;
-            $idx[inv_ek($cu['email'])][] = (string)$cu['id'];
-        }
-        $after = isset($j['meta']['cursors']['after']) ? (string)$j['meta']['cursors']['after'] : '';
-    } while ($after !== '' && ++$pages < 20);
-    inv_write_json('pcm-gc-custidx.json', array('at' => time(), 'idx' => $idx));
-    return $idx;
-}
+// sha1(email) -> array of customer ids, from GET /customers in pages of 500 (pcm-gc-lib.php). null = could
+// not read; a blip serves the last good index.
+function inv_gc_index($get, $fresh = false) { return gcl_index($get, $fresh); }
 
 function inv_money($n) { return '£' . number_format((float)$n, 2); }
 function inv_day($ymd) { $t = strtotime((string)$ymd . ' 12:00 UTC'); return $t ? gmdate('j M', $t) : (string)$ymd; }

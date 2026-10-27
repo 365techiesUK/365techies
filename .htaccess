@@ -283,6 +283,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-invite-(lib|test)\.php|pcm-invite-sent\.json(\..*)?|pcm-gc-(custidx|invstatus)\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
+# GoCardless customer lookup by email (27 Oct 2026), shared by pcm.php, pcm-invoice.php and the Plans tab: the
+# library is include-only, its test CLI-only. Its index (pcm-gc-custidx.json) is denied just above.
+<FilesMatch "^pcm-gc-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
 # Per-job pay links (20 Sep 2026). The store holds SINGLE-USE GoCardless payment
 # links, each made for one named customer and each worth the money on it, plus
 # their name, email, phone and the amount - the most sensitive api/ store we have.

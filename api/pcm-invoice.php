@@ -110,19 +110,17 @@ function gc_get($path){ global $GC_TOKEN; $ch = curl_init('https://api.gocardles
     $r = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
     return ($r !== false && $code >= 200 && $code < 300) ? json_decode($r, true) : null; }
 // Active per-PC subscriptions for an email -> line items [{name, amount}], or null on transport failure.
+// GET /customers has no email filter (27 Oct 2026): the customer list is read ONCE per run, fresh and never
+// a stale copy, and the plans on every GoCardless record with this email are used (pcm-gc-lib.php).
+require_once $BASE . '/pcm-gc-lib.php';
+$GC_IDX = null;   // the run's customer index; false = could not read it (every customer counts as a transport failure)
 function gc_lines($email){
-    $cust = gc_get('/customers?email=' . rawurlencode($email));
-    if (!is_array($cust)) return null;                       // transport failure
-    if (empty($cust['customers'][0]['id'])) return array();  // genuinely no GoCardless customer
-    $cid = $cust['customers'][0]['id'];
-    $subs = gc_get('/subscriptions?customer=' . rawurlencode($cid) . '&status=active');
-    if (!is_array($subs)) return null;
-    $lines = array();
-    foreach ((isset($subs['subscriptions']) ? $subs['subscriptions'] : array()) as $s) {
-        $amt = round(intval($s['amount'] ?? 0) / 100.0, 2);
-        if ($amt > 0) $lines[] = array('name'=>(string)($s['name'] ?? 'Support plan'), 'amount'=>$amt);
-    }
-    return $lines;
+    global $GC_IDX;
+    if ($GC_IDX === null) { $GC_IDX = gcl_index('gc_get', true, false); if ($GC_IDX === null) $GC_IDX = false; }
+    if ($GC_IDX === false) return null;                      // transport failure
+    $ids = gcl_ids($GC_IDX, $email);
+    if (!$ids) return array();                               // genuinely no GoCardless customer
+    return gcl_lines('gc_get', $ids);
 }
 
 // ---- QuickBooks OAuth2 (access token 1h; refresh token 100d AND ROTATES) -

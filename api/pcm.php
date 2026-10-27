@@ -671,7 +671,10 @@ if ($action === 'overview') {
 
 // GoCardless read-only summary (plan + Direct Debit + last payment) for the portal.
 // Feature-flagged on the server-only token file; 10-min cached per email; masked data only.
-function pcm_gc_summary($email) {
+// GET /customers has no email filter (27 Oct 2026): the customer is found in the shared, paged customer
+// index (pcm-gc-lib.php), and every GoCardless record with this email counts. $get is the test's stub;
+// live callers pass nothing.
+function pcm_gc_summary($email, $get = null) {
     $cfg = __DIR__ . '/pcm-gocardless.php';        // server-only: <?php $GC_TOKEN = 'live_....';
     if (!is_readable($cfg) || $email === '') return null;
     include $cfg; if (empty($GC_TOKEN)) return null;
@@ -679,38 +682,19 @@ function pcm_gc_summary($email) {
     $cache = @json_decode((string)@file_get_contents($ck), true); if (!is_array($cache)) $cache = array();
     $ek = sha1(strtolower($email));
     if (isset($cache[$ek]) && ($cache[$ek]['ts'] ?? 0) > time() - 600) return $cache[$ek]['data'];
-    $gc = function($path) use ($GC_TOKEN) {
+    $gc = $get ? $get : function($path) use ($GC_TOKEN) {
         $ch = curl_init('https://api.gocardless.com' . $path);
-        curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER=>true, CURLOPT_CONNECTTIMEOUT=>3, CURLOPT_TIMEOUT=>4,
+        // a page of 500 customers takes longer than one customer's plans
+        curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER=>true, CURLOPT_CONNECTTIMEOUT=>3, CURLOPT_TIMEOUT=>(strpos($path, '/customers?') === 0 ? 10 : 4),
             CURLOPT_HTTPHEADER=>array('Authorization: Bearer ' . $GC_TOKEN, 'GoCardless-Version: 2015-07-06')));
         $r = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
         return ($r !== false && $code >= 200 && $code < 300) ? json_decode($r, true) : null;
     };
-    $data = null;
-    $cust = $gc('/customers?email=' . rawurlencode($email));
-    if (is_array($cust) && !empty($cust['customers'][0]['id'])) {
-        $cid = $cust['customers'][0]['id'];
-        $subs = $gc('/subscriptions?customer=' . rawurlencode($cid) . '&status=active');
-        $pays = $gc('/payments?customer=' . rawurlencode($cid) . '&limit=1');
-        if (!is_array($subs)) return null;   // transport failure: don't cache a made-up "no plan"
-        // sum ALL active subscriptions (some customers pay per-PC on separate plans)
-        $tot = 0.0; $names = array(); $nextchg = '';
-        foreach ((isset($subs['subscriptions']) ? $subs['subscriptions'] : array()) as $s) {
-            $tot += intval($s['amount'] ?? 0) / 100.0;
-            $names[] = (string)($s['name'] ?? 'Support plan');
-            $nc = !empty($s['upcoming_payments'][0]['charge_date']) ? (string)$s['upcoming_payments'][0]['charge_date'] : '';
-            if ($nc !== '' && ($nextchg === '' || $nc < $nextchg)) $nextchg = $nc;
-        }
-        $p = is_array($pays) && !empty($pays['payments'][0]) ? $pays['payments'][0] : null;
-        $data = array(
-            'active' => count($names) > 0,
-            'amount' => round($tot, 2),
-            'name'   => count($names) === 1 ? $names[0] : (count($names) > 1 ? 'Support plans (' . count($names) . ' Direct Debits)' : ''),
-            'nextchg'=> $nextchg,
-            'lastamt'=> $p ? round(intval($p['amount'] ?? 0) / 100, 2) : 0,
-            'lastdate'=> $p ? (string)($p['charge_date'] ?? '') : '',
-            'laststatus'=> $p ? (string)($p['status'] ?? '') : '');
-    }
+    require_once __DIR__ . '/pcm-gc-lib.php';
+    $idx = gcl_index($gc);
+    if ($idx === null) return null;                  // could not read the customer list: don't cache a made-up "no plan"
+    $data = gcl_summary($gc, gcl_ids($idx, $email)); // null = no GoCardless customer with this email
+    if ($data === false) return null;                // transport failure: don't cache a made-up "no plan"
     $cache[$ek] = array('ts'=>time(), 'data'=>$data);
     @file_put_contents($ck, json_encode($cache), LOCK_EX);
     return $data;
