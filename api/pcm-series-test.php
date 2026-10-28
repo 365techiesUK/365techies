@@ -206,6 +206,61 @@ $ct = cx_body('Jane', $sv, $ls); $ch = cx_body_html('<b>J</b>', $sv, $ls);
 ok(strpos($ct, 'These 2 visits are cancelled') !== false && strpos($ct, 'David & Steve') !== false, 'text: says how many, signed');
 ok(strpos($ch, '<b>J</b>') === false && strpos($ch, rv_h(cf_series_line($at(1)))) !== false && strpos($ch, 'David and Steve') !== false, 'HTML: escaped, lists them, signed');
 
+echo "-- every booked visit, however far ahead (the old six-weekly series)\n";
+fresh();
+$far = function ($i) use ($T0) { return strtotime(date('Y-m-d', $T0) . ' +' . (42 * $i) . ' days 11:00'); };   // a series running years ahead
+$plan = array(); for ($i = 0; $i < 30; $i++) $plan[] = array('bid' => 7000 + $i, 'em' => 'Plan.Old@Example.com', 'nm' => 'Pat Old', 'start' => $far($i), 'end' => $far($i) + 5400,
+                                                    'sv' => $sv, 'rec' => '2024-06-03 21:27:52');
+qput(function ($q) use ($far) {
+    $q['q']['7100'] = array('em' => 'gone@example.com', 'nm' => 'Gone', 'bs' => $far(3), 'end' => $far(3) + 5400, 'st' => 'seeded', 'rm' => 'pending', 'ts' => time() - 86400);   // deleted in SimplyBook
+    $q['q']['7101'] = array('em' => 'real@example.com', 'nm' => 'Real', 'bs' => $far(3), 'end' => $far(3) + 5400, 'st' => 'pending', 'rm' => 'pending', 'ts' => time() - 86400);  // a real booking, not a seed
+    $q['q']['7102'] = array('em' => 'beyond@example.com', 'nm' => 'Beyond', 'bs' => $far(80), 'end' => $far(80) + 5400, 'st' => 'seeded', 'rm' => 'pending', 'ts' => time() - 86400); // past the list's last visit
+    return $q;
+});
+$r = rv_seed_sync($plan, time(), time() + 86400 * 2200);
+$e = q();
+ok($r['added'] === 30 && isset($e['q']['7029']), 'all thirty visits of a series running ' . date('Y', $far(29)) . ' are on the list', json_encode($r));
+ok($e['q']['7029']['rec'] === '2024-06-03 21:27:52' && $e['q']['7000']['em'] === 'plan.old@example.com', '... each tagged with when the series was made');
+ok(!isset($e['q']['7100']) && $r['dropped'] === 1, 'a seed SimplyBook no longer has is dropped (it can never be reminded)');
+ok(isset($e['q']['7101']), 'a real booking is never dropped');
+ok(isset($e['q']['7102']), 'nothing past the last visit the list reached is dropped (a list cut short)');
+$plan2 = $plan; $plan2[5]['start'] = $far(5) + 7200; $plan2[5]['end'] = $far(5) + 12600;
+$r = rv_seed_sync($plan2, time(), time() + 86400 * 2200); $e = q();
+ok($r['added'] === 0 && $e['q']['7005']['bs'] === $far(5) + 7200 && $e['q']['7005']['cf']['h'] === $far(5) + 7200, 'the next pass adds nothing and follows a moved visit');
+ok(rv_seed_sync(array(), time(), time() + 86400)['dropped'] === 0 && isset(q()['q']['7001']), 'an empty answer drops nothing');
+rv_record('7006', 'plan.old@example.com', 'Pat Old', $far(6) + 5400, 'change', $far(6), $sv);
+ok(q()['q']['7006']['rec'] === '2024-06-03 21:27:52' && q()['q']['7006']['st'] === 'pending', 'a webhook for one of them keeps its series tag');
+list($a) = cf_decide(q()['q']['7020']['cf'], 'change', $far(20) + 3600, $far(20), time());
+ok($a === 'send', 'a visit two years out, moved in SimplyBook: "New time" (it used to be a stranger, so nothing)');
+
+echo "-- a whole old series cancelled: one email, however SimplyBook sends it\n";
+$CF_LIVE = true;
+rv_record('7000', 'x@example.com', '', 0, 'cancel', 0, '');
+cf_notify('7000', 'cancel', 'plan.old@example.com', 'Pat Old', $sv, $far(0), 0, '');
+$live = array('7001', '7002');   // SimplyBook still has these two (cancelled from the third visit on, say)
+$n = rv_cancel_sweep('7000', 'plan.old@example.com', '2024-06-03 21:27:52', $live);
+$e = q();
+ok($n === 27, 'one webhook: the 27 other visits SimplyBook no longer has are cancelled with it', (string)$n);
+ok($e['q']['7001']['st'] === 'seeded' && $e['q']['7002']['st'] === 'seeded', 'the ones SimplyBook still has are left alone');
+ok($e['q']['7029']['st'] === 'cancelled' && $e['q']['7029']['rm'] === 'skipped' && $e['q']['7029']['cf']['cxq'] === 1, '... the rest: cancelled, no reminder, in the email queue');
+ok(isset($e['q']['7101']) && $e['q']['7101']['st'] === 'pending', 'another customer\'s booking is untouched');
+ok(rv_cancel_sweep('7003', 'plan.old@example.com', '2024-06-03 21:27:52', $live) === 0, 'the same series\' other webhooks find nothing more to do');
+cf_notify('7003', 'cancel', 'plan.old@example.com', 'Pat Old', $sv, $far(3), 0, '');
+qput(function ($q) { foreach ($q['q'] as $k => $x) if (isset($x['cf']['ca'])) $q['q'][$k]['cf']['ca'] = time() - 90; return $q; });
+$SENT = array(); cx_process(5, 'fake_send');
+$pat = array_values(array_filter($SENT, function ($m) { return $m['to'] === 'plan.old@example.com'; }));
+ok(count($pat) === 1 && $pat[0]['subj'] === 'Cancelled: ' . $sv . ' - 28 visits', 'ONE email naming all 28', count($pat) ? $pat[0]['subj'] : 'none');
+ok(rv_cancel_sweep('7001', 'plan.old@example.com', '', $live) === 0 && rv_cancel_sweep('7001', 'plan.old@example.com', '2024-06-03 21:27:52', null) === 0,
+   'no series tag, or no answer from SimplyBook: sweeps nothing');
+fresh();
+qput(function ($q) use ($far) {
+    $q['q']['7200'] = array('em' => 'twin@example.com', 'nm' => 'Twin', 'bs' => $far(2), 'end' => $far(2) + 5400, 'st' => 'seeded', 'rm' => 'pending', 'ts' => time() - 86400, 'rec' => '2025-01-01 10:00:00', 'cf' => array('cr' => 1, 'h' => $far(2)));
+    $q['q']['7201'] = array('em' => 'twin@example.com', 'nm' => 'Twin', 'bs' => $far(4), 'end' => $far(4) + 5400, 'st' => 'seeded', 'rm' => 'pending', 'ts' => time() - 86400, 'rec' => '2025-03-09 15:00:00', 'cf' => array('cr' => 1, 'h' => $far(4)));
+    return $q;
+});
+ok(rv_cancel_sweep('7199', 'twin@example.com', '2025-01-01 10:00:00', array()) === 1 && q()['q']['7201']['st'] === 'seeded', 'only the same series: another series of the same customer is left alone');
+$CF_LIVE = false;
+
 echo "-- the self-check on SimplyBook's creation times\n";
 ok(cf_series_selfcheck(array(array('id' => 1, 'record_date' => $REC))) === 'ok', 'present: ok');
 ok(cf_series_selfcheck(array()) === 'no_rows', 'no bookings in the window: nothing to judge');
@@ -217,7 +272,12 @@ $cb = (string)file_get_contents(__DIR__ . '/pcm-sb-callback.php');
 $pLook = strpos($cb, '$visits = cb_series_visits('); $pSer = strpos($cb, 'cf_notify_series($bid'); $pOne = strpos($cb, 'else cf_notify($bid, $type');
 ok($pLook !== false && $pSer !== false && $pOne !== false && $pLook < $pSer && $pSer < $pOne, 'callback: looks for the series, confirms it, else the single "Booked:"');
 ok(strpos($cb, "if (\$type === 'create' && !\$logged && \$ts && \$ts > time() && !bkann_recent(\$bid, 'single'))") !== false, '... only for a new future booking, not a logged job, not the booking page\'s one visit');
-ok(strpos($cb, "'getBookings', array(\$f)") !== false && strpos($cb, "'client_id' => \$cid") !== false, '... asking SimplyBook for this client\'s bookings');
+ok(strpos($cb, "'getBookings', array(\$f)") !== false && strpos($cb, "'client_id' => (int)\$cid") !== false, '... asking SimplyBook for this client\'s bookings');
+$pCx = strpos($cb, '$swept = rv_cancel_sweep('); $pCxIf = strpos($cb, "if (\$type === 'cancel' && \$ts && \$ts > time() && !empty(\$b['record_date']) && !bkann_recent(\$bid, 'single')");
+ok($pCx !== false && $pCxIf !== false && $pOne < $pCxIf && $pCxIf < $pCx, 'callback: a cancellation sweeps the rest of its series, after its own email is queued, never for the booking page\'s trim');
+$bp = (string)file_get_contents(__DIR__ . '/pcm-bkpoll.php');
+ok(strpos($bp, '$rvDeep = rv_seed_sync($dd, time(), $dTo);') !== false && strpos($bp, "< time() - 10800)") !== false && strpos($bp, '86400 * 2200') !== false,
+   'the poll hands over EVERY future booking (six years ahead) every 3 hours');
 ok(strpos($cb, 'cx_process(5);') !== false, '... and every webhook sends settled cancellations');
 ok(strpos((string)file_get_contents(__DIR__ . '/pcm-bkpoll.php'), '$mailC = cx_process(5);') !== false, 'the 5-minute poll sends them too');
 $bk = (string)file_get_contents(__DIR__ . '/pcm-booking.php');

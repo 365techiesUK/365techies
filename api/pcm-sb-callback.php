@@ -42,19 +42,33 @@ function sb_rpc($url, $method, $params, $headers = array()) {
 /* The other visits of a recurring series made with booking $bid (28 Oct 2026; cf_series_pick explains how they are
    told apart). The admin API, because only it lists a client's bookings: this client, this service, from this visit
    on. Any failure, or no admin login configured, = no series. */
-function cb_series_visits($b, $bid, $ts, $ets) {
-    global $SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY;
-    if (empty($SB_API_USER) || empty($SB_API_USER_KEY) || !function_exists('cf_series_pick')) return array();
+// the SimplyBook client and service of a booking, whichever way its details name them
+function cb_ids($b) {
     $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
     $eid = (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['event']) && is_array($b['event']) && isset($b['event']['id']) ? $b['event']['id'] : 0));
-    if ($cid <= 0) return array();
-    $tok = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY));
-    if (!is_array($tok) || empty($tok['result']) || !is_string($tok['result'])) return array();
-    $f = array('client_id' => $cid, 'booking_type' => 'non_cancelled', 'date_from' => date('Y-m-d', $ts), 'order' => 'date_start_asc');
-    if ($eid > 0) $f['event_id'] = $eid;
-    $r = sb_rpc('https://user-api.simplybook.me/admin/', 'getBookings', array($f),
-        array('X-Company-Login: ' . $SB_COMPANY, 'X-User-Token: ' . $tok['result']));
-    if (!is_array($r) || !isset($r['result']) || !is_array($r['result'])) return array();
+    return array($cid, $eid);
+}
+// One client's bookings SimplyBook still has, from $day on (the admin API; one login per webhook). null = no answer.
+function cb_client_bookings($cid, $day, $eid = 0) {
+    global $SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY;
+    static $tok = null;
+    if ($cid <= 0 || empty($SB_API_USER) || empty($SB_API_USER_KEY)) return null;
+    if ($tok === null) {
+        $t = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY));
+        $tok = (is_array($t) && !empty($t['result']) && is_string($t['result'])) ? $t['result'] : '';
+    }
+    if ($tok === '') return null;
+    $f = array('client_id' => (int)$cid, 'booking_type' => 'non_cancelled', 'date_from' => $day, 'order' => 'date_start_asc');
+    if ($eid > 0) $f['event_id'] = (int)$eid;
+    $r = sb_rpc('https://user-api.simplybook.me/admin/', 'getBookings', array($f), array('X-Company-Login: ' . $SB_COMPANY, 'X-User-Token: ' . $tok));
+    return (is_array($r) && isset($r['result']) && is_array($r['result'])) ? $r['result'] : null;
+}
+function cb_series_visits($b, $bid, $ts, $ets) {
+    if (!function_exists('cf_series_pick')) return array();
+    list($cid, $eid) = cb_ids($b);
+    $rows = cb_client_bookings($cid, date('Y-m-d', $ts), $eid);
+    if ($rows === null) return array();
+    $r = array('result' => $rows);
     return cf_series_pick(array('bid' => (int)$bid, 'start' => (int)$ts, 'end' => (int)$ets,
         'rec' => isset($b['record_date']) ? (string)$b['record_date'] : '', 'cid' => $cid, 'eid' => $eid), $r['result']);
 }
@@ -148,6 +162,17 @@ if ($type === 'create' && !$logged && $ts && $ts > time() && !bkann_recent($bid,
 if ($logged) { /* a job logged as already done: no "Booked:" */ }
 elseif (count($visits) > 1 && ($serOK = cf_notify_series($bid, $email, $cnm, $svcName, $visits, $bcode))) { /* sent as a series */ }
 else cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode, $prevStart);
+/* 28 Oct 2026: a cancelled visit that belongs to a series - every other visit of it that SimplyBook no longer has joins
+   the same cancellation email, however many webhooks SimplyBook sends for it (rv_cancel_sweep, pcm-review.php). */
+$swept = 0;
+if ($type === 'cancel' && $ts && $ts > time() && !empty($b['record_date']) && !bkann_recent($bid, 'single') && function_exists('rv_cancel_sweep')) {
+    list($cxCid, ) = cb_ids($b);
+    $liveRows = cb_client_bookings($cxCid, date('Y-m-d'));
+    if ($liveRows !== null) {
+        $liveIds = array(); foreach ($liveRows as $lr) if (is_array($lr) && !empty($lr['id'])) $liveIds[] = (string)$lr['id'];
+        $swept = rv_cancel_sweep($bid, $email, (string)$b['record_date'], $liveIds);
+    }
+}
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
@@ -200,6 +225,7 @@ if (!$ours) {
     elseif ($type === 'change') $msg = ':arrows_counterclockwise: *Booking changed* (in SimplyBook) - ' . $who . ($whn !== '' ? ' - now ' . $whn : '');
     else $msg = ':telephone_receiver: *New booking* (taken in SimplyBook) - ' . $who . ($whn !== '' ? ' - ' . $whn : '');
     if ($what !== '') $msg .= "\n> " . $what;
+    if ($swept > 0) $msg .= "\n> :repeat: and " . $swept . ' more visit' . ($swept > 1 ? 's' : '') . ' of the same series, gone with it - one cancellation email covers them all.';
     if (count($visits) > 1) {
         $evy = cf_series_every($visits);
         $msg .= "\n> :repeat: Recurring - " . count($visits) . ' visits' . ($evy !== '' ? ', ' . $evy : '')

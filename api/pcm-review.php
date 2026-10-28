@@ -262,7 +262,8 @@ function rv_record($bid, $email, $name, $endTs, $type, $startTs = 0, $svc = '') 
             // and the customer would get a second "All wrapped up" email
             // rm_snd/rm_tries MUST be carried: dropping them makes an in-flight 'sending'
             // look instantly stale, and a concurrent run would send a second reminder
-            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries', 'cf', 'rm_snd', 'rm_ts', 'rm_tries') as $dk)
+            // 'rec' (28 Oct 2026): when SimplyBook made the booking - the series tag rv_cancel_sweep matches on
+            if ($cur) foreach (array('dn', 'dn_snd', 'dn_ts', 'dn_tries', 'cf', 'rm_snd', 'rm_ts', 'rm_tries', 'rec') as $dk)
                 if (isset($cur[$dk])) $q['q'][$bid][$dk] = $cur[$dk];
             // a MOVED appointment must be reminded about again - the customer was reminded
             // of a time that no longer exists (fresh try budget with it)
@@ -819,6 +820,7 @@ function cf_series_pick($trig, $rows) {
     $rec = !empty($trig['rec']) ? (int)strtotime((string)$trig['rec']) : 0;
     foreach ($rows as $r) if (is_array($r) && (int)(isset($r['id']) ? $r['id'] : 0) === $tb && !empty($r['record_date'])) $rec = (int)strtotime((string)$r['record_date']);
     if ($rec <= 0) return array_values($out);
+    $out[$tb]['rec'] = date('Y-m-d H:i:s', $rec);
     $cid = (int)(isset($trig['cid']) ? $trig['cid'] : 0); $eid = (int)(isset($trig['eid']) ? $trig['eid'] : 0);
     foreach ($rows as $r) {
         if (!is_array($r)) continue;
@@ -831,7 +833,7 @@ function cf_series_pick($trig, $rows) {
         if ($rr <= 0 || abs($rr - $rec) > 120) continue;
         list($s, $e) = cf_row_times($r);
         if ($s <= time()) continue;
-        $out[$id] = array('bid' => $id, 'start' => $s, 'end' => $e);
+        $out[$id] = array('bid' => $id, 'start' => $s, 'end' => $e, 'rec' => (string)$r['record_date']);
     }
     $v = array_values($out);
     usort($v, function ($a, $b) { return $a['start'] - $b['start']; });
@@ -898,8 +900,10 @@ function rv_seed_into($q, $rows, $now) {
         if ($bid === '' || $bs <= $now || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
         $end = (int)(isset($r['end']) ? $r['end'] : 0);
         if ($end <= $bs) $end = $bs + 5400;
+        $rec = isset($r['rec']) ? substr(preg_replace('/[^0-9 :\-]/', '', (string)$r['rec']), 0, 19) : '';
         if (isset($q['q'][$bid])) {
             $cur = $q['q'][$bid];
+            if ($rec !== '' && empty($cur['rec'])) { $q['q'][$bid]['rec'] = $rec; $dirty = true; }
             if ((isset($cur['st']) ? $cur['st'] : '') === 'seeded' && (int)(isset($cur['bs']) ? $cur['bs'] : 0) !== $bs) {
                 $q['q'][$bid]['bs'] = $bs; $q['q'][$bid]['end'] = $end; $q['q'][$bid]['rm'] = 'pending';
                 $q['q'][$bid]['cf']['h'] = $bs; $dirty = true;
@@ -909,6 +913,7 @@ function rv_seed_into($q, $rows, $now) {
         $q['q'][$bid] = array('em' => $em, 'nm' => rv_clean_name(isset($r['nm']) ? $r['nm'] : ''), 'end' => $end, 'bs' => $bs,
             'sv' => rv_clean_name(isset($r['sv']) ? $r['sv'] : ''), 'rm' => 'pending', 'ts' => $now - 86400, 'st' => 'seeded',
             'tries' => 0, 'cf' => array('cr' => $now, 'h' => $bs), 'seed' => $now);
+        if ($rec !== '') $q['q'][$bid]['rec'] = $rec;
         $n++; $dirty = true;
     }
     return array($q, $n, $dirty);
@@ -934,7 +939,9 @@ function cf_notify_series($bid, $email, $name, $sv, $visits, $code) {
     $q['q'][$bid]['cf'] = $cf;
     $rows = array();
     foreach ($visits as $v) if ((string)$v['bid'] !== $bid)
-        $rows[] = array('bid' => $v['bid'], 'em' => $email, 'nm' => $name, 'start' => $v['start'], 'end' => $v['end'], 'sv' => $sv);
+        $rows[] = array('bid' => $v['bid'], 'em' => $email, 'nm' => $name, 'start' => $v['start'], 'end' => $v['end'], 'sv' => $sv,
+                        'rec' => isset($v['rec']) ? $v['rec'] : '');
+    foreach ($visits as $v) if ((string)$v['bid'] === $bid && !empty($v['rec'])) $q['q'][$bid]['rec'] = (string)$v['rec'];
     list($q, , ) = rv_seed_into($q, $rows, time());
     rvq_save($q);
     rvq_close($lk);
@@ -948,6 +955,71 @@ function cf_notify_series($bid, $email, $name, $sv, $visits, $code) {
         rv_slack(':warning: 365 mail: the confirmation of a ' . count($visits) . '-visit series FAILED for booking #' . $bid . ' - SimplyBook\'s own email is the only copy the customer got');
     }
     return true;
+}
+
+/* EVERY BOOKED VISIT, HOWEVER FAR AHEAD (28 Oct 2026, owner: "fix the 30 day gap for old series too ... every 6 weeks").
+   The 5-minute poll only sees 30 days ahead, so an old six-weekly series (some run to 2030) was on our list one visit at
+   a time - a visit further out that staff moved or cancelled in SimplyBook was a stranger to us, and once SimplyBook's
+   own emails are off the customer would hear nothing. pcm-bkpoll.php now hands over EVERY future booking every few
+   hours. Missing ones are added (rv_seed_into), moved seeds follow, and a seed SimplyBook no longer has - deleted, or
+   cancelled with the webhook lost - is dropped so it can never be reminded. Only 'seeded' entries are ever dropped,
+   and only up to the last visit the list reached (a list cut short drops nothing past its end). Returns counts. */
+function rv_seed_sync($rows, $from, $to) {
+    $rows = is_array($rows) ? $rows : array();
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    list($q, $added, $dirty) = rv_seed_into($q, $rows, time());
+    $have = array(); $hi = 0;
+    foreach ($rows as $r) { $have[(string)$r['bid']] = true; $hi = max($hi, (int)$r['start']); }
+    $hi = min((int)$to, $hi);
+    $dropped = 0;
+    if ($rows) foreach ($q['q'] as $bid => $e) {
+        if ((isset($e['st']) ? $e['st'] : '') !== 'seeded' || isset($have[(string)$bid])) continue;
+        $bs = (int)(isset($e['bs']) ? $e['bs'] : 0);
+        if ($bs < (int)$from || $bs > $hi) continue;
+        unset($q['q'][$bid]); $dropped++; $dirty = true;
+    }
+    if ($dirty) rvq_save($q);
+    rvq_close($lk);
+    return array('rows' => count($rows), 'added' => $added, 'dropped' => $dropped);
+}
+
+/* A SERIES CANCELLED (28 Oct 2026). Whether SimplyBook sends one webhook per cancelled visit or one for the lot, the
+   customer must get ONE email naming every visit that went. The callback hands over the cancelled booking's series tag
+   (its creation time) and the client's bookings SimplyBook still has. Every other queued future visit of that series -
+   same email, same creation time - that SimplyBook no longer has is cancelled with it and joins the same email
+   (cx_process). Returns how many were added to it. */
+function rv_cancel_sweep($bid, $email, $rec, $liveIds) {
+    global $CF_LIVE;
+    $bid = (string)preg_replace('/[^0-9]/', '', (string)$bid);
+    $email = strtolower(trim((string)$email));
+    $rt = $rec !== '' ? (int)strtotime((string)$rec) : 0;
+    if ($bid === '' || $rt <= 0 || !filter_var($email, FILTER_VALIDATE_EMAIL) || !is_array($liveIds)) return 0;
+    $live = array(); foreach ($liveIds as $l) $live[(string)$l] = true;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return 0;
+    $optout = isset($q['optout'][sha1($email)]);
+    $n = 0; $now = time(); $dirty = false;
+    foreach ($q['q'] as $k => $e) {
+        if ((string)$k === $bid || isset($live[(string)$k])) continue;
+        if (strtolower((string)(isset($e['em']) ? $e['em'] : '')) !== $email) continue;
+        if (!in_array((isset($e['st']) ? $e['st'] : ''), array('seeded', 'pending'), true)) continue;
+        if ((int)(isset($e['bs']) ? $e['bs'] : 0) <= $now) continue;
+        $er = !empty($e['rec']) ? (int)strtotime((string)$e['rec']) : 0;
+        if ($er <= 0 || abs($er - $rt) > 120) continue;
+        $q['q'][$k]['st'] = 'cancelled'; $dirty = true;
+        if ((isset($e['rm']) ? $e['rm'] : 'pending') === 'pending') $q['q'][$k]['rm'] = 'skipped';
+        $cf = (isset($e['cf']) && is_array($e['cf'])) ? $e['cf'] : array();
+        if (!isset($cf['ca'])) {
+            $cf['ca'] = $now;
+            if ($CF_LIVE && !$optout && isset($cf['cr'])) $cf['cxq'] = 1;   // only visits the customer was told about
+            $n++;
+        }
+        $q['q'][$k]['cf'] = $cf;
+    }
+    if ($dirty) rvq_save($q);
+    rvq_close($lk);
+    return $n;
 }
 
 /* The series emails stand on SimplyBook's creation time ('record_date'). pcm-bkpoll.php hands over its booking rows on

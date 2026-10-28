@@ -270,9 +270,33 @@ if (function_exists('rv_seed') && isset($br['result']) && is_array($br['result']
         $v = bp_visit_of($b);
         if ($v['em'] === '' || $v['start'] <= time()) continue;
         $sd[] = array('bid' => $sbid, 'em' => $v['em'], 'nm' => $v['nm'], 'start' => $v['start'], 'end' => $v['end'],
-                      'sv' => bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : '')));
+                      'sv' => bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : '')),
+                      'rec' => isset($b['record_date']) && is_string($b['record_date']) ? $b['record_date'] : '');
     }
     $rvSeeded = rv_seed($sd);
+}
+/* 28 Oct 2026 (owner: "fix the 30 day gap for old series too"): every 3 hours, EVERY future booking - six years ahead,
+   old six-weekly series run to 2030 - so a visit staff move or cancel in SimplyBook is never a stranger to us, however
+   far out (rv_seed_sync in pcm-review.php: adds, follows moves, drops seeds SimplyBook no longer has). Its own call,
+   after the lock; a failure just waits for the next poll. */
+$rvDeep = array('skip' => 'not_due');
+if (function_exists('rv_seed_sync') && (isset($TC['deep_ts']) ? (int)$TC['deep_ts'] : 0) < time() - 10800) {
+    $dTo = time() + 86400 * 2200;
+    $dr = adm('getBookings', array(array('booking_type' => 'non_cancelled', 'date_from' => date('Y-m-d'), 'date_to' => date('Y-m-d', $dTo), 'order' => 'date_start_asc')));
+    if (isset($dr['_net']) || !isset($dr['result']) || !is_array($dr['result'])) $rvDeep = array('error' => 'sb_unavailable');
+    else {
+        $dd = array();
+        foreach ($dr['result'] as $b) {
+            $dbid = (int)(isset($b['id']) ? $b['id'] : 0); if ($dbid <= 0) continue;
+            $v = bp_visit_of($b);
+            if ($v['em'] === '' || $v['start'] <= time()) continue;
+            $dd[] = array('bid' => $dbid, 'em' => $v['em'], 'nm' => $v['nm'], 'start' => $v['start'], 'end' => $v['end'],
+                          'sv' => bp_clean(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : '')),
+                          'rec' => isset($b['record_date']) && is_string($b['record_date']) ? $b['record_date'] : '');
+        }
+        $rvDeep = rv_seed_sync($dd, time(), $dTo);
+        $TC['deep_ts'] = time(); @file_put_contents($TCACHE, json_encode($TC), LOCK_EX);
+    }
 }
 
 // Slack AFTER releasing the lock (never hold the DB lock during outbound HTTP)
@@ -305,5 +329,5 @@ $serChk = function_exists('cf_series_selfcheck') ? cf_series_selfcheck($rows) : 
 $mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($DATA) : array('skip' => 'no_fn');
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded, 'series_check' => $serChk,
+           'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded, 'all_visits' => $rvDeep, 'series_check' => $serChk,
            'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'cancel' => $mailC, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));
