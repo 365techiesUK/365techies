@@ -316,27 +316,7 @@ function rv_seed($rows) {
     if (!is_array($rows) || !$rows) return 0;
     list($lk, $q) = rvq_open();
     if (!$lk) return 0;
-    $n = 0; $dirty = false; $now = time();
-    foreach ($rows as $r) {
-        $bid = preg_replace('/[^0-9]/', '', (string)(isset($r['bid']) ? $r['bid'] : ''));
-        $em = strtolower(trim((string)(isset($r['em']) ? $r['em'] : '')));
-        $bs = (int)(isset($r['start']) ? $r['start'] : 0);
-        if ($bid === '' || $bs <= $now || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
-        $end = (int)(isset($r['end']) ? $r['end'] : 0);
-        if ($end <= $bs) $end = $bs + 5400;
-        if (isset($q['q'][$bid])) {
-            $cur = $q['q'][$bid];
-            if ((isset($cur['st']) ? $cur['st'] : '') === 'seeded' && (int)(isset($cur['bs']) ? $cur['bs'] : 0) !== $bs) {
-                $q['q'][$bid]['bs'] = $bs; $q['q'][$bid]['end'] = $end; $q['q'][$bid]['rm'] = 'pending';
-                $q['q'][$bid]['cf']['h'] = $bs; $dirty = true;
-            }
-            continue;
-        }
-        $q['q'][$bid] = array('em' => $em, 'nm' => rv_clean_name(isset($r['nm']) ? $r['nm'] : ''), 'end' => $end, 'bs' => $bs,
-            'sv' => rv_clean_name(isset($r['sv']) ? $r['sv'] : ''), 'rm' => 'pending', 'ts' => $now - 86400, 'st' => 'seeded',
-            'tries' => 0, 'cf' => array('cr' => $now, 'h' => $bs), 'seed' => $now);
-        $n++; $dirty = true;
-    }
+    list($q, $n, $dirty) = rv_seed_into($q, $rows, time());
     if ($dirty) rvq_save($q);
     rvq_close($lk);
     return $n;
@@ -689,19 +669,29 @@ function rm_body_html($first, $svc, $ts) {
         'blocks' => $blocks, 'legal' => 'You are receiving this because you have a booking with 365 Techies.'));
 }
 function ics_build($summary, $st, $en, $uid, $seq) {
+    return ics_build_many($summary, array(array($st, $en, $uid)), $seq);
+}
+/* One calendar file holding several visits (28 Oct 2026, a recurring series): one VEVENT each, every one with the
+   same per-booking UID a later "New time" email uses (sb-<booking id>), so moving one visit updates that visit. */
+function ics_build_many($summary, $events, $seq) {
     $esc = function($s){ return preg_replace('/([\\\\,;])/', '\\\\$1', preg_replace('/[\r\n]+/', ' ', (string)$s)); };
     $tz = "BEGIN:VTIMEZONE\r\nTZID:Europe/London\r\n"
         . "BEGIN:DAYLIGHT\r\nTZOFFSETFROM:+0000\r\nTZOFFSETTO:+0100\r\nTZNAME:BST\r\nDTSTART:19700329T010000\r\nRRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU\r\nEND:DAYLIGHT\r\n"
         . "BEGIN:STANDARD\r\nTZOFFSETFROM:+0100\r\nTZOFFSETTO:+0000\r\nTZNAME:GMT\r\nDTSTART:19701025T020000\r\nRRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU\r\nEND:STANDARD\r\nEND:VTIMEZONE";
+    $ev = array();
+    foreach ($events as $e) {
+        list($st, $en, $uid) = $e;
+        $ev[] = "BEGIN:VEVENT\r\nUID:" . $esc($uid) . "\r\nSEQUENCE:" . (int)$seq
+            . "\r\nDTSTAMP:" . gmdate('Ymd\THis\Z')
+            . "\r\nDTSTART;TZID=Europe/London:" . date('Ymd\THis', $st)
+            . "\r\nDTEND;TZID=Europe/London:" . date('Ymd\THis', $en > $st ? $en : $st + 3600)
+            . "\r\nSUMMARY:" . $esc($summary)
+            . "\r\nDESCRIPTION:" . $esc('365 Techies - 01202 775566 - manage at https://365techies.co.uk/portal/')
+            . "\r\nORGANIZER;CN=365 Techies:mailto:info@365techies.co.uk"
+            . "\r\nSTATUS:CONFIRMED\r\nEND:VEVENT";
+    }
     return "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//365 Techies//Booking//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n" . $tz
-        . "\r\nBEGIN:VEVENT\r\nUID:" . $esc($uid) . "\r\nSEQUENCE:" . (int)$seq
-        . "\r\nDTSTAMP:" . gmdate('Ymd\THis\Z')
-        . "\r\nDTSTART;TZID=Europe/London:" . date('Ymd\THis', $st)
-        . "\r\nDTEND;TZID=Europe/London:" . date('Ymd\THis', $en > $st ? $en : $st + 3600)
-        . "\r\nSUMMARY:" . $esc($summary)
-        . "\r\nDESCRIPTION:" . $esc('365 Techies - 01202 775566 - manage at https://365techies.co.uk/portal/')
-        . "\r\nORGANIZER;CN=365 Techies:mailto:info@365techies.co.uk"
-        . "\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n";
+        . "\r\n" . implode("\r\n", $ev) . "\r\nEND:VCALENDAR\r\n";
 }
 
 // Called by the webhook right after rv_record. Dedupes SimplyBook's webhook retries
@@ -759,11 +749,14 @@ function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code, $prevStart
     list($act, $cf) = cf_decide($cf, $kind, $ts, $prevStart, time());
     if ($act === 'none') { rvq_close($lk); return; }                                  // a webhook retry, or the time didn't move
     $silent = ($act === 'silent');
+    /* 28 Oct 2026: a cancellation is not sent from here. It waits a minute in the queue (cf 'cxq') and cx_process sends
+       it, so a whole recurring series cancelled at once - one webhook per visit - is ONE email listing them, not twelve. */
+    if ($kind === 'cancel' && !$silent && $CF_LIVE) $cf['cxq'] = 1;
     // mark BEFORE sending so a webhook retry seconds later can't double-send
     if (isset($q['q'][$bid])) { $q['q'][$bid]['cf'] = $cf; rvq_save($q); }
     rvq_close($lk);
 
-    if (!$CF_LIVE || $silent) return;   // safe mode / nothing worth telling them: state recorded, nothing sent
+    if (!$CF_LIVE || $silent || $kind === 'cancel') return;   // safe mode / nothing worth telling them / cx_process sends it
 
     $icsN = ''; $icsD = '';
     if ($kind !== 'cancel' && $ts) {
@@ -790,6 +783,279 @@ function cf_notify($bid, $type, $email, $name, $sv, $ts, $ets, $code, $prevStart
         }
         rv_slack(':warning: 365 mail: ' . $kind . ' email FAILED for booking #' . $bid . ' - SimplyBook\'s own notification is the only copy the customer got');
     }
+}
+
+/* ---- RECURRING SERIES (28 Oct 2026, owner: "build the recurring series confirmations too") -----------------------
+   A six-weekly plan is booked in SimplyBook as a recurring series: one action makes ten or twelve visits. SimplyBook
+   then calls our webhook ONCE, for the first visit (seen 21 Sep: two series, one Slack line each), and sends the
+   customer its own "Recurring ... has been booked" email listing every date. Ours used to answer with a "Booked:" for
+   the first visit alone - so SimplyBook's confirmation could never be switched off without customers losing the rest
+   of their dates.
+
+   SimplyBook marks a series nowhere in the booking record (no series or batch field, checked against its own admin
+   data), but every visit of one series has the same client, the same service and the SAME CREATION TIME to the
+   second. pcm-sb-callback.php asks the admin API for that client's bookings of that service made that day, and
+   cf_series_pick keeps the ones created with the webhook's booking. Two or more = one "Booked: 12 visits" email
+   listing them all, with every visit in the calendar file, and every visit queued for its own reminder. */
+
+// start and end of one SimplyBook booking row (the same keys pcm-bkpoll.php reads)
+function cf_row_times($r) {
+    $st = ''; foreach (array('start_date_time', 'start_datetime', 'date_start', 'start_date') as $k) if (!empty($r[$k]) && is_string($r[$k])) { $st = $r[$k]; break; }
+    if ($st !== '' && strlen($st) <= 10 && !empty($r['start_time'])) $st .= ' ' . $r['start_time'];
+    $en = ''; foreach (array('end_date_time', 'end_datetime', 'date_end', 'end_date') as $k) if (!empty($r[$k]) && is_string($r[$k])) { $en = $r[$k]; break; }
+    if ($en !== '' && strlen($en) <= 10 && !empty($r['end_time'])) $en .= ' ' . $r['end_time'];
+    $s = $st !== '' ? (int)strtotime($st) : 0; $e = $en !== '' ? (int)strtotime($en) : 0;
+    if ($s > 0 && $e <= $s) $e = $s + 5400;
+    return array($s, $e);
+}
+/* The visits SimplyBook made in the same action as the booking the webhook named. $trig: bid, start, end, and when
+   known cid / eid / rec (its record_date). $rows: the admin getBookings answer. Pure. Always returns the trigger
+   itself; anything else only on a creation time within two minutes of the trigger's - and with no creation time to
+   match on, nothing else: a wrong "12 visits" would be worse than SimplyBook's email doing the job a while longer. */
+function cf_series_pick($trig, $rows) {
+    $tb = (int)$trig['bid'];
+    $out = array($tb => array('bid' => $tb, 'start' => (int)$trig['start'], 'end' => (int)$trig['end']));
+    $rows = is_array($rows) ? $rows : array();
+    $rec = !empty($trig['rec']) ? (int)strtotime((string)$trig['rec']) : 0;
+    foreach ($rows as $r) if (is_array($r) && (int)(isset($r['id']) ? $r['id'] : 0) === $tb && !empty($r['record_date'])) $rec = (int)strtotime((string)$r['record_date']);
+    if ($rec <= 0) return array_values($out);
+    $cid = (int)(isset($trig['cid']) ? $trig['cid'] : 0); $eid = (int)(isset($trig['eid']) ? $trig['eid'] : 0);
+    foreach ($rows as $r) {
+        if (!is_array($r)) continue;
+        $id = (int)(isset($r['id']) ? $r['id'] : 0);
+        if ($id <= 0 || isset($out[$id])) continue;
+        if (!empty($r['is_cancelled']) || !empty($r['is_canceled'])) continue;
+        if ($cid && isset($r['client_id']) && (int)$r['client_id'] !== $cid) continue;
+        if ($eid && isset($r['event_id']) && (int)$r['event_id'] !== $eid) continue;
+        $rr = !empty($r['record_date']) ? (int)strtotime((string)$r['record_date']) : 0;
+        if ($rr <= 0 || abs($rr - $rec) > 120) continue;
+        list($s, $e) = cf_row_times($r);
+        if ($s <= time()) continue;
+        $out[$id] = array('bid' => $id, 'start' => $s, 'end' => $e);
+    }
+    $v = array_values($out);
+    usort($v, function ($a, $b) { return $a['start'] - $b['start']; });
+    return $v;
+}
+// "every 6 weeks" when the visits are evenly spaced (counted in calendar days, so a clock change does not upset it)
+function cf_series_every($visits) {
+    if (count($visits) < 2) return '';
+    $gap = null;
+    for ($i = 1; $i < count($visits); $i++) {
+        $d = (int)round((strtotime(date('Y-m-d', $visits[$i]['start']) . ' 12:00') - strtotime(date('Y-m-d', $visits[$i - 1]['start']) . ' 12:00')) / 86400);
+        if ($d <= 0 || ($gap !== null && $d !== $gap)) return '';
+        $gap = $d;
+    }
+    if ($gap % 7 === 0) return $gap === 7 ? 'every week' : 'every ' . ($gap / 7) . ' weeks';
+    return $gap === 1 ? 'every day' : 'every ' . $gap . ' days';
+}
+function cf_series_line($ts) { return date('D j M Y', $ts) . ', ' . date('g:ia', $ts); }
+function cf_series_subject($sv, $visits) {
+    return 'Booked: ' . $sv . ' - ' . count($visits) . ' visits from ' . date('D j M', $visits[0]['start']);
+}
+function cf_series_body($first, $sv, $visits, $code) {
+    $n = count($visits); $every = cf_series_every($visits);
+    $list = ''; foreach ($visits as $v) $list .= '  ' . cf_series_line($v['start']) . "\r\n";
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . 'Your regular visits are booked in - ' . $n . ' of them' . ($every !== '' ? ', ' . $every : '') . ":\r\n\r\n"
+    . '  What:   ' . $sv . "\r\n"
+    . '  First:  ' . cf_pretty($visits[0]['start']) . "\r\n"
+    . '  Last:   ' . date('l j F Y, g:ia', $visits[$n - 1]['start']) . "\r\n"
+    . ($code !== '' ? '  Booking reference: ' . $code . "\r\n" : '')
+    . "\r\nEvery visit:\r\n\r\n" . $list
+    . "\r\nA calendar file is attached with every visit in it - open it and they all\r\n"
+    . "drop into your phone or computer's calendar.\r\n\r\n"
+    . "You'll get a reminder the day before each one. Need to move or cancel a\r\n"
+    . "visit? Your portal handles it in a couple of taps -\r\nhttps://365techies.co.uk/portal/ - or just ring 01202 775566.\r\n\r\n"
+    . "See you then,\r\nDavid & Steve\r\n365 Techies - family-run IT support in Bournemouth since 1995\r\n01202 775566 - https://365techies.co.uk\r\n";
+}
+function cf_series_body_html($first, $sv, $visits, $code) {
+    list($portal, $tel) = cf_h_links();
+    $n = count($visits); $every = cf_series_every($visits);
+    $facts = array('What' => $sv, 'Visits' => $n . ($every !== '' ? ', ' . $every : ''),
+                   'First' => cf_pretty($visits[0]['start']), 'Last' => date('l j F Y, g:ia', $visits[$n - 1]['start']));
+    if ($code !== '') $facts['Reference'] = $code;
+    $lines = '';
+    foreach ($visits as $v) $lines .= '<p style="margin:0 0 7px 0;font-size:16px;line-height:1.5;color:#3d4d6d !important;">' . rv_h(cf_series_line($v['start'])) . '</p>';
+    $blocks = array(rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p('Your regular visits are booked in &ndash; here they all are:'),
+        rv_h_facts($facts),
+        rv_h_panel('Every visit', $lines),
+        rv_h_note('<strong style="color:#0b1226;">A calendar file is attached with every visit in it.</strong> Open it and they all drop into your phone or computer&rsquo;s calendar.'),
+        rv_h_p('You&rsquo;ll get a reminder the day before each one. Need to move or cancel a visit? Your portal handles it in a couple of taps &ndash; ' . $portal . ' &ndash; or just ring ' . $tel . '.'));
+    return rv_html_shell(array('title' => 'Your visits are booked', 'eyebrow' => 'Booking confirmed', 'heading' => "You're booked in",
+        'preview' => $sv . ' - ' . $n . ' visits' . ($every !== '' ? ', ' . $every : '') . ', from ' . cf_pretty($visits[0]['start']),
+        'blocks' => $blocks, 'legal' => 'You are receiving this because you have a booking with 365 Techies.'));
+}
+/* Add queue entries for visits we have never seen, for the reminder only (rv_seed explains the marks). Works on an
+   open queue; returns array($q, $added, $dirty). */
+function rv_seed_into($q, $rows, $now) {
+    $n = 0; $dirty = false;
+    foreach ($rows as $r) {
+        $bid = preg_replace('/[^0-9]/', '', (string)(isset($r['bid']) ? $r['bid'] : ''));
+        $em = strtolower(trim((string)(isset($r['em']) ? $r['em'] : '')));
+        $bs = (int)(isset($r['start']) ? $r['start'] : 0);
+        if ($bid === '' || $bs <= $now || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        $end = (int)(isset($r['end']) ? $r['end'] : 0);
+        if ($end <= $bs) $end = $bs + 5400;
+        if (isset($q['q'][$bid])) {
+            $cur = $q['q'][$bid];
+            if ((isset($cur['st']) ? $cur['st'] : '') === 'seeded' && (int)(isset($cur['bs']) ? $cur['bs'] : 0) !== $bs) {
+                $q['q'][$bid]['bs'] = $bs; $q['q'][$bid]['end'] = $end; $q['q'][$bid]['rm'] = 'pending';
+                $q['q'][$bid]['cf']['h'] = $bs; $dirty = true;
+            }
+            continue;
+        }
+        $q['q'][$bid] = array('em' => $em, 'nm' => rv_clean_name(isset($r['nm']) ? $r['nm'] : ''), 'end' => $end, 'bs' => $bs,
+            'sv' => rv_clean_name(isset($r['sv']) ? $r['sv'] : ''), 'rm' => 'pending', 'ts' => $now - 86400, 'st' => 'seeded',
+            'tries' => 0, 'cf' => array('cr' => $now, 'h' => $bs), 'seed' => $now);
+        $n++; $dirty = true;
+    }
+    return array($q, $n, $dirty);
+}
+/* The series confirmation. Same discipline as cf_notify: the webhook's own booking must be queued (rv_record ran),
+   marked before sending so SimplyBook's retry cannot send it twice, unmarked again if the send fails. The other
+   visits are queued in the same lock, already counted as confirmed. Returns true when it handled the webhook. */
+function cf_notify_series($bid, $email, $name, $sv, $visits, $code) {
+    global $CF_LIVE;
+    $bid = preg_replace('/[^0-9]/', '', (string)$bid);
+    $email = strtolower(trim((string)$email));
+    if ($bid === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || count($visits) < 2) return false;
+    $sv = trim(preg_replace('/[\r\n\x00-\x1F]+/', ' ', (string)$sv)); if ($sv === '') $sv = 'your 365 Techies visit';
+    $ts = 0; foreach ($visits as $v) if ((string)$v['bid'] === $bid) $ts = (int)$v['start'];
+    list($lk, $q) = rvq_open();
+    if (!$lk) return false;
+    if (!isset($q['q'][$bid])) { rvq_close($lk); return false; }
+    $cf = (isset($q['q'][$bid]['cf']) && is_array($q['q'][$bid]['cf'])) ? $q['q'][$bid]['cf'] : array();
+    $optout = isset($q['optout'][sha1($email)]);
+    list($act, $cf) = cf_decide($cf, 'confirm', $ts, null, time());
+    if ($act === 'none') { rvq_close($lk); return true; }   // SimplyBook's retry: already done
+    $cf['ser'] = count($visits);
+    $q['q'][$bid]['cf'] = $cf;
+    $rows = array();
+    foreach ($visits as $v) if ((string)$v['bid'] !== $bid)
+        $rows[] = array('bid' => $v['bid'], 'em' => $email, 'nm' => $name, 'start' => $v['start'], 'end' => $v['end'], 'sv' => $sv);
+    list($q, , ) = rv_seed_into($q, $rows, time());
+    rvq_save($q);
+    rvq_close($lk);
+    if (!$CF_LIVE || $act === 'silent' || $optout) return true;
+    $ev = array(); foreach ($visits as $v) $ev[] = array($v['start'], $v['end'], 'sb-' . $v['bid'] . '@365techies.co.uk');
+    $ok = rv_send_raw($email, cf_series_subject($sv, $visits), cf_series_body(rv_first($name), $sv, $visits, (string)$code),
+                      '365-techies-visits.ics', ics_build_many($sv, $ev, time()), cf_series_body_html(rv_first($name), $sv, $visits, (string)$code));
+    if (!$ok) {
+        list($lk2, $q2) = rvq_open();
+        if ($lk2) { if (isset($q2['q'][$bid]['cf']['cr'])) { unset($q2['q'][$bid]['cf']['cr']); rvq_save($q2); } rvq_close($lk2); }
+        rv_slack(':warning: 365 mail: the confirmation of a ' . count($visits) . '-visit series FAILED for booking #' . $bid . ' - SimplyBook\'s own email is the only copy the customer got');
+    }
+    return true;
+}
+
+/* The series emails stand on SimplyBook's creation time ('record_date'). pcm-bkpoll.php hands over its booking rows on
+   every poll: if they ever arrive without it, say so in Slack (once a week at most) rather than let every series quietly
+   fall back to a one-visit "Booked:". Returns 'ok', 'missing', or 'no_rows'. */
+function cf_series_selfcheck($rows) {
+    $have = null;
+    foreach ((array)$rows as $r) if (is_array($r)) { $have = !empty($r['record_date']); break; }
+    if ($have === null) return 'no_rows';
+    if ($have) return 'ok';
+    list($lk, $q) = rvq_open();
+    if (!$lk) return 'missing';
+    $due = ((isset($q['ser_warned']) ? (int)$q['ser_warned'] : 0) < time() - 604800);
+    if ($due) { $q['ser_warned'] = time(); rvq_save($q); }
+    rvq_close($lk);
+    if ($due) rv_slack(':warning: SimplyBook\'s booking list has stopped including the time each booking was made. Recurring series '
+        . 'can\'t be recognised without it, so a new series gets a "Booked:" for its first visit only - SimplyBook\'s own email still '
+        . 'lists every date while its confirmation is switched on. (pcm-review.php, cf_series_pick)');
+    return 'missing';
+}
+
+/* ---- CANCELLATIONS, ONE EMAIL PER CUSTOMER (28 Oct 2026) ---------------------------------------------------------
+   cf_notify marks a cancellation (cf 'cxq') instead of sending it. Once a customer's cancellations have been quiet for a
+   minute, this sends one email: the usual "Cancelled:" for one visit, or one listing them all when a series went at
+   once. Runs on every webhook, every 5-minute poll and the 2-hourly cron; no quiet hours (it answers something staff
+   just did). A booking reinstated in the meantime is dropped from the email. $send is for the tests. */
+function cx_subject($sv, $list) {
+    return 'Cancelled: ' . $sv . ' - ' . count($list) . ' visits';
+}
+function cx_body($first, $sv, $list) {
+    $lines = ''; foreach ($list as $ts) $lines .= '  ' . cf_series_line($ts) . "\r\n";
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . 'These ' . count($list) . " visits are cancelled - this email is your confirmation:\r\n\r\n"
+    . '  What:  ' . $sv . "\r\n\r\n" . $lines
+    . "\r\nNothing else is needed from you. If this wasn't you, or you'd like to\r\n"
+    . "rebook, ring 01202 775566 or book online any time:\r\nhttps://365techies.co.uk/portal/\r\n\r\n"
+    . "Thanks,\r\nDavid & Steve\r\n365 Techies - family-run IT support in Bournemouth since 1995\r\n01202 775566 - https://365techies.co.uk\r\n";
+}
+function cx_body_html($first, $sv, $list) {
+    list($portal, $tel) = cf_h_links();
+    $lines = '';
+    foreach ($list as $ts) $lines .= '<p style="margin:0 0 7px 0;font-size:16px;line-height:1.5;color:#3d4d6d !important;">' . rv_h(cf_series_line($ts)) . '</p>';
+    return rv_html_shell(array('title' => 'Your visits are cancelled', 'eyebrow' => 'Booking cancelled', 'heading' => 'Your visits are cancelled',
+        'preview' => $sv . ' - ' . count($list) . ' visits cancelled',
+        'blocks' => array(rv_h_p('Hi ' . rv_h($first) . ','),
+            rv_h_p('These ' . count($list) . ' visits are cancelled &ndash; this email is your confirmation:'),
+            rv_h_facts(array('What' => $sv)),
+            rv_h_panel('Cancelled', $lines),
+            rv_h_p('Nothing else is needed from you. If this wasn&rsquo;t you, or you&rsquo;d like to rebook, ring ' . $tel . ' or book online any time in ' . $portal . '.')),
+        'legal' => 'You are receiving this because you have a booking with 365 Techies.'));
+}
+function cx_process($cap = 5, $send = null) {
+    global $CF_LIVE;
+    if ($send === null) $send = 'rv_send_raw';
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    $now = time(); $groups = array(); $settling = array(); $dirty = false;
+    foreach ($q['q'] as $bid => $e) {
+        $cf = (isset($e['cf']) && is_array($e['cf'])) ? $e['cf'] : array();
+        if (empty($cf['cxq'])) continue;
+        $em = strtolower(trim((string)(isset($e['em']) ? $e['em'] : '')));
+        if (!$CF_LIVE || (isset($e['st']) ? $e['st'] : '') !== 'cancelled' || !filter_var($em, FILTER_VALIDATE_EMAIL) || isset($q['optout'][sha1($em)])) {
+            unset($q['q'][$bid]['cf']['cxq'], $q['q'][$bid]['cf']['cxs']); $dirty = true; continue;   // reinstated, opted out, or safe mode
+        }
+        if ($cf['cxq'] === 'sending' && (isset($cf['cxs']) ? $cf['cxs'] : 0) > $now - 600) { $settling[$em] = true; continue; }   // in flight
+        if ((int)(isset($cf['ca']) ? $cf['ca'] : 0) > $now - 60) $settling[$em] = true;
+        $groups[$em][] = (string)$bid;
+    }
+    $picked = array();
+    foreach ($groups as $em => $ids) {
+        if (isset($settling[$em]) || count($picked) >= $cap) continue;
+        foreach ($ids as $id) {
+            $q['q'][$id]['cf']['cxq'] = 'sending'; $q['q'][$id]['cf']['cxs'] = $now;
+            $q['q'][$id]['cf']['cxt'] = (int)(isset($q['q'][$id]['cf']['cxt']) ? $q['q'][$id]['cf']['cxt'] : 0) + 1;
+        }
+        $picked[$em] = $ids; $dirty = true;
+    }
+    if ($dirty) rvq_save($q);
+    $snap = $q;
+    rvq_close($lk);
+
+    $sent = 0; $failed = 0;
+    foreach ($picked as $em => $ids) {
+        $ent = array(); foreach ($ids as $id) $ent[] = $snap['q'][$id];
+        usort($ent, function ($a, $b) { return (int)(isset($a['bs']) ? $a['bs'] : 0) - (int)(isset($b['bs']) ? $b['bs'] : 0); });
+        $first = rv_first(isset($ent[0]['nm']) ? $ent[0]['nm'] : '');
+        $svs = array(); $list = array();
+        foreach ($ent as $e) { $svs[(isset($e['sv']) && $e['sv'] !== '') ? $e['sv'] : 'your 365 Techies visit'] = true; $list[] = (int)(isset($e['bs']) ? $e['bs'] : 0); }
+        $sv = count($svs) === 1 ? key($svs) : 'your 365 Techies visits';
+        $ok = count($ent) === 1
+            ? call_user_func($send, $em, cf_subject('cancel', $sv, $list[0]), cf_body('cancel', $first, $sv, $list[0], ''), '', '', cf_body_html('cancel', $first, $sv, $list[0], ''))
+            : call_user_func($send, $em, cx_subject($sv, $list), cx_body($first, $sv, $list), '', '', cx_body_html($first, $sv, $list));
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        $gaveUp = false;
+        foreach ($ids as $id) {
+            if (!isset($q2['q'][$id]['cf']['cxq']) || $q2['q'][$id]['cf']['cxq'] !== 'sending') continue;
+            if ($ok || (int)(isset($q2['q'][$id]['cf']['cxt']) ? $q2['q'][$id]['cf']['cxt'] : 0) >= 3) {
+                if (!$ok) $gaveUp = true;
+                unset($q2['q'][$id]['cf']['cxq'], $q2['q'][$id]['cf']['cxs']);
+            } else $q2['q'][$id]['cf']['cxq'] = 1;
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+        if ($ok) $sent++; else $failed++;
+        if ($gaveUp) rv_slack(':warning: 365 mail: a cancellation email FAILED three times (' . count($ids) . ' visit' . (count($ids) > 1 ? 's' : '') . ') - SimplyBook\'s own notification is the only copy the customer got');
+    }
+    return array('sent' => $sent, 'failed' => $failed, 'waiting' => count($groups) - count($picked));
 }
 
 // ---- best-effort Slack ping (send failures + daily summaries) - never blocks ----
@@ -3121,7 +3387,8 @@ if (!defined('RV_LIB')) {
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
-                      'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report');
+                      'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report',
+                      'series' => 'series', 'cancels' => 'cancels');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -3153,6 +3420,21 @@ if (!defined('RV_LIB')) {
             $smp = sr_sample();
             $ok = rv_send_raw($tto, sr_subject($smp), sr_body('Steve', $smp), '', '', sr_body_html('Steve', $smp));
         }
+        elseif ($tkind === 'series' || $tkind === 'cancels') {
+            // a six-weekly plan of six visits from next Tuesday (28 Oct 2026: the recurring-series emails)
+            $sv0 = strtotime('next tuesday 10:00'); $vs = array();
+            for ($i = 0; $i < 6; $i++) { $vt = strtotime(date('Y-m-d', $sv0) . ' +' . (42 * $i) . ' days 10:00'); $vs[] = array('bid' => 'sample' . $i, 'start' => $vt, 'end' => $vt + 5400); }
+            if ($tkind === 'series') {
+                $ev = array(); foreach ($vs as $v) $ev[] = array($v['start'], $v['end'], 'sb-' . $v['bid'] . '@365techies.co.uk');
+                $ok = rv_send_raw($tto, cf_series_subject('365 Techies Full Computer Service', $vs), cf_series_body('Steve', '365 Techies Full Computer Service', $vs, 'SAMPLE'),
+                                  '365-techies-visits.ics', ics_build_many('365 Techies Full Computer Service', $ev, time()),
+                                  cf_series_body_html('Steve', '365 Techies Full Computer Service', $vs, 'SAMPLE'));
+            } else {
+                $ls = array(); foreach ($vs as $v) $ls[] = $v['start'];
+                $ok = rv_send_raw($tto, cx_subject('365 Techies Full Computer Service', $ls), cx_body('Steve', '365 Techies Full Computer Service', $ls), '', '',
+                                  cx_body_html('Steve', '365 Techies Full Computer Service', $ls));
+            }
+        }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
             $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts), '', '', rm_body_html('Steve', 'Computer Health Check', $rts));
@@ -3173,6 +3455,7 @@ if (!defined('RV_LIB')) {
         $r = rv_process(5);
         $r2 = dn_process(5);
         $r3 = rm_process(8);
+        cx_process(5);   // settled cancellations (28 Oct 2026)
         $r4 = wc_process(5);
         // Backfill: seeding is harmless and idempotent (read-only on the customer DB);
         // whether anything is SENT is governed by $BF_LIVE, which ships false.

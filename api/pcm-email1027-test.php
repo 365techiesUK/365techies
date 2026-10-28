@@ -212,15 +212,18 @@ ok(strpos($mh, '2 computers') !== false && strpos($mh, '84%') !== false && strpo
 
 fresh();
 $cust1 = array('email' => 'solo@example.com', 'name' => 'Sol O', 'tier' => 'pro', 'machines' => array($MA => array('seen' => $seen)));
-sr_record($KEY, $MA, $NOW - 900, $sum('Latitude 5520', 70), $cust1);
-sr_record($KEY, $MA, $NOW - 120, $sum('Latitude 5520', 72), $cust1);
+// three reports on ONE calendar day, all in the past hour (the flip guard): just after midnight, use late yesterday
+$tA = $NOW - 900; $tB = $NOW - 120; $tC = $NOW - 30;
+if (date('Y-m-d', $tA) !== date('Y-m-d', $NOW)) { $tA = strtotime(date('Y-m-d', $NOW) . ' 00:00:00') - 1500; $tB = $tA + 780; $tC = $tA + 870; }
+sr_record($KEY, $MA, $tA, $sum('Latitude 5520', 70), $cust1);
+sr_record($KEY, $MA, $tB, $sum('Latitude 5520', 72), $cust1);
 $p = sr_process(5); $e = q();
 ok($p['due_waiting'] === 1 && $p['superseded'] === 1, 'the same computer twice in a day: only the newest goes', json_encode($p));
-ok($e['sr'][$KH . '-' . $MA . '-' . ($NOW - 900)]['st'] === 'superseded' && $e['sr'][$KH . '-' . $MA . '-' . ($NOW - 120)]['st'] === 'pending', '... the older is marked superseded');
-qput(function ($q) use ($KH, $MA, $NOW) { $q['sr'][$KH . '-' . $MA . '-' . ($NOW - 120)]['st'] = 'sent'; unset($q['srrun_ts']); return $q; });
-sr_record($KEY, $MA, $NOW - 30, $sum('Latitude 5520', 73), $cust1);
+ok($e['sr'][$KH . '-' . $MA . '-' . ($tA)]['st'] === 'superseded' && $e['sr'][$KH . '-' . $MA . '-' . ($tB)]['st'] === 'pending', '... the older is marked superseded');
+qput(function ($q) use ($KH, $MA, $tB) { $q['sr'][$KH . '-' . $MA . '-' . ($tB)]['st'] = 'sent'; unset($q['srrun_ts']); return $q; });
+sr_record($KEY, $MA, $tC, $sum('Latitude 5520', 73), $cust1);
 $p = sr_process(5); $e = q();
-ok($p['due_waiting'] === 0 && $e['sr'][$KH . '-' . $MA . '-' . ($NOW - 30)]['why'] === 'already_sent_today', 'one already emailed today for that computer: a re-run is not sent again', json_encode($p));
+ok($p['due_waiting'] === 0 && $e['sr'][$KH . '-' . $MA . '-' . ($tC)]['why'] === 'already_sent_today', 'one already emailed today for that computer: a re-run is not sent again', json_encode($p));
 
 fresh();
 sr_record($KEY, $MA, $NOW - 120, $sum('Latitude 5520', 80), $cust);   // a two-computer household, only one serviced

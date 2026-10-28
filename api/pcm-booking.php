@@ -1775,6 +1775,13 @@ if ($action === 'book') {
     if (isset($b['require_confirm'])) $confirmed = !$b['require_confirm'];
     $ts = strtotime($date . ' ' . $time);
     $pretty = $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time);
+    // 28 Oct 2026: this page books ONE visit (a recurring service is trimmed just below). Marked before the trim so
+    // SimplyBook's callback, which may arrive mid-trim, never confirms the doomed series as a series (pcm-sb-callback.php).
+    if ($bid > 0 || $series) {
+        require_once __DIR__ . '/pcm-bkann-lib.php';
+        $sgl = array($bid); foreach ($series as $sv0) $sgl[] = $sv0['id'];
+        foreach (array_unique($sgl) as $sg) if ($sg > 0) bkann_mark($sg, 'single');
+    }
     // ONE CLICK = ONE VISIT. If the service is set up as recurring in SimplyBook, the
     // call above just created the whole series. The customer chose one date and one time
     // and expected one appointment, so cancel every later occurrence and keep the first.

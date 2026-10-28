@@ -39,6 +39,26 @@ function sb_rpc($url, $method, $params, $headers = array()) {
     return json_decode($r, true);
 }
 
+/* The other visits of a recurring series made with booking $bid (28 Oct 2026; cf_series_pick explains how they are
+   told apart). The admin API, because only it lists a client's bookings: this client, this service, from this visit
+   on. Any failure, or no admin login configured, = no series. */
+function cb_series_visits($b, $bid, $ts, $ets) {
+    global $SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY;
+    if (empty($SB_API_USER) || empty($SB_API_USER_KEY) || !function_exists('cf_series_pick')) return array();
+    $cid = (int)(isset($b['client_id']) ? $b['client_id'] : (isset($b['client']) && is_array($b['client']) && isset($b['client']['id']) ? $b['client']['id'] : 0));
+    $eid = (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['event']) && is_array($b['event']) && isset($b['event']['id']) ? $b['event']['id'] : 0));
+    if ($cid <= 0) return array();
+    $tok = sb_rpc('https://user-api.simplybook.me/login', 'getUserToken', array($SB_COMPANY, $SB_API_USER, $SB_API_USER_KEY));
+    if (!is_array($tok) || empty($tok['result']) || !is_string($tok['result'])) return array();
+    $f = array('client_id' => $cid, 'booking_type' => 'non_cancelled', 'date_from' => date('Y-m-d', $ts), 'order' => 'date_start_asc');
+    if ($eid > 0) $f['event_id'] = $eid;
+    $r = sb_rpc('https://user-api.simplybook.me/admin/', 'getBookings', array($f),
+        array('X-Company-Login: ' . $SB_COMPANY, 'X-User-Token: ' . $tok['result']));
+    if (!is_array($r) || !isset($r['result']) || !is_array($r['result'])) return array();
+    return cf_series_pick(array('bid' => (int)$bid, 'start' => (int)$ts, 'end' => (int)$ets,
+        'rec' => isset($b['record_date']) ? (string)$b['record_date'] : '', 'cid' => $cid, 'eid' => $eid), $r['result']);
+}
+
 $tokRes = sb_rpc('https://user-api.simplybook.me/login', 'getToken', array($SB_COMPANY, $SB_API_KEY));
 $token = isset($tokRes['result']) ? $tokRes['result'] : '';
 // transient failures answer NON-2xx so SimplyBook retries the delivery - a one-off
@@ -118,7 +138,16 @@ rv_record($bid, $email, $cnm, $ets, $type, $ts, $svcName);
 // it sits at the next free slot today, and "Booked: ... today 3:30pm" for finished work would only confuse.
 require_once __DIR__ . '/pcm-bkann-lib.php';
 $bcode = isset($b['code']) ? preg_replace('/[^A-Za-z0-9]/', '', (string)$b['code']) : '';
-if (!bkann_recent($bid, 'logged')) cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode, $prevStart);
+/* 28 Oct 2026: a RECURRING SERIES made in SimplyBook reaches us as this one webhook, for its first visit. Find the rest
+   (cb_series_visits) and confirm them all in one email (cf_notify_series, pcm-review.php). Not for the customer booking
+   page, which trims a series to the one visit the customer chose and marks it 'single' first. Any failure on the way
+   = the ordinary single "Booked:", as before. */
+$logged = bkann_recent($bid, 'logged');
+$visits = array(); $serOK = false;
+if ($type === 'create' && !$logged && $ts && $ts > time() && !bkann_recent($bid, 'single')) $visits = cb_series_visits($b, $bid, $ts, $ets);
+if ($logged) { /* a job logged as already done: no "Booked:" */ }
+elseif (count($visits) > 1 && ($serOK = cf_notify_series($bid, $email, $cnm, $svcName, $visits, $bcode))) { /* sent as a series */ }
+else cf_notify($bid, $type, $email, $cnm, $svcName, $ts, $ets, $bcode, $prevStart);
 
 // ---- match a PC Manager customer by email, write/clear next-service ----
 // Lock + refuse-to-wipe: never overwrite a DB we couldn't parse (would destroy all customers).
@@ -171,9 +200,15 @@ if (!$ours) {
     elseif ($type === 'change') $msg = ':arrows_counterclockwise: *Booking changed* (in SimplyBook) - ' . $who . ($whn !== '' ? ' - now ' . $whn : '');
     else $msg = ':telephone_receiver: *New booking* (taken in SimplyBook) - ' . $who . ($whn !== '' ? ' - ' . $whn : '');
     if ($what !== '') $msg .= "\n> " . $what;
+    if (count($visits) > 1) {
+        $evy = cf_series_every($visits);
+        $msg .= "\n> :repeat: Recurring - " . count($visits) . ' visits' . ($evy !== '' ? ', ' . $evy : '')
+              . ', last ' . date('D j M Y', $visits[count($visits) - 1]['start']) . ($serOK ? ' - confirmed to the customer in one email.' : '.');
+    }
     rv_slack($msg);
 }
 rv_process(2);   // piggyback: each booking event also sends any due review emails (capped)
 dn_process(2);   // ...and any due "job done" visit-record emails
 rm_process(3);   // ...and any due day-before reminders
+cx_process(5);   // ...and cancellations that have settled (one email per customer)
 exit($out);

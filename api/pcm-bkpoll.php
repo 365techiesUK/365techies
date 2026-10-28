@@ -293,6 +293,8 @@ require_once __DIR__ . '/pcm-review.php';   // _once: already loaded at the top 
 $mailR = rv_process(3);
 $mailD = dn_process(3);
 $mailM = rm_process(5);
+$mailC = cx_process(5);   // 28 Oct 2026: cancellations, one email per customer once they have settled for a minute
+$serChk = function_exists('cf_series_selfcheck') ? cf_series_selfcheck($rows) : 'no_fn';   // recurring-series emails need record_date
 // 14 Sep 2026 (owner: "send within 5 minutes"): the six-weekly service report email used to wait for the
 // 2-hourly GitHub run (up to two hours after the service, next morning after 19:17). sr_process guards itself
 // (09:00-20:00 only, queue lock, 60 s ran-recently, $SR_LIVE), so it rides this poll like the other queues and
@@ -303,5 +305,5 @@ $mailM = rm_process(5);
 $mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($DATA) : array('skip' => 'no_fn');
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
-           'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded,
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));
+           'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded, 'series_check' => $serChk,
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'cancel' => $mailC, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));
