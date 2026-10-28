@@ -177,6 +177,9 @@ check($pt['d7'] === 6 && $pt['d30'] === 6 && $tt['d30'] === 4, 'PC Manager click
 check($pt['from'][0] === array('k' => '/computer-spec-checker/', 'n' => 3) && count($pt['from']) === 3 && in_array(array('k' => '/', 'n' => 1), $pt['from'], true), 'the pages, busiest first; a bare /~dl/pcm/ is the home page', json_encode($pt['from']));
 check($pt['countries'] === array(array('k' => 'GB', 'n' => 3), array('k' => 'US', 'n' => 2)), 'by country, from every page', json_encode($pt['countries']));
 check(vis_dl_tally(null, 'pcm')['d30'] === 0 && vis_dl_tally(array(), 'pcm')['from'] === array(), 'no statistics yet: zeros, never an error');
+// 28 Oct 2026: one page's visits (the banner's 365 Games figure) - that page only, not the pages under it
+$gvs = array('days' => array($DLT => array('t365' => array('pages' => array('/games/' => 5, '/games/hearts/' => 7))), '2000-01-01' => array('t365' => array('pages' => array('/games/' => 50)))));
+check(vis_page_tally($gvs, '/games/') === array('d7' => 5, 'd30' => 5) && vis_page_tally(null, '/games/')['d30'] === 0, 'one page\'s visits, last 7 and 30 days only', json_encode(vis_page_tally($gvs, '/games/')));
 // 14 Oct 2026: links sent to a computer (the phone panel) are tallied apart from the downloads
 $dvs['days'][$DLT]['t365']['pages']['/~send/pcm/free-pc-health-check/'] = 5;
 $ps = vis_dl_tally($dvs, 'pcm', 8, 'send'); $pd = vis_dl_tally($dvs, 'pcm');

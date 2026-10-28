@@ -81,6 +81,19 @@ function vis_dl_tally($vs, $app, $nFrom = 8, $kind = 'dl') {
     foreach (array_slice($from, 0, $nFrom, true) as $p => $n) $out['from'][] = array('k' => (string)$p, 'n' => $n);
     return $out;
 }
+// 28 Oct 2026: visits to one page (each visitor once a day) over the same 7 and 30 days - the staff banner's 365 Games
+// figure (the Store app opens /games/, so its launches land here too)
+function vis_page_tally($vs, $path) {
+    $out = array('d7' => 0, 'd30' => 0);
+    if (!is_array($vs) || !isset($vs['days']) || !is_array($vs['days'])) return $out;
+    $cut7 = gmdate('Y-m-d', time() - 6 * 86400); $cut30 = gmdate('Y-m-d', time() - 29 * 86400);
+    foreach ($vs['days'] as $day => $sites) {
+        if ($day < $cut30 || !isset($sites['t365']['pages'][$path])) continue;
+        $n = (int)$sites['t365']['pages'][$path];
+        $out['d30'] += $n; if ($day >= $cut7) $out['d7'] += $n;
+    }
+    return $out;
+}
 // a page-count map without the action pings (the Pages lists show what people read)
 function vis_reads(array $pages) {
     $out = array();

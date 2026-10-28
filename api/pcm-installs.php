@@ -86,4 +86,7 @@ $vs = @json_decode((string)@file_get_contents(__DIR__ . '/visitors-stats.json'),
 $out['downloads'] = vis_dl_tally($vs, 'pcm');
 // 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer" - the links they sent themselves
 $out['sends'] = vis_dl_tally($vs, 'pcm', 8, 'send');
+// 28 Oct 2026: our other Store programs for the Computers banner. Techies PDF and Techies Move don't report installs, so
+// the site's download clicks; 365 Games = visits to /games/ (the Store app opens there)
+$out['others'] = array('tpdf' => vis_dl_tally($vs, 'tpdf', 0), 'tmove' => vis_dl_tally($vs, 'tmove', 0), 'games' => vis_page_tally($vs, '/games/'));
 echo json_encode($out);

@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Oct 2026 &middot; 851636d10b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Oct 2026 &middot; 70b932010b</p><script>
 (function () {
-  var P365BUILD = '851636d10b';
+  var P365BUILD = '70b932010b';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -10018,18 +10018,33 @@
     }
     h += app('PC Manager', 'downloaded from us' + (p && p.ok && p.plan ? ' \u00b7 plus ' + p.plan + ' on a plan we set up' : ''), p, 'inst');
     h += app('Techies One Mail', 'the email app', t, 't1');
+    // 28 Oct 2026: our other Store programs. They don't report installs, so the site's download clicks (365 Games: visits
+    // to /games/, where the Store app opens); a figure opens the program's Store page
+    var o = p && p.ok ? p.others : null;
+    if (!p) h += row('Also in the Store', 'Techies PDF, Techies Move, 365 Games', wait('Counting\u2026'));
+    else if (o) {
+      var ot = o.tpdf || {}, om = o.tmove || {}, og = o.games || {};
+      h += row('Also in the Store', 'no install counts: clicks and visits on our site',
+        cell(ot.d7 || 0, 'Techies PDF', 'download clicks this week \u00b7 ' + (ot.d30 || 0) + ' in 30 days', '', 'store:XPDLXSHHH42Q88')
+        + cell(om.d7 || 0, 'Techies Move', 'download clicks this week \u00b7 ' + (om.d30 || 0) + ' in 30 days', '', 'store:XPFCXK6CK201FQ')
+        + cell(og.d7 || 0, '365 Games', 'visitors this week \u00b7 ' + (og.d30 || 0) + ' in 30 days', '', 'store:9P9JT29Z4NGV'));
+    }
     h += '<details class="nx-how"><summary>How these are counted</summary><p class="quiet">'
       + '<b>Customer PCs</b> are the copies of PC Manager linked to a customer. Each reports in at least hourly; <b>on right now</b> = reported in the last 70 minutes, '
       + '<b>on support</b> = on a Pro plan, <b>worth a call</b> = the PCs the list below ranks. <b>PC Manager</b> counts the copies not on a plan (the ones people download from us), '
       + 'counted from the app\u2019s own check-in since ' + (p && p.since ? instDay(p.since) : '1 Oct') + '; <b>Techies One Mail</b> since ' + (t && t.since ? instDay(t.since) : '10 Oct')
       + '. Our own PCs are left out of both. <b>Still using it</b> = used on two or more days and seen in the last week. A <b>download click</b> is a click on a download button, '
-      + 'each visitor once a day: not every click becomes an install, and some installs come from a file passed on. Click a figure to go to its list.</p></details>';
+      + 'each visitor once a day: not every click becomes an install, and some installs come from a file passed on. <b>Also in the Store</b>: Techies PDF and Techies Move '
+      + 'don\u2019t report installs, so these are clicks on their download buttons; <b>365 Games</b> = visitors to the games page each day (the Store app opens there too). '
+      + 'Installs from the Microsoft Store itself show only in Partner Center. Click a figure to go to its list (Also in the Store: its Store page).</p></details>';
     var open = box.querySelector('details[open]');
     box.innerHTML = h;
     if (open) { var dt = box.querySelector('details'); if (dt) dt.open = true; }   // a refresh mustn't shut it
     box.onclick = function (e) {
       var b = e.target.closest ? e.target.closest('[data-cg]') : null; if (!b) return;
-      var go = b.getAttribute('data-cg'), id = { on: 'ffleet', fleet: 'ffleet', call: 'worthcall', inst: 'instbox', t1: 't1ibox' }[go];
+      var go = b.getAttribute('data-cg');
+      if (go.indexOf('store:') === 0) { window.open('https://apps.microsoft.com/detail/' + go.slice(6), '_blank', 'noopener'); return; }
+      var id = { on: 'ffleet', fleet: 'ffleet', call: 'worthcall', inst: 'instbox', t1: 't1ibox' }[go];
       if (go === 'on' && ftab !== 'on' && FLEET) { ftab = 'on'; renderFtabs(FLEET.filter(function (m) { return m.on; }).length); renderFleet(); }
       if (go === 'inst' && INST.who !== 'free') { INST.who = 'free'; INST.cc = null; INST.all = false; loadInstalls(); }
       var n = document.getElementById(id), c = n ? (n.closest('.card') || n) : null;
