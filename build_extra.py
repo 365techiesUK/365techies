@@ -25367,10 +25367,33 @@ def write_portal_page():
   #p365app .instgrid tr[data-icc] { cursor:pointer; }
   #p365app .instgrid tr[data-icc]:hover td { background:rgba(127,232,255,.06); }
   #p365app .instgrid tr[data-icc].on td { background:rgba(127,232,255,.14); }
-  #p365app .appcmp th.num, #p365app .appcmp td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
-  #p365app .appcmp th { vertical-align:bottom; line-height:1.25; } #p365app .appcmp td b { font-size:1.15rem; }
-  #p365app .appcmp tbody th { vertical-align:middle; color:var(--pwhite); white-space:nowrap; padding:.42rem .4rem; border-bottom:1px solid rgba(42,59,99,.4); }
   @media (max-width:700px) { #p365app .instgrid { grid-template-columns:1fr; } }
+  /* 28 Oct 2026: Computers at a glance - the tab's headline figures, one row each for the fleet and our two apps */
+  #p365app .cg { margin:0 0 1rem; padding:.3rem 1.1rem .5rem; border-radius:16px; background:#0d1631; border:1px solid #24406b; }
+  #p365app .cg-row { display:grid; grid-template-columns:200px minmax(0,1fr); gap:1rem; align-items:center; padding:.7rem 0; }
+  #p365app .cg-row + .cg-row { border-top:1px solid #1c2947; }
+  #p365app .cg-lab b { display:block; font-size:1.05rem; color:#eaf4ff; }
+  #p365app .cg-lab span { display:block; font-size:.86rem; color:#9fb5d3; margin-top:.15rem; line-height:1.35; }
+  #p365app .cg-cells { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.4rem; }
+  #p365app button.cg-c { display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; margin:0; padding:.5rem .65rem; border-radius:10px; background:none; border:1px solid transparent; color:#eaf4ff; text-align:left; font-weight:400; }
+  #p365app button.cg-c:hover { background:#13203f; border-color:#24406b; filter:none; }
+  #p365app button.cg-c:focus-visible { outline:2px solid #5cb8f0; outline-offset:2px; }
+  #p365app .cg-c b { font-size:1.75rem; line-height:1; font-variant-numeric:tabular-nums; }
+  #p365app .cg-c span { font-size:.9rem; color:#c4d6ee; line-height:1.3; }
+  #p365app .cg-c small { font-size:.8rem; color:#8aa2c4; line-height:1.3; }
+  #p365app .cg-c.g b { color:#5fe07a; } #p365app .cg-c.w b { color:#f0c65a; }
+  #p365app .cg-c .nx-ldot { margin-right:.4rem; vertical-align:middle; }
+  #p365app .cg-wait { margin:0; }
+  #p365app .cg details.nx-how { margin:.2rem 0 0; } #p365app .cg details.nx-how p { margin:.2rem 0 .4rem; }
+  #p365app .nx-panel[data-tab="computers"] > .card { scroll-margin-top:84px; }
+  @media (max-width:900px) { #p365app .cg-row { grid-template-columns:1fr; gap:.35rem; } #p365app .cg-cells { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:520px) {
+    #p365app .cg { padding:.2rem .8rem .5rem; } #p365app .cg-row { padding:.6rem 0; }
+    #p365app .cg-cells { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.1rem .4rem; }
+    #p365app button.cg-c { padding:.4rem .45rem; gap:.15rem; } #p365app .cg-c b { font-size:1.45rem; } #p365app .cg-c span { font-size:.86rem; }
+    /* five figures in two columns: the first takes the whole width, on one line, so none is left on its own */
+    #p365app button.cg-c:first-child { grid-column:1 / -1; flex-direction:row; flex-wrap:wrap; align-items:baseline; column-gap:.55rem; }
+  }
   /* 9 Oct 2026: a free month for people on the free app - the installs, one by one, with "Give 30 days free" */
   #p365app .insttrial { margin-top:1.1rem; padding-top:.9rem; border-top:1px solid var(--pline); }
   #p365app .insttrial h3 { margin:0 0 .3rem; font-size:1.05rem; }
@@ -30325,16 +30348,6 @@ def write_portal_page():
     var ap = h >= 12 ? 'pm' : 'am'; h = h % 12; if (h === 0) h = 12;
     return h + (m === '00' ? '' : ':' + m) + ap;
   }
-  function countUp(node, target) {
-    var t0 = null;
-    function step(ts) {
-      if (!t0) t0 = ts;
-      var p = Math.min(1, (ts - t0) / 700);
-      node.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
 
   // SOS relay inbox: whole card stays hidden until a code is actually waiting, so the
   // console isn't cluttered on the 360 days a year nobody uses it
@@ -30509,9 +30522,9 @@ def write_portal_page():
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
         plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
-        // 11 Oct 2026 (owner couldn't find them): the two apps side by side, and Techies One Mail installs, beside the
-        // PC Manager installs card - they were landing at the bottom of Today because this list didn't know them
-        appcmp = cardOf('appcmp'), t1inst = cardOf('t1ibox'),
+        // 11 Oct 2026 (owner couldn't find them): Techies One Mail installs, beside the PC Manager installs card - they
+        // were landing at the bottom of Today because this list didn't know them
+        t1inst = cardOf('t1ibox'),
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
         m365 = cardOf('m365card'),   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
         shopc = cardOf('shopcard'),   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on its own Shop tab
@@ -30551,9 +30564,12 @@ def write_portal_page():
     if (commsV) colC.appendChild(commsV);
     if (live) panels.today.appendChild(live);
     [cust, lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
+    // 28 Oct 2026 (owner: "a banner at the top just with all the different totals"): first thing on Computers
+    var glance = document.createElement('section'); glance.className = 'cg'; glance.id = 'cpglance';
+    glance.setAttribute('aria-label', 'Computers at a glance');
+    panels.computers.appendChild(glance);
     if (worth) panels.computers.appendChild(worth);
     if (fleet) panels.computers.appendChild(fleet);
-    if (appcmp) panels.computers.appendChild(appcmp);
     if (inst) panels.computers.appendChild(inst);
     if (t1inst) panels.computers.appendChild(t1inst);
     if (invq) panels.invoices.appendChild(invq);
@@ -31176,12 +31192,11 @@ def write_portal_page():
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\\ud83d\\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \\u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\\u2026</p></div></div>';
+      // 28 Oct 2026: the fleet's row of figures and the "Our apps side by side" card (11 Oct) moved into the banner at
+      // the top of Computers (renderGlance) - its two app rows line up column for column, as that card did
       h += '<div class="card"><h2>\\ud83d\\udda5 PC Manager fleet</h2>'
-        + '<div class="stats" id="fstats"></div>'
         + '<div class="fupd" id="fupd" aria-live="polite"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\\u2026</p></div></div>';
-      // 11 Oct 2026 (owner): our two apps side by side - downloads against installs, and who is still using each
-      h += '<div class="card"><h2>\\ud83d\\udcca Our apps side by side</h2><div id="appcmp"><p class="quiet">Counting\\u2026</p></div></div>';
       // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
       h += '<div class="card"><h2>\\ud83d\\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\\u2026</p></div></div>';
       // 10 Oct 2026: Techies One Mail, counted from the email app's own check-in (api/t1-installs.php)
@@ -33346,6 +33361,7 @@ def write_portal_page():
     Array.prototype.forEach.call(box.querySelectorAll('.wcunhide'), function (b) { b.onclick = function () { setHidden(b, false); }; });
   }
   function renderWorthCall() {
+    renderGlance();   // 28 Oct 2026: the banner's fleet figures follow the fleet (and a PC hidden from this list)
     var box = document.getElementById('worthcall'); if (!box) return;
     // Hidden by staff (owner, 28 Sep 2026: "an option to basically hide various machines ... some are like our own
     // machines, and some are like custom machines, which aren't on the support") - kept on the server
@@ -34236,8 +34252,8 @@ def write_portal_page():
     var body = { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' }; for (var xk in (extra || {})) body[xk] = extra[xk];
     var who = INST.who;
     post('/api/pcm-installs.php', body)
-      .then(function (d) { INST.d = d; if (who === 'free' && d && d.ok) INST.cmp = d; renderInstalls(); renderAppCompare(); })
-      .catch(function () { INST.d = { ok: false }; if (!INST.cmp) INST.cmp = { ok: false }; renderInstalls(); renderAppCompare(); });
+      .then(function (d) { INST.d = d; if (who === 'free' && d && d.ok) INST.cmp = d; renderInstalls(); renderGlance(); })
+      .catch(function () { INST.d = { ok: false }; if (!INST.cmp) INST.cmp = { ok: false }; renderInstalls(); renderGlance(); });
   }
   function instCountry(c) {
     if (!c || c === '--') return 'Not known';
@@ -34302,7 +34318,8 @@ def write_portal_page():
         + (oi.here ? 'Count PCs on this connection again' : 'These PCs are ours: leave out PCs on this internet connection') + '</button>'
         + (oi.here ? '' : '<p class="quiet" style="font-size:.88rem;margin:.35rem 0 0">Press it on the internet your own PCs use (at home or the office). A customer\\u2019s PC on your bench counts as ours only while it is here.</p>')
         + '</div>';
-      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = used on two or more different days, and seen in the last week; <b>used on 3+ days</b> = the surest sign of a real person (days are counted from 8 Oct 2026); <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
+      // 28 Oct 2026 (owner: "make it a lot simpler"): the explanation folds away under the figures it explains
+      h += '<details class="nx-how" style="margin-top:.7rem"><summary>How these are counted</summary><p class="quiet" style="font-size:.9rem;margin:.2rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = used on two or more different days, and seen in the last week; <b>used on 3+ days</b> = the surest sign of a real person (days are counted from 8 Oct 2026); <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p></details>';
       box.innerHTML = h;
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); INST.cc = null; INST.all = false; loadInstalls(); }; });
@@ -34338,7 +34355,9 @@ def write_portal_page():
     var rows = d.rows || [], days = d.trial_days || 30, minv = d.trial_min_ver || 37;
     var using = instTrialIds();
     var h = '<div class="insttrial"><h3>\\ud83c\\udf81 Give a free month</h3>'
-      + '<p class="quiet" style="margin:0 0 .3rem">Everything unlocked on that PC for ' + days + ' days \\u2014 the full automatic service with its report, and every tool. Within the hour the app tells them <i>\\u201c365 Techies has given this PC ' + days + ' days of everything, free\\u201d</i>. Their report stays on their PC unless they choose to send it to us for a free look-over (it arrives in Messages). Near the end it reminds them; after it, UK PCs are offered our plans. Only PCs never linked to us, one free month each. It needs PC Manager 36.1 \\u2014 an older copy updates itself first, then gets it.</p>';
+      // 28 Oct 2026 (owner: "make it a lot simpler"): one line, and what they get folded under it
+      + '<p class="quiet" style="margin:0 0 .3rem">Everything unlocked on that PC for ' + days + ' days, free. Only PCs never linked to us, one free month each.</p>'
+      + '<details class="nx-how"><summary>What they get</summary><p class="quiet" style="margin:.2rem 0 .4rem">The full automatic service with its report, and every tool. Within the hour the app tells them <i>\\u201c365 Techies has given this PC ' + days + ' days of everything, free\\u201d</i>. Their report stays on their PC unless they choose to send it to us for a free look-over (it arrives in Messages). Near the end it reminds them; after it, UK PCs are offered our plans. It needs PC Manager 36.1 \\u2014 an older copy updates itself first, then gets it.</p></details>';
     h += '<div class="itr-actions">' + (using.length ? '<button type="button" class="sm" data-itrial="using">Give ' + days + ' days free to everyone still using it (' + using.length + ')</button>' : '<span class="quiet">Everyone still using it has been given a free month, or none can be.</span>') + '</div>';
     if (!rows.length) return h + '</div>';
     return h + '<p class="quiet" style="margin:.45rem 0 0">One PC at a time: the <b>Free month</b> column in the list above.</p></div>';
@@ -34389,38 +34408,68 @@ def write_portal_page():
   function loadT1Installs() {
     var box = document.getElementById('t1ibox'); if (!box) return;
     post('/api/t1-installs.php', { stoken: S.stoken, machine: mid() })
-      .then(function (d) { T1I.d = d; renderT1Installs(); renderAppCompare(); })
-      .catch(function () { T1I.d = { ok: false }; renderT1Installs(); renderAppCompare(); });
+      .then(function (d) { T1I.d = d; renderT1Installs(); renderGlance(); })
+      .catch(function () { T1I.d = { ok: false }; renderT1Installs(); renderGlance(); });
   }
-  // 11 Oct 2026 (owner: "how many is downloaded and how many installed on the Techies One Mail app ... in comparison ...
-  // with the PC Manager downloads and how many people are using it"): the two apps side by side, from the figures the two
-  // cards below already load (no extra request). PC Manager = its "Not on a plan" copies, the ones people download from us.
-  function renderAppCompare() {
-    var box = document.getElementById('appcmp'); if (!box) return;
-    var p = INST.cmp, t = T1I.d;
-    function n30(d) { var n = 0; (d.daily || []).forEach(function (x) { n += x.n; }); return n; }
-    function row(name, d) {
-      if (!d) return '<tr><th scope="row">' + name + '</th><td colspan="6" class="quiet">Counting\\u2026</td></tr>';
-      if (!d.ok) return '<tr><th scope="row">' + name + '</th><td colspan="6" class="quiet">Couldn\\u2019t load - refresh to retry.</td></tr>';
-      var dl = d.downloads || {}, c30 = dl.d30 || 0, i30 = n30(d);
-      return '<tr><th scope="row">' + name + '</th>'
-        + '<td class="num"><b>' + (dl.d7 || 0) + '</b> <span class="quiet">\\u00b7 ' + c30 + '</span></td>'
-        + '<td class="num"><b>' + (d.new7 || 0) + '</b> <span class="quiet">\\u00b7 ' + i30 + '</span></td>'
-        + '<td class="num">' + (c30 >= 10 ? '<b>' + Math.round(100 * i30 / c30) + '</b>' : '<span class="quiet">too few clicks</span>') + '</td>'
-        + '<td class="num"><b>' + (d.total || 0) + '</b></td>'
-        + '<td class="num" style="color:var(--pgood)"><b>' + (d.kept || 0) + '</b></td>'
-        + '<td class="num"><b>' + (d.active7 || 0) + '</b></td></tr>';
+  // 28 Oct 2026 (owner: "rather than having to scroll down the page to get the headline figures ... a banner at the top
+  // just with all the different totals"): Computers at a glance - the fleet, PC Manager installs and Techies One Mail
+  // installs, from the figures the cards below already load (no extra request). It took over the fleet's own row of
+  // figures and the "Our apps side by side" card (11 Oct): the two app rows line up column for column, as that card did.
+  // PC Manager = its "Not on a plan" copies, the ones people download from us. A figure jumps to its card.
+  var GL = { at: '', err: false };
+  function renderGlance() {
+    var box = document.getElementById('cpglance'); if (!box) return;
+    var f = FLEET, p = INST.cmp, t = T1I.d;
+    function cell(n, label, sub, cls, go) {
+      return '<button type="button" class="cg-c' + (cls ? ' ' + cls : '') + '" data-cg="' + go + '"><b>' + n + '</b><span>' + label + '</span>' + (sub ? '<small>' + sub + '</small>' : '') + '</button>';
     }
-    var h = '<div class="tblwrap"><table class="appcmp"><thead><tr><th></th><th class="num">Download clicks<br><span class="quiet">week \\u00b7 30 days</span></th>'
-      + '<th class="num">New installs<br><span class="quiet">week \\u00b7 30 days</span></th><th class="num">Installs per<br>100 clicks</th>'
-      + '<th class="num">Installs<br>in all</th><th class="num">Still<br>using it</th><th class="num">Used this<br>week</th></tr></thead><tbody>'
-      + row('PC Manager', p) + row('Techies One Mail', t) + '</tbody></table></div>';
-    h += '<p class="quiet" style="font-size:.9rem;margin:.6rem 0 0">PC Manager: copies not on a plan (the ones people download from us)'
-      + (p && p.ok && p.plan ? ', plus <b>' + p.plan + '</b> on a plan that we set up' : '') + '. Our own PCs are left out of both. '
-      + 'Counting began ' + (p && p.since ? instDay(p.since) : '1 Oct') + ' for PC Manager and ' + (t && t.since ? instDay(t.since) : '10 Oct') + ' for Techies One Mail, '
-      + 'so early \\u201cnew installs\\u201d include copies that were already in use. A download click is a click on a download button '
-      + '(each visitor once a day), so installs per 100 clicks is a rough guide: not every click becomes an install, and some installs come from a file passed on.</p>';
+    function row(name, sub, inner) { return '<div class="cg-row"><div class="cg-lab"><b>' + name + '</b><span>' + sub + '</span></div><div class="cg-cells">' + inner + '</div></div>'; }
+    function wait(txt) { return '<p class="quiet cg-wait">' + txt + '</p>'; }
+    var h = '';
+    if (!f) h += row('Customer PCs', 'PC Manager, linked to us', wait(GL.err ? 'Couldn\\u2019t load the fleet - refresh to retry.' : 'Loading the fleet\\u2026'));
+    else {
+      var on = f.filter(function (m) { return m.on; }).length, pro = f.filter(function (m) { return m.tier === 'pro'; }), cust = {};
+      var warn = f.filter(function (m) { return m.warns.length; }).length;
+      var call = f.filter(function (m) { return !m.fresh && !m.wch && attentionScore(m) > 0; }).length;   // as Worth a call ranks them
+      pro.forEach(function (m) { cust[m.cid] = 1; });
+      var nc = Object.keys(cust).length;
+      h += row('Customer PCs', 'PC Manager, linked to us' + (GL.at ? ' \\u00b7 as of ' + GL.at : ''),
+        cell(on, '<span class="nx-ldot"></span>on right now', '', 'g', 'on')
+        + cell(pro.length, 'on support', 'for ' + nc + ' customer' + (nc === 1 ? '' : 's'), '', 'fleet')
+        + cell(call, 'worth a call', call > 12 ? 'the top 12 are listed' : '', call ? 'w' : '', 'call')
+        + cell(warn, 'with warnings', '', '', 'fleet')
+        + cell(f.length, 'in all', (f.length - pro.length) + ' free', '', 'fleet'));
+    }
+    function app(name, sub, d, go) {
+      if (!d) return row(name, sub, wait('Counting\\u2026'));
+      if (!d.ok) return row(name, sub, wait('Couldn\\u2019t load - refresh to retry.'));
+      var dl = d.downloads || {}, n30 = 0; (d.daily || []).forEach(function (x) { n30 += x.n; });
+      return row(name, sub,
+        cell(d.total || 0, 'installs', '', '', go)
+        + cell(d.kept || 0, 'still using it', (d.days3 || 0) + ' used on 3+ days', 'g', go)
+        + cell(d.new7 || 0, 'new this week', (d.newToday != null ? d.newToday + ' today \\u00b7 ' : '') + n30 + ' in 30 days', '', go)
+        + cell(d.active7 || 0, 'used this week', '', '', go)
+        + cell(dl.d7 || 0, 'download clicks this week', (dl.d30 || 0) + ' in 30 days', '', go));
+    }
+    h += app('PC Manager', 'downloaded from us' + (p && p.ok && p.plan ? ' \\u00b7 plus ' + p.plan + ' on a plan we set up' : ''), p, 'inst');
+    h += app('Techies One Mail', 'the email app', t, 't1');
+    h += '<details class="nx-how"><summary>How these are counted</summary><p class="quiet">'
+      + '<b>Customer PCs</b> are the copies of PC Manager linked to a customer. Each reports in at least hourly; <b>on right now</b> = reported in the last 70 minutes, '
+      + '<b>on support</b> = on a Pro plan, <b>worth a call</b> = the PCs the list below ranks. <b>PC Manager</b> counts the copies not on a plan (the ones people download from us), '
+      + 'counted from the app\\u2019s own check-in since ' + (p && p.since ? instDay(p.since) : '1 Oct') + '; <b>Techies One Mail</b> since ' + (t && t.since ? instDay(t.since) : '10 Oct')
+      + '. Our own PCs are left out of both. <b>Still using it</b> = used on two or more days and seen in the last week. A <b>download click</b> is a click on a download button, '
+      + 'each visitor once a day: not every click becomes an install, and some installs come from a file passed on. Click a figure to go to its list.</p></details>';
+    var open = box.querySelector('details[open]');
     box.innerHTML = h;
+    if (open) { var dt = box.querySelector('details'); if (dt) dt.open = true; }   // a refresh mustn't shut it
+    box.onclick = function (e) {
+      var b = e.target.closest ? e.target.closest('[data-cg]') : null; if (!b) return;
+      var go = b.getAttribute('data-cg'), id = { on: 'ffleet', fleet: 'ffleet', call: 'worthcall', inst: 'instbox', t1: 't1ibox' }[go];
+      if (go === 'on' && ftab !== 'on' && FLEET) { ftab = 'on'; renderFtabs(FLEET.filter(function (m) { return m.on; }).length); renderFleet(); }
+      if (go === 'inst' && INST.who !== 'free') { INST.who = 'free'; INST.cc = null; INST.all = false; loadInstalls(); }
+      var n = document.getElementById(id), c = n ? (n.closest('.card') || n) : null;
+      if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
   }
   function renderT1Installs() {
     var box = document.getElementById('t1ibox'); if (!box) return;
@@ -34450,8 +34499,8 @@ def write_portal_page():
       + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
       + '<p class="quiet" style="margin:.6rem 0 0">Windows 10: <b>' + (d.w10 || 0) + '</b> \\u00b7 Windows 11: <b>' + (d.w11 || 0) + '</b></p>'
       + '<p class="quiet" style="margin:.2rem 0 0">Offered to the updater: <b>' + (d.latest ? 'v' + esc(d.latest.ver) : 'nothing yet') + '</b></p></div></div>';
-    h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own check-in (when it starts and every few hours)' + (d.since ? ' since ' + esc(d.since) : '')
-      + '. Only anonymous figures: never an email address, a name or an email. One install can use several email providers.</p>';
+    h += '<details class="nx-how" style="margin-top:.7rem"><summary>How these are counted</summary><p class="quiet" style="font-size:.9rem;margin:.2rem 0 0">Counted from the app\\u2019s own check-in (when it starts and every few hours)' + (d.since ? ' since ' + esc(d.since) : '')
+      + '. Only anonymous figures: never an email address, a name or an email. One install can use several email providers.</p></details>';
     box.innerHTML = h;
   }
   // 9 Oct 2026: a free-month report sent for a look-over - the Slack card links here (#lookover=<id>); opened signed in
@@ -34900,7 +34949,7 @@ def write_portal_page():
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
       var fv = document.getElementById('ffleet'); if (!fv) return;
-      if (!d || !d.ok) { fv.innerHTML = '<p class="quiet">Couldn\\u2019t load the fleet - refresh to retry.</p>'; return; }
+      if (!d || !d.ok) { fv.innerHTML = '<p class="quiet">Couldn\\u2019t load the fleet - refresh to retry.</p>'; GL.err = true; renderGlance(); return; }
       var now = Date.now();
       (d.machines || []).forEach(function (m) {
         var t = m.seen ? Date.parse(m.seen.replace(' ', 'T') + ':00Z') : NaN;
@@ -34924,19 +34973,12 @@ def write_portal_page():
         loadFleet();
       }, 120000);
       var on = FLEET.filter(function (m) { return m.on; }).length;
-      var pro = FLEET.filter(function (m) { return m.tier === 'pro'; }).length;
-      var warn = FLEET.filter(function (m) { return m.warns.length; }).length;
-      var stats = document.getElementById('fstats');
-      stats.innerHTML = '<div class="stat"><b data-n="' + FLEET.length + '">0</b><span>PCs with the app</span></div>'
-        + '<div class="stat g"><b data-n="' + on + '">0</b><span>on right now</span></div>'
-        + '<div class="stat"><b data-n="' + pro + '">0</b><span>on support (Pro)</span></div>'
-        + '<div class="stat"><b data-n="' + (FLEET.length - pro) + '">0</b><span>free</span></div>'
-        + '<div class="stat' + (warn ? ' w' : '') + '"><b data-n="' + warn + '">0</b><span>with warnings</span></div>';
-      Array.prototype.forEach.call(stats.querySelectorAll('[data-n]'), function (n) { countUp(n, parseInt(n.getAttribute('data-n'), 10)); });
+      // 28 Oct 2026: the fleet's figures (with the app, on right now, on support, free, with warnings) are in the banner
+      var gd = new Date(); GL.at = ('0' + gd.getHours()).slice(-2) + ':' + ('0' + gd.getMinutes()).slice(-2);
       renderFtabs(on);
       renderFleet();
-      renderWorthCall();
-    }).catch(function () { var fv = document.getElementById('ffleet'); if (fv) fv.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+      renderWorthCall();   // and the banner
+    }).catch(function () { var fv = document.getElementById('ffleet'); if (fv) fv.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; GL.err = true; renderGlance(); });
   }
   function renderFtabs(onCount) {
     var t = document.getElementById('ftabs'); if (!t) return;
