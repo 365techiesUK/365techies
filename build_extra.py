@@ -24798,6 +24798,15 @@ for _lst in (NEW_PAGES, SEO_WAVE5_PAGES, SEO_WAVE8_PAGES):
             _np['sections'].insert(_i, _PFP_SH.shares_section(_np['slug'], PCM_SETUP_V30))
             _sh_done += 1
 assert _sh_done == len(_PFP_SH.SHARES_AT), 'shared-folder pages moved: %d of %d boxes placed' % (_sh_done, len(_PFP_SH.SHARES_AT))
+# 28 Oct 2026 (installs plan W2): the app box on the scam page and the four parent pages (pcm_feature_pages_data.OUTREACH_AT)
+_or_done = 0
+for _np in NEW_PAGES:
+    if _np.get('slug') in _PFP_SH.OUTREACH_AT:
+        _h = _PFP_SH.OUTREACH_AT[_np['slug']][0]
+        _i = [s.get('h2', '').startswith(_h) for s in _np['sections']].index(True) + 1
+        _np['sections'].insert(_i, _PFP_SH.outreach_section(_np['slug'], PCM_SETUP_V30))
+        _or_done += 1
+assert _or_done == len(_PFP_SH.OUTREACH_AT), 'scam/parent pages moved: %d of %d app boxes placed' % (_or_done, len(_PFP_SH.OUTREACH_AT))
 
 for _np in NEW_PAGES:
     build_new_page(_np)

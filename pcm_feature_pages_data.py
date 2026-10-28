@@ -2565,6 +2565,38 @@ def shares_section(slug, setup_url):
 # ---- the free tool pages
 
 
+# 28 Oct 2026 (installs plan W2, seo-research/pcm-installs-2026-10-28/03-plan.md): the app box on the scam page and the four
+# parent pages, which talked about the app only in the menus. Each goes after the section named here (matched on how the h2
+# STARTS - some carry a long dash). The scam page keeps the bank and Report Fraud steps first: the box follows them.
+OUTREACH_AT = {   # slug -> (start of the h2 the box follows, which box)
+    'gave-a-scammer-remote-access': ('Six steps to take right now', 'scam'),
+    'worried-about-a-parent-being-scammed': ('What to do today, step by step', 'parentscam'),
+    'computer-help-for-elderly-parents': ('Set it all up from anywhere', 'parent'),
+    'computer-support-gift-for-parents': ('How it works', 'parent'),
+    'laptop-set-up-for-elderly-parent': ('Large text, email, video calls', 'parent'),
+}
+_REMOTE_WHAT = ('<p style="margin:0">It lists the remote-control programs on the PC, such as AnyDesk and TeamViewer, and says which are running. '
+                'It reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected, and its Cut them off button closes those programs or disconnects the Wi-Fi. '
+                'It also tells you for certain when Windows&rsquo; own remote tools are in use.</p>')
+
+
+def outreach_section(slug, setup_url):
+    kind = OUTREACH_AT[slug][1]
+    if kind == 'scam':
+        return {'eyebrow': '// THEN CHECK THE PC', 'h2': 'Is the scammer&rsquo;s program still on the computer?',
+                'html': '<p>Once the bank and Report Fraud know, check what was left behind. Scammers install a remote-control program, and it can stay after the call ends.</p>'
+                        + _app_box('remote', 'Remote access: is anyone connected right now?', _REMOTE_WHAT, setup_url, clip='remote')}
+    if kind == 'parentscam':
+        return {'eyebrow': '// A FREE CHECK FOR THEIR PC', 'h2': 'Check their PC for a scammer&rsquo;s remote-control program',
+                'html': '<p>Next time you are with them, or while you talk them through it on the phone, put our free app on their PC. It shows whether a remote-control program is there and whether anyone is connected.</p>'
+                        + _app_box('remote', 'Remote access: is anyone connected right now?', _REMOTE_WHAT, setup_url, clip='remote')}
+    return {'eyebrow': '// A FREE CHECK FOR THEIR PC', 'h2': 'Before you next see Mum or Dad, put this free check on their PC',
+            'html': '<p>Our free app keeps an eye on their computer between your visits, and explains what it finds in plain English, so they can read it out to you on the phone.</p>'
+                    + _app_box('winsafety', 'Is their PC safe and up to date?',
+                        '<p style="margin:0">It checks Windows updates, backups and security, says whether Windows&rsquo; own protections are switched on, and spots the remote-control programs scammers use. '
+                        'It changes nothing without asking.</p>', setup_url)}
+
+
 # ---- the free tool pages whose job the app also does: an app box after "What next" (wave 5, 8 Oct 2026)
 def tool_boxes(setup_url):
     """slug -> the section to insert on that tool page."""
