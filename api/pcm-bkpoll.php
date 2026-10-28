@@ -295,6 +295,13 @@ if (function_exists('rv_seed_sync') && (isset($TC['deep_ts']) ? (int)$TC['deep_t
                           'rec' => isset($b['record_date']) && is_string($b['record_date']) ? $b['record_date'] : '');
         }
         $rvDeep = rv_seed_sync($dd, time(), $dTo);
+        // said once, so the first pass on the live server is visible (the cron's own output goes nowhere)
+        if ($dd && empty($TC['deep_said']) && function_exists('rv_slack')) {
+            $far = 0; foreach ($dd as $x) $far = max($far, (int)$x['start']);
+            rv_slack(':white_check_mark: Every booked visit is now on our customer-email list - ' . count($dd) . ' future visits, the furthest on '
+                . date('D j M Y', $far) . '. A move or cancellation of any of them, however far ahead, now reaches the customer from us.');
+            $TC['deep_said'] = time();
+        }
         $TC['deep_ts'] = time(); @file_put_contents($TCACHE, json_encode($TC), LOCK_EX);
     }
 }
