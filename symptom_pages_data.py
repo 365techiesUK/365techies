@@ -1278,6 +1278,433 @@ W11LIKE10 = {
 }
 
 
+# ============================================================ 15-19. PC-problem sweep (28 Oct 2026)
+# Owner: "keyword research on Bing ... YouTube API ... see if we can do some more pages", then "yes build all five".
+# Research: D:/claude/seo-research/pcm-problems-2026-10-28/FINDINGS.md. Bing Keyword Research, 3 months to 24 Oct 2026, UK:
+# "system restore" 12,423, "reset this pc" 10,406, "windows backup app" 2,472, "smart app control" 2,180, "blue screen" 1,562
+# + "blue screen of death" 567 + "critical process died" 77, "antimalware service executable" 1,676. None had a page (sitemap
+# and H2s checked; /why-does-my-pc-keep-crashing/ covers crashes in general but no stop codes, so the blue screen page is
+# about the code on the screen and links there). Each page carries the app box for the check the app really does
+# (Ui.cs build 47: Safety > System Restore row; Photos & files > Backup; My PC > What keeps going wrong; Programs check).
+
+# ============================================================ 15. System Restore or Reset this PC
+RESTORE = {
+    'slug': 'system-restore-vs-reset-this-pc',
+    'title': 'System Restore or Reset this PC? Which One, What You Lose',
+    'metaDesc': 'System Restore, Reset this PC, or the repair that keeps everything? What each one does to your files and programs, and which to try first.',
+    'ogTitle': 'System Restore or Reset this PC: which one, and what you lose',
+    'crumbName': 'System Restore or Reset this PC?',
+    'eyebrow': '// SOMETHING WENT WRONG IN WINDOWS',
+    'h1': 'System Restore or <em class="grad grad--cyan">Reset this PC</em>?',
+    'lede': 'Windows has three ways to put itself right, and they are very different. System Restore takes Windows back to an earlier day and leaves your files alone. The Windows Update repair reinstalls Windows and keeps everything. Reset this PC starts Windows again from scratch, and your programs go. Try them in that order, lightest first.',
+    'chips': ['Lightest fix first', 'What each one removes', 'Back up before a reset'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Which one to use', '#s1'],
+    'ctaHead': 'Not sure which one your PC needs?',
+    'ctaSub': 'With your permission we connect to your Windows PC, back up your files first, and use the lightest fix that works. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('System Restore', 'Takes Windows, programs and drivers back to an earlier day. <strong>Your files stay</strong>. It can be undone.'),
+        ('Fix problems using Windows Update', 'Windows 11 only. Reinstalls Windows and <strong>keeps your files, programs and settings</strong>.'),
+        ('Reset this PC, Keep my files', 'Fresh Windows. <strong>Your files stay; your programs and settings go</strong>.'),
+        ('Reset this PC, Remove everything', 'Fresh Windows with <strong>nothing of yours left</strong>. For selling or giving away the PC.'),
+        ('Before any of them', 'Copy your photos and documents to a USB drive or OneDrive.'),
+        ('No restore points?', 'System Restore is switched off on many PCs. Switch it on now, for next time.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHICH ONE', 'h2': 'Which one to use',
+         'html': '<ul>'
+                 '<li><strong>It went wrong after an update, a new program or a new driver:</strong> <strong>System Restore</strong>, to a day before it happened.</li>'
+                 '<li><strong>Windows itself is misbehaving, and System Restore didn&rsquo;t help or has no restore points:</strong> on Windows 11, <strong>Fix problems using Windows Update</strong>.</li>'
+                 '<li><strong>It&rsquo;s been slow and odd for months, or a virus has been in it:</strong> <strong>Reset this PC</strong> and <strong>Keep my files</strong>, after a backup.</li>'
+                 '<li><strong>You&rsquo;re selling it, giving it away or recycling it:</strong> <strong>Reset this PC</strong> and <strong>Remove everything</strong>, with the drive cleaned.</li>'
+                 '</ul>'
+                 '<p>The rule of thumb: start with the fix that changes least. You can always go further; you can&rsquo;t un-reset a PC.</p>'},
+        {'eyebrow': '/02 &mdash; SYSTEM RESTORE', 'h2': 'System Restore: back to an earlier day',
+         'html': '<p>A <strong>restore point</strong> is a snapshot of Windows&rsquo; own settings, programs and drivers. Windows usually makes one before an update or a new driver, and you can make one yourself. Going back to it undoes the changes made since. Your documents, photos and emails are not touched.</p>'
+                 '<ol>'
+                 '<li>Click Start, type <strong>restore point</strong> and open <strong>Create a restore point</strong>.</li>'
+                 '<li>On the System Protection tab, click <strong>System Restore</strong>, then <strong>Next</strong>.</li>'
+                 '<li>Pick a restore point from <strong>before</strong> the problem started. <strong>Scan for affected programs</strong> lists what will be removed (programs installed since) and what may come back.</li>'
+                 '<li>Click <strong>Next</strong>, then <strong>Finish</strong>. The PC restarts, and it can take 15 minutes or more. Leave a laptop plugged in.</li>'
+                 '</ol>'
+                 '<p><strong>Changed your mind?</strong> Open System Restore again and choose <strong>Undo System Restore</strong>. (A restore run from the blue recovery screen can&rsquo;t be undone.)</p>'
+                 '<p><strong>Windows won&rsquo;t start?</strong> After two or three failed starts Windows opens its recovery screen by itself. Choose <strong>Troubleshoot</strong>, <strong>Advanced options</strong>, <strong>System Restore</strong>.</p>'},
+        {'eyebrow': '/03 &mdash; NO RESTORE POINTS?', 'h2': 'No restore points? Switch System Restore on now',
+         'html': '<p>System Restore is <strong>switched off</strong> on many new Windows 11 PCs, so when something goes wrong there&rsquo;s nothing to go back to. Switch it on today, for next time:</p>'
+                 '<ol>'
+                 '<li>Open <strong>Create a restore point</strong> as above.</li>'
+                 '<li>Select the Windows drive (usually <strong>C:</strong>), click <strong>Configure</strong>, choose <strong>Turn on system protection</strong>, and set Max Usage to about 5 to 10 per cent of the drive.</li>'
+                 '<li>Click <strong>OK</strong>, then <strong>Create</strong> to make the first restore point now.</li>'
+                 '</ol>'
+                 '<p>It isn&rsquo;t a backup: restore points live on the same drive and don&rsquo;t include your files. If the drive fails, they go with it.</p>'},
+        {'eyebrow': '/04 &mdash; THE REPAIR THAT KEEPS EVERYTHING', 'h2': 'Fix problems using Windows Update (Windows 11)',
+         'html': '<p>Windows 11 can reinstall itself without touching your files, programs or settings. It repairs Windows&rsquo; own files, which fixes a lot of strange behaviour, and it&rsquo;s the step to try before a reset.</p>'
+                 '<ol>'
+                 '<li>Open <strong>Settings</strong>, <strong>System</strong>, <strong>Recovery</strong>.</li>'
+                 '<li>Next to <strong>Fix problems using Windows Update</strong>, click <strong>Reinstall now</strong>.</li>'
+                 '<li>Keep the PC plugged in and online. It downloads Windows, then restarts to install it, which takes an hour or so.</li>'
+                 '</ol>'
+                 '<p>It may not show on a PC that a work or school manages. More on Windows&rsquo; own repairs in <a href="/windows-update-stuck/">Windows Update stuck</a>.</p>'},
+        {'eyebrow': '/05 &mdash; RESET THIS PC', 'h2': 'Reset this PC: what you keep and what goes',
+         'html': '<p>Reset reinstalls Windows from scratch. Both choices remove <strong>every program you installed</strong>, including Microsoft Office, printer software and anything you paid for, and put Windows&rsquo; settings back to how they came.</p>'
+                 '<ul>'
+                 '<li><strong>Keep my files</strong> keeps what&rsquo;s in your own folders, such as Documents, Pictures and the Desktop. Windows leaves a list of the programs it removed on the desktop, so you know what to put back.</li>'
+                 '<li><strong>Remove everything</strong> deletes your files too. Choose <strong>Clean data</strong> (or <strong>Clean the drive</strong>) if the PC is leaving you, so files can&rsquo;t be recovered.</li>'
+                 '</ul>'
+                 '<ol>'
+                 '<li><strong>Back up first.</strong> Copy your photos and documents to a USB drive or OneDrive, even with Keep my files. Note your email and other passwords, and find your Microsoft Office details.</li>'
+                 '<li>Open <strong>Settings</strong>, <strong>System</strong>, <strong>Recovery</strong>, and click <strong>Reset PC</strong>. (Windows 10: Settings, Update &amp; Security, Recovery, <strong>Get started</strong>.)</li>'
+                 '<li>Choose Keep my files or Remove everything.</li>'
+                 '<li><strong>Cloud download</strong> fetches a fresh copy of Windows from Microsoft (several gigabytes) and is the better choice if Windows is damaged. <strong>Local reinstall</strong> uses the copy already on the PC.</li>'
+                 '<li>Check the summary, then click <strong>Reset</strong>. Allow an hour or two, plugged in.</li>'
+                 '</ol>'
+                 '<p>If the drive is encrypted, Windows may ask for the BitLocker recovery key part-way through: <a href="/computer-asking-for-bitlocker-recovery-key/">where to find it</a>. Can&rsquo;t get into Windows at all? Hold <strong>Shift</strong> while you click <strong>Restart</strong> on the sign-in screen, then Troubleshoot, Reset this PC.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check before you start', 'html': '__APP_BOX_RESTORE__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' Before any reset we copy your files somewhere safe and note your programs, then put back the ones you use. Want it done properly in one go? See our <a href="/windows-reinstall/">Windows reinstall service</a>.')},
+    ],
+    'howToName': 'How to choose between System Restore and Reset this PC',
+    'howToSteps': [
+        {'name': 'Back up your files', 'text': 'Copy your photos and documents to a USB drive or OneDrive before any repair.'},
+        {'name': 'Try System Restore', 'text': 'Start, type restore point, open Create a restore point, click System Restore and pick a day before the problem.'},
+        {'name': 'Repair Windows and keep everything', 'text': 'On Windows 11: Settings, System, Recovery, Fix problems using Windows Update, Reinstall now.'},
+        {'name': 'Reset and keep your files', 'text': 'Settings, System, Recovery, Reset PC, Keep my files, then Cloud download. Your programs will need reinstalling.'},
+        {'name': 'Switch System Restore on for next time', 'text': 'In Create a restore point, select C:, click Configure, Turn on system protection, then Create.'},
+    ],
+    'faqs': [
+        {'q': 'Does System Restore delete my files?', 'a': '<p>No. It takes Windows&rsquo; settings, programs and drivers back to an earlier day and leaves your documents, photos and emails alone. Programs installed since the restore point are removed.</p>'},
+        {'q': 'Does Reset this PC delete my programs?', 'a': '<p>Yes, with either choice. Keep my files keeps your own files but removes every program you installed, so you&rsquo;ll need to reinstall Office, printer software and the rest. Windows leaves a list of them on the desktop.</p>'},
+        {'q': 'What is the difference between System Restore and Reset this PC?', 'a': '<p>System Restore goes back to a snapshot of Windows from an earlier day and keeps your files and most programs. Reset this PC reinstalls Windows from scratch and removes your programs, and can remove your files too.</p>'},
+        {'q': 'Why are there no restore points?', 'a': '<p>System Restore is switched off on many PCs. Search for Create a restore point, select C:, click Configure and choose Turn on system protection. Restore points are also deleted when the space set aside for them fills up.</p>'},
+        {'q': 'Can I undo System Restore?', 'a': '<p>Yes, if it was run from Windows: open System Restore again and choose Undo System Restore. A restore run from the recovery screen can&rsquo;t be undone.</p>'},
+        {'q': 'Should I choose Cloud download or Local reinstall?', 'a': '<p>Cloud download fetches a fresh copy of Windows and is better when Windows itself is damaged. Local reinstall is quicker on a slow connection. Both end in the same place.</p>'},
+        {'q': 'How long does Reset this PC take?', 'a': '<p>Usually an hour or two, sometimes longer on an older PC with a hard drive. Keep a laptop plugged in and don&rsquo;t switch it off part-way.</p>'},
+        {'q': 'Can you do it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, back up your files first, and use the lightest fix that works. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck</a>, <a href="/blue-screen-stop-codes/">blue screen stop codes</a>, <a href="/what-windows-backup-backs-up/">what the Windows Backup app backs up</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a> and <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>.</p>',
+}
+
+# ============================================================ 16. Blue screen stop codes
+# Stop code names and numbers as Windows reports them (Microsoft's bug check code reference): 0xEF CRITICAL_PROCESS_DIED,
+# 0xA IRQL_NOT_LESS_OR_EQUAL, 0x133 DPC_WATCHDOG_VIOLATION, 0x1A MEMORY_MANAGEMENT, 0x50 PAGE_FAULT_IN_NONPAGED_AREA,
+# 0x3B SYSTEM_SERVICE_EXCEPTION, 0x139 KERNEL_SECURITY_CHECK_FAILURE, 0x116 VIDEO_TDR_FAILURE, 0x124 WHEA_UNCORRECTABLE_ERROR,
+# 0x7B INACCESSIBLE_BOOT_DEVICE, 0x154 UNEXPECTED_STORE_EXCEPTION. Causes are said as "usually", never as a diagnosis.
+BSOD = {
+    'slug': 'blue-screen-stop-codes',
+    'title': 'Blue Screen Stop Codes: What Yours Means and What to Do',
+    'metaDesc': 'CRITICAL_PROCESS_DIED, IRQL_NOT_LESS_OR_EQUAL, MEMORY_MANAGEMENT? What the stop code on a blue (or black) screen usually means, and the fixes in order.',
+    'ogTitle': 'Blue screen stop codes: what yours means and what to do',
+    'crumbName': 'Blue Screen Stop Codes',
+    'eyebrow': '// BLUE SCREEN, OR BLACK?',
+    'h1': 'Blue screen <em class="grad grad--cyan">stop codes</em>: what yours means',
+    'lede': 'The PC stopped with &ldquo;Your device ran into a problem and needs to restart&rdquo; and a code in capitals. That code is the most useful clue you&rsquo;ll get. Here&rsquo;s what the common ones usually mean, how to find the code again after the restart, and what to try, in order.',
+    'chips': ['The common codes', 'Find it after the restart', 'Fixes in order'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Look up your code', '#s1'],
+    'ctaHead': 'Still getting blue screens?',
+    'ctaSub': 'With your permission we connect to your Windows PC, read its crash record and dump files, and find what&rsquo;s behind it. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Once, then never again', 'Not worth worrying about. Note the code in case it comes back.'),
+        ('Missed the code?', 'Reliability Monitor and Event Viewer keep it after the restart.'),
+        ('Driver codes', 'IRQL_NOT_LESS_OR_EQUAL, SYSTEM_SERVICE_EXCEPTION, DPC_WATCHDOG_VIOLATION: update or roll back drivers.'),
+        ('Memory codes', 'MEMORY_MANAGEMENT, PAGE_FAULT_IN_NONPAGED_AREA: run Windows Memory Diagnostic.'),
+        ('Windows or drive codes', 'CRITICAL_PROCESS_DIED, UNEXPECTED_STORE_EXCEPTION: repair Windows files and check the drive.'),
+        ('Back up first', 'Repeated blue screens can mean a drive on its way out. Copy your files today.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE CODES', 'h2': 'What the common stop codes usually mean',
+         'html': '<p>Each code says what Windows was doing when it had to stop, not always why. These are the ones we see most, with the number Windows records alongside (you&rsquo;ll need it in step 2):</p>'
+                 '<ul>'
+                 '<li><strong>CRITICAL_PROCESS_DIED</strong> (0xEF): a part of Windows it can&rsquo;t run without stopped. Usually damaged Windows files, a failing drive, or a driver. Repair Windows&rsquo; files and check the drive.</li>'
+                 '<li><strong>IRQL_NOT_LESS_OR_EQUAL</strong> (0xA): a driver tried to use memory it shouldn&rsquo;t. Usually a driver, sometimes faulty memory. Update or roll back recent drivers.</li>'
+                 '<li><strong>DPC_WATCHDOG_VIOLATION</strong> (0x133): a driver took too long to answer. Often the drive&rsquo;s own driver or its firmware. Install the maker&rsquo;s storage and chipset updates.</li>'
+                 '<li><strong>MEMORY_MANAGEMENT</strong> (0x1A): Windows found its memory in a state it didn&rsquo;t expect. Often faulty memory (RAM). Run Windows Memory Diagnostic.</li>'
+                 '<li><strong>PAGE_FAULT_IN_NONPAGED_AREA</strong> (0x50): something asked for memory that wasn&rsquo;t there. Faulty memory, a driver, or security software.</li>'
+                 '<li><strong>SYSTEM_SERVICE_EXCEPTION</strong> (0x3B): a driver or a part of Windows went wrong. The file named on the screen (if there is one) points to the driver.</li>'
+                 '<li><strong>KERNEL_SECURITY_CHECK_FAILURE</strong> (0x139): Windows found its own data damaged. Drivers, faulty memory or damaged Windows files.</li>'
+                 '<li><strong>VIDEO_TDR_FAILURE</strong> (0x116): the graphics card stopped answering. Update the graphics driver from the maker; on a desktop, check the card isn&rsquo;t overheating.</li>'
+                 '<li><strong>WHEA_UNCORRECTABLE_ERROR</strong> (0x124): the hardware itself reported an error. Overheating, a failing part, or settings pushed beyond the maker&rsquo;s (overclocking).</li>'
+                 '<li><strong>UNEXPECTED_STORE_EXCEPTION</strong> (0x154): usually the drive, sometimes security software. Check the drive&rsquo;s health first.</li>'
+                 '<li><strong>INACCESSIBLE_BOOT_DEVICE</strong> (0x7B): Windows couldn&rsquo;t reach its own drive while starting. A failing drive, a changed setting in the BIOS, or an update gone wrong.</li>'
+                 '</ul>'
+                 '<p><strong>Is the screen black, not blue?</strong> Windows 11 changed it in 2025: up-to-date PCs show the same message and code on a black screen. Everything on this page applies.</p>'},
+        {'eyebrow': '/02 &mdash; FIND THE CODE AGAIN', 'h2': 'Missed the code? Windows wrote it down',
+         'html': '<ol>'
+                 '<li>Click Start, type <strong>reliability</strong> and open <strong>View reliability history</strong>.</li>'
+                 '<li>Click the day with a red cross, then the line that says <strong>Windows</strong> and <strong>Shut down unexpectedly</strong> (or <strong>Windows stopped working</strong>), and choose <strong>View technical details</strong>.</li>'
+                 '<li>The code is next to <strong>BCCode</strong>, as a number: <strong>ef</strong> is 0xEF (CRITICAL_PROCESS_DIED), <strong>1a</strong> is 0x1A, and so on. Match it to the list above.</li>'
+                 '</ol>'
+                 '<p>Event Viewer has it too: Windows Logs, <strong>System</strong>, an event from <strong>BugCheck</strong> (ID 1001). More on reading the record in <a href="/reliability-monitor/">Reliability Monitor</a>.</p>'},
+        {'eyebrow': '/03 &mdash; WHAT TO TRY, IN ORDER', 'h2': 'What to try, in order',
+         'html': '<ol>'
+                 '<li><strong>Back up your files</strong> to a USB drive or OneDrive. If the drive is the cause, it may not last.</li>'
+                 '<li><strong>Undo what changed.</strong> Started after an update, a new program, a new device or a driver? Uninstall it, or use <a href="/system-restore-vs-reset-this-pc/">System Restore</a> to a day before.</li>'
+                 '<li><strong>Get the updates.</strong> Settings, Windows Update, then <strong>Advanced options</strong>, <strong>Optional updates</strong> for drivers. For graphics, storage and chipset drivers, the PC or part maker&rsquo;s own site is usually newer.</li>'
+                 '<li><strong>Check the drive:</strong> <a href="/how-to-check-ssd-health/">how to check your drive&rsquo;s health</a>.</li>'
+                 '<li><strong>Test the memory:</strong> Start, type <strong>Windows Memory Diagnostic</strong>, choose <strong>Restart now and check for problems</strong>. Any error reported means faulty memory.</li>'
+                 '<li><strong>Repair Windows&rsquo; files:</strong> in Terminal (Admin), <strong>DISM /Online /Cleanup-Image /RestoreHealth</strong>, then <strong>sfc /scannow</strong>. Step by step in <a href="/windows-update-stuck/">Windows Update stuck</a>.</li>'
+                 '<li><strong>Check it isn&rsquo;t overheating:</strong> a laptop on a bed or a dusty desktop can stop with hardware codes. See <a href="/laptop-overheating/">laptop overheating</a>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; IT WON&rsquo;T START', 'h2': 'When it blue-screens before Windows starts',
+         'html': '<p>After two or three failed starts Windows opens <strong>Automatic Repair</strong>. Choose <strong>Advanced options</strong>, then:</p>'
+                 '<ul>'
+                 '<li><strong>Troubleshoot</strong>, <strong>Advanced options</strong>, <strong>Uninstall Updates</strong>, if it started after an update.</li>'
+                 '<li><strong>System Restore</strong>, if there&rsquo;s a restore point from before.</li>'
+                 '<li><strong>Startup Settings</strong>, <strong>Restart</strong>, then <strong>4</strong> for Safe Mode, which starts Windows with only its own drivers. If it&rsquo;s fine there, a driver or a program is the cause.</li>'
+                 '</ul>'
+                 '<p>Stuck on the maker&rsquo;s logo instead? See <a href="/laptop-stuck-on-logo-wont-boot/">laptop stuck on the logo</a>.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app read the crash record', 'html': '__APP_BOX_BSOD__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We can read the dump files Windows saves at each blue screen, which name the driver involved. If it&rsquo;s hardware, we collect the PC and test it on the bench: see <a href="/computer-repairs/">computer repairs</a>.')},
+    ],
+    'howToName': 'How to fix a blue screen from its stop code',
+    'howToSteps': [
+        {'name': 'Find the stop code', 'text': 'Note the code on the screen, or open View reliability history, click the red cross and View technical details: the BCCode is the code.'},
+        {'name': 'Back up your files', 'text': 'Copy your photos and documents somewhere safe in case the drive is failing.'},
+        {'name': 'Undo what changed', 'text': 'Uninstall a recent program, driver or update, or use System Restore to a day before.'},
+        {'name': 'Update drivers', 'text': 'Settings, Windows Update, Advanced options, Optional updates, and the PC maker\u2019s own drivers.'},
+        {'name': 'Test the drive and memory', 'text': 'Check the drive\u2019s health, and run Windows Memory Diagnostic.'},
+        {'name': 'Repair Windows files', 'text': 'In Terminal (Admin), run DISM /Online /Cleanup-Image /RestoreHealth, then sfc /scannow.'},
+    ],
+    'faqs': [
+        {'q': 'What causes a blue screen?', 'a': '<p>Usually a driver, faulty memory, a failing drive, damaged Windows files or overheating. The stop code narrows it down; the list on this page says what each common one usually means.</p>'},
+        {'q': 'Is one blue screen something to worry about?', 'a': '<p>Not usually. A single one after an update or a new device often never comes back. Note the code; if it happens again, work through the steps.</p>'},
+        {'q': 'What does CRITICAL_PROCESS_DIED mean?', 'a': '<p>A part of Windows that it can&rsquo;t run without stopped unexpectedly. Damaged Windows files, a failing drive and drivers are the usual causes: repair Windows&rsquo; files with DISM and sfc /scannow, and check the drive&rsquo;s health.</p>'},
+        {'q': 'How do I find the stop code after the PC restarted?', 'a': '<p>Open View reliability history, click the day with the red cross, the Shut down unexpectedly line, then View technical details. The BCCode is the stop code as a number.</p>'},
+        {'q': 'Why is my blue screen black?', 'a': '<p>Windows 11 changed it in 2025. Up-to-date PCs show the same message and stop code on a black background.</p>'},
+        {'q': 'Can a virus cause a blue screen?', 'a': '<p>It can, but it&rsquo;s much less common than drivers and hardware. Two security programs running at once are a more likely cause than a virus.</p>'},
+        {'q': 'Will I lose my files?', 'a': '<p>Not from a blue screen itself. But a failing drive can cause them, so back up your files as soon as you can.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Usually we can find the cause remotely by reading the crash record and dump files. If it&rsquo;s a hardware fault, we collect the PC and repair it on the bench.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/reliability-monitor/">Reliability Monitor</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a>, <a href="/how-to-check-ssd-health/">checking your drive&rsquo;s health</a>, <a href="/laptop-overheating/">laptop overheating</a> and <a href="/laptop-stuck-on-logo-wont-boot/">stuck on the logo</a>.</p>',
+}
+
+# ============================================================ 17. Antimalware Service Executable
+# MsMpEng.exe = Microsoft Defender Antivirus's own engine (Microsoft Learn). Set-MpPreference -ScanAvgCPULoadFactor: the most a
+# scan should use, default 50 (scheduled and custom scans; not real-time). Tamper protection blocks switching Defender off by
+# registry. With another antivirus registered Windows puts Defender in passive mode by itself.
+DEFENDER = {
+    'slug': 'antimalware-service-executable-high-cpu',
+    'title': 'Antimalware Service Executable High CPU or Disk? Fix It',
+    'metaDesc': 'Antimalware Service Executable slowing your PC? It\'s Microsoft Defender scanning. When to let it finish, the real causes, and fixes that keep you protected.',
+    'ogTitle': 'Antimalware Service Executable using high CPU or disk: what to do',
+    'crumbName': 'Antimalware Service Executable',
+    'eyebrow': '// SOMETHING IS EATING THE PC',
+    'h1': 'Antimalware Service Executable <em class="grad grad--cyan">slowing your PC</em>?',
+    'lede': 'Task Manager shows Antimalware Service Executable near the top, the fan is roaring and everything is slow. It&rsquo;s not a virus: it&rsquo;s Microsoft Defender, Windows&rsquo; own antivirus, doing a scan. Usually it settles by itself. When it doesn&rsquo;t, there&rsquo;s a reason, and switching your antivirus off isn&rsquo;t the fix.',
+    'chips': ['Not a virus', 'Why it gets busy', 'Fixes that keep you safe'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Why it gets busy', '#s1'],
+    'ctaHead': 'Still slow after all that?',
+    'ctaSub': 'With your permission we connect to your Windows PC, find what&rsquo;s keeping Defender busy and sort it, without leaving you unprotected. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'MsMpEng.exe: Microsoft Defender, the antivirus built into Windows.'),
+        ('Busy for 10 to 30 minutes', 'A scan, often after an update or first thing in the morning. Let it finish.'),
+        ('Busy all day, every day', 'Two security programs, a huge folder it keeps rescanning, or a slow hard drive.'),
+        ('Lower its share', 'PowerShell (Admin): Set-MpPreference -ScanAvgCPULoadFactor 30.'),
+        ('Don&rsquo;t switch it off', 'Registry tricks are blocked by tamper protection and leave the PC unprotected.'),
+        ('Old hard drive?', 'Disk at 100 per cent is usually the drive, not Defender. An SSD fixes it for good.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'What Antimalware Service Executable is, and why it gets busy',
+         'html': '<p>It&rsquo;s the engine of <strong>Microsoft Defender Antivirus</strong>; its file is called <strong>MsMpEng.exe</strong>. It checks each file as it&rsquo;s opened, downloaded or copied, and scans the whole PC from time to time. Both use the processor and the drive.</p>'
+                 '<p>It gets busy for good reasons: a <strong>scan</strong> (Windows runs them when it thinks you&rsquo;re not using the PC, which on a PC that&rsquo;s only switched on when you need it, means while you are), <strong>after a Windows update</strong> or a new set of virus definitions, and when you <strong>copy or unzip lots of files</strong>.</p>'
+                 '<p><strong>Is it really Defender?</strong> In Task Manager, right-click it and choose <strong>Open file location</strong>. The real one is in a folder under <strong>C:\\ProgramData\\Microsoft\\Windows Defender\\Platform</strong> (or <strong>C:\\Program Files\\Windows Defender</strong> on older PCs). Anywhere else: ring us.</p>'},
+        {'eyebrow': '/02 &mdash; FIRST', 'h2': 'First: let it finish',
+         'html': '<ol>'
+                 '<li>Open <strong>Windows Security</strong> (Start, type Windows Security), then <strong>Virus &amp; threat protection</strong>. If a scan is running, it shows here with its progress.</li>'
+                 '<li>Leave the PC on and plugged in for 30 minutes. A quick scan takes minutes; a full scan on a big drive can take an hour or more.</li>'
+                 '<li>Restart afterwards and check Task Manager again. If it&rsquo;s quiet now, that was all it was.</li>'
+                 '</ol>'
+                 '<p>Leaving the PC switched on for an hour once a week, plugged in and idle, gives Defender its chance to scan when you don&rsquo;t need the PC.</p>'},
+        {'eyebrow': '/03 &mdash; BUSY ALL THE TIME', 'h2': 'Busy all the time? The usual causes',
+         'html': '<ul>'
+                 '<li><strong>Two security programs.</strong> Norton, McAfee or another antivirus alongside Defender, or an old one that was never removed properly. Normally Windows puts Defender to rest when another is in charge; when that goes wrong, they fight. Keep one: uninstall the other in Settings, Apps, then restart.</li>'
+                 '<li><strong>Something it keeps rescanning:</strong> a big folder that changes all the time, such as a game library, a backup drive or a folder of virtual machines. See the next section.</li>'
+                 '<li><strong>A slow hard drive.</strong> If Task Manager shows the <strong>disk</strong> at 100 per cent, not the processor, the drive is the bottleneck: an old spinning hard drive struggles with any scan. Replacing it with an SSD fixes it for good: <a href="/hard-drive-upgrade/">hard drive upgrade</a>.</li>'
+                 '<li><strong>Something was found.</strong> Check Protection history in Windows Security: a threat it keeps finding and removing can keep it busy.</li>'
+                 '<li><strong>Windows itself is behind.</strong> Install every update, including Defender&rsquo;s own, then restart.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; FIXES THAT KEEP YOU SAFE', 'h2': 'Make it lighter, without switching it off',
+         'html': '<ol>'
+                 '<li><strong>Lower how much of the processor a scan may use.</strong> Right-click Start, choose <strong>Terminal (Admin)</strong>, say Yes, and type <strong>Set-MpPreference -ScanAvgCPULoadFactor 30</strong>. Scans then aim for about 30 per cent instead of 50, so they take longer but you notice them less. It doesn&rsquo;t change the checking of each file as it&rsquo;s opened.</li>'
+                 '<li><strong>Leave a folder out, only if you trust everything in it.</strong> Windows Security, Virus &amp; threat protection, Manage settings, <strong>Exclusions</strong>. A game library from Steam or a folder of your own work files, perhaps; never Downloads, the Desktop or a whole drive. Anything in an excluded folder isn&rsquo;t checked at all.</li>'
+                 '</ol>'
+                 '<p><strong>What not to do:</strong> switch Defender off with a registry change or a &ldquo;tweak&rdquo; program. Tamper protection blocks most of them, the rest leave your PC with no antivirus at all, and the guides that suggest them are often older than Windows 11.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check what&rsquo;s protecting the PC', 'html': '__APP_BOX_DEFENDER__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' We find what&rsquo;s keeping Defender busy and sort it with one antivirus left on duty. For a slow PC in general, see <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>.')},
+    ],
+    'howToName': 'How to stop Antimalware Service Executable slowing your PC',
+    'howToSteps': [
+        {'name': 'Let the scan finish', 'text': 'Open Windows Security, Virus & threat protection, and leave the PC on and plugged in until any scan finishes.'},
+        {'name': 'Keep one antivirus', 'text': 'If another antivirus is installed alongside Defender, uninstall one of them in Settings, Apps, and restart.'},
+        {'name': 'Install updates', 'text': 'Install every Windows and Defender update, then restart.'},
+        {'name': 'Lower the scan share', 'text': 'In Terminal (Admin), type Set-MpPreference -ScanAvgCPULoadFactor 30.'},
+        {'name': 'Check the drive', 'text': 'If the disk shows 100 per cent in Task Manager, an old hard drive is the bottleneck: an SSD fixes it.'},
+    ],
+    'faqs': [
+        {'q': 'What is Antimalware Service Executable?', 'a': '<p>It&rsquo;s Microsoft Defender Antivirus, the antivirus built into Windows. Its file is MsMpEng.exe. It checks files as they&rsquo;re opened and scans the PC from time to time.</p>'},
+        {'q': 'Is Antimalware Service Executable a virus?', 'a': '<p>No, not the real one. Right-click it in Task Manager and choose Open file location: it should be in a Windows Defender folder under ProgramData or Program Files.</p>'},
+        {'q': 'Why is it using so much CPU?', 'a': '<p>Usually a scan, often after an update. If it&rsquo;s busy all day, the usual causes are a second security program fighting it, a large folder it keeps rescanning, or a slow hard drive.</p>'},
+        {'q': 'Can I disable Antimalware Service Executable?', 'a': '<p>Not safely. It&rsquo;s your antivirus. If you install another antivirus, Windows rests Defender by itself. Lower its scan share instead, as on this page.</p>'},
+        {'q': 'Why is my disk at 100 per cent?', 'a': '<p>On a PC with an old spinning hard drive, almost any scan or update fills the disk. Replacing it with an SSD is the fix that lasts.</p>'},
+        {'q': 'Does Norton or McAfee replace Defender?', 'a': '<p>Yes, while it&rsquo;s installed and up to date, Windows puts Defender in the background. If its subscription runs out, switch Defender back on or renew: don&rsquo;t keep both running in full.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: with your permission we connect to your Windows PC and find what&rsquo;s keeping it busy while you watch.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/why-is-my-computer-slow/">why is my computer slow?</a>, <a href="/how-to-choose-antivirus/">choosing antivirus</a>, <a href="/virus-threat-protection-managed-by-your-organization/">virus &amp; threat protection is managed by your organisation</a>, <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a> and <a href="/smart-app-control-blocked-an-app/">Smart App Control blocked an app</a>.</p>',
+}
+
+# ============================================================ 18. Smart App Control blocked an app
+# Microsoft Support (Smart App Control FAQ): Windows 11 22H2+, on clean installs; Evaluation / On / Off; no per-app exceptions;
+# switching it off has been one-way on most PCs (back on only after a reinstall or reset). Different from SmartScreen's
+# "Windows protected your PC" (which has Run anyway).
+SAC = {
+    'slug': 'smart-app-control-blocked-an-app',
+    'title': 'Smart App Control Blocked an App? What It Means, What to Do',
+    'metaDesc': 'Smart App Control blocked an app that may be unsafe? Why it happens, why there\'s no Allow button, and your safe choices before switching it off.',
+    'ogTitle': 'Smart App Control blocked an app: what it means and what to do',
+    'crumbName': 'Smart App Control Blocked an App',
+    'eyebrow': '// WINDOWS BLOCKED A PROGRAM',
+    'h1': 'Smart App Control <em class="grad grad--cyan">blocked an app</em>?',
+    'lede': 'You tried to open or install something and Windows 11 said &ldquo;Smart App Control blocked an app that may be unsafe&rdquo;, with no button to run it anyway. That&rsquo;s deliberate, and it doesn&rsquo;t always mean the program is harmful. Here&rsquo;s why it happens, your safe choices, and what switching it off really means.',
+    'chips': ['Why there&rsquo;s no Allow button', 'Safe choices first', 'Off can be one-way'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Your choices', '#s2'],
+    'ctaHead': 'Not sure whether to trust it?',
+    'ctaSub': 'With your permission we connect to your Windows 11 PC, check the program and install it the safe way. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'A Windows 11 protection that only lets programs run that Microsoft knows to be safe, or that are signed by their maker.'),
+        ('No Allow button', 'On purpose: it has no exceptions list. It&rsquo;s on, or it&rsquo;s off.'),
+        ('Try first', 'The newest version from the maker&rsquo;s own website, or the Microsoft Store version.'),
+        ('Switching it off', 'Windows Security, App &amp; browser control, Smart App Control settings, Off.'),
+        ('Off can be one-way', 'On most PCs it can only be switched back on by resetting Windows.'),
+        ('Not the same as SmartScreen', '&ldquo;Windows protected your PC&rdquo; is SmartScreen, and does have Run anyway.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHY IT BLOCKED IT', 'h2': 'Why Smart App Control blocks programs',
+         'html': '<p>Smart App Control is a Windows 11 protection that checks every program before it runs. It lets a program through when Microsoft&rsquo;s cloud service knows it to be safe, or when its maker has <strong>signed</strong> it with a certificate. Anything it can&rsquo;t vouch for is blocked.</p>'
+                 '<p>So it blocks plenty of harmless things: small free tools, older programs, things written by one person, and programs whose makers never paid for a signing certificate. It&rsquo;s strict on purpose, because it&rsquo;s aimed at people who mostly use well-known programs.</p>'
+                 '<p>It&rsquo;s only switched on for PCs that started with a <strong>fresh copy of Windows 11</strong> (a new PC, or a reset). PCs upgraded from Windows 10 have it off. When it&rsquo;s new it runs in <strong>Evaluation</strong> mode, watching how you use the PC, then switches itself on or off.</p>'
+                 '<p><strong>Not the same as &ldquo;Windows protected your PC&rdquo;.</strong> That blue box is SmartScreen, checking downloads, and it has <strong>More info</strong>, <strong>Run anyway</strong>. Smart App Control has no such button.</p>'},
+        {'eyebrow': '/02 &mdash; YOUR CHOICES', 'h2': 'Your safe choices, before switching anything off',
+         'html': '<ol>'
+                 '<li><strong>Get it from the maker&rsquo;s own website</strong>, not a download site, and get the newest version. Many makers sign their newer versions, which Smart App Control lets through.</li>'
+                 '<li><strong>Look for it in the Microsoft Store.</strong> Store programs are checked and run without being blocked.</li>'
+                 '<li><strong>Look for an alternative</strong> that does the same job and is well known: there usually is one.</li>'
+                 '<li><strong>Ask the maker</strong> whether a signed version is coming. Small makers often add it when people ask.</li>'
+                 '<li><strong>Not sure where it came from?</strong> Don&rsquo;t run it. Delete it, and check the PC: see <a href="/how-to-know-if-computer-has-virus/">how to tell if your computer has a virus</a>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; SWITCHING IT OFF', 'h2': 'Switching Smart App Control off, and what that means',
+         'html': '<p>If you trust the program and need it, you can switch Smart App Control off:</p>'
+                 '<ol>'
+                 '<li>Open <strong>Windows Security</strong> (Start, type Windows Security).</li>'
+                 '<li>Choose <strong>App &amp; browser control</strong>, then <strong>Smart App Control settings</strong>.</li>'
+                 '<li>Choose <strong>Off</strong>.</li>'
+                 '</ol>'
+                 '<p><strong>Think before you do.</strong> On most PCs, once it&rsquo;s off, the only way to switch it back on is to <a href="/system-restore-vs-reset-this-pc/">reset Windows</a>. If the settings page still lets you choose On again after switching it off, your Windows is newer and it isn&rsquo;t one-way.</p>'
+                 '<p>With it off, the PC is still protected by Microsoft Defender and SmartScreen, as almost every Windows 10 PC always has been. It&rsquo;s one layer less, not none.</p>'},
+        {'eyebrow': '/04 &mdash; THE QUICK WAY', 'h2': 'Check Windows&rsquo; other protections are on', 'html': '__APP_BOX_SAC__'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' We check the program is what it claims to be, and find a signed version or a safe alternative where there is one.')},
+    ],
+    'howToName': 'What to do when Smart App Control blocks an app',
+    'howToSteps': [
+        {'name': 'Get the newest version from the maker', 'text': 'Download it from the maker\u2019s own website, not a download site. Newer versions are often signed.'},
+        {'name': 'Try the Microsoft Store', 'text': 'Search the Microsoft Store for the program or a well-known alternative.'},
+        {'name': 'Ask the maker', 'text': 'Ask whether a signed version is available or coming.'},
+        {'name': 'Switch it off only if you trust it', 'text': 'Windows Security, App & browser control, Smart App Control settings, Off. On most PCs it can only be switched back on by resetting Windows.'},
+    ],
+    'faqs': [
+        {'q': 'Why did Smart App Control block my app?', 'a': '<p>Because Microsoft couldn&rsquo;t vouch for it and it isn&rsquo;t signed by its maker. That happens to plenty of harmless programs, especially small or older ones.</p>'},
+        {'q': 'Can I allow just one app?', 'a': '<p>No. Smart App Control has no exceptions list: it&rsquo;s on or off. Try a signed version from the maker&rsquo;s website or the Microsoft Store first.</p>'},
+        {'q': 'Can I turn Smart App Control back on?', 'a': '<p>On most PCs, only by resetting Windows. Newer versions of Windows 11 are changing this: if the setting still offers On after you switch it off, yours can.</p>'},
+        {'q': 'Is it safe to turn Smart App Control off?', 'a': '<p>Microsoft Defender and SmartScreen still protect the PC, as on almost every Windows 10 PC. It&rsquo;s one layer less, so only do it for a program you trust.</p>'},
+        {'q': 'Why is Smart App Control off and greyed out?', 'a': '<p>It&rsquo;s only available on PCs that started with a fresh copy of Windows 11. PCs upgraded from Windows 10, or where it was switched off, show it off.</p>'},
+        {'q': 'What is the difference between Smart App Control and SmartScreen?', 'a': '<p>SmartScreen checks downloads and websites, and its &ldquo;Windows protected your PC&rdquo; box has Run anyway. Smart App Control checks every program as it runs and has no way round it.</p>'},
+        {'q': 'Can you help?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC, check the program and install it the safe way. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/old-program-wont-open-on-windows-11/">an old program won&rsquo;t open on Windows 11</a>, <a href="/virus-threat-protection-managed-by-your-organization/">virus &amp; threat protection is managed by your organisation</a>, <a href="/how-to-choose-antivirus/">choosing antivirus</a>, <a href="/antimalware-service-executable-high-cpu/">Antimalware Service Executable slowing the PC</a> and <a href="/link-safety-checker/">is this link safe?</a></p>',
+}
+
+# ============================================================ 19. What the Windows Backup app backs up
+# Microsoft Support (Back up your Windows PC / Windows Backup): Folders (Desktop, Documents, Pictures, Music, Videos via
+# OneDrive folder backup), Apps, Settings, Credentials; needs a Microsoft account; restores when setting up a new PC with
+# the same account. Not a system image, no external-drive target. File History (Control Panel) still backs up to a drive.
+WINBACKUP = {
+    'slug': 'what-windows-backup-backs-up',
+    'title': 'What Does the Windows Backup App Actually Back Up?',
+    'metaDesc': 'Windows Backup copies some folders to OneDrive, plus app and settings lists. What it leaves out, why it isn\'t a full backup, and how to fill the gaps.',
+    'ogTitle': 'What the Windows Backup app actually backs up (and what it doesn\'t)',
+    'crumbName': 'What Windows Backup Backs Up',
+    'eyebrow': '// IS MY PC BACKED UP?',
+    'h1': 'What does <em class="grad grad--cyan">Windows Backup</em> actually back up?',
+    'lede': 'Windows 11 has an app called Windows Backup, and it&rsquo;s easy to assume it backs up the whole PC. It doesn&rsquo;t. It copies a few folders to OneDrive and remembers your apps and settings, so a new PC can be set up like the old one. Here&rsquo;s exactly what it covers, what it leaves out, and the simple way to fill the gaps.',
+    'chips': ['What it copies', 'What it leaves out', 'A second copy that&rsquo;s yours'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['What it copies', '#s1'],
+    'ctaHead': 'Want it set up properly?',
+    'ctaSub': 'With your permission we connect to your Windows PC, set up a backup that covers everything that matters, and test that it reads back. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Folders', 'Desktop, Documents, Pictures, Music and Videos, copied to OneDrive.'),
+        ('Apps', 'A list of your apps, so a new PC can offer to put them back. Not the programs themselves.'),
+        ('Settings and passwords', 'Windows preferences, and saved Wi-Fi and other sign-in details.'),
+        ('Left out', 'Downloads, other drives, other folders, and a copy of Windows and your programs.'),
+        ('The catch', 'It uses OneDrive: 5 GB free, and a file deleted on the PC is deleted there too.'),
+        ('Fill the gap', 'File History to a USB drive: a second copy that&rsquo;s yours, with older versions.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT COPIES', 'h2': 'What Windows Backup copies',
+         'html': '<p>Open it from Start (type <strong>Windows Backup</strong>) or <strong>Settings</strong>, <strong>Accounts</strong>, <strong>Windows backup</strong>. It needs a Microsoft account, and it has four parts:</p>'
+                 '<ul>'
+                 '<li><strong>Folders:</strong> Desktop, Documents, Pictures, Music and Videos. These are copied to <strong>OneDrive</strong> and stay in step with it, which is the same thing as OneDrive folder backup.</li>'
+                 '<li><strong>Apps:</strong> a list of the apps on the PC and the ones pinned to Start and the taskbar, so a new PC can offer to put them back. Store apps come back; most other programs, such as Office or printer software, you reinstall yourself.</li>'
+                 '<li><strong>Settings:</strong> things like your desktop picture, language, accessibility and other preferences.</li>'
+                 '<li><strong>Credentials:</strong> saved Wi-Fi passwords and other sign-in details Windows keeps.</li>'
+                 '</ul>'
+                 '<p>It shines when you get a <strong>new PC</strong>: sign in with the same Microsoft account during set-up, choose to restore, and your folders, apps and settings come across.</p>'},
+        {'eyebrow': '/02 &mdash; WHAT IT LEAVES OUT', 'h2': 'What it leaves out',
+         'html': '<ul>'
+                 '<li><strong>Downloads</strong>, and any folder that isn&rsquo;t one of the five, such as a folder you made on C: for your accounts.</li>'
+                 '<li><strong>Other drives</strong>, such as a D: drive or a USB drive.</li>'
+                 '<li><strong>Windows and your programs.</strong> It isn&rsquo;t a copy of the whole PC (a &ldquo;system image&rdquo;): if the drive fails, you start with fresh Windows and reinstall.</li>'
+                 '<li><strong>Emails kept on the PC</strong> by older email programs, in files outside those folders. Email that lives online, such as Outlook.com, Gmail or Microsoft 365, is already kept by the provider.</li>'
+                 '<li><strong>Anything over your OneDrive space.</strong> The free plan is 5 GB, which photos fill quickly. When it&rsquo;s full, new files stop being copied.</li>'
+                 '</ul>'},
+        {'eyebrow': '/03 &mdash; THE CATCH', 'h2': 'The catch: OneDrive is a mirror, not a separate copy',
+         'html': '<p>Because the folders stay in step with OneDrive, <strong>delete a file on the PC and it&rsquo;s deleted in OneDrive too</strong>. A file that gets damaged, or locked by ransomware, is replaced by the damaged copy online. OneDrive&rsquo;s recycle bin and version history can rescue you for a while (30 days for deleted files on a personal account), but it isn&rsquo;t the same as a copy kept apart.</p>'
+                 '<p>It also changes where your files live: once it&rsquo;s on, your Desktop and Documents are inside the OneDrive folder. If that surprised you, see <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>.</p>'},
+        {'eyebrow': '/04 &mdash; FILL THE GAP', 'h2': 'Fill the gap: a second copy on a USB drive',
+         'html': '<p>The simple, solid set-up for a home PC is <strong>two copies</strong>: OneDrive for convenience, and a USB drive you own. Windows still has File History built in for that:</p>'
+                 '<ol>'
+                 '<li>Plug in a USB drive bigger than your files (the app below tells you how big they are).</li>'
+                 '<li>Click Start, type <strong>File History</strong> and open it (it&rsquo;s in Control Panel).</li>'
+                 '<li>Check it has found the drive and click <strong>Turn on</strong>. Under <strong>Exclude folders</strong> and <strong>Advanced settings</strong> you can choose how often it copies and how long it keeps old versions.</li>'
+                 '<li>To get something back, open File History and click <strong>Restore personal files</strong>, or right-click a folder, Properties, <strong>Previous Versions</strong>.</li>'
+                 '</ol>'
+                 '<p>File History copies your user folders, and keeps <strong>older versions</strong>, so a file deleted or spoiled last week is still there. Plug the drive in regularly, and keep it unplugged in between, so ransomware can&rsquo;t reach it. For photos in particular, see <a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your backup', 'html': '__APP_BOX_BACKUP__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We set up a backup that covers everything that matters to you, and test that a file reads back. For businesses, see <a href="/backup-support/">backup support</a>.')},
+    ],
+    'howToName': 'How to make sure your Windows PC is properly backed up',
+    'howToSteps': [
+        {'name': 'Check Windows Backup', 'text': 'Settings, Accounts, Windows backup: see which folders are copied to OneDrive.'},
+        {'name': 'Check your OneDrive space', 'text': 'Make sure OneDrive has room for your folders; the free plan is 5 GB.'},
+        {'name': 'Add a USB drive copy', 'text': 'Plug in a USB drive, open File History and click Turn on.'},
+        {'name': 'Cover the other folders', 'text': 'Move files from Downloads, other drives or your own folders into Documents or Pictures, so they are copied.'},
+        {'name': 'Test it', 'text': 'Restore one file from File History or OneDrive to be sure the copy reads back.'},
+    ],
+    'faqs': [
+        {'q': 'Does Windows Backup back up everything?', 'a': '<p>No. It copies Desktop, Documents, Pictures, Music and Videos to OneDrive, and remembers your apps, settings and saved passwords. Downloads, other drives, other folders, Windows itself and your programs aren&rsquo;t copied.</p>'},
+        {'q': 'Does Windows Backup back up to an external drive?', 'a': '<p>No, it only uses OneDrive. For a copy on a USB drive, use File History, which is still in Windows 11 in Control Panel.</p>'},
+        {'q': 'Does Windows Backup back up my programs?', 'a': '<p>It saves a list of them so a new PC can offer to put them back. Store apps come back; most other programs need reinstalling.</p>'},
+        {'q': 'Is OneDrive a backup?', 'a': '<p>Partly. It keeps a copy online, but it stays in step with the PC: delete or damage a file and the change reaches OneDrive too. Its recycle bin and version history help for a while. A second copy on a USB drive covers what it can&rsquo;t.</p>'},
+        {'q': 'Why does Windows Backup say my OneDrive is full?', 'a': '<p>The free OneDrive plan is 5 GB, and your folders are bigger. Either buy more space (Microsoft 365 includes 1 TB), back up fewer folders, or use File History to a USB drive instead.</p>'},
+        {'q': 'How do I restore from Windows Backup on a new PC?', 'a': '<p>During the new PC&rsquo;s set-up, sign in with the same Microsoft account and choose to restore from your old PC. Your folders, apps list and settings come across.</p>'},
+        {'q': 'Can you set up my backup?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup that covers your important files, and test that it works. Remote help from &pound;20.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
+}
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -1301,9 +1728,25 @@ def symptom_pages(setup_url):
         '__APP_BOX_UPDATES__': pfp._app_box('updates', 'Windows Update: is it really getting updates?',
             '<p style="margin:0">It reads Windows&rsquo; own update history &mdash; the same list as Settings, Windows Update, Update history &mdash; and says in plain words when the monthly update last installed, whether one update is failing over and over, and whether an update is waiting for a restart. '
             'It never installs, removes or changes anything.</p>', setup_url),
+        # 28 Oct 2026 (PC-problem sweep): what the app really shows for each (Ui.cs, build 47)
+        '__APP_BOX_RESTORE__': pfp._app_box('winsafety', 'Before you restore or reset: two checks',
+            '<p style="margin:0">Its <strong>Safety</strong> page says whether <strong>System Restore</strong> is switched on, and the date of the newest restore point Windows made, so you know whether there&rsquo;s a day to go back to. '
+            'Its <strong>Backup</strong> page (under Photos &amp; files) says which backup is on and when it last finished, and how big your important files are, so you know a reset can&rsquo;t take anything you haven&rsquo;t copied. It only reads.</p>', setup_url),
+        '__APP_BOX_BSOD__': pfp._app_box('reliability', 'What keeps going wrong: every blue screen, in plain words',
+            '<p style="margin:0">It reads the same record as Reliability Monitor and puts it in plain words: blue screens and unexpected shutdowns in the last 90 days, which programs crashed or froze in the last 30, updates that failed, and Windows&rsquo; own stability score. '
+            'Fixed something? <strong>Start a fresh list</strong> counts from now, so you can see whether the blue screens come back. It never guesses at a cause, and a button opens Reliability Monitor for the stop code.</p>', setup_url),
+        '__APP_BOX_DEFENDER__': pfp._app_box('programs', 'Programs check: is more than one antivirus running?',
+            '<p style="margin:0">It reads Windows&rsquo; own register of security programs and says which one is protecting the PC, and warns when <strong>two are protecting at once</strong> &mdash; the usual reason Defender never settles &mdash; or when one is switched on but <strong>out of date</strong>, often a subscription that has ended. '
+            'It also lists programs the PC doesn&rsquo;t need, such as tune-up tools and driver updaters, each with the reason. It only reads: you remove things in Settings.</p>', setup_url),
+        '__APP_BOX_SAC__': pfp._app_box('winsafety', 'Safety settings: is the rest of Windows&rsquo; protection on?',
+            '<p style="margin:0">Whatever you decide about Smart App Control, the app checks the protections that stay: which antivirus is on duty (and Defender&rsquo;s <strong>tamper protection</strong>), <strong>SmartScreen</strong>&rsquo;s check on downloads and whether a policy switched it off, the &ldquo;allow this app to make changes?&rdquo; question, and memory integrity. '
+            'It doesn&rsquo;t read Smart App Control itself: that&rsquo;s in Windows Security, as above. Each button opens the right Windows setting.</p>', setup_url),
+        '__APP_BOX_BACKUP__': pfp._app_box('backup', 'Backup: is it on, and would your files fit on a drive?',
+            '<p style="margin:0">It says which backup is switched on &mdash; File History, OneDrive folder backup or Windows 7&rsquo;s Backup and Restore &mdash; and when it last finished, how big your important files are, and how much space each drive has, so you can see whether a USB drive would hold them. '
+            '<strong>Test my backup</strong> opens one real file from the backup and checks it reads back. It never deletes anything without asking.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -1369,5 +1812,23 @@ SYMPTOM_FLOWS = {
                         'lede': 'Work through it one change at a time: press <strong>Done</strong> when you have finished each one, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
                         'h3f': 'All set{mins}. Welcome home.',
                         'tip': 'Pin the programs you use most, so they are always one click away.',
+                        'h3s': 'Stuck at a step? We can set it up with you, remotely.'},
+    RESTORE['slug']: {'h2': 'Put Windows right, lightest fix first', 'ask': 'Is it working properly now?',
+                      'tip': 'Switch System Restore on, and make a restore point, for next time.',
+                      'h3s': 'Still wrong after every step? Ring us before you reset.'},
+    BSOD['slug']: {'h2': 'Stop the blue screens, step by step', 'ask': 'Has it stopped happening?',
+                   'tip': 'Give it a week, then look at Reliability Monitor again to be sure.',
+                   'h3s': 'Still blue-screening? That is a job for the crash dump files.'},
+    DEFENDER['slug']: {'h2': 'Calm it down, step by step', 'ask': 'Has it settled down?',
+                       'tip': 'Leave the PC on and plugged in for an hour once a week, so scans run while you are away.',
+                       'h3s': 'Still busy all day? That is a remote job.'},
+    SAC['slug']: {'h2': 'Get the program running safely, step by step', 'ask': 'Is it running now?',
+                  'tip': 'Keep the installer from the maker&rsquo;s own site, so you can reinstall it later.',
+                  'h3s': 'Still blocked, and not sure about switching it off? Ring us.'},
+    WINBACKUP['slug']: {'h2': 'Check your backup, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all covered', 'ask': 'Done that step?',
+                        'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All covered{mins}. Nice work.',
+                        'tip': 'Plug the USB drive in once a week, and keep it unplugged in between.',
                         'h3s': 'Stuck at a step? We can set it up with you, remotely.'},
 }

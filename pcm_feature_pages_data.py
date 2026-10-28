@@ -127,6 +127,9 @@ CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, o
 # wave 2 (13 Oct 2026, owner: "yes start with number 1"): Devices on your network, for the EE-hub printer and CCTV pages
 SHOTS['devices'] = ('/images/pcm-feat-devices-v40.webp', 1272, 1334, 'Devices on your network in 365 PC Manager: 4 devices found in 9 seconds on a cable connection - the router (Linksys, 192.168.1.1), a phone hiding its identity with a private Wi-Fi address and an ASUS device - and the network printer this PC has set up, an HP ENVY Photo 6200', ('Internet &amp; email', 'Devices on your network'))
 CAPS['devices'] = 'The real app, on our office network.'
+# 28 Oct 2026 (PC-problem sweep): Photos & files > Backup, rendered from build 47 (PCM_SNAPTABS=backup) on our office PC
+SHOTS['backup'] = ('/images/pcm-feat-backup-v47.webp', 736, 430, 'Backup in 365 PC Manager on our office PC: Windows Backup and Restore is switched on, last completed 25 Oct 2026; the important files come to about 6.6 GB, with each drive&rsquo;s free space, including a USB drive with 84.4 GB free', ('Photos &amp; files', 'Backup'))
+CAPS['backup'] = 'The real app, on our office PC.'
 # 21 Oct 2026: Storage & space, cut from the real app screen in the free-up-space film (file names were blurred there)
 SHOTS['storage'] = ('/images/pcm-feat-storage-v41.webp', 1116, 800, 'Storage and space in 365 PC Manager: drive C, the Windows drive, is 90% full with 85.6 GB free of 893.2 GB, the other drives each show how full they are, temporary files come to 375 MB, with Clear temporary files and Scan for my biggest files buttons and the biggest files found, each with Open, Folder, Move and Delete (file names blurred)', ('Tools', 'Storage &amp; space'))
 CAPS['storage'] = 'The real app, on our office PC (file names blurred).'
