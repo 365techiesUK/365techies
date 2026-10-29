@@ -1,11 +1,11 @@
 {
-  "ver": 45,
-  "version": "1.0.45",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v45.exe",
-  "sha256": "568d5f32d788646096bce3b3056c291d03512c8564636de3262eb2a759442202",
-  "notes": "Version 36.5.1: Techies PDF, our free program for filling in, signing, joining and shrinking PDFs, now has its own place in the menu under Techies One. And the Techies One page now recognises Windows 10 and 11 properly - it was telling every PC that Techies One couldn't run on it. Signed by 365 Techies Ltd.",
+  "ver": 47,
+  "version": "1.0.47",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v47.exe",
+  "sha256": "e910a2ca900407db65af808f73f0bdf829b23e53e4dbe460c8778201a2f8684d",
+  "notes": "Version 36.7: Cyber Essentials readiness - is this PC ready for the UK's Cyber Essentials certificate, checked against the April 2026 requirements, and it can keep watch all year: a dated record and a reminder before each month's update deadline. Choose your colours: Light, Dark, or match Windows (under Text size). Suggest an idea - tell us what you'd like the app to do, or what isn't right, from Get help or the tray menu, and we read every one. A Rate us in the Microsoft Store button. Plus everything from 36.6: see how your laptop's battery is wearing, and a safer drive check on PCs that use Intel's storage driver (Intel RST). Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v45.exe",
-    "sha256": "e324f4a5b279cdcef7202c2cbbb457b8ecbfdec4653ee866b89d69c4e7b023de"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v47.exe",
+    "sha256": "0ecc9e48c417dd997dab498e12c257af9e8c9ed83affb2a31231ff948d5d214b"
   }
 }
