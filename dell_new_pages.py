@@ -132,7 +132,7 @@ NEW_PAGES.append({
   {'q': 'Do I need Dell SupportAssist?', 'a': '<p>No, Windows works without it. It&rsquo;s the easiest way to get Dell&rsquo;s BIOS updates and hardware checks, so keep it if you value those; remove it if the reminders bother you.</p>'},
   {'q': 'Is a pop-up telling me to ring Dell real?', 'a': '<p>Not if it&rsquo;s in your web browser with a phone number: that&rsquo;s a scam. SupportAssist runs in its own window. Close the browser and don&rsquo;t ring.</p>'},
  ],
- 'crossLinksHtml': '<p>Related help: <a href="/how-to-update-dell-bios/">updating a Dell BIOS safely</a>, <a href="/how-to-find-dell-service-tag-and-check-warranty/">finding your Dell service tag</a>, <a href="/dell-remote-support/">remote Dell support</a>, <a href="/dell-it-support-dorset/">Dell support and repair in Dorset</a>.</p>',
+ 'crossLinksHtml': '<p>Related help: <a href="/how-to-update-dell-bios/">updating a Dell BIOS safely</a>, <a href="/how-to-find-dell-service-tag-and-check-warranty/">finding your Dell service tag</a>, <a href="/dell-remote-support/">remote Dell support</a>, <a href="/dell-it-support-dorset/">Dell support and repair in Dorset</a>, <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a>, <a href="/lenovo-vantage-keeps-popping-up/">Lenovo Vantage pop-ups</a>.</p>',
 })
 
 NEW_PAGES.append({

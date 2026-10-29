@@ -1012,7 +1012,8 @@
  },
  "dell-supportassist-keeps-popping-up": {
   "first": "2026-10-13",
-  "h": "b89146b5bb6ee375"
+  "h": "bb0a2f23c81503a0",
+  "last": "2026-10-29"
  },
  "dell-this-pc-cant-run-windows-11": {
   "first": "2026-07-28",
@@ -1638,8 +1639,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "8eccd47900bd0bb4",
-  "last": "2026-10-28"
+  "h": "807b66ae52bd5baf",
+  "last": "2026-10-29"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -4049,5 +4050,17 @@
  "what-windows-backup-backs-up": {
   "first": "2026-10-28",
   "h": "b7eee0df650f5662"
+ },
+ "do-i-need-ccleaner": {
+  "first": "2026-10-29",
+  "h": "ee89dabf04a37e9d"
+ },
+ "hp-support-assistant-keeps-popping-up": {
+  "first": "2026-10-29",
+  "h": "bc732e8ee0b82687"
+ },
+ "lenovo-vantage-keeps-popping-up": {
+  "first": "2026-10-29",
+  "h": "b50cb7691e3586d0"
  }
 }

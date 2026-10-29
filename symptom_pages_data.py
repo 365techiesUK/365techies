@@ -1705,6 +1705,233 @@ WINBACKUP = {
     'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
 }
 
+# ============================================================ 20-22. Programs like ours (29 Oct 2026)
+# Owner: "research PC service tools like our PC manager ... top five", then "yes build the CCleaner and HP Lenovo pages".
+# Research: D:/claude/seo-research/pc-tools-competitors-2026-10-29/FINDINGS.md. Bing Keyword Research, 3 months, UK:
+# "ccleaner" 46,833, "hp support assistant" 39,165, "lenovo vantage" 8,400 (the Dell one already has a page:
+# dell-supportassist-keeps-popping-up). The app's own verdicts (programs-rules.json, build 47) agree with these pages:
+# HP Support Assistant and Lenovo Vantage "ok"; CCleaner "not_needed" (it includes a registry cleaner). Never a ranking of
+# programs (no league tables): the CCleaner page compares it with what Windows already does, not with rivals.
+# Facts: CCleaner 5.33 (Aug-Sep 2017) was compromised at its maker, fixed in 5.34 (Cisco Talos, widely reported);
+# Microsoft Defender has flagged CCleaner installers as a potentially unwanted app (bundled offers, BleepingComputer);
+# Microsoft's support policy for registry cleaning utilities (support.microsoft.com KB 2563254). HP and Lenovo steps are
+# said with care: menu names change between versions.
+
+CCLEANER = {
+    'slug': 'do-i-need-ccleaner',
+    'title': 'Do You Still Need CCleaner? What Windows Does for Free',
+    'metaDesc': 'Is CCleaner safe, and do you need it? What it does, what Windows 10 and 11 already do for free, the registry cleaner question, and how to remove it.',
+    'ogTitle': 'Do you still need CCleaner? What Windows already does for free',
+    'crumbName': 'Do I Need CCleaner?',
+    'eyebrow': '// CCLEANER',
+    'h1': 'Do you still need <em class="grad grad--cyan">CCleaner</em>?',
+    'lede': 'For years CCleaner was the first thing many people put on a new PC. It&rsquo;s a legitimate program, but Windows 10 and 11 now do most of its job for free, and its registry cleaner is the part Microsoft says it doesn&rsquo;t support. Here&rsquo;s what it does, what Windows already does, and how to decide.',
+    'chips': ['What Windows does free', 'The registry question', 'Keep it or remove it'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['What Windows does free', '#s3'],
+    'ctaHead': 'Want a second opinion on what&rsquo;s on your PC?',
+    'ctaSub': 'With your permission we connect to your Windows PC, look at what&rsquo;s installed and tidy it safely. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Is it safe?', 'It&rsquo;s a legitimate program. Download it only from ccleaner.com and untick any offers.'),
+        ('Do you need it?', 'Usually not: Windows 10 and 11 clear junk files, manage startup and uninstall programs for free.'),
+        ('The registry cleaner', 'Microsoft says it doesn&rsquo;t support registry cleaners. Leave that part alone.'),
+        ('Junk files', 'Settings, System, Storage: Cleanup recommendations, and switch on Storage Sense.'),
+        ('Slow PC?', 'Cleaning rarely fixes it. The usual causes are startup programs, a full or failing drive, or an old hard drive.'),
+        ('Removing it', 'Settings, Apps, Installed apps, CCleaner, Uninstall. Cancel any paid plan with CCleaner too.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT DOES', 'h2': 'What CCleaner does',
+         'html': '<p>CCleaner clears temporary files, browser history and caches, and offers a <strong>registry cleaner</strong>, a startup manager and an uninstaller. Its &ldquo;Health Check&rdquo; runs several of these in one go. The paid versions, sold as yearly subscriptions, add automatic cleaning, monitoring and driver updates.</p>'
+                 '<p>All of that is real. The question in 2026 is whether you need a separate program for it.</p>'},
+        {'eyebrow': '/02 &mdash; IS IT SAFE?', 'h2': 'Is CCleaner safe?',
+         'html': '<p>CCleaner is a legitimate program from a well-known company. Three things are worth knowing:</p>'
+                 '<ul>'
+                 '<li><strong>The 2017 incident.</strong> Attackers got into the maker&rsquo;s systems and hid malware inside the official CCleaner 5.33, downloaded by millions between August and September 2017. It was found by Cisco&rsquo;s security team and fixed in 5.34. It was a one-off, but it shows why to download only from the maker&rsquo;s own site and keep programs updated.</li>'
+                 '<li><strong>Offers during installation.</strong> Microsoft Defender has flagged CCleaner installers as a &ldquo;potentially unwanted app&rdquo; because they offered other software as they installed. Read each screen and untick anything you didn&rsquo;t ask for.</li>'
+                 '<li><strong>The registry cleaner.</strong> Microsoft&rsquo;s own support policy says it doesn&rsquo;t support registry cleaning programs, that problems they cause may not be fixable without reinstalling Windows, and that the registry doesn&rsquo;t need cleaning for a PC to run well (<a href="https://support.microsoft.com/en-us/topic/2563254" rel="noopener" target="_blank">Microsoft</a>).</li>'
+                 '</ul>'},
+        {'eyebrow': '/03 &mdash; WHAT WINDOWS DOES FREE', 'h2': 'What Windows 10 and 11 already do for free',
+         'html': '<div class="tblwrap"><table><thead><tr><th>CCleaner job</th><th>Where Windows does it</th></tr></thead><tbody>'
+                 '<tr><td>Clear temporary and junk files</td><td>Settings, System, Storage, <strong>Cleanup recommendations</strong> or <strong>Temporary files</strong>. Switch on <strong>Storage Sense</strong> to do it automatically.</td></tr>'
+                 '<tr><td>Clear browser history and cache</td><td>In the browser: Ctrl + Shift + Delete in Edge, Chrome and Firefox.</td></tr>'
+                 '<tr><td>Stop programs starting with Windows</td><td>Settings, Apps, <strong>Startup</strong>, or Task Manager&rsquo;s Startup apps tab.</td></tr>'
+                 '<tr><td>Uninstall programs</td><td>Settings, Apps, <strong>Installed apps</strong>.</td></tr>'
+                 '<tr><td>Update drivers</td><td>Windows Update, including <strong>Optional updates</strong>, and the PC maker&rsquo;s own app.</td></tr>'
+                 '<tr><td>Clean the registry</td><td>Not needed, and not supported by Microsoft.</td></tr>'
+                 '</tbody></table></div>'
+                 '<p>Step by step: <a href="/how-to-free-up-storage-space/">freeing up storage space</a> and <a href="/stop-programs-starting-with-windows/">stopping programs starting with Windows</a>.</p>'},
+        {'eyebrow': '/04 &mdash; SLOW PC?', 'h2': 'If you got it because the PC is slow',
+         'html': '<p>Deleting junk files frees space, but it rarely makes a PC faster. What usually does:</p>'
+                 '<ul>'
+                 '<li>Fewer programs starting with Windows.</li>'
+                 '<li>Enough free space on the C: drive (aim for at least 15 per cent).</li>'
+                 '<li>Replacing an old spinning hard drive with an SSD, the biggest single speed-up for an older PC: <a href="/hard-drive-upgrade/">hard drive upgrade</a>.</li>'
+                 '<li>Checking the drive isn&rsquo;t failing: <a href="/how-to-check-ssd-health/">how to check your drive&rsquo;s health</a>.</li>'
+                 '</ul>'
+                 '<p>More in <a href="/how-to-speed-up-a-slow-computer/">how to speed up a slow computer</a>.</p>'},
+        {'eyebrow': '/05 &mdash; KEEP IT OR REMOVE IT', 'h2': 'Keep it or remove it?',
+         'html': '<p><strong>Keeping it is fine</strong> if you like it: use the cleaning, leave the registry cleaner alone, keep it updated, and say no to offers when it updates.</p>'
+                 '<p><strong>To remove it:</strong> Settings, Apps, Installed apps, find <strong>CCleaner</strong>, then <strong>Uninstall</strong>, and restart. Paying for it? Cancel the subscription with CCleaner as well, or it may renew.</p>'
+                 '<p>If you&rsquo;d like one place that tells you what&rsquo;s actually wrong instead of cleaning everything, that&rsquo;s why we made our free app, below.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app say what&rsquo;s worth keeping', 'html': '__APP_BOX_CCLEANER__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' We look at what&rsquo;s installed, remove what isn&rsquo;t needed and set up Windows&rsquo; own clean-up, so nothing extra has to run.')},
+    ],
+    'howToName': 'How to clean up a Windows PC without CCleaner',
+    'howToSteps': [
+        {'name': 'Clear junk files', 'text': 'Settings, System, Storage: open Cleanup recommendations or Temporary files, and switch on Storage Sense.'},
+        {'name': 'Clear browser data', 'text': 'In the browser, press Ctrl + Shift + Delete and choose what to clear.'},
+        {'name': 'Cut startup programs', 'text': 'Settings, Apps, Startup: switch off what you do not need at start-up.'},
+        {'name': 'Remove unused programs', 'text': 'Settings, Apps, Installed apps: uninstall what you no longer use.'},
+        {'name': 'Leave the registry alone', 'text': 'Microsoft does not support registry cleaners, and Windows does not need one.'},
+    ],
+    'faqs': [
+        {'q': 'Is CCleaner safe to use?', 'a': '<p>It&rsquo;s a legitimate program. Download it only from ccleaner.com, untick offers during installation, keep it updated and leave its registry cleaner alone.</p>'},
+        {'q': 'Do I need CCleaner on Windows 11?', 'a': '<p>Usually not. Windows 11 clears junk files with Storage Sense and Cleanup recommendations, manages startup apps and uninstalls programs for free.</p>'},
+        {'q': 'Should I use the registry cleaner?', 'a': '<p>No. Microsoft says it doesn&rsquo;t support registry cleaning programs and that problems they cause may need Windows reinstalling. The registry doesn&rsquo;t need cleaning.</p>'},
+        {'q': 'Was CCleaner hacked?', 'a': '<p>In 2017 attackers hid malware in the official CCleaner 5.33. It was found and fixed in 5.34 within weeks. Current versions aren&rsquo;t affected; it&rsquo;s a reminder to download only from the maker and keep programs updated.</p>'},
+        {'q': 'Will CCleaner make my PC faster?', 'a': '<p>Rarely by much. Fewer startup programs, enough free space and an SSD in place of an old hard drive make far more difference.</p>'},
+        {'q': 'How do I uninstall CCleaner?', 'a': '<p>Settings, Apps, Installed apps, CCleaner, Uninstall, then restart. Cancel any paid subscription with CCleaner too.</p>'},
+        {'q': 'Can you tidy my PC for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed and set up Windows&rsquo; own clean-up. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-free-up-storage-space/">freeing up storage space</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a>, <a href="/antimalware-service-executable-high-cpu/">Antimalware Service Executable slowing the PC</a>, <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a> and <a href="/lenovo-vantage-keeps-popping-up/">Lenovo Vantage pop-ups</a>.</p>',
+}
+
+HPSA = {
+    'slug': 'hp-support-assistant-keeps-popping-up',
+    'title': 'HP Support Assistant Keeps Popping Up? Turn It Down or Off',
+    'metaDesc': 'HP Support Assistant notifications every day? How to switch them off, what you lose if you uninstall it, and how to remove it properly.',
+    'ogTitle': 'HP Support Assistant keeps popping up? Turn it down or off',
+    'crumbName': 'HP Support Assistant Pop-ups',
+    'eyebrow': '// HP SUPPORT ASSISTANT',
+    'h1': 'HP Support Assistant <em class="grad grad--cyan">keeps popping up</em>?',
+    'lede': 'HP Support Assistant is HP&rsquo;s own app on most HP laptops and desktops. It offers driver and BIOS updates, checks the battery and hardware, and shows your warranty. Its pop-ups can get repetitive. You can quieten them, or remove the app altogether. Here&rsquo;s what each choice means.',
+    'chips': ['Quieten it', 'Keep it or remove it', 'Nothing lost that matters'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Turn the notifications off', '#s2'],
+    'ctaHead': 'Not sure what to keep on your HP?',
+    'ctaSub': 'With your permission we connect to your Windows PC and sort it with you: what to keep, what to remove, and the updates done. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'HP&rsquo;s own app: driver and BIOS updates, battery and hardware checks, warranty.'),
+        ('Quieten it', 'In the app: the settings (gear) icon, then Notifications. Or Windows Settings, System, Notifications.'),
+        ('Remove it', 'Settings, Apps, Installed apps: HP Support Assistant, then HP Support Solutions Framework.'),
+        ('What you lose', 'An easy way to get HP&rsquo;s BIOS updates. Windows Update still brings most drivers.'),
+        ('Want it back?', 'Download it free from HP&rsquo;s own website at any time.'),
+        ('A pop-up with a phone number?', 'In the web browser, that&rsquo;s a scam, not HP. Close it and don&rsquo;t ring.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'What HP Support Assistant does',
+         'html': '<p>HP Support Assistant comes on most HP PCs. It checks HP&rsquo;s website for <strong>driver, BIOS and software updates</strong> for your exact model, runs <strong>battery and hardware checks</strong>, shows your <strong>warranty</strong>, and links to HP&rsquo;s support. Newer HP PCs may also have the <strong>myHP</strong> app, which does some of the same jobs.</p>'
+                 '<p>It&rsquo;s genuine and useful. The trouble is how often it wants your attention.</p>'},
+        {'eyebrow': '/02 &mdash; TURN IT DOWN', 'h2': 'Turn off HP Support Assistant notifications',
+         'html': '<ol>'
+                 '<li>Open <strong>HP Support Assistant</strong> from the Start menu.</li>'
+                 '<li>Click the <strong>settings</strong> icon (a gear), then <strong>Notifications</strong>, and switch off the pop-up and tray alerts you don&rsquo;t want.</li>'
+                 '<li>If they still appear, switch them off in Windows too: <strong>Settings</strong>, <strong>System</strong>, <strong>Notifications</strong>, then turn <strong>HP Support Assistant</strong> off. Do the same for any other HP app that nags.</li>'
+                 '</ol>'
+                 '<p>The menu names differ a little between versions. Windows&rsquo; own switch always works, because it blocks the app&rsquo;s notifications at Windows&rsquo; end.</p>'},
+        {'eyebrow': '/03 &mdash; REMOVE IT', 'h2': 'Uninstall HP Support Assistant properly',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong>, <strong>Apps</strong>, <strong>Installed apps</strong>.</li>'
+                 '<li>Find <strong>HP Support Assistant</strong>, choose <strong>Uninstall</strong>, and follow the steps.</li>'
+                 '<li>Then uninstall <strong>HP Support Solutions Framework</strong>, the background part it leaves behind, if it&rsquo;s listed.</li>'
+                 '<li><strong>Restart</strong> the PC.</li>'
+                 '</ol>'
+                 '<p>Use Windows&rsquo; own uninstall, not a third-party &ldquo;remover&rdquo;. You can download HP Support Assistant again free from HP&rsquo;s website whenever you want it back.</p>'},
+        {'eyebrow': '/04 &mdash; KEEP IT OR NOT?', 'h2': 'Should you keep it?',
+         'html': '<p><strong>Keep it</strong> if you&rsquo;d like HP to offer BIOS updates and check the battery for you: it&rsquo;s the easiest way to keep an HP&rsquo;s firmware current, and BIOS updates fix real problems.</p>'
+                 '<p><strong>Remove it</strong> if the pop-ups bother you more than they help. Windows Update still brings most HP drivers, and HP&rsquo;s website has the BIOS for your model when you need it. Before a BIOS update on a PC with BitLocker, suspend BitLocker first: see <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>.</p>'},
+        {'eyebrow': '/05 &mdash; IS IT REALLY HP?', 'h2': 'A pop-up asking you to ring &ldquo;HP&rdquo;?',
+         'html': '<p>HP Support Assistant runs in its own window from the Start menu. A <strong>web browser</strong> pop-up saying your HP is infected and giving a phone number to ring is a scam, not HP: close the browser and don&rsquo;t ring the number. Already rang and let someone in? See <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app say what&rsquo;s worth keeping', 'html': '__APP_BOX_MAKERAPP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' We can quieten or remove the HP apps you don&rsquo;t want and do the BIOS update safely, BitLocker included.')},
+    ],
+    'howToName': 'How to stop HP Support Assistant notifications',
+    'howToSteps': [
+        {'name': 'Open HP Support Assistant', 'text': 'Open HP Support Assistant from the Start menu.'},
+        {'name': 'Switch off its notifications', 'text': 'Click the settings (gear) icon, then Notifications, and switch off the alerts you do not want.'},
+        {'name': 'Block them in Windows', 'text': 'Settings, System, Notifications: turn HP Support Assistant off.'},
+        {'name': 'Or uninstall it', 'text': 'Settings, Apps, Installed apps: uninstall HP Support Assistant, then HP Support Solutions Framework, and restart.'},
+    ],
+    'faqs': [
+        {'q': 'How do I stop HP Support Assistant pop-ups?', 'a': '<p>In the app, click the settings (gear) icon, then Notifications, and switch them off. If they continue, Settings, System, Notifications, and turn HP Support Assistant off.</p>'},
+        {'q': 'Can I uninstall HP Support Assistant?', 'a': '<p>Yes. Settings, Apps, Installed apps: uninstall HP Support Assistant, then HP Support Solutions Framework, and restart. You can download it again free from HP.</p>'},
+        {'q': 'Do I need HP Support Assistant?', 'a': '<p>No, Windows works without it. It&rsquo;s the easiest way to get HP&rsquo;s BIOS updates and battery checks, so keep it if you value those.</p>'},
+        {'q': 'Is HP Support Assistant a virus?', 'a': '<p>No, it&rsquo;s HP&rsquo;s own program, installed with the PC. A browser pop-up telling you to ring HP is a scam, though.</p>'},
+        {'q': 'What is HP Support Solutions Framework?', 'a': '<p>The background part of HP Support Assistant. If you uninstall the app, uninstall this too.</p>'},
+        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/lenovo-vantage-keeps-popping-up/">Lenovo Vantage pop-ups</a>, <a href="/dell-supportassist-keeps-popping-up/">Dell SupportAssist pop-ups</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/how-to-check-laptop-battery-health/">laptop battery health</a> and <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>.</p>',
+}
+
+VANTAGE = {
+    'slug': 'lenovo-vantage-keeps-popping-up',
+    'title': 'Lenovo Vantage Keeps Popping Up? Turn It Down or Off',
+    'metaDesc': 'Lenovo Vantage messages and pop-ups? How to switch them off, what to set before you remove it (the battery setting), and how to uninstall it.',
+    'ogTitle': 'Lenovo Vantage keeps popping up? Turn it down or off',
+    'crumbName': 'Lenovo Vantage Pop-ups',
+    'eyebrow': '// LENOVO VANTAGE',
+    'h1': 'Lenovo Vantage <em class="grad grad--cyan">keeps popping up</em>?',
+    'lede': 'Lenovo Vantage is Lenovo&rsquo;s own app on most Lenovo laptops. It handles updates, the warranty and handy laptop settings, including how the battery charges. Its messages and offers can get repetitive. You can quieten them, or remove it, but set the battery the way you want first.',
+    'chips': ['Quieten it', 'The battery setting', 'Keep it or remove it'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Turn the messages off', '#s2'],
+    'ctaHead': 'Not sure what to keep on your Lenovo?',
+    'ctaSub': 'With your permission we connect to your Windows PC and sort it with you: what to keep, what to remove, and the updates done. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Lenovo&rsquo;s own app: updates, warranty, battery and other laptop settings.'),
+        ('Quieten it', 'In Vantage: its settings or preferences, Messages, switch off app features and marketing.'),
+        ('Block it in Windows', 'Settings, System, Notifications: turn Lenovo Vantage off.'),
+        ('Before removing it', 'Set the battery charging mode the way you want: changing it later needs Vantage.'),
+        ('Remove it', 'Settings, Apps, Installed apps: Lenovo Vantage, then Lenovo Vantage Service.'),
+        ('Want it back?', 'It&rsquo;s free in the Microsoft Store.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'What Lenovo Vantage does',
+         'html': '<p>Lenovo Vantage comes on most Lenovo laptops and desktops. It checks for <strong>driver, BIOS and software updates</strong> for your model, shows the <strong>warranty</strong>, and holds settings Windows doesn&rsquo;t have, such as the <strong>battery charging mode</strong> (stopping at around 80 per cent to make the battery last longer), keyboard backlight and camera privacy. Business ThinkPads often have <strong>Lenovo Commercial Vantage</strong> instead, which does the same jobs without the offers.</p>'},
+        {'eyebrow': '/02 &mdash; TURN IT DOWN', 'h2': 'Turn off Lenovo Vantage messages',
+         'html': '<ol>'
+                 '<li>Open <strong>Lenovo Vantage</strong> from the Start menu.</li>'
+                 '<li>Open its <strong>settings</strong> or <strong>preferences</strong> (the gear, or the arrow by your name at the top right, depending on the version), find <strong>Messages</strong>, and switch off the app feature and marketing messages.</li>'
+                 '<li>If messages still appear, switch them off in Windows: <strong>Settings</strong>, <strong>System</strong>, <strong>Notifications</strong>, then turn <strong>Lenovo Vantage</strong> off.</li>'
+                 '<li>Want it not to start with Windows at all? <strong>Settings</strong>, <strong>Apps</strong>, <strong>Startup</strong>, and switch it off there.</li>'
+                 '</ol>'
+                 '<p>Lenovo moves these menus between versions, so the names may differ slightly on yours.</p>'},
+        {'eyebrow': '/03 &mdash; BEFORE YOU REMOVE IT', 'h2': 'First: set the battery the way you want',
+         'html': '<p>On many Lenovo laptops, Vantage is where you choose how the battery charges: full to 100 per cent, or a <strong>conservation</strong> or threshold mode that stops earlier so the battery wears more slowly, which is good for a laptop that&rsquo;s plugged in most of the time. Without Vantage you can&rsquo;t change it, so set it first.</p>'
+                 '<p>Unsure how worn the battery is already? See <a href="/how-to-check-laptop-battery-health/">how to check laptop battery health</a>.</p>'},
+        {'eyebrow': '/04 &mdash; REMOVE IT', 'h2': 'Uninstall Lenovo Vantage properly',
+         'html': '<ol>'
+                 '<li>Open <strong>Settings</strong>, <strong>Apps</strong>, <strong>Installed apps</strong>.</li>'
+                 '<li>Find <strong>Lenovo Vantage</strong> and choose <strong>Uninstall</strong>.</li>'
+                 '<li>Then uninstall <strong>Lenovo Vantage Service</strong>, the background part, if it&rsquo;s listed.</li>'
+                 '<li><strong>Restart</strong> the PC.</li>'
+                 '</ol>'
+                 '<p>You can get Lenovo Vantage back free from the <strong>Microsoft Store</strong> at any time. Driver and BIOS updates are also on Lenovo&rsquo;s support website, and Windows Update brings most drivers.</p>'},
+        {'eyebrow': '/05 &mdash; KEEP IT OR NOT?', 'h2': 'Should you keep it?',
+         'html': '<p><strong>Keep it</strong> if you use its battery mode, want Lenovo&rsquo;s BIOS updates offered to you, or like its keyboard and camera settings. Quieten the messages instead.</p>'
+                 '<p><strong>Remove it</strong> if you never open it and the messages bother you. Windows runs perfectly well without it.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app say what&rsquo;s worth keeping', 'html': '__APP_BOX_MAKERAPP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra=' We can set the battery mode, quieten or remove the Lenovo apps you don&rsquo;t want, and do the BIOS update safely, BitLocker included.')},
+    ],
+    'howToName': 'How to stop Lenovo Vantage messages and pop-ups',
+    'howToSteps': [
+        {'name': 'Open Lenovo Vantage', 'text': 'Open Lenovo Vantage from the Start menu.'},
+        {'name': 'Switch off its messages', 'text': 'Open its settings or preferences, find Messages and switch off app feature and marketing messages.'},
+        {'name': 'Block it in Windows', 'text': 'Settings, System, Notifications: turn Lenovo Vantage off.'},
+        {'name': 'Set the battery first', 'text': 'If you will remove Vantage, choose the battery charging mode you want before you do.'},
+        {'name': 'Or uninstall it', 'text': 'Settings, Apps, Installed apps: uninstall Lenovo Vantage, then Lenovo Vantage Service, and restart.'},
+    ],
+    'faqs': [
+        {'q': 'How do I stop Lenovo Vantage pop-ups?', 'a': '<p>In Vantage, open its settings or preferences, find Messages and switch off the app feature and marketing messages. If they continue, Settings, System, Notifications, and turn Lenovo Vantage off.</p>'},
+        {'q': 'Can I uninstall Lenovo Vantage?', 'a': '<p>Yes. Settings, Apps, Installed apps: uninstall Lenovo Vantage, then Lenovo Vantage Service, and restart. It&rsquo;s free to reinstall from the Microsoft Store.</p>'},
+        {'q': 'Do I need Lenovo Vantage?', 'a': '<p>No, Windows works without it. Keep it if you use its battery charging mode or want Lenovo&rsquo;s BIOS updates offered to you.</p>'},
+        {'q': 'What happens to the battery setting if I remove Vantage?', 'a': '<p>Set it the way you want first: Vantage is where you change it, so you&rsquo;d need Vantage back to change it again.</p>'},
+        {'q': 'Is Lenovo Vantage safe?', 'a': '<p>Yes, it&rsquo;s Lenovo&rsquo;s own app. Keep it updated, as you would any program.</p>'},
+        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a>, <a href="/dell-supportassist-keeps-popping-up/">Dell SupportAssist pop-ups</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/how-to-check-laptop-battery-health/">laptop battery health</a> and <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>.</p>',
+}
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -1741,12 +1968,20 @@ def symptom_pages(setup_url):
         '__APP_BOX_SAC__': pfp._app_box('winsafety', 'Safety settings: is the rest of Windows&rsquo; protection on?',
             '<p style="margin:0">Whatever you decide about Smart App Control, the app checks the protections that stay: which antivirus is on duty (and Defender&rsquo;s <strong>tamper protection</strong>), <strong>SmartScreen</strong>&rsquo;s check on downloads and whether a policy switched it off, the &ldquo;allow this app to make changes?&rdquo; question, and memory integrity. '
             'It doesn&rsquo;t read Smart App Control itself: that&rsquo;s in Windows Security, as above. Each button opens the right Windows setting.</p>', setup_url),
+        # 29 Oct 2026 (programs like ours): the Programs check's own verdicts (programs-rules.json) - CCleaner "not needed",
+        # the PC makers' apps "fine to keep"
+        '__APP_BOX_CCLEANER__': pfp._app_box('programs', 'Programs check: what&rsquo;s worth keeping on your PC',
+            '<p style="margin:0">It looks through your installed programs and names the ones the PC doesn&rsquo;t need &mdash; tune-up and registry cleaners (CCleaner included), driver updaters, adware and programs that no longer get security fixes &mdash; each with the reason in plain English. '
+            'It also says which security program is protecting the PC, and warns when two are running at once. It doesn&rsquo;t clean anything itself: you remove things in Settings, or we can do it with you.</p>', setup_url),
+        '__APP_BOX_MAKERAPP__': pfp._app_box('programs', 'Programs check: what&rsquo;s worth keeping on your PC',
+            '<p style="margin:0">It looks through your installed programs and says which are fine to keep &mdash; the PC maker&rsquo;s own app, HP&rsquo;s, Lenovo&rsquo;s or Dell&rsquo;s, is one of them &mdash; and which the PC doesn&rsquo;t need: tune-up tools, driver updaters, adware and programs that no longer get security fixes, each with the reason. '
+            'It also says which security program is protecting the PC. It only reads: you remove things in Settings.</p>', setup_url),
         '__APP_BOX_BACKUP__': pfp._app_box('backup', 'Backup: is it on, and would your files fit on a drive?',
             '<p style="margin:0">It says which backup is switched on &mdash; File History, OneDrive folder backup or Windows 7&rsquo;s Backup and Restore &mdash; and when it last finished, how big your important files are, and how much space each drive has, so you can see whether a USB drive would hold them. '
             '<strong>Test my backup</strong> opens one real file from the backup and checks it reads back. It never deletes anything without asking.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -1831,4 +2066,18 @@ SYMPTOM_FLOWS = {
                         'h3f': 'All covered{mins}. Nice work.',
                         'tip': 'Plug the USB drive in once a week, and keep it unplugged in between.',
                         'h3s': 'Stuck at a step? We can set it up with you, remotely.'},
+    CCLEANER['slug']: {'h2': 'Tidy the PC the Windows way, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                       'last_yes': 'Done, all tidy', 'ask': 'Done that step?',
+                       'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                       'h3f': 'All tidy{mins}. Nice work.',
+                       'tip': 'Switch on Storage Sense, so the junk files clear themselves from now on.',
+                       'h3s': 'Stuck at a step? We can tidy it with you, remotely.'},
+    HPSA['slug']: {'h2': 'Quieten it, step by step', 'ask': 'Has it gone quiet?',
+                   'yes': 'Yes, it&rsquo;s quiet', 'no': 'Not yet',
+                   'tip': 'Check for HP BIOS updates now and then, or keep the app for that alone.',
+                   'h3s': 'Still popping up? That is a quick remote job.'},
+    VANTAGE['slug']: {'h2': 'Quieten it, step by step', 'ask': 'Has it gone quiet?',
+                      'yes': 'Yes, it&rsquo;s quiet', 'no': 'Not yet',
+                      'tip': 'If the laptop is plugged in most of the time, use the battery conservation mode.',
+                      'h3s': 'Still popping up? That is a quick remote job.'},
 }
