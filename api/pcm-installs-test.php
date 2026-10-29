@@ -136,6 +136,52 @@ file_put_contents($F, '{broken');
 check(inst_mark_ours('81.2.69.160', 'Steve', true, $N) === false && file_get_contents($F) === '{broken', 'an unreadable store is never overwritten by a mark');
 @unlink($F);
 
+echo "G  one PC, two copies: a plan customer's login and someone else's, not signed in (29 Oct 2026)\n";
+@unlink($F);
+$Q = gmmktime(9, 0, 0, 10, 29, 2026); $QD = '2026-10-29';
+$hid = substr(sha1('365inst|9e0354f4f02b'), 0, 16);
+check(inst_note('9e0354f4f02b', 45, false, true, true, '86.163.78.248', $Q) === 'new', 'her copy, signed in to her plan (build 45)');
+check(inst_note('9e0354f4f02b', 46, false, false, false, '86.163.78.248', $Q + 600) === 'updated', 'his copy checks in, not signed in (build 46): noted once');
+$d = json_decode(file_get_contents($F), true); $e = $d['m'][$hid];
+check($e['p'] === 1 && $e['k'] === 1 && $e['v'] === 45 && $e['x'] === $QD && $e['xv'] === 46 && $e['ka'] === $QD, 'the PC stays on her plan, at her version; the other copy is noted (x, xv)', json_encode($e));
+$s = inst_stats($d, 'free', $Q + 600);
+check($s['total'] === 0 && $s['plan'] === 1 && $s['extra'] === 1, 'so the "not on a plan" figure does not go up; the plan PC is flagged as having someone else on it', json_encode(array($s['total'], $s['plan'], $s['extra'])));
+// the hour-by-hour flip that bounced 183/184/183: none of these change anything, and nothing more is written
+$writes = 0;
+foreach (array(array(45, true), array(46, false), array(45, true), array(46, false)) as $i => $c)
+    if (inst_note('9e0354f4f02b', $c[0], false, $c[1], $c[1], '86.163.78.248', $Q + 3600 * ($i + 1)) !== 'same') $writes++;
+$d = json_decode(file_get_contents($F), true);
+check($writes === 0 && inst_stats($d, 'free', $Q + 5 * 3600)['total'] === 0 && inst_stats($d, 'all', $Q + 5 * 3600)['plan'] === 1, 'her copy and his, taking turns all day: the figures never move and nothing more is written', 'writes=' . $writes);
+check(inst_rows($d, 'plan', array(), $Q)[0]['x'] === $QD, 'the plan list carries the day the other copy was seen');
+// the next day only his copy runs: still her plan PC (within INST_KEY_DAYS of her last signed-in check-in)
+inst_note('9e0354f4f02b', 46, false, false, false, '86.163.78.248', $Q + 86400);
+$e = json_decode(file_get_contents($F), true)['m'][$hid];
+check($e['p'] === 1 && $e['x'] === '2026-10-30' && $e['n'] === 2, 'a day when only his copy runs: still her plan PC, and it counts as a day used', json_encode($e));
+// her plan ends: a KEYED check-in is always believed
+inst_note('9e0354f4f02b', 45, false, true, false, '86.163.78.248', $Q + 2 * 86400);
+$e = json_decode(file_get_contents($F), true)['m'][$hid];
+check($e['p'] === 0 && $e['k'] === 1, 'a signed-in check-in that says the plan has ended is believed at once', json_encode($e));
+// nobody signed in for longer than INST_KEY_DAYS: the copy that is left is what the PC is
+inst_note('9e0354f4f02b', 46, false, false, false, '86.163.78.248', $Q + (2 + INST_KEY_DAYS + 1) * 86400);
+$e = json_decode(file_get_contents($F), true)['m'][$hid];
+check($e['k'] === 0 && $e['p'] === 0 && $e['v'] === 46, 'no signed-in check-in for over ' . INST_KEY_DAYS . ' days: the PC counts as not signed in', json_encode($e));
+// an ordinary free PC, never signed in, is unaffected
+inst_note('aaaa5555bbbb', 45, false, false, false, '8.8.8.8', $Q); inst_note('aaaa5555bbbb', 46, false, false, false, '8.8.8.8', $Q + 3600);
+$e = json_decode(file_get_contents($F), true)['m'][substr(sha1('365inst|aaaa5555bbbb'), 0, 16)];
+check($e['v'] === 46 && !isset($e['x']) && $e['ka'] === '', 'a free PC that updates: just a new version, never "someone else"', json_encode($e));
+// rows written before 29 Oct (no ka): a linked one starts from its last day seen
+@unlink($F);
+file_put_contents($F, json_encode(array('v' => 1, 'since' => '2026-10-01', 'm' => array($hid => array('v' => 45, 'w' => 0, 'k' => 1, 'p' => 1, 'o' => 0, 'f' => '2026-10-05', 'l' => '2026-10-28', 'c' => 'GB', 'n' => 9)))));
+inst_note('9e0354f4f02b', 46, false, false, false, '86.163.78.248', $Q);
+$e = json_decode(file_get_contents($F), true)['m'][$hid];
+check($e['p'] === 1 && $e['ka'] === '2026-10-28' && $e['x'] === $QD, 'an older plan row (no ka yet) keeps its plan through the other copy', json_encode($e));
+// the staff list names the PC from the customer records
+$db = array('customers' => array('K1' => array('name' => 'Example Customer', 'tier' => 'pro', 'machines' => array('9e0354f4f02b' => array('name' => 'DESKTOP-EXAMPLE')))));
+$x = inst_extra_people(json_decode(file_get_contents($F), true), $db, $Q);
+check(count($x) === 1 && $x[0]['cust'] === 'Example Customer' && $x[0]['pc'] === 'DESKTOP-EXAMPLE' && $x[0]['plan'] === true && $x[0]['x'] === $QD, 'the staff list: customer, PC name, on a plan, the day the other copy was seen', json_encode($x));
+check(inst_extra_people(json_decode(file_get_contents($F), true), $db, $Q + 8 * 86400) === array(), '...and it drops off after a week with no sign of the other copy');
+@unlink($F);
+
 echo "D  the wiring, at source level\n";
 $P = (string)file_get_contents(__DIR__ . '/pcm.php');
 $i1 = strpos($P, "if (\$action === 'checkin') {"); $i2 = strpos($P, 'inst_note($machine', $i1); $i3 = strpos($P, "if (\$key === '' || !isset(\$db['customers'][\$key])) out(", $i1);

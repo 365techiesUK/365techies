@@ -25371,6 +25371,8 @@ def write_portal_page():
   #p365app .ftabs button { margin:0; padding:.32rem .68rem; font-size: 0.85rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#06101f; }
   /* 1 Oct 2026: PC Manager installs card */
+  #p365app .inst-extra { margin:.4rem 0 .2rem; padding:.55rem .8rem; border:1px solid rgba(240,198,90,.45); border-radius:10px; background:rgba(240,198,90,.06); font-size:.95rem; color:var(--pwhite); }
+  #p365app .inst-extra ul { margin:0; padding-left:1.15rem; line-height:1.5; overflow-wrap:anywhere; }
   #p365app .instbars { display:flex; align-items:flex-end; gap:2px; height:42px; }
   #p365app .instbars span { flex:1; min-width:3px; background:var(--pcyan); border-radius:2px 2px 0 0; opacity:.85; }
   #p365app .instgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem 1.5rem; margin-top:.9rem; }
@@ -34428,6 +34430,15 @@ def write_portal_page():
         + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> (first seen in the last two days)'
         // 14 Oct 2026: on a phone, tablet or Mac the download opens "Send it to your computer"
         + ' \\u00b7 link sent to a computer from a phone, this week: <b>' + ((d.sends || {}).d7 || 0) + '</b></p>';
+      // 29 Oct 2026 (owner: "she's only paying for one ... her husband ... on his profile"): customers' PCs where someone
+      // else - another Windows login - runs PC Manager, not signed in. The PC stays counted once, on its plan; each person
+      // is their own plan, so this is who to ask
+      var xp = d.extra_people || [];
+      if (xp.length) h += '<div class="inst-extra"><p style="margin:.75rem 0 .3rem"><b>\\ud83d\\udc65 Someone else on a customer\\u2019s PC</b> \\u2014 another Windows login on these PCs runs PC Manager, not signed in (each person is their own plan):</p><ul>'
+        + xp.map(function (x) {
+            return '<li><b>' + esc(x.cust || 'A customer') + '</b>' + (x.pc ? ' \\u00b7 ' + esc(x.pc) : '') + ' \\u00b7 ' + (x.plan ? 'on a plan' : 'linked, not on a plan')
+              + ' \\u00b7 the other login has v' + esc(x.xv || '?') + (x.v && x.v !== x.xv ? ' (theirs is v' + esc(x.v) + ')' : '') + ' \\u00b7 last seen ' + esc(x.x) + '</li>';
+          }).join('') + '</ul></div>';
       var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';

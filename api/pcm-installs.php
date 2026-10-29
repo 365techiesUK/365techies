@@ -40,7 +40,6 @@ $sdb = $tok !== '' ? @json_decode((string)@file_get_contents(__DIR__ . '/pcm-dat
 $srec = (is_array($sdb) && isset($sdb['staff'][$tok]) && is_array($sdb['staff'][$tok])) ? $sdb['staff'][$tok] : array();
 $slogin = (string)(isset($srec['login']) ? $srec['login'] : (isset($srec['email']) ? $srec['email'] : ''));
 $by = ucfirst(strtolower(preg_replace('/[^A-Za-z]/', '', (string)strstr($slogin . '@', '@', true))));
-unset($sdb);
 $given = array();
 if ($do === 'trial') {
     $d0 = @json_decode((string)@file_get_contents(inst_file()), true);
@@ -68,6 +67,10 @@ if ($do === 'trial') {
 $d = @json_decode((string)@file_get_contents(inst_file()), true);
 $out = inst_stats(is_array($d) ? $d : array(), $who);
 $out['ours_info'] = inst_ours_info(is_array($d) ? $d : array(), $ip);
+// 29 Oct 2026: customers' PCs where someone else (another Windows login) runs PC Manager, not signed in - named from the
+// customer records, for staff only (each person is their own plan)
+$out['extra_people'] = inst_extra_people(is_array($d) ? $d : array(), $sdb);
+unset($sdb);
 $out['note'] = $note;
 $out['given'] = $given;
 // 9 Oct 2026: the installs themselves (for "Give 30 days free"), with each one's free month

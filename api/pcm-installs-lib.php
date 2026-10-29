@@ -95,6 +95,34 @@ function inst_ours_info($d, $ip, $now = null) {
     return array('nets' => $n, 'here' => $here !== null, 'hereBy' => $here ? (string)(isset($here['by']) ? $here['by'] : '') : '', 'hereSince' => $here ? gmdate('Y-m-d', (int)(isset($here['since']) ? $here['since'] : $here['at'])) : '');
 }
 
+// ---- one PC, two copies (29 Oct 2026) ----
+// Owner: the "not on a plan" figure went 183, 184, 183 all day. The app's sign-in (licence.txt) is kept per Windows user,
+// but the install id is per PC, so a plan customer's PC where someone else - another Windows login - also runs PC
+// Manager, not signed in, flipped between "on a plan" and "not on a plan" at every check-in. Each person is their own
+// plan (owner), so staff want to SEE those PCs, not have them bounce. Now a check-in with NO key never undoes a keyed one
+// from the last INST_KEY_DAYS: the row keeps the signed-in copy's facts, and the other copy is noted - x (the last day it
+// checked in) and xv (its build). A KEYED check-in is always believed, so a plan that ends shows at once. ka = the last
+// day a keyed check-in came (rows from before this start from their last day seen if they were linked).
+if (!defined('INST_KEY_DAYS')) define('INST_KEY_DAYS', 14);
+function inst_merge($e, array $row, $day, $now) {
+    if (!is_array($e)) return array_merge($row, array('ka' => $row['k'] ? $day : ''));
+    $ka = isset($e['ka']) ? (string)$e['ka'] : ((!empty($e['k']) || !empty($e['p'])) ? (string)(isset($e['l']) ? $e['l'] : '') : '');
+    $keep = array();
+    foreach (array('x', 'xv') as $f) if (isset($e[$f])) $keep[$f] = $e[$f];
+    if ($row['k']) return array_merge($row, $keep, array('ka' => $day));
+    if ($ka !== '' && $ka >= gmdate('Y-m-d', $now - INST_KEY_DAYS * 86400))
+        return array('v' => (int)(isset($e['v']) ? $e['v'] : 0), 'w' => (int)(isset($e['w']) ? $e['w'] : 0), 'k' => (int)(isset($e['k']) ? $e['k'] : 0),
+            'p' => (int)(isset($e['p']) ? $e['p'] : 0), 'o' => $row['o'], 'ka' => $ka, 'x' => $day, 'xv' => $row['v']);
+    return array_merge($row, $keep, array('ka' => $ka));
+}
+// true when the stored row already says everything this check-in would write today
+function inst_unchanged($e, array $m, $day) {
+    if ((string)(isset($e['l']) ? $e['l'] : '') !== $day) return false;
+    foreach (array('v', 'w', 'k', 'p', 'o', 'xv') as $f) if ((int)(isset($e[$f]) ? $e[$f] : 0) !== (int)(isset($m[$f]) ? $m[$f] : 0)) return false;
+    foreach (array('ka', 'x') as $f) if ((string)(isset($e[$f]) ? $e[$f] : '') !== (string)(isset($m[$f]) ? $m[$f] : '')) return false;
+    return true;
+}
+
 // $machine: the app's id; $ver: its build number; $w10: true on Windows 10; $linked: the key is a customer record;
 // $plan: that record is on a plan ('pro'); $ip: the caller's address (for the country only). Returns 'new' | 'updated' |
 // 'same' | 'busy' | ''.
@@ -110,11 +138,8 @@ function inst_note($machine, $ver, $w10, $linked, $plan, $ip, $now = null) {
     // the common case - already noted today with the same facts - costs one read and no lock
     $cur = @json_decode((string)@file_get_contents($file), true);
     $row['o'] = (is_array($cur) && inst_is_ours($cur, $ip, $now)) ? 1 : 0;   // checking in over one of our own connections
-    if (is_array($cur) && isset($cur['m'][$id])) {
-        $e = $cur['m'][$id];
-        if ((string)(isset($e['l']) ? $e['l'] : '') === $day && (int)$e['v'] === $ver && (int)$e['w'] === $row['w'] && (int)$e['k'] === $row['k'] && (int)$e['p'] === $row['p']
-            && (int)(isset($e['o']) ? $e['o'] : 0) === $row['o']) return 'same';
-    }
+    if (is_array($cur) && isset($cur['m'][$id]) && is_array($cur['m'][$id])
+        && inst_unchanged($cur['m'][$id], inst_merge($cur['m'][$id], $row, $day, $now), $day)) return 'same';
     $lk = @fopen($file . '.lock', 'c');
     if (!$lk) return '';
     if (!@flock($lk, LOCK_EX | LOCK_NB)) { fclose($lk); return 'busy'; }   // next check-in, an hour on, tries again
@@ -130,10 +155,10 @@ function inst_note($machine, $ver, $w10, $linked, $plan, $ip, $now = null) {
             // n = how many different days it has been used (8 Oct 2026); copies noted before then start from what first/last say
             $n = isset($e['n']) ? (int)$e['n'] : ((string)$e['l'] > (string)$e['f'] ? 2 : 1);
             if ((string)$e['l'] !== $day) $n++;
-            $d['m'][$id] = array_merge($e, $row, array('l' => $day, 'c' => $cc, 'n' => $n));
+            $d['m'][$id] = array_merge($e, inst_merge($e, $row, $day, $now), array('l' => $day, 'c' => $cc, 'n' => $n));
             $what = 'updated';
         } else {
-            $d['m'][$id] = array_merge($row, array('f' => $day, 'l' => $day, 'c' => geo_cc($ip), 'n' => 1));
+            $d['m'][$id] = array_merge(inst_merge(null, $row, $day, $now), array('f' => $day, 'l' => $day, 'c' => geo_cc($ip), 'n' => 1));
             $what = 'new';
         }
         // an install not seen for a year is gone for good
@@ -168,10 +193,44 @@ function inst_rows(array $d, $who, array $trials = array(), $now = null, $max = 
         $v = (int)(isset($e['v']) ? $e['v'] : 0);
         $rows[] = array('id' => (string)$id, 'c' => (string)(isset($e['c']) ? $e['c'] : ''), 'v' => $v, 'vn' => function_exists('pcm_vname') ? pcm_vname($v) : (string)$v,
             'w' => !empty($e['w']), 'f' => $f, 'l' => $l, 'n' => $days, 'how' => $how, 'k' => $k, 'p' => $p,
+            'x' => (string)(isset($e['x']) ? $e['x'] : ''),   // 29 Oct 2026: last day a second copy, not signed in, checked in
             'trial' => isset($trials[$id]) ? $trials[$id] : null);
     }
     usort($rows, function ($a, $b) { $c = strcmp($b['l'], $a['l']); return $c !== 0 ? $c : $b['n'] - $a['n']; });
     return array_slice($rows, 0, $max);
+}
+
+/* 29 Oct 2026 (owner: "she's only paying for one ... he hasn't got a booking email"): the PCs linked to a customer where
+   someone else also runs PC Manager, not signed in - another Windows login (each person is their own plan) - seen in the
+   last 7 days. Named from the customer records ($db = pcm-data.json, read by the caller; staff-only): the customer, the
+   PC's name, whether they're on a plan, the day the other copy last checked in and its version. Newest first. */
+function inst_extra_people(array $d, $db, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $d7 = gmdate('Y-m-d', $now - 6 * 86400);
+    $want = array();
+    foreach ((isset($d['m']) && is_array($d['m'])) ? $d['m'] : array() as $id => $e) {
+        if (!is_array($e) || !empty($e['o']) || (empty($e['k']) && empty($e['p']))) continue;
+        if ((string)(isset($e['x']) ? $e['x'] : '') >= $d7) $want[(string)$id] = $e;
+    }
+    if (!$want) return array();
+    $names = array();
+    foreach ((is_array($db) && isset($db['customers']) && is_array($db['customers'])) ? $db['customers'] : array() as $c) {
+        if (!is_array($c) || !isset($c['machines']) || !is_array($c['machines'])) continue;
+        foreach ($c['machines'] as $mid => $m) {
+            $iid = substr(sha1('365inst|' . preg_replace('/[^a-f0-9]/', '', strtolower((string)$mid))), 0, 16);
+            if (isset($want[$iid]) && !isset($names[$iid]))
+                $names[$iid] = array('cust' => (string)(isset($c['name']) ? $c['name'] : ''), 'pc' => (string)(is_array($m) && isset($m['name']) ? $m['name'] : ''));
+        }
+    }
+    $out = array();
+    foreach ($want as $id => $e) {
+        $v = (int)(isset($e['v']) ? $e['v'] : 0); $xv = (int)(isset($e['xv']) ? $e['xv'] : 0);
+        $out[] = array('id' => $id, 'cust' => isset($names[$id]) ? $names[$id]['cust'] : '', 'pc' => isset($names[$id]) ? $names[$id]['pc'] : '',
+            'plan' => !empty($e['p']), 'x' => (string)$e['x'], 'c' => (string)(isset($e['c']) ? $e['c'] : ''),
+            'v' => function_exists('pcm_vname') ? pcm_vname($v) : (string)$v, 'xv' => function_exists('pcm_vname') ? pcm_vname($xv) : (string)$xv);
+    }
+    usort($out, function ($a, $b) { return strcmp($b['x'], $a['x']); });
+    return $out;
 }
 
 /* What the staff portal shows. $who: 'free' (not on a plan - linked or not; the default, as the owner asked),
@@ -183,7 +242,7 @@ function inst_stats(array $d, $who, $now = null) {
     $out = array('ok' => true, 'since' => (string)(isset($d['since']) ? $d['since'] : ''), 'who' => $who,
         'total' => 0, 'active7' => 0, 'active30' => 0, 'new7' => 0, 'new30' => 0, 'newToday' => 0,
         'kept' => 0, 'once' => 0, 'soon' => 0, 'ours' => 0, 'stopped' => 0, 'days3' => 0,
-        'linked' => 0, 'plan' => 0, 'unlinked' => 0, 'w10' => 0,
+        'linked' => 0, 'plan' => 0, 'unlinked' => 0, 'w10' => 0, 'extra' => 0,
         'countries' => array(), 'versions' => array(), 'daily' => array());
     $cc = array(); $vv = array(); $daily = array();
     for ($i = 29; $i >= 0; $i--) $daily[gmdate('Y-m-d', $now - $i * 86400)] = 0;
@@ -193,6 +252,7 @@ function inst_stats(array $d, $who, $now = null) {
         $p = !empty($e['p']); $k = !empty($e['k']);
         // the whole picture, before the filter
         if ($p) $out['plan']++; elseif ($k) $out['linked']++; else $out['unlinked']++;
+        if (($p || $k) && (string)(isset($e['x']) ? $e['x'] : '') >= $d7) $out['extra']++;   // 29 Oct 2026: someone else on it, not signed in
         if ($who === 'free' && $p) continue;
         if ($who === 'unlinked' && ($k || $p)) continue;
         if ($who === 'plan' && !$p) continue;
