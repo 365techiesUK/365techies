@@ -168,29 +168,31 @@ test('orbit: the speeds are the same table in slower and faster motion', () => {
 });
 
 // ============================================================ Ember Peak
-test('ember: the table, its storeys and toys, and the world the pictures read', () => {
+test('ember: the table (one screen, one storey), its toys, and the world the pictures read', () => {
   S.use('ember');
   const T = E.table('ember').T, W = E.newWorld(2, 0, 365);
-  assert.equal(T.W, 270); assert.ok(T.H >= 620 && T.H <= 700, 'taller than one screen: ' + T.H);
-  assert.equal(W.flippers.length, 4);
-  assert.deepEqual(W.flippers.map((f) => f.side), [-1, 1, -1, 1]);
-  assert.deepEqual(W.flippers.map((f) => f.storey), [0, 0, 1, 1]);
-  assert.equal(W.storeys.length, 2);
+  assert.equal(T.W, 270); assert.ok(T.H >= 446 && T.H <= 470, 'one screen tall: ' + T.H);
+  assert.equal(W.flippers.length, 2);
+  assert.deepEqual(W.flippers.map((f) => f.side), [-1, 1]);
+  assert.deepEqual(W.flippers.map((f) => f.storey), [0, 0]);
+  assert.equal(W.storeys.length, 1);
   for (const s of W.storeys) for (const k of ['id', 'flippers', 'x0', 'x1', 'y0', 'y1', 'approach']) assert.ok(k in s, 'storey has ' + k);
-  assert.ok(W.balls[0].x > T.shooter.x0 && W.balls[0].y > W.storeys[0].approach, 'the first ball waits at the foot of the full-height shooter lane');
+  assert.ok(W.balls[0].x > T.shooter.x0 && W.balls[0].y > W.storeys[0].approach, 'the first ball waits at the foot of the shooter lane');
   const V = W.toys.volcano;
   for (const k of ['pressure', 'rise', 'hold', 'release', 'land', 'carry', 'busy']) assert.ok(k in V, 'volcano has ' + k);
+  assert.ok(T.volcano.y < T.H * 0.35 && T.volcano.x > 60 && T.volcano.x < 125, 'the volcano stands in the upper left middle');
   for (const k of ['st', 't', 'x', 'y']) assert.ok(k in W.toys.geyser, 'geyser has ' + k);
-  assert.equal(W.toys.crabs.length, 3);
+  assert.ok(W.toys.crabs.length >= 2 && W.toys.crabs.length <= 3, 'two or three crabs');
   for (const c of W.toys.crabs) for (const k of ['x', 'y', 'vx', 'vy', 'stun', 'hits']) assert.ok(k in c, 'crab has ' + k);
   assert.equal(W.toys.lava.gates.length, 2);
   for (const k of ['open', 't', 'gates']) assert.ok(k in W.toys.lava, 'lava has ' + k);
   for (const k of ['pending', 't', 'gx']) assert.ok(k in W.toys.quake, 'quake has ' + k);
-  for (const k of ['crater', 'geyser', 'quake', 'crab', 'lava']) assert.ok(k in W.lit, 'lit has ' + k);
-  // no crab path and no geyser inside an approach zone
+  for (const k of ['crater', 'geyser', 'quake', 'crab', 'lava', 'ramp', 'orbitL', 'orbitR', 'drop', 'kick', 'save']) assert.ok(k in W.lit, 'lit has ' + k);
+  assert.ok(T.ramp && T.ramp.entry && T.ramp.path.length > 4 && T.carries[T.volcano.carry], 'the ramp and the sky carry');
+  // no crab path and no geyser inside the approach zone
   const zone = (x, y) => E.inApproach(W, { m: 'free', x, y });
-  T.crabs.forEach((c, i) => c.path.forEach((p) => assert.equal(zone(p[0], p[1] + c.r), -1, 'crab ' + i + ' stays out of the approach zones')));
-  assert.equal(zone(T.geyser.x, T.geyser.y + T.geyser.r), -1, 'the geyser is above the summit approach line');
+  T.crabs.forEach((c, i) => c.path.forEach((p) => assert.equal(zone(p[0], p[1] + c.r), -1, 'crab ' + i + ' stays out of the approach zone')));
+  assert.equal(zone(T.geyser.x, T.geyser.y + T.geyser.r), -1, 'the geyser is above the approach line');
   // scores feel like millions
   assert.ok(E.table('ember').PTS.crater >= 100000 && E.table('ember').PTS.skill >= 1000000);
 });
@@ -201,21 +203,19 @@ test('ember: no ball gets stuck: a fixed batch of 200 random balls, 20 seconds e
 
 test('ember: no ball rests in any named corner', () => corners('ember', 6));
 
-test('ember: every major shot is makeable from some flipper with a timing window of at least 15 ms', () => {
+test('ember: every major shot is makeable from a flipper with a timing window of at least 15 ms', () => {
   S.use('ember');
   const best = (name, ...maps) => Math.max(0, ...maps.map((m) => (m[name] ? m[name].best : 0)));
-  const shoreL = Shots.windows(Shots.sweep(2, 0, 'cradle', false, 0, 700));
-  const shoreR = Shots.windows(Shots.sweep(2, 1, 'cradle', false, 0, 700));
-  const shoreRin = Shots.windows(Shots.sweep(2, 1, 'inlane', false, 300, 1000));
-  const sumR = Shots.windows(Shots.sweep(2, 3, 'cradle', true, 0, 700, { lava: true }));
-  const sumL = Shots.windows(Shots.sweep(2, 2, 'cradle', true, 0, 700, { lava: true }));
-  const sumRup = Shots.windows(Shots.sweep(2, 3, 'cradle', false, 0, 700));
-  const want = { 'orbit R': [shoreL], 'orbit L': [shoreR], 'drop target': [shoreL, shoreR], 'RAMP made': [shoreR, shoreRin], CRATER: [sumRup, sumR], 'lava L': [sumR, sumL], 'lava R': [sumL, sumR], crab: [sumL, sumR, shoreL, shoreR] };
+  const L = Shots.windows(Shots.sweep(2, 0, 'cradle', false, 0, 700));
+  const R = Shots.windows(Shots.sweep(2, 1, 'cradle', false, 0, 700));
+  const Lg = Shots.windows(Shots.sweep(2, 0, 'cradle', true, 0, 700, { lava: true }));
+  const Rg = Shots.windows(Shots.sweep(2, 1, 'cradle', true, 0, 700, { lava: true }));
+  const want = { 'orbit R': [L], 'orbit L': [R], 'drop target': [L, R], 'RAMP made': [L, R], CRATER: [L, R], 'lava L': [Rg, Lg], 'lava R': [Lg, Rg], crab: [L, R] };
   for (const [shot, maps] of Object.entries(want)) assert.ok(best(shot, ...maps) >= 15, shot + ': ' + best(shot, ...maps).toFixed(1) + ' ms');
   // the crater is a skill shot, not a gimme
-  assert.ok(best('CRATER', sumRup) <= 60, 'the crater window is ' + best('CRATER', sumRup).toFixed(1) + ' ms');
-  // and the lava lanes are made from the far summit flipper, not only lobbed in from their own side
-  assert.ok(best('lava L', sumR) >= 15 && best('lava R', sumL) >= 15, 'lava lanes across: ' + best('lava L', sumR).toFixed(1) + ' / ' + best('lava R', sumL).toFixed(1) + ' ms');
+  assert.ok(best('CRATER', L, R) <= 60, 'the crater window is ' + best('CRATER', L, R).toFixed(1) + ' ms');
+  // the lava lanes are made from the far flipper (a cross-table shot)
+  assert.ok(best('lava L', Rg) >= 15 && best('lava R', Lg) >= 15, 'lava lanes across: ' + best('lava L', Rg).toFixed(1) + ' / ' + best('lava R', Lg).toFixed(1) + ' ms');
 });
 
 test('ember: the plunger: weak falls back, a tap goes down the right orbit, each skill lane holds for 3+ frames, full pull goes round', () => {
@@ -247,5 +247,5 @@ test('ember: whole bot games: the ball search never fires', () => {
   S.use('ember');
   const t = Traps.games(6, true);
   assert.equal(t.searches, 0, 'ball searches in ' + (t.secs / 60).toFixed(0) + ' minutes of play');
-  assert.ok(t.craters > 0 && t.ramps > 0 && t.orbits > 0 && t.crabs > 0, 'the bot meets the toys');
+  assert.ok(t.craters > 0 && t.ramps > 0 && t.orbits > 0 && t.crabs > 0 && t.geysers > 0, 'the bot meets the toys: ' + ['craters', 'ramps', 'orbits', 'crabs', 'geysers'].map((k) => k + ' ' + t[k]).join(', '));
 });

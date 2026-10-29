@@ -936,6 +936,14 @@
   // and our own mark; nothing from any real table. paint({ scale, table: 'ember' }), plastic(kind, scale, 'ember'),
   // inserts('ember') (the inserts as lamp data: world3d lights them until lamps.js covers this table).
   var emberCache = {}, emberList = null, emberTags = null;
+  // the lava river printed under the glass (one screen, 29 Oct 2026): [x, y, width] from the volcano's foot (past the
+  // geyser's hot spring) down the middle of the lower field to the lagoon at the drain. world3d.js lays a flowing sheet
+  // of lava along the same line.
+  function river(table) {
+    if (table !== 'ember') return null;
+    return [[92, 142, 7], [86, 160, 8], [79, 182, 9], [75, 204, 10], [78, 226, 10], [88, 248, 11], [102, 270, 12], [113, 292, 12],
+      [119, 316, 13], [122, 342, 13], [124, 366, 14], [125, 388, 15], [125, 410, 16]];
+  }
   function emberB() { return E.table && E.TABLES && E.TABLES.ember ? E.table('ember') : null; }
   function emberT() { var B = emberB(); return B ? B.T : null; }
   function inserts(table) {
@@ -960,12 +968,12 @@
     add({ id: 'geyser', group: 'geyser', shape: 'rect', x: ET.geyser.x, y: ET.geyser.y + 22, w: 24, h: 7, rot: 0, color: '#7ff0ff', text: 'GEYSER' });
     var re = ET.ramp.entry;
     add({ id: 'ramp', group: 'ramp', shape: 'arrow', x: (re.x0 + re.x1) / 2, y: re.y + 30, w: 13, h: 20, rot: 0, color: '#ff9a2e' });
-    add({ id: 'orbitL', group: 'orbits', shape: 'arrow', x: 18, y: 468, w: 10, h: 15, rot: 0, color: '#ffd84a' });
-    add({ id: 'orbitR', group: 'orbits', shape: 'arrow', x: 2 * MI - 18, y: 468, w: 10, h: 15, rot: 0, color: '#3fe0ff' });
+    add({ id: 'orbitL', group: 'orbits', shape: 'arrow', x: 18, y: 258, w: 10, h: 15, rot: 0, color: '#ffd84a' });
+    add({ id: 'orbitR', group: 'orbits', shape: 'arrow', x: 2 * MI - 18, y: 258, w: 10, h: 15, rot: 0, color: '#3fe0ff' });
     B.DROPS.forEach(function (d, i) {
       add({ id: 'drop' + i, group: 'drops', shape: 'rect', x: (d.ax + d.bx) / 2 + d.fx * 9, y: (d.ay + d.by) / 2 + d.fy * 9, w: 7, h: 4, rot: Math.atan2(d.fx, -d.fy), color: '#ff7a1a' });
     });
-    add({ id: 'kick', group: 'kick', shape: 'arrow', x: 16, y: 606, w: 9, h: 14, rot: 0, color: '#ff4a3a' });
+    add({ id: 'kick', group: 'kick', shape: 'arrow', x: 16, y: 430, w: 9, h: 14, rot: 0, color: '#ff4a3a' });
     var F0 = ET.flippers[0];
     add({ id: 'save', group: 'save', shape: 'rect', x: MI, y: F0.y + 8, w: 27, h: 13, rot: 0, color: '#ff3b4a', text: 'SHOOT|AGAIN' });
     var d0 = B.DROPS[2], dr = Math.atan2(B.DROPS[4].by - B.DROPS[0].ay, B.DROPS[4].bx - B.DROPS[0].ax);
@@ -973,11 +981,11 @@
       { text: 'CRATER', x: V.x, y: V.y + V.r + 45, rot: 0, size: 4.4, color: '#ffd27a' },
       { text: 'LAVA', x: L[12].x, y: L[12].y + 17, rot: 0, size: 3.8, color: '#ffb02a' },
       { text: 'LAVA', x: L[13].x, y: L[13].y + 17, rot: 0, size: 3.8, color: '#ffb02a' },
-      { text: 'SUMMIT RAMP', x: (re.x0 + re.x1) / 2, y: re.y + 50, rot: 0, size: 4, color: '#ffd27a' },
-      { text: 'ORBIT', x: 18, y: 396, rot: -Math.PI / 2, size: 4, color: '#3a1606' },
-      { text: 'ORBIT', x: 2 * MI - 18, y: 396, rot: -Math.PI / 2, size: 4, color: '#ffffff' },
+      { text: (ET.names && ET.names.ramp) || 'RAMP', x: (re.x0 + re.x1) / 2, y: re.y + 50, rot: 0, size: 4, color: '#ffd27a' },
+      { text: 'ORBIT', x: 18, y: 196, rot: -Math.PI / 2, size: 4, color: '#3a1606' },
+      { text: 'ORBIT', x: 2 * MI - 18, y: 196, rot: -Math.PI / 2, size: 4, color: '#ffffff' },
       { text: 'OBSIDIAN', x: (d0.ax + d0.bx) / 2 + d0.fx * 20, y: (d0.ay + d0.by) / 2 + d0.fy * 20, rot: dr, size: 4, color: '#ffb02a' },
-      { text: 'KICKBACK', x: 16, y: 576, rot: -Math.PI / 2, size: 3.2, color: '#ff7a5a' }
+      { text: 'KICKBACK', x: 16, y: 400, rot: -Math.PI / 2, size: 3.2, color: '#ff7a5a' }
     ];
     emberList = L;
     return L;
@@ -1000,28 +1008,29 @@
     function step(name, fn) { var c0 = now(); g.save(); gg.save(); fn(); g.restore(); gg.restore(); ms[name] = Math.round((now() - c0) * 10) / 10; }
     function both(fn) { unitT(g, S); unitT(gg, GS); fn(g, false); fn(gg, true); }
     function poly(c, P) { c.beginPath(); P.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.closePath(); }
-    function coastY(x) { return 478 + 9 * Math.sin(x / 21 + 1) + 5 * Math.sin(x / 7.3); }
-    function lagoon() {   // the lagoon round the flippers: widening down to the open sea
+    var RIV = river('ember');
+    function lagoon() {   // the lagoon round the flippers' drain: widening down to the open sea (one screen: from y 404)
       var L = [], R = [], y;
-      for (y = 584; y <= H0 + 2; y += 4) {
-        var hw = 14 + (y - 584) * 0.62 + 3 * Math.sin(y / 9);
-        L.push([MI - hw, y]); R.unshift([MI + hw + 2 * Math.sin(y / 7), y]);
+      for (y = 404; y <= H0 + 2; y += 3) {
+        var hw = 9 + (y - 404) * 0.72 + 2 * Math.sin(y / 7);
+        L.push([MI - hw, y]); R.unshift([MI + hw + 1.5 * Math.sin(y / 5), y]);
       }
       return L.concat(R);
     }
-    var veins = [];   // the lava veins: from the volcano's foot, meandering down across the summit (shared by both canvases)
+    function path(c, P) { c.beginPath(); P.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); }
+    var veins = [];   // the lava veins: from the volcano's foot, meandering down and out across the rock (shared by both canvases)
     (function () {
       var rv = rng(77);
-      [[0.35, 120], [0.75, 150], [1.15, 110], [1.6, 90], [2.15, 70], [0.05, 80]].forEach(function (v) {
-        var a = v[0], x = V.x + Math.cos(a) * (V.r + 3), y = V.y + Math.sin(a) * (V.r + 3), pts = [[x, y]], dir = a, n = Math.round(v[1] / 5);
+      [[0.35, 90], [0.9, 70], [2.3, 80], [2.8, 60], [-0.4, 50], [3.5, 46]].forEach(function (v) {
+        var a = v[0], x = V.x + Math.cos(a) * (V.r + 5), y = V.y + Math.sin(a) * (V.r + 5), pts = [[x, y]], dir = a, n = Math.round(v[1] / 5);
         for (var k = 0; k < n; k++) {
-          dir += (rv() - 0.5) * 0.7; dir = dir * 0.85 + (Math.PI / 2) * 0.15;
+          dir += (rv() - 0.5) * 0.7; dir = dir * 0.88 + (Math.PI / 2) * 0.12;
           x += Math.cos(dir) * 5; y += Math.sin(dir) * 5;
-          if (x < 58 || x > 192 || y > 270) break;
-          if (Math.hypot(x - ET.geyser.x, y - ET.geyser.y) < 22) { dir += 0.9; continue; }
+          if (x < 34 || x > 124 || y < 40 || y > 232) break;
+          if (Math.hypot(x - ET.geyser.x, y - ET.geyser.y) < 20) break;
           pts.push([x, y]);
         }
-        veins.push({ pts: pts, w: 2.4 - veins.length * 0.18 });
+        veins.push({ pts: pts, w: 2.2 - veins.length * 0.15 });
       });
     })();
 
@@ -1035,104 +1044,121 @@
       x.putImageData(d, 0, 0);
       g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
       unitT(g, S);
-      for (var q = 0; q < 7000; q++) { g.fillStyle = r() < 0.55 ? 'rgba(150,140,160,' + (0.08 + r() * 0.2) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * 500, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
+      for (var q = 0; q < 6000; q++) { g.fillStyle = r() < 0.55 ? 'rgba(150,140,160,' + (0.08 + r() * 0.2) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * H0, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
       g.lineCap = 'round';
-      for (q = 0; q < 46; q++) {
-        var cx = r() * W0, cy = r() * 480, a = r() * Math.PI * 2; g.beginPath(); g.moveTo(cx, cy);
+      for (q = 0; q < 40; q++) {
+        var cx = r() * W0, cy = r() * H0, a = r() * Math.PI * 2; g.beginPath(); g.moveTo(cx, cy);
         for (var s2 = 0; s2 < 6; s2++) { a += (r() - 0.5) * 1.2; cx += Math.cos(a) * 4; cy += Math.sin(a) * 4; g.lineTo(cx, cy); }
         g.lineWidth = 0.25 + r() * 0.35; g.strokeStyle = 'rgba(0,0,0,0.55)'; g.stroke();
       }
     });
-    step('beach', function () {   // the golden beach below the rock, with ripples and a scatter of black pebbles
-      unitT(g, S);
-      var P = [[0, H0 + 2]]; for (var x = 0; x <= W0; x += 3) P.push([x, coastY(x)]); P.push([W0, H0 + 2]);
-      softly(g, S, 'rgba(0,0,0,0.75)', 4, 0, -2, function (c) { poly(c, P); c.fillStyle = '#000'; c.fill(); });
-      g.save(); poly(g, P);
-      var gr = g.createLinearGradient(0, 470, 0, H0); gr.addColorStop(0, '#ffd986'); gr.addColorStop(0.5, '#f7c766'); gr.addColorStop(1, '#eeb456');
-      g.fillStyle = gr; g.fill(); g.clip();
-      for (var i = 0; i < 9000; i++) { g.fillStyle = r() < 0.5 ? 'rgba(255,248,220,0.35)' : 'rgba(170,110,40,0.28)'; g.fillRect(r() * W0, 460 + r() * 222, 0.3, 0.3); }
-      g.lineWidth = 0.35;
-      for (var y = 468; y < H0; y += 5.5) {
-        g.strokeStyle = 'rgba(190,130,50,0.35)'; g.beginPath();
-        for (x = 0; x <= W0; x += 4) { var yy = y + Math.sin(x / 13 + y) * 1.4 + Math.sin(x / 5 + y * 0.3) * 0.4; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); }
-        g.stroke();
-      }
-      for (i = 0; i < 140; i++) { var px = r() * W0, py = coastY(px) + Math.pow(r(), 2) * 40; g.fillStyle = 'rgba(30,24,30,0.85)'; g.beginPath(); g.ellipse(px, py, 0.6 + r() * 1.4, 0.5 + r() * 0.9, r() * 3, 0, Math.PI * 2); g.fill(); }
-      g.restore();
+    step('glowfield', function () {   // the lower half lit by the lava: a warm wash up from the river, hot cracks in the rock
+      unitT(g, S); unitT(gg, GS);
+      var wash = g.createLinearGradient(0, 230, 0, 420); wash.addColorStop(0, 'rgba(255,90,20,0)'); wash.addColorStop(0.6, 'rgba(255,90,20,0.16)'); wash.addColorStop(1, 'rgba(255,120,30,0.24)');
+      g.fillStyle = wash; g.fillRect(0, 230, W0, 190);
+      var rc = rng(19);
+      both(function (c, glow) {   // hot cracks branching off the river across the lower rock (both canvases: they glow)
+        c.lineCap = 'round'; c.lineJoin = 'round';
+        for (var k = 0; k < 18; k++) {
+          var p = RIV[3 + Math.floor(rc() * (RIV.length - 5))], side = rc() < 0.5 ? -1 : 1, x = p[0] + side * p[2] * 0.4, y = p[1], a = side < 0 ? Math.PI + (rc() - 0.5) * 0.9 : (rc() - 0.5) * 0.9, pts = [[x, y]];
+          for (var j = 0; j < 4 + rc() * 6; j++) { a += (rc() - 0.5) * 0.8; x += Math.cos(a) * 4.5; y += Math.sin(a) * 4.5; if (x < 60 || x > 190 || y > 400) break; pts.push([x, y]); }
+          [[glow ? 2.4 : 1.8, glow ? 'rgba(255,80,10,0.55)' : 'rgba(30,6,2,0.8)'], [glow ? 1.1 : 0.8, glow ? '#ff8a1a' : '#ff6a10'], [0.3, glow ? '#ffe08a' : '#ffd060']].forEach(function (st) { path(c, pts); c.lineWidth = st[0]; c.strokeStyle = st[1]; c.stroke(); });
+        }
+      });
+      // warm pools of light round the slings (the lava lights their plastics from below)
+      ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 30, [255, 110, 30], 0.35); pool(gg, cx, cy, 26, [255, 100, 20], 0.4); });
     });
-    step('water', function () {   // the lagoon (the drain is the open sea), the right orbit's channel, the shooter lane's deep water
+    step('river', function () {   // the lava river under the glass: a dark crust bank, molten core, a yellow heart (glows)
+      unitT(g, S); unitT(gg, GS);
+      function band(c, k, col) { c.lineCap = 'round'; c.lineJoin = 'round'; for (var i = 1; i < RIV.length; i++) { var a = RIV[i - 1], b = RIV[i]; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineWidth = (a[2] + b[2]) / 2 * k; c.strokeStyle = col; c.stroke(); } }
+      softly(g, S, 'rgba(255,90,20,0.8)', 4, 0, 0, function (c) { band(c, 1.25, '#ff5a10'); });
+      band(g, 1.15, '#2a0c04'); band(g, 0.9, '#a8300a'); band(g, 0.62, '#ff6a10'); band(g, 0.26, '#ffd060');
+      var rl = rng(31);   // crust plates drifting on it
+      for (var q = 0; q < 70; q++) { var i = 1 + Math.floor(rl() * (RIV.length - 2)), p = RIV[i], o = (rl() - 0.5) * p[2] * 0.6; g.fillStyle = 'rgba(40,10,4,' + (0.5 + rl() * 0.4) + ')'; g.beginPath(); g.ellipse(p[0] + o, p[1] + (rl() - 0.5) * 20, 0.8 + rl() * 1.8, 1.2 + rl() * 2.5, rl() * 3, 0, Math.PI * 2); g.fill(); }
+      band(gg, 1.6, 'rgba(255,80,10,0.5)'); band(gg, 0.8, '#ff8a1a'); band(gg, 0.3, '#ffe08a');
+    });
+    step('water', function () {   // the lagoon (the drain is the open sea, a golden sand rim round it), the right orbit's channel, the shooter lane
       unitT(g, S); unitT(gg, GS);
       function water(P, top, bottom, deep) {
         g.save(); poly(g, P);
         var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#6ff0e4'); gr.addColorStop(0.35, '#22cfd8'); gr.addColorStop(1, deep);
         g.fillStyle = gr; g.fill(); g.clip();
         g.globalCompositeOperation = 'lighter'; g.lineWidth = 0.3;
-        for (var i = 0; i < 260; i++) { var x = r() * W0, y = top + r() * (bottom - top), l = 1.5 + r() * 4; g.strokeStyle = 'rgba(210,255,255,' + (0.12 + r() * 0.25) + ')'; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 0.8, x + l, y); g.stroke(); }
+        for (var i = 0; i < 200; i++) { var x = r() * W0, y = top + r() * (bottom - top), l = 1.5 + r() * 4; g.strokeStyle = 'rgba(210,255,255,' + (0.12 + r() * 0.25) + ')'; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 0.8, x + l, y); g.stroke(); }
         g.restore();
         softly(g, S, 'rgba(255,255,255,0.9)', 1.6, 0, 0, function (c) { poly(c, P); c.lineWidth = 1.2; c.strokeStyle = '#fff'; c.stroke(); });
         g.save(); poly(g, P); g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,255,255,0.95)'; g.lineJoin = 'round'; g.stroke(); g.restore();
       }
-      water(lagoon(), 584, H0, '#0a5fa8');
-      var ch = [[221, 150], [243, 150], [243, 496], [221, 496]];
-      water(ch, 150, 496, '#0e86c4');
+      var LG = lagoon();
+      softly(g, S, 'rgba(0,0,0,0.6)', 3, 0, -1, function (c) { poly(c, LG); c.lineWidth = 9; c.strokeStyle = '#000'; c.stroke(); });
+      g.save(); poly(g, LG); g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = '#f7c766'; g.stroke(); g.lineWidth = 5; g.strokeStyle = '#ffd986'; g.stroke(); g.restore();
+      water(LG, 404, H0, '#0a5fa8');
+      var ch = [[221, 150], [243, 150], [243, 300], [221, 300]];
+      water(ch, 150, 300, '#0e86c4');
       var sh = [[245, 150], [265, 150], [265, H0 + 2], [245, H0 + 2]];
       g.save(); poly(g, sh); var sg = g.createLinearGradient(0, 150, 0, H0); sg.addColorStop(0, '#1b78d8'); sg.addColorStop(1, '#0b3f8e'); g.fillStyle = sg; g.fill(); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       chevrons(g, [[255, H0 - 40], [255, 170]], 22, 'rgba(255,214,90,0.9)', 1, 3.4);
+      // where the river pours into the lagoon: a glowing fan in the shallows
+      var e = RIV[RIV.length - 1]; pool(g, e[0], e[1] + 4, 16, [255, 150, 60], 0.5); pool(gg, e[0], e[1] + 4, 18, [255, 120, 30], 0.55);
       // the hot spring round the geyser: silica terraces, a turquoise pool
       var G = ET.geyser;
-      for (var k = 5; k >= 0; k--) { g.beginPath(); for (var a = 0; a <= 40; a++) { var an = a / 40 * Math.PI * 2, rr = G.r + 2 + k * 1.6 + Math.sin(an * 5 + k) * 0.8; if (a) g.lineTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); else g.moveTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); } g.closePath(); g.fillStyle = k % 2 ? '#e9e2c8' : '#f8f4e6'; g.fill(); }
+      for (var k = 5; k >= 0; k--) { g.beginPath(); for (var a = 0; a <= 40; a++) { var an = a / 40 * Math.PI * 2, rr = G.r + 2 + k * 1.6 + Math.sin(an * 5 + k) * 0.8; if (a) g.lineTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); else g.moveTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); } g.closePath(); g.fillStyle = k % 2 ? '#b9ddd6' : '#d8eee8'; g.fill(); }
       var pg = g.createRadialGradient(G.x, G.y, 1, G.x, G.y, G.r + 2); pg.addColorStop(0, '#c8fbff'); pg.addColorStop(0.45, '#33d6e0'); pg.addColorStop(1, '#0b8fb8');
       g.fillStyle = pg; g.beginPath(); g.arc(G.x, G.y, G.r + 2, 0, Math.PI * 2); g.fill();
       pool(gg, G.x, G.y, G.r * 2.4, [60, 220, 240], 0.35);
     });
     step('summit', function () {   // the scorched ring round the volcano, lava veins, the lava lanes, the fumaroles' crusts
       unitT(g, S); unitT(gg, GS);
-      var sr = g.createRadialGradient(V.x, V.y, V.r, V.x, V.y, V.r + 26); sr.addColorStop(0, 'rgba(10,4,4,0.95)'); sr.addColorStop(0.5, 'rgba(60,14,6,0.6)'); sr.addColorStop(1, 'rgba(60,14,6,0)');
+      // a pale ash field round the cone's foot, so the black cone stands out against it at the home view
+      var sr = g.createRadialGradient(V.x, V.y, V.r + 4, V.x, V.y, V.r + 34); sr.addColorStop(0, 'rgba(196,180,168,0.95)'); sr.addColorStop(0.55, 'rgba(150,130,120,0.6)'); sr.addColorStop(1, 'rgba(120,100,90,0)');
       g.fillStyle = sr; g.fillRect(V.x - 60, V.y - 60, 120, 120);
+      var ra = rng(9); for (var q = 0; q < 500; q++) { var aa = ra() * Math.PI * 2, dd = V.r + 6 + Math.pow(ra(), 1.5) * 26; g.fillStyle = ra() < 0.6 ? 'rgba(40,30,30,0.5)' : 'rgba(230,220,210,0.5)'; g.fillRect(V.x + Math.cos(aa) * dd, V.y + Math.sin(aa) * dd, 0.4 + ra() * 0.6, 0.4 + ra() * 0.6); }
       both(function (c, glow) {
         c.lineCap = 'round'; c.lineJoin = 'round';
-        // cracks round the volcano's foot
         var rc = rng(5);
-        for (var k = 0; k < 16; k++) { var a = k / 16 * Math.PI * 2 + rc() * 0.3, x = V.x + Math.cos(a) * (V.r + 1), y = V.y + Math.sin(a) * (V.r + 1); c.beginPath(); c.moveTo(x, y); for (var j = 0; j < 3; j++) { a += (rc() - 0.5) * 0.5; x += Math.cos(a) * 4; y += Math.sin(a) * 4; c.lineTo(x, y); } c.lineWidth = glow ? 1.6 : 0.9; c.strokeStyle = glow ? '#ff8a1a' : '#ff6a1a'; c.stroke(); }
-        // the veins: a dark crust, a hot orange core, a yellow heart
+        for (var k = 0; k < 16; k++) { var a = k / 16 * Math.PI * 2 + rc() * 0.3, x = V.x + Math.cos(a) * (V.r + 6), y = V.y + Math.sin(a) * (V.r + 6); c.beginPath(); c.moveTo(x, y); for (var j = 0; j < 3; j++) { a += (rc() - 0.5) * 0.5; x += Math.cos(a) * 4; y += Math.sin(a) * 4; c.lineTo(x, y); } c.lineWidth = glow ? 1.6 : 0.9; c.strokeStyle = glow ? '#ff8a1a' : '#ff6a1a'; c.stroke(); }
         veins.forEach(function (v) {
           [[v.w * 2.2, glow ? 'rgba(255,80,10,0.5)' : 'rgba(30,6,2,0.85)'], [v.w, glow ? '#ff8a1a' : '#ff6a10'], [v.w * 0.4, glow ? '#ffe08a' : '#ffd060']].forEach(function (st) {
-            c.beginPath(); v.pts.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.lineWidth = st[0]; c.strokeStyle = st[1]; c.stroke();
+            path(c, v.pts); c.lineWidth = st[0]; c.strokeStyle = st[1]; c.stroke();
           });
         });
-        // the lava lanes, molten
-        ET.lava.gates.forEach(function (gt) {
-          var left = gt[5] > gt[0], x0 = left ? 30 : gt[0], x1 = left ? gt[0] : 2 * MI - 30, y0 = 140, y1 = Math.max(gt[1], gt[3]);
+        // the lava lanes, molten (one screen: each gate lies across its lane's mouth; the lane runs up from it)
+        ET.lava.gates.forEach(function (gt, gi) {
+          var x0 = Math.min(gt[0], gt[2]), x1 = Math.max(gt[0], gt[2]), y1 = Math.min(gt[1], gt[3]), y0 = y1 - 76;
           var lg = c.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, glow ? '#a02a06' : '#6a1606'); lg.addColorStop(0.5, glow ? '#ff7a10' : '#ff6a10'); lg.addColorStop(1, glow ? '#a02a06' : '#6a1606');
           c.fillStyle = lg; c.fillRect(x0, y0, x1 - x0, y1 - y0);
-          var rl = rng(left ? 3 : 4);
-          for (var q = 0; q < 26; q++) { var xx = x0 + 3 + rl() * (x1 - x0 - 6), yy = y0 + rl() * (y1 - y0); c.beginPath(); c.moveTo(xx, yy); c.lineTo(xx + (rl() - 0.5) * 3, yy + 6 + rl() * 12); c.lineWidth = 0.6 + rl() * 1.2; c.strokeStyle = glow ? '#ffe08a' : 'rgba(255,214,96,0.9)'; c.stroke(); }
-          if (!glow) for (q = 0; q < 14; q++) { c.fillStyle = 'rgba(30,8,4,0.75)'; c.beginPath(); c.ellipse(x0 + 3 + rl() * (x1 - x0 - 6), y0 + rl() * (y1 - y0), 1 + rl() * 2, 2 + rl() * 3.5, 0, 0, Math.PI * 2); c.fill(); }
+          var rl = rng(3 + gi);
+          for (var q = 0; q < 22; q++) { var xx = x0 + 3 + rl() * (x1 - x0 - 6), yy = y0 + rl() * (y1 - y0); c.beginPath(); c.moveTo(xx, yy); c.lineTo(xx + (rl() - 0.5) * 3, yy + 6 + rl() * 12); c.lineWidth = 0.6 + rl() * 1.2; c.strokeStyle = glow ? '#ffe08a' : 'rgba(255,214,96,0.9)'; c.stroke(); }
+          if (!glow) for (q = 0; q < 12; q++) { c.fillStyle = 'rgba(30,8,4,0.75)'; c.beginPath(); c.ellipse(x0 + 3 + rl() * (x1 - x0 - 6), y0 + rl() * (y1 - y0), 1 + rl() * 2, 2 + rl() * 3.5, 0, 0, Math.PI * 2); c.fill(); }
         });
       });
-      // the fumaroles: sulphur crusts round each one, a warm glow
       ET.bumpers.forEach(function (b) {
         var cr = g.createRadialGradient(b[0], b[1], b[2], b[0], b[1], b[2] + 13); cr.addColorStop(0, 'rgba(240,214,70,0.8)'); cr.addColorStop(0.6, 'rgba(220,170,40,0.35)'); cr.addColorStop(1, 'rgba(200,140,30,0)');
         g.fillStyle = cr; g.beginPath(); g.arc(b[0], b[1], b[2] + 13, 0, Math.PI * 2); g.fill();
         pool(gg, b[0], b[1], b[2] * 2.6, [255, 120, 30], 0.3);
       });
-      // the skill lanes: three slots under the arch, dark with a gold edge
       for (var i = 0; i < 3; i++) { var sx = 146 + i * 24; g.fillStyle = 'rgba(14,8,10,0.85)'; g.fillRect(sx + 2.5, 62, 19, 30); g.strokeStyle = 'rgba(255,207,106,0.8)'; g.lineWidth = 0.6; g.strokeRect(sx + 2.5, 62, 19, 30); }
     });
-    step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes
-      unitT(g, S);
+    step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes (lit: they glow)
+      unitT(g, S); unitT(gg, GS);
       g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#d49a3a'); lg.addColorStop(0.5, '#ffd27a'); lg.addColorStop(1, '#d49a3a');
-      g.fillStyle = lg; g.fillRect(7, 150, 22, 346); g.restore();
+      g.fillStyle = lg; g.fillRect(7, 140, 22, 160); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       var re = ET.ramp.entry;
-      g.save(); var rg = g.createLinearGradient(0, 400, 0, 456); rg.addColorStop(0, '#ff8a1a'); rg.addColorStop(1, '#c84a0a');
-      g.fillStyle = rg; g.fillRect(re.x0 - 1, 404, re.x1 - re.x0 + 2, 50); g.restore();
-      // the shore's lanes: outlanes shallow water (danger), inlanes gold
-      lanePanel(g, [[16, 504], [16, 640]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
-      lanePanel(g, [[2 * MI - 16, 504], [2 * MI - 16, 640]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
-      lanePanel(g, [[37.5, 520], [37.5, 604], [52, 618]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
-      lanePanel(g, [[2 * MI - 37.5, 520], [2 * MI - 37.5, 604], [2 * MI - 52, 618]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+      g.save(); var rg = g.createLinearGradient(0, re.y - 34, 0, re.y + 6); rg.addColorStop(0, '#ff8a1a'); rg.addColorStop(1, '#c84a0a');
+      g.fillStyle = rg; g.fillRect(re.x0 - 1, re.y - 34, re.x1 - re.x0 + 2, 40); g.restore();
+      var F0 = ET.flippers[0], fy = F0.y, inX = 38, outX = 16;
+      // the outlanes: shallow water running out to the sea (danger); the inlanes: lava-lit gold, glowing
+      lanePanel(g, [[outX, fy - 86], [outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
+      lanePanel(g, [[2 * MI - outX, fy - 86], [2 * MI - outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
+      lanePanel(g, [[inX - 0.5, fy - 120], [inX - 0.5, fy - 30], [inX + 14, fy - 16]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+      lanePanel(g, [[2 * MI - inX + 0.5, fy - 120], [2 * MI - inX + 0.5, fy - 30], [2 * MI - inX - 14, fy - 16]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+      [inX - 0.5, 2 * MI - inX + 0.5].forEach(function (x) {   // the inlanes' glow (emissive), a hot line down each middle
+        var lgg = gg.createLinearGradient(x - 6, 0, x + 6, 0); lgg.addColorStop(0, 'rgba(255,120,20,0)'); lgg.addColorStop(0.5, 'rgba(255,170,60,0.55)'); lgg.addColorStop(1, 'rgba(255,120,20,0)');
+        gg.fillStyle = lgg; gg.fillRect(x - 6, fy - 120, 12, 92);
+      });
+      [outX, 2 * MI - outX].forEach(function (x) { var lgg = gg.createLinearGradient(x - 7, 0, x + 7, 0); lgg.addColorStop(0, 'rgba(40,200,220,0)'); lgg.addColorStop(0.5, 'rgba(60,220,240,0.35)'); lgg.addColorStop(1, 'rgba(40,200,220,0)'); gg.fillStyle = lgg; gg.fillRect(x - 7, fy - 86, 14, 106); });
     });
     step('guides', function () {   // contact shadows under the walls, then a printed band: gold edge, dark core
       unitT(g, S);
@@ -1167,21 +1193,6 @@
       ET.sensors.lines.forEach(function (l) { g.beginPath(); g.moveTo(l[1], l[2]); g.lineTo(l[3], l[4]); g.lineWidth = 3.4; g.strokeStyle = 'rgba(0,0,0,0.5)'; g.stroke(); g.lineWidth = 0.8; g.strokeStyle = 'rgba(255,240,200,0.8)'; g.stroke(); });
       // the closed spaces (the summit deck, the obsidian block): dark under the rock blocks the 3D look raises there
       (ET.voids || []).forEach(function (v) { poly(g, v); g.fillStyle = '#120e14'; g.fill(); });
-    });
-    step('words', function () {   // our island's name on the beach right of the ramp lane, the sun rising behind it
-      unitT(g, S);
-      var cx = 177, cy = 436;
-      for (var k = 0; k < 13; k++) { var a = Math.PI + k / 12 * Math.PI; g.beginPath(); g.moveTo(cx, cy - 4); g.lineTo(cx + Math.cos(a - 0.08) * 34, cy - 4 + Math.sin(a - 0.08) * 34); g.lineTo(cx + Math.cos(a + 0.08) * 34, cy - 4 + Math.sin(a + 0.08) * 34); g.closePath(); g.fillStyle = 'rgba(255,240,170,0.35)'; g.fill(); }
-      var sg = g.createRadialGradient(cx, cy - 4, 2, cx, cy - 4, 14); sg.addColorStop(0, '#fff6c8'); sg.addColorStop(1, 'rgba(255,190,70,0.95)');
-      g.fillStyle = sg; g.beginPath(); g.arc(cx, cy - 4, 13, Math.PI, 0); g.fill();
-      [['EMBER', cy - 6, 12], ['PEAK', cy + 8, 12]].forEach(function (w) {
-        g.save(); g.font = 'italic 900 ' + w[2] + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
-        var wm = g.measureText(w[0]).width, kx = Math.min(1, 54 / wm);
-        g.translate(cx, w[1]); g.scale(kx, 1);
-        g.lineWidth = 2.4 / kx; g.strokeStyle = '#3a1206'; g.strokeText(w[0], 0, 0);
-        var tg = g.createLinearGradient(0, -10, 0, 0); tg.addColorStop(0, '#fff6c0'); tg.addColorStop(0.45, '#ffc23a'); tg.addColorStop(0.55, '#ff8a1a'); tg.addColorStop(1, '#e8501a');
-        g.fillStyle = tg; g.fillText(w[0], 0, 0); g.restore();
-      });
     });
     step('inserts', function () {
       unitT(g, S); inserts('ember').forEach(function (l) { insertUnlit(g, l); });
@@ -1232,5 +1243,5 @@
     return out;
   }
 
-  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, plastic: plastic, inserts: inserts, tags: emberTagsOf, version: 3 };
+  root.PinArt = { paint: paint, lampSprite: lampSprite, quad: quad, plastic: plastic, inserts: inserts, tags: emberTagsOf, river: river, version: 4 };
 })(typeof self !== 'undefined' ? self : this);

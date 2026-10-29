@@ -10,7 +10,7 @@
  *  - NUDGES: now and then at any moment, and often when a ball heads for an outlane or the drain gap (it mostly
  *    stops before a tilt, but not always);
  *  - pulls the plunger by a random amount after a random wait (and sometimes just taps it).
- * One button works every flipper on its side, both storeys. MessyBot.create(seed, opt) -> function (W) -> input.
+ * One button works every flipper on its side (however many pairs a table has). MessyBot.create(seed, opt) -> function (W) -> input.
  * In node: require('./messybot.cjs'); in a page (camera-preview.html) load it after engine.js: window.MessyBot. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('../../games/pinball/engine.js'));

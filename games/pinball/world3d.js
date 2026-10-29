@@ -10,7 +10,7 @@
  * step to the inlane), the STEAM GEYSER (a hot-spring vent and a column of steam puffs: wisps, a warning puff, the
  * burst), the MAGMA CRABS (jointed parts: a shell with a glowing back, six legs that step as it walks, claws, eye
  * stalks), the LAVA GATES (they rise to open the lava lanes, whose lava flows brighter), FUMAROLE bumpers, OBSIDIAN
- * drop targets and the summit deck. Beyond the cabinet: blue sky, a turquoise sea, the island's rock and a few
+ * drop targets, the lava river under the glass (one screen, 29 Oct 2026) and the sunset backbox. Beyond the cabinet: blue sky, a turquoise sea, the island's rock and a few
  * islands on the horizon (baked, a handful of draw calls), so a moving camera shows a world.
  *
  * Coordinates: table x 0..W left to right, y 0..H from the arch DOWN to the flippers, heights in the same units (the
@@ -55,7 +55,7 @@ const wx = (x) => x - HW, wz = (y) => y - ZC;
 const KEY = new THREE.Vector3(-60, 400, 230).normalize();
 const SHX = -KEY.x / KEY.y, SHY = -KEY.z / KEY.y;
 // heights (table units) - everything stands up
-const H = { rail: 18, guide: 13, arch: 21, wood: 30, front: 22, bumpCap: 26, drop: 17, apron: 6, sling: 16, rampWall: 16, post: 19, void: 12, gate: 13 };
+const H = { rail: 18, guide: 13, arch: 21, wood: 30, front: 22, bumpCap: 26, drop: 17, apron: 6, sling: 16, rampWall: 16, post: 19, void: 12, gate: 9 };
 const WOOD_L = -36, WOOD_R = 308;
 const FOV = 32, HOME_TILT = 28;
 // 365 Invaders' pixel invaders (ours), for the old space table
@@ -447,13 +447,40 @@ function flipperShadowCanvas(f) {   // a soft shadow of a bat, pointing along +x
   g.beginPath(); g.moveTo(pad * k - 4000, m / 2 - f.r0 * k); g.lineTo((pad + f.len) * k - 4000, m / 2 - f.r1 * k); g.lineTo((pad + f.len) * k - 4000, m / 2 + f.r1 * k); g.lineTo(pad * k - 4000, m / 2 + f.r0 * k); g.fill();
   return { c, pad, w: n / k, h: m / k };
 }
+// Ember Peak's backbox panel (one screen, 29 Oct 2026: the strip above the arch the fill framing leaves when the phone's
+// width binds): a sunset over the sea, the volcano's silhouette smoking, our island's name. Same size as the speaker panel.
+function islandBackCanvas() {
+  const k = 4, w = (WOOD_R - WOOD_L) * k, h = 60 * k, c = cv(w, h), g = c.getContext('2d'), X = (x) => (x - WOOD_L) * k, r = rnd(29);
+  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#2a0f3a'); q.addColorStop(0.45, '#b8361a'); q.addColorStop(0.75, '#ff9a2e'); q.addColorStop(1, '#ffd36a');
+  g.fillStyle = q; g.fillRect(0, 0, w, h);
+  const sun = g.createRadialGradient(X(214), h * 0.86, 4, X(214), h * 0.86, 30 * k); sun.addColorStop(0, '#fff6c8'); sun.addColorStop(0.25, 'rgba(255,214,110,0.9)'); sun.addColorStop(1, 'rgba(255,150,60,0)');
+  g.fillStyle = sun; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#1a0a10';   // the volcano and the island's ridge, black against the sky
+  g.beginPath(); g.moveTo(0, h); g.lineTo(0, h * 0.86); g.lineTo(X(20), h * 0.8); g.lineTo(X(70), h * 0.42); g.lineTo(X(84), h * 0.36); g.lineTo(X(98), h * 0.42); g.lineTo(X(150), h * 0.84); g.lineTo(X(240), h * 0.9); g.lineTo(w, h * 0.86); g.lineTo(w, h); g.closePath(); g.fill();
+  g.save(); g.shadowColor = '#ff6a1a'; g.shadowBlur = 18; g.strokeStyle = '#ff8a1a'; g.lineWidth = 6; g.lineCap = 'round';
+  for (const [x0, x1] of [[78, 64], [90, 104], [84, 86]]) { g.beginPath(); g.moveTo(X(x0), h * 0.4); g.quadraticCurveTo(X((x0 + x1) / 2 + 3), h * 0.55, X(x1), h * 0.7); g.stroke(); }
+  g.restore();
+  for (let i = 0; i < 26; i++) { const t = i / 26, a = 0.35 * (1 - t); g.fillStyle = 'rgba(70,50,60,' + a + ')'; g.beginPath(); g.arc(X(84 + t * 46 + Math.sin(t * 7) * 6), h * (0.33 - t * 0.32), (5 + t * 14) * k, 0, Math.PI * 2); g.fill(); }
+  for (let i = 0; i < 60; i++) { g.fillStyle = 'rgba(255,' + (140 + r() * 100 | 0) + ',60,' + (0.4 + r() * 0.5) + ')'; g.fillRect(X(70 + r() * 30), h * (0.05 + r() * 0.3), 3, 3); }
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.save(); g.shadowColor = '#ff6a1a'; g.shadowBlur = 24; g.lineJoin = 'round'; g.font = 'italic 900 ' + (25 * k) + 'px "Arial Black", Arial, sans-serif';
+  g.lineWidth = 16; g.strokeStyle = '#3a1206'; g.strokeText('EMBER PEAK', X(176), h * 0.46);
+  const tg = g.createLinearGradient(0, h * 0.3, 0, h * 0.62); tg.addColorStop(0, '#fff6c0'); tg.addColorStop(0.45, '#ffc23a'); tg.addColorStop(0.55, '#ff8a1a'); tg.addColorStop(1, '#e8501a');
+  g.fillStyle = tg; g.fillText('EMBER PEAK', X(176), h * 0.46); g.restore();
+  g.save(); g.fillStyle = '#fff3c4'; g.font = 'bold ' + (8 * k) + 'px "Arial Black", Arial, sans-serif'; g.shadowColor = '#000'; g.shadowBlur = 8; g.fillText('365 PINBALL HERO', X(176), h * 0.8); g.restore();
+  return c;
+}
 // the volcano's skin, wrapped round the cone (u round it, 0 = facing the player; v up it): black rock, a crusted rim,
 // and on the glow canvas lava veins running down from the crater and the glowing mouth at the front, at its foot
 function coneCanvases() {
   const w = 512, h = 256, col = cv(w, h), glo = cv(w, h), g = col.getContext('2d'), gg = glo.getContext('2d'), r = rnd(71);
   g.drawImage(noiseCanvas(64, 32, 5, 10), 0, 0, w, h);
-  g.globalCompositeOperation = 'multiply'; g.fillStyle = '#3a3036'; g.fillRect(0, 0, w, h); g.globalCompositeOperation = 'source-over';
-  g.fillStyle = 'rgba(10,8,12,0.55)'; g.fillRect(0, 0, w, h);
+  g.globalCompositeOperation = 'multiply'; g.fillStyle = '#5a4c50'; g.fillRect(0, 0, w, h); g.globalCompositeOperation = 'source-over';
+  g.fillStyle = 'rgba(10,8,12,0.3)'; g.fillRect(0, 0, w, h);
+  const ash = g.createLinearGradient(0, 0, 0, h); ash.addColorStop(0, 'rgba(190,176,170,0.6)'); ash.addColorStop(0.45, 'rgba(120,104,104,0.25)'); ash.addColorStop(1, 'rgba(10,6,8,0.45)');
+  g.fillStyle = ash; g.fillRect(0, 0, w, h);   // grey ash high up, warm brown rock at the foot: the cone's form reads from above
+  g.lineCap = 'round';
+  for (let i = 0; i < 26; i++) { let x = r() * w, y = h * 0.04; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 8; k++) { x += (r() - 0.5) * 10; y += h * 0.11; g.lineTo(x, y); } g.lineWidth = 2 + r() * 4; g.strokeStyle = 'rgba(8,6,8,0.55)'; g.stroke(); }
   for (let i = 0; i < 900; i++) { g.fillStyle = r() < 0.5 ? 'rgba(120,110,120,0.25)' : 'rgba(0,0,0,0.35)'; g.fillRect(r() * w, r() * h, 1 + r() * 3, 1 + r() * 2); }
   const rim = g.createLinearGradient(0, 0, 0, h * 0.16); rim.addColorStop(0, '#5a2a18'); rim.addColorStop(1, 'rgba(60,30,20,0)');
   g.fillStyle = rim; g.fillRect(0, 0, w, h * 0.16);
@@ -471,14 +498,7 @@ function coneCanvases() {
       gg.shadowBlur = 0;
     }
   };
-  for (let i = 0; i < 11; i++) vein((i + 0.3 + r() * 0.4) / 11 * w, h * (0.35 + r() * 0.45), 2.2 + r() * 2.5);
-  // the mouth at the front foot (u = 0, so at both edges): a glowing arch, dark inside on the colour canvas
-  for (const x of [0, w]) {
-    const mw = w * 0.075, top = h * 0.62;
-    g.fillStyle = '#120806'; g.beginPath(); g.moveTo(x - mw, h); g.quadraticCurveTo(x - mw, top, x, top); g.quadraticCurveTo(x + mw, top, x + mw, h); g.closePath(); g.fill();
-    const q = gg.createRadialGradient(x, h, 2, x, h, h * 0.42); q.addColorStop(0, '#fff6c0'); q.addColorStop(0.35, '#ffb030'); q.addColorStop(0.7, '#ff5a10'); q.addColorStop(1, 'rgba(255,60,0,0)');
-    gg.fillStyle = q; gg.beginPath(); gg.moveTo(x - mw * 1.25, h); gg.quadraticCurveTo(x - mw * 1.25, top - 6, x, top - 8); gg.quadraticCurveTo(x + mw * 1.25, top - 6, x + mw * 1.25, h); gg.closePath(); gg.fill();
-  }
+  for (let i = 0; i < 8; i++) vein((i + 0.3 + r() * 0.4) / 8 * w, h * (0.45 + r() * 0.45), 4 + r() * 3);
   return { col, glo };
 }
 function shellCanvases() {   // a magma crab's shell (a sphere's uvs: v = 1 at the top): dark crust, glowing cracks on its back
@@ -721,7 +741,7 @@ export function create(opts) {
     T.slings.forEach((s) => parts.push({ poly: offsetPoly([s.a, s.b, s.c], 3, 6), h: H.sling }));
     DROPS.forEach((d) => parts.push({ seg: [d.ax, d.ay, d.bx, d.by], r: 2.2, h: H.drop * 0.5 }));
     (T.voids || []).forEach((v) => parts.push({ poly: v, h: H.void }));
-    if (T.volcano) parts.push({ circle: [T.volcano.x, T.volcano.y, T.volcano.r + 1], h: 26 });
+    if (T.volcano) parts.push({ circle: [T.volcano.x, T.volcano.y, T.volcano.r - 2], h: 44 });
     if (T.lava) T.lava.gates.forEach((g) => parts.push({ seg: [g[0], g[1], g[2], g[3]], r: 2, h: H.gate }));
     function cabinetSide(w) { return w[0] === w[2] && (w[0] <= 6 || w[0] >= 266); }
 
@@ -912,8 +932,8 @@ export function create(opts) {
     if (ISLAND) { box(wood, WOOD_L, WOOD_R, -14, -1.5, -18, TH + 24); }   // (its underside: seen from the low angles)
     group.add(RF(new THREE.Mesh(keep(wood.geometry()), M.wood)));
     const backbox = new THREE.Group(); group.add(backbox);
-    if (!ISLAND) {   // the old table's backbox: only its lit speaker panel shows, in the strip above the arch
-      const sp = keep(tex(speakerCanvas(), { aniso: ANISO })), pg = keep(new THREE.PlaneGeometry(WOOD_R - WOOD_L, 60));
+    {   // the backbox: only its lit panel shows, in the strip above the arch (the old table's speakers, Ember Peak's sunset)
+      const sp = keep(tex(ISLAND ? islandBackCanvas() : speakerCanvas(), { aniso: ANISO })), pg = keep(new THREE.PlaneGeometry(WOOD_R - WOOD_L, 60));
       const panel = new THREE.Mesh(pg, keep(new THREE.MeshStandardMaterial({ map: sp, emissiveMap: sp, emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.4, metalness: 0.3 })));
       panel.position.set(wx((WOOD_L + WOOD_R) / 2), H.wood + 30, wz(-18.3)); backbox.add(panel);
       const sides = new Geo(); box(sides, WOOD_L - 6, WOOD_R + 6, 0, H.wood + 64, -46, -18.4);
@@ -1102,23 +1122,28 @@ export function create(opts) {
     // ---- the volcano: a cone of black rock that rises with the pressure (scaled up from a squat mound: the ball always
     // meets rock at the crater's collision radius), lava veins and the glowing mouth on its skin, a lava pool in the crater
     if (T.volcano) {
-      const V = T.volcano, HV = 56.5, grp = new THREE.Group(); grp.position.set(wx(V.x), 0, wz(V.y)); group.add(grp);
-      const prof = [[V.r + 2.2, 0], [V.r + 1.4, 6], [V.r + 0.6, 12], [V.r, 20], [V.r - 0.8, 28], [V.r - 2.4, 35], [V.r - 4.6, 42], [V.r - 6.6, 48], [V.r - 8, 52.5], [V.r - 8.8, 55.4], [V.r - 9.6, 56.4], [V.r - 10.8, 56.2], [V.r - 11.8, 54.5], [V.r - 12.6, 52], [V.r - 13.2, 51.2]];
+      // one screen (29 Oct 2026): a proper cone standing up off the playfield even at rest - concave flanks from a wide
+      // foot (a low flare inside the ball's reach: a ball touching the 22-unit collision circle clears it) up to a
+      // crusted rim round a lava crater the ball can sit in
+      const V = T.volcano, HV = 60, POOL = 55.6, grp = new THREE.Group(); grp.position.set(wx(V.x), 0, wz(V.y)); group.add(grp);
+      const R0 = V.r, prof = [[R0 + 7.5, 0], [R0 + 4.6, 0.6], [R0 + 2.6, 1.6], [R0 + 1.2, 3.5], [R0 - 0.3, 8], [R0 - 2.4, 14], [R0 - 4.6, 21], [R0 - 6.6, 29], [R0 - 8.3, 37],
+        [R0 - 9.6, 45], [R0 - 10.4, 51.5], [R0 - 10.7, 56.5], [R0 - 10.6, 59.2], [R0 - 11.4, 60], [R0 - 12.3, 59.4], [R0 - 12.7, 57.6], [R0 - 12.8, POOL]];
       const cg = keep(new THREE.LatheGeometry(prof.map((q) => new THREE.Vector2(q[0], q[1])), 56));
       { const P = cg.attributes.position, uv = cg.attributes.uv; for (let k = 0; k < P.count; k++) uv.setY(k, clamp(P.getY(k) / HV, 0, 1)); }
       const cc = coneCanvases(), ct = keep(tex(cc.col, { wrapS: true, aniso: ANISO })), cgt = keep(tex(cc.glo, { wrapS: true }));
       const coneMat = keep(new THREE.MeshStandardMaterial({ map: ct, emissiveMap: cgt, emissive: new THREE.Color(TH_.lava), emissiveIntensity: 0.8, roughness: 0.82, metalness: 0, envMap: envRT.texture, envMapIntensity: 0.5 }));
       const cone = RF(new THREE.Mesh(cg, coneMat)); grp.add(cone);
-      const poolG = keep(new THREE.CircleGeometry(V.r - 12.4, 32)); poolG.rotateX(-Math.PI / 2);
+      if (V.mouth) cone.rotation.y = Math.atan2(V.mouth[0], V.mouth[1]);   // the glowing mouth on its skin faces the crater's own mouth
+      const poolG = keep(new THREE.CircleGeometry(V.r - 12.6, 32)); poolG.rotateX(-Math.PI / 2);
       const poolMat = keep(new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff7a1a').multiplyScalar(3) }));
-      const pool = R1(new THREE.Mesh(poolG, poolMat)); pool.position.y = 51.4; cone.add(pool);
+      const pool = R1(new THREE.Mesh(poolG, poolMat)); pool.position.y = POOL + 0.2; cone.add(pool);
       // a collar of rubble on the playfield, where it rises out
       const r = rnd(55);
       const rocks = R1(new THREE.InstancedMesh(keep(new THREE.DodecahedronGeometry(1, 0)), M.rock, 30));
-      { const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); for (let k = 0; k < 30; k++) { const a = k / 30 * Math.PI * 2 + r() * 0.15, d = V.r + 2.2 + r() * 2.8, s = 1.4 + r() * 2.1; e.set(r() * 3, r() * 3, r() * 3); q.setFromEuler(e); m.compose(new THREE.Vector3(Math.sin(a) * d, s * 0.35, Math.cos(a) * d), q, new THREE.Vector3(s, s * 0.7, s)); rocks.setMatrixAt(k, m); } }
+      { const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); for (let k = 0; k < 30; k++) { const a = k / 30 * Math.PI * 2 + r() * 0.15, d = V.r + 6 + r() * 3.5, s = 1.2 + r() * 1.6; e.set(r() * 3, r() * 3, r() * 3); q.setFromEuler(e); m.compose(new THREE.Vector3(Math.sin(a) * d, s * 0.35, Math.cos(a) * d), q, new THREE.Vector3(s, s * 0.7, s)); rocks.setMatrixAt(k, m); } }
       grp.add(rocks);
       const lavaLight = RF(new THREE.PointLight(0xff6a1a, 0, 190, 2)); lavaLight.position.set(0, 64, 10); grp.add(lavaLight);
-      toys.volcano = { grp, cone, coneMat, poolMat, lavaLight, HV, k: 0.45, fount: 0, lastCarry: 0, smokeAcc: 0, x: V.x, y: V.y, r: V.r };
+      toys.volcano = { grp, cone, coneMat, poolMat, lavaLight, HV, POOL, k: 0.85, fount: 0, lastCarry: 0, smokeAcc: 0, x: V.x, y: V.y, r: V.r };
     }
     // ---- the steam geyser: a hot-spring vent (rock ring, turquoise pool) and its column of steam
     if (T.geyser) {
@@ -1162,9 +1187,9 @@ export function create(opts) {
       });
       // the lava in each lane (the side away from where the gate's own ball comes in: between the summit's side wall and the gate)
       const lanes = T.lava.gates.map((g) => {
-        const left = g[5] > g[0];   // (the lane is on the side away from the point given: the side the gate blocks)
-        const xa = left ? 31 : g[0] + 1, xb = left ? g[0] - 1 : 2 * MID - 31;
-        const ya = Math.min(g[1], g[3]) - 16, yb = Math.max(g[1], g[3]) - 2, w = Math.abs(xb - xa), h = yb - ya;
+        // one screen: the gate lies ACROSS the lane's mouth at the bottom; the lane runs up from it to the arch
+        const xa = Math.min(g[0], g[2]) + 1, xb = Math.max(g[0], g[2]) - 1;
+        const yb = Math.min(g[1], g[3]) - 1, ya = yb - 74, w = Math.abs(xb - xa), h = yb - ya;
         const pg = keep(new THREE.PlaneGeometry(w, h)); pg.rotateX(-Math.PI / 2);
         const mat = keep(new THREE.MeshBasicMaterial({ map: flow, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(0.6, 0.6, 0.6) }));
         const m = new THREE.Mesh(pg, mat); m.position.set(wx((xa + xb) / 2), 0.25, wz((ya + yb) / 2)); m.renderOrder = 1; group.add(m);
@@ -1172,7 +1197,23 @@ export function create(opts) {
       });
       toys.lava = { gates, lanes, flow };
     }
-
+    // ---- one screen (29 Oct 2026): the LAVA RIVER printed under the glass from the volcano's foot down the middle to
+    // the sea at the drain (art3d.js prints it; here a flowing sheet of lava over the print, one draw call; embers off it
+    // and steam where it meets the sea are the toys' own particles)
+    const RV = ISLAND && window.PinArt && typeof PinArt.river === 'function' ? PinArt.river(tid) : null;
+    if (RV && RV.length > 1) {
+      const rt = keep(tex(lavaFlowCanvas(), { repeat: true })), G = new Geo(); let s = 0;
+      RV.forEach((p, i) => {
+        const q0 = RV[Math.max(0, i - 1)], q1 = RV[Math.min(RV.length - 1, i + 1)]; let tx = q1[0] - q0[0], ty = q1[1] - q0[1]; const l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
+        if (i) s += Math.hypot(p[0] - RV[i - 1][0], p[1] - RV[i - 1][1]);
+        const hw = p[2] * 0.42;
+        G.v(wx(p[0] - ty * hw), 0.2, wz(p[1] + tx * hw), 0, 1, 0, 0, -s / 64); G.v(wx(p[0] + ty * hw), 0.2, wz(p[1] - tx * hw), 0, 1, 0, 1, -s / 64);
+        if (i) G.quad(2 * i - 2, 2 * i - 1, 2 * i + 1, 2 * i);
+      });
+      const mat = keep(new THREE.MeshBasicMaterial({ map: rt, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(0.75, 0.75, 0.75) }));
+      const m = new THREE.Mesh(keep(G.geometry()), mat); m.renderOrder = 1; m.name = 'lava river'; group.add(m);
+      toys.river = { m, mat, rt, pts: RV, acc: 0 };
+    }
     // ---- lights: the old table: high-key fill, a strong key, warm GI along the sides; Ember Peak: the sun and the sky,
     // the lava's own glow at the crater; both: one flash light
     const lights = { gi: [] };
@@ -1536,12 +1577,12 @@ export function create(opts) {
   function ballZ(b) {
     const V = TB.toys.volcano;
     if (b.m === 'held') {
-      if (b.at === 'crater' && V) return 51.4 * V.k - 2.5;
+      if (b.at === 'crater' && V) return V.POOL * V.k - 2.5;
       if (b.at === 'geyser') return 3 + Math.sin(performance.now() / 60) * 0.8;
       return -4;
     }
     let z = b.m === 'ramp' ? (b.z || 0) : 0;
-    if (b.carry && V && Math.hypot(b.x - V.x, b.y - V.y) < V.r - 6) z = Math.max(z, 56.4 * V.k - 2);
+    if (b.carry && V && Math.hypot(b.x - V.x, b.y - V.y) < V.r - 6) z = Math.max(z, V.HV * V.k - 1);
     return z;
   }
 
@@ -1553,21 +1594,21 @@ export function create(opts) {
     const V = toys.volcano, Vs = Tz.volcano;
     if (V) {
       const rise = Vs ? clamp(Vs.rise || 0, 0, 1) : 0, press = Vs ? clamp(Vs.pressure || 0, 0, 1.5) : 0;
-      const kT = 0.45 + 0.55 * (play ? rise : 0.25 + 0.15 * Math.sin(t / 2400));
+      const kT = 0.84 + 0.36 * (play ? rise : 0.2 + 0.12 * Math.sin(t / 2400));   // always a standing cone; it grows with the pressure
       V.k += (kT - V.k) * (dt > 0 ? 1 - Math.exp(-dt / 0.12) : 1); V.cone.scale.y = V.k;
       const held = !!(Vs && Vs.busy && Vs.hold > 0), carrying = !!(Vs && Vs.busy && !(Vs.hold > 0) && Vs.carry > 0);
       if (carrying && V.lastCarry === 0) V.fount = 1;   // the launch: a lava fountain
       V.lastCarry = carrying ? Vs.carry : 0;
       V.fount = Math.max(0, V.fount - dt * 0.9);
       const warn = press > 1.25 ? 0.5 + 0.5 * Math.sin(t / 70) : 0;
-      const glow = dark ? 0.15 : 0.6 + 1.3 * Math.min(1, press) + (held ? 1.0 + 0.3 * Math.sin(t / 90) : 0) + warn * 1.0 + V.fount * 1.5;
+      const glow = dark ? 0.15 : 0.45 + 1.0 * Math.min(1, press) + (held ? 1.0 + 0.3 * Math.sin(t / 90) : 0) + warn * 1.0 + V.fount * 1.5;
       V.coneMat.emissiveIntensity = glow;
       V.poolMat.color.setRGB(1, 0.36, 0.05).multiplyScalar(dark ? 0.5 : 1.3 + 0.9 * Math.min(1, press) + (held ? 0.5 + 0.3 * Math.sin(t / 90) : 0) + V.fount * 1.5);
       V.lavaLight.intensity = dark ? 0 : 500 + 1300 * Math.min(1, press) + (held ? 1500 : 0) + V.fount * 4000;
       V.lavaLight.position.y = V.HV * V.k + 8;
       const topY = V.HV * V.k + 1;
       // smoke from the crater, more as the pressure builds; embers when it's high or the crater holds the ball
-      V.smokeAcc += dt * (2.5 + 14 * press + (held ? 12 : 0)) * tier.motes;
+      V.smokeAcc += dt * (7 + 14 * press + (held ? 12 : 0)) * tier.motes;   // a plume at all times: it reads as a volcano
       while (V.smokeAcc >= 1) {
         V.smokeAcc -= 1; const a = mr() * Math.PI * 2, d = mr() * 6, g0 = 0.32 + mr() * 0.2;
         emit('puff', V.x + Math.cos(a) * d, V.y + Math.sin(a) * d, topY, (mr() - 0.5) * 8 + 6, (mr() - 0.5) * 6 - 4, 18 + mr() * 14, 2.2 + mr() * 1.6, 7 + mr() * 6, [g0, g0 * 0.95, g0 * 0.95], 0.55, 0, 2.2);
@@ -1626,6 +1667,19 @@ export function create(opts) {
         _mm.makeScale(24, 1, 20); _mm.setPosition(wx(c.x + SHX * 4), 0.3, wz(c.y + SHY * 4)); C.shadows.setMatrixAt(i, _mm);
       }
       C.legs.instanceMatrix.needsUpdate = true; C.claws.instanceMatrix.needsUpdate = true; C.eyes.instanceMatrix.needsUpdate = true; C.shadows.instanceMatrix.needsUpdate = true;
+    }
+    // the lava river: it flows faster and brighter with the pressure; a few embers rise off it
+    const RVt = toys.river;
+    if (RVt) {
+      const press = Vs ? clamp(Vs.pressure || 0, 0, 1.5) : 0;
+      RVt.rt.offset.y = (RVt.rt.offset.y - dt * (0.16 + 0.22 * press)) % 1;
+      const v = dark ? 0.12 : 0.62 + 0.35 * Math.min(1, press) + 0.08 * Math.sin(t / 260); RVt.mat.color.setRGB(v, v, v);
+      RVt.acc += dt * (dark ? 0 : 3 + 6 * press) * tier.motes;
+      while (RVt.acc >= 1) {
+        RVt.acc -= 1; const p = RVt.pts[1 + Math.floor(mr() * (RVt.pts.length - 2))];
+        emit('glow', p[0] + (mr() - 0.5) * p[2] * 0.6, p[1] + (mr() - 0.5) * 4, 0.6, (mr() - 0.5) * 6, (mr() - 0.5) * 6, 14 + mr() * 18, 0.9 + mr() * 0.8, 1.3 + mr() * 1.1, [1, 0.42 + mr() * 0.3, 0.08], 1.2, 6);
+        if (mr() < 0.35) { const e = RVt.pts[RVt.pts.length - 1], w = 0.9 + mr() * 0.1; emit('puff', e[0] + (mr() - 0.5) * e[2], e[1] + (mr() - 0.5) * 4, 1, (mr() - 0.5) * 5, (mr() - 0.5) * 5, 12 + mr() * 10, 1.6 + mr(), 4 + mr() * 4, [w, w, w], 0.35, 0, 2.4); }   // steam where the lava meets the sea
+      }
     }
     // the lava gates and lanes
     const L = toys.lava, Ls = Tz.lava;

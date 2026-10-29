@@ -56,24 +56,24 @@ var checks = {
     return { ok: caught >= 0 && ejected - caught >= 70 && clear > ejected && reset > clear && !has(r3.seen, 'reset'),
       detail: 'caught at ' + caught + ', held ' + (ejected - caught) + ' frames, clear of the hangar ' + (clear - ejected) + ' frames after the eject, targets up ' + (reset - ejected) + ' frames after; with a ball in the way: ' + (has(r3.seen, 'reset') ? 'RESET ANYWAY' : 'waited') };
   },
-  ramp: function (sp) {   // up the ramp lane fast: made, and off the far end (old table: the left inlane; Ember: the summit)
-    var T = S.T, en = T.ramp.entry, y0 = en.y + 35, ember = !!T.storeys[1];
-    var W = S.world(sp, 3, { noGeyser: true });
-    S.place(W, 120, y0, 0, -1500);
+  ramp: function (sp) {   // up the ramp lane fast: made, and off the far end (into an inlane; the old two-storey Ember: the summit)
+    var T = S.T, en = T.ramp.entry, y0 = en.y + 35, upper = !!T.storeys[1], fy = T.flippers[0].y;
+    var W = S.world(sp, 3, { noGeyser: true, noCrabs: true });
+    S.place(W, (en.x0 + en.x1) / 2, y0, 0, -1500);
     var out = null, landed = null;
     var r = play(W, 400, {}, function (W2, seen) {
       var b = W2.balls[0]; if (!b) return true;
       if (has(seen, 'ramp') && !out) out = [b.x, b.y];
-      if (!ember && out && b.y > 380 && b.x < 125 && !landed) landed = [b.x, b.y];
-      if (ember && out && E.inApproach(W2, b) === 1 && !landed) landed = [b.x, b.y];
+      if (!upper && out && b.y > fy - 30 && !landed) landed = [b.x, b.y];
+      if (upper && out && E.inApproach(W2, b) === 1 && !landed) landed = [b.x, b.y];
       return landed || (out && b.y > T.H);
     });
-    var W2 = S.world(sp, 3, {});
-    S.place(W2, 120, y0, 0, -600);
+    var W2 = S.world(sp, 3, { noCrabs: true });
+    S.place(W2, (en.x0 + en.x1) / 2, y0, 0, -600);
     var r2 = play(W2, 200, {}, function (W3, seen) { return has(seen, 'rampfail'); });
-    var into = ember ? true : has(r.seen, 'inlane');
+    var into = upper ? true : has(r.seen, 'inlane');
     return { ok: !!out && into && !!landed && !has(r.seen, 'outlane') && r2.stopped,
-      detail: (out ? 'made, off the ramp at ' + out.map(Math.round) : 'NOT made') + (ember ? '' : has(r.seen, 'inlane') ? ', through the left inlane' : ', MISSED the inlane') + (landed ? ', on to the ' + (ember ? 'summit flippers' : 'left flipper') + ' at ' + landed.map(Math.round) : ', NEVER reached the flippers') + '; slow shot ' + (r2.stopped ? 'rolls back' : 'did NOT roll back') };
+      detail: (out ? 'made, off the ramp at ' + out.map(Math.round) : 'NOT made') + (upper ? '' : has(r.seen, 'inlane') ? ', through an inlane' : ', MISSED the inlane') + (landed ? ', on to the flippers at ' + landed.map(Math.round) : ', NEVER reached the flippers') + '; slow shot ' + (r2.stopped ? 'rolls back' : 'did NOT roll back') };
   },
   orbits: function (sp) {   // up the left orbit, round the arch, down the right orbit into the right inlane; then a LOOP
     var T = S.T, oy = line(T, 'spin')[2] + 44;
@@ -158,7 +158,7 @@ var checks = {
       if (rel < 0 && has(seen, 'erupt')) rel = W2.frame;
       if (rail < 0 && has(seen, 'rail')) rail = W2.frame;
       // riding: never in an approach zone (the rail's very end is the inlane, on the shore's approach line)
-      if (b.m === 'ramp') { maxZ = Math.max(maxZ, b.z); maxY = Math.max(maxY, b.y); if (b.y > T.storeys[0].approach + 3 || (b.y > T.storeys[1].approach && b.y < T.storeys[1].y1 && b.x > 30 && b.x < 220)) near++; }
+      if (b.m === 'ramp') { maxZ = Math.max(maxZ, b.z); maxY = Math.max(maxY, b.y); if (T.storeys.some(function (s) { return b.y > s.approach + 3 && b.y <= s.y1 && b.x >= s.x0 && b.x <= s.x1; })) near++; }
       if (out < 0 && has(seen, 'railout')) out = W2.frame;
       if (inlane < 0 && has(seen, 'inlane')) inlane = W2.frame;
       if (inlane > 0 && flipper < 0 && b.y > T.flippers[0].y - 30 && b.x < T.MID) flipper = W2.frame;
@@ -194,7 +194,7 @@ var checks = {
     play(W, 60, {});
     var walked = Math.abs(W.toys.crabs[0].x - x0) > 5 || W.toys.crabs[0].wait > 0;
     // a ball held still right in a crab's path: the crab waits, never overlapping it
-    var W2 = S.world(sp, 3, { noGeyser: true }), C = W2.toys.crabs[2], d = T.crabs[2], b = S.place(W2, (d.path[0][0] + d.path[1][0]) / 2, d.path[0][1], 0, 0);
+    var nc = T.crabs.length - 1, W2 = S.world(sp, 3, { noGeyser: true }), C = W2.toys.crabs[nc], d = T.crabs[nc], b = S.place(W2, (d.path[0][0] + d.path[1][0]) / 2, d.path[0][1], 0, 0);
     var worst = 0;
     for (var i = 0; i < 600; i++) {
       b.x = (d.path[0][0] + d.path[1][0]) / 2; b.y = d.path[0][1]; b.vx = 0; b.vy = 0;   // pinned there
@@ -202,10 +202,10 @@ var checks = {
       worst = Math.max(worst, S.BR + d.r - Math.hypot(b.x - C.x, b.y - C.y));
     }
     // a shot into a crab: it stops (stunned) and scores
-    var W3 = S.world(sp, 3, { noGeyser: true }), C3 = W3.toys.crabs[2];
+    var W3 = S.world(sp, 3, { noGeyser: true }), C3 = W3.toys.crabs[nc];
     S.place(W3, C3.x, C3.y + 40, 0, -700);
     var r3 = play(W3, 30, {}, function (W4, seen) { return has(seen, 'crab'); });
-    return { ok: walked && worst < 0.01 && r3.stopped && W3.toys.crabs[2].stun > 0,
+    return { ok: walked && worst < 0.01 && r3.stopped && W3.toys.crabs[nc].stun > 0,
       detail: (walked ? 'walking' : 'NOT walking') + '; with a ball in its path it closed to ' + (-worst).toFixed(1) + ' units of it and waited; a shot ' + (r3.stopped ? 'stunned it' : 'MISSED') };
   },
   lava: function (sp) {   // the gates rise on a full eruption; a lane shot scores; they come down only once no ball is in the way
@@ -215,20 +215,22 @@ var checks = {
     var r = play(W, 30, {}, function (W2, seen) { return has(seen, 'lavaopen'); });
     var open = W.toys.lava.open && W.toys.lava.gates.every(function (g) { return !g.solid; });
     // a ball shot up a lane while open
+    var G0 = T.lava.gates[0], flat = Math.abs(G0[1] - G0[3]) < Math.abs(G0[0] - G0[2]);   // a gate across the lane's foot, or along its side
+    var LX = flat ? (G0[0] + G0[2]) / 2 : (30 + G0[0]) / 2, LY = flat ? G0[1] - 30 : Math.min(G0[1], G0[3]) + 22;   // inside the left lava lane
     var W2 = S.world(sp, 3, { lava: true, noGeyser: true, noCrabs: true });
-    S.place(W2, 42, 200, 0, -600);
+    S.place(W2, LX, LY, 0, -600);
     var r2 = play(W2, 60, {}, function (W3, seen) { return has(seen, 'lava'); });
     // closing with a ball sitting in the gate's way: it waits
     var W3 = S.world(sp, 3, { lava: true, noGeyser: true, noCrabs: true }), g = T.lava.gates[0];
     W3.toys.lava.t = 2;
-    var b = S.place(W3, g[0], (g[1] + g[3]) / 2, 0, 0), waited = true;
-    for (var i = 0; i < 20; i++) { b.x = g[0]; b.y = (g[1] + g[3]) / 2; b.vx = b.vy = 0; E.step(W3, {}); if (W3.toys.lava.gates[0].solid) waited = false; }
+    var gx = (g[0] + g[2]) / 2, gy = (g[1] + g[3]) / 2, b = S.place(W3, gx, gy, 0, 0), waited = true;
+    for (var i = 0; i < 20; i++) { b.x = gx; b.y = gy; b.vx = b.vy = 0; E.step(W3, {}); if (W3.toys.lava.gates[0].solid) waited = false; }
     W3.balls.length = 0; E.step(W3, {});
     var closed = W3.toys.lava.gates[0].solid;
     // closed, a ball inside the lane rolls out through the gate
     var W4 = S.world(sp, 3, { noGeyser: true, noCrabs: true });
-    S.place(W4, 42, 200, 0, 0);
-    var r4 = play(W4, 240, {}, function (W5) { var bb = W5.balls[0]; return bb && bb.x > 64; });
+    S.place(W4, LX, LY, 0, 0);
+    var r4 = play(W4, 240, {}, function (W5) { var bb = W5.balls[0]; return bb && (flat ? bb.y > G0[1] + 10 : bb.x > G0[0] + 10); });
     return { ok: r.stopped && open && r2.stopped && waited && closed && r4.stopped,
       detail: 'full eruption: ' + (open ? 'gates up' : 'gates NOT up') + '; a lane shot ' + (r2.stopped ? 'scores' : 'did NOT score') + '; closing with a ball in the way ' + (waited ? 'waits' : 'CLOSED ON IT') + ', then ' + (closed ? 'closes' : 'did NOT close') + '; a ball inside a closed lane ' + (r4.stopped ? 'rolls out' : 'is STUCK') };
   },
@@ -238,7 +240,7 @@ var checks = {
     W.toys.quake.pending = true;
     play(W, 5, {});
     var waited = W.toys.quake.pending && W.toys.quake.t === 0;
-    W.balls.length = 0; S.place(W, 125, 380, 0, -200);   // up in the shore's upper field
+    W.balls.length = 0; S.place(W, 100, T.storeys[0].approach - 60, 0, -200);   // up in the field above the approach line
     var r = play(W, 5, {}, function (W2, seen) { return has(seen, 'quake'); });
     var pulled = 0, stopped = false;
     play(W, 60, {}, function (W2, seen) { if (W2.toys.quake.gx !== 0) pulled++; if (has(seen, 'quakeend')) { stopped = true; return true; } });

@@ -843,8 +843,8 @@
   // ================================================================ any other table (16 Oct 2026): a clean flat look made from its data
   // Ember Peak and the tables after it are drawn straight from the table data with canvas shapes: everything that
   // never moves once into two layers (under the ball, and the ramp and wire rail over it), the moving parts every
-  // frame. A table taller than the screen (Ember Peak is 680 units, the screen shows 446) scrolls smoothly to follow
-  // the lowest ball. Colours come from the table's theme (THEMES; a table without one gets a neutral one). Nothing
+  // frame. A table a little taller than the screen (Ember Peak is 470 units since 29 Oct 2026, the screen shows 446) is
+  // drawn a touch smaller so all of it shows; a much taller one scrolls smoothly to follow the lowest ball. Colours come from the table's theme (THEMES; a table without one gets a neutral one). Nothing
   // here may throw on a table it has never seen: every part is drawn only if the table has it.
   var THEMES = {
     ember: { sky: ['#4fb6f0', '#a6e4ff'], rock: ['#3b302b', '#211a17'], sand: '#d8b46e', sea: ['#3ad6cf', '#1aa3bf'], bands: [120, 340, 470],
@@ -928,14 +928,15 @@
     if (AL.id !== id) { var L2 = buildAny(id); AL.id = id; AL.under = L2.under; AL.over = L2.over; AL.T = L2.T; AL.B = L2.B; AL.th = L2.th; AL.view = -1; }
     var T = AL.T, B = AL.B, th = AL.th, lit = W.lit || {}, play = mode !== 'title', dark = W.tilted || W.over, i;
     // the view: follow the lowest ball, smoothly; snap on a new world
-    var maxTop = Math.max(0, T.H - TH), b0 = lowest(W, T), target = b0 ? Math.max(0, Math.min(maxTop, b0.y - TH * 0.45)) : maxTop;
+    var fit = T.H > TH && T.H <= TH * 1.12 ? TH / T.H : 1;
+    var maxTop = fit < 1 ? 0 : Math.max(0, T.H - TH), b0 = lowest(W, T), target = b0 ? Math.max(0, Math.min(maxTop, b0.y - TH * 0.45)) : maxTop;
     var dt = AL.lastT < 0 ? 1 : Math.max(0, Math.min(0.1, (t - AL.lastT) / 1000)); AL.lastT = t;
     if (AL.view < 0 || AL.W !== W) AL.view = target; else AL.view += (target - AL.view) * (1 - Math.exp(-dt * 7));
     AL.W = W;
     var vy = Math.round(AL.view);
     g.save();
     g.beginPath(); g.rect(0, OY, TW, TH); g.clip();
-    g.translate(0, OY - vy);
+    if (fit < 1) { g.fillStyle = th.cab; g.fillRect(0, OY, TW, TH); g.translate((TW - T.W * fit) / 2, OY); g.scale(fit, fit); } else g.translate(0, OY - vy);
     g.imageSmoothingEnabled = false;
     g.drawImage(AL.under, 0, 0);
     g.lineCap = 'round'; g.lineJoin = 'round';
@@ -1025,7 +1026,7 @@
     g.drawImage(AL.over, 0, 0);
     up.forEach(function (b) { ball(b.x, b.y, BRd + Math.min(4, (b.z || 0) / 13)); });
     // tilted or over: the table dims
-    if (dark && play) { g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(0, vy, TW, TH); }
+    if (dark && play) { g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(-20, vy, T.W + 40, Math.max(TH, T.H)); }
     g.restore();
     // the scroll position, as a slim bar down the right edge (the table is taller than the screen)
     if (maxTop > 0) { var bh = Math.round(TH * TH / T.H); g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(TW - 2, OY + Math.round(vy / T.H * TH), 2, bh); }

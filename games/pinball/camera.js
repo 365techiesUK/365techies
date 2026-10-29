@@ -28,10 +28,10 @@
  * balls). Every move home is the same 0.35 s smootherstep, started 1.45 s before the ball can arrive, so the picture
  * is still for a full second: half a second for the rule, half a second more for a press made early.
  *
- * HOME on Ember Peak shows BOTH storeys' flipper boxes at once: in a portrait picture the width-filling shot already
- * reaches from the summit's approach line to the front rail, and on a wider screen the camera backs off until it does.
- * One home for both storeys is deliberate: a ball shot up the summit ramp, or dropping between the summit flippers,
- * reaches the other storey's approach line in under a second - too soon to scroll and then be still for half a second.
+ * HOME shows the WHOLE TABLE (Ember Peak is one screen since 29 Oct 2026, the owner's call: 270 x 470, one storey): every
+ * storey's flipper box, the ball on the plunger and the top of the arch. In a portrait picture the width-filling shot
+ * already shows it all (the table fills the width, the flippers low on the screen, the spare room above the arch); on
+ * a wider screen the camera backs off until the arch's top is in. Follow and the close-ups are push-ins from there.
  *
  * States: home; follow (ball high and forecast to stay away; slow, damped, dead-zoned; zoom 1.25 calm, 1.35 arcade, a
  * plain scroll in classic); launch (two moves: the plunger, then up the lane to the skill lanes); closeup (the crater's
@@ -57,7 +57,9 @@
     spare: 0.1,       // seconds of safety on top
     horizon: 200,     // look-ahead, in game steps (3.3 s): more than calm's window plus a refresh's worth
     forecaster: 'auto', // 'auto' (a worker in the page, else in-line) or 'sync'
-    latency: 0        // node only: answers arrive this many updates late (to test "close until an answer arrives")
+    latency: 0,       // node only: answers arrive this many updates late (to test "close until an answer arrives")
+    craterZ: 48       // table units: the crater's lava pool above the playfield (world3d.js's cone, 60 tall at rest
+                      // scale 0.85, since 29 Oct 2026): the dive looks at the pool, not the cone's foot
   };
   var MODES = {
     //          follow zoom, window (s free needed to push in), home dwell between push-ins, push-ins a minute,
@@ -121,6 +123,7 @@
     var pts = [];
     boxes(id).forEach(function (bx) { pts = pts.concat(bx.pts); });
     pts.push([T.shooter.cx + T.BALL, T.storeys[bottomStorey(T)].y1, 0]);   // the ball on the plunger too
+    if (T.arch) pts.push([T.arch.x, T.arch.y - T.arch.R, 0]);   // and the top of the table: home is the whole table
     var x0 = 1e9, x1 = -1e9;
     pts.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); });
     var cx = (x0 + x1) / 2, m = CFG.margin;
@@ -254,8 +257,9 @@
   function reset() { S = fresh(); FC = null; ASKED = null; PENDING.length = 0; }
   function home() { return homeFor(S.W ? S.W.tableId : getE().DEFAULT, ASPECT); }
   function zoomOf(p) { return home().span / p.span; }
+  function tiltAt(zoom) { return Math.min(40, CFG.tilt + 9 * (zoom - 1) / 1.2); }
   function shotAt(cx, cy, zoom, T) {
-    var H = home(), span = H.span / zoom, tilt = Math.min(40, CFG.tilt + 9 * (zoom - 1) / 1.2);
+    var H = home(), span = H.span / zoom, tilt = tiltAt(zoom);
     var s = { cx: cx, cy: cy, span: span, tilt: tilt, yaw: 0 }, W = T.W, half = span / 2, xl = -10, xr = W + 10;
     s.cx = half * 2 > xr - xl ? (xl + xr) / 2 : Math.max(xl + half, Math.min(xr - half, cx));
     var e = yEdges(s), top = -14, bot = T.H + 14;
@@ -370,7 +374,8 @@
         var Vt = T.volcano, C = T.carries[Vt.carry], rel = V.release - W.frame, dive = S.craterMode === 'dive';
         if (b.m === 'held') {   // the hold: dive in (a slow swing round the cone); a nod after the first, in calm
           want = 'closeup'; w = 6;
-          goal = shotAt(Vt.x, Vt.y + 4, dive ? 2.2 : 1.5, T);
+          var zc = dive ? 2.2 : 1.5;
+          goal = shotAt(Vt.x, Vt.y + 4 - CFG.craterZ * Math.tan(tiltAt(zc) * DEG), zc, T);
           if (dive && M.yaw) goal.yaw = M.yaw * Math.sin(Math.PI * Math.max(0, Math.min(1, 1 - rel / Vt.hold)));
           if (dive && M.slow && rel <= 8) slow = 0.5;
         } else if (dive) {      // fired skyward: pull back over the island in slow motion to frame the whole flight onto

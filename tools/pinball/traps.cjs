@@ -150,18 +150,16 @@ var CORNERS = {
   ember: {
     'arch top': [136, 20], 'arch right shoulder': [240, 60], 'arch left shoulder': [30, 60], 'shooter gate (top of the lane)': [255, 140],
     'top lanes': [182, 72], 'fumarole / top lanes': [190, 96], 'between the fumaroles': [178, 136],
-    'volcano top': [90, 90], 'volcano left': [62, 124], 'volcano right': [118, 124], 'volcano mouth': [90, 148],
-    'left lava lane top': [42, 150], 'right lava lane top': [208, 150], 'left lava gate': [60, 207], 'right lava gate': [190, 207],
-    'left lava floor': [40, 228], 'right lava floor': [210, 228], 'below the left lava floor': [38, 254], 'below the right lava floor': [212, 254],
-    'crab A': [95, 196], 'crab B': [153, 190], 'geyser': [125, 196],
-    'summit left wall foot': [38, 258], 'summit right wall foot': [212, 258], 'summit left guide -> flipper': [76, 276], 'summit right guide -> flipper': [174, 276],
-    'summit gap': [125, 314], 'deck underside left': [60, 330], 'deck underside right': [190, 330],
-    'obsidian roof': [70, 382], 'roof -> ramp lane': [104, 396], 'ramp lane top (right wall)': [134, 404], 'ramp lane mouth': [120, 458],
-    'drop targets, left end': [40, 442], 'drop targets, right end': [100, 422], 'crab C': [171, 372],
-    'left orbit wall foot': [30, 446], 'right orbit wall foot': [220, 446],
-    'left orbit foot gate': [20, 519], 'right orbit foot gate': [230, 519], 'left outlane/inlane post': [27, 548], 'right outlane/inlane post': [223, 548],
-    'left inlane floor -> flipper': [66, 626], 'right inlane floor -> flipper': [184, 626], 'left inlane guide top': [46, 514], 'right inlane guide top': [204, 514],
-    'left sling top': [49, 546], 'right sling top': [201, 546], 'left sling foot': [72, 606], 'right sling foot': [178, 606]
+    'volcano top': [84, 90], 'volcano left': [56, 124], 'volcano right': [112, 124], 'volcano mouth': [84, 148],
+    'left lava lane top': [42, 150], 'right lava lane top': [208, 150], 'left lava gate': [42, 226], 'right lava gate': [208, 226],
+    'left lava wall foot': [58, 226], 'right lava wall foot': [192, 226], 'inside the left lava lane': [42, 200], 'inside the right lava lane': [208, 200],
+    'crab A': [137, 150], 'crab B': [85, 252], 'the vent': [175, 204], 'geyser': [104, 204],
+    'ramp lane top (left wall)': [128, 200], 'ramp lane top (right wall)': [154, 208], 'ramp lane mouth': [141, 252],
+    'drop targets, left end': [158, 232], 'drop targets, right end': [190, 244], 'behind the drop targets': [172, 228],
+    'left orbit wall foot': [30, 238], 'right orbit wall foot': [220, 238],
+    'left orbit foot gate': [20, 283], 'right orbit foot gate': [230, 283], 'left outlane/inlane post': [27, 338], 'right outlane/inlane post': [223, 338],
+    'left inlane floor -> flipper': [66, 416], 'right inlane floor -> flipper': [184, 416], 'left inlane guide top': [46, 304], 'right inlane guide top': [204, 304],
+    'left sling top': [49, 336], 'right sling top': [201, 336], 'left sling foot': [72, 396], 'right sling foot': [178, 396]
   }
 };
 function corners() {

@@ -15,7 +15,7 @@
  *    letting go fires it. Full screen on a phone: a press anywhere counts, by which side of the middle it is.
  * Everything held is let go when the game pauses, the window loses focus or the page is hidden, so a flipper can never
  * stick up. Presses on buttons, links and the title / pause / game-over cards go to the cabinet as before.
- * A button works EVERY flipper on its side: on Ember Peak the shore's pair at the bottom and the summit's pair halfway up.
+ * A button works EVERY flipper on its side (a table may have more than one pair; Ember Peak, one screen since 29 Oct 2026, has one).
  *
  * THE CAMERA (camera.js, window.PinCam; 16 Oct 2026): the 3D picture (world3d.js) asks PinCam.update(W, t, mode) for its
  * shot every frame. This file passes the 3D canvas's real shape (the camera's guarantee depends on it), sets the mode
@@ -279,25 +279,25 @@
     '<b>Ball save:</b> for the first ' + SP[1].save + ' seconds of each ball on Gentle (' + SP[2].save + ' on Classic, ' + SP[3].save + ' on Fast), a ball that drains comes straight back: <b>BALL SAVED</b>.',
     '<b>Bonus:</b> most shots add to your bonus too. It is paid at the end of each ball, times the multiplier.',
     '<b>Extra balls</b> at ' + extraList(1) + '; ' + extraList(2) + '; ' + extraList(3) + '.',
-    '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is a flatter, slower table with ' + SP[1].balls + ' balls and the longest ball save; Classic is ' + SP[2].balls + ' balls; Fast is a steeper, quicker table for experts. <b>Look</b> &mdash; the 3D table or the flat one (<b>R</b>). <b>Camera</b> &mdash; Calm follows the ball up the table now and then and dives into the crater the first time; Arcade does it more often, with more zoom and slow motion; Classic keeps the whole table in view and never moves (chosen for you if your device asks for less motion). The camera never moves in the last half second before the ball can reach a flipper. <b>P</b> pauses, and the game pauses itself if you click away to another window.'
+    '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is a flatter, slower table with ' + SP[1].balls + ' balls and the longest ball save; Classic is ' + SP[2].balls + ' balls; Fast is a steeper, quicker table for experts. <b>Look</b> &mdash; the 3D table or the flat one (<b>R</b>). <b>Camera</b> &mdash; Calm leans in on the ball now and then and dives into the crater the first time; Arcade does it more often, with more zoom and slow motion; Classic keeps the whole table in view and never moves (chosen for you if your device asks for less motion). The camera never moves in the last half second before the ball can reach a flipper. <b>P</b> pauses, and the game pauses itself if you click away to another window.'
   ];
   var HELP = EMBER ? [
     '<b>The aim:</b> Ember Peak is a volcano island waking up. Build up the pressure, shoot the ball into the crater and set off the full eruption &mdash; and score all you can. ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.',
-    '<b>Two storeys:</b> the <b>shore</b> at the bottom and the <b>summit</b> halfway up each have their own pair of flippers. Each button works every flipper on its side, both storeys at once. A ball that falls between the summit flippers drops down to the shore.'
+    '<b>The island:</b> the <b>volcano</b> stands at the top left, the <b>fumaroles</b> and the top lanes at the top right, and the shore with your two flippers at the bottom.'
   ].concat(CONTROLS, [
     '<b>Skill shot:</b> as each ball goes in, one of the three top lanes flashes. Roll through that one before the ball touches anything else for <b>' + fmt(PT.skill) + '</b>.',
     '<b>Top lanes:</b> ' + fmt(PT.lane) + ' a lane. Light all three to raise the bonus multiplier (up to 5 times). The flippers move the lit lanes along, so you can line up the one you need.',
-    '<b>Summit ramp</b> (the lane in the middle of the shore): ' + fmt(PT.ramp) + ', and it carries the ball up to the summit. Too slow and the ball rolls back down. Make it again within four seconds for a <b>COMBO</b>: double, then up to five times.',
+    '<b>Heat ramp</b> (the lane just right of the middle): ' + fmt(PT.ramp) + '. It climbs over the fumaroles and brings the ball back down to the right flipper. Too slow and the ball rolls back down. Make it again within four seconds for a <b>COMBO</b>: double, then up to five times.',
     '<b>Orbits:</b> the long lanes up each side, ' + fmt(PT.orbit) + '. Up one and round and up again within four seconds is a <b>LOOP</b>: ' + fmt(PT.loop) + '. The spinner in the left orbit: ' + fmt(PT.spin) + ' a turn.',
-    '<b>Obsidian targets</b> (the five black stones on the left of the shore): ' + fmt(PT.drop) + ' each. Knock down all five for ' + fmt(PT.drops) + ' and to light the kickback; they come back up two seconds later.',
+    '<b>Obsidian targets</b> (the three black stones right of the middle, beside the heat ramp): ' + fmt(PT.drop) + ' each. Knock down all three for ' + fmt(PT.drops) + ' and to light the kickback; they come back up two seconds later.',
     '<b>Pressure:</b> nearly every shot builds the volcano&rsquo;s pressure &mdash; the cone rises and the rumble under the table grows. When it is full the display says <b>ERUPT NOW</b>.',
-    '<b>The crater:</b> from the summit flippers, shoot the ball firmly into the volcano&rsquo;s mouth: ' + fmt(PT.crater) + ', plus up to ' + fmt(PT.pressure) + ' more for the pressure inside. The volcano holds the ball for a moment, then fires it into the sky and down the <b>wire rail</b> into the left inlane (' + fmt(PT.rail) + ').',
-    '<b>The full eruption:</b> shoot the crater at full pressure for <b>' + fmt(PT.eruption) + '</b> more. The lava gates rise and the two <b>lava lanes</b> at the sides of the summit open for 20 seconds: ' + fmt(PT.lava) + ' a lane.',
+    '<b>The crater:</b> best from the right flipper, shoot the ball firmly into the volcano&rsquo;s mouth: ' + fmt(PT.crater) + ', plus up to ' + fmt(PT.pressure) + ' more for the pressure inside. The volcano holds the ball for a moment, then fires it into the sky and down the <b>wire rail</b> into the left inlane (' + fmt(PT.rail) + ').',
+    '<b>The full eruption:</b> shoot the crater at full pressure for <b>' + fmt(PT.eruption) + '</b> more. The lava gates rise and the two <b>lava lanes</b> (inside the orbits, one each side) open for 20 seconds: ' + fmt(PT.lava) + ' a lane.',
     '<b>The quake:</b> keep building pressure without erupting and the volcano overloads &mdash; <b>QUAKE COMING</b>: the island shakes and tips the ball sideways for a moment, the kickback goes off and the pressure drops back. The quake waits until no ball is close to a flipper.',
-    '<b>Steam geyser</b> (the middle of the summit): a slow ball is caught, it puffs, then flings the ball up into the fumaroles: ' + fmt(PT.geyser) + '.',
-    '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the rubber triangles above the shore flippers): ' + fmt(PT.sling) + '.',
-    '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game (on Gentle, at the start of every ball), and again by knocking down all five obsidian targets.',
-    '<b>Inlanes</b> (beside the shore flippers): ' + fmt(PT.inlane) + '. <b>Outlanes</b> (the outside lanes, down to the drain): ' + fmt(PT.outlane) + ', a small comfort.'
+    '<b>Steam geyser</b> (just below the volcano): a slow ball is caught, it puffs, then flings the ball up into the fumaroles: ' + fmt(PT.geyser) + '.',
+    '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the lava-lit triangles above the flippers): ' + fmt(PT.sling) + '.',
+    '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game (on Gentle, at the start of every ball), and again by knocking down all three obsidian targets.',
+    '<b>Inlanes</b> (beside the flippers): ' + fmt(PT.inlane) + '. <b>Outlanes</b> (the outside lanes, down to the drain): ' + fmt(PT.outlane) + ', a small comfort.'
   ], ENDS) : [
     '<b>The aim:</b> you are the hero defending a planet from the invaders of 365 Invaders. Keep the ball in play and score all you can &mdash; ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.'
   ].concat(CONTROLS, [
@@ -372,10 +372,10 @@
       return 'Game over' + (bits.length ? ': ' + bits.slice(0, 2).join(', ') : '');
     },
     titleText: EMBER
-      ? 'Wake the volcano! Shoot up the <b>summit ramp</b>, round the <b>orbits</b> and through the <b>obsidian</b> to build the <b>pressure</b>, then fire the ball into the <b>crater</b> for a <b>full eruption</b> &mdash; before the <b>quake</b> comes.'
+      ? 'Wake the volcano! Shoot up the <b>heat ramp</b>, round the <b>orbits</b> and through the <b>obsidian</b> to build the <b>pressure</b>, then fire the ball into the <b>crater</b> for a <b>full eruption</b> &mdash; before the <b>quake</b> comes.'
       : 'Defend the planet from the invaders! Flip the ball up the <b>warp ramp</b>, round the <b>orbits</b> and into the <b>hangar</b>, knock down the five <b>invader targets</b>, and light the <b>top lanes</b> for a bigger bonus.',
     keysText: '<b>&larr; &rarr;</b> (or <b>Z</b> and <b>M</b>) to flip &middot; hold <b>Space</b> and let go to launch &middot; <b>&uarr;</b> to nudge &middot; <b>P</b> to pause',
-    touchText: 'Tap the left or right half of the screen to flip (each side works its flippers on both storeys). To launch, hold a finger down, then let go.',
+    touchText: 'Tap the left or right half of the screen to flip. To launch, hold a finger down, then let go.',
     help: HELP,
     pad: [{ act: 'left', label: 'Flip' }, { act: 'fire', label: 'Launch', cls: 'fire' }, { act: 'right', label: 'Flip' }]
   });

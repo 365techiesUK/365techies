@@ -5,7 +5,7 @@
  * screen works which flipper, several fingers at once, the plunger from a press while the ball waits, the extra keys,
  * and that nothing stays held through a pause or the window losing focus. Every sound name is played through a
  * recording kit to check its numbers (an exponential ramp to 0 would silently kill a sound), Ember Peak's sounds with
- * an Ember world. Ember Peak (16 Oct 2026): the page plays it; each button works BOTH storeys' flippers; the Camera
+ * an Ember world. Ember Peak (16 Oct 2026; one screen, one pair, 29 Oct 2026): the page plays it; each button works every flipper on its side; the Camera
  * and Look settings; slow motion steps the engine proportionally less (and a quick tap during a skipped step is still
  * seen); the attract mode's flythrough and the director; the flat look draws Ember Peak and scrolls with the ball.
  *
@@ -17,7 +17,8 @@ var path = require('path');
 var pw = require(process.env.PW_CORE || 'D:/claude/365-techies-website-launch-reel/node_modules/playwright-core');
 var BASE = (process.argv[2] || 'http://127.0.0.1:8481').replace(/\/$/, '');
 var OUT = process.argv[3] || path.join(__dirname, 'shots');
-var EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+// (29 Oct 2026: Edge stopped starting headless on this PC; Chrome is used when it's installed, or set PW_BROWSER)
+var EDGE = process.env.PW_BROWSER || (require('fs').existsSync('C:/Program Files/Google/Chrome/Application/chrome.exe') ? 'C:/Program Files/Google/Chrome/Application/chrome.exe' : 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe');
 var fails = 0, passes = 0;
 function ok(cond, what) { if (cond) { passes++; console.log('  ok   ' + what); } else { fails++; console.log('  FAIL ' + what); } }
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -69,7 +70,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     ok(parts.mode === 'title' && parts.h1 === '365 Pinball Hero', 'the title card shows 365 Pinball Hero');
     ok(parts.robots === 'noindex', 'the page is noindex');
     ok(parts.help >= 15, 'How to play has the full list (' + parts.help + ' items)');
-    ok(parts.table === 'ember' && parts.flippers === 4, 'the page plays Ember Peak (four flippers on two storeys)');
+    ok(parts.table === 'ember' && parts.flippers === 2, 'the page plays Ember Peak (one screen: one pair of flippers)');
     ok(/volcano/i.test(parts.titleText) && /crater/i.test(parts.titleText), 'the title card speaks of Ember Peak (the volcano, the crater)');
     ok(parts.cam === 'arcade,classic,calm' && parts.look === '3d,flat', 'Settings has Camera (Arcade / Classic / Calm) and Look (3D / Flat)');
     ok(parts.camMode === 'calm', 'the camera starts Calm (' + parts.camMode + ')');
@@ -143,13 +144,15 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     await p.keyboard.up('ShiftRight'); await sleep(40);
     var k4 = await p.evaluate(function () { var i = ARCADE365.input; return [i.pl, i.pr]; });
     ok(k1.join() === 'true,false' && k2.join() === 'true,true' && k3.join() === 'false,true' && k4.join() === 'false,false', 'Z and Right Shift: each flipper, together, let go one at a time');
-    // each button works both storeys' flippers: the shore's (0, 1) and the summit's (2, 3)
+    // each button works every flipper on its side (and none on the other)
+    var sides = await p.evaluate(function () { return PinEngine.table(ARCADE365.world.tableId).T.flippers.map(function (f) { return f.side; }); });
+    var wantL = sides.map(function (s) { return s < 0; }).join(), wantR = sides.map(function (s) { return s > 0; }).join();
     await p.keyboard.down('ArrowLeft'); await sleep(60);
     var st1 = await p.evaluate(function () { return ARCADE365.world.flippers.map(function (f) { return f.on; }).join(); });
     await p.keyboard.up('ArrowLeft'); await p.keyboard.down('ArrowRight'); await sleep(60);
     var st2 = await p.evaluate(function () { return ARCADE365.world.flippers.map(function (f) { return f.on; }).join(); });
     await p.keyboard.up('ArrowRight'); await sleep(60);
-    ok(st1 === 'true,false,true,false' && st2 === 'false,true,false,true', 'the left button raises both left flippers (shore and summit), the right both right ones (' + st1 + ' / ' + st2 + ')');
+    ok(st1 === wantL && st2 === wantR, 'the left button raises every left flipper, the right every right one (' + st1 + ' / ' + st2 + ')');
     await p.keyboard.down('ShiftLeft'); await p.keyboard.down('m'); await sleep(40);
     var k5 = await p.evaluate(function () { var i = ARCADE365.input; return [i.pl, i.pr]; });
     await p.keyboard.up('m'); await p.keyboard.up('ShiftLeft');
@@ -197,7 +200,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
       for (var i = 0; i < 2; i++) PinSlow.step(W, inp);
       out.skippedTwo = W.frame === f0;
       inp.plTap = true; PinSlow.step(W, inp);   // the third call: 1.05, a real step, which sees the tap
-      out.tapSeen = W.flippers[0].on && W.flippers[2].on && W.frame === f0 + 1 && !inp.plTap;
+      out.tapSeen = W.flippers.every(function (f, k) { return f.on === (PinEngine.table(W.tableId).T.flippers[k].side < 0); }) && W.frame === f0 + 1 && !inp.plTap;
       f0 = W.frame; for (i = 0; i < 600; i++) PinSlow.step(W, {});
       out.per600 = W.frame - f0;
       // the same engine steps either way: a copy stepped plainly the same number of times is identical
@@ -273,7 +276,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     var vw = 412, cx = box.x + box.width / 2, ty = box.y + box.height * 0.75;
     // finger 1 on the left with the ball waiting: left flipper + plunger
     await touch('touchStart', [{ x: cx - 80, y: ty, id: 1 }]); await sleep(80);
-    var t1 = await p.evaluate(function () { var i = ARCADE365.input, F = ARCADE365.world.flippers; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire, both: F[0].on && F[2].on && !F[1].on && !F[3].on }; });
+    var t1 = await p.evaluate(function () { var i = ARCADE365.input, F = ARCADE365.world.flippers; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire, both: F.every(function (f, k) { return f.on === (PinEngine.table(ARCADE365.world.tableId).T.flippers[k].side < 0); }) }; });
     // finger 2 on the right
     await touch('touchStart', [{ x: cx - 80, y: ty, id: 1 }, { x: cx + 80, y: ty, id: 2 }]); await sleep(80);
     var t2 = await p.evaluate(function () { var i = ARCADE365.input; return { pl: i.pl, pr: i.pr, pp: i.pp, fire: i.fire }; });
@@ -284,7 +287,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     var t4 = await p.evaluate(function () { var i = ARCADE365.input; return { pl: i.pl, pr: i.pr, pp: i.pp }; });
     console.log('  ' + JSON.stringify([t1, t2, t3, t4]));
     ok(t1.pl && !t1.pr && t1.pp && !t1.fire, 'touch: one finger on the left = left flipper (+ plunger while the ball waits), never Fire');
-    ok(t1.both, 'touch: the left finger raises the shore\'s AND the summit\'s left flippers');
+    ok(t1.both, 'touch: the left finger raises every left flipper and no right one');
     ok(t2.pl && t2.pr && t2.pp, 'touch: two fingers = both flippers (the first still pulling the plunger)');
     ok(!t3.pl && t3.pr && !t3.pp, 'touch: lifting the first finger fires the ball and keeps the second flipper up (y ' + t3.y + ')');
     ok(!t4.pl && !t4.pr && !t4.pp, 'touch: all fingers up, nothing held');

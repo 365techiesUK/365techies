@@ -217,9 +217,9 @@ obstaclesE.push(['geyser', [TE.geyser.x, TE.geyser.y, TE.geyser.x, TE.geyser.y, 
 for (const c of TE.crabs) obstaclesE.push(['crab walk', [c.path[0][0], c.path[0][1], c.path[1][0], c.path[1][1], c.r]]);
 function inPoly(P, x, y) { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) if ((P[i][1] > y) !== (P[j][1] > y) && x < (P[j][0] - P[i][0]) * (y - P[i][1]) / (P[j][1] - P[i][1]) + P[i][0]) c = !c; return c; }
 
-test('Ember Peak: about 80-100 inserts, each complete and on the table, every shot and toy has its lamps', () => {
+test('Ember Peak: about 80-110 inserts, each complete and on the table, every shot and toy has its lamps', () => {
   assert.equal(LE.id, 'ember');
-  assert.ok(LE.list.length >= 80 && LE.list.length <= 100, 'count ' + LE.list.length);
+  assert.ok(LE.list.length >= 80 && LE.list.length <= 110, 'count ' + LE.list.length);
   const ids = new Set();
   for (const l of LE.list) {
     assert.ok(!ids.has(l.id), 'duplicate ' + l.id); ids.add(l.id);
@@ -229,8 +229,9 @@ test('Ember Peak: about 80-100 inserts, each complete and on the table, every sh
     assert.ok(l.x > 6 && l.x < TE.shooter.x0 && l.y > 0 && l.y < TE.H, l.id + ' off the playfield');
     assert.equal(LE.list[l.i], l);
   }
-  for (const g of ['lanes', 'skill', 'loop', 'gauge', 'crater', 'geyser', 'lava', 'orbitL', 'orbitR', 'ramp', 'drops', 'obsidian', 'inlanes', 'kick', 'outlanes', 'save', 'erupt', 'mult', 'bumpers', 'rings']) assert.ok(LE.groups[g], 'group ' + g);
-  assert.equal(LE.groups.gauge.length, 9); assert.equal(LE.groups.erupt.length, 5); assert.equal(LE.groups.drops.length, 5); assert.equal(LE.groups.lava.length, 10);
+  for (const g of ['lanes', 'skill', 'loop', 'gauge', 'crater', 'geyser', 'lava', 'orbitL', 'orbitR', 'ramp', 'drops', 'obsidian', 'inlanes', 'kick', 'outlanes', 'save', 'erupt', 'mult', 'bumpers', 'rings', 'slings']) assert.ok(LE.groups[g], 'group ' + g);
+  assert.equal(LE.groups.slings.length, 6);
+  assert.equal(LE.groups.gauge.length, 9); assert.equal(LE.groups.erupt.length, 5); assert.equal(LE.groups.drops.length, BE.DROPS.length); assert.equal(LE.groups.lava.length, 10);
   assert.ok(LE.groups.rings.length >= 9, 'fumarole rings ' + LE.groups.rings.length);
   for (const id of ['crater', 'ramp', 'orbitL', 'orbitR', 'obsidian', 'geyser', 'lavaL', 'lavaR']) assert.ok(LE.chains[id] && LE.chains[id].length >= 3 && LE.chains[id].includes(idxE(id)), id + ' chain');
   // our words only: none of the banned ones
@@ -265,7 +266,7 @@ test('Ember Peak: the shots point the right way and their chases run towards the
   const aim = (id, x, y) => { const l = LE.list[idxE(id)], d = dir(id), v = [x - l.x, y - l.y], n = Math.hypot(v[0], v[1]); return (d[0] * v[0] + d[1] * v[1]) / n; };
   assert.ok(aim('crater', TE.volcano.x, TE.volcano.y) > 0.95, 'crater arrow points at the crater');
   assert.ok(aim('geyser', TE.geyser.x, TE.geyser.y) > 0.95, 'geyser arrow points at the geyser');
-  const bank = { x: (BE.DROPS[0].ax + BE.DROPS[4].bx) / 2, y: (BE.DROPS[0].ay + BE.DROPS[4].by) / 2 };
+  const DL = BE.DROPS[BE.DROPS.length - 1], bank = { x: (BE.DROPS[0].ax + DL.bx) / 2, y: (BE.DROPS[0].ay + DL.by) / 2 };
   assert.ok(aim('obsidian', bank.x, bank.y) > 0.95, 'obsidian arrow points at the targets');
   assert.ok(dir('ramp')[1] < -0.99 && dir('lavaL')[1] < -0.99 && dir('lavaR')[1] < -0.99, 'ramp and lava lanes: up');
   assert.ok(dir('orbitL')[0] < 0 && dir('orbitL')[1] < 0 && dir('orbitR')[0] > 0 && dir('orbitR')[1] < 0, 'orbits: up and out');

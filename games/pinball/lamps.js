@@ -330,8 +330,7 @@
   // Placed from tables/ember.js: the skill lanes and the loop over the arch; the fumaroles' rings; the PRESSURE GAUGE (nine
   // ticks round the volcano's foot, filling left to right as the pressure builds) and the crater's arrow under it; the
   // geyser; the two lava lanes (an arrow and four chevrons up each, glowing like embers until a full eruption opens
-  // them, then racing); the orbits (an arrow at each mouth and chevrons all the way up the lane: the camera follows the
-  // ball up there); the summit ramp; the obsidian targets; and the shore's inlanes, outlanes, ball save, E-R-U-P-T (the
+  // them, then racing); the orbits (an arrow at each mouth and chevrons all the way up the lane); the heat ramp; the obsidian targets; and the shore's inlanes, outlanes, ball save, E-R-U-P-T (the
   // pressure again, where the player looks most) and the bonus multiplier.
   function buildEmber() {
     var Be = E.table('ember'), T = Be.T, M = T.MID, TH = T.H, TW = T.W, A = T.arch, IDLE = 0.3;
@@ -375,23 +374,26 @@
     });
 
     // ---------------------------------------------------------------- the volcano: the pressure gauge round its foot
-    // (nine ticks, left to right, yellow to deep orange) and the crater's arrow under its mouth, with two lamps below
-    // the crab's walk leading up to it from the summit flippers
-    var V = T.volcano, GR = V.r + 14, crabY = T.crabs ? T.crabs[0].path[0][1] + T.crabs[0].r : V.y + 86;
+    // (nine ticks, left to right, yellow to deep orange) and the crater's arrow on the line out of its mouth (towards
+    // the right flipper, the shot's flipper), with two lamps behind it
+    var V = T.volcano, GR = V.r + 14, mu = V.mouth || [0, 1], ml = Math.sqrt(mu[0] * mu[0] + mu[1] * mu[1]), mux = mu[0] / ml, muy = mu[1] / ml;
+    function onMouth(d) { return [V.x + mux * (V.r + d), V.y + muy * (V.r + d)]; }
     for (var g = 0; g < 9; g++) {
       var ga = (160 - g * 17.5) * PI / 180, gx = V.x + Math.cos(ga) * GR, gy = V.y + Math.sin(ga) * GR;
       add({ id: 'gauge' + g, group: 'gauge', shape: 'rect', x: gx, y: gy, w: 4, h: 7, rot: rotOfF(Math.cos(ga), Math.sin(ga)), color: COL.gauge[g], step: g });
     }
-    shot('crater', 'crater', V.x, V.y + V.r + 32, 0, -1, COL.crater, [[V.x + 3, crabY + 29], [V.x + 3, crabY + 15]], [11, 16]);
+    var cA = onMouth(28.5);
+    shot('crater', 'crater', cA[0], cA[1], -mux, -muy, COL.crater, [onMouth(50.5), onMouth(41.5)], [11, 16]);
 
     // ---------------------------------------------------------------- the geyser: an arrow and a lamp below it, a lamp above
     var GY = T.geyser;
-    shot('geyser', 'geyser', GY.x, GY.y + 24, 0, -1, COL.geyser, [[GY.x, GY.y + 40]], [10, 14]);
-    chains.geyser.push(add({ id: 'geyser.top', group: 'geyser', shape: 'circle', x: GY.x, y: GY.y - 16, w: 5, h: 5, rot: 0, color: COL.geyser, step: 3 }).i);
+    shot('geyser', 'geyser', GY.x + 5, GY.y + 24, -5, -24, COL.geyser, [[GY.x + 8.3, GY.y + 40]], [10, 14]);
+    // (the top lamp up and to the right, the way it flings the ball, clear of the crater's lamps)
+    chains.geyser.push(add({ id: 'geyser.top', group: 'geyser', shape: 'circle', x: GY.x + 12, y: GY.y - 13, w: 5, h: 5, rot: 0, color: COL.geyser, step: 3 }).i);
 
-    // ---------------------------------------------------------------- the lava lanes: an arrow at the foot of each and four
-    // chevrons up it (the chain runs up the lane, the way the ball goes)
-    var lg = T.lava.gates[0], lx = (30 + lg[0]) / 2, lbot = Math.max(lg[1], lg[3]) - 22;
+    // ---------------------------------------------------------------- the lava lanes: an arrow just inside each mouth (above
+    // its gate, at the bottom) and four chevrons up it (the chain runs up the lane, the way the ball goes)
+    var lg = T.lava.gates[0], lx = (lg[0] + lg[2]) / 2, lbot = Math.min(lg[1], lg[3]) - 12;
     ['lavaL', 'lavaR'].forEach(function (id, s) {
       var x = s ? mx(lx) : lx;
       add({ id: id, group: 'lava', shape: 'arrow', x: x, y: lbot, w: 11, h: 16, rot: 0, color: COL.lava, side: s });
@@ -400,21 +402,26 @@
     });
 
     // ---------------------------------------------------------------- the orbits: an arrow pointing up into each mouth
-    // (from the inner wall's foot and the one-way gate below it), two lamps behind, chevrons all the way up the lane
+    // (from the inner wall's foot and the one-way gate below it), two lamps behind, chevrons all the way up the lane.
+    // The gate: the left one-way gate (not the shooter lane's); the wall: the lowest upright wall foot above it at
+    // x 12-40 (the orbit's inner wall, not the outlane divider below the gate)
     var ow = null, og = null, sp = line('spin');
-    T.walls.forEach(function (w) { if (w[0] === w[2] && w[0] > 12 && w[0] < 40 && Math.max(w[1], w[3]) > 300 && Math.max(w[1], w[3]) < 500) ow = w; });
-    T.gates.forEach(function (gt) { if (Math.max(gt[0], gt[2]) < M && Math.min(gt[1], gt[3]) > 300) og = gt; });
-    var ox = ow[0], oy = Math.max(ow[1], ow[3]), gy0 = Math.min(og[1], og[3]), mY = (oy + gy0) / 2;
+    T.gates.forEach(function (gt) { if (Math.max(gt[0], gt[2]) < M) og = gt; });
+    var gy0 = Math.min(og[1], og[3]);
+    T.walls.forEach(function (w) { var b = Math.max(w[1], w[3]); if (w[0] === w[2] && w[0] > 12 && w[0] < 40 && b < gy0 && (!ow || b > Math.max(ow[1], ow[3]))) ow = w; });
+    var ox = ow[0], oy = Math.max(ow[1], ow[3]), mY = (oy + gy0) / 2;
     var ax = ox + 17, ay = Math.max(mY + 20, gy0 - 2), adx = ox - ax, ady = mY - ay, laneX = (sp[1] + sp[3]) / 2, spinY = sp[2];
     ['orbitL', 'orbitR'].forEach(function (id, s) {
       var X = function (x) { return s ? mx(x) : x; }, pts = behind(ax, ay, adx, ady, [25, 16]).map(function (p) { return [X(p[0]), p[1]]; });
       shot(id, id, X(ax), ay, s ? -adx : adx, ady, COL.orbit, pts);
-      [oy + 12, spinY + 10, spinY - 26, spinY - 90, spinY - 170].forEach(function (y, k) { chevron(id, id, k, X(laneX), y, 0, COL.orbit); });
+      // (up the lane to just under the arch: one screen, so the lane is short)
+      var top = A.y - Math.sqrt(A.R * A.R - (laneX - A.x) * (laneX - A.x)) + 30, foot = oy + 10;
+      [0, 1, 2, 3, 4].forEach(function (k) { chevron(id, id, k, X(laneX), foot - (foot - top) * k / 4, 0, COL.orbit); });
     });
     tag('ORBIT', laneX, (oy + gy0) / 2 + 7, -PI / 2, 3.5, '#9ff6ee');
     tag('ORBIT', mx(laneX), (oy + gy0) / 2 + 7, -PI / 2, 3.5, '#9ff6ee');
 
-    // ---------------------------------------------------------------- the summit ramp: an arrow under its mouth, three lamps
+    // ---------------------------------------------------------------- the heat ramp: an arrow under its mouth, three lamps
     // behind, two chevrons up its lane
     var en = T.ramp.entry, rx = (en.x0 + en.x1) / 2, mouth = 0;
     T.posts.forEach(function (p) { if (p[0] >= en.x0 - 4 && p[0] <= en.x1 + 4) mouth = Math.max(mouth, p[1]); });
@@ -422,17 +429,17 @@
     shot('ramp', 'ramp', rx, ra, 0, -1, COL.ramp, behind(rx, ra, 0, -1, [34, 25, 16]));
     chevron('ramp', 'ramp', 0, rx, en.y + 7, 0, COL.ramp, 12);
     chevron('ramp', 'ramp', 1, rx, en.y - 6, 0, COL.ramp, 12);
-    tag('SUMMIT RAMP', rx - 11, ra + 26, -PI / 2, 3.4, '#ffd08a');
+    tag('HEAT RAMP', rx - 11, ra + 20, -PI / 2, 3.4, '#ffd08a');
 
     // ---------------------------------------------------------------- the obsidian targets: a lamp in front of each, the
     // shot's arrow pointing into the bank with three lamps behind it
     var D = Be.DROPS, fx = D[0].fx, fy = D[0].fy, toBank = rotOfF(-fx, -fy);
     D.forEach(function (d, i) {
       var cx = (d.ax + d.bx) / 2, cy = (d.ay + d.by) / 2;
-      add({ id: 'drop' + i, group: 'drops', shape: 'rect', x: cx + fx * 10, y: cy + fy * 10, w: 9, h: 5, rot: toBank, color: COL.obsidian });
+      add({ id: 'drop' + i, group: 'drops', shape: 'rect', x: cx + fx * 15, y: cy + fy * 15, w: 9, h: 5, rot: toBank, color: COL.obsidian });
     });
-    var bank = { x: (D[0].ax + D[D.length - 1].bx) / 2, y: (D[0].ay + D[D.length - 1].by) / 2 }, bx = bank.x + fx * 33, by = bank.y + fy * 33;
-    shot('obsidian', 'obsidian', bx, by, -fx, -fy, COL.obsidian, behind(bx, by, -fx, -fy, [34, 25, 16]));
+    var bank = { x: (D[0].ax + D[D.length - 1].bx) / 2, y: (D[0].ay + D[D.length - 1].by) / 2 }, bx = bank.x + fx * 29, by = bank.y + fy * 29;
+    shot('obsidian', 'obsidian', bx, by, -fx, -fy, COL.obsidian, behind(bx, by, -fx, -fy, [33, 24, 15]));
 
     // ---------------------------------------------------------------- the shore: inlanes, outlanes, kickback, ball save
     var sl = T.slings[0], inS = sensor('inL'), inX = inS[1];
@@ -460,6 +467,16 @@
     });
     tag('BONUS', M - 1.5 * 14 - 6 - 2.5 - 8, multY + 0.2, 0, 3.6, '#ffc27a');
 
+    // ---------------------------------------------------------------- the slings, lava-lit: three lamps along each kicking
+    // face (just off it, towards the middle), glowing like embers, flashing on a kick (one screen: the lower half busy)
+    T.slings.forEach(function (S, s) {
+      var dx = S.c[0] - S.a[0], dy = S.c[1] - S.a[1], l = Math.sqrt(dx * dx + dy * dy), nx = -S.side * dy / l, ny = S.side * dx / l;
+      if (nx * (M - S.a[0]) < 0) { nx = -nx; ny = -ny; }
+      [0.25, 0.5, 0.75].forEach(function (u, k) {
+        add({ id: 'sling' + s + '.' + k, group: 'slings', shape: 'circle', x: S.a[0] + dx * u + nx * 7, y: S.a[1] + dy * u + ny * 7, w: 5, h: 5, rot: 0, color: COL.lava, side: s, step: k });
+      });
+    });
+
     // ---------------------------------------------------------------- the fumaroles (pop bumpers): a lamp in each gap and
     // a ring of small lamps round each base (any that would crowd a neighbour, a lane guide or another insert are left
     // out; at most 4 round each)
@@ -477,6 +494,7 @@
         if (ok && y < A.y && Math.hypot(x - A.x, y - A.y) > A.R - 8) ok = false;
         T.walls.forEach(function (w) { if (ok && w[6] === 'post' && Math.abs(x - w[0]) < 6 && y < Math.max(w[1], w[3]) + 5) ok = false; });
         Be.WALLS.concat(Be.LAVA, Be.GATES).forEach(function (w) { if (ok && segD(x, y, w) < w.r + 5) ok = false; });
+        (T.crabs || []).forEach(function (c) { var w = { ax: c.path[0][0], ay: c.path[0][1], dx: c.path[1][0] - c.path[0][0], dy: c.path[1][1] - c.path[0][1] }; w.l2 = w.dx * w.dx + w.dy * w.dy || 1; if (ok && segD(x, y, w) < c.r + 3.5) ok = false; });
         if (!ok) continue;
         n++;
         add({ id: 'ring' + i + '.' + k, group: 'rings', shape: 'circle', x: x, y: y, w: 4, h: 4, rot: 0, color: COL.bump[i], b: i });
@@ -486,10 +504,12 @@
     // ---------------------------------------------------------------- lookups
     var byId = {}, groups = {};
     list.forEach(function (l) { byId[l.id] = l.i; (groups[l.group] = groups[l.group] || []).push(l.i); });
-    var N = list.length, LOOP = groups.loop, GAUGE = groups.gauge, ERUPT = groups.erupt;
+    var N = list.length, NDROP = groups.drops.length, LOOP = groups.loop, GAUGE = groups.gauge, ERUPT = groups.erupt;
     var KICK = byId.kick, SAVER = byId.saveR, OUTL = byId.outL, OUTR = byId.outR, SAVE = byId.save;
     var INL = [byId.inL0, byId.inL1, byId.inR0, byId.inR1], ringsOf = [[], [], []];
     (groups.rings || []).forEach(function (i) { ringsOf[list[i].b].push(i); });
+    var SLING = [[], []];
+    (groups.slings || []).forEach(function (i) { SLING[list[i].side].push(i); });
     var SHOTS = ['crater', 'ramp', 'orbitL', 'orbitR', 'obsidian', 'geyser', 'lavaL', 'lavaR'];
 
     // ---------------------------------------------------------------- how bright each lamp should be
@@ -571,11 +591,11 @@
       if (lit.orbitL > 0 || lit.orbitR > 0) for (k = 0; k < LOOP.length; k++) out[LOOP[k]] = blinkF(t, 70);
       else if (loop) cometF(out, LOOP, t, 70, 1, 0.12, W.orbitFrom === 'R');
       else cometF(out, LOOP, t, 260, IDLE, 0.02, (Math.floor(t / 1560) & 1) === 1);
-      // the summit ramp: lit while a combo runs, and while the crater (up there) is ready to erupt
+      // the heat ramp: lit while a combo runs, and while the crater is ready to erupt
       shotLamps(out, 'ramp', t, lit.ramp > 0 ? 'made' : W.comboT > 0 || (V && (V.ready || V.red)) ? 'lit' : 'idle', W.comboT > 0 ? W.combo : 0);
       // the obsidian targets: down ones lit, a just-hit one flashing, a dim chase along the ones still up
       var dpos = Math.floor(t / 230) % 7, ndn = 0;
-      for (i = 0; i < 5; i++) {
+      for (i = 0; i < NDROP; i++) {
         var dl = byId['drop' + i];
         if (lit.drop && lit.drop[i] > 0) out[dl] = blinkF(t, 60);
         else if (W.drops && !W.drops[i]) { out[dl] = 1; ndn++; }
@@ -617,6 +637,14 @@
       else if (W.saveT > 0) out[SAVE] = out[SAVER] = blinkF(t, 110);
       else out[SAVER] = 0.02 + 0.1 * breatheF(t, 2000, 0.5);
       out[OUTR] = W.saveT > 0 ? blinkF(t + 55, 110) : 0.02 + 0.1 * breatheF(t, 2000, 0);
+      // the slings: a kick flashes its three; open lava races down them; else an ember flicker, hotter with the pressure
+      var hot = V ? Math.min(1, V.pressure / full) : 0;
+      for (i = 0; i < 2; i++) {
+        var sg = SLING[i];
+        if (lit.sling && lit.sling[i] > 0) { for (k = 0; k < sg.length; k++) out[sg[k]] = 1; continue; }
+        if (Lv && Lv.open) { cometF(out, sg, t + i * 120, 90, 0.9, 0.15); continue; }
+        for (k = 0; k < sg.length; k++) out[sg[k]] = 0.04 + (0.1 + 0.25 * hot) * hashF(sg[k], Math.floor(t / 150));
+      }
       // the bonus multiplier
       var m = W.mult || 1, mpos = Math.floor(t / 380) % (7 - Math.min(m, 5));
       for (i = 2; i <= 5; i++) out[byId['mult' + i]] = m >= i ? 1 : mpos === i - m - 1 ? 0.26 : 0.02;

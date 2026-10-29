@@ -23,6 +23,14 @@ const { spawn, execFileSync } = require('child_process');
 const PW = process.env.PLAYWRIGHT || 'D:/claude/365-techies-website-launch-reel/node_modules/playwright-core';
 const { chromium } = require(PW);
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+// headless Edge, or Chrome when Edge will not start headless on this PC (29 Oct 2026: Edge 155 quits at once); BROWSER= to choose
+async function launchB(o) {
+  for (const exe of [process.env.BROWSER, EDGE, CHROME].filter(Boolean)) {
+    try { const b = await chromium.launch(Object.assign({}, o, { executablePath: exe })); console.log('browser:', exe); return b; } catch (e) { console.warn('browser would not start:', exe); }
+  }
+  throw new Error('no headless browser would start');
+}
 const ROOT = path.resolve(__dirname, '../..');
 
 const A = process.argv.slice(2), arg = (k, d) => { const i = A.indexOf('--' + k); return i >= 0 ? A[i + 1] : d; }, flag = (k) => A.includes('--' + k);
@@ -49,7 +57,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
   fs.mkdirSync(OUT, { recursive: true });
   const srv = await serve();
   if (EMBER) { try { await ember(); } finally { stop(srv); } return; }
-  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const browser = await launchB({ headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), tilts: {} };
   try {
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
@@ -152,7 +160,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 
 // ---------------------------------------------------------------- Ember Peak
 async function ember() {
-  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const browser = await launchB({ headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), table: 'ember' };
   const t0 = Date.now(), log = (...a) => console.log('[' + Math.round((Date.now() - t0) / 1000) + 's]', ...a);
   try {

@@ -189,7 +189,7 @@
         S.noise(0.8, 0.12, 200, { type: 'lowpass', to: 50, when: 0.1 });
         return true;
       }
-      case 'ramp': {   // the summit ramp made: a climbing whoosh and a bright two-note call
+      case 'ramp': {   // the heat ramp made: a climbing whoosh and a bright two-note call
         S.tone(220, 0.35, 0.035, { type: 'sawtooth', to: 1400, verb: 0.3 });
         S.noise(0.3, 0.06, 1200, { type: 'bandpass', q: 1, to: 5000, verb: 0.2 });
         S.tone(1319, 0.22, 0.05, { type: 'triangle', when: 0.3, verb: 0.35 });

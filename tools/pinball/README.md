@@ -5,7 +5,7 @@ reads the tables: `games/pinball/table.js` is the old space table "orbit", `game
 Peak) in node and play it without a screen, so a table can be checked and tuned by numbers instead of by feel alone.
 `games/pinball/engine.test.mjs` runs a smaller, fixed batch of the same checks on both tables:
 
-    node --test games/pinball/engine.test.mjs        (43 tests, about 30 seconds)
+    node --test games/pinball/engine.test.mjs        (43 tests, about 25 seconds)
 
 Run everything from the repository root. **Every tool works on Ember Peak unless you add `--orbit`** (or
 `--table=<id>`); code calls `S.use(id)` from `sim.cjs`.
@@ -25,23 +25,27 @@ Run everything from the repository root. **Every tool works on Ember Peak unless
 The engine has one hook for these tools: if a world has `W.onSub` set, it is called after every physics substep. The
 game never sets it (and `E.clone` leaves it behind).
 
-## Ember Peak on 16 Oct 2026 (Classic unless said)
+## Ember Peak on 29 Oct 2026: one screen (Classic unless said)
 
-- 270 x 680. Two storeys: the shore (flippers 0 and 1, approach line y 534) and the summit (flippers 2 and 3, y 292,
-  approach line y 216).
-- Trap finder: 10,000 balls, 40 ball-hours, a fifth with the lava gates up and some with a quake: nothing stuck,
-  nothing through a wall or a gate, no flipper reached from outside its approach zone, no quake pulling with a ball
-  below an approach line, ball search 0. Corners: 57,860 slow balls round 50 corners, none came to rest. 60 whole
-  bot games (178 minutes): 0 searches, median score 6.3 million.
-- From crossing an approach line to the flipper: shore min 0.057 s (1% 0.11 s, median 0.28 s); summit min 0.040 s
-  (1% 0.07 s, median 0.38 s).
-- Longest timing windows (Gentle / Classic / Fast, ms): left orbit 35 / 25 / 30, right orbit 35 / 23 / 35, summit
-  ramp 32 / 25 / 72, obsidian drops 142 / 87 / 78, crater 20 / 32 / 20, lava lanes across from the far summit
-  flipper about 17-22 on Classic (38-48 counting a soft lob from the same side's flipper), crabs 100+. The crabs walk,
-  so some windows change with where they are.
-- Plunger: up to 0.12 of a pull is a tap (the machine's shot, down the right orbit to the right flipper); 0.13-0.23
-  falls back; then the right orbit, a fumarole; 0.52-0.74 the three skill lanes (3-5 frames of hold each); from 0.78
-  round the arch and down the left orbit.
+- 270 x 470 (was 270 x 680 with two storeys): the owner's call, so the home view is full size on a phone. One storey
+  (`island`, flippers 0 and 1, approach line y 324); the lower part is the old table's, 24 down. No upper flipper.
+- Layout: volcano (84,118, r 22, mouth tilted to the right flipper, half 15 deg) top left; skill lanes and three
+  fumaroles top right; lava lanes x 30-54 / 196-220 inside the orbits, mouths at the bottom (gates across y 222);
+  geyser (104,204); heat ramp lane x 128-154 (entry y 238) up over the fumaroles and down over the right orbit into
+  the right inlane; three obsidian drops (157,236)-(187,246) across the foot of the vent, its floor right behind them;
+  crabs at y 150 (x 124-150) and y 252 (x 74-96). The sky carry rides the wire rail down x 14-35 into the left inlane.
+- Trap finder: 10,000 balls, 38.6 ball-hours (gates up, quakes and all): nothing stuck, nothing through a wall or a
+  gate, no flipper reached from outside the approach zone, no quake pulling with a ball below the line, ball search 0.
+  Corners: 49,460 slow balls round 43 corners, none came to rest. 60 whole bot games (176 minutes): 0 searches,
+  median score 8.2 million; per game 1.4 craters, 1.4 ramps, 2.7 orbits, 0.8 geysers, 13 crabs, 6 drops.
+- From crossing the approach line to the flipper: min 0.055 s, 1% 0.115 s, median 0.38 s.
+- Longest timing windows (Gentle / Classic / Fast, ms): left orbit (right flipper) 35 / 23 / 23, right orbit (left)
+  33 / 23 / 23, heat ramp 50 / 67 / 52 (mostly the left flipper), obsidian 53 / 52 / 47, crater 15 / 58 / 17 (right
+  flipper), lava L across from the right flipper 32 / 30 / 18, lava R from the left 28 / 28 / 15, crabs 45-83. The
+  crabs walk, so some windows change with where they are.
+- Plunger: up to 0.12 of a pull is a tap (the machine's shot, down the right orbit to the right flipper); 0.13-0.19
+  falls back; 0.20-0.47 the right orbit; 0.48-0.76 the three skill lanes (lane 2 six frames, lane 1 five, lane 0 three);
+  from 0.80 round the arch and down the left orbit.
 
 ## The old table ("orbit") on 15 Oct 2026
 

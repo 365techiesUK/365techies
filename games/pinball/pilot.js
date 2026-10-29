@@ -6,14 +6,15 @@
  * How it plays, at the game's own 60 steps a second like a person:
  *  - the plunger: it waits a moment, then holds the plunger for the number of steps that drops the ball into the lit
  *    skill-shot lane (or now and then a full pull round the arch) and lets go;
- *  - a ball coming down on to a flipper - ANY flipper: Ember Peak's shore pair and its summit pair - is flipped a
+ *  - a ball coming down on to a flipper - ANY flipper (a table may have more than one pair) - is flipped a
  *    moment before it lands (a look-ahead from its speed). A button works every flipper on its side, so each side
  *    watches all of its flippers and acts for the one the ball is coming to;
  *  - a slow ball is often caught instead: the flipper is held up, the ball rolls into the crook and settles (a cradle),
- *    then the pilot picks a shot and lets go, flipping again that shot's delay later. Ember Peak: from the summit it
- *    aims at the crater (the lava lanes while they are open, now and then the geyser); from the shore at the summit
- *    ramp (always, when the pressure is full or the lava is open: the crater is up there), the orbits for a LOOP, and
- *    the obsidian targets. The old table: the hangar, the ramp, the orbits, the targets.
+ *    then the pilot picks a shot and lets go, flipping again that shot's delay later. Ember Peak (one screen since
+ *    29 Oct 2026, one pair of flippers): the crater when the pressure is full (the eruption), the lava lanes while
+ *    they are open, the orbits for a LOOP, the heat ramp during a combo; else a round of the heat ramp, the orbits,
+ *    the obsidian targets, the crater and now and then the geyser. The old table: the hangar, the ramp, the orbits,
+ *    the targets.
  *  - the delays start from AIM (measured by tools/pinball/page-pilot-aim.cjs; re-run it if a table changes). Then,
  *    with the ball still held, it tries each candidate delay on a copy of the world (E.clone steps exactly as the
  *    game will), one try a step, and lets go the moment one makes the shot - so it really hits the crater and the
@@ -26,13 +27,13 @@
   'use strict';
   if (!E) return null;
   // for each table and speed: steps of plunger hold for top lanes 0-2, and for each flipper (by index) the steps from
-  // letting a cradled ball go to the flip that makes each shot. Ember Peak: tools/pinball/page-pilot-aim.cjs, 16 Oct
-  // 2026 (crabs off the table, lava measured up); the old table: tools/pinball/fx-aim.cjs, 15 Oct 2026.
+  // letting a cradled ball go to the flip that makes each shot. Ember Peak: tools/pinball/page-pilot-aim.cjs, 29 Oct
+  // 2026, the one-screen table (crabs off the table, lava measured up); the old table: tools/pinball/fx-aim.cjs, 15 Oct 2026.
   var AIM = {
     ember: {
-      1: { lane: [39, 34, 30], F: [{ drop: 16, ramp: 21, orbit: 40 }, { drop: 34, orbit: 40 }, { lava: 5, geyser: 13, crater: 16 }, { lava: 5, crater: 28, geyser: 38 }] },
-      2: { lane: [39, 34, 30], F: [{ drop: 14, orbit: 35 }, { ramp: 25, drop: 32, orbit: 36 }, { lava: 4, crater: 14, geyser: 34 }, { lava: 4, crater: 25, geyser: 34 }] },
-      3: { lane: [39, 34, 30], F: [{ drop: 13, ramp: 22, orbit: 32 }, { ramp: 24, drop: 28, orbit: 32 }, { lava: 4, crater: 11 }, { lava: 4, crater: 23 }] }
+      1: { lane: [40, 34, 29], F: [{ drop: 35, crater: 16, ramp: 26, orbit: 40 }, { lava: 37, drop: 16, ramp: 23, geyser: 27, orbit: 40 }] },
+      2: { lane: [40, 34, 29], F: [{ orbit: 36, ramp: 22, drop: 31, lava: 34 }, { drop: 14, crater: 27, lava: 34, orbit: 36 }] },
+      3: { lane: [40, 34, 29], F: [{ crater: 13, drop: 29, lava: 30, orbit: 32, ramp: 34 }, { drop: 13, ramp: 19, lava: 30, orbit: 32 }] }
     },
     orbit: {
       1: { lane: [38, 34, 29], F: [{ ramp: 21, orbit: 40, hangar: 16, drop: 16 }, { orbit: 40, hangar: 32, drop: 33 }] },
@@ -109,14 +110,16 @@
       if (V && !V.busy) list.push('crater');
       if (G && G.st === 'ready' && k % 4 === 3) list.unshift('geyser');
       list.push('crater', 'lava', 'geyser');
-    } else {   // the shore: up the summit ramp to the crater when it matters, else loops, the ramp and the targets
-      var up = (V && (V.ready || V.pressure >= 1)) || (L && L.open);
-      if (up) list.push('ramp');
+    } else {   // Ember Peak's one pair: the crater when it matters (the eruption), the open lava lanes, loops and combos,
+      // else a round of the ramp, orbits, targets, the crater and the geyser
+      if (V && !V.busy && (V.ready || V.pressure >= 1)) list.push('crater');
+      if (L && L.open) list.push('lava');
       if (W.orbitFrom) list.push('orbit');
       if (W.comboT > 0) list.push('ramp');
-      var rota = ['ramp', 'orbit', 'drop', 'orbit', 'ramp', 'drop'], pick = rota[k % 6];
+      var rota = ['ramp', 'orbit', 'drop', 'crater', 'orbit', 'ramp', 'drop', 'geyser'], pick = rota[k % 8];
       if (pick === 'drop' && W.dropsDown >= (W.drops || []).length) pick = 'orbit';
-      list.push(pick, 'orbit', 'ramp', 'drop');
+      if (pick === 'geyser' && !(G && G.st === 'ready')) pick = 'crater';
+      list.push(pick, 'orbit', 'ramp', 'drop', 'crater');
     }
     var out = [], seen = {};
     for (var i = 0; i < list.length; i++) {

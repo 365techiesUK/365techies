@@ -171,10 +171,11 @@
     X.slingAt = function (side) { var sl = T.slings[side < 0 ? 0 : 1]; return { x: (sl.a[0] + sl.c[0]) / 2 + (side < 0 ? 4 : -4), y: (sl.a[1] + sl.c[1]) / 2 }; };
     X.slingPath = function (side) { var sl = T.slings[side < 0 ? 0 : 1]; return [{ x: sl.a[0], y: sl.a[1] - 14 }, { x: sl.a[0], y: sl.a[1] }, { x: sl.c[0], y: sl.c[1] }, { x: sl.c[0] + (side < 0 ? 8 : -8), y: sl.c[1] + 18 }]; };
     // Ember Peak's toys
-    if (T.volcano) X.volc = { x: T.volcano.x, y: T.volcano.y, z: 26 };
+    if (T.volcano) X.volc = { x: T.volcano.x, y: T.volcano.y, z: 48 };   // the crater's pool (world3d.js: a 60-unit cone at 0.85, 29 Oct 2026)
     if (T.geyser) X.gey = { x: T.geyser.x, y: T.geyser.y, z: 4 };
     if (T.lava) {
-      X.gates = T.lava.gates.map(function (g) { return { x: (g[0] + g[2]) / 2 + (g[5] > g[0] ? 6 : -6), y: (g[1] + g[3]) / 2, z: 4 }; });
+      // (6 units from the gate's middle towards the side it blocks: the lane's mouth, wherever the gate faces)
+      X.gates = T.lava.gates.map(function (g) { var x = (g[0] + g[2]) / 2, y = (g[1] + g[3]) / 2, dx = g[5] - x, dy = g[6] - y, l = Math.sqrt(dx * dx + dy * dy) || 1; return { x: x + dx / l * 6, y: y + dy / l * 6, z: 4 }; });
       X.laneTops = [line('lavaL') || X.gates[0], line('lavaR') || X.gates[1]];
     }
     var sky = Bt && Bt.CARRY && Bt.CARRY.sky;
@@ -642,6 +643,17 @@
       }
     }
 
+    // the lower half alive (one screen, 29 Oct 2026): an ember now and then drifts up off a lava-lit sling, faster as
+    // the pressure builds (a particle or two: cheap; none in reduced motion, on a tilt or at game over)
+    if (W && X.volc && !red && !dark && W.state !== 'bonus') {
+      var V0 = W.toys && W.toys.volcano, pk = V0 ? Math.min(1, V0.pressure || 0) : 0;
+      S.slingEmit = (S.slingEmit || 0) - dt;
+      if (S.slingEmit <= 0) {
+        S.slingEmit += 560 - 320 * pk;
+        var sd = rnd() < 0.5 ? -1 : 1, sp = X.slingAt(sd);
+        sparks(1 + (pk > 0.6 ? 1 : 0), sp.x + (rnd() - 0.5) * 10, sp.y + (rnd() - 0.5) * 14, 3, C.ember, 0.3);
+      }
+    }
     // the flash (and a second one, a third of a second later)
     for (i = S.flashQ.length - 1; i >= 0; i--) if (S.clock >= S.flashQ[i].at) { flash(S.flashQ[i].v, S.flashQ[i].c); S.flashQ.splice(i, 1); }
     state.flash = red ? 0 : state.flash * Math.exp(-dt / 85);
