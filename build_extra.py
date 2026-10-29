@@ -26314,6 +26314,8 @@ def write_portal_page():
   #p365app .pin-sub { margin:-.25rem 0 .3rem; }
   #p365app .pin-it { padding:.85rem 0 .9rem; }
   #p365app .pin-it .cm-t { white-space:normal; }
+  #p365app .pin-mail { flex-basis:100%; font-size:.95rem; color:var(--pcyan); overflow-wrap:anywhere; text-decoration:none; }
+  #p365app .pin-mail:hover, #p365app .pin-mail:focus-visible { text-decoration:underline; }
   #p365app .pin-brief { margin:.5rem 0 0; padding:.6rem .8rem; border-radius:10px; background:rgba(255,255,255,.04); border:1px solid rgba(240,198,90,.38); }
   #p365app .pin-need { margin:0; font-size:1.05rem; line-height:1.4; color:var(--pwhite); overflow-wrap:anywhere; }
   #p365app .pin-urg { display:inline-block; margin-left:.25rem; padding:.05rem .5rem; border-radius:999px; background:#7a1f1f; color:#ffd1c9; font-size:.8rem; font-weight:700; vertical-align:middle; }
@@ -33649,7 +33651,9 @@ def write_portal_page():
       + (w.n ? '<span class="cm-num">' + esc(pinUk(w.n)) + '</span>' : '')
       + '<span class="cm-tag cm-tag--web">' + esc(w.label || 'Website enquiry') + '</span>'
       + (w.cust ? '<span class="cm-tag">' + (w.cust_src === 'job' ? 'job record: ' : 'customer: ') + esc(w.cust) + '</span>' : '')
-      + '<span class="cm-t">' + esc(cmWhen(w.at)) + ' ' + pinWait(w.at) + '</span>';
+      + '<span class="cm-t">' + esc(cmWhen(w.at)) + ' ' + pinWait(w.at) + '</span>'
+      // 29 Oct 2026 (owner, for David: the email address was only behind the Email button - "one of the most important bits")
+      + (w.email ? '<a class="pin-mail" href="mailto:' + esc(w.email) + '?subject=' + encodeURIComponent('Your enquiry to 365 Techies') + '">\\u2709 ' + esc(w.email) + '</a>' : '');
     var also = vms.map(function (v) {
       return '<div class="pin-vm"><span class="cm-k">\\ud83d\\udcde They also left a voicemail \\u00b7 ' + esc(cmWhen(v.at)) + (v.dur ? ' \\u00b7 ' + esc(v.dur) : '') + '</span>'
         + (v.audio ? '<audio controls preload="none" src="' + esc(v.audio) + '"></audio>' : '')
@@ -33657,14 +33661,14 @@ def write_portal_page():
     }).join('') + (tx ? '<p class="cm-k pin-vm">\\ud83d\\udcac They texted us too \\u2014 ' + tx.open + ' new in Messages.</p>' : '');
     return '<div class="cm-th pin-it"><div class="cm-hd">' + hd + '</div>'
       + cmBrief(w.brief || { need: w.topic || w.label || 'Website enquiry' }) + also
-      + (w.body ? '<details class="pin-msg"><summary>What they wrote</summary><p>' + esc(w.body) + '</p>'
-        + (w.email ? '<span class="cm-k"><a href="mailto:' + esc(w.email) + '">' + esc(w.email) + '</a></span>' : '') + '</details>' : '')
+      + (w.body ? '<details class="pin-msg"><summary>What they wrote</summary><p>' + esc(w.body) + '</p></details>' : '')
       + cmNotes(w.notes)
       + '<div class="cm-act">' + (w.n ? '<a class="btn sm" href="tel:' + esc(w.n) + '">\\ud83d\\udcde Call ' + esc(pinUk(w.n)) + '</a>' : '')
       + (w.email ? '<a class="btn sm ghost" href="mailto:' + esc(w.email) + '?subject=' + encodeURIComponent('Your enquiry to 365 Techies') + '">Email</a>' : '')
       + (w.mobile ? '<button type="button" class="sm ghost" data-pj="r:' + esc(key) + '">Text</button>' : '')
       + cmNewBtn(key, w.cust)
       + '<button type="button" class="sm ghost" data-pj="n:' + esc(key) + '">Note</button>'
+      + (w.cust || !w.email ? '' : '<button type="button" class="sm ghost" data-pj="b:' + esc(key) + '">Block</button>')   // spam: the Messages card's block box
       + '<button type="button" class="sm" data-cmid="' + esc(w.id) + '">\\u2714 Done</button></div></div>';
   }
   function renderPinned(d) {
@@ -34342,10 +34346,10 @@ def write_portal_page():
       if (b.id === 'cmdonev') { CM.doneV = !CM.doneV; renderComms(); return; }
       if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
       if (b.id === 'pinmore') { CM.allP = true; renderComms(); return; }
-      if (b.hasAttribute('data-pj')) {   // 29 Oct 2026: Note or Text on a pinned enquiry opens its box on the full card in Messages
+      if (b.hasAttribute('data-pj')) {   // 29 Oct 2026: Note, Text or Block on a pinned enquiry opens its box on the full card in Messages
         var pj = b.getAttribute('data-pj'), pk = pj.slice(2), wid = pk.slice(2);
-        CM.f = 'w'; CM.allT = true; CM.doneT = false; CM.blk = ''; CM.draft = ''; CM.ndraft = '';
-        CM.rep = pj.charAt(0) === 'r' ? pk : ''; CM.note = pj.charAt(0) === 'n' ? pk : '';
+        CM.f = 'w'; CM.allT = true; CM.doneT = false; CM.draft = ''; CM.ndraft = '';
+        CM.rep = pj.charAt(0) === 'r' ? pk : ''; CM.note = pj.charAt(0) === 'n' ? pk : ''; CM.blk = pj.charAt(0) === 'b' ? pk : '';
         renderComms();
         var tgt = null;
         Array.prototype.forEach.call(document.querySelectorAll('#cmbox [data-wid]'), function (x) { if (x.getAttribute('data-wid') === wid) tgt = x; });

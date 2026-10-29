@@ -808,7 +808,9 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
     $openWebs = 0; $wout = array();
     foreach ($webs as $it) {
         if (empty($it['handled'])) $openWebs++;
-        if (count($wout) >= $limit) continue;
+        // 29 Oct 2026: every unanswered enquiry is sent, however old, so the portal's pinned "Call these back" card never
+        // misses one (it was showing 17 of 18); answered ones still stop at $limit
+        if (count($wout) >= $limit && (!empty($it['handled']) || count($wout) >= 150)) continue;
         $n = (string)$it['number']; $L = is_array($it['lead'] ?? null) ? $it['lead'] : array();
         list($known, $ksrc) = $n !== '' ? comms_name_for($n, $it['match'] ?? array(), $names) : array('', '');
         $typed = (string)($L['name'] ?? '');

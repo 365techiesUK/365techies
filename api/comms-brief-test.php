@@ -75,6 +75,21 @@ check($x['need'] === 'Ordered Business Care on the website — set it up and rin
 $x = $r('', 'Asked us to ring them back.', 'Get Help button');
 check(strpos($x['need'], 'Pressed Get Help') === 0, 'the Get Help button', $x['need']);
 
+echo "E  every unanswered enquiry reaches the portal (comms-lib comms_board)\n";
+require_once __DIR__ . '/comms-lib.php';
+$its = array();
+for ($i = 0; $i < 35; $i++)   // 35 answered enquiries, all newer than the unanswered one
+    $its[] = array('id' => 'A' . $i, 'type' => 'web', 'at' => gmdate('c', 1793000000 + 3600 + $i * 60), 'number' => '', 'body' => 'Answered ' . $i, 'handled' => true, 'handled_by' => 'portal',
+        'lead' => array('kind' => 'web', 'label' => 'Website enquiry', 'name' => 'A' . $i, 'email' => 'a' . $i . '@example.com', 'phone' => '', 'company' => '', 'topic' => '', 'page' => '/contact/'));
+$its[] = array('id' => 'OLD', 'type' => 'web', 'at' => gmdate('c', 1793000000), 'number' => '', 'body' => 'My Virgin email needs moving.', 'handled' => false, 'handled_by' => '',
+    'lead' => array('kind' => 'web', 'label' => 'Website enquiry', 'name' => 'Old Example', 'email' => 'old@example.com', 'phone' => '', 'company' => '', 'topic' => '', 'page' => '/contact/'));
+$bd = comms_board($its, array(), 'k', 1793100000, 30);
+$ids = array_map(function ($w) { return $w['id']; }, $bd['webs']);
+check(in_array('OLD', $ids, true) && $bd['open_webs'] === 1, 'an old unanswered enquiry is sent even behind 30 newer answered ones', count($ids) . ' sent');
+check(count(array_filter($bd['webs'], function ($w) { return !empty($w['done']); })) === 30, 'answered ones still stop at the limit');
+$old = array_values(array_filter($bd['webs'], function ($w) { return $w['id'] === 'OLD'; }))[0];
+check($old['email'] === 'old@example.com' && $old['brief']['need'] === 'Move their Virgin Media email address', 'each item carries its email and its brief', json_encode($old['brief']));
+
 echo "D  wording rules\n";
 $src = (string)file_get_contents(__DIR__ . '/comms-brief-lib.php');
 check(strpos($src, '?' . '>') === false, 'no closing tag');
