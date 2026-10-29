@@ -333,7 +333,7 @@
   // them, then racing); the orbits (an arrow at each mouth and chevrons all the way up the lane); the heat ramp; the obsidian targets; and the shore's inlanes, outlanes, ball save, E-R-U-P-T (the
   // pressure again, where the player looks most) and the bonus multiplier.
   function buildEmber() {
-    var Be = E.table('ember'), T = Be.T, M = T.MID, TH = T.H, TW = T.W, A = T.arch, IDLE = 0.3;
+    var Be = E.table('ember'), T = Be.T, M = T.MID, TH = T.H, TW = T.W, A = T.arch, IDLE = 0.42;
     var COL = {
       lane: '#ffd84a', skill: '#5cff6b', loop: '#2ee6d6', orbit: '#2ee6d6', ramp: '#ffb02e', obsidian: '#b48cff',
       crater: '#ff8a1e', geyser: '#e8f6ff', lava: '#ff7a1a', inlane: '#ffd84a', kick: '#ff4a3a', save: '#ff3b4a', mult: '#ff9a2e',
@@ -500,8 +500,26 @@
         add({ id: 'ring' + i + '.' + k, group: 'rings', shape: 'circle', x: x, y: y, w: 4, h: 4, rot: 0, color: COL.bump[i], b: i });
       }
     });
-
-    // ---------------------------------------------------------------- lookups
+    // ---------------------------------------------------------------- the lava river (29 Oct 2026, owner: "more lamps"):
+    // bubbles of lava along the printed river (the same line as art3d.js river()), every 12 units from the volcano's foot
+    // to the drain, wherever they clear the other lamps, the toys and the walls. In play the lava flows down them.
+    var RIV = [[92, 142], [86, 160], [79, 182], [75, 204], [78, 226], [88, 248], [102, 270], [113, 292], [119, 316], [122, 342], [124, 366], [125, 388], [125, 410]];
+    var rv = 0, Vk = T.volcano, Gk = T.geyser;
+    for (var ri = 0, carry = 0; ri < RIV.length - 1; ri++) {
+      var p0 = RIV[ri], p1 = RIV[ri + 1], sl = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
+      for (var u = carry; u < sl; u += 12) {
+        var rx2 = p0[0] + (p1[0] - p0[0]) * u / sl, ry2 = p0[1] + (p1[1] - p0[1]) * u / sl, ok2 = true;
+        for (var j2 = 0; j2 < list.length && ok2; j2++) if (Math.hypot(list[j2].x - rx2, list[j2].y - ry2) < 0.5 * Math.max(list[j2].w, list[j2].h) + 5) ok2 = false;
+        if (Vk && Math.hypot(rx2 - Vk.x, ry2 - Vk.y) < Vk.r + 10) ok2 = false;
+        if (Gk && Math.hypot(rx2 - Gk.x, ry2 - Gk.y) < (Gk.r || 8) + 9) ok2 = false;
+        B.forEach(function (b) { if (ok2 && Math.hypot(b[0] - rx2, b[1] - ry2) < b[2] + 7) ok2 = false; });
+        T.posts.forEach(function (p) { if (ok2 && Math.hypot(p[0] - rx2, p[1] - ry2) < p[2] + 5) ok2 = false; });
+        Be.WALLS.concat(Be.LAVA, Be.GATES).forEach(function (w) { if (ok2 && segD(rx2, ry2, w) < w.r + 5) ok2 = false; });
+        (T.crabs || []).forEach(function (c) { var w = { ax: c.path[0][0], ay: c.path[0][1], dx: c.path[1][0] - c.path[0][0], dy: c.path[1][1] - c.path[0][1] }; w.l2 = w.dx * w.dx + w.dy * w.dy || 1; if (ok2 && segD(rx2, ry2, w) < c.r + 6) ok2 = false; });
+        if (ok2) add({ id: 'river' + rv++, group: 'river', shape: 'circle', x: rx2, y: ry2, w: 5, h: 5, rot: 0, color: COL.lava });
+      }
+      carry = u - sl;
+    }
     var byId = {}, groups = {};
     list.forEach(function (l) { byId[l.id] = l.i; (groups[l.group] = groups[l.group] || []).push(l.i); });
     var N = list.length, NDROP = groups.drops.length, LOOP = groups.loop, GAUGE = groups.gauge, ERUPT = groups.erupt;
@@ -654,6 +672,12 @@
         out[bl] = hit ? 1 : (Math.floor(t / 420) + i) % 3 === 0 ? 0.3 : 0.06;
         if (lit.bump && lit.bump[i] > 0) { var r = ringsOf[i]; for (k = 0; k < r.length; k++) out[r[k]] = 1; }
         else rings(out, i, t, 150, IDLE);
+      }
+      // the lava river: a flow down from the volcano, quicker and hotter with the pressure; racing while the lava is open
+      var RV = groups.river;
+      if (RV) {
+        if (Lv && Lv.open) cometF(out, RV, t, 45, 1, 0.3);
+        else { cometF(out, RV, t, 230 - 140 * hot, 0.55 + 0.45 * hot, 0.1 + 0.12 * hot); for (k = 0; k < RV.length; k++) out[RV[k]] = Math.max(out[RV[k]], 0.12 + 0.12 * hashF(RV[k], Math.floor(t / 170))); }
       }
       // a quake: the whole table shudders (each lamp drops out at random, fast)
       if (Q && Q.t > 0) { var qt = Math.floor(t / 40); for (i = 0; i < N; i++) if (hashF(i, qt) < 0.45) out[i] *= 0.2; }

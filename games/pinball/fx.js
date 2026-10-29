@@ -108,19 +108,21 @@
   // bursts: [kind, n (medium tier), power, colour, z lift, where ('gates': at both lava gates), dir]; shock: a screen shockwave's power; move: a kick to the table
   // {pitch, dy, roll} (only when quiet); fringe: a colour-fringe spike; trauma: a rumble (0..1)
   var FXD = {
-    bumper:   { bursts: [['sparks', 14, 1], ['steam', 8, 0.5, C.steam, 8]] },
-    sling:    { bursts: [['sparks', 10, 0.8]] },
-    drop:     { bursts: [['debris', 30, 0.9, C.rock], ['sparks', 8, 0.8, C.violet]] },
-    drops:    { bursts: [['debris', 140, 1.2, C.rock], ['sparks', 40, 1.2, C.violet]], shock: 0.45 },
-    crater:   { bursts: [['lava', 50, 0.7], ['steam', 30, 0.6, C.steam, 10]], shock: 0.35, trauma: 0.3 },
+    // 29 Oct 2026 (owner: "more lamps and effects", "camera moves more"): fuller hits, and small table kicks on the everyday
+    // hits too (still only while quiet)
+    bumper:   { bursts: [['sparks', 22, 1.1], ['lava', 10, 0.5], ['steam', 12, 0.6, C.steam, 8]], shock: 0.15, move: { dy: 0.35 } },
+    sling:    { bursts: [['sparks', 16, 0.9], ['lava', 6, 0.4]], move: { roll: 0.25 } },
+    drop:     { bursts: [['debris', 40, 1, C.rock], ['sparks', 14, 0.9, C.violet]], move: { pitch: 0.3 } },
+    drops:    { bursts: [['debris', 180, 1.3, C.rock], ['sparks', 60, 1.3, C.violet]], shock: 0.5, move: { pitch: 0.7, dy: 1 } },
+    crater:   { bursts: [['lava', 80, 0.8], ['steam', 40, 0.7, C.steam, 10]], shock: 0.4, trauma: 0.3, move: { pitch: 0.4, dy: 0.6 } },
     erupt:    { bursts: [['lava', 260, 1.1], ['steam', 80, 0.9, C.steam, 16], ['debris', 30, 1, C.rock], ['sparks', 40, 1.2, C.ember]], shock: 0.6, move: { pitch: 0.9, dy: 1.2 }, fringe: 0.35, trauma: 0.45 },
     eruption: { bursts: [['lava', 1100, 1.7], ['lava', 300, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 220, 1.6, C.ember], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.6, move: { pitch: 2, dy: 3 }, fringe: 0.9, trauma: 1 },
     rail:     { bursts: [['sparks', 18, 0.9, C.yellow]] },
     railout:  { bursts: [['sparks', 12, 0.8, C.yellow]] },
     puff:     { bursts: [['steam', 40, 0.5, C.steam, 4]] },
     geyser:   { bursts: [['steam', 220, 0.6, C.steam, 4, null, [0, 0, 2.2]], ['sparks', 20, 1, C.white]], shock: 0.4, move: { pitch: 0.5, dy: 0.8 } },
-    crab:     { bursts: [['sparks', 16, 1, C.crab], ['debris', 14, 0.8, C.crab]], shock: 0.2 },
-    lava:     { bursts: [['lava', 160, 1.2], ['sparks', 30, 1.2, C.ember]], shock: 0.45, fringe: 0.3 },
+    crab:     { bursts: [['sparks', 22, 1.1, C.crab], ['debris', 18, 0.9, C.crab]], shock: 0.25, move: { roll: 0.35 } },
+    lava:     { bursts: [['lava', 200, 1.3], ['sparks', 40, 1.2, C.ember]], shock: 0.5, fringe: 0.3, move: { pitch: 0.5, dy: 0.9 } },
     lavaopen: { bursts: [['lava', 120, 1, null, 0, 'gates'], ['steam', 60, 0.8, C.steam, 6, 'gates']], trauma: 0.4, move: { dy: 1 } },
     lavaclose:{ bursts: [['steam', 70, 0.8, C.steam, 6, 'gates']] },
     quake:    { bursts: [['ash', 80, 1, C.ash, 10], ['debris', 60, 1, C.rock, 30]], trauma: 1, move: { pitch: 0.5 } },
@@ -398,12 +400,12 @@
     state.shocks.push({ x: x, y: y, z: z || 0, power: power });
     if (state.shocks.length > MAXSHOCK) state.shocks.splice(0, state.shocks.length - MAXSHOCK);
   }
-  function kick(m) {   // a push to the whole table (only while quiet; never with reduced motion)
+  function kick(m, side) {   // a push to the whole table (only while quiet; never with reduced motion); side -1/1 signs the roll
     if (!m || reduced() || !S.quiet) return;
     var w = 12;   // the spring's speed: a push of `a` peaks near a
     if (m.pitch) S.tm.pitch.v += m.pitch * w * 1.6;
     if (m.dy) S.tm.dy.v += m.dy * w * 1.6;
-    if (m.roll) S.tm.roll.v += m.roll * w * 1.6;
+    if (m.roll) S.tm.roll.v += m.roll * (side || 1) * w * 1.6;
   }
   function fxAt(name, at, W, override) {   // a named FXD entry's bursts, shock, table push, fringe and rumble
     var f = override || FXD[name]; if (!f) return;
@@ -413,7 +415,7 @@
     });
     if (f.shock) shock(at.x, at.y, at.z, f.shock);
     if (f.shock2) S.later.push({ at: S.clock + 260, fn: function () { shock(at.x, at.y, at.z, f.shock2); } });
-    if (f.move) kick(f.move);
+    if (f.move) kick(f.move, at && at.x != null && X ? (at.x < X.MID ? -1 : 1) : 1);
     if (f.fringe && !reduced()) S.fringe = Math.max(S.fringe, f.fringe);
     if (f.trauma && !reduced()) S.trauma = Math.min(1, Math.max(S.trauma, f.trauma));
   }

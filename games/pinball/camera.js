@@ -63,10 +63,11 @@
   };
   var MODES = {
     //          follow zoom, window (s free needed to push in), home dwell between push-ins, push-ins a minute,
-    //          crater dive ('all' | 'first' | 'nod' | 'none'), yaw arc, slow motion, launch and drain shots
-    calm:    { follow: 1.25, window: 2.2, dwell: 3.0, perMin: 6, dive: 'first', yaw: 8, slow: true, shots: true },
-    arcade:  { follow: 1.35, window: 1.75, dwell: 0.6, perMin: 15, dive: 'all', yaw: 12, slow: true, shots: true },
-    classic: { follow: 1.0, window: 1.6, dwell: 0.6, perMin: 0, dive: 'none', yaw: 0, slow: false, shots: false }
+    //          crater dive ('all' | 'first' | 'nod' | 'none'), yaw arc, slow motion, launch and drain shots, reach (how far
+    //          below the top approach line a ball still counts as "high" enough to follow; the forecast still decides)
+    calm:    { follow: 1.25, window: 2.2, dwell: 3.0, perMin: 6, dive: 'first', yaw: 8, slow: true, shots: true, reach: 40 },
+    arcade:  { follow: 1.5, window: 1.75, dwell: 0.4, perMin: 20, dive: 'all', yaw: 16, slow: true, shots: true, reach: 110 },
+    classic: { follow: 1.0, window: 1.6, dwell: 0.6, perMin: 0, dive: 'none', yaw: 0, slow: false, shots: false, reach: 40 }
   };
   var NEED = Math.ceil((CFG.back + CFG.settle + CFG.early + CFG.spare) * 60);   // steps before an arrival that the move home starts
   var SETTLE = Math.round(CFG.settle * 60);
@@ -402,7 +403,7 @@
         // follow: the ball high up (or out of the home picture) and its next half second
         var pts = leadPath(W, b), x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
         pts.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
-        var off = project(H, ASPECT, b.x, b.y, b.z || 0)[1] < 0.03, high = y0 < topApproach(T) + 40;
+        var off = project(H, ASPECT, b.x, b.y, b.z || 0)[1] < 0.03, high = y0 < topApproach(T) + (M.reach || 40);
         if (high || off) {
           if (!S.goalC || (S.state !== 'follow' && S.state !== 'back')) S.goalC = [(x0 + x1) / 2, (y0 + y1) / 2];
           else {   // the dead zone: re-aim only once the next half second leaves the middle 40% of the picture

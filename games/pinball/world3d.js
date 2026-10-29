@@ -73,7 +73,7 @@ const THEMES = {
     drops: { order: ['orb', 'moth', 'bot', 'moth', 'orb'], col: { orb: '#ff5cc8', moth: '#3fe0ff', bot: '#ffd84a' } }
   },
   ember: {
-    world: 'island', exposure: 1.04, cabinet: 'lacquer',
+    world: 'island', exposure: 1.16, bloomT: 1.5, cabinet: 'lacquer',
     bump: [{ c: '#ff7a1a', art: 'vent' }, { c: '#ffb21a', art: 'vent' }, { c: '#ff5a2a', art: 'vent' }],
     sling: ['#ff8a1a', '#ff8a1a'], slingArt: [null, null], ramp: 0xffc890, rampWall: '#ff9a2e', led: '#ffae3a',
     lava: '#ff6a1a', steam: '#f4f8ff', sea: '#29d3d6'
@@ -701,12 +701,12 @@ export function create(opts) {
   }
 
   // the ball pool: chrome balls reflecting the table round them
-  const BR0 = 7;
+  const BR0 = 7, BVIS = 1.15;   // the ball is drawn 15% bigger than the engine's (owner, 29 Oct 2026: "bigger ball") so it reads on a phone
   const cubeRT = keepS(new THREE.WebGLCubeRenderTarget(opts.reflectSize || (PHONE ? 64 : 128), { type: THREE.HalfFloatType, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter }));
   const cubeCam = new THREE.CubeCamera(2, 2500, cubeRT); scene.add(cubeCam);
   cubeCam.children.forEach((c) => c.layers.set(1));
   const ballMat = keepS(new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0.05, envMap: cubeRT.texture, envMapIntensity: 1.3 }));
-  const ballGeo = keepS(new THREE.SphereGeometry(BR0, 48, 32));
+  const ballGeo = keepS(new THREE.SphereGeometry(BR0 * BVIS, 48, 32));
   const shGeo = keepS(new THREE.PlaneGeometry(1, 1)); shGeo.rotateX(-Math.PI / 2);
   const balls = [];
   // the ball is never lost behind a toy: a slightly larger copy drawn only where something is in front of the ball
@@ -1026,7 +1026,7 @@ export function create(opts) {
       rg.rotateX(-Math.PI / 2); rg.translate(0, 1.9, 0);
       const bg = keep(new THREE.ExtrudeGeometry(batShape(f.r0 - 1.3, f.r1 - 1.25, f.len), { depth: 7.2, bevelEnabled: true, bevelThickness: 0.9, bevelSize: 0.8, bevelSegments: 3, curveSegments: 24 }));
       bg.rotateX(-Math.PI / 2); bg.translate(0, 1.4, 0);
-      const bat = new THREE.Group(); grp.add(bat);
+      const bat = new THREE.Group(); grp.add(bat); bat.scale.set(1, 1.15, 1.18);   // drawn chunkier than the engine's bat (29 Oct 2026)
       bat.add(R1(new THREE.Mesh(rg, M.rubberR)), R1(new THREE.Mesh(bg, M.batW)));
       const pin = R1(new THREE.Mesh(cylinder(2.4, 2.6, 1.2, 20), M.chrome)); pin.position.y = 10.4; bat.add(pin);
       const sc = flipperShadowCanvas(f), sg = keep(new THREE.PlaneGeometry(sc.w, sc.h)); sg.rotateX(-Math.PI / 2); sg.translate(sc.w / 2 - sc.pad, 0, 0);
@@ -1218,8 +1218,8 @@ export function create(opts) {
     // the lava's own glow at the crater; both: one flash light
     const lights = { gi: [] };
     if (ISLAND) {
-      lights.hemi = RF(new THREE.HemisphereLight(0xf4f6ff, 0x8a6a48, 1.2)); group.add(lights.hemi);
-      lights.key = RF(new THREE.DirectionalLight(0xfff0d8, 2.9)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
+      lights.hemi = RF(new THREE.HemisphereLight(0xf4f6ff, 0x9a7050, 1.45)); group.add(lights.hemi);
+      lights.key = RF(new THREE.DirectionalLight(0xfff0d8, 3.15)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
       lights.rim = RF(new THREE.DirectionalLight(0x9fd8ff, 0.7)); lights.rim.position.set(0, 120, -420); group.add(lights.rim); group.add(lights.rim.target);
     } else {
       lights.hemi = RF(new THREE.HemisphereLight(0xe8ecff, 0x40304a, 1.05)); group.add(lights.hemi);
@@ -1351,6 +1351,7 @@ export function create(opts) {
     scene.environment = TB.envRT.texture;
     scene.background = TB.ISLAND ? new THREE.Color(0x8fd0ff) : new THREE.Color(0x07060c);
     renderer.toneMappingExposure = TB.theme.exposure;
+    bloom.threshold = TB.theme.bloomT || (opts.threshold != null ? opts.threshold : 1.75);
     applyTierToTable();
     motes.length = 0; trails.clear();
     if (particles && typeof particles.setOrigin === 'function') { try { particles.setOrigin(HW, ZC); } catch (e) {} }
@@ -1536,8 +1537,9 @@ export function create(opts) {
     (W.balls || []).forEach((b) => {
       const z = ballZ(b);
       let h = trails.get(b.id); if (!h) { h = []; trails.set(b.id, h); } seen.add(b.id);
-      h.unshift([b.x, b.y, z]); if (h.length > 8) h.length = 8;
-      const sp = b.m === 'ramp' ? Math.abs(b.vs || 0) : Math.hypot(b.vx || 0, b.vy || 0), k = clamp((sp - 430) / 420, 0, 1);
+      h.unshift([b.x, b.y, z]); if (h.length > 10) h.length = 10;
+      if (b.at !== 'crater') put(b.x, b.y, z + BR, TB.ISLAND ? '#ffe2b0' : '#bfefff', 0.22, BR * 3.4);   // the hero ball's halo: always findable
+      const sp = b.m === 'ramp' ? Math.abs(b.vs || 0) : Math.hypot(b.vx || 0, b.vy || 0), k = clamp((sp - 280) / 380, 0, 1);
       if (k <= 0 || b.m === 'held' || b.carry) return;
       for (let i = 0; i < h.length - 1; i++) for (let j = 0; j < 3; j++) {
         const A = h[i], B = h[i + 1], u = j / 3, x = A[0] + (B[0] - A[0]) * u, y = A[1] + (B[1] - A[1]) * u;
@@ -1809,9 +1811,9 @@ export function create(opts) {
     for (let i = 0; i < balls.length; i++) {
       const b = W.balls && W.balls[i], Bb = balls[i];
       if (!b) { Bb.m.visible = Bb.s.visible = Bb.s2.visible = false; continue; }
-      const z = ballZ(b), cy = TB.BR + z, onFloor = b.m !== 'held' && !(b.m === 'ramp' && b.carry);
+      const z = ballZ(b), cy = TB.BR * BVIS + z, onFloor = b.m !== 'held' && !(b.m === 'ramp' && b.carry);
       Bb.m.position.set(wx(b.x), cy, wz(b.y)); Bb.m.visible = true; Bb.m.children[0].visible = b.at !== 'crater';
-      const sz = 15 + z * 0.05;
+      const sz = (15 + z * 0.05) * BVIS;
       Bb.s.position.set(wx(b.x + SHX * TB.BR * 0.6), (b.m === 'ramp' && !b.carry ? z : 0) + 0.45, wz(b.y + SHY * TB.BR * 0.6)); Bb.s.scale.set(sz, 1, sz * 1.15); Bb.s.visible = onFloor || (b.m === 'ramp' && !b.carry);
       if (z > 2 && b.at !== 'crater') { Bb.s2.position.set(wx(b.x + SHX * cy), 0.1, wz(b.y + SHY * cy)); const k = 18 + z * 0.3; Bb.s2.scale.set(k, 1, k); Bb.s2.material.opacity = 1; Bb.s2.visible = true; } else Bb.s2.visible = false;
       if (!first) first = Bb.m;

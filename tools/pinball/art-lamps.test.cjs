@@ -219,7 +219,7 @@ function inPoly(P, x, y) { let c = false; for (let i = 0, j = P.length - 1; i < 
 
 test('Ember Peak: about 80-110 inserts, each complete and on the table, every shot and toy has its lamps', () => {
   assert.equal(LE.id, 'ember');
-  assert.ok(LE.list.length >= 80 && LE.list.length <= 110, 'count ' + LE.list.length);
+  assert.ok(LE.list.length >= 80 && LE.list.length <= 130, 'count ' + LE.list.length);
   const ids = new Set();
   for (const l of LE.list) {
     assert.ok(!ids.has(l.id), 'duplicate ' + l.id); ids.add(l.id);

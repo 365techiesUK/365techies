@@ -1039,7 +1039,7 @@
       for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
         var n = fbm(i / 16, j / 16, 4, 11), m = fbm(i / 4.5, j / 4.5, 2, 23), ox = fbm(i / 30 + 9, j / 30, 3, 5), k = (j * w + i) * 4, v = 0.6 * n + 0.4 * m;
         var red = sstep(0.55, 0.75, ox);   // oxidised patches: rust red-brown in the black
-        d.data[k] = 26 + v * 52 + red * 60; d.data[k + 1] = 23 + v * 44 + red * 14; d.data[k + 2] = 34 + v * 54 - red * 10; d.data[k + 3] = 255;
+        d.data[k] = 44 + v * 66 + red * 74; d.data[k + 1] = 30 + v * 50 + red * 22; d.data[k + 2] = 42 + v * 58 - red * 8; d.data[k + 3] = 255;   // lifted 29 Oct 2026 (owner: "brighter and more colourful")
       }
       x.putImageData(d, 0, 0);
       g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
@@ -1054,8 +1054,8 @@
     });
     step('glowfield', function () {   // the lower half lit by the lava: a warm wash up from the river, hot cracks in the rock
       unitT(g, S); unitT(gg, GS);
-      var wash = g.createLinearGradient(0, 230, 0, 420); wash.addColorStop(0, 'rgba(255,90,20,0)'); wash.addColorStop(0.6, 'rgba(255,90,20,0.16)'); wash.addColorStop(1, 'rgba(255,120,30,0.24)');
-      g.fillStyle = wash; g.fillRect(0, 230, W0, 190);
+      var wash = g.createLinearGradient(0, 170, 0, 420); wash.addColorStop(0, 'rgba(255,90,20,0)'); wash.addColorStop(0.5, 'rgba(255,100,24,0.22)'); wash.addColorStop(1, 'rgba(255,130,36,0.34)');
+      g.fillStyle = wash; g.fillRect(0, 170, W0, 250);
       var rc = rng(19);
       both(function (c, glow) {   // hot cracks branching off the river across the lower rock (both canvases: they glow)
         c.lineCap = 'round'; c.lineJoin = 'round';
