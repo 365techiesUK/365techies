@@ -264,16 +264,17 @@ function woodCanvas() {
   }
   return c;
 }
-function lacquerCanvas() {   // Ember Peak's cabinet: glossy ocean-blue lacquer with waves and a gold pinstripe
+function lacquerCanvas() {   // Ember Peak's cabinet: glossy volcanic-black lacquer, faint lava waves, a gold pinstripe (dark since 29 Oct 2026: the lit table pops, as on the top tables)
   const c = cv(512, 256), g = c.getContext('2d'), r = rnd(9);
-  const q = g.createLinearGradient(0, 0, 0, 256); q.addColorStop(0, '#0e4cb4'); q.addColorStop(1, '#0a3690');
+  const q = g.createLinearGradient(0, 0, 0, 256); q.addColorStop(0, '#1c1220'); q.addColorStop(1, '#0b070e');
   g.fillStyle = q; g.fillRect(0, 0, 512, 256);
   for (let i = 0; i < 9; i++) {
-    const y0 = 20 + i * 27 + r() * 6; g.strokeStyle = i % 3 ? 'rgba(80,190,255,0.14)' : 'rgba(255,255,255,0.1)'; g.lineWidth = 3 + r() * 4; g.beginPath();
+    const y0 = 20 + i * 27 + r() * 6; g.strokeStyle = i % 3 ? 'rgba(255,96,24,0.12)' : 'rgba(255,190,90,0.09)'; g.lineWidth = 3 + r() * 4; g.beginPath();
     for (let x = 0; x <= 512; x += 8) { const yy = y0 + Math.sin(x / 40 + i * 1.7) * 6; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); }
     g.stroke();
   }
-  g.fillStyle = '#ffd36a'; g.fillRect(0, 6, 512, 3); g.fillRect(0, 247, 512, 3);
+  g.fillStyle = '#ffc04a'; g.fillRect(0, 6, 512, 3); g.fillRect(0, 247, 512, 3);
+  g.fillStyle = 'rgba(255,90,20,0.55)'; g.fillRect(0, 12, 512, 1); g.fillRect(0, 243, 512, 1);
   return c;
 }
 function skyCanvas(w, h, hy, hx0, hx1) {   // the old table's space beyond its far end

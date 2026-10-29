@@ -1068,6 +1068,38 @@
       // warm pools of light round the slings (the lava lights their plastics from below)
       ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 30, [255, 110, 30], 0.42); pool(gg, cx, cy, 28, [255, 100, 20], 0.55); });
     });
+    step('mural', function () {   // printed playfield art over the bare rock (29 Oct 2026: the top tables print art edge to edge): a sunburst from the
+      // volcano, basalt hex columns fading in down the field, gold pinstripe rings round the peak, and printed ember sparks (they glow)
+      unitT(g, S); unitT(gg, GS);
+      var rm = rng(41), k, a;
+      g.save(); g.globalCompositeOperation = 'screen';
+      for (k = 0; k < 28; k++) {   // the sunburst: alternate warm and magenta wedges, fading out with distance
+        a = k / 28 * Math.PI * 2; var a1 = a + Math.PI / 28, sb = g.createRadialGradient(V.x, V.y, V.r + 6, V.x, V.y, 330);
+        sb.addColorStop(0, k % 2 ? 'rgba(255,120,40,0.26)' : 'rgba(220,60,160,0.2)'); sb.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = sb; g.beginPath(); g.moveTo(V.x, V.y); g.arc(V.x, V.y, 330, a, a1); g.closePath(); g.fill();
+      }
+      g.restore();
+      g.lineWidth = 0.45;   // basalt hex columns: outlines, strongest low on the field, broken up at random
+      for (var hy = 150, row = 0; hy < H0 - 30; hy += 8.7, row++) for (var hx = (row % 2) * 7.5; hx < W0; hx += 15) {
+        var f = Math.min(1, (hy - 150) / 160), al = f * (0.1 + rm() * 0.16);
+        if (rm() < 0.3 || al < 0.02) continue;
+        g.strokeStyle = 'rgba(255,190,110,' + al.toFixed(3) + ')'; g.beginPath();
+        for (k = 0; k <= 6; k++) { a = Math.PI / 6 + k * Math.PI / 3; var px = hx + Math.cos(a) * 5, py = hy + Math.sin(a) * 5; if (k) g.lineTo(px, py); else g.moveTo(px, py); }
+        g.stroke();
+      }
+      [V.r + 16, V.r + 27, V.r + 40].forEach(function (rr, i) {   // gold pinstripe rings round the peak, dashed outward
+        g.save(); g.setLineDash(i ? [3, 2.2 + i] : []); g.lineWidth = i ? 0.6 : 0.9; g.strokeStyle = 'rgba(255,205,110,' + (0.6 - i * 0.15) + ')';
+        g.beginPath(); g.arc(V.x, V.y, rr, 0, Math.PI * 2); g.stroke(); g.restore();
+      });
+      both(function (c, glow) {   // printed ember sparks scattered down the field
+        var rs = rng(57);
+        for (k = 0; k < 160; k++) {
+          var sx = 14 + rs() * (W0 - 40), sy = 40 + rs() * (H0 - 110), sr = 0.35 + rs() * 0.8, hot = rs();
+          c.fillStyle = hot > 0.7 ? 'rgba(255,230,140,' + (glow ? 0.9 : 0.85) + ')' : 'rgba(255,110,40,' + (glow ? 0.6 : 0.7) + ')';
+          c.beginPath(); c.arc(sx, sy, sr, 0, Math.PI * 2); c.fill();
+        }
+      });
+    });
     step('river', function () {   // the lava river under the glass: a dark crust bank, molten core, a yellow heart (glows)
       unitT(g, S); unitT(gg, GS);
       function band(c, k, col) { c.lineCap = 'round'; c.lineJoin = 'round'; for (var i = 1; i < RIV.length; i++) { var a = RIV[i - 1], b = RIV[i]; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineWidth = (a[2] + b[2]) / 2 * k; c.strokeStyle = col; c.stroke(); } }
@@ -1207,7 +1239,7 @@
         g.restore();
       });
     });
-    step('apron', function () {   // the apron: ocean-blue enamel with a gold edge, 365 on the left, our island's name on the right
+    step('apron', function () {   // the apron: black enamel with lava ripples and a gold edge (was ocean blue till 29 Oct 2026), 365 on the left, our island's name on the right
       unitT(g, S);
       var F = ET.flippers[0], fl = null;
       ET.walls.forEach(function (w) { if (w[6] !== 'apron' && w[1] < w[3] && w[0] < w[2] && w[2] < MI && w[3] > F.y - 44 && w[3] < F.y && Math.abs(w[2] - F.x) < 20) fl = w; });
@@ -1218,10 +1250,10 @@
       [left, right].forEach(function (P, side) {
         softly(g, S, 'rgba(0,0,0,0.85)', 3, 0, -1, function (c) { poly(c, P); c.fillStyle = '#000'; c.fill(); });
         g.save(); poly(g, P);
-        var gr = g.createLinearGradient(0, fl[1], 0, H0); gr.addColorStop(0, '#2a7fe0'); gr.addColorStop(0.3, '#145cc0'); gr.addColorStop(1, '#0a3482');
+        var gr = g.createLinearGradient(0, fl[1], 0, H0); gr.addColorStop(0, '#3a1c22'); gr.addColorStop(0.3, '#1e1016'); gr.addColorStop(1, '#0c070c');
         g.fillStyle = gr; g.fill(); g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,214,120,0.95)'; g.lineJoin = 'round'; g.stroke(); g.clip();
         g.lineWidth = 0.5;
-        for (var y = fl[1]; y < H0; y += 3.2) { g.strokeStyle = 'rgba(160,220,255,0.12)'; g.beginPath(); for (var x = 0; x <= W0; x += 4) { var yy = y + Math.sin(x / 9 + y) * 0.8; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.stroke(); }
+        for (var y = fl[1]; y < H0; y += 3.2) { g.strokeStyle = 'rgba(255,110,40,0.13)'; g.beginPath(); for (var x = 0; x <= W0; x += 4) { var yy = y + Math.sin(x / 9 + y) * 0.8; if (x) g.lineTo(x, yy); else g.moveTo(x, yy); } g.stroke(); }
         g.restore();
         var cx = side ? 2 * MI - ((fl[0] + MI - gap) / 2 - 3) : (fl[0] + MI - gap) / 2 - 3, word = side ? 'EMBER PEAK' : '365';
         g.save(); g.font = 'italic 900 ' + (side ? 7 : 11) + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
