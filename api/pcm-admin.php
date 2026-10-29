@@ -155,6 +155,14 @@ if (($_POST['do'] ?? '') === 'plan') {
         save($DATA,$db); $msg="Updated {$db['customers'][$k]['name']} → {$db['customers'][$k]['plan']} plan";
     }
 }
+// 29 Oct 2026 (app 36.7): Cyber Essentials Ready - a service on a BUSINESS plan (pcm-ce-lib.php). On: their PCs keep the
+// year-round watch on, and their portal shows the fleet's readiness and the evidence pack. Owner's switch, per customer.
+if (($_POST['do'] ?? '') === 'ceready') {
+    $k=$_POST['key']??''; if (isset($db['customers'][$k]) && (($db['customers'][$k]['plan'] ?? '') === 'business')) {
+        $db['customers'][$k]['ceready'] = empty($db['customers'][$k]['ceready']);
+        save($DATA,$db); $msg="Cyber Essentials Ready " . ($db['customers'][$k]['ceready'] ? 'ON' : 'off') . " for {$db['customers'][$k]['name']}";
+    }
+}
 /* Engineer mode (18 Sep 2026): the PIN that lets an engineer run ONE service, with a report, on a PC
    that is not on a plan (api/pcm-engineer.php). Stored as a password hash, never in the clear, and
    never shown again after it is set - rotate it here if it is ever typed somewhere it shouldn't be. */
@@ -804,6 +812,7 @@ tbody tr:hover td{background:rgba(29,151,227,.04)}
     <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
     <?php if(($c['tier']??'free')==='pro'): ?>
       <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=plan><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Which dashboard their portal builds: Business adds the estate tiles"><?=(($c['plan']??'home')==='business')?'→ 🏠 Home':'→ 🏢 Business'?></button></form>
+      <?php if(($c['plan']??'home')==='business'): ?><form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=ceready><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Cyber Essentials Ready: their PCs keep the year-round watch on; their portal shows the fleet and the evidence pack"><?=!empty($c['ceready'])?'🛡 CE Ready: on':'🛡 CE Ready: off'?></button></form><?php endif; ?>
     <?php endif; ?>
     <?php if(!empty($c['ready_confirm'])): ?>
       <span class="pill pro" title="confirmed <?=h($c['ready_confirm'])?>">✓ ready</span>

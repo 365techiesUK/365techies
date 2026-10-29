@@ -321,6 +321,8 @@ if ($action === 'checkin') {
         // 29 Oct 2026 (36.7): Cyber Essentials readiness - one letter per area (r ready, a attention, u couldn't check: firewall,
         // set-up, updates, accounts, malware), how many things need attention, and the requirements version (33 = v3.3)
         if (isset($in['ce'])) { $c['machines'][$machine]['ce'] = substr(preg_replace('/[^rau]/', '', (string)$in['ce']), 0, 5); $c['machines'][$machine]['cen'] = max(0, min(99, intval($in['cen'] ?? 0))); $c['machines'][$machine]['cev'] = substr(preg_replace('/[^0-9]/', '', (string)($in['cev'] ?? '')), 0, 3); $c['machines'][$machine]['ceat'] = $now; }
+        // 29 Oct 2026 (36.7): Cyber Essentials Ready - the watch, each month's update and a day-by-day record (pcm-ce-lib.php)
+        if (isset($in['ce'])) { require_once __DIR__ . '/pcm-ce-lib.php'; pce_store($c['machines'][$machine], $in, $now); }
         // 9 Oct 2026 (owner: "more information on each customer's PC ... spec ... how quickly does it refresh"): WHY there is
         // or isn't a backup - every app since v28 sends bstate, the server used to drop it, so the portal could only say
         // "no backup" for a backup that ran but failed. v37 adds when, which kind, its own words, and the PC's spec and
@@ -448,7 +450,8 @@ if ($action === 'checkin') {
     // QuickBooks look-up runs in the 5-minute poll, pcm-asset-backfill.php, never under this request's lock).
     require_once __DIR__ . '/pcm-asset-lib.php';
     $assetOut = pcm_asset_app_out(($machine !== '' && isset($c['machines'][$machine])) ? $c['machines'][$machine] : null, $tier === 'pro');
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $assetOut + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+    require_once __DIR__ . '/pcm-ce-lib.php';   // 36.7: Cyber Essentials Ready on a business plan - the app switches its watch on
+    out(array('ok'=>true,'tier'=>$tier,'ceready'=>(pce_ready($c) ? '1' : '0'),'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn,'lastsvc'=>$lastSvc,'lastsvck'=>$lastSvcK) + $assetOut + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
 }
 
 // 17 Oct 2026 (app 36.4.2, build 43): a PC that was linked to a customer but has lost its link ON THE PC (36.4 froze some
@@ -593,6 +596,7 @@ if ($action === 'overview') {
     // null = see everything (the director, or a manager they nominated).
     require_once __DIR__ . '/pcm-team-lib.php';
     $visible = team_visible_pcs($c, $member);
+    require_once __DIR__ . '/pcm-ce-lib.php';
     $ms = array();
     foreach ((isset($c['machines']) ? $c['machines'] : array()) as $id => $m) {
         if ($visible !== null && !in_array((string)$id, $visible, true)) continue;
@@ -615,6 +619,7 @@ if ($action === 'overview') {
             'reboot'=>!empty($m['reboot']), 'rmaint'=>!empty($m['rmaint']),
             'wv'=>(string)($m['wv'] ?? ''), 'sbc'=>(string)($m['sbc'] ?? ''),   // v31: stored sanitised at check-in
             'ce'=>(string)($m['ce'] ?? ''), 'cen'=>intval($m['cen'] ?? 0), 'cev'=>(string)($m['cev'] ?? ''), 'ceat'=>(string)($m['ceat'] ?? ''),   // 36.7: Cyber Essentials readiness
+            'ce2'=>pce_portal($m),   // 36.7: Cyber Essentials Ready - the watch, each month's update, the day-by-day record
             'ofc'=>(string)($m['ofc'] ?? ''),   // v32: Office licence, stored sanitised at check-in
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
@@ -647,7 +652,7 @@ if ($action === 'overview') {
         // makes the whole product feel like it was not built for you
         'name'=>($mrec ? (string)($mrec['name'] ?? '') : (string)($c['name'] ?? '')),
         'tier'=>(($c['tier'] ?? 'free')==='pro'?'pro':'free'),
-        'plan'=>$plan, 'role'=>$role, 'member'=>$member,
+        'plan'=>$plan, 'role'=>$role, 'member'=>$member, 'ceready'=>pce_ready($c),
         'org'=>(string)($c['org']['name'] ?? ''), 'company'=>(string)($c['name'] ?? ''),
         'team'=>$teamN, 'domains'=>array_values((array)($c['org']['domains'] ?? array())),
         'next'=>(string)($c['next'] ?? ''), 'next_ts'=>intval($c['next_ts'] ?? 0),

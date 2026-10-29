@@ -28949,6 +28949,78 @@ def write_portal_page():
     }
   }
   function bindOut() { var b = document.getElementById('sout'); if (b) b.onclick = sOut; }
+  // 29 Oct 2026 (app 36.7, owner: "a business one ... which basically does all the cyber essentials"): Cyber Essentials
+  // Ready, a service on a business plan (api/pcm-ce-lib.php; the owner switches it on in pcm-admin). Every PC's readiness,
+  // this month's Windows update against its 14-day deadline, and an evidence pack. A record of what the PCs showed - it never
+  // says "compliant" or "certified": only an IASME certification body certifies.
+  var CE_AREAS = ['firewall', 'set-up', 'updates', 'accounts', 'malware'];
+  var CE_MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function ceIso(d) { return d.toISOString().slice(0, 10); }
+  function cePt(ym) { var p = ym.split('-'), d = new Date(Date.UTC(+p[0], +p[1] - 1, 1)); while (d.getUTCDay() !== 2) d.setUTCDate(d.getUTCDate() + 1); d.setUTCDate(d.getUTCDate() + 7); return d; }
+  function ceDue(ym) { var d = cePt(ym); d.setUTCDate(d.getUTCDate() + 14); return ceIso(d); }
+  // the month whose update is the current one: the newest month whose second Tuesday has come
+  function ceCur(today) { var t = new Date(today + 'T00:00:00Z'), ym = today.slice(0, 7); if (t < cePt(ym)) ym = ceIso(new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() - 1, 1))).slice(0, 7); return ym; }
+  function ceNext(ym) { var p = ym.split('-'); return ceIso(new Date(Date.UTC(+p[0], +p[1], 1))).slice(0, 7); }
+  function ceMonth(ym) { var p = ym.split('-'); return CE_MON[+p[1] - 1] + ' ' + p[0]; }
+  function ceDay(day) { var p = String(day || '').split('-'); return p.length === 3 ? (+p[2]) + ' ' + CE_MON[+p[1] - 1].slice(0, 3) : ''; }
+  function ceBad(ce) { var b = []; String(ce || '').split('').forEach(function (c, i) { if (c === 'a') b.push(CE_AREAS[i]); }); return b; }
+  function ceReadyCard(d) {
+    var today = ceIso(new Date()), cur = ceCur(today), due = ceDue(cur), n = 0, ready = 0, have = 0, rows = '';
+    d.machines.forEach(function (m) {
+      n++;
+      var c2 = m.ce2 || {}, mon = c2.cemon || {}, bad = ceBad(m.ce), isIn = !!c2.ceum && c2.ceum >= cur;
+      if (m.ce && !bad.length) ready++;
+      if (isIn) have++;
+      var st = !m.ce ? '<span class="quiet">waiting for its first check (app 36.7)</span>'
+        : (!bad.length ? '<span style="color:var(--pgood)">&#10003; ready</span>' : '<span style="color:var(--pwarn)">' + (m.cen || bad.length) + ' to fix &mdash; ' + esc(bad.join(', ')) + '</span> <span class="quiet">(we&rsquo;re on it)</span>');
+      var up = !m.ce || !c2.ceum ? '<span class="quiet">&ndash;</span>'
+        : (isIn ? '<span style="color:var(--pgood)">&#10003; in' + (mon[cur] ? ' ' + ceDay(mon[cur]) : '') + '</span>'
+          : (today > due ? '<span style="color:var(--pbad)">overdue</span>' : '<span style="color:var(--pwarn)">not in yet</span>'));
+      rows += '<tr><td>' + esc(m.name || 'PC') + '</td><td>' + st + '</td><td>' + up + '</td><td class="quiet">' + esc(m.ceat ? ceDay(m.ceat.slice(0, 10)) + ' ' + m.ceat.slice(11, 16) : '') + (c2.cew || !m.ce ? '' : ' &middot; watch off') + '</td></tr>';
+    });
+    return '<div class="card" id="ceReady"><h2>&#128737;&#65039; Cyber Essentials Ready</h2>'
+      + '<p class="quiet">Every computer is checked against Cyber Essentials v3.3 every few hours, and we put right anything flagged within 14 days. '
+      + esc(ceMonth(cur).split(' ')[0]) + '&rsquo;s Windows update came out on ' + ceDay(ceIso(cePt(cur))) + ' and is due by <strong>' + ceDay(due) + '</strong>.</p>'
+      + '<p style="margin:.2rem 0 .6rem"><strong style="color:' + (ready === n ? 'var(--pgood)' : 'var(--pwarn)') + '">' + ready + ' of ' + n + ' ready</strong> &middot; '
+      + '<strong style="color:' + (have === n ? 'var(--pgood)' : 'var(--pwarn)') + '">' + have + ' of ' + n + '</strong> with ' + esc(ceMonth(cur).split(' ')[0]) + '&rsquo;s update</p>'
+      + '<div style="overflow-x:auto"><table class="cetab" style="width:100%;border-collapse:collapse;font-size:.9rem"><thead><tr style="text-align:left;color:var(--pmut)"><th>Computer</th><th>Readiness</th><th>' + esc(ceMonth(cur).split(' ')[0]) + '&rsquo;s update</th><th>Last check</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
+      + '<div class="row" style="border:0;padding:.7rem 0 0;gap:.6rem;align-items:center;flex-wrap:wrap"><button class="sm" id="cepack">Evidence pack</button>'
+      + '<span class="quiet" style="margin:0;font-size:.82rem">Month by month, every computer: for your assessor, insurer or a customer&rsquo;s questionnaire. A record of what the computers showed &mdash; not a certificate.</span></div></div>';
+  }
+  function cePack(d) {
+    var today = ceIso(new Date()), cur = ceCur(today), body = '';
+    d.machines.forEach(function (m) {
+      var c2 = m.ce2 || {}, mon = c2.cemon || {}, days = c2.cedays || {}, keys = Object.keys(days).sort();
+      body += '<h2>' + esc(m.name || 'PC') + '</h2>';
+      if (!keys.length) { body += '<p>No record yet &mdash; the record starts with the first check by 365 PC Manager 36.7.</p>'; return; }
+      var first = keys[0], rows = '';
+      for (var ym = ceCur(first); ym <= cur; ym = ceNext(ym)) {
+        var dd = ceDue(ym), seen = mon[ym] || '', res;
+        if (!seen) { var later = Object.keys(mon).sort().filter(function (k) { return k > ym; }); seen = later.length ? mon[later[0]] : ''; }
+        if (!seen) res = today > dd ? '<b class="bad">not seen installed &mdash; overdue</b>' : 'not in yet';
+        else if (seen <= first && ym <= ceCur(first)) res = 'already installed when the record began (' + ceDay(first) + ')';
+        else res = 'first seen installed ' + ceDay(seen) + (seen <= dd ? ' &mdash; <b class="ok">on time</b>' : ' &mdash; <b class="bad">late</b>');
+        var tot = 0, rd = 0; keys.forEach(function (k) { if (k.slice(0, 7) === ym) { tot++; if (+days[k].slice(5) === 0) rd++; } });
+        rows += '<tr><td>' + ceMonth(ym) + '</td><td>' + ceDay(dd) + '</td><td>' + res + '</td><td>' + (tot ? rd + ' of ' + tot : '&ndash;') + '</td></tr>';
+      }
+      body += '<table><tr><th>Windows update</th><th>Due by</th><th>Installed</th><th>Days ready</th></tr>' + rows + '</table>';
+      var last = keys.slice(-31), grid = '';
+      last.forEach(function (k) { var v = days[k], a = v.slice(0, 5), c = +v.slice(5); grid += '<tr><td>' + k + '</td>' + a.split('').map(function (x) { return '<td class="' + (x === 'r' ? 'ok' : x === 'a' ? 'bad' : '') + '">' + (x === 'r' ? 'ready' : x === 'a' ? 'fix' : '?') + '</td>'; }).join('') + '<td>' + (c ? c + ' to fix' : 'ready') + '</td></tr>'; });
+      body += '<p class="sm">The last ' + last.length + ' days:</p><table><tr><th>Day</th><th>Firewall</th><th>Set-up</th><th>Updates</th><th>Accounts</th><th>Malware</th><th></th></tr>' + grid + '</table>';
+    });
+    var w = window.open('', '_blank'); if (!w) return;
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Cyber Essentials evidence pack - ' + esc(d.company || d.name || '') + '</title><style>'
+      + 'body{font:14px/1.45 system-ui,Segoe UI,Arial,sans-serif;color:#111;max-width:900px;margin:24px auto;padding:0 16px}h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:26px 0 6px;border-top:1px solid #ccc;padding-top:14px}'
+      + 'table{border-collapse:collapse;width:100%;margin:6px 0 10px;font-size:12.5px}th,td{border:1px solid #ccc;padding:4px 6px;text-align:left}th{background:#f2f4f8}.ok{color:#11772a}.bad{color:#b3261e}.sm,.note{color:#555;font-size:12.5px}'
+      + '</style></head><body><h1>Cyber Essentials evidence pack</h1><p class="note">' + esc(d.company || d.name || '') + ' &middot; produced ' + esc(today) + ' by 365 Techies from 365 PC Manager&rsquo;s checks, measured against Cyber Essentials v3.3 (April 2026). '
+      + 'Each month&rsquo;s critical and high-risk Windows update is due within 14 days of release (the second Tuesday).</p>'
+      + '<p class="note"><b>This is a record of what each computer showed when it was checked. It is not a certificate: only an IASME certification body can certify an organisation.</b></p>'
+      + body
+      + '<h2>Not shown by a computer &mdash; checked with you</h2><p class="note">The router or office firewall (admin password changed, nothing opened without a reason, firmware updated); two-step sign-in on every cloud account; '
+      + 'firmware (BIOS) updates; phones and tablets used for work; every other device in scope.</p></body></html>');
+    w.document.close(); setTimeout(function () { try { w.print(); } catch (e) {} }, 400);
+  }
+  function bindCeReady(d) { var b = document.getElementById('cepack'); if (b) b.onclick = function () { cePack(d); }; }
   function bindFeedback() {
     var open = document.getElementById('pcmfbopen');
     if (!open) return;
@@ -29410,6 +29482,7 @@ def write_portal_page():
         if (ngPrimary) h += '<details class="nx-more"><summary>Full health details for ' + esc(ngPrimary.name) + '</summary>' + ngHero(d, ngPrimary)
           + '<div class="nx-fb"><span id="pcmfb"><button class="sm ghost" id="pcmfbopen">Tell us what you think of 365 PC Manager</button></span></div></details>';
         h += '</div>';
+        if (d.plan === 'business' && d.ceready) h += ceReadyCard(d);   // 29 Oct 2026 (app 36.7): Cyber Essentials Ready
       } else {
         // the install-the-app ask lives only here, for a customer whose computers we cannot see yet
         h += '<div class="card" id="nxPcs"><h2>Your computers</h2>'
@@ -29525,6 +29598,7 @@ def write_portal_page():
             el.innerHTML = h;
       bindOut();
       bindFeedback();
+      bindCeReady(d);
       heroAnim(heroPrimary);
       journeyAnim(jrn.pts);
       journeyBind(d);
