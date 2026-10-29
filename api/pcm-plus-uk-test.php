@@ -1,7 +1,7 @@
 <?php
 /*
- * The UK "service it yourself" key and the automatic free month (13 Oct 2026; owner: "£19.99 a year, 3 PCs", "Yes,
- * automatic", "Build it all for release 37"). CLI only:
+ * The UK "service it yourself" key and the automatic free month (13 Oct 2026; owner: "Yes, automatic",
+ * "Build it all for release 37"). The prices in these checks are made up: the real ones are server-only. CLI only:
  *   C:\tools\php\php.exe -d extension=mbstring api/pcm-plus-uk-test.php
  * Pure checks in a temp folder: PayPal is never called. Denied over HTTP (.htaccess, with pcm-plus-test.php).
  */
@@ -22,14 +22,14 @@ function check($ok, $what, $detail = '') { global $fails; echo ($ok ? "  PASS  "
 $cfg = function ($uk, $extra = '') {
     file_put_contents(PLUS_CONFIG, "<?php\n" . $extra . "\$BUY_ON = true;\n\$BUY_URL = 'https://365techies.co.uk/pc-manager-buy/?install={id}';\n"
         . "\$BUY_PRICE = 'US\$19.99 for 1 year - does not renew';\n\$BUY_USD = '19.99';\n\$BUY_PROVIDER = 'paypal';\n\$PP_COUNTRIES = 'US,CA';\n"
-        . "\$BUY_UK = '" . $uk . "';\n\$UK_GBP = '19.99';\n\$UK_PRICE = '\u{00A3}19.99 for 1 year - does not renew';\n\$TRIAL_AUTO_UK_FROM = '2026-10-13';\n");
+        . "\$BUY_UK = '" . $uk . "';\n\$UK_GBP = '12.34';\n\$UK_PRICE = '\u{00A3}12.34 for 1 year - does not renew';\n\$TRIAL_AUTO_UK_FROM = '2026-10-13';\n");
 };
 $SB = array('id' => 'cid', 'secret' => 's', 'webhook' => 'WH-1', 'env' => 'sandbox');
 $LIVE = array('id' => 'cid', 'secret' => 's', 'webhook' => 'WH-1', 'env' => 'live');
 
 echo "A  the settings\n";
 $cfg('off');
-$c = plus_config(); check($c['uk'] === 'off' && $c['uk_gbp'] === '19.99' && $c['uk_price'] === "\u{00A3}19.99 for 1 year - does not renew" && $c['trial_uk_from'] === '2026-10-13', 'read: off, the price in pounds, the line, the start date', json_encode($c, JSON_UNESCAPED_UNICODE));
+$c = plus_config(); check($c['uk'] === 'off' && $c['uk_gbp'] === '12.34' && $c['uk_price'] === "\u{00A3}12.34 for 1 year - does not renew" && $c['trial_uk_from'] === '2026-10-13', 'read: off, the price in pounds, the line, the start date', json_encode($c, JSON_UNESCAPED_UNICODE));
 $cfg('page'); check(plus_config()['uk'] === 'page' && plus_uk_sells(plus_config()) && !plus_uk_offered(plus_config()), "'page': the buy page sells it, the app is not offered it");
 $cfg('on'); check(plus_uk_sells(plus_config()) && plus_uk_offered(plus_config()), "'on': both");
 $cfg('yes'); check(plus_config()['uk'] === 'off', 'anything else reads as off');
@@ -41,7 +41,7 @@ echo "B  what a UK PC is offered in the app\n";
 $cfg('off'); check(plus_offer_out('GB', 'a1b2c3d4e5f60718') === array('offer' => 'plan'), 'off: our plans, as before');
 $cfg('page'); check(plus_offer_out('GB', 'a1b2c3d4e5f60718') === array('offer' => 'plan'), "'page': still our plans in the app");
 $cfg('on'); $o = plus_offer_out('GB', 'a1b2c3d4e5f60718');
-check(($o['offer'] ?? '') === 'both' && $o['buy_url'] === 'https://365techies.co.uk/pc-manager-buy/?install=a1b2c3d4e5f60718' && $o['buy_price'] === "\u{00A3}19.99 for 1 year - does not renew",
+check(($o['offer'] ?? '') === 'both' && $o['buy_url'] === 'https://365techies.co.uk/pc-manager-buy/?install=a1b2c3d4e5f60718' && $o['buy_price'] === "\u{00A3}12.34 for 1 year - does not renew",
     "'on': BOTH - our plans and the key, at the pound price, opening our buy page", json_encode($o, JSON_UNESCAPED_UNICODE));
 check(plus_offer_out('', 'x') === array('offer' => 'plan'), 'a country we cannot tell: our plans, never a sale');
 check(plus_offer_out('US', 'x')['offer'] === 'buy' && strpos(plus_offer_out('US', 'x')['buy_price'], 'US$19.99') !== false, 'abroad: unchanged (Buy, in US dollars)');
@@ -52,24 +52,24 @@ check(plus_offer_out('GB', 'x') === array(), 'Buy switched off altogether: nothi
 echo "C  the buy page's price for a UK PC\n";
 $cfg('off'); check(pp_offer('GB', null, $LIVE)['reason'] === 'uk', 'off: "uk" (the page points to our plans)');
 $cfg('page'); $p = pp_offer('GB', null, $LIVE);
-check($p['ok'] && $p['currency'] === 'GBP' && $p['amount'] === '19.99' && !empty($p['uk']) && $p['usd'] === '' && $p['local'] === '', "'page': on sale in pounds - no US dollars, no 'about'", json_encode($p, JSON_UNESCAPED_UNICODE));
+check($p['ok'] && $p['currency'] === 'GBP' && $p['amount'] === '12.34' && !empty($p['uk']) && $p['usd'] === '' && $p['local'] === '', "'page': on sale in pounds - no US dollars, no 'about'", json_encode($p, JSON_UNESCAPED_UNICODE));
 check(pp_offer('JE', null, $LIVE)['currency'] === 'GBP', 'Jersey: the same');
 check(pp_offer('', null, $LIVE)['reason'] === 'uk', 'a country we cannot tell: not sold');
 $u = pp_offer('US', null, $LIVE); check($u['currency'] === 'USD' && $u['amount'] === '19.99' && $u['usd'] === '19.99', 'abroad: USD, as before (amount = usd)', json_encode($u));
 
 echo "D  a payment in pounds\n";
 $sent = array(); $mail = function ($to, $key, $exp) use (&$sent) { $sent[] = array($to, $key, $exp); return true; };
-pp_orders_locked(function (&$d) { $d['UKORDER12345'] = array('at' => time(), 'install' => 'a1b2c3d4e5f60718', 'cur' => 'GBP', 'amt' => '19.99'); return true; });
-$cap = array('id' => 'CAPUK1', 'status' => 'COMPLETED', 'amount' => array('value' => '19.99', 'currency_code' => 'GBP'));
-$r = pp_keep($LIVE, array_merge($cap, array('amount' => array('value' => '19.99', 'currency_code' => 'USD'))), 'UKORDER12345', 'uk@x.com', $mail);
-check($r[0] === 'refused' && strpos($r[3], 'not the GBP 19.99') !== false, 'paid in dollars for a pound order: refused', $r[3]);
+pp_orders_locked(function (&$d) { $d['UKORDER12345'] = array('at' => time(), 'install' => 'a1b2c3d4e5f60718', 'cur' => 'GBP', 'amt' => '12.34'); return true; });
+$cap = array('id' => 'CAPUK1', 'status' => 'COMPLETED', 'amount' => array('value' => '12.34', 'currency_code' => 'GBP'));
+$r = pp_keep($LIVE, array_merge($cap, array('amount' => array('value' => '12.34', 'currency_code' => 'USD'))), 'UKORDER12345', 'uk@x.com', $mail);
+check($r[0] === 'refused' && strpos($r[3], 'not the GBP 12.34') !== false, 'paid in dollars for a pound order: refused', $r[3]);
 $r = pp_keep($LIVE, array_merge($cap, array('amount' => array('value' => '9.99', 'currency_code' => 'GBP'))), 'UKORDER12345', 'uk@x.com', $mail);
 check($r[0] === 'refused', 'the wrong amount in pounds: refused');
 $r = pp_keep($LIVE, $cap, 'UKORDER12345', 'uk@x.com', $mail);
 check($r[0] === 'made' && plus_is_key($r[1]) && count($sent) === 1, 'the right amount in pounds: a key, emailed', json_encode($r));
 $ukKey = $r[1];
 $d = plus_load(); $e = $d['keys'][plus_hash($ukKey)];
-check(!empty($e['uk']) && strpos($e['note'], 'GBP 19.99') !== false && $e['provider'] === 'paypal', 'the key is marked as bought in the UK, its note says GBP', json_encode($e));
+check(!empty($e['uk']) && strpos($e['note'], 'GBP 12.34') !== false && $e['provider'] === 'paypal', 'the key is marked as bought in the UK, its note says GBP', json_encode($e));
 pp_orders_locked(function (&$d) { $d['OLDORDER1234'] = array('at' => time(), 'install' => 'a1b2c3d4e5f60718', 'usd' => '19.99'); return true; });
 $r = pp_keep($LIVE, array('id' => 'CAPOLD', 'status' => 'COMPLETED', 'amount' => array('value' => '19.99', 'currency_code' => 'USD')), 'OLDORDER1234', 'us@x.com', $mail);
 check($r[0] === 'made', 'an order made before today (only "usd" kept) still becomes its key', json_encode($r));
@@ -134,13 +134,24 @@ $pcmSrc = (string)file_get_contents(__DIR__ . '/pcm.php');
 check(strpos($pcmSrc, "plus_trial_auto_abroad(\$auId, \$auCc, (int)\$in['ver'], \$auD['m'][\$auId])") !== false, 'wired: a keyless check-in from abroad may be given its month');
 $loSrc = (string)file_get_contents(__DIR__ . '/pcm-lookover.php');
 check(strpos($loSrc, "if (!\$ukk && \$loCc !== '' && !plus_is_uk(\$loCc)) lo_fail('abroad');") !== false, 'wired: no free look-over for a free month outside the UK (a UK-bought key still may)');
-// 17 Oct 2026 (owner: "keep £19.99 and do step 1"): 'page' - the buy page sells it so the owner can buy one and refund it.
+// 17 Oct 2026 (owner: "do step 1"): 'page' - the buy page sells it so the owner can buy one and refund it.
 // 18 Oct 2026 (owner: "put it so they get the option in the PC Manager app"): 'on' - the app offers it beside the plans. The
 // live order was created by PayPal (the owner's own account was refused as the merchant itself); a real purchase + refund is
 // still to be made, by card as a guest, when convenient.
 check(preg_match("/^\\\$BUY_UK = 'on';/m", $src) === 1, "shipped: \$BUY_UK = 'on' (owner's go, 18 Oct 2026)");
-// 18 Oct 2026 (owner: "you don't say that it's 19.99 ... for three PCs for one year"): the line names the 3 PCs
-check(preg_match("/^\\\$UK_GBP = '19\\.99';/m", $src) === 1 && preg_match("/^\\\$UK_PRICE = '\x{00A3}19\\.99 for 1 year, 3 PCs, no renewal';/mu", $src) === 1, 'shipped: GBP 19.99, and the line the app shows (36 characters, under 40)');
+// 29 Oct 2026 (owner: "move the prices off GitHub"): this file is public, so it names no price at all. The prices are in
+// api/pcm-buy-prices.php - server-only: gitignored, denied over HTTP, and read first by plus_config()
+check(preg_match('/^[ \t]*\$(BUY_PRICE|BUY_USD|BUY_LOW_USD|BUY_LOW_PRICE|BUY_LOW_CODE|UK_GBP|UK_PRICE)\s*=/m', $src) === 0 && preg_match('/\d\.\d\d\b/', $src) === 0, 'shipped: the public config names no price');
+check(preg_match('#^api/pcm-buy-prices\.php\r?$#m', (string)file_get_contents(__DIR__ . '/../.gitignore')) === 1
+    && strpos((string)file_get_contents(__DIR__ . '/../.htaccess'), 'pcm-buy-(config|prices)\.php') !== false, 'the prices file: gitignored, and denied over HTTP');
+// the real prices file, where there is one (the server; a developer's copy): complete, and the UK line (18 Oct 2026, owner:
+// say it covers 3 PCs) fits the app's 40 characters - its numbers are never written here
+$pf = plus_prices_file(__DIR__ . '/pcm-buy-config.php');
+if (is_file($pf)) {
+    $rc = plus_config(__DIR__ . '/pcm-buy-config.php');
+    $raw = preg_match("/^[ \t]*\\\$UK_PRICE\s*=\s*'([^']*)'/m", (string)file_get_contents($pf), $um) ? $um[1] : '';
+    check($rc['price'] !== '' && $rc['usd'] !== '' && $rc['uk_gbp'] !== '' && strpos($raw, $rc['uk_gbp']) !== false && strpos($raw, '3 PCs') !== false && preg_match('/^.{1,40}$/u', $raw) === 1, 'the prices file here: every price set, and the UK line names the 3 PCs in 40 characters or fewer');
+} else echo "  (no api/pcm-buy-prices.php here - the server has it)\n";
 check(preg_match("/^\\\$TRIAL_AUTO_UK_FROM = '2026-10-13';/m", $src) === 1, 'shipped: the automatic free month from 13 Oct 2026');
 $pcm = (string)file_get_contents(__DIR__ . '/pcm.php');
 check(strpos($pcm, 'plus_trial_auto_uk($auId, $auCc, (int)$in[\'ver\'], $auD[\'m\'][$auId])') !== false && strpos($pcm, 'plus_trial_auto_uk') < strpos($pcm, '$trHand = '), 'pcm.php gives the month on a keyless check-in, before handing any over');

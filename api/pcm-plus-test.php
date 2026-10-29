@@ -21,8 +21,13 @@ function check($ok, $what, $detail = '') { global $fails; echo ($ok ? "  PASS  "
 echo "A  switched off until the owner says go\n";
 check(plus_offer_out('US', 'abc') === array(), 'no config: a check-in\'s answer gains nothing (the app behaves as before)');
 copy(__DIR__ . '/pcm-buy-config.php', PLUS_CONFIG);
+// 29 Oct 2026 (owner: "move the prices off GitHub"): the shipped config names no price - the prices are server-only
+// (api/pcm-buy-prices.php, beside the config). Without that file nothing is on sale: never a Buy button with no price.
+check(plus_config()['on'] && plus_config()['price'] === '' && plus_offer_out('US', 'abc') === array(), 'the config as shipped, alone: switched on, but no price - nothing on sale');
+file_put_contents(plus_prices_file(), "<?php\n\$BUY_PRICE = 'US\$12.34 for 1 year - does not renew';\n\$BUY_USD = '12.34';\n");
 // 12 Oct 2026 (owner: "go ahead and put it live"): switched ON - PayPal in its countries, FastSpring still on its TEST checkout
-check(plus_config()['on'] && (plus_offer_out('US', 'abc')['offer'] ?? '') === 'buy' && plus_offer_out('DE', 'abc') === array(), 'the config as shipped (12 Oct 2026): ON - the US is offered Buy; Germany not until FastSpring is live');
+check(plus_config()['on'] && (plus_offer_out('US', 'abc')['offer'] ?? '') === 'buy' && plus_offer_out('DE', 'abc') === array(), 'the config as shipped + its prices file (12 Oct 2026): ON - the US is offered Buy; Germany not until FastSpring is live');
+@unlink(plus_prices_file());
 file_put_contents(PLUS_CONFIG, "<?php\n\$BUY_ON = true;\n\$BUY_URL = '';\n");
 check(plus_offer_out('US', 'abc') === array(), 'switched on, but no checkout link: still nothing');
 file_put_contents(PLUS_CONFIG, "<?php\n\$BUY_ON = false;\n\$BUY_URL = 'https://pay.example.com/checkout?id={id}';\n\$BUY_PRICE = '\$29 a year';\n\$BUY_PROVIDER = 'Paddle';\n");
@@ -352,10 +357,16 @@ plus_fx($T0 + 21 * 3600 + 600, $fail);
 check($calls === 1, '...and it does not try again within the hour');
 check(plus_fx($T0 + 11 * 86400, $fail) === array(), 'rates more than 10 days old are not used: no "about" rather than a wrong one');
 check(plus_fx_parse('<Cube time=\'2026-10-09\'><Cube currency=\'USD\' rate=\'9.9\'/></Cube>') === null && plus_fx_parse('') === null, 'a broken or odd ECB answer is refused');
-// the shipped config: the same switches, Buy still off
+// the shipped config + the server-only prices file (29 Oct 2026; made-up prices here): the switches from one, the prices
+// from the other
 copy(__DIR__ . '/pcm-buy-config.php', PLUS_CONFIG);
+file_put_contents(plus_prices_file(), "<?php\n\$BUY_PRICE = 'US\$12.34 for 1 year - does not renew';\n\$BUY_USD = '12.34';\n\$BUY_LOW_USD = '5.67';\n\$BUY_LOW_PRICE = 'US\$5.67 for 1 year - does not renew';\n");
 $sc = plus_config();
-check($sc['on'] && $sc['usd'] === '19.99' && $sc['low_usd'] === '9.99' && $sc['low_price'] === 'US$9.99 for 1 year - does not renew' && $sc['fs_product'] === 'unlock-everything' && $sc['fs_product_low'] === 'unlock-everything-low', 'the shipped config: US$19.99 / US$9.99, switched on, the two FastSpring products');
+check($sc['on'] && $sc['usd'] === '12.34' && $sc['low_usd'] === '5.67' && $sc['low_price'] === 'US$5.67 for 1 year - does not renew' && $sc['fs_product'] === 'unlock-everything' && $sc['fs_product_low'] === 'unlock-everything-low', 'the shipped config + its prices file: the prices from the file, switched on, the two FastSpring products');
+file_put_contents(PLUS_CONFIG, (string)file_get_contents(PLUS_CONFIG) . "\$BUY_USD = '99.99';\n");
+check(plus_config()['usd'] === '12.34', 'a price in both files: the server-only prices file wins');
+@unlink(plus_prices_file());
+check(plus_config()['usd'] === '99.99', '...and without it, the config\'s own line is read (how the tests\' fixtures work)');
 
 array_map('unlink', glob("$TMP/*")); @rmdir($TMP);
 echo "\n" . ($fails ? "pcm-plus-test: $fails FAILED\n" : "pcm-plus-test: all passed\n");

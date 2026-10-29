@@ -20,12 +20,14 @@
  * to whoever issues it); email (to find a buyer's key), when, until when (0 = lifetime), status, up to PLUS_MAX_PCS PCs
  * (hashed machine ids, like the install count). Store api/pcm-plus.json (+ .lock): .htaccess-denied, gitignored.
  *
- * Config (in git - nothing secret in it - and .htaccess-denied): api/pcm-buy-config.php
+ * Config (in git - nothing secret in it - and .htaccess-denied): api/pcm-buy-config.php. The PRICES ($BUY_PRICE, $BUY_USD,
+ * the $BUY_LOW_ three, $UK_GBP, $UK_PRICE) are in api/pcm-buy-prices.php beside it: server-only, because the config is
+ * public on GitHub (29 Oct 2026). plus_config() reads the prices file first, so its lines win; no price, nothing on sale.
  *   $BUY_ON = false;                 the switch (the owner's go -> true, deployed)
  *   $BUY_URL = 'https://...';        the checkout page; "{id}" in it is replaced with the install's anonymous id
  *   $BUY_PRICE = '$29 a year';       shown as written, beside the button
  *   $BUY_PROVIDER = 'paddle';        or 'lemonsqueezy' - recorded with keys its webhook issues (later)
- *   $BUY_USD = '19.99';              the price in US dollars: adds "about €17" in the buyer's money (PLUS_FX_FILE)
+ *   $BUY_USD = '12.34';              the price in US dollars: adds "about €10" in the buyer's money (PLUS_FX_FILE)
  *   $BUY_LOW_USD / $BUY_LOW_PRICE / $BUY_LOW_CODE   the lower price in PLUS_LOW_PRICE's countries: the checkout link
  *                                    carries the Lemon Squeezy discount code that makes it so (all three, or no lower price)
  * Stop at once, without a deploy: create api/pcm-buy.off on the server (gitignored).
@@ -47,8 +49,12 @@ function plus_hash($key) { return hash('sha256', '365plus|' . strtoupper(trim((s
 function plus_mhash($machine) { $m = preg_replace('/[^a-f0-9]/', '', strtolower((string)$machine)); return strlen($m) >= 8 ? substr(sha1('365inst|' . $m), 0, 16) : ''; }
 
 /* ---------------- the switch and the offer ---------------- */
+// 29 Oct 2026 (owner: "move the prices off GitHub"): the prices file sits beside whichever config is read (a test's too)
+function plus_prices_file($config = null) { return dirname($config !== null ? $config : PLUS_CONFIG) . '/pcm-buy-prices.php'; }
 function plus_config($file = null) {
-    $src = (string)@file_get_contents($file !== null ? $file : PLUS_CONFIG);
+    $cf = $file !== null ? $file : PLUS_CONFIG;
+    // the server-only prices first: the first line naming a setting is the one read, so a price there wins
+    $src = (string)@file_get_contents(plus_prices_file($cf)) . "\n" . (string)@file_get_contents($cf);
     // a setting is a line of its own: words in the file's comments never count (its doc comment says "$BUY_ON = true;")
     $g = function ($n) use ($src) { return preg_match('/^[ \t]*\$' . $n . '\s*=\s*([\'"])(.*?)\1\s*;/m', $src, $m) ? $m[2] : ''; };
     $url = $g('BUY_URL');
@@ -76,7 +82,8 @@ function plus_fs_mode($cfg) {
 }
 function plus_enabled($off = null, $config = null) {
     $c = plus_config($config);
-    return $c['on'] && $c['url'] !== '' && !file_exists($off !== null ? $off : PLUS_OFF);
+    // 29 Oct 2026: and a price - without the server-only prices file nothing is on sale (never a Buy button with no price)
+    return $c['on'] && $c['url'] !== '' && $c['price'] !== '' && !file_exists($off !== null ? $off : PLUS_OFF);
 }
 // 11 Oct 2026 (owner: "do everything"): the countries Lemon Squeezy will not sell to (docs.lemonsqueezy.com, Supported
 // countries, read 11 Oct 2026 - its page lists North Korea twice, so 17). A PC there is never offered Buy (the checkout

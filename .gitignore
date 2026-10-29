@@ -172,6 +172,8 @@ api/pcm-sentlog.json.*
 api/pcm-plus.json
 api/pcm-plus.json.*
 api/pcm-buy.off
+# 29 Oct 2026: the key's prices - server-only, so they are never public on GitHub (pcm-plus-lib.php plus_config)
+api/pcm-buy-prices.php
 api/pcm-ls-secret.php
 api/pcm-plus-ls.log
 # 11 Oct 2026: the day's exchange rates for "about €17" (pcm-plus-lib.php plus_fx) - written by the server
