@@ -2,24 +2,42 @@
  * world3d.js only applies it. Plain ES5, no drawing: the same file runs in the page, in the forecast worker
  * (forecast-worker.js) and in node (tools/pinball/camera-farm.cjs proves its guarantee over thousands of balls).
  *
- *   PinCam.update(W, t, mode[, aspect]) -> shot   once per drawn frame (t in ms); shot = { cx, cy, span, tilt, yaw,
+ *   PinCam.update(W, t, mode[, aspect]) -> shot   once per drawn frame (t in ms); shot = { cx, cy, span, tilt, yaw, fov,
  *                                                 timeScale, state, zoom, A }
  *   PinCam.frame(shot, aspect) -> { eye, target, up, fov }   THE camera model, in table units (x across, y down the
  *                                                 table, z up out of the playfield; the playfield's own slope is the 3D
  *                                                 picture's business): the camera looks at (cx, cy, 0), tilted `tilt`
  *                                                 degrees from straight down towards the player's end, turned `yaw`
  *                                                 degrees about the table's up axis, far enough back that `span` table
- *                                                 units fill the screen's width at that point. The lens never changes
- *                                                 (fov 32 degrees, vertical): it zooms by moving closer.
+ *                                                 units fill the screen's width at that point, through the shot's lens
+ *                                                 (`fov`, vertical degrees; 32 when a shot names none). A mode's lens
+ *                                                 never changes during play: it zooms by moving closer.
  *   PinCam.project(shot, aspect, x, y, z) -> [sx, sy]   the same model: 0..1 across and down the screen
  *   PinCam.quiet()  -> true when no ball can reach any flipper's approach line in the next 0.8 s (fx.js asks before
  *                      moving the table)
- *   PinCam.setMode('calm' | 'arcade' | 'classic')   calm is the default (about 6 push-ins a minute); arcade about 13
+ *   PinCam.setMode('calm' | 'arcade' | 'classic')   calm is the default (about 5 push-ins a minute); arcade about 9
  *                      (short, punchy, swinging); classic never zooms, swings or slows: it only scrolls when the ball is
  *                      out of the picture
- *   also: setAspect(a), home(aspect), reset(), stats(), info(), configure(opts), timing(mode) (the mode's need, settle,
- *         early, look, back and spare), forecast(W, input, horizon, pathN, nudged), decided(W, ball), boxes(tableId),
- *         director(on)
+ *   PinCam.homeTilt(aspect[, mode]) / PinCam.lens(aspect[, mode])   home's tilt and lens (degrees) for that screen shape
+ *                      and mode (default: the current one); see THE PLAYER-EYE HOME below
+ *   also: setAspect(a), home(aspect[, tableId, mode]), reset(), stats(), info(), configure(opts), timing(mode) (the mode's
+ *         need, settle, early, look, back and spare), forecast(W, input, horizon, pathN, nudged), decided(W, ball),
+ *         boxes(tableId), director(on)
+ *
+ * THE PLAYER-EYE HOME (30 Oct 2026, owner: "the full realism rebuild", after the top digital tables on YouTube: ours
+ * "just looks like the old Microsoft version"). Calm and arcade look from a player's eye: CFG.eye, tilt 40 and fov 26 on
+ * a phone in portrait (aspect up to 0.62), tilt 48 and fov 24 on a wide screen (from 1.25), smoothly between. Measured
+ * (the ball, radius 7, at the arch top and at the flippers, home framing): phone 0.46 at 1080 px wide, old (28/32) 47.3 and
+ * 56.3 px, new 46.4 and 56.1 (portrait is width-bound, so the steeper eye costs the far end almost nothing; the longer lens
+ * pays for it); desktop 1.6 at 1920 px wide, old 35.0 and 45.5 px, new 43.1 and 64.7 (landscape is height-bound: the
+ * steeper eye foreshortens the table and the whole picture comes closer). CLASSIC keeps the old look exactly: tilt 28 and
+ * fov 32 at every shape (MODES.classic.eye false), and its old moves. Push-ins lean in from home's tilt (up to 6 degrees
+ * more past 40). Calm and arcade also move more gently since then (MODES.*.pace scales every spring, and slower moves
+ * home: calm 0.5 s, arcade 0.4 s; owner: fast camera moves "lose track of the pinball game"); the farm's camSpeed shows it.
+ * world3d.js MUST MATCH: its own home (no PinCam, the 'home' override, the stills bench) has to be solved at
+ * PinCam.homeTilt(aspect) and PinCam.lens(aspect) for the active mode (instead of its HOME_TILT 28 and FOV 32), and it
+ * must use the fov that PinCam.frame() returns (it does: camFrom passes r.fov) - otherwise the picture and the
+ * director's home disagree and a move home ends in a jump.
  *
  * THE GUARANTEE (note 12 as corrected by note 17): game time at exactly 1.0, and every storey's flippers fully on screen
  * and still, for the 0.5 s before any ball can cross a storey's approach line. "Can cross" comes from the engine's own
@@ -58,9 +76,10 @@
   else root.PinCam = factory(function () { return root.PinEngine; }, root);
 })(typeof self !== 'undefined' ? self : this, function (getE, G) {
   'use strict';
-  var DEG = Math.PI / 180, FOV = 32, TV = Math.tan(FOV * DEG / 2);
+  var DEG = Math.PI / 180, FOV = 32, TV = Math.tan(FOV * DEG / 2);   // FOV: classic's lens (and the default when a shot names none)
   var CFG = {
-    tilt: 28,         // home's tilt (degrees from straight down), as the owner picked from the stills
+    tilt: 28,         // CLASSIC's home tilt (degrees from straight down), as the owner picked from the stills (fov FOV, 32)
+    eye: { portrait: [40, 26], wide: [48, 24], a0: 0.62, a1: 1.25 },   // calm and arcade's player-eye home (30 Oct 2026, owner: "the full realism rebuild"): [tilt, fov] up to aspect a0, from a1, smoothly between
     margin: 0.012,    // the flipper boxes keep this share of the screen clear at every edge
     pad: 4,           // table units round each flipper box: the shake (1.5) and the table's nudge slide (2.5)
     back: 0.35,       // seconds: every move home (arcade: its own, MODES.arcade.back)
@@ -85,42 +104,52 @@
     //          on a fresh bumper, crab, drop, lane, lava, ramp or orbit hit), punchT (its steps), nudged (leave home only if
     //          a nudge pressed now would still leave the time: fewer cuts for the shorter wait), hold (s: an unscripted
     //          push-in goes home after this, then in again: more, shorter moves) and bonus (the bonus count's drift zoom)
-    calm:    { follow: 1.25, window: 2.2, dwell: 3.0, perMin: 6, dive: 'first', yaw: 8, slow: true, shots: true, reach: 40 },
-    arcade:  { follow: 1.8, window: 0, dwell: 0.1, perMin: 40, dive: 'all', yaw: 24, slow: true, shots: true, reach: 140, early: 0.1, look: 10, zmin: 1.15, swing: true, punch: 2.0, punchT: 30, nudged: true, hold: 0.5, back: 0.25, spare: 0.2, bonus: 1.45 },
-    classic: { follow: 1.0, window: 1.6, dwell: 0.6, perMin: 0, dive: 'none', yaw: 0, slow: false, shots: false, reach: 40 }
+    calm:    { follow: 1.25, window: 2.2, dwell: 3.0, perMin: 6, dive: 'first', yaw: 8, slow: true, shots: true, reach: 40, pace: 0.55, back: 0.5 },
+    arcade:  { follow: 1.7, window: 0, dwell: 0.1, perMin: 40, dive: 'all', yaw: 20, slow: true, shots: true, reach: 140, early: 0.1, look: 10, zmin: 1.15, swing: true, punch: 1.7, punchT: 30, nudged: true, hold: 0.5, back: 0.4, spare: 0.2, bonus: 1.45, pace: 0.5 },
+    classic: { follow: 1.0, window: 1.6, dwell: 0.6, perMin: 0, dive: 'none', yaw: 0, slow: false, shots: false, reach: 40, eye: false }   // eye false: the old look, tilt 28 and fov 32, exactly (30 Oct 2026)
   };
   var NEED = Math.ceil((CFG.back + CFG.settle + CFG.early + CFG.spare) * 60);   // steps before an arrival that the move home starts
   var SETTLE = Math.round(CFG.settle * 60);
   function earlyOf(M) { return M.early != null ? M.early : CFG.early; }
-  function backOf(M) { return M.early != null && M.back != null ? M.back : CFG.back; }
-  function needOf(M) { return M.early != null ? Math.ceil((backOf(M) + CFG.settle + M.early + (M.spare != null ? M.spare : CFG.spare)) * 60) : NEED; }   // per mode (29 Oct 2026): calm and classic exactly as before
+  function backOf(M) { return M.back != null ? M.back : CFG.back; }
+  function needOf(M) { return M.early != null || M.back != null ? Math.ceil((backOf(M) + CFG.settle + earlyOf(M) + (M.spare != null ? M.spare : CFG.spare)) * 60) : NEED; }   // per mode (29 Oct 2026); classic exactly as before, calm's slower move home since 30 Oct 2026
 
   // ------------------------------------------------------------ the camera model
   function basis(s, aspect) {
-    var T = s.tilt * DEG, Y = (s.yaw || 0) * DEG, tH = TV * aspect, d = s.span / (2 * tH);
+    var tv = s.fov ? Math.tan(s.fov * DEG / 2) : TV, T = s.tilt * DEG, Y = (s.yaw || 0) * DEG, tH = tv * aspect, d = s.span / (2 * tH);
     var bx = -Math.sin(Y), by = Math.cos(Y), sT = Math.sin(T), cT = Math.cos(T);   // b: "back", towards the player
     return {
       eye: [s.cx + d * sT * bx, s.cy + d * sT * by, d * cT],
-      f: [-sT * bx, -sT * by, -cT], u: [-cT * bx, -cT * by, sT], r: [by, -bx, 0], tH: tH, d: d
+      f: [-sT * bx, -sT * by, -cT], u: [-cT * bx, -cT * by, sT], r: [by, -bx, 0], tH: tH, tV: tv, d: d
     };
   }
   function frame(s, aspect) {
     var b = basis(s, aspect || ASPECT);
-    return { eye: b.eye, target: [s.cx, s.cy, 0], up: b.u, fov: FOV, dist: b.d };
+    return { eye: b.eye, target: [s.cx, s.cy, 0], up: b.u, fov: s.fov || FOV, dist: b.d };
   }
   function projectB(b, x, y, z) {
     var vx = x - b.eye[0], vy = y - b.eye[1], vz = z - b.eye[2];
     var dz = vx * b.f[0] + vy * b.f[1] + vz * b.f[2];
     if (dz < 1e-6) return [NaN, NaN];
-    return [0.5 + (vx * b.r[0] + vy * b.r[1]) / (dz * b.tH) / 2, 0.5 - (vx * b.u[0] + vy * b.u[1] + vz * b.u[2]) / (dz * TV) / 2];
+    return [0.5 + (vx * b.r[0] + vy * b.r[1]) / (dz * b.tH) / 2, 0.5 - (vx * b.u[0] + vy * b.u[1] + vz * b.u[2]) / (dz * b.tV) / 2];
   }
   function project(s, aspect, x, y, z) { return projectB(basis(s, aspect || ASPECT), x, y, z || 0); }
   // where the screen's centre column meets the playfield at the top and bottom edges (yaw ignored)
   function yEdges(s) {
-    var T = s.tilt * DEG, sT = Math.sin(T), cT = Math.cos(T), d = s.span / (2 * TV * ASPECT), y0 = s.cy + d * sT;
-    var den = cT - TV * sT;
-    return [den > 1e-3 ? y0 - d * cT * (sT + TV * cT) / den : -1e9, y0 - d * cT * (sT - TV * cT) / (cT + TV * sT)];
+    var tv = s.fov ? Math.tan(s.fov * DEG / 2) : TV, T = s.tilt * DEG, sT = Math.sin(T), cT = Math.cos(T), d = s.span / (2 * tv * ASPECT), y0 = s.cy + d * sT;
+    var den = cT - tv * sT;
+    return [den > 1e-3 ? y0 - d * cT * (sT + tv * cT) / den : -1e9, y0 - d * cT * (sT - tv * cT) / (cT + tv * sT)];
   }
+
+  // ------------------------------------------------------------ the player-eye home: tilt and lens by screen shape (30 Oct 2026)
+  function eyeMix(aspect) { var e = CFG.eye, u = (aspect - e.a0) / (e.a1 - e.a0); u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * (3 - 2 * u); }
+  function eyeOf(aspect, mode) {   // [tilt, fov] of the mode's home at this screen shape
+    var M = MODES[mode || MODE] || MODES.calm, e = CFG.eye, u = eyeMix(aspect || ASPECT);
+    if (M.eye === false) return [CFG.tilt, FOV];
+    return [e.portrait[0] + (e.wide[0] - e.portrait[0]) * u, e.portrait[1] + (e.wide[1] - e.portrait[1]) * u];
+  }
+  function homeTilt(aspect, mode) { return eyeOf(aspect, mode)[0]; }
+  function lens(aspect, mode) { return eyeOf(aspect, mode)[1]; }
 
   // ------------------------------------------------------------ the table's flipper boxes and home
   var BOXES = {}, HOMES = {};
@@ -141,17 +170,18 @@
     }));
   }
   function bottomStorey(T) { var b = 0; T.storeys.forEach(function (s, i) { if (s.y1 > T.storeys[b].y1) b = i; }); return b; }
-  function homeFor(id, aspect) {
-    var E = getE(), T = E.table(id).T, key = T.id + '@' + aspect.toFixed(4);
+  function homeFor(id, aspect, mode) {
+    var E = getE(), T = E.table(id).T, ey = eyeOf(aspect, mode), key = T.id + '@' + aspect.toFixed(4) + '/' + ey[0].toFixed(3) + '/' + ey[1].toFixed(3);
     if (HOMES[key]) return HOMES[key];
     var pts = [];
     boxes(id).forEach(function (bx) { pts = pts.concat(bx.pts); });
     pts.push([T.shooter.cx + T.BALL, T.storeys[bottomStorey(T)].y1, 0]);   // the ball on the plunger too
     if (T.arch) pts.push([T.arch.x, T.arch.y - T.arch.R, 0]);   // and the top of the table: home is the whole table
+    if ((MODES[mode || MODE] || MODES.calm).eye !== false) pts.push([T.W / 2, T.H + 2, 22]);   // the player's eye sees the apron's front edge too, as at a real cabinet (classic keeps its old framing; 30 Oct 2026)
     var x0 = 1e9, x1 = -1e9;
     pts.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); });
     var cx = (x0 + x1) / 2, m = CFG.margin;
-    function at(span, cy) { return { cx: cx, cy: cy, span: span, tilt: CFG.tilt, yaw: 0 }; }
+    function at(span, cy) { return { cx: cx, cy: cy, span: span, tilt: ey[0], yaw: 0, fov: ey[1] }; }
     function placeBottom(span) {   // the lowest point on the bottom margin (the spare room goes up the table)
       var lo = -T.H * 2, hi = T.H * 3;
       for (var n = 0; n < 60; n++) {
@@ -296,12 +326,12 @@
   }
   S = fresh();
   function reset() { S = fresh(); FC = null; ASKED = null; PENDING.length = 0; }
-  function home() { return homeFor(S.W ? S.W.tableId : getE().DEFAULT, ASPECT); }
+  function home() { return homeFor(S.W ? S.W.tableId : getE().DEFAULT, ASPECT, MODE); }
   function zoomOf(p) { return home().span / p.span; }
-  function tiltAt(zoom) { return Math.min(40, CFG.tilt + 9 * (zoom - 1) / 1.2); }
+  function tiltAt(zoom) { var h = home().tilt; return Math.min(Math.max(40, h + 6), h + 9 * (zoom - 1) / 1.2); }   // a push-in leans in a little more; classic exactly as before (30 Oct 2026)
   function shotAt(cx, cy, zoom, T) {
     var H = home(), span = H.span / zoom, tilt = tiltAt(zoom);
-    var s = { cx: cx, cy: cy, span: span, tilt: tilt, yaw: 0 }, W = T.W, half = span / 2, xl = -10, xr = W + 10;
+    var s = { cx: cx, cy: cy, span: span, tilt: tilt, yaw: 0, fov: H.fov }, W = T.W, half = span / 2, xl = -10, xr = W + 10;
     s.cx = half * 2 > xr - xl ? (xl + xr) / 2 : Math.max(xl + half, Math.min(xr - half, cx));
     var e = yEdges(s), top = -14, bot = T.H + 14;
     if (e[1] - e[0] > bot - top) s.cy += (top + bot) / 2 - (e[0] + e[1]) / 2;
@@ -313,7 +343,7 @@
   function fitShot(pts, tilt, m) {
     var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
     pts.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
-    var s = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, span: 100, tilt: tilt, yaw: 0 };
+    var s = { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, span: 100, tilt: tilt, yaw: 0, fov: home().fov };
     function ext() { var b = basis(s, ASPECT), e = [1e9, -1e9, 1e9, -1e9]; pts.forEach(function (q) { var v = projectB(b, q[0], q[1], q[2]); e[0] = Math.min(e[0], v[0]); e[1] = Math.max(e[1], v[0]); e[2] = Math.min(e[2], v[1]); e[3] = Math.max(e[3], v[1]); }); return e; }
     var lo = 40, hi = 3000;
     for (var n = 0; n < 30; n++) {
@@ -326,8 +356,8 @@
     s.span = hi;
     return s;
   }
-  function copyShot(p) { return { cx: p.cx, cy: p.cy, span: p.span, tilt: p.tilt, yaw: p.yaw || 0 }; }
-  function same(a, b) { return Math.abs(a.cx - b.cx) < 1e-6 && Math.abs(a.cy - b.cy) < 1e-6 && Math.abs(a.span - b.span) < 1e-6 && Math.abs(a.tilt - b.tilt) < 1e-6 && Math.abs((a.yaw || 0) - (b.yaw || 0)) < 1e-6; }
+  function copyShot(p) { return { cx: p.cx, cy: p.cy, span: p.span, tilt: p.tilt, yaw: p.yaw || 0, fov: p.fov || FOV }; }
+  function same(a, b) { return Math.abs(a.cx - b.cx) < 1e-6 && Math.abs(a.cy - b.cy) < 1e-6 && Math.abs(a.span - b.span) < 1e-6 && Math.abs(a.tilt - b.tilt) < 1e-6 && Math.abs((a.yaw || 0) - (b.yaw || 0)) < 1e-6 && Math.abs((a.fov || FOV) - (b.fov || FOV)) < 1e-6; }
   function smoother(u) { u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * u * (u * (u * 6 - 15) + 10); }
   function springTo(goal, w, dt) {   // critically damped, per part of the pose
     ['cx', 'cy', 'span', 'tilt', 'yaw'].forEach(function (k) {
@@ -388,9 +418,11 @@
   // ------------------------------------------------------------ once per drawn frame
   function update(W, t, mode, aspect) {
     var E = getE();
-    if (aspect && Math.abs(aspect - ASPECT) > 1e-4) { ASPECT = aspect; if (S.pose) { S.pose = copyShot(homeFor(W.tableId, ASPECT)); S.state = 'home'; still(); } }
+    if (aspect && Math.abs(aspect - ASPECT) > 1e-4) { ASPECT = aspect; if (S.pose) { S.pose = copyShot(homeFor(W.tableId, ASPECT, MODE)); S.state = 'home'; still(); } }
+    if (S.pose && S.mode && S.mode !== MODE) { S.pose = copyShot(homeFor(W.tableId, ASPECT, MODE)); S.state = 'home'; still(); }   // a new mode may have a new lens: start from its home (30 Oct 2026)
     if (W !== S.W || W.frame < S.frame) { reset(); S.W = W; }
-    var T = E.table(W.tableId).T, H = homeFor(W.tableId, ASPECT), M = MODES[MODE], BACK = backOf(M), NEEDM = needOf(M), EARLY = Math.round(earlyOf(M) * 60), LOOK = M.look || 30;
+    S.mode = MODE;
+    var T = E.table(W.tableId).T, H = homeFor(W.tableId, ASPECT, MODE), M = MODES[MODE], BACK = backOf(M), NEEDM = needOf(M), EARLY = Math.round(earlyOf(M) * 60), LOOK = M.look || 30;
     var dt = S.t == null ? 0 : Math.max(0, Math.min(0.1, (t - S.t) / 1000));
     S.t = t;
     var newFrame = W.frame !== S.frame;
@@ -414,7 +446,7 @@
     // ---- what the director would like to show, and the slow motion it asks for
     var want = 'home', goal = H, w = 6, slow = 1, scripted = false;
     if (director && b) {
-      want = 'director'; goal = shotAt(b.x, b.y + 30, 1.7, T); goal.tilt = 40; goal.yaw = 9 * Math.sin(t / 4000); w = 3.5;
+      want = 'director'; goal = shotAt(b.x, b.y + 30, 1.7, T); goal.tilt = Math.max(40, H.tilt + 6); goal.yaw = 9 * Math.sin(t / 4000); w = 3.5;
     } else if (playing && lone) {
       var inLane = b.m === 'free' && b.x > T.shooter.x0, crater = V && V.busy && V.ball === b.id && M.dive !== 'none';
       if (crater) {
@@ -432,7 +464,7 @@
           if (S.skyFor !== V.release) {
             var arc = C.pts.filter(function (q) { return q[3] <= C.railAt + 40; }).map(function (q) { return [q[0], q[1], q[2] + T.BALL]; });
             arc.push([Vt.x - Vt.r - 30, Vt.y + Vt.r + 40, 0], [Vt.x + Vt.r + 50, Vt.y + Vt.r + 40, 0]);   // and the island round the cone
-            S.sky = fitShot(arc, 33, 0.06); S.skyFor = V.release;
+            S.sky = fitShot(arc, Math.max(33, H.tilt + 2), 0.06); S.skyFor = V.release;
           }
           var f = W.frame - V.release;
           want = 'rail'; goal = S.sky; w = 4;
@@ -517,7 +549,8 @@
       S.stillAt = null;
       S.state = want;
       // every way in is quick (most of the way in about 0.4 s); then each state tracks at its own, gentler pace
-      springTo(goal, t - S.since < 600 ? Math.max(w, 10) : w, dt);
+      var pace = M.pace || 1;   // calm and arcade: gentler springs (30 Oct 2026, owner: fast moves "lose track of the pinball game"); classic 1, as before
+      springTo(goal, (t - S.since < 600 / pace ? Math.max(w, 10) : w) * pace, dt);
     }
 
     // ---- slow motion: only where nothing the player does can matter, and exactly 1.0 once a ball is 0.75 s away
@@ -536,7 +569,7 @@
     }
     var nx = -1;
     if (FC && FC.min >= 0) Object.keys(FC.arrive).forEach(function (k) { if (FC.arrive[k] === FC.min) nx = FC.storey[k]; });
-    return { cx: S.pose.cx, cy: S.pose.cy, span: S.pose.span, tilt: S.pose.tilt, yaw: S.pose.yaw || 0, timeScale: S.ts,
+    return { cx: S.pose.cx, cy: S.pose.cy, span: S.pose.span, tilt: S.pose.tilt, yaw: S.pose.yaw || 0, fov: S.pose.fov || FOV, timeScale: S.ts,
       state: S.state, zoom: zoomOf(S.pose), A: known ? A : -1, next: nx, cut: cut, emergency: cut ? 'rule' : emergency };
   }
   function bonusLeft(W) {   // steps until the bonus count ends and the next ball comes (the engine's bonusStep, read only)
@@ -557,11 +590,12 @@
   function stats() { var s = STATS; return JSON.parse(JSON.stringify(s)); }
   function resetStats() { STATS = freshStats(); }
   function info() { return { state: S.state, A: S.A, known: S.Aknown, ts: S.ts, mode: MODE, aspect: ASPECT, forecast: FC, worker: !!WK && !WK_BAD, need: needOf(MODES[MODE]), settle: SETTLE, early: earlyOf(MODES[MODE]) }; }
-  function timing(m) { var M = MODES[m || MODE]; return { need: needOf(M), settle: SETTLE, early: earlyOf(M), look: M.look || 30, back: backOf(M), spare: M.early != null && M.spare != null ? M.spare : CFG.spare }; }
+  function timing(m) { var M = MODES[m || MODE]; return { need: needOf(M), settle: SETTLE, early: earlyOf(M), look: M.look || 30, back: backOf(M), spare: M.spare != null ? M.spare : CFG.spare }; }
 
   return {
     update: update, frame: frame, project: project, quiet: quiet, setMode: setMode, setAspect: setAspect,
-    home: function (aspect, id) { return homeFor(id || (S.W ? S.W.tableId : getE().DEFAULT), aspect || ASPECT); },
+    home: function (aspect, id, mode) { return homeFor(id || (S.W ? S.W.tableId : getE().DEFAULT), aspect || ASPECT, mode || MODE); },
+    homeTilt: function (aspect, mode) { return homeTilt(aspect || ASPECT, mode); }, lens: function (aspect, mode) { return lens(aspect || ASPECT, mode); },
     reset: function () { reset(); resetStats(); }, stats: stats, resetStats: resetStats, info: info, configure: configure,
     forecast: forecast, decided: decided, boxes: boxes, director: function (on) { DIRECTOR = !!on; },
     MODES: MODES, CFG: CFG, FOV: FOV, timing: timing, yEdges: function (s, aspect) { var a = ASPECT; ASPECT = aspect || a; var r = yEdges(s); ASPECT = a; return r; }

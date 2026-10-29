@@ -9,7 +9,8 @@
      when it is there; else a simple seeded auto-flipper), so a seed and a frame are always the same moment, and draws
      the 3D table under a strip with the flat look's dot-matrix display (its top 34 rows, square pixels), so a picture
      looks exactly like the phone screen.
-     Query: ?table=ember|orbit &cam=home|calm|arcade|classic (home: world3d's whole-table framing; the others: camera.js
+     Query: ?table=ember|orbit &cam=home|calm|arcade|classic (home: the still home, camera.js's home in the &home= mode
+     (calm by default); the others: camera.js
      in that mode, if it is on the page) &tier=high|medium|low &seed=7 &frame=900 &speed=2 &w=1080 &h=1920
      &mode=title (the attract show) &fill=1 (the old table's close framing) &tilt= &fov= &bot=pilot|simple
      &fx=0 &particles=0 &post=0 (leave those add-ons out).
@@ -45,10 +46,10 @@
   have.lamps = await optional(P + 'lamps.js'); have.art = await optional(P + 'art3d.js');
   if (Q.get('fx') !== '0') have.fx = await optional(P + 'fx.js');
   have.pilot = await optional(P + 'pilot.js');
-  if (CAM !== 'home') have.cam = await optional(P + 'camera.js');
+  have.cam = await optional(P + 'camera.js');   // home too: world3d's home is camera.js's home in that mode (&home=calm|arcade|classic, default calm; 30 Oct 2026)
   if (Q.get('particles') !== '0') have.particles = await optional(P + 'particles.js');
   if (Q.get('post') !== '0') have.post = await optional(P + 'post.js');
-  if (window.PinCam) { try { PinCam.configure({ forecaster: 'sync' }); if (PinCam.setMode && CAM !== 'home') PinCam.setMode(CAM === 'arcade' || CAM === 'calm' || CAM === 'classic' ? CAM : 'arcade'); } catch (e) {} }
+  if (window.PinCam) { try { PinCam.configure({ forecaster: 'sync' }); if (PinCam.setMode) PinCam.setMode(CAM === 'home' ? (/^(calm|arcade|classic)$/.test(Q.get('home') || '') ? Q.get('home') : 'calm') : CAM === 'arcade' || CAM === 'calm' || CAM === 'classic' ? CAM : 'arcade'); } catch (e) {} }
   const { create } = await import('../../games/pinball/world3d.js?' + Date.now());
 
   // ---------------------------------------------------------------- the bots

@@ -1,7 +1,8 @@
-/* 365 Pinball Hero - the BALL-CAM test clip (29 Oct 2026), never deployed. The most-viewed pinball Short on YouTube is a
- * camera riding inside a real machine (61M views); our 3D table can do that for free. Drives tools/pinball/stills3d.html
- * (headless Chrome, the high tier) and chases the ball from above and behind (clear of the walls and toys), looking where the ball is
- * going (its velocity, smoothed), pulling up and back when it is fast, circling it slowly while it is held. It starts a
+/* 365 Pinball Hero - the CALM CINEMATIC test clip (29 Oct 2026; calm since 30 Oct 2026: the owner rejected the fast chase
+ * cam, "moves quite quickly ... you lose track of the pinball game"), never deployed. Drives tools/pinball/stills3d.html
+ * (headless Chrome, the high tier) from the player-eye table view (camera.js's calm home), with slow eased dollies only
+ * (2.5-3.5 s smootherstep, never a cut): a push towards the volcano for the crater catch, a follow alongside the sky
+ * carry and the wire rail from high over the middle of the table (never near a wall), and home again. It starts a
  * few seconds before a crater catch (the pilot playing Ember Peak) so the clip has the dive, the sky carry and the wire
  * rail. Writes ballcam.mp4 (1080 x 1920, 30 fps, 18 s, with the game's own sounds rendered offline frame by frame),
  * ballcam.wav and a contact sheet ballcam-sheet.jpg.
@@ -32,7 +33,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     if (!browser) throw new Error('no headless browser would start');
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
     const errs = []; page.on('pageerror', (e) => errs.push(String(e)));
-    await page.goto('http://127.0.0.1:' + PORT + '/tools/pinball/stills3d.html?table=ember&cam=arcade&tier=high&w=1080&h=1920&frame=2');
+    await page.goto('http://127.0.0.1:' + PORT + '/tools/pinball/stills3d.html?table=ember&cam=home&home=calm&tier=high&w=1080&h=1920&frame=2');
     await page.waitForFunction(() => window.__ready === true, null, { timeout: 120000 });
     const m = await page.evaluate(() => S3.findMoment('craterclip'));
     if (!m) throw new Error('no crater moment found');
@@ -69,36 +70,38 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
           return { b64: btoa(bin), sr: buf.sampleRate, n };
         } };
     }, SECS);
-    // the ball-cam, in the page: smoothed heading, speed-dependent pull-back, a slow orbit while held
+    // the calm camera, in the page (30 Oct 2026, owner on the chase cam: "moves quite quickly ... you lose track of the
+    // pinball game"): the player-eye table view most of the time; a slow eased push towards the volcano for the crater
+    // catch; a slow follow alongside the sky carry and the wire rail from the middle of the table (high, never near a
+    // wall); a slow dolly home. Every move is a smootherstep of 2.5-3.5 s from wherever the camera is: no cuts, no snaps
     await page.evaluate(() => {
-      const st = { n: 0, shot: 'table', cutAt: 0, hx: 0, hy: -1, ex: null, ey: 0, ez: 0, lx: 0, ly: 0, lz: 0, t: 0, orbit: 0 };
-      const mix = (a, b, k) => a + (b - a) * k, clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+      const H = S3.world.homes().whole, V3 = [84, 118, 40];   // home (camera.js's player-eye home) and the crater's pool
+      const mix = (a, b, k) => a + (b - a) * k, mixV = (a, b, k) => a.map((v, i) => mix(v, b[i], k)), clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+      const ease = (u) => { u = clamp(u, 0, 1); return u * u * u * (u * (u * 6 - 15) + 10); };
+      const st = { n: 0, t: 0, shot: 'home', since: 0, from: null, dur: 3000, eye: H.eye.slice(), look: H.look.slice(), fl: null };
+      const target = (b) => {
+        if (st.shot === 'crater') return { eye: mixV(V3, [H.eye[0], H.eye[1], H.eye[2]], 0.5), look: mixV(H.look, V3, 0.85) };   // half way in, still high over the table
+        if (st.shot === 'rail' && st.fl) { const D = H.eye.map((v, i) => v - H.look[i]), L = [mix(st.fl[0], 135, 0.3), st.fl[1], st.fl[2] * 0.45]; return { eye: [clamp(L[0] + D[0] * 0.62 + 40, 110, 170), L[1] + D[1] * 0.62, L[2] + D[2] * 0.62], look: L }; }   // home's angle at 0.62 of its distance, aimed a little in from the ball towards the middle and below it in the sky, so the table (not the cabinet's side or the sky) fills the picture (the long lens: any nearer is a close-up)
+        return { eye: H.eye.slice(), look: H.look.slice() };
+      };
       window.BC = function () {
         const W = S3.W, b = W.balls && W.balls[0];
         AUD.A.t = st.n / 30; S3.step(); AUD.A.t += 1 / 60; S3.step(); AUD.frame(); st.n++;
         st.t += 1000 / 30;
-        if (!b) { S3.world.setCam(null); S3.render(st.t); return 'none'; }
-        const vx = b.vx || 0, vy = b.vy || 0, sp = Math.hypot(vx, vy), held = b.m === 'held' || sp < 40;
-        // the director (polish, 29 Oct 2026): the normal arcade camera low on the table (no walls in the lens near the
-        // flippers, and the player sees the save), the ball-cam up top, in the crater and on the rail; each shot held 0.8 s+
-        const want = b.m === 'held' || b.m === 'ramp' || b.y < 300 ? 'ball' : 'table';
-        if (want !== st.shot && st.t - (st.cutAt || 0) > 800) { st.shot = want; st.cutAt = st.t; if (want === 'ball') st.ex = null; }
-        if (st.shot === 'table') { S3.world.setCam(null); S3.render(st.t); return 'table'; }
-        const bz = b.at === 'crater' ? 48 : b.m === 'ramp' ? (b.z || 0) : 0;   // the crater's pool is 48 up (camera.js craterZ)
-        if (!held) { const k = clamp(sp / 2500, 0.04, 0.16); st.hx = mix(st.hx, vx / sp, k); st.hy = mix(st.hy, vy / sp, k); const n = Math.hypot(st.hx, st.hy) || 1; st.hx /= n; st.hy /= n; }
-        else st.orbit += 0.018;
-        let hx = st.hx, hy = st.hy;
-        if (held) { const c = Math.cos(st.orbit), s = Math.sin(st.orbit); hx = st.hx * c - st.hy * s; hy = st.hx * s + st.hy * c; }
-        const back = held ? 85 : 62 + clamp(sp / 45, 0, 30), up = held ? 60 : 42 + clamp(sp / 90, 0, 22);   // a chase cam: above the walls and toys, never inside them
-        const ex = clamp(b.x - hx * back, 30, 240), ey = clamp(b.y - hy * back, 12, 470), ez = bz + up;
-        const lx = b.x + hx * 18, ly = b.y + hy * 18, lz = bz + 2;
-        if (st.ex == null) Object.assign(st, { ex, ey, ez, lx, ly, lz });
-        const k = held ? 0.08 : 0.3;
-        st.ex = mix(st.ex, ex, k); st.ey = mix(st.ey, ey, k); st.ez = mix(st.ez, ez, k);
-        st.lx = mix(st.lx, lx, 0.4); st.ly = mix(st.ly, ly, 0.4); st.lz = mix(st.lz, lz, 0.4);
-        S3.world.setCam({ eye: [st.ex, st.ey, st.ez], look: [st.lx, st.ly, st.lz], fov: 58 });
+        const want = !b ? 'home' : b.at === 'crater' && b.m === 'held' ? 'crater' : b.carry ? 'rail' : 'home';
+        if (b && b.carry) { const p = [b.x, b.y, b.z || 0]; st.fl = st.fl ? mixV(st.fl, p, 1 - Math.exp(-(1 / 30) / 0.45)) : p; }   // the rail's look point trails the ball softly
+        if (want !== st.shot && (st.t - st.since > 2000 || want !== 'home')) {
+          st.from = { eye: st.eye.slice(), look: st.look.slice() }; st.shot = want; st.since = st.t;
+          st.dur = want === 'crater' ? 3000 : want === 'rail' ? 2500 : 3500;
+          if (want === 'rail' && !st.fl && b) st.fl = [b.x, b.y, b.z || 0];
+        }
+        if (st.shot !== 'rail' && !(b && b.carry)) st.fl = null;
+        const T = target(b), u = st.from ? ease((st.t - st.since) / st.dur) : 1;
+        st.eye = st.from ? mixV(st.from.eye, T.eye, u) : T.eye; st.look = st.from ? mixV(st.from.look, T.look, u) : T.look;
+        if (u >= 1) st.from = null;
+        S3.world.setCam({ eye: st.eye, look: st.look, fov: H.fov });
         S3.render(st.t);
-        return 'ball:' + b.m + (b.at ? ':' + b.at : '');
+        return st.shot + (st.from ? ':moving' : '');
       };
     });
     const dir = path.join(OUT, '_frames'); fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });

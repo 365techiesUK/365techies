@@ -57,7 +57,8 @@ const SHX = -KEY.x / KEY.y, SHY = -KEY.z / KEY.y;
 // heights (table units) - everything stands up
 const H = { rail: 18, guide: 13, arch: 21, wood: 30, front: 22, bumpCap: 26, drop: 17, apron: 6, sling: 16, rampWall: 16, post: 19, void: 12, gate: 9 };
 const WOOD_L = -36, WOOD_R = 308;
-const FOV = 32, HOME_TILT = 28;
+const FOV = 32, HOME_TILT = 28;   // classic's home (and the bench's tilt studies)
+const EYE = { portrait: [40, 26], wide: [48, 24], a0: 0.62, a1: 1.25 };   // camera.js's player-eye home (CFG.eye), used when PinCam is not on the page (30 Oct 2026, owner: "the full realism rebuild")
 // 365 Invaders' pixel invaders (ours), for the old space table
 const ART = {
   orb: ['....####....', '..########..', '.##..##..##.', '.##########.', '..########..', '...#....#...', '..#..##..#..', '.#........#.'],
@@ -73,7 +74,7 @@ const THEMES = {
     drops: { order: ['orb', 'moth', 'bot', 'moth', 'orb'], col: { orb: '#ff5cc8', moth: '#3fe0ff', bot: '#ffd84a' } }
   },
   ember: {
-    world: 'island', exposure: 1.22, bloomT: 1.4, cabinet: 'lacquer',
+    world: 'island', exposure: 1.3, bloomT: 1.25, cabinet: 'lacquer', tone: THREE.ACESFilmicToneMapping,   // filmic, under arcade light (30 Oct 2026, owner: "the full realism rebuild")
     bump: [{ c: '#ff7a1a', art: 'vent' }, { c: '#ffb21a', art: 'vent' }, { c: '#ff5a2a', art: 'vent' }],
     sling: ['#ff8a1a', '#ff8a1a'], slingArt: [null, null], ramp: 0xffc890, rampWall: '#ff9a2e', led: '#ffae3a',
     lava: '#ff6a1a', steam: '#f4f8ff', sea: '#29d3d6'
@@ -232,7 +233,100 @@ function segMatrix(m, ax, ay, az, bx, by, bz, r) {
   return m.compose(_p, _q, _s);
 }
 
+// several indexed or plain geometries (position, normal, uv) as one, for one draw call (30 Oct 2026, owner: "the full realism rebuild")
+function mergeGeos(list) {
+  const P = [], N = [], U = [];
+  list.forEach((g0) => { const g = g0.index ? g0.toNonIndexed() : g0, p = g.attributes.position, n = g.attributes.normal, u = g.attributes.uv; for (let i = 0; i < p.count; i++) { P.push(p.getX(i), p.getY(i), p.getZ(i)); N.push(n.getX(i), n.getY(i), n.getZ(i)); U.push(u ? u.getX(i) : 0, u ? u.getY(i) : 0); } if (g !== g0) g.dispose(); });
+  const out = new THREE.BufferGeometry();
+  out.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); out.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); out.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2));
+  out.computeBoundingSphere(); out.computeBoundingBox(); return out;
+}
+// smooth 3D value noise (0..1) and its fractal sum, for rock that is the same at a lathe's seam
+function hash3(x, y, z) { let h = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(z, 1274126177)) | 0; h = Math.imul(h ^ (h >>> 13), 1103515245); return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
+function vnoise3(x, y, z) {
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z), xf = x - xi, yf = y - yi, zf = z - zi, s = (t) => t * t * (3 - 2 * t), u = s(xf), v = s(yf), w = s(zf);
+  const L = (a, b, t) => a + (b - a) * t, c = (i, j, k) => hash3(xi + i, yi + j, zi + k);
+  return L(L(L(c(0, 0, 0), c(1, 0, 0), u), L(c(0, 1, 0), c(1, 1, 0), u), v), L(L(c(0, 0, 1), c(1, 0, 1), u), L(c(0, 1, 1), c(1, 1, 1), u), v), w);
+}
+function fbm3(x, y, z, oct) { let s = 0, a = 0.5, n = 0; for (let i = 0; i < oct; i++) { s += a * vnoise3(x, y, z); n += a; a *= 0.5; x = x * 2.07 + 5.3; y = y * 2.07 - 3.1; z = z * 2.07 + 1.7; } return s / n; }
+
 // ---------------------------------------------------------------- canvases painted once
+// the arcade the chrome reflects (equirectangular, 30 Oct 2026, owner: "the full realism rebuild"): a dark room, two long
+// fluorescent tubes overhead along the table, the lit backbox up at the far end, rows of warm GI bulbs low down either
+// side, neon from the machines across the room; the floor near black. Bright bits at 1.0 on near-black, so chrome shows
+// highlights and the gloss shows lamp streaks, not a grey or a sky
+function arcadeEnvCanvas(w, h) {
+  const c = cv(w, h), g = c.getContext('2d'), r = rnd(61);
+  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#120e16'); q.addColorStop(0.42, '#0a0810'); q.addColorStop(0.5, '#140c0e'); q.addColorStop(0.56, '#060406'); q.addColorStop(1, '#030203');
+  g.fillStyle = q; g.fillRect(0, 0, w, h);
+  const uvOf = (x, y, z) => { const l = Math.hypot(x, y, z) || 1; return [(Math.atan2(z, x) / (2 * Math.PI) + 0.5) * w, (0.5 - Math.asin(y / l) / Math.PI) * h]; };
+  const line = (pts, wd, col, blur) => { g.save(); g.strokeStyle = col; g.lineWidth = wd; g.lineCap = 'round'; g.shadowColor = col; g.shadowBlur = blur || 0; g.beginPath(); let last = null; pts.forEach(([x, y, z]) => { const p = uvOf(x, y, z); if (!last || Math.abs(p[0] - last[0]) > w / 2) g.moveTo(p[0], p[1]); else g.lineTo(p[0], p[1]); last = p; }); g.stroke(); g.restore(); };
+  const blob = (u, v, rx, ry, col, a) => { g.save(); g.globalCompositeOperation = 'lighter'; g.translate(u, v); g.scale(1, ry / rx); const qq = g.createRadialGradient(0, 0, 0, 0, 0, rx); qq.addColorStop(0, rgba(col, a)); qq.addColorStop(0.35, rgba(col, a * 0.5)); qq.addColorStop(1, rgba(col, 0)); g.fillStyle = qq; g.fillRect(-rx, -rx, rx * 2, rx * 2); g.restore(); };
+  // the tubes overhead, along the table (the room's Z), and one across above the player
+  for (const x of [-0.42, 0.42]) { const pts = []; for (let k = -40; k <= 40; k++) pts.push([x, 1, k * 0.12]); line(pts, h * 0.022, 'rgba(255,246,228,1)', 18); line(pts, h * 0.008, '#ffffff', 0); }
+  { const pts = []; for (let k = -10; k <= 10; k++) pts.push([k * 0.06, 1, 0.9]); line(pts, h * 0.018, 'rgba(255,236,210,0.9)', 14); }
+  // the backbox at the far end (-Z): a warm lit panel, a hot strip along its foot (the speaker panel's light)
+  { const [u0, v0] = uvOf(-0.45, 0.62, -1), [u1, v1] = uvOf(0.45, 0.2, -1), bg = g.createLinearGradient(0, v0, 0, v1); bg.addColorStop(0, '#ff9a3a'); bg.addColorStop(0.5, '#ffd27a'); bg.addColorStop(1, '#ff6a1a'); g.fillStyle = bg; g.fillRect(Math.min(u0, u1), v0, Math.abs(u1 - u0), v1 - v0); blob((u0 + u1) / 2, (v0 + v1) / 2, Math.abs(u1 - u0) * 0.9, (v1 - v0) * 1.4, '#ff8a2a', 0.5); }
+  // warm GI bulbs low down either side (the cabinet's own lamps), and the neon of the room
+  for (const sx of [-1, 1]) for (let k = -6; k <= 6; k++) { const [u, v] = uvOf(sx, 0.05 + 0.03 * (k % 2), k * 0.22); blob(u, v, h * 0.02, h * 0.02, k % 3 ? '#ffc070' : '#ffe6b0', 0.95); }
+  line([[-1, 0.18, -0.9], [-1, 0.18, -0.2]], h * 0.012, 'rgba(255,70,190,1)', 14); line([[1, 0.24, -0.8], [1, 0.24, -0.1]], h * 0.012, 'rgba(60,220,255,1)', 14);
+  line([[-1, 0.3, 0.4], [-1, 0.3, 0.9]], h * 0.01, 'rgba(255,140,40,1)', 12); line([[1, 0.12, 0.3], [1, 0.12, 0.8]], h * 0.01, 'rgba(160,90,255,1)', 12);
+  for (let i = 0; i < 14; i++) { const a = r() * Math.PI * 2, [u, v] = uvOf(Math.cos(a), 0.02 + r() * 0.1, Math.sin(a)); blob(u, v, h * (0.03 + r() * 0.04), h * 0.02, ['#ff5ab4', '#3fd8ff', '#ffb040', '#9a6aff'][i % 4], 0.35); }
+  return c;
+}
+// the playfield's general illumination (30 Oct 2026, owner: "the full realism rebuild"): a dim table lit in pools by its own
+// lamps - bulbs along both side rails, hot pools under the slings and inlanes and round the flippers, warm key pools on the
+// toys, the middle lit where the ball plays - over a dark base. Multiplies the playfield's self-light (x3 in the shader)
+function giCanvas(T, B) {
+  const k = 2, c = cv(T.W * k, T.H * k), g = c.getContext('2d'), W0 = T.W, H0 = T.H;
+  g.fillStyle = 'rgb(30,27,34)'; g.fillRect(0, 0, c.width, c.height);
+  g.scale(k, k); g.globalCompositeOperation = 'lighter';
+  const pool = (x, y, rr, col, a, sy) => { g.save(); g.translate(x, y); g.scale(1, sy || 1); const q = g.createRadialGradient(0, 0, 0, 0, 0, rr); q.addColorStop(0, rgba(col, a)); q.addColorStop(0.4, rgba(col, a * 0.55)); q.addColorStop(1, rgba(col, 0)); g.fillStyle = q; g.fillRect(-rr, -rr, rr * 2, rr * 2); g.restore(); };
+  const vg = g.createLinearGradient(0, 0, 0, H0); vg.addColorStop(0, 'rgba(60,50,60,0)'); vg.addColorStop(0.5, 'rgba(70,60,60,0.35)'); vg.addColorStop(1, 'rgba(90,70,60,0.5)'); g.fillStyle = vg; g.fillRect(0, 0, W0, H0);
+  for (let y = 150; y <= H0 - 40; y += 46) { pool(10, y, 30, '#ffc890', 0.55, 1.3); pool(240, y, 30, '#ffc890', 0.55, 1.3); }   // GI bulbs along both side rails
+  (T.slings || []).forEach((s) => { const cx = (s.a[0] + s.b[0] + s.c[0]) / 3, cy = (s.a[1] + s.b[1] + s.c[1]) / 3; pool(cx, cy + 6, 46, '#ffd6a0', 0.75); pool(cx, cy - 30, 30, '#ffb070', 0.45); });
+  (T.flippers || []).forEach((f) => pool(f.x + f.side * -8, f.y - 4, 40, '#fff0d8', 0.5));
+  pool(T.MID + 10, T.H * 0.6, 90, '#ffe8d0', 0.28, 1.4);   // the key light down the middle, where the ball plays
+  if (T.volcano) pool(T.volcano.x, T.volcano.y + 10, 62, '#ff9a50', 0.6);
+  (B ? B.BUMPERS : []).forEach((Bm) => pool(Bm.x, Bm.y, 34, '#ffc070', 0.5));
+  if (T.arch) pool(T.arch.x + 40, T.arch.y - 60, 60, '#ffe0b0', 0.3);
+  return c;
+}
+// Ember Peak's die-cut art plastics (30 Oct 2026, owner: "the full realism rebuild"): thin printed plastics on posts over
+// the outlane guides and the lava lanes' mouths, our own simple graphics - flame tongues, a lava drop, the island's palm
+// and sun. Each: { pts (outline, table units), z (height), art } painted into one atlas, laid out a row of cells
+function plasticsAtlas(list, S) {
+  const cells = list.map((p) => { const xs = p.pts.map((q) => q[0]), ys = p.pts.map((q) => q[1]); return { x0: Math.min(...xs) - 1, y0: Math.min(...ys) - 1, x1: Math.max(...xs) + 1, y1: Math.max(...ys) + 1 }; });
+  let AW = 0, AH = 0; cells.forEach((b) => { b.ox = AW; AW += Math.ceil((b.x1 - b.x0) * S) + 4; AH = Math.max(AH, Math.ceil((b.y1 - b.y0) * S)); });
+  const c = cv(AW, AH), g = c.getContext('2d');
+  list.forEach((p, i) => {
+    const b = cells[i]; g.save(); g.translate(b.ox, 0); g.scale(S, S); g.translate(-b.x0, -b.y0);
+    const path = () => { g.beginPath(); p.pts.forEach((q, j) => (j ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]))); g.closePath(); };
+    path(); g.save(); g.clip();
+    const cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2, R = Math.max(b.x1 - b.x0, b.y1 - b.y0);
+    if (p.art === 'flame') {
+      const q = g.createLinearGradient(0, b.y1, 0, b.y0); q.addColorStop(0, '#5a0a02'); q.addColorStop(0.35, '#e8360a'); q.addColorStop(0.7, '#ff9a1a'); q.addColorStop(1, '#ffe27a'); g.fillStyle = q; g.fillRect(b.x0, b.y0, R * 2, R * 2);
+      const rr = rnd(7 + i);
+      for (let k = 0; k < 7; k++) { const fx = b.x0 + (k + 0.5) / 7 * (b.x1 - b.x0), fh = (b.y1 - b.y0) * (0.4 + rr() * 0.5); g.fillStyle = k % 2 ? 'rgba(255,230,120,0.85)' : 'rgba(255,120,20,0.8)'; g.beginPath(); g.moveTo(fx - 2.4, b.y1); g.quadraticCurveTo(fx - 3, b.y1 - fh * 0.6, fx + (rr() - 0.5) * 3, b.y1 - fh); g.quadraticCurveTo(fx + 2.6, b.y1 - fh * 0.5, fx + 2.4, b.y1); g.closePath(); g.fill(); }
+      g.fillStyle = 'rgba(255,255,230,0.9)'; for (let k = 0; k < 10; k++) { g.beginPath(); g.arc(b.x0 + rr() * (b.x1 - b.x0), b.y0 + rr() * (b.y1 - b.y0) * 0.6, 0.3 + rr() * 0.5, 0, Math.PI * 2); g.fill(); }
+    } else if (p.art === 'drop') {
+      const q = g.createLinearGradient(b.x0, 0, b.x1, 0); q.addColorStop(0, '#1a0a14'); q.addColorStop(0.5, '#3a1424'); q.addColorStop(1, '#1a0a14'); g.fillStyle = q; g.fillRect(b.x0, b.y0, R * 2, R * 2);
+      g.strokeStyle = 'rgba(255,150,40,0.5)'; g.lineWidth = 0.5; for (let x = b.x0; x < b.x1; x += 2.2) { g.beginPath(); g.moveTo(x, b.y0); g.lineTo(x + 3, b.y1); g.stroke(); }
+      const dq = g.createRadialGradient(cx, cy + 1, 0.5, cx, cy + 1, 7); dq.addColorStop(0, '#fff6c0'); dq.addColorStop(0.4, '#ffb020'); dq.addColorStop(1, '#e83a08');
+      g.fillStyle = dq; g.beginPath(); g.moveTo(cx, cy - 6.5); g.bezierCurveTo(cx + 2, cy - 2.5, cx + 5, cy, cx + 5, cy + 2.5); g.arc(cx, cy + 2.5, 5, 0, Math.PI); g.bezierCurveTo(cx - 5, cy, cx - 2, cy - 2.5, cx, cy - 6.5); g.fill();
+      g.font = '900 3.2px "Arial Black", Arial, sans-serif'; g.textAlign = 'center'; g.fillStyle = '#ffe08a'; g.fillText('LAVA', cx, b.y1 - 1.6);
+    } else {   // 'palm': the island at sunset - a sun, the sea, a palm
+      const q = g.createLinearGradient(0, b.y0, 0, b.y1); q.addColorStop(0, '#ff5a2a'); q.addColorStop(0.55, '#ffb040'); q.addColorStop(0.56, '#13b4cf'); q.addColorStop(1, '#064a7a'); g.fillStyle = q; g.fillRect(b.x0, b.y0, R * 2, R * 2);
+      g.fillStyle = '#fff3b0'; g.beginPath(); g.arc(cx + 2, b.y0 + (b.y1 - b.y0) * 0.55, 4.5, Math.PI, 0); g.fill();
+      g.strokeStyle = '#1a0a08'; g.lineWidth = 1.1; g.lineCap = 'round'; g.beginPath(); g.moveTo(cx - 3, b.y1); g.quadraticCurveTo(cx - 4.5, cy, cx - 1.5, b.y0 + 3.5); g.stroke();
+      g.fillStyle = '#1a0a08'; for (let k = 0; k < 5; k++) { const a = -Math.PI * 0.95 + k * Math.PI * 0.45; g.beginPath(); g.ellipse(cx - 1.5 + Math.cos(a) * 3, b.y0 + 3.5 + Math.sin(a) * 1.6, 3.4, 0.9, a, 0, Math.PI * 2); g.fill(); }
+    }
+    g.restore();
+    path(); g.lineJoin = 'round'; g.lineWidth = 1.1; g.strokeStyle = '#141014'; g.stroke(); g.lineWidth = 0.45; g.strokeStyle = 'rgba(255,240,210,0.95)'; g.stroke();   // the printed black keyline and white edge, as on a real plastic
+    g.restore();
+  });
+  return { c, cells, AW, AH };
+}
 function noiseCanvas(w, h, seed, cells) {   // smooth value noise, small, for scaling up
   const c = cv(w, h), g = c.getContext('2d'), d = g.createImageData(w, h), r = rnd(seed), N = cells || 8, grid = [];
   for (let i = 0; i <= N; i++) { grid.push([]); for (let j = 0; j <= N; j++) grid[i].push(r()); }
@@ -301,19 +395,19 @@ function ballSkyCanvas() {   // what a ball sees above the old table (equirectan
 // the sun, fair-weather clouds, islands on the horizon (one of them a far volcano), the turquoise sea below
 function islandSkyCanvas(w, h) {
   const c = cv(w, h), g = c.getContext('2d'), r = rnd(31), HZ = h * 0.5;
-  const q = g.createLinearGradient(0, 0, 0, HZ); q.addColorStop(0, '#0d4fd6'); q.addColorStop(0.45, '#2f8cf2'); q.addColorStop(0.85, '#8fd0ff'); q.addColorStop(1, '#e4f6ff');
+  const q = g.createLinearGradient(0, 0, 0, HZ); q.addColorStop(0, '#05040e'); q.addColorStop(0.45, '#140c2a'); q.addColorStop(0.82, '#4a1a3a'); q.addColorStop(0.95, '#c8502a'); q.addColorStop(1, '#ffa050');   // dusk, the afterglow on the horizon (30 Oct 2026, owner: arcade light, not daylight)
   g.fillStyle = q; g.fillRect(0, 0, w, HZ);
-  const s = g.createLinearGradient(0, HZ, 0, h); s.addColorStop(0, '#bfeef2'); s.addColorStop(0.06, '#35c9d4'); s.addColorStop(0.4, '#0f8fc0'); s.addColorStop(1, '#0a5e96');
+  const s = g.createLinearGradient(0, HZ, 0, h); s.addColorStop(0, '#d0703a'); s.addColorStop(0.06, '#1a4a5a'); s.addColorStop(0.4, '#0a2a3a'); s.addColorStop(1, '#040e18');
   g.fillStyle = s; g.fillRect(0, HZ, w, h - HZ);
   const blob = (x, y, rx, ry, col, a, op) => { g.save(); g.globalCompositeOperation = op || 'source-over'; g.translate(x, y); g.scale(1, ry / rx); const qq = g.createRadialGradient(0, 0, 0, 0, 0, rx); qq.addColorStop(0, rgba(col, a)); qq.addColorStop(1, rgba(col, 0)); g.fillStyle = qq; g.fillRect(-rx, -rx, rx * 2, rx * 2); g.restore(); };
   // the sun (high, in front and to the left, where the key light comes from) and its glow
   const sx = w * 0.62, sy = h * 0.16;
-  blob(sx, sy, w * 0.12, w * 0.12, '#fff6d8', 0.55, 'lighter'); blob(sx, sy, w * 0.03, w * 0.03, '#ffffff', 1, 'lighter');
+  blob(sx, h * 0.5, w * 0.16, w * 0.05, '#ff7a2a', 0.5, 'lighter');   // (the sun just set: its glow on the horizon)
   // clouds: soft puffs in rows near the horizon, fewer higher up
   for (let i = 0; i < 70; i++) {
     const x = r() * w, y = HZ - 6 - Math.pow(r(), 1.8) * HZ * 0.55, cw = w * (0.015 + r() * 0.035);
-    for (let k = 0; k < 6; k++) blob(x + (r() - 0.5) * cw * 3, y + (r() - 0.5) * cw * 0.5, cw * (0.6 + r() * 0.6), cw * (0.35 + r() * 0.25), '#ffffff', 0.5 + r() * 0.3);
-    blob(x, y + cw * 0.35, cw * 2, cw * 0.4, '#9fb8d8', 0.18);
+    for (let k = 0; k < 6; k++) blob(x + (r() - 0.5) * cw * 3, y + (r() - 0.5) * cw * 0.5, cw * (0.6 + r() * 0.6), cw * (0.35 + r() * 0.25), y > HZ * 0.8 ? '#ff8a5a' : '#3a2a4a', 0.25 + r() * 0.2);
+    blob(x, y + cw * 0.35, cw * 2, cw * 0.4, '#1a1020', 0.18);
   }
   // islands on the horizon: low green humps, and a far volcano with a wisp of smoke
   const isle = (x, wd, ht, col) => { g.fillStyle = col; g.beginPath(); g.moveTo(x - wd, HZ + 1); for (let k = 0; k <= 20; k++) { const u = k / 20, yy = HZ - Math.sin(u * Math.PI) * ht * (0.8 + 0.2 * Math.sin(u * 17 + x)); g.lineTo(x - wd + u * wd * 2, yy); } g.lineTo(x + wd, HZ + 1); g.closePath(); g.fill(); };
@@ -321,13 +415,14 @@ function islandSkyCanvas(w, h) {
   g.fillStyle = '#5a6a78'; g.beginPath(); g.moveTo(w * 0.04, HZ + 1); g.lineTo(w * 0.085, HZ - h * 0.035); g.lineTo(w * 0.095, HZ - h * 0.035); g.lineTo(w * 0.14, HZ + 1); g.closePath(); g.fill();
   for (let k = 0; k < 8; k++) blob(w * 0.09 + k * w * 0.006, HZ - h * 0.04 - k * h * 0.012, w * 0.012 + k * w * 0.002, w * 0.008, '#e8eef4', 0.5);
   // the sea's sparkle under the sun and a few wave lines
-  for (let i = 0; i < 900; i++) { const y = HZ + Math.pow(r(), 2) * (h - HZ), x = sx + (r() - 0.5) * w * 0.25 * (1 + (y - HZ) / h); g.fillStyle = 'rgba(255,255,255,' + (0.25 + r() * 0.6) + ')'; g.fillRect(x, y, 1 + r() * 2, 1); }
+  for (let i = 0; i < 900; i++) { const y = HZ + Math.pow(r(), 2) * (h - HZ), x = sx + (r() - 0.5) * w * 0.25 * (1 + (y - HZ) / h); g.fillStyle = 'rgba(255,170,90,' + (0.15 + r() * 0.4) + ')'; g.fillRect(x, y, 1 + r() * 2, 1); }
+  for (let i = 0; i < 500; i++) { g.fillStyle = 'rgba(220,225,255,' + (0.2 + r() * 0.6) + ')'; g.fillRect(r() * w, Math.pow(r(), 1.5) * HZ * 0.7, 1, 1); }   // stars
   return c;
 }
 function seaCanvas(n) {   // the sea under and round the island, seen from above: shallows to deep, a sparkle, then haze
   const c = cv(n, n), g = c.getContext('2d'), r = rnd(37), m = n / 2;
   const q = g.createRadialGradient(m, m, 0, m, m, m);
-  q.addColorStop(0, '#5fe8e0'); q.addColorStop(0.06, '#2fd6d8'); q.addColorStop(0.16, '#13b4cf'); q.addColorStop(0.35, '#0b86bd'); q.addColorStop(0.7, '#1a78bf'); q.addColorStop(0.92, '#8ccbea'); q.addColorStop(1, '#d6f0fb');
+  q.addColorStop(0, '#0a1e24'); q.addColorStop(0.06, '#081a20'); q.addColorStop(0.16, '#06141a'); q.addColorStop(0.35, '#050f16'); q.addColorStop(0.7, '#081a28'); q.addColorStop(0.92, '#2a1a28'); q.addColorStop(1, '#4a2a2a');   // the sea at dusk (30 Oct 2026)
   g.fillStyle = q; g.fillRect(0, 0, n, n);
   g.globalCompositeOperation = 'lighter';
   for (let i = 0; i < 2600; i++) {
@@ -600,7 +695,7 @@ function makeRoomEnv(renderer, floorTex, TW, TH) {   // the old table: a little 
   pm.dispose(); junk.forEach((j) => j.dispose());
   return rt;
 }
-function makeSkyEnv(renderer, skyTex) {   // Ember Peak: the sky and the sea all round
+function makeSkyEnv(renderer, skyTex) {   // Ember Peak: the arcade room (was the sky and the sea till 30 Oct 2026)
   const pm = new THREE.PMREMGenerator(renderer);
   const rt = pm.fromEquirectangular(skyTex);
   pm.dispose();
@@ -759,11 +854,14 @@ export function create(opts) {
     const pfTex = keep(tex(bakePlayfield(B || { T, BUMPERS, RAMP, rampAt }, artBase, parts, artSource !== 'PinArt', TH_), { aniso: ANISO }));
     pfTex.generateMipmaps = true; pfTex.minFilter = THREE.LinearMipmapLinearFilter;
     const LIFT = opts.lift != null ? opts.lift : ISLAND ? 0.36 : 0.34, liftU = { value: LIFT };
-    const lift = (m) => { m.onBeforeCompile = (sh) => { sh.uniforms.uLift = liftU; sh.fragmentShader = 'uniform float uLift;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * uLift;'); }; m.customProgramCacheKey = () => 'lift'; return m; };
-    const pfMatHi = keep(lift(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: 0.62, metalness: 0, clearcoat: ISLAND ? 0.3 : 0.45, clearcoatRoughness: ISLAND ? 0.22 : 0.05, envMapIntensity: ISLAND ? 0.035 : 0.1 })));
-    const pfMatLo = keep(lift(new THREE.MeshStandardMaterial({ map: pfTex, roughness: 0.5, metalness: 0, envMapIntensity: ISLAND ? 0.05 : 0.18 })));
+    // the self-light is laid on through the GI map: pools of lamp light on a dim table (Ember Peak, 30 Oct 2026, owner: "the full realism rebuild"); the old table's is even
+    const giT = keep(tex(ISLAND ? giCanvas(T, B || { BUMPERS }) : (() => { const c = cv(2, 2), g = c.getContext('2d'); g.fillStyle = 'rgb(85,85,85)'; g.fillRect(0, 0, 2, 2); return c; })(), { linear: true }));
+    const giU = { value: giT }, giK = { value: 3.0 };
+    const lift = (m) => { m.onBeforeCompile = (sh) => { sh.uniforms.uLift = liftU; sh.uniforms.uGI = giU; sh.uniforms.uGIk = giK; sh.fragmentShader = 'uniform float uLift; uniform sampler2D uGI; uniform float uGIk;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * uLift * texture2D(uGI, vMapUv).rgb * uGIk;'); }; m.customProgramCacheKey = () => 'lift-gi'; return m; };
+    const pfMatHi = keep(lift(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: ISLAND ? 0.5 : 0.62, metalness: 0, clearcoat: ISLAND ? 1 : 0.45, clearcoatRoughness: ISLAND ? 0.06 : 0.05, envMapIntensity: ISLAND ? 0.55 : 0.1 })));   // the island's: a glossy clear coat that shows the lamps (30 Oct 2026)
+    const pfMatLo = keep(lift(new THREE.MeshStandardMaterial({ map: pfTex, roughness: ISLAND ? 0.26 : 0.5, metalness: 0, envMapIntensity: ISLAND ? 0.5 : 0.18 })));
     let glowTex = null;
-    if (artGlow) { glowTex = keep(tex(artGlow, { aniso: ANISO })); [pfMatHi, pfMatLo].forEach((m) => { m.emissiveMap = glowTex; m.emissive = new THREE.Color(0xffffff); m.emissiveIntensity = ISLAND ? 1.45 : 1.1; }); }
+    if (artGlow) { glowTex = keep(tex(artGlow, { aniso: ANISO })); [pfMatHi, pfMatLo].forEach((m) => { m.emissiveMap = glowTex; m.emissive = new THREE.Color(0xffffff); m.emissiveIntensity = ISLAND ? 1.0 : 1.1; }); }   // (island 1.45 -> 1.0 under arcade light, 30 Oct 2026: the ball stays the brightest thing)
     const pfGeo = keep(new THREE.PlaneGeometry(TW, TH)); pfGeo.rotateX(-Math.PI / 2);
     const playfield = RF(new THREE.Mesh(pfGeo, tier.clearcoat ? pfMatHi : pfMatLo)); group.add(playfield);
 
@@ -772,8 +870,9 @@ export function create(opts) {
     if (ISLAND) {
       const sc = islandSkyCanvas(PHONE ? 1024 : 2048, PHONE ? 512 : 1024), st = keep(tex(sc, { wrapS: true }));
       st.mapping = THREE.EquirectangularReflectionMapping;
-      envRT = makeSkyEnv(renderer, st);
-      ballSky = st;
+      const ac = keep(tex(arcadeEnvCanvas(1024, 512), { wrapS: true })); ac.mapping = THREE.EquirectangularReflectionMapping;   // the chrome reflects the arcade, not the sky (30 Oct 2026)
+      envRT = makeSkyEnv(renderer, ac);
+      ballSky = ac;
       world = buildIsland(st);
     } else {
       envRT = makeRoomEnv(renderer, pfTex, TW, TH);
@@ -815,11 +914,11 @@ export function create(opts) {
     }
 
     // ---- materials
-    const M = {
-      chrome: keep(new THREE.MeshStandardMaterial({ color: 0xe6ebf4, metalness: 1, roughness: 0.17 })),
-      darkChrome: keep(new THREE.MeshStandardMaterial({ color: 0x9aa3b4, metalness: 1, roughness: 0.3 })),
+    const M = {   // the island's chrome is bright on a dark arcade: it shows the tubes and the lamps (30 Oct 2026, owner: "the full realism rebuild")
+      chrome: keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xf4f6fa : 0xe6ebf4, metalness: 1, roughness: ISLAND ? 0.1 : 0.17, envMapIntensity: ISLAND ? 2.6 : 1 })),
+      darkChrome: keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xc0c6d0 : 0x9aa3b4, metalness: 1, roughness: ISLAND ? 0.24 : 0.3, envMapIntensity: ISLAND ? 2 : 1 })),
       rubberW: keep(new THREE.MeshStandardMaterial({ color: 0xf3f0e8, roughness: 0.55, envMapIntensity: 0.4 })),
-      rubberB: keep(new THREE.MeshStandardMaterial({ color: 0x17161c, roughness: 0.5, envMapIntensity: 0.6 })),
+      rubberB: keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0x141317 : 0x17161c, roughness: ISLAND ? 0.42 : 0.5, envMapIntensity: ISLAND ? 0.9 : 0.6 })),
       rubberR: keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xff6a1a : 0xd8182a, roughness: 0.45, envMapIntensity: 0.5 })),
       batW: keep(new THREE.MeshPhysicalMaterial({ color: 0xf6f4ee, roughness: 0.28, clearcoat: 0.6, clearcoatRoughness: 0.15 })),
       wood: keep(new THREE.MeshStandardMaterial({ map: keep(tex(TH_.cabinet === 'lacquer' ? lacquerCanvas() : woodCanvas(), { repeat: true, aniso: ANISO })), roughness: TH_.cabinet === 'lacquer' ? 0.22 : 0.38, metalness: TH_.cabinet === 'lacquer' ? 0.15 : 0, envMapIntensity: TH_.cabinet === 'lacquer' ? 1.0 : 0.7 })),
@@ -840,6 +939,7 @@ export function create(opts) {
     (function () { const A = T.arch, pts = []; for (let k = 0; k <= 120; k++) { const a = Math.PI + Math.PI * k / 120; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } sweep(chrome, pts, A.r + 0.2, H.arch, { arc: 8 }); })();
     sweep(chrome, [[7.2, -14], [7.2, TH]], 1.4, 2.6, { base: H.wood - 1 });
     sweep(chrome, [[264.8, -14], [264.8, TH]], 1.4, 2.6, { base: H.wood - 1 });
+    if (ISLAND) { box(chrome, -6, 8.6, H.wood - 0.2, H.wood + 2.2, -18, TH + 24); box(chrome, 263.4, 278, H.wood - 0.2, H.wood + 2.2, -18, TH + 24); }   // metal side rails along the cabinet's top edges (30 Oct 2026, owner: "the full realism rebuild")
 
     // ---- the ramp: a clear ribbon with walls, chrome wires, LED edges, supports
     let ledMat = null;
@@ -865,6 +965,7 @@ export function create(opts) {
       const edge = (off) => RP.map((p) => [p[0] - p[4] * off, p[1] + p[3] * off, p[2] + 0.15]);
       sweep(led, edge(rampHW - 0.6), 0.55, 1.1, { bottom: 0 }); sweep(led, edge(-(rampHW - 0.6)), 0.55, 1.1, { bottom: 0 });
       const p0 = RP[1]; sweep(chrome, [[p0[0] + p0[4] * rampHW, p0[1] - p0[3] * rampHW, 0], [p0[0] - p0[4] * rampHW, p0[1] + p0[3] * rampHW, 0]], 0.9, 1.4);
+      if (ISLAND) { const F = []; for (let i = 0; i < Math.min(6, n); i++) { const p = RP[i], lx = -p[4], ly = p[3]; F.push([chrome.v(wx(p[0] + lx * (rampHW + 0.5)), p[2] + 0.12, wz(p[1] + ly * (rampHW + 0.5)), 0, 1, 0, 0, 0), chrome.v(wx(p[0] - lx * (rampHW + 0.5)), p[2] + 0.12, wz(p[1] - ly * (rampHW + 0.5)), 0, 1, 0, 1, 0)]); } for (let i = 0; i < F.length - 1; i++) chrome.quad(F[i][0], F[i + 1][0], F[i + 1][1], F[i][1]); }   // the metal entrance flap (30 Oct 2026)
       let last = -99;
       for (let i = 0; i < n; i++) {
         const p = RP[i]; if (p[2] < 12 || i - last < 14) continue;
@@ -876,9 +977,9 @@ export function create(opts) {
           if (offField || onWall) { posts.push([ex, ey, p[2] - 0.3, 1.1, true]); last = i; break; }
         }
       }
-      const clearMat = keep(new THREE.MeshPhysicalMaterial({ color: TH_.ramp, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.2, depthWrite: false, side: THREE.DoubleSide, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.9 }));
+      const clearMat = keep(new THREE.MeshPhysicalMaterial({ color: ISLAND ? 0xe8f2ff : TH_.ramp, roughness: 0.04, metalness: 0, transparent: true, opacity: ISLAND ? 0.16 : 0.2, depthWrite: false, side: THREE.DoubleSide, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: ISLAND ? 2.2 : 0.9 }));   // the island's: clear plastic, a cool tint, the lamps in its gloss (30 Oct 2026)
       const rampClear = new THREE.Mesh(keep(clear.geometry()), clearMat); rampClear.renderOrder = 3; group.add(rampClear);
-      const wallMat = keep(new THREE.MeshStandardMaterial({ color: TH_.rampWall, emissive: new THREE.Color(TH_.rampWall), emissiveIntensity: 0.22, roughness: 0.12, metalness: 0, transparent: true, opacity: 0.36, depthWrite: false, side: THREE.DoubleSide }));
+      const wallMat = keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xf0f6ff : TH_.rampWall, emissive: new THREE.Color(TH_.rampWall), emissiveIntensity: ISLAND ? 0.05 : 0.22, roughness: ISLAND ? 0.04 : 0.12, metalness: 0, transparent: true, opacity: ISLAND ? 0.2 : 0.36, depthWrite: false, side: THREE.DoubleSide, envMapIntensity: ISLAND ? 2.4 : 1 }));
       const rampWalls = new THREE.Mesh(keep(walls.geometry()), wallMat); rampWalls.renderOrder = 4; group.add(rampWalls);
       ledMat = keep(new THREE.MeshBasicMaterial({ color: new THREE.Color(TH_.led).multiplyScalar(1.4) }));
       group.add(R1(new THREE.Mesh(keep(led.geometry()), ledMat)));
@@ -923,8 +1024,6 @@ export function create(opts) {
       group.add(hoop); rail.hoop = hoop; rail.P = P;
     }
 
-    const chromeMesh = RF(new THREE.Mesh(keep(chrome.geometry()), M.chrome)); group.add(chromeMesh);
-
     // ---- the cabinet: sides and back, the front and lockdown bar; the corners outside the arch
     const wood = new Geo();
     box(wood, WOOD_L, 8, 0, H.wood, -18, TH + 0.5); box(wood, 264, WOOD_R, 0, H.wood, -18, TH + 0.5);
@@ -954,7 +1053,7 @@ export function create(opts) {
       [-1, 1].forEach((s) => { group.add(R1(new THREE.Mesh(keep(extrude(corner(s), 0, 4, 0)), M.black))); });
     })();
     const lockGeo = keep(new THREE.CylinderGeometry(4.5, 4.5, 300, 24)); lockGeo.rotateZ(Math.PI / 2);
-    const lock = R1(new THREE.Mesh(lockGeo, keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xd8b25a : 0x2a2e36, metalness: 1, roughness: 0.35, envMapIntensity: 0.6 }))));
+    const lock = R1(new THREE.Mesh(lockGeo, keep(new THREE.MeshStandardMaterial({ color: ISLAND ? 0xb8bcc6 : 0x2a2e36, metalness: 1, roughness: ISLAND ? 0.38 : 0.35, envMapIntensity: ISLAND ? 0.8 : 0.6 }))));
     lock.position.set(wx(136), H.front + 3, wz(TH + 12)); group.add(lock);
 
     // ---- the summit deck and other closed spaces: raised rock blocks
@@ -970,15 +1069,18 @@ export function create(opts) {
       const right = left.map((p) => [2 * MID - p[0], p[1]]).reverse();
       const mat = keep(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: 0.35, metalness: 0.1, clearcoat: ISLAND ? 0.4 : 0.8, clearcoatRoughness: ISLAND ? 0.2 : 0.1, envMap: envRT.texture, envMapIntensity: ISLAND ? 0.25 : 1 }));
       [left, right].forEach((P) => { const g = keep(extrude(P, 0, H.apron - 0.8, 0.8)); planarUV(g, 0, 0, TW, TH); group.add(R1(new THREE.Mesh(g, mat))); });
+      if (ISLAND) { sweep(chrome, left.slice(0, 5), 0.8, 1.2, { base: H.apron - 0.3 }); sweep(chrome, right.slice(right.length - 5), 0.8, 1.2, { base: H.apron - 0.3 }); }   // the apron's metal edge (30 Oct 2026)
       const dg = keep(new THREE.PlaneGeometry(2 * gap, TH - tipY - 6)); dg.rotateX(-Math.PI / 2);
       const drain = new THREE.Mesh(dg, keep(new THREE.MeshBasicMaterial({ color: ISLAND ? 0x062a3a : 0x010103 }))); drain.position.set(wx(MID), 0.08, wz((tipY + 6 + TH) / 2)); group.add(drain);
     })();
 
-    // ---- slingshots: white rubber round the posts, a coloured plastic on top
+    const chromeMesh = RF(new THREE.Mesh(keep(chrome.geometry()), M.chrome)); group.add(chromeMesh);
+
+    // ---- slingshots: white rubber round the posts, a coloured plastic on top (Ember Peak: black rubber, 30 Oct 2026)
     const slings = T.slings.map((s, i) => {
       const col = TH_.sling[i % 2], tri = [s.a, s.b, s.c];
       const rub = new Geo(); sweep(rub, offsetPoly(tri, 1.5, 8), 1.0, 6, { closed: true, base: 3 });
-      group.add(R1(new THREE.Mesh(keep(rub.geometry()), M.rubberW)));
+      group.add(R1(new THREE.Mesh(keep(rub.geometry()), ISLAND ? M.rubberB : M.rubberW)));
       const outline = offsetPoly(tri, 3.8, 6), xs = outline.map((p) => p[0]), ys = outline.map((p) => p[1]);
       let bx = [Math.min(...xs) - 1, Math.min(...ys) - 1, Math.max(...xs) + 1, Math.max(...ys) + 1], art = null;
       if (artSource === 'PinArt' && typeof PinArt.plastic === 'function') {
@@ -1104,10 +1206,32 @@ export function create(opts) {
     })();
 
     // ---- posts (chrome, instanced) and the rubber rings on the rubber posts
-    const postGeo = keep(new THREE.LatheGeometry([[0, 0], [1, 0], [1, 0.86], [0.8, 0.95], [0.45, 1], [0, 1.02]].map((q) => new THREE.Vector2(q[0], q[1])), 16));
+    const postGeo = keep(ISLAND ? (() => {   // star posts: a fluted chrome star, a domed nut on top (30 Oct 2026, owner: "the full realism rebuild")
+      const st = new THREE.Shape(); for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2, r = k % 2 ? 0.76 : 1; if (k) st.lineTo(Math.cos(a) * r, Math.sin(a) * r); else st.moveTo(r, 0); } st.closePath();
+      const prism = new THREE.ExtrudeGeometry(st, { depth: 0.86, bevelEnabled: false }); prism.rotateX(-Math.PI / 2);
+      const cap = new THREE.LatheGeometry([[0.001, 0.86], [0.84, 0.86], [0.84, 0.9], [0.6, 0.98], [0.001, 1.03]].map((q) => new THREE.Vector2(q[0], q[1])), 14);
+      const g = mergeGeos([prism, cap]); prism.dispose(); cap.dispose(); return g;
+    })() : new THREE.LatheGeometry([[0, 0], [1, 0], [1, 0.86], [0.8, 0.95], [0.45, 1], [0, 1.02]].map((q) => new THREE.Vector2(q[0], q[1])), 16));
     T.slings.forEach((s) => [s.a, s.b, s.c].forEach((p) => posts.push([p[0], p[1], H.post, 1.6])));
     POSTS.forEach((p) => posts.push([p.x, p.y, H.post, 1.3]));
     if (T.lava) T.lava.gates.forEach((g) => { posts.push([g[0], g[1], 30, 2.4], [g[2], g[3], 30, 2.4]); });
+    // ---- Ember Peak's die-cut art plastics on their posts (one draw call for them all; the posts are star posts below)
+    if (ISLAND) {
+      const lobed = (cx, cy, rx, ry, tips) => { const P = []; for (let k = 0; k < 48; k++) { const a = k / 48 * Math.PI * 2, up = Math.max(0, -Math.sin(a)), f = 1 + tips * up * Math.pow(Math.abs(Math.cos(a * 3.5)), 3); P.push([cx + Math.cos(a) * rx * f, cy + Math.sin(a) * ry * f]); } return P; };
+      const PL = [
+        { pts: lobed(37, 334, 15, 9, 0.45), z: 22, art: 'flame', stand: [[27, 342], [27, 352], [48, 330]] },
+        { pts: lobed(213, 334, 15, 9, 0.2), z: 22, art: 'palm', stand: [[223, 342], [223, 352], [202, 330]] },
+        { pts: offsetPoly([[31, 215], [53, 215], [53, 229], [31, 229]], 2, 4), z: 31.5, art: 'drop', stand: [] },
+        { pts: offsetPoly([[197, 215], [219, 215], [219, 229], [197, 229]], 2, 4), z: 31.5, art: 'drop', stand: [] }
+      ], S = 10, at = plasticsAtlas(PL, S), geos = [];
+      PL.forEach((p, i) => {
+        const b = at.cells[i], g = extrude(p.pts, p.z, 0.8, 0.25), P = g.attributes.position, uv = g.attributes.uv;
+        for (let k = 0; k < P.count; k++) uv.setXY(k, (b.ox + (P.getX(k) + HW - b.x0) * S) / at.AW, 1 - (P.getZ(k) + ZC - b.y0) * S / at.AH);
+        geos.push(g); p.stand.forEach((q) => posts.push([q[0], q[1], p.z, 1.1]));
+      });
+      const ptx = keep(tex(at.c, { aniso: ANISO })), pm = keep(new THREE.MeshStandardMaterial({ map: ptx, emissiveMap: ptx, emissive: 0xffffff, emissiveIntensity: 0.55, roughness: 0.1, metalness: 0, transparent: true, opacity: 0.9, depthWrite: true, envMapIntensity: 1.2 }));
+      const plastics = R1(new THREE.Mesh(keep(mergeGeos(geos)), pm)); geos.forEach((g) => g.dispose()); plastics.renderOrder = 2; plastics.name = 'art plastics'; plastics.userData.occl = true; group.add(plastics);   // writes depth and counts as solid: the ball under one gets the xray outline and the sight-line check sees it (30 Oct 2026)
+    }
     const postMesh = R1(new THREE.InstancedMesh(postGeo, M.chrome, posts.length));
     { const m = new THREE.Matrix4(); posts.forEach((p, i) => { m.makeScale(p[3], p[2], p[3]); m.setPosition(wx(p[0]), 0, wz(p[1])); postMesh.setMatrixAt(i, m); }); }
     group.add(postMesh);
@@ -1129,10 +1253,30 @@ export function create(opts) {
       const V = T.volcano, HV = 60, POOL = 55.6, grp = new THREE.Group(); grp.position.set(wx(V.x), 0, wz(V.y)); group.add(grp);
       const R0 = V.r, prof = [[R0 + 7.5, 0], [R0 + 4.6, 0.6], [R0 + 2.6, 1.6], [R0 + 1.2, 3.5], [R0 - 0.3, 8], [R0 - 2.4, 14], [R0 - 4.6, 21], [R0 - 6.6, 29], [R0 - 8.3, 37],
         [R0 - 9.6, 45], [R0 - 10.4, 51.5], [R0 - 10.7, 56.5], [R0 - 10.6, 59.2], [R0 - 11.4, 60], [R0 - 12.3, 59.4], [R0 - 12.7, 57.6], [R0 - 12.8, POOL]];
-      const cg = keep(new THREE.LatheGeometry(prof.map((q) => new THREE.Vector2(q[0], q[1])), 56));
-      { const P = cg.attributes.position, uv = cg.attributes.uv; for (let k = 0; k < P.count; k++) uv.setY(k, clamp(P.getY(k) / HV, 0, 1)); }
+      // rock, not a smooth cone (30 Oct 2026, owner: "the full realism rebuild"): the profile finely resampled, every vertex pushed
+      // in or out by 3D noise (the same at the lathe's seam), only inwards low down where the ball meets it, crevices dark
+      // and glowing with lava (aCrack), the rim kept round the crater
+      const fine = []; for (let i = 0; i < prof.length - 1; i++) { const a = prof[i], b = prof[i + 1], m = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 1.6)); for (let k = 0; k < m; k++) fine.push([a[0] + (b[0] - a[0]) * k / m, a[1] + (b[1] - a[1]) * k / m]); }
+      fine.push(prof[prof.length - 1]);
+      const SEG = 96, cg = keep(new THREE.LatheGeometry(fine.map((q) => new THREE.Vector2(q[0], q[1])), SEG));
+      { const P = cg.attributes.position, uv = cg.attributes.uv, crack = new Float32Array(P.count), np = fine.length;
+        for (let k = 0; k < P.count; k++) {
+          const x = P.getX(k), y = P.getY(k), z = P.getZ(k), rr = Math.hypot(x, z) || 1, n = fbm3(x / 7, y / 9, z / 7, 4) - 0.5, ridge = Math.abs(fbm3(x / 5 + 9, y / 4, z / 5, 3) - 0.5);
+          const amp = y < 2 ? 0 : y < 16 ? -Math.abs(n) * 2.6 * (y - 2) / 14 : y > 54 ? n * 0.9 : n * 4.2 - Math.max(0, 0.08 - ridge) * 14;
+          P.setXYZ(k, x + x / rr * amp, y + (y > 2 && y < 54 ? n * 1.2 : 0), z + z / rr * amp);
+          crack[k] = y < 1 ? 0 : clamp((0.045 - ridge) / 0.035, 0, 1) * (0.4 + 0.6 * clamp(y / 40, 0, 1)) + clamp(-n * 1.6 - 0.35, 0, 1) * 0.3;
+          uv.setY(k, clamp(y / HV, 0, 1));
+        }
+        cg.computeVertexNormals();
+        const N = cg.attributes.normal; for (let j = 0; j < np; j++) { const a = j, b = SEG * np + j, nx = N.getX(a) + N.getX(b), ny = N.getY(a) + N.getY(b), nz = N.getZ(a) + N.getZ(b), l = Math.hypot(nx, ny, nz) || 1; N.setXYZ(a, nx / l, ny / l, nz / l); N.setXYZ(b, nx / l, ny / l, nz / l); }   // (no seam)
+        cg.setAttribute('aCrack', new THREE.BufferAttribute(crack, 1)); }
       const cc = coneCanvases(), ct = keep(tex(cc.col, { wrapS: true, aniso: ANISO })), cgt = keep(tex(cc.glo, { wrapS: true }));
-      const coneMat = keep(new THREE.MeshStandardMaterial({ map: ct, emissiveMap: cgt, emissive: new THREE.Color(TH_.lava), emissiveIntensity: 0.8, roughness: 0.82, metalness: 0, envMap: envRT.texture, envMapIntensity: 0.5 }));
+      const coneMat = keep(new THREE.MeshStandardMaterial({ map: ct, emissiveMap: cgt, emissive: new THREE.Color(TH_.lava), emissiveIntensity: 0.8, roughness: 0.78, metalness: 0, envMap: envRT.texture, envMapIntensity: 0.7 }));
+      coneMat.onBeforeCompile = (sh) => {
+        sh.vertexShader = 'attribute float aCrack; varying float vCrack;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvCrack = aCrack;');
+        sh.fragmentShader = 'varying float vCrack;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\tdiffuseColor.rgb *= 1.0 - 0.6 * vCrack;\n\ttotalEmissiveRadiance += emissive * vCrack * vCrack * 1.6;');
+      };
+      coneMat.customProgramCacheKey = () => 'rock-crack';
       const cone = RF(new THREE.Mesh(cg, coneMat)); grp.add(cone);
       if (V.mouth) cone.rotation.y = Math.atan2(V.mouth[0], V.mouth[1]);   // the glowing mouth on its skin faces the crater's own mouth
       const poolG = keep(new THREE.CircleGeometry(V.r - 12.6, 32)); poolG.rotateX(-Math.PI / 2);
@@ -1140,7 +1284,8 @@ export function create(opts) {
       const pool = R1(new THREE.Mesh(poolG, poolMat)); pool.position.y = POOL + 0.2; cone.add(pool);
       // a collar of rubble on the playfield, where it rises out
       const r = rnd(55);
-      const rocks = R1(new THREE.InstancedMesh(keep(new THREE.DodecahedronGeometry(1, 0)), M.rock, 30));
+      const rockG = keep(new THREE.IcosahedronGeometry(1, 1)); { const P = rockG.attributes.position; for (let k = 0; k < P.count; k++) { const x = P.getX(k), y = P.getY(k), z = P.getZ(k), f = 0.72 + 0.5 * fbm3(x * 1.7 + 3, y * 1.7, z * 1.7, 2); P.setXYZ(k, x * f, y * f, z * f); } rockG.computeVertexNormals(); }   // lumpy boulders (30 Oct 2026)
+      const rocks = R1(new THREE.InstancedMesh(rockG, M.rock, 30));
       { const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); for (let k = 0; k < 30; k++) { const a = k / 30 * Math.PI * 2 + r() * 0.15, d = V.r + 6 + r() * 3.5, s = 1.2 + r() * 1.6; e.set(r() * 3, r() * 3, r() * 3); q.setFromEuler(e); m.compose(new THREE.Vector3(Math.sin(a) * d, s * 0.35, Math.cos(a) * d), q, new THREE.Vector3(s, s * 0.7, s)); rocks.setMatrixAt(k, m); } }
       grp.add(rocks);
       const lavaLight = RF(new THREE.PointLight(0xff6a1a, 0, 190, 2)); lavaLight.position.set(0, 64, 10); grp.add(lavaLight);
@@ -1159,10 +1304,19 @@ export function create(opts) {
     // but the shells, which glow each on its own)
     if (T.crabs && T.crabs.length) {
       const n = T.crabs.length, sc = shellCanvases(), st = keep(tex(sc.col)), sg = keep(tex(sc.glo));
-      const shellG = keep(new THREE.SphereGeometry(1, 24, 14)); shellG.scale(9.6, 4.2, 7.2);
+      // a crab's carapace, not an egg (30 Oct 2026, owner: "the full realism rebuild"): a flat belly, a domed knobbly back, a
+      // serrated rim with spikes, a notched brow at the front; the pincers two-fingered
+      const shellG = keep(new THREE.SphereGeometry(1, 40, 22));
+      { const P = shellG.attributes.position; for (let k = 0; k < P.count; k++) {
+        let x = P.getX(k), y = P.getY(k), z = P.getZ(k); const th = Math.atan2(x, z), rim = Math.exp(-y * y / 0.03);
+        if (y < 0) y *= 0.38; else y = y * (1 + 0.16 * (fbm3(x * 3, y * 3, z * 3, 2) - 0.5)) + 0.05 * Math.pow(Math.max(0, Math.cos(x * 9)), 6) * y;
+        const sp = 1 + rim * (0.08 + 0.34 * Math.pow(Math.max(0, Math.cos(th * 9)), 8) * (Math.abs(th) > 0.5 ? 1 : 0));
+        x *= sp * (1 + 0.12 * Math.max(0, z)); z *= sp; if (z > 0.3) z -= 0.22 * Math.exp(-x * x / 0.02) * Math.max(0, y + 0.3);
+        P.setXYZ(k, x * 9.6, y * 4.6, z * 7.2);
+      } shellG.computeVertexNormals(); }
       const legG = keep(new THREE.CylinderGeometry(1, 0.75, 1, 6, 1)); legG.translate(0, 0.5, 0);
-      const legMat = keep(new THREE.MeshStandardMaterial({ color: 0xc8401a, roughness: 0.5, emissive: new THREE.Color('#ff4a10'), emissiveIntensity: 0.35 }));
-      const clawG = keep(new THREE.SphereGeometry(1, 12, 8)); clawG.scale(3.4, 2.0, 2.6);
+      const legMat = keep(new THREE.MeshStandardMaterial({ color: 0x5a1a0e, roughness: 0.35, emissive: new THREE.Color('#ff4a10'), emissiveIntensity: 0.22, envMapIntensity: 1.2 }));   // (dark armour, a lava glow, 30 Oct 2026)
+      const clawG = keep((() => { const palm = new THREE.SphereGeometry(1, 14, 10); palm.scale(2.6, 1.8, 2.4); const f1 = new THREE.ConeGeometry(0.9, 3.6, 8); f1.rotateX(Math.PI / 2 + 0.25); f1.translate(-0.7, 0.4, 3.2); const f2 = new THREE.ConeGeometry(0.75, 3.0, 8); f2.rotateX(Math.PI / 2 - 0.3); f2.translate(0.9, -0.3, 2.9); const g = mergeGeos([palm, f1, f2]); [palm, f1, f2].forEach((q) => q.dispose()); return g; })());
       const eyeG = keep(new THREE.SphereGeometry(1, 10, 8));
       const eyeMat = keep(new THREE.MeshStandardMaterial({ color: 0xfff0a0, emissive: new THREE.Color('#ffd84a'), emissiveIntensity: 1.6, roughness: 0.2 }));
       const legs = R1(new THREE.InstancedMesh(legG, legMat, n * 14)), claws = R1(new THREE.InstancedMesh(clawG, legMat, n * 2)), eyes = R1(new THREE.InstancedMesh(eyeG, eyeMat, n * 2));
@@ -1218,10 +1372,10 @@ export function create(opts) {
     // ---- lights: the old table: high-key fill, a strong key, warm GI along the sides; Ember Peak: the sun and the sky,
     // the lava's own glow at the crater; both: one flash light
     const lights = { gi: [] };
-    if (ISLAND) {
-      lights.hemi = RF(new THREE.HemisphereLight(0xf8f4ff, 0xc8703a, 1.5)); group.add(lights.hemi);
-      lights.key = RF(new THREE.DirectionalLight(0xfff0d8, 3.15)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
-      lights.rim = RF(new THREE.DirectionalLight(0x9fd8ff, 0.7)); lights.rim.position.set(0, 120, -420); group.add(lights.rim); group.add(lights.rim.target);
+    if (ISLAND) {   // arcade light (30 Oct 2026, owner: "the full realism rebuild"): a dim room, the cabinet's warm overhead lamp for shape, a cool backbox rim; the pools are in the GI map
+      lights.hemi = RF(new THREE.HemisphereLight(0x8a80a8, 0x3a1a10, 0.45)); group.add(lights.hemi);
+      lights.key = RF(new THREE.DirectionalLight(0xffe0bc, 1.55)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
+      lights.rim = RF(new THREE.DirectionalLight(0xff9a5a, 0.8)); lights.rim.position.set(0, 120, -420); group.add(lights.rim); group.add(lights.rim.target);
     } else {
       lights.hemi = RF(new THREE.HemisphereLight(0xe8ecff, 0x40304a, 1.05)); group.add(lights.hemi);
       lights.key = RF(new THREE.DirectionalLight(0xfff4e6, 2.6)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
@@ -1325,7 +1479,7 @@ export function create(opts) {
     // ---- occluders for the sight-line check: everything solid
     function occluders() {
       const out = [];
-      group.traverse((o) => { if ((o.isMesh || o.isInstancedMesh) && o.visible && !o.userData.thin && !(o.material && (o.material.transparent || o.material === shadowMat)) && !balls.some((Bb) => Bb.m === o)) out.push(o); });
+      group.traverse((o) => { if ((o.isMesh || o.isInstancedMesh) && o.visible && !o.userData.thin && !(o.material && ((o.material.transparent && !o.userData.occl) || o.material === shadowMat)) && !balls.some((Bb) => Bb.m === o)) out.push(o); });
       return out;
     }
 
@@ -1350,8 +1504,8 @@ export function create(opts) {
     units.matrix.set(1, 0, 0, -HW, 0, 0, 1, 0, 0, 1, 0, -ZC, 0, 0, 0, 1); units.matrixWorldNeedsUpdate = true;
     if (TB.world) { scene.add(TB.world.group); cab.add(TB.world.skirt); }
     scene.environment = TB.envRT.texture;
-    scene.background = TB.ISLAND ? new THREE.Color(0x8fd0ff) : new THREE.Color(0x07060c);
-    renderer.toneMappingExposure = TB.theme.exposure;
+    scene.background = TB.ISLAND ? new THREE.Color(0x0a0812) : new THREE.Color(0x07060c);
+    renderer.toneMapping = TB.theme.tone || THREE.NeutralToneMapping; renderer.toneMappingExposure = TB.theme.exposure;
     bloom.threshold = TB.theme.bloomT || (opts.threshold != null ? opts.threshold : 1.75);
     applyTierToTable();
     motes.length = 0; trails.clear();
@@ -1393,10 +1547,24 @@ export function create(opts) {
     return [p.x + f.x * k + HW, p.z + f.z * k + ZC, 0];
   }
   function toUnits(v) { const p = v.clone().applyQuaternion(CABQI); return [p.x + HW, p.z + ZC, p.y]; }
+  // the player-eye home: camera.js's tilt and lens for this screen shape and mode (classic: 28 and 32), so the home here and the director's agree (30 Oct 2026)
+  function eyeNow() {
+    const a = RW / RH, P = window.PinCam;
+    if (P && typeof P.homeTilt === 'function' && typeof P.lens === 'function') { try { const t = +P.homeTilt(a), f = +P.lens(a); if (t > 0 && f > 0) return [t, f]; } catch (e) {} }
+    let u = clamp((a - EYE.a0) / (EYE.a1 - EYE.a0), 0, 1); u = u * u * (3 - 2 * u);
+    return [EYE.portrait[0] + (EYE.wide[0] - EYE.portrait[0]) * u, EYE.portrait[1] + (EYE.wide[1] - EYE.portrait[1]) * u];
+  }
+  let eyeKey = '';
+  function camHome() {   // camera.js's own home framing (the flipper boxes, the plunger ball and the arch top), when it is on the page
+    const P = window.PinCam, a = RW / RH;
+    if (!P || typeof P.home !== 'function' || typeof P.frame !== 'function') return null;
+    try { const c = camFrom(P.frame(P.home(a, TB.id), a)); return c && c.pos ? c : null; } catch (e) { return null; }
+  }
   function fit() {
     if (!TB || !RW) return;
     if (view.fill) {
-      HOME = solve(TB.homeSpecs.whole, view.tilt, view.fov);
+      if (view.eye) { const e = eyeNow(); view.tilt = e[0]; view.fov = e[1]; eyeKey = e.join(); }
+      HOME = (view.eye && camHome()) || solve(TB.homeSpecs.whole, view.tilt, view.fov);
       homes = {};
       for (const k in TB.homeSpecs) { const h = k === 'whole' ? HOME : solve(TB.homeSpecs[k], view.tilt, view.fov); homes[k] = { eye: toUnits(h.pos), look: h.look, fov: h.fov }; }
     } else HOME = solveCabinet();
@@ -1458,7 +1626,7 @@ export function create(opts) {
   function fromPose(p) {
     if (!HOME) return null;
     const aim = v3(p.aim) || HOME.look, zoom = clamp(+p.zoom || 1, 0.3, 6);
-    const pitch = p.pitch != null ? +p.pitch : HOME_TILT + 9 * (zoom - 1) / 1.2, yaw = (+p.yaw || 0) * DEG, tl = clamp(pitch, 0, 85) * DEG;
+    const pitch = p.pitch != null ? +p.pitch : Math.min(Math.max(40, view.tilt + 6), view.tilt + 9 * (zoom - 1) / 1.2), yaw = (+p.yaw || 0) * DEG, tl = clamp(pitch, 0, 85) * DEG;
     const at = toCab(aim[0], aim[1], aim[2] || 0), dHome = HOME.pos.distanceTo(toCab(HOME.look[0], HOME.look[1], 0));
     const q = cabBasis(), yq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
     const F = new THREE.Vector3(0, -Math.cos(tl), -Math.sin(tl)).applyQuaternion(yq).applyQuaternion(q);
@@ -1487,7 +1655,7 @@ export function create(opts) {
   function applyTierToTable() {
     if (!TB) return;
     TB.playfield.material = tier.clearcoat ? TB.pfMatHi : TB.pfMatLo;
-    ballMat.envMap = tier.reflectEvery && opts.reflect !== false ? cubeRT.texture : TB.envRT.texture;
+    ballMat.envMap = tier.reflectEvery && opts.reflect !== false ? cubeRT.texture : TB.envRT.texture; ballMat.envMapIntensity = TB.ISLAND ? 2.3 : 1.3;   // (the island's arcade is dark: the ball shows its tubes bright, 30 Oct 2026)
     ballMat.needsUpdate = true;
     if (particles && typeof particles.setTier === 'function') { try { particles.setTier(tierName); } catch (e) {} }
   }
@@ -1522,7 +1690,7 @@ export function create(opts) {
   }
 
   // ---------------------------------------------------------------- the effects drawn from PinFX.state and the toys' own
-  const trails = new Map(), tmpC = new THREE.Color();
+  const trails = new Map(), tmpC = new THREE.Color(), _gl = new THREE.Vector3();
   let gN = 0, pN = 0;
   function putTo(S, k, x, y, z, r, g, b, a, sz) { S.pos[k * 3] = wx(x); S.pos[k * 3 + 1] = z; S.pos[k * 3 + 2] = wz(y); S.col[k * 4] = r; S.col[k * 4 + 1] = g; S.col[k * 4 + 2] = b; S.col[k * 4 + 3] = a; S.size[k] = sz; }
   function flush(S, n) {
@@ -1540,6 +1708,7 @@ export function create(opts) {
       let h = trails.get(b.id); if (!h) { h = []; trails.set(b.id, h); } seen.add(b.id);
       h.unshift([b.x, b.y, z]); if (h.length > 10) h.length = 10;
       if (b.at !== 'crater') put(b.x, b.y, z + BR * BVIS, TB.ISLAND ? '#ffe2b0' : '#bfefff', 0.22, BR * 3.4 * BVIS);   // the hero ball's halo: always findable
+      if (TB.ISLAND && b.at !== 'crater') { const cz = z + BR * BVIS, P = TB.group.worldToLocal(_gl.copy(camera.position)); let dx = P.x + HW - b.x, dy = P.z + ZC - b.y, dz = P.y - cz; const L = Math.hypot(dx, dy, dz) || 1; dx = dx / L - 0.12; dy = dy / L - 0.15; dz = dz / L + 0.18; const L2 = Math.hypot(dx, dy, dz) || 1, R = BR * BVIS + 1; put(b.x + dx / L2 * R, b.y + dy / L2 * R, cz + dz / L2 * R, '#ffffff', 0.75, BR * 1.1); }   // and its glint, the brightest point on the table: on the ball's camera-facing skin (leaned up and up-table), not inside it where the ball's depth hid it (30 Oct 2026, owner: "the full realism rebuild")
       const sp = b.m === 'ramp' ? Math.abs(b.vs || 0) : Math.hypot(b.vx || 0, b.vy || 0), k = clamp((sp - 280) / 380, 0, 1);
       if (k <= 0 || b.m === 'held' || b.carry) return;
       for (let i = 0; i < h.length - 1; i++) for (let j = 0; j < 3; j++) {
@@ -1550,6 +1719,7 @@ export function create(opts) {
       }
     });
     for (const id of trails.keys()) if (!seen.has(id)) trails.delete(id);
+    if (TB.ISLAND) { const gk = clamp(TB.giNow, 0, 1.2); for (let y = 150; y <= TB.TH - 40; y += 46) { put(9.5, y, 2.5, '#ffd090', 0.5 * gk, 5); put(240.5, y, 2.5, '#ffd090', 0.5 * gk, 5); } }   // the GI bulbs along the side rails, under their pools of light (30 Oct 2026)
     if (st && st.sparks) for (let i = 0; i < st.sparks.length; i++) { const q = st.sparks[i]; if (q) put(q.x, q.y, q.z || 0, q.color || '#ffffff', (q.a == null ? 1 : q.a) * 2.4, q.size || 3); }
     // the toys' own particles
     for (let i = motes.length - 1; i >= 0; i--) {
@@ -1560,7 +1730,7 @@ export function create(opts) {
       else if (m.z < 0.5 && m.vz < 0) { m.z = 0.5; m.vz *= -0.25; m.vx *= 0.5; m.vy *= 0.5; }
       const f = m.life / m.max, a = m.kind === 'glow' ? m.a * (1 - f) : m.a * Math.min(1, f * 6) * (1 - f), sz = m.size * (1 + m.grow * f);
       if (m.kind === 'glow') { if (gN < glowPts.n && a > 0.004) putTo(glowPts, gN++, m.x, m.y, m.z, m.col[0], m.col[1], m.col[2], a, sz); }
-      else if (pN < puffPts.n && a > 0.004) putTo(puffPts, pN++, m.x, m.y, m.z, m.col[0], m.col[1], m.col[2], a, sz);
+      else if (pN < puffPts.n && a > 0.004) { const pk = TB.ISLAND ? 0.6 : 1; putTo(puffPts, pN++, m.x, m.y, m.z, m.col[0] * pk, m.col[1] * pk * 0.96, m.col[2] * pk * 0.92, a, sz); }   // (steam and smoke in a dim arcade, not daylight, 30 Oct 2026)
     }
     flush(glowPts, gN); flush(puffPts, pN);
     let pi = 0;
@@ -1676,7 +1846,7 @@ export function create(opts) {
     if (RVt) {
       const press = Vs ? clamp(Vs.pressure || 0, 0, 1.5) : 0;
       RVt.rt.offset.y = (RVt.rt.offset.y - dt * (0.16 + 0.22 * press)) % 1;
-      const v = dark ? 0.12 : 0.62 + 0.35 * Math.min(1, press) + 0.08 * Math.sin(t / 260); RVt.mat.color.setRGB(v, v, v);
+      const v = dark ? 0.08 : 0.26 + 0.3 * Math.min(1, press) + 0.05 * Math.sin(t / 260); RVt.mat.color.setRGB(v, v, v);   // (dimmer under arcade light, 30 Oct 2026: it was blooming white)
       RVt.acc += dt * (dark ? 0 : 3 + 6 * press) * tier.motes;
       while (RVt.acc >= 1) {
         RVt.acc -= 1; const p = RVt.pts[1 + Math.floor(mr() * (RVt.pts.length - 2))];
@@ -1694,7 +1864,7 @@ export function create(opts) {
         g.panel.position.y = H.gate / 2 + h * 20;
         g.mat.emissiveIntensity = dark ? 0.05 : 0.3 + h * 1.2 + (lit.lava && lit.lava[i] > 0 ? 1.5 : 0);
       });
-      L.lanes.forEach((ln, i) => { const v = dark ? 0.15 : open ? 1.2 + 0.3 * Math.sin(t / 120 + i) : 0.55; ln.mat.color.setRGB(v, v, v); });
+      L.lanes.forEach((ln, i) => { const v = dark ? 0.12 : open ? 1.0 + 0.3 * Math.sin(t / 120 + i) : 0.38; ln.mat.color.setRGB(v, v, v); });
     }
     void k60;
   }
@@ -1784,7 +1954,7 @@ export function create(opts) {
       bp.hit = v > 0 ? 1 : Math.max(0, bp.hit - dt * 7);
       const idle = play ? (dark ? 0.15 : 0.75 + 0.25 * Math.sin(t / 300 + i * 2.1)) : 0.6 + 0.6 * Math.max(0, Math.sin(t / 240 - i * 2.1));
       bp.ring.position.y = 11 - 4.4 * (v > 0 ? 1 : bp.hit);
-      bp.skirtMat.emissiveIntensity = idle * 0.9 + bp.hit * 5;
+      bp.skirtMat.emissiveIntensity = idle * (TB.ISLAND ? 0.45 : 0.9) + bp.hit * 5;   // (the island's: amber plastic lit from inside, not neon, 30 Oct 2026)
       bp.sideMat.emissiveIntensity = (TB.ISLAND ? 0.4 : 1) * idle + bp.hit * 4;
       bp.topMat.emissiveIntensity = 0.45 * idle + bp.hit * 2.2;
     });
@@ -1822,6 +1992,7 @@ export function create(opts) {
     updateLamps(W, t, mode, dt, st && st.lamps);
     fxPts = drawFx(W, st, dt);
     // the camera: the director's (PinCam), an override (the bench), or home
+    if (view.eye && view.fill && eyeNow().join() !== eyeKey) fit();   // a new camera mode (classic) or screen shape: a new home
     let c = null;
     if (camOverride) { c = camOverride === 'home' ? HOME : typeof camOverride === 'object' && camOverride.pos ? camOverride : camFrom(camOverride); camSource = 'override'; }
     else if (window.PinCam && opts.cam !== 'home' && view.cam !== 'home' && typeof PinCam.frame === 'function') {
@@ -1855,7 +2026,7 @@ export function create(opts) {
     let L = TB.lampsObj;
     if (!L) { if (window.PinArt && (window.PinLamps || typeof PinArt.inserts === 'function') && !TB.triedLamps) { TB.triedLamps = true; L = TB.buildLamps(); } if (!L) return; }
     let lv = null; try { lv = L.level(W, t, mode); } catch (e) { lv = null; }
-    const n = L.list.length, C = L.ca.array, snap = dt <= 0 || dt > 0.5, tgt = L.tg, GAIN = opts.lampGain || 2.4;
+    const n = L.list.length, C = L.ca.array, snap = dt <= 0 || dt > 0.5, tgt = L.tg, GAIN = opts.lampGain || (TB.ISLAND ? 1.75 : 2.4);   // (the island's under filmic tone mapping: lit inserts keep their colour, 30 Oct 2026)
     for (let i = 0; i < n; i++) tgt[i] = lv ? lv[i] || 0 : 0;
     if (extra && L.byId) for (const id in extra) { const i = L.byId[id]; if (i != null) tgt[i] += +extra[id] || 0; }
     const up = 1 - Math.exp(-dt / 0.028), dn = 1 - Math.exp(-dt / 0.11);
@@ -1871,12 +2042,12 @@ export function create(opts) {
     L.ca.needsUpdate = true;
   }
 
-  function setView(v) { view = Object.assign({}, view, v || {}); view.fill = !!view.fill; fit(); }
+  function setView(v) { v = v || {}; view = Object.assign({}, view, v); if (v.eye == null && (v.tilt != null || v.fov != null)) view.eye = false; view.fill = !!view.fill; view.eye = !!view.eye && view.fill; fit(); }   // eye: home at camera.js's tilt and lens (a tilt or lens of your own turns it off)
 
   // ---------------------------------------------------------------- set up, compile, measure
   resize(opts.width || canvasEl.width || 360, opts.height || canvasEl.height || 640);
   useTable(opts.table || (E.DEFAULT || 'orbit'));
-  { const fill = opts.fill !== false; setView({ fill, tilt: opts.tilt != null ? opts.tilt : fill ? HOME_TILT : 35, fov: opts.fov || (fill ? FOV : 34) }); }
+  { const fill = opts.fill !== false; setView({ fill, eye: fill && opts.tilt == null && opts.fov == null, tilt: opts.tilt != null ? opts.tilt : fill ? HOME_TILT : 35, fov: opts.fov || (fill ? FOV : 34) }); }
   renderer.compile(scene, camera);
   const buildMs = Math.round(performance.now() - t0);
 

@@ -5,6 +5,7 @@
  *   node tools/pinball/camera-farm.cjs [--balls=1000] [--mode=calm|arcade|classic] [--aspect=0.5] [--speed=2]
  *        [--latency=2] [--workers=24] [--seed=1] [--json=out.json]
  *        [--early=0.5] [--set=key:value,...]   (the active mode's early allowance; any of its MODES knobs, to try them)
+ *        [--cam=path/to/camera.js]   (another copy of camera.js, e.g. a saved older one, to compare before and after)
  *
  * Each drawn frame (60 a second) the game takes as many steps as the camera's timeScale allows (as the page must), then
  * the camera updates. Checked:
@@ -18,13 +19,18 @@
  *    (presses made sooner than that are measured as earlyBeyondPromise, outside the pass);
  *  - emergency cuts (aim: under 1 per 100 balls), and that no "decided" drain was ever saved;
  * and reported: time away from home and zoomed, push-ins a minute, the ball off screen, the time in each state, how
- * often the look-ahead was asked and how far it stepped. */
+ * often the look-ahead was asked and how far it stepped; and since 30 Oct 2026 (owner: fast camera moves lose the game)
+ * camSpeed: how fast the picture moves while the camera moves, in screen heights a second (the fastest of a 5 x 8 grid
+ * of playfield points, counting only those on screen in both frames), as p50 / p95 / p99 / max of the moving frames,
+ * the share of all frames over 1 and 2 (cuts left out: they are counted as cuts), and over1By: those frames by state. */
 'use strict';
 const path = require('path');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const ROOT = path.join(__dirname, '..', '..');
 const E = require(path.join(ROOT, 'games', 'pinball', 'engine.js'));
-const C = require(path.join(ROOT, 'games', 'pinball', 'camera.js'));
+const CAM = isMainThread ? (process.argv.find((a) => a.startsWith('--cam=')) || '').slice(6) : String((workerData.o && workerData.o.cam) || '');   // a worker's argv is its own: it gets the path from args()
+if (CAM) { const Mod = require('module'), CP = path.resolve(CAM), EP = path.join(ROOT, 'games', 'pinball', 'engine.js'), r0 = Mod._resolveFilename; Mod._resolveFilename = function (req, par, ...rest) { return req === './engine.js' && par && par.filename === CP ? EP : r0.call(this, req, par, ...rest); }; }   // an older camera.js kept outside the tree still steps this engine
+const C = require(CAM ? path.resolve(CAM) : path.join(ROOT, 'games', 'pinball', 'camera.js'));
 const Messy = require('./messybot.cjs');
 
 function args() {
@@ -46,7 +52,8 @@ function playGame(seed, o, acc) {
   const ring = [];   // the drawn frames: { g: game frame when drawn, shot, ts, on: [box fully on screen per storey], pts }
   const zoneHist = []; // per game frame: bitmask of storeys with a (live) ball in their zone
   const pendingFlips = [];
-  let t = 0, accT = 0, shot = null, prevL = false, prevR = false, lastBalls = 0, decidedId = 0, frames = 0;
+  let t = 0, accT = 0, shot = null, prevL = false, prevR = false, lastBalls = 0, decidedId = 0, frames = 0, prevRef = null;
+  const refPts = []; for (let i = 0; i < 5; i++) for (let j = 0; j < 8; j++) refPts.push([T.W * (i + 0.5) / 5, T.H * (j + 0.5) / 8, 0]);   // the picture's speed is read off this grid
   const inZonePrev = {};
   function boxState(s) {
     const on = [], pts = [];
@@ -159,6 +166,15 @@ function playGame(seed, o, acc) {
     if (shot.cut) acc.cuts++;
     if (shot.emergency) { if (shot.emergency === 'rule') acc.emerg++; else acc.short++; emergAt.push([W.frame, shot.emergency]); }
     const bs = boxState(shot);
+    {   // the picture's speed (screen heights a second), cuts aside
+      const ref = refPts.map((q) => C.project(shot, o.aspect, q[0], q[1], q[2])), on = (p) => p[0] >= 0 && p[0] <= 1 && p[1] >= 0 && p[1] <= 1;
+      if (prevRef && !shot.cut) {
+        let v = 0;
+        for (let k = 0; k < ref.length; k++) if (on(ref[k]) && on(prevRef[k])) v = Math.max(v, Math.hypot((ref[k][0] - prevRef[k][0]) * o.aspect, ref[k][1] - prevRef[k][1]) * 60);
+        if (isFinite(v)) { acc.spN++; if (v > 1e-3) acc.spHist[Math.min(399, Math.floor(v / 0.025))]++; if (v > 1) { acc.sp1++; acc.spFast[shot.state] = (acc.spFast[shot.state] || 0) + 1; } if (v > 2) acc.sp2++; acc.spMax = Math.max(acc.spMax, v); }
+      }
+      prevRef = ref;
+    }
     ring.push({ g: W.frame, ts: shot.timeScale, on: bs.on, pts: bs.pts, cut: shot.cut, st: shot.state });
     if (ring.length > 80) ring.shift();
     // time shares (real time: drawn frames)
@@ -184,12 +200,14 @@ function blank() {
   const k = () => ({ n: 0, bad: 0, ts: 0, off: 0, moving: 0, badAfterCut: 0 });
   return { games: 0, balls: 0, gameFrames: 0, drawn: 0, away: 0, zoomed: 0, slow: 0, states: {}, ballFrames: 0, ballOff: 0,
     entries: 0, flips: 0, liveFlips: 0, entry: k(), flip: k(), beyond: k(), cuts: 0, emerg: 0, short: 0, cutsCam: 0, pushIns: 0, asks: 0, steps: 0,
-    decidedSaved: 0, decidedN: 0, badList: [], earlyFlips: 0, earlyBeyond: 0, early: k(), craters: 0, nudges: 0, tilts: 0, multiFrames: 0, scores: [] };
+    decidedSaved: 0, decidedN: 0, badList: [], earlyFlips: 0, earlyBeyond: 0, early: k(), craters: 0, nudges: 0, tilts: 0, multiFrames: 0, scores: [],
+    spN: 0, spHist: new Array(400).fill(0), sp1: 0, sp2: 0, spMax: 0, spFast: {} };
 }
 function merge(a, b) {
   for (const k of Object.keys(b)) {
     if (k === 'scores' || k === 'badList') a[k] = a[k].concat(b[k]);
-    else if (k === 'states') for (const s of Object.keys(b.states)) a.states[s] = (a.states[s] || 0) + b.states[s];
+    else if (k === 'states' || k === 'spFast') for (const s of Object.keys(b[k])) a[k][s] = (a[k][s] || 0) + b[k][s];
+    else if (k === 'spMax') a[k] = Math.max(a[k], b[k]);
     else if (typeof b[k] === 'object') for (const j of Object.keys(b[k])) a[k][j] += b[k][j];
     else a[k] += b[k];
   }
@@ -223,6 +241,7 @@ if (!isMainThread) {
       ballOffScreen: pct(a.ballOff, a.ballFrames), states: Object.fromEntries(Object.entries(a.states).map(([k, v]) => [k, pct(v, a.drawn)])),
       craters: a.craters, nudgesPerBall: +(a.nudges / Math.max(1, a.balls)).toFixed(1), tilts: a.tilts, multiballShare: pct(a.multiFrames, a.gameFrames),
       lookAhead: { asksPerSec: +(a.asks / Math.max(1, a.gameFrames / 60)).toFixed(2), stepsPerAsk: Math.round(a.steps / Math.max(1, a.asks)) },
+      camSpeed: (() => { const n = a.spHist.reduce((x, y) => x + y, 0), q = (f) => { let c = 0; for (let i = 0; i < 400; i++) { c += a.spHist[i]; if (c >= f * n) return +((i + 1) * 0.025).toFixed(3); } return 10; }; return { moving: pct(n, a.spN), p50: q(0.5), p95: q(0.95), p99: q(0.99), max: +a.spMax.toFixed(2), over1: pct(a.sp1, a.spN), over2: pct(a.sp2, a.spN), over1By: Object.fromEntries(Object.entries(a.spFast).map(([k, v]) => [k, pct(v, a.spN)])) }; })(),
       bad: a.badList.slice(0, 12),
       medianScore: sc[sc.length >> 1] || 0, seconds: Math.round((Date.now() - t0) / 1000)
     };

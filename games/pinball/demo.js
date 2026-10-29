@@ -49,14 +49,14 @@
   function keys(W, aspect) {
     var T = E.table ? E.table(W.tableId).T : E.TABLE, C = cam(), H = null;
     try { H = C.home(aspect, W.tableId); } catch (e) { H = null; }
-    if (!H) H = { cx: T.W / 2, cy: T.H * 0.55, span: T.W + 20, tilt: 28, yaw: 0 };
+    if (!H) H = { cx: T.W / 2, cy: T.H * 0.55, span: T.W + 20, tilt: 28, yaw: 0, fov: 32 };
     var V = T.volcano || (T.saucer ? { x: T.saucer.x, y: T.saucer.y } : { x: T.W / 2, y: 120 });
     return [
-      { cx: V.x + 6, cy: V.y + 18, span: 110, tilt: 54, yaw: -28, at: 0 },
-      { cx: V.x + 24, cy: V.y + 46, span: 140, tilt: 48, yaw: 22, at: 0.3 },
-      { cx: T.W / 2, cy: T.H * 0.5, span: 210, tilt: 38, yaw: 8, at: 0.65 },
-      { cx: H.cx, cy: H.cy, span: H.span, tilt: H.tilt, yaw: H.yaw || 0, at: 1 }
-    ];
+      { cx: V.x + 6, cy: V.y + 18, span: 110, tilt: 54, yaw: -28, fov: 32, at: 0 },
+      { cx: V.x + 24, cy: V.y + 46, span: 140, tilt: 48, yaw: 22, fov: 32, at: 0.3 },
+      { cx: T.W / 2, cy: T.H * 0.5, span: 210, tilt: 38, yaw: 8, fov: 32, at: 0.65 },
+      { cx: H.cx, cy: H.cy, span: H.span, tilt: H.tilt, yaw: H.yaw || 0, fov: H.fov || 32, at: 1 }
+    ];   // the lens too, so the flight lands exactly on home (30 Oct 2026: calm/arcade's home is fov 26/24 now)
   }
   function shot(t, aspect) {
     if (flyAt < 0 || !flyFrom || !cam()) return null;
@@ -65,7 +65,7 @@
     var K = keys(flyFrom, aspect || 0.55), i = 1;
     while (i < K.length - 1 && K[i].at < u) i++;
     var a = K[i - 1], b = K[i], f = smoother((u - a.at) / (b.at - a.at)), o = { timeScale: 1, state: 'fly', fly: u };
-    ['cx', 'cy', 'span', 'tilt', 'yaw'].forEach(function (k) { o[k] = a[k] + (b[k] - a[k]) * f; });
+    ['cx', 'cy', 'span', 'tilt', 'yaw', 'fov'].forEach(function (k) { o[k] = a[k] + (b[k] - a[k]) * f; });
     try { o.zoom = cam().home(aspect, flyFrom.tableId).span / o.span; } catch (e) { o.zoom = 1; }
     return o;
   }

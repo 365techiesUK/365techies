@@ -1113,7 +1113,7 @@
       unitT(g, S); unitT(gg, GS);
       function water(P, top, bottom, deep) {
         g.save(); poly(g, P);
-        var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#86fff0'); gr.addColorStop(0.35, '#14e2ea'); gr.addColorStop(1, deep);
+        var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#4ec8c0'); gr.addColorStop(0.35, '#0e9aa6'); gr.addColorStop(1, deep);   // (deeper water for arcade light, 30 Oct 2026)
         g.fillStyle = gr; g.fill(); g.clip();
         g.globalCompositeOperation = 'lighter'; g.lineWidth = 0.3;
         for (var i = 0; i < 200; i++) { var x = r() * W0, y = top + r() * (bottom - top), l = 1.5 + r() * 4; g.strokeStyle = 'rgba(210,255,255,' + (0.12 + r() * 0.25) + ')'; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 0.8, x + l, y); g.stroke(); }
@@ -1128,14 +1128,14 @@
       var ch = [[221, 150], [243, 150], [243, 300], [221, 300]];
       water(ch, 150, 300, '#0896d8');
       var sh = [[245, 150], [265, 150], [265, H0 + 2], [245, H0 + 2]];
-      g.save(); poly(g, sh); var sg = g.createLinearGradient(0, 150, 0, H0); sg.addColorStop(0, '#1b78d8'); sg.addColorStop(1, '#0b3f8e'); g.fillStyle = sg; g.fill(); g.restore();
+      g.save(); poly(g, sh); var sg = g.createLinearGradient(0, 150, 0, H0); sg.addColorStop(0, '#14468a'); sg.addColorStop(1, '#081e48'); g.fillStyle = sg; g.fill(); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       chevrons(g, [[255, H0 - 40], [255, 170]], 22, 'rgba(255,214,90,0.9)', 1, 3.4);
       // where the river pours into the lagoon: a glowing fan in the shallows
       var e = RIV[RIV.length - 1]; pool(g, e[0], e[1] + 4, 16, [255, 150, 60], 0.5); pool(gg, e[0], e[1] + 4, 18, [255, 120, 30], 0.55);
       // the hot spring round the geyser: silica terraces, a turquoise pool
       var G = ET.geyser;
-      for (var k = 5; k >= 0; k--) { g.beginPath(); for (var a = 0; a <= 40; a++) { var an = a / 40 * Math.PI * 2, rr = G.r + 2 + k * 1.6 + Math.sin(an * 5 + k) * 0.8; if (a) g.lineTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); else g.moveTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); } g.closePath(); g.fillStyle = k % 2 ? '#b9ddd6' : '#d8eee8'; g.fill(); }
+      for (var k = 5; k >= 0; k--) { g.beginPath(); for (var a = 0; a <= 40; a++) { var an = a / 40 * Math.PI * 2, rr = G.r + 2 + k * 1.6 + Math.sin(an * 5 + k) * 0.8; if (a) g.lineTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); else g.moveTo(G.x + Math.cos(an) * rr, G.y + Math.sin(an) * rr); } g.closePath(); g.fillStyle = k % 2 ? '#6e9690' : '#8cb2aa'; g.fill(); }   // (silica terraces toned down for arcade light, 30 Oct 2026)
       var pg = g.createRadialGradient(G.x, G.y, 1, G.x, G.y, G.r + 2); pg.addColorStop(0, '#c8fbff'); pg.addColorStop(0.45, '#33d6e0'); pg.addColorStop(1, '#0b8fb8');
       g.fillStyle = pg; g.beginPath(); g.arc(G.x, G.y, G.r + 2, 0, Math.PI * 2); g.fill();
       pool(gg, G.x, G.y, G.r * 2.4, [60, 220, 240], 0.35);
@@ -1174,7 +1174,7 @@
     });
     step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes (lit: they glow)
       unitT(g, S); unitT(gg, GS);
-      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#e8a020'); lg.addColorStop(0.5, '#ffd862'); lg.addColorStop(1, '#e8a020');
+      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#9a5a12'); lg.addColorStop(0.5, '#d8a040'); lg.addColorStop(1, '#9a5a12');
       g.fillStyle = lg; g.fillRect(7, 140, 22, 160); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       var re = ET.ramp.entry;
@@ -1182,10 +1182,10 @@
       g.fillStyle = rg; g.fillRect(re.x0 - 1, re.y - 34, re.x1 - re.x0 + 2, 40); g.restore();
       var F0 = ET.flippers[0], fy = F0.y, inX = 38, outX = 16;
       // the outlanes: shallow water running out to the sea (danger); the inlanes: lava-lit gold, glowing
-      lanePanel(g, [[outX, fy - 86], [outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#14dce6');
-      lanePanel(g, [[2 * MI - outX, fy - 86], [2 * MI - outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#14dce6');
-      lanePanel(g, [[inX - 0.5, fy - 120], [inX - 0.5, fy - 30], [inX + 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#ffc640');
-      lanePanel(g, [[2 * MI - inX + 0.5, fy - 120], [2 * MI - inX + 0.5, fy - 30], [2 * MI - inX - 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#ffc640');
+      lanePanel(g, [[outX, fy - 86], [outX, fy + 20]], 15, 'rgba(220,240,240,0.8)', '#0e8e9a');
+      lanePanel(g, [[2 * MI - outX, fy - 86], [2 * MI - outX, fy + 20]], 15, 'rgba(220,240,240,0.8)', '#0e8e9a');
+      lanePanel(g, [[inX - 0.5, fy - 120], [inX - 0.5, fy - 30], [inX + 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#d08a28');
+      lanePanel(g, [[2 * MI - inX + 0.5, fy - 120], [2 * MI - inX + 0.5, fy - 30], [2 * MI - inX - 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#d08a28');
       [inX - 0.5, 2 * MI - inX + 0.5].forEach(function (x) {   // the inlanes' glow (emissive), a hot line down each middle
         var lgg = gg.createLinearGradient(x - 6, 0, x + 6, 0); lgg.addColorStop(0, 'rgba(255,120,20,0)'); lgg.addColorStop(0.5, 'rgba(255,170,60,0.7)'); lgg.addColorStop(1, 'rgba(255,120,20,0)');
         gg.fillStyle = lgg; gg.fillRect(x - 6, fy - 120, 12, 92);

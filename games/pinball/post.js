@@ -17,6 +17,7 @@
 (function (root) {
   'use strict';
   var MAXS = 3, LIFE = 700;   // ms a ring lives (it runs out to about 0.75 of the screen's height)
+  var VIG = 0.3;   // the vignette when fx.js gives none: a dim arcade round a lit table (0.18 -> 0.3, 30 Oct 2026, owner: "the full realism rebuild")
   // 29 Oct 2026 (owner: "bigger light shows"): a stronger colour fringe (0.022 -> 0.03 at full) and a warmer lava grade on the big moments
   var VERT = [
     'precision highp float;',
@@ -89,7 +90,7 @@
     U = {
       tDiffuse: { value: null }, toneMappingExposure: { value: 1 }, uAspect: { value: 1 },
       uShock: { value: [new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4()] }, uBall: { value: new THREE.Vector3(0.5, 0.2, 0) },
-      uFlash: { value: new THREE.Vector4(1, 1, 1, 0) }, uFringe: { value: 0 }, uVignette: { value: 0.18 }, uWarm: { value: 0 }, uSat: { value: 1 }
+      uFlash: { value: new THREE.Vector4(1, 1, 1, 0) }, uFringe: { value: 0 }, uVignette: { value: VIG }, uWarm: { value: 0 }, uSat: { value: 1 }
     };
     var mat = new THREE.RawShaderMaterial({ name: 'PinPost', uniforms: U, vertexShader: VERT, fragmentShader: FRAG, depthTest: false, depthWrite: false });
     var cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
@@ -147,7 +148,7 @@
     var post = fx && fx.post || {}, fl = fx && fx.flash > 0 && !red ? Math.min(1, fx.flash) : 0, c = hexLin(fx && fx.flashColor);
     U.uFlash.value.set(c[0], c[1], c[2], fl * 0.35);
     U.uFringe.value = red ? 0 : Math.max(0, Math.min(1, +post.fringe || 0));
-    U.uVignette.value = Math.max(0, Math.min(0.8, post.vignette == null ? 0.18 : +post.vignette));
+    U.uVignette.value = Math.max(0, Math.min(0.8, post.vignette == null ? VIG : +post.vignette));
     U.uWarm.value = Math.max(0, Math.min(0.8, +post.warm || 0));
     U.uSat.value = Math.max(0.3, Math.min(1.4, post.sat == null ? 1 : +post.sat));
   }

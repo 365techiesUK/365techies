@@ -27,7 +27,7 @@
   var KINDS = {
     lava:     { mesh: 'add', g: 480, drag: 0.5, bounce: 0.22, life: [1.0, 2.0], size: [3.0, 6.0], sp: [18, 90], up: [110, 270], grow: -0.4, look: 0, color: '#ff8a1e' },
     sparks:   { mesh: 'add', g: 430, drag: 1.6, bounce: 0.45, life: [0.3, 0.85], size: [0.8, 1.7], sp: [60, 210], up: [40, 200], grow: -0.6, look: 1, color: '#ffd27a' },
-    steam:    { mesh: 'alpha', g: -55, drag: 1.5, bounce: 0, life: [0.9, 2.0], size: [4.0, 8.0], sp: [5, 26], up: [40, 120], grow: 2.4, look: 2, color: '#eef8ff' },
+    steam:    { mesh: 'alpha', g: -55, drag: 1.5, bounce: 0, life: [0.9, 2.0], size: [4.0, 8.0], sp: [5, 26], up: [40, 120], grow: 2.4, look: 2, color: '#b8c0cc' },   // (steam in a dim arcade, not daylight: '#eef8ff' -> '#b8c0cc', 30 Oct 2026)
     ash:      { mesh: 'alpha', g: -22, drag: 0.8, bounce: 0, life: [1.6, 3.2], size: [3.0, 7.0], sp: [8, 42], up: [25, 85], grow: 1.6, look: 3, color: '#6a6670' },
     confetti: { mesh: 'alpha', g: 150, drag: 2.3, bounce: 0.2, life: [1.2, 2.3], size: [1.4, 2.4], sp: [40, 140], up: [120, 280], grow: 0, look: 4, color: null },
     debris:   { mesh: 'cube', g: 600, drag: 0.45, bounce: 0.35, life: [0.6, 1.1], size: [2.0, 4.4], sp: [40, 150], up: [90, 230], grow: 0, look: 5, color: '#6a6070' }
