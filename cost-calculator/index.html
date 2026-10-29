@@ -40,7 +40,7 @@
     })();
   </script>
   <title>IT Support Cost Calculator | 365 Techies</title>
-  <meta name="description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of computers and Microsoft 365 licences." />
+  <meta name="description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of people and computers, and Microsoft 365 licences." />
   <link rel="canonical" href="https://365techies.co.uk/cost-calculator/" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
@@ -55,13 +55,13 @@
   <meta property="og:locale" content="en_GB" />
   <meta property="og:url" content="https://365techies.co.uk/cost-calculator/" />
   <meta property="og:title" content="IT Support Cost Calculator | 365 Techies" />
-  <meta property="og:description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of computers and Microsoft 365 licences." />
+  <meta property="og:description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of people and computers, and Microsoft 365 licences." />
   <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="IT Support Cost Calculator | 365 Techies" />
-  <meta name="twitter:description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of computers and Microsoft 365 licences." />
+  <meta name="twitter:description" content="Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of people and computers, and Microsoft 365 licences." />
   <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -272,7 +272,7 @@
       "@id": "https://365techies.co.uk/cost-calculator/#webpage",
       "url": "https://365techies.co.uk/cost-calculator/",
       "name": "IT Support Cost Calculator",
-      "description": "Work out your monthly IT support cost in seconds. A live calculator for home and business IT support — set the number of computers and Microsoft 365 licences and see a clear monthly total. 365 Techies, Dorset.",
+      "description": "Work out your monthly IT support cost in seconds. A live calculator for home and business IT support — set the number of people and computers, and Microsoft 365 licences, and see a clear monthly total. 365 Techies, Dorset.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-03"
+      "dateModified": "2026-10-29"
     },
     {
       "@type": "FAQPage",
@@ -314,7 +314,7 @@
           "name": "How is business support priced?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Business support is priced per computer, from &pound;24.38 per computer, per month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."
+            "text": "Business support is priced for each person on each computer, from &pound;24.38 a month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."
           }
         },
         {
@@ -903,9 +903,9 @@
       <div class="wrap"><div class="taskhead__in">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Cost Calculator</span></nav>
         <h1 class="taskhead__h">See your monthly cost in <em class="grad grad--cyan">seconds</em></h1>
-        <p class="taskhead__lede">Move the sliders to match your home or business &mdash; how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.</p>
+        <p class="taskhead__lede">Move the sliders to match your home or business &mdash; how many people and computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.</p>
         <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; Rated 4.9 on Google</a></span><span>Family-run since 1995</span><span>No fix, no fee</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 3 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 29 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -933,12 +933,12 @@
           <div class="cc-grid">
             <div class="cc-controls">
               <div id="cc-home-fields">
-                <div class="cc-field"><label>Computers / laptops <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Computers or laptops"></div>
-                <p class="cc-note">Home support is &pound;18.25/month per computer. Add Microsoft 365 below for the people who need it.</p>
+                <div class="cc-field"><label>Each person on each computer <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Each person on each computer"></div>
+                <p class="cc-note">Home support is &pound;18.25/month for each person on each computer. Two people sharing one computer, each with their own login, count as two. Add Microsoft 365 below for the people who need it.</p>
               </div>
               <div id="cc-biz-fields" hidden>
-                <div class="cc-field"><label>Computers / laptops <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Computers needing support"></div>
-                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are <a href="/which-microsoft-365-plan/">priced per plan</a> and added to your quote.</p>
+                <div class="cc-field"><label>Each person on each computer <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Each person on each computer needing support"></div>
+                <p class="cc-note">Business support is priced for each person on each computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are <a href="/which-microsoft-365-plan/">priced per plan</a> and added to your quote.</p>
               </div>
               <div>
                 <p class="cc-label" id="cc-m365-label">Microsoft 365 for home <span>(optional)</span></p>
@@ -1023,11 +1023,11 @@
           var lines=[],total=0,fromFlag=false,ctaLabel='Get started',ctaHref='/home-it-support-plans/';
           if(state.mode==='home'){
             var ht=HOME_PER*state.comp;total+=ht;
-            lines.push({l:'Home support · '+state.comp+' computer'+(state.comp>1?'s':''),v:money(ht)});
+            lines.push({l:'Home support × '+state.comp,v:money(ht)});
           } else {
             fromFlag=true;
             var bt=BIZ_PER*state.users;total+=bt;
-            lines.push({l:'Business support · '+state.users+' computer'+(state.users>1?'s':''),v:'from '+money(bt)});
+            lines.push({l:'Business support × '+state.users,v:'from '+money(bt)});
             ctaLabel='Get a tailored quote';ctaHref='/contact/';
           }
           if(state.mode==='home'&&state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
@@ -1038,7 +1038,7 @@
           var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
           var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
           var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
-          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo per computer for business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo for each person on each computer at home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo for each person on each computer in a business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
           if(fromFlag) msgs.push('Business plans are tailored to how you work (email, hosting, users), so the figure above is a starting guide.');
           root.querySelector('#cc-note').innerHTML=msgs.join(' ');
         }
@@ -1098,7 +1098,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>How is business support priced?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Business support is priced per computer, from &pound;24.38 per computer, per month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote.</p></div>
+          <div class="faq__ans"><p>Business support is priced for each person on each computer, from &pound;24.38 a month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>How much is Microsoft 365?<span class="faq__icon" aria-hidden="true"></span></summary>
@@ -1126,7 +1126,7 @@
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// HOW IT WORKS</p>
         <h2 class="section-title" data-title>How to work out your managed IT support cost per computer<span class="title-underline"></span></h2>
-        <p class="lede"><strong>365 Techies&rsquo; managed IT support is priced per computer &mdash; home support is &pound;18.25/month per computer (with optional Microsoft 365 at &pound;4.85 per user) and business support from &pound;24.38/month per computer &mdash; and this calculator adds them up live as you set the number of computers and licences.</strong></p>
+        <p class="lede"><strong>365 Techies&rsquo; managed IT support is priced per person, per computer &mdash; home support is &pound;18.25/month for each person on each computer (with optional Microsoft 365 at &pound;4.85 per user) and business support from &pound;24.38/month for each person on each computer &mdash; and this calculator adds them up live as you set the number of computers and licences.</strong></p>
         <h3>Step by step</h3>
         <ol data-stagger>
           <li><strong>Choose home or business</strong> &mdash; Pick the Home &amp; Family or Business tab at the top of the calculator &mdash; each uses its own per-computer price.</li>

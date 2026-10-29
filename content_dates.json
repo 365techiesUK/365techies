@@ -322,13 +322,13 @@
  },
  "business-it-support-plans": {
   "first": "2026-07-28",
-  "h": "df408f153ec5f1a7",
-  "last": "2026-10-12"
+  "h": "5aee98c72968a4dd",
+  "last": "2026-10-29"
  },
  "business-it-support-subscriptions": {
   "first": "2026-07-28",
-  "h": "70ba2f69f08d52a7",
-  "last": "2026-10-03"
+  "h": "5fbce13a5411919b",
+  "last": "2026-10-29"
  },
  "business-wifi-health-check-dorset": {
   "first": "2026-07-28",
@@ -691,8 +691,8 @@
  },
  "cost-calculator": {
   "first": "2026-07-28",
-  "h": "cc0cd5069bedd1c0",
-  "last": "2026-10-03"
+  "h": "8bcf674fe2414320",
+  "last": "2026-10-29"
  },
  "cost-to-upgrade-office-to-windows-11": {
   "first": "2026-09-05",
@@ -1176,8 +1176,8 @@
  },
  "faqs": {
   "first": "2026-07-28",
-  "h": "d87d8a957006d845",
-  "last": "2026-10-03"
+  "h": "981c60b1082a4130",
+  "last": "2026-10-29"
  },
  "ferrari-sd2-laptop-windows-xp": {
   "first": "2026-09-05",
@@ -1230,8 +1230,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "8c8549bc844103a9",
-  "last": "2026-10-24"
+  "h": "ab40605a38259521",
+  "last": "2026-10-29"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -1335,13 +1335,13 @@
  },
  "home-it-support-plans": {
   "first": "2026-07-28",
-  "h": "ee6bbb2d22870c2c",
-  "last": "2026-09-27"
+  "h": "3b9df0b1c1b0adca",
+  "last": "2026-10-29"
  },
  "home-it-support-subscriptions": {
   "first": "2026-07-28",
-  "h": "f27b0e365e808f37",
-  "last": "2026-09-28"
+  "h": "34a0ccbc24e53980",
+  "last": "2026-10-29"
  },
  "home-network-setup": {
   "first": "2026-07-28",
@@ -1799,8 +1799,8 @@
  },
  "it-support-cost-guide": {
   "first": "2026-07-28",
-  "h": "b5d830b2730f744d",
-  "last": "2026-10-12"
+  "h": "12c3aee0a020a979",
+  "last": "2026-10-29"
  },
  "it-support-dorchester": {
   "first": "2026-07-28",
@@ -2099,8 +2099,8 @@
  },
  "join": {
   "first": "2026-07-28",
-  "h": "7a0839b2e243ff21",
-  "last": "2026-10-06"
+  "h": "01e3600f6b552486",
+  "last": "2026-10-29"
  },
  "keyboard-test": {
   "first": "2026-10-12",
@@ -2245,8 +2245,8 @@
  },
  "managed-it-support": {
   "first": "2026-07-28",
-  "h": "137afedc80fed86e",
-  "last": "2026-09-26"
+  "h": "1e51de3278584900",
+  "last": "2026-10-29"
  },
  "mapped-network-drive-keeps-disconnecting": {
   "first": "2026-07-28",
@@ -2329,8 +2329,8 @@
  },
  "monthly-it-support": {
   "first": "2026-07-28",
-  "h": "777519aad9cd3b9e",
-  "last": "2026-10-03"
+  "h": "692223e7d078f8ef",
+  "last": "2026-10-29"
  },
  "motorhome-hire-fleet-monitoring": {
   "first": "2026-07-28",
@@ -2853,8 +2853,8 @@
  },
  "password-manager-setup": {
   "first": "2026-07-28",
-  "h": "5d496c05ad913392",
-  "last": "2026-10-03"
+  "h": "87e176faf44a0b56",
+  "last": "2026-10-29"
  },
  "password-strength-checker": {
   "first": "2026-07-28",
@@ -2902,8 +2902,8 @@
  },
  "plan-finder": {
   "first": "2026-07-28",
-  "h": "47671999844c29b9",
-  "last": "2026-09-28"
+  "h": "7b3ed600df040133",
+  "last": "2026-10-29"
  },
  "play-brick-breaker-online-free": {
   "first": "2026-10-09",
@@ -2978,8 +2978,8 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "489a57eb6770629c",
-  "last": "2026-10-22"
+  "h": "7fa49aeb5244bb81",
+  "last": "2026-10-29"
  },
  "pre-call-checklists": {
   "first": "2026-07-28",
@@ -2993,8 +2993,8 @@
  },
  "pricing": {
   "first": "2026-07-28",
-  "h": "cea0f5b84d3f3276",
-  "last": "2026-10-12"
+  "h": "427efeaf961568fc",
+  "last": "2026-10-29"
  },
  "printer-asking-for-admin-password": {
   "first": "2026-08-01",
@@ -3201,8 +3201,8 @@
  },
  "remote-support": {
   "first": "2026-07-28",
-  "h": "f2c59a97da5ea434",
-  "last": "2026-10-19"
+  "h": "d0e766596b423e6c",
+  "last": "2026-10-29"
  },
  "repair-or-replace-advisor": {
   "first": "2026-07-28",
@@ -3419,8 +3419,8 @@
  },
  "small-business-it-support": {
   "first": "2026-07-28",
-  "h": "5c4ef68684945568",
-  "last": "2026-10-12"
+  "h": "960bd927e71afcc2",
+  "last": "2026-10-29"
  },
  "smart-tv-streaming-setup-help": {
   "first": "2026-07-28",
@@ -3553,8 +3553,8 @@
  },
  "terms": {
   "first": "2026-07-28",
-  "h": "0260a755038748da",
-  "last": "2026-10-17"
+  "h": "d1f3bb28cff230cc",
+  "last": "2026-10-29"
  },
  "the-set-of-folders-cannot-be-opened": {
   "first": "2026-07-28",

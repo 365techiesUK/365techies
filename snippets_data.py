@@ -371,7 +371,7 @@ SNIPPETS = {
         "desc": "The most common IT terms and services explained in plain English: backups, online security, Microsoft 365, remote support and monthly support plans.",
     },
     "cost-calculator": {
-        "desc": "Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of computers and Microsoft 365 licences.",
+        "desc": "Work out your monthly IT support cost in seconds. A live calculator for home and business: set the number of people and computers, and Microsoft 365 licences.",
     },
     "coverage-checker": {
         "desc": "Do we cover your area? Enter your postcode and instantly see whether 365 Techies offers on-site IT support near you across Dorset and the New Forest.",
@@ -634,7 +634,7 @@ SNIPPETS = {
     # the number to ring. The price is the page's own plan-card figure.
     "business-it-support-plans": {
         "title": "Business IT Support Plans | From £24.38, No Lock-In",
-        "desc": "Monthly IT support plans for Dorset small businesses from £24.38 per computer, no lock-in. Microsoft 365 looked after, no call-out fee. Call 01202 775566.",
+        "desc": "Monthly IT support plans for Dorset small businesses from £24.38 per person, per computer, no lock-in. Microsoft 365 looked after, no call-out fee. Call 01202 775566.",
     },
     "business-wifi-installation": {
         "desc": "What business WiFi installation actually costs in Dorset, and what a proper job includes: VLANs, fast roaming, captive portals, licence traps and PoE.",
@@ -699,7 +699,7 @@ SNIPPETS = {
         # 5 Sep 2026: position 57.8 on 393 impressions, titled just "Pricing". The real
         # price in the title is the honest signal for a pricing page; the body already states it.
         "title": "IT Support Pricing: From &pound;18.25 a Month Per Computer",
-        "desc": "Transparent monthly IT support: homes £18.25 per computer (Microsoft 365 £4.85 per user), business from £24.38 per computer. No call-out fee, ever.",
+        "desc": "Transparent monthly IT support: homes £18.25 per person, per computer (Microsoft 365 £4.85 per user), business from £24.38 per person, per computer. No call-out fee, ever.",
     },
     "pstn-switch-off-business": {
         "title": "PSTN Switch-Off: The Business Lines That Aren't Phones",
@@ -1085,7 +1085,7 @@ SNIPPETS = {
     },
     "it-support-cost-guide": {
         "title": "How Much Does IT Support Cost? Real Dorset Prices (2026)",
-        "desc": "What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per computer, no VAT. Per user or per computer, compared.",
+        "desc": "What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per person, per computer, no VAT. Per user or per computer, compared.",
     },
     "case-study-signal-map": {
         "title": "Case Study: A Live Signal-Mapping Platform for Dorset",

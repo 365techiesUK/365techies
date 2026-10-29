@@ -1186,7 +1186,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "How much does password manager setup cost?",
-    "a": "It&rsquo;s included as part of our monthly IT support plans (home from &pound;18.25/mo per computer, business from &pound;24.38/mo per computer), or we can set it up as a one-off job &mdash; just ask for a quote. The password manager app itself may have its own subscription depending on which one suits you; we&rsquo;ll be upfront about that before you commit."
+    "a": "It&rsquo;s included as part of our monthly IT support plans (home from &pound;18.25/mo per person, per computer, business from &pound;24.38/mo per person, per computer), or we can set it up as a one-off job &mdash; just ask for a quote. The password manager app itself may have its own subscription depending on which one suits you; we&rsquo;ll be upfront about that before you commit."
    }
   ],
   "relatedSlugs": [
@@ -1872,7 +1872,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Is there a long contract?",
-    "a": "No. Our managed support runs on simple monthly plans with no lock-in &mdash; you stay because it&rsquo;s working, not because you&rsquo;re tied in. Pricing is per computer; tell us your setup and we&rsquo;ll give you a clear quote, or pick a plan straight away."
+    "a": "No. Our managed support runs on simple monthly plans with no lock-in &mdash; you stay because it&rsquo;s working, not because you&rsquo;re tied in. Pricing is per person, per computer; tell us your setup and we&rsquo;ll give you a clear quote, or pick a plan straight away."
    }
   ],
   "relatedSlugs": [

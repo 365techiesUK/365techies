@@ -424,7 +424,7 @@ def faqs_page():
       ("Can you help with cybersecurity?", "Yes — protection from scams, malware, ransomware and phishing, plus antivirus, multi-factor authentication, password security and backup checks."),
       ("Can you help with printers?", "Yes — printer setup, Wi-Fi printing, offline errors, drivers and scanning, for homes and offices."),
       ("Can you help with slow computers?", "Yes — slow computers are something we fix regularly, usually remotely. A monthly plan keeps them fast with regular maintenance."),
-      ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added to a home plan for £4.85/month per user. One-off repairs are also available with no subscription."),
+      ("How much does it cost?", "Home support is £18.25/month per person, per computer and business support from £24.38/month per person, per computer. Each price is for one person on one computer. If someone else uses the same computer with their own login, that's the same price again, because each person's accounts, email and settings are set up and looked after separately. Microsoft 365 can be added to a home plan for £4.85/month per user. One-off repairs are also available with no subscription."),
       ("How quickly can you help?", "Most remote sessions start within minutes during opening hours, Monday to Friday, 9am to 5pm. Subscribers always jump the queue."),
       ("Do you offer no-fix-no-fee computer repairs?", "Yes. Every computer and laptop repair is no-fix-no-fee, so if we can't fix it you don't pay for the diagnosis, and it's backed by a 12-month warranty. We quote clearly before any chargeable work, with no call-out fee."),
       ("Do you support Apple Macs?", "We're Windows and Android specialists, the platforms most UK homes and businesses run, so we focus there to give you genuine, in-depth expertise rather than being a jack-of-all-trades. We don't support Apple Macs."),
@@ -1304,7 +1304,7 @@ def pcm_landing():
         svc = service(s, "Six-weekly PC service with written Service Report",
                       "A full computer service every six weeks on a 365 Techies support plan: Windows, driver and application updates, a security check, a network safety check, a system file check, backup and drive health checks, a broadband speed test and a tune-up, each written up in a Service Report that is emailed to the customer and kept in their portal. Home £18.25 per computer per month; business from £24.38.",
                       stype="Computer servicing and maintenance")
-        svc["offers"] = bp._from("18.25", "per computer per month", SITE + "/monthly-it-support/")
+        svc["offers"] = bp._from("18.25", "per person per computer per month", SITE + "/monthly-it-support/")
         svc["url"] = f"{SITE}/{s}/#six-weekly-service"
         return graph([crumb(s, "Free PC Health Check"),
                       webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
@@ -4730,9 +4730,9 @@ PLAN_FINDER_WIDGET = '''    <section class="section section--alt" aria-label="Pl
           }
         }
         var PLANS = {
-          'home-support': {name:'Home IT Support', price:'&pound;18.25', per:'/mo per computer', desc:'Friendly cover for your computer &mdash; remote support, a full service every 6 weeks and security checks.', href:'/home-it-support-plans/'},
-          'home-support-365': {name:'Home Support + Microsoft 365', price:'&pound;23.10', per:'/mo per computer', desc:'Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.', href:'/home-it-support-plans/'},
-          'business': {name:'Business IT Support', price:'from &pound;24.38', per:'/mo per computer', desc:'Per-computer support for sole traders and small teams &mdash; remote help, Microsoft 365 and security.', href:'/business-it-support-plans/'},
+          'home-support': {name:'Home IT Support', price:'&pound;18.25', per:'/mo per person, per computer', desc:'Friendly cover for your computer &mdash; remote support, a full service every 6 weeks and security checks.', href:'/home-it-support-plans/'},
+          'home-support-365': {name:'Home Support + Microsoft 365', price:'&pound;23.10', per:'/mo per person, per computer', desc:'Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.', href:'/home-it-support-plans/'},
+          'business': {name:'Business IT Support', price:'from &pound;24.38', per:'/mo per person, per computer', desc:'Support for sole traders and small teams, for each person on each computer &mdash; remote help, Microsoft 365 and security.', href:'/business-it-support-plans/'},
           'business-larger': {name:'Business IT Support', price:'Custom', per:'', desc:'A tailored plan for a larger team &mdash; Microsoft 365 management, security, backups and onboarding.', href:'/business-it-support-plans/'}
         };
         function recommend() {
@@ -12290,11 +12290,11 @@ ai_os()
 # ===================================================== COST CALCULATOR (interactive)
 def cost_calculator():
     slug = "cost-calculator"
-    desc = "Work out your monthly IT support cost in seconds. A live calculator for home and business IT support — set the number of computers and Microsoft 365 licences and see a clear monthly total. 365 Techies, Dorset."
+    desc = "Work out your monthly IT support cost in seconds. A live calculator for home and business IT support — set the number of people and computers, and Microsoft 365 licences, and see a clear monthly total. 365 Techies, Dorset."
     faqs = [
       ("Are these the exact prices I&rsquo;ll pay?", "They&rsquo;re accurate guide prices taken straight from our published plans, so what you see is what you&rsquo;d expect to pay. We always confirm the exact figure with you before anything starts &mdash; no hidden call-out fees, no surprises."),
       ("What&rsquo;s included in every plan?", "Every monthly plan includes a full computer service every six weeks, remote help, regular maintenance and security checks. We also call before we connect, call ahead with an ETA for visits, and you deal with the same friendly faces. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
-      ("How is business support priced?", "Business support is priced per computer, from &pound;24.38 per computer, per month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
+      ("How is business support priced?", "Business support is priced for each person on each computer, from &pound;24.38 a month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
       ("How much is Microsoft 365?", "For home users, Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it. For businesses we price the right Microsoft 365 business plan with you &mdash; with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
       ("Do I have to commit to a contract?", "No &mdash; every plan is monthly and cancel-anytime. There&rsquo;s no long lock-in."),
     ]
@@ -12313,12 +12313,12 @@ def cost_calculator():
           <div class="cc-grid">
             <div class="cc-controls">
               <div id="cc-home-fields">
-                <div class="cc-field"><label>Computers / laptops <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Computers or laptops"></div>
-                <p class="cc-note">Home support is &pound;18.25/month per computer. Add Microsoft 365 below for the people who need it.</p>
+                <div class="cc-field"><label>Each person on each computer <output id="cc-comp">1</output></label><input type="range" id="cc-comp-r" min="1" max="10" value="1" aria-label="Each person on each computer"></div>
+                <p class="cc-note">Home support is &pound;18.25/month for each person on each computer. Two people sharing one computer, each with their own login, count as two. Add Microsoft 365 below for the people who need it.</p>
               </div>
               <div id="cc-biz-fields" hidden>
-                <div class="cc-field"><label>Computers / laptops <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Computers needing support"></div>
-                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are <a href="/which-microsoft-365-plan/">priced per plan</a> and added to your quote.</p>
+                <div class="cc-field"><label>Each person on each computer <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Each person on each computer needing support"></div>
+                <p class="cc-note">Business support is priced for each person on each computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are <a href="/which-microsoft-365-plan/">priced per plan</a> and added to your quote.</p>
               </div>
               <div>
                 <p class="cc-label" id="cc-m365-label">Microsoft 365 for home <span>(optional)</span></p>
@@ -12403,11 +12403,11 @@ def cost_calculator():
           var lines=[],total=0,fromFlag=false,ctaLabel='Get started',ctaHref='/home-it-support-plans/';
           if(state.mode==='home'){
             var ht=HOME_PER*state.comp;total+=ht;
-            lines.push({l:'Home support · '+state.comp+' computer'+(state.comp>1?'s':''),v:money(ht)});
+            lines.push({l:'Home support × '+state.comp,v:money(ht)});
           } else {
             fromFlag=true;
             var bt=BIZ_PER*state.users;total+=bt;
-            lines.push({l:'Business support · '+state.users+' computer'+(state.users>1?'s':''),v:'from '+money(bt)});
+            lines.push({l:'Business support × '+state.users,v:'from '+money(bt)});
             ctaLabel='Get a tailored quote';ctaHref='/contact/';
           }
           if(state.mode==='home'&&state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
@@ -12418,7 +12418,7 @@ def cost_calculator():
           var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
           var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
           var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
-          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo per computer for business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo for each person on each computer at home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo for each person on each computer in a business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
           if(fromFlag) msgs.push('Business plans are tailored to how you work (email, hosting, users), so the figure above is a starting guide.');
           root.querySelector('#cc-note').innerHTML=msgs.join(' ');
         }
@@ -12429,7 +12429,7 @@ def cost_calculator():
     content = "\n".join([
       hero(bc("Cost Calculator"), "// COST CALCULATOR",
            'See your monthly cost in <em class="grad grad--cyan">seconds</em>',
-           "Move the sliders to match your home or business &mdash; how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.",
+           "Move the sliders to match your home or business &mdash; how many people and computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.",
            cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Talk to Us", "/contact/"),
            chips=["Live sliders","Guide prices from real plans","Cancel anytime"]),
       calc,
@@ -17073,6 +17073,8 @@ info_page(
           <p>Machines bought on our website are sent anywhere in the UK by tracked courier for &pound;15, usually within two working days of your order. We deliver to UK addresses only.</p>
           <h2>Plans, payment and Direct Debit</h2>
           <p>Monthly plans are paid in advance by Direct Debit (via GoCardless). One-off work is quoted and agreed before we begin. Prices are shown on our website or in your quote.</p>
+          <h2>Who a support plan covers</h2>
+          <p>A home or business support plan covers <strong>one person on one computer</strong>. If someone else uses the same computer with their own login and wants their own accounts, email and settings looked after too, that is a second plan at the same price, because each person is set up and supported separately. Someone who uses more than one computer has a plan for each. Not sure how many you need? Ask us and we&rsquo;ll work it out with you before anything changes.</p>
           <h2>Cancelling a monthly plan</h2>
           <p>Our monthly plans are rolling and cancel-anytime &mdash; there is no long lock-in contract. Just let us know and we&rsquo;ll stop your plan at the end of your current period.</p>
           <h2>Business Care and Microsoft 365 licences</h2>
@@ -17477,7 +17479,7 @@ _PRICING_CSS = r"""      <style>
 
 def pricing_page():
     slug = "pricing"
-    desc = "365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer (Microsoft 365 £4.85/month per user), business from £24.38/month per computer. No contracts; one-off repairs quoted up front."
+    desc = "365 Techies pricing — transparent monthly IT support: homes £18.25/month per person, per computer (Microsoft 365 £4.85/month per user), business from £24.38/month per person, per computer. No contracts; one-off repairs quoted up front."
     head = f"""    <section class="prhead" aria-label="Pricing">
       <div class="wrap"><div class="prhead__in">
         <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Pricing")}</nav>
@@ -17494,7 +17496,7 @@ def pricing_page():
             <h2 class="prcard__name">Home Support</h2>
             <p class="prcard__for">For homes and families</p>
             <p class="prcard__price"><b>&pound;18.25</b></p>
-            <p class="prcard__per">a month per computer</p>
+            <p class="prcard__per">a month per person, per computer</p>
             <ul><li>Friendly remote support</li><li>A full service every 6 weeks</li><li>Security &amp; backup checks</li><li>Wi-Fi, printer &amp; email help</li></ul>
             <a class="button secondary" href="/home-it-support-plans/">See home plans</a>
           </article>
@@ -17504,7 +17506,7 @@ def pricing_page():
             <h2 class="prcard__name">Home + Microsoft 365</h2>
             <p class="prcard__for">Home Support with Microsoft 365 at &pound;4.85 a user</p>
             <p class="prcard__price"><b>&pound;23.10</b></p>
-            <p class="prcard__per">a month per computer</p>
+            <p class="prcard__per">a month per person, per computer</p>
             <ul><li>Everything in Home Support</li><li>Microsoft 365: Outlook and the Office apps</li></ul>
             <a class="button primary" href="/home-it-support-plans/">See home plans</a>
           </article>
@@ -17512,7 +17514,7 @@ def pricing_page():
             <h2 class="prcard__name">Business</h2>
             <p class="prcard__for">For sole traders and small businesses</p>
             <p class="prcard__price"><small>from</small><b>&pound;24.38</b></p>
-            <p class="prcard__per">a month per computer</p>
+            <p class="prcard__per">a month per person, per computer</p>
             <ul><li>Remote fixes included</li><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>With Microsoft 365: <a href="/business-it-support-plans/#bundles">Business Care from &pound;""" + _swo_order.bundle_price("business-care") + """</a></li></ul>
             <a class="button secondary" href="/business-it-support-plans/">See business plans</a>
           </article>
@@ -17635,19 +17637,19 @@ info_page(
   hero_cta1=('See our prices', '/pricing/'), hero_cta2=('Try the Plan Finder', '/plan-finder/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How much does IT support <em class="grad grad--cyan">cost?</em>',
   lede="Our real prices first, then what moves the price, per user against per computer, VAT, and what to check before you sign anything.",
-  desc="What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per computer, no VAT. Per user or per computer, and what to check.",
+  desc="What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per person, per computer, no VAT. Per user or per computer, and what to check.",
   chips=["Real prices","No VAT to add","No lock-in"],
   inner="""          <h2>What we charge</h2>
           <p>These are the prices our customers pay. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add.</p>
           <ul>
-            <li><strong>Home support: &pound;18.25 a month per computer.</strong> A full service every 6 weeks, remote help, and a loyalty discount on any fault work. Microsoft 365 for home users is &pound;4.85 a month per person. <a href="/home-it-support-plans/">Home plans</a></li>
-            <li><strong>Business support: from &pound;24.38 a month per computer, with remote fixes included.</strong> On-site visits, parts and new set-ups are quoted before we start. <a href="/business-it-support-plans/">Business plans</a></li>
+            <li><strong>Home support: &pound;18.25 a month per person, per computer.</strong> A full service every 6 weeks, remote help, and a loyalty discount on any fault work. Microsoft 365 for home users is &pound;4.85 a month per person. <a href="/home-it-support-plans/">Home plans</a></li>
+            <li><strong>Business support: from &pound;24.38 a month per person, per computer, with remote fixes included.</strong> On-site visits, parts and new set-ups are quoted before we start. <a href="/business-it-support-plans/">Business plans</a></li>
             <li><strong>Business Care: &pound;""" + _swo_order.bundle_price("business-care") + """ per person a month</strong> for support plus a Microsoft 365 Business Standard licence, or <strong>Business Care Plus at &pound;""" + _swo_order.bundle_price("business-care-plus") + """</strong> with Business Premium, Microsoft 365 backup and staff security training. Microsoft 365 comes with our support, not on its own. <a href="/business-it-support-plans/#bundles">The bundles</a></li>
             <li><strong>One-off remote fixes: from &pound;20</strong>, priced on the job and agreed before any chargeable work. A full Windows reinstall with your files backed up and put back takes about four hours and is &pound;149. <a href="/remote-support/">Remote support</a></li>
             <li><strong>Security and backup software</strong>, per month: Malwarebytes &pound;2.50 for a home computer, ThreatDown business antivirus &pound;4.50 per computer, the Keeper password manager &pound;3.50 per person, computer backup &pound;12.00. <a href="/cybersecurity-support/#software">Security prices</a></li>
           </ul>
           <h2>Per computer or per person?</h2>
-          <p>Most managed IT companies price <strong>per person</strong> (they say &ldquo;per user&rdquo;). We price <strong>per computer</strong>. If three people share two computers, you pay for two. If one person has a desktop and a laptop, per person can come out cheaper &mdash; ask us and we&rsquo;ll work it out both ways for you.</p>
+          <p>Most managed IT companies price <strong>per person</strong> (they say &ldquo;per user&rdquo;). Ours is <strong>per person, per computer</strong>: one plan looks after one person on one computer. Someone with a desktop and a laptop has a plan for each, and two people sharing one computer, each with their own login, have one each &mdash; because each person&rsquo;s accounts, email and settings are set up and looked after separately. Not sure what you&rsquo;d need? Ask us and we&rsquo;ll work it out with you.</p>
           <h2>Check whether the price includes VAT</h2>
           <p>Many IT companies show prices <strong>plus VAT</strong>. If your business is VAT registered you can claim that back, so compare prices before VAT. If you&rsquo;re not VAT registered &mdash; plenty of sole traders, charities and small firms aren&rsquo;t &mdash; the VAT is a real cost: &pound;35 plus VAT is &pound;42. Our prices have no VAT on top.</p>
           <h2>What affects the cost of IT support?</h2>
@@ -18526,7 +18528,7 @@ info_page(
             <p class="plan-card__tag mono">ON MONTHLY SUPPORT</p>
             <h3>On a plan</h3>
             <p class="plan-card__desc">Once everything&rsquo;s working, your plan keeps it that way &mdash; proactively maintained, problem- and hassle-free. A bit like servicing a car.</p>
-            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;18.25<span class="per">/mo per computer</span></p>
+            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;18.25<span class="per">/mo per person, per computer</span></p>
             <ul class="plan-card__features">
               <li><strong>Full computer health check &amp; service included</strong></li>
               <li>A full service <strong>every 6 weeks</strong> to keep it running sweet</li>
@@ -25007,7 +25009,7 @@ _join_compare = '''<section class="section section--alt" id="included" aria-labe
         </tbody>
       </table>
     </div>
-    <p class="plans-note mono" data-reveal>// PER COMPUTER &middot; DIRECT DEBIT &middot; NO CONTRACT &middot; CANCEL ANYTIME &middot; THE PRICE YOU SEE IS FINAL</p>
+    <p class="plans-note mono" data-reveal>// PER PERSON, PER COMPUTER &middot; DIRECT DEBIT &middot; NO CONTRACT &middot; CANCEL ANYTIME &middot; THE PRICE YOU SEE IS FINAL</p>
     <p class="lede lede--center" data-reveal style="margin-top:.9rem">Recommended by a friend? Your <strong>first</strong> Computer Service &amp; Health Check is free either way &mdash; <a href="/book-service/">book it here</a> and mention their name.</p>
     <div class="page-hero__cta" style="justify-content:center;margin-top:1.4rem">
       <a href="/portal/" class="button primary button--lg">Join the 365 Club free</a>
@@ -26946,7 +26948,7 @@ def write_portal_page():
         + '<span class="unl__st">' + lbl + '</span></div>';
     });
     h += '</div>';
-    if (!pro) h += '<p class="quiet" style="margin:.6rem 0 .55rem"><strong style="color:var(--pwhite)">\\u00a318.25 a month per computer</strong> by Direct Debit \\u2014 about 60p a day, no contract, cancel any time.</p>'
+    if (!pro) h += '<p class="quiet" style="margin:.6rem 0 .55rem"><strong style="color:var(--pwhite)">\\u00a318.25 a month per person, per computer</strong> by Direct Debit \\u2014 about 60p a day, no contract, cancel any time.</p>'
       + '<div class="row" style="border:0"><a class="btn sm" href="/monthly-it-support/" target="_blank" rel="noopener">See how support works</a>'
       + '<a class="btn sm ghost" href="tel:+441202775566">Talk it over: 01202 775566</a></div>';
     return h + '</div>';
@@ -28680,9 +28682,9 @@ def write_portal_page():
         + '<div class="ds__cnpanel" id="dsConnPanel" hidden></div>'
         + '<h3 style="margin-top:1rem">Your connections</h3><div id="dsConnList"><p class="ds__sub" style="margin:0">Loading&hellip;</p></div></div>'
         + (pro ? '' : '<div class="ds__up"><h3>Comes with a support plan</h3>'
-            + '<p>Join <strong>365 Home Support</strong> at <strong>&pound;18.25 a month per computer</strong> and the live tiles switch on: '
+            + '<p>Join <strong>365 Home Support</strong> at <strong>&pound;18.25 a month per person, per computer</strong> and the live tiles switch on: '
             + 'your PCs&rsquo; health, whether last night&rsquo;s backup really ran, your next visit, your written reports. '
-            + '<strong>365 Business Support</strong>, from <strong>&pound;24.38 a month per computer</strong>, adds the estate view &mdash; '
+            + '<strong>365 Business Support</strong>, from <strong>&pound;24.38 a month per person, per computer</strong>, adds the estate view &mdash; '
             + 'the whole fleet on one line, updates and Windows versions, servers, Wi-Fi and alerts into Slack or Teams. '
             + 'No contract, cancel any time.</p>'
             + '<div class="row"><a class="btn sm" href="/monthly-it-support/" target="_blank" rel="noopener">Home support</a>'

@@ -146,7 +146,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                                ('Save the spec sheet', 'Download or copy the summary &mdash; handy when buying software, asking for support or selling a device.'),
                                                ('Need the full detail?', 'For the exact CPU, RAM and drive models a browser can&rsquo;t see, our PC Hardware Checker guidance and our team can help.')]},
                            'webapp': False},
- 'cost-calculator': {'answer': '365 Techies&rsquo; managed IT support is priced per computer &mdash; home support is &pound;18.25/month per computer (with optional Microsoft 365 at &pound;4.85 per user) and business support from &pound;24.38/month per computer '
+ 'cost-calculator': {'answer': '365 Techies&rsquo; managed IT support is priced per person, per computer &mdash; home support is &pound;18.25/month for each person on each computer (with optional Microsoft 365 at &pound;4.85 per user) and business support from &pound;24.38/month for each person on each computer '
                                '&mdash; and this calculator adds them up live as you set the number of computers and licences.',
                      'faqs': [['How much is managed IT support per computer in the UK?',
                                'With 365 Techies it is &pound;18.25 per month per computer for home support and from &pound;24.38 per month per computer for business support, with Microsoft 365 an optional &pound;4.85 per user per month on a home plan. '
