@@ -67,8 +67,9 @@ $HOF_ARCADE = array(
     'eclipse'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 30000, 'base' => 100000, 'word' => 'stage'),
     // (365 Coast Run, 5 Oct: a driver that gets round scores ~2,000-2,700 a second, plus up to ~450,000 at each goal; the third round on is capped)
     'coastrun' => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 8000, 'base' => 500000, 'word' => 'stage'),
+    // (30 Oct 2026, owner: "change how it plays": EMBER RUN keeps its own boards r1-r3; an unknown lv falls back to v1, which would mix runs into Classic Gentle)
     // (365 Pinball Hero, 15 Oct: PROVISIONAL - generous until the playtest farm measures a good player's points a second in milestone 3)
-    'pinball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 20000, 'base' => 300000, 'word' => 'ball'),
+    'pinball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast', 'r1' => 'Ember Run · Gentle', 'r2' => 'Ember Run · Classic', 'r3' => 'Ember Run · Fast'), 'rate' => 20000, 'base' => 300000, 'word' => 'ball'),
 );
 $HOF_RUNS = __DIR__ . '/games-hof-runs.json';
 $HOF_RUNLOCK = __DIR__ . '/games-hof-runs.lock';

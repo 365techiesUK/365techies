@@ -34,7 +34,8 @@
      physics (engine.js); the cabinet's shared parts; then the flat picture (flat.js), the sounds (sound.js), the 3D
      look's lamps, printed playfield and effects (lamps.js, art3d.js, fx.js), the camera director (camera.js, which
      starts its look-ahead worker forecast-worker.js itself), the table playing itself on the title screen (pilot.js,
-     demo.js) and the game itself with its flipper controls (pinball.js); last, the 3D table (world3d.js, a module, with
+     demo.js), EMBER RUN's rounds, upgrades and boss (run.js, 30 Oct 2026) and the game itself with its flipper controls
+     and its two modes (pinball.js); last, the 3D table (world3d.js, a module, with
      three.js r185 from the site) and its spectacle add-ons (particles.js, post.js), which it picks up when they arrive.
      Any of lamps.js to demo.js, particles.js or post.js missing, or no WebGL2: the game still plays (in the flat look
      without WebGL2). 16 Oct 2026: Ember Peak, the next-gen fast track. -->
@@ -56,7 +57,8 @@
 <script src="camera.js?v=5"></script>
 <script src="pilot.js?v=3"></script>
 <script src="demo.js?v=3"></script>
-<script src="pinball.js?v=5"></script>
+<script src="run.js?v=1"></script>
+<script src="pinball.js?v=6"></script>
 <script type="module" src="world3d.js?v=9"></script>
 <script src="particles.js?v=3" defer></script>
 <script src="post.js?v=3" defer></script>

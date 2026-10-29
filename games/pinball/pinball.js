@@ -281,7 +281,7 @@
     '<b>Extra balls</b> at ' + extraList(1) + '; ' + extraList(2) + '; ' + extraList(3) + '.',
     '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is a flatter, slower table with ' + SP[1].balls + ' balls and the longest ball save; Classic is ' + SP[2].balls + ' balls; Fast is a steeper, quicker table for experts. <b>Look</b> &mdash; the 3D table or the flat one (<b>R</b>). <b>Camera</b> &mdash; Calm leans in on the ball now and then and dives into the crater the first time; Arcade does it more often, with more zoom and slow motion; Classic keeps the whole table in view and never moves (chosen for you if your device asks for less motion). The camera never moves in the last half second before the ball can reach a flipper. <b>P</b> pauses, and the game pauses itself if you click away to another window.'
   ];
-  var HELP = EMBER ? [
+  var HELP = EMBER ? (window.PinRun ? ['<b>Ember Run</b> (the title card, or Settings &gt; Mode): up to 8 rounds, one ball each, each with a <b>target</b> score. Miss it and the run is over; make it and pick <b>1 of 3 upgrades</b> (keys 1 2 3, or tap one) &mdash; and the table <b>mutates</b>. Rounds 4 and 8 are boss rounds: knock out <b>THE VOLCANO</b>&rsquo;s HP with crater shots, full eruptions, lava lanes and the heat ramp. <b>Classic</b> is the whole game for a high score.'] : []).concat([
     '<b>The aim:</b> Ember Peak is a volcano island waking up. Build up the pressure, shoot the ball into the crater and set off the full eruption &mdash; and score all you can. ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.',
     '<b>The island:</b> the <b>volcano</b> stands at the top left, the <b>fumaroles</b> and the top lanes at the top right, and the shore with your two flippers at the bottom.'
   ].concat(CONTROLS, [
@@ -298,7 +298,7 @@
     '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the lava-lit triangles above the flippers): ' + fmt(PT.sling) + '.',
     '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game (on Gentle, at the start of every ball), and again by knocking down all three obsidian targets.',
     '<b>Inlanes</b> (beside the flippers): ' + fmt(PT.inlane) + '. <b>Outlanes</b> (the outside lanes, down to the drain): ' + fmt(PT.outlane) + ', a small comfort.'
-  ], ENDS) : [
+  ], ENDS)) : [
     '<b>The aim:</b> you are the hero defending a planet from the invaders of 365 Invaders. Keep the ball in play and score all you can &mdash; ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.'
   ].concat(CONTROLS, [
     '<b>Skill shot:</b> as each ball goes in, one of the three top lanes flashes. Roll through that one before the ball touches anything else for <b>' + fmt(PTS.skill) + '</b>.',
@@ -317,6 +317,7 @@
   // steps the engine: the shares add up (0.35, 0.7, 1.05: a step ...), so the engine itself is stepped exactly as ever.
   // A step that is skipped leaves the quick-tap latches set, so the next real step still sees the tap.
   function stepGame(W, input) {
+    if (W.run && RUN && RUN.phase !== 'play') return;   // EMBER RUN: the table waits while the upgrade is picked
     var ts = timeScale(A3() ? A3().mode : 'play');
     if (ts < 1) {
       G3.slow += ts;
@@ -327,22 +328,144 @@
     if (input.ppTap) input.pp = true; if (input.plTap) input.pl = true; if (input.prTap) input.pr = true;
     E.step(W, input);
     input.pp = pp; input.pl = pl; input.pr = pr; input.ppTap = input.plTap = input.prTap = false;
+    if (W.run && RUN) runStep(W);   // EMBER RUN: the target, the boss, the round's end
     // the effects (fx.js) see this step's events before the cabinet plays their sounds and clears them
     if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} }
+  }
+
+  // ---------------------------------------------------------------- EMBER RUN (run.js, window.PinRun; 30 Oct 2026, owner: "change how it plays")
+  // The title card offers two modes (Settings 'game': EMBER RUN, the default, and CLASSIC, the game as it always was).
+  // A run is up to 8 rounds of one ball each, every round a fresh world from PinRun.startRound. The cabinet keeps ONE
+  // world object, so a new round is copied into it in place (as demo.js does between its games). At a round's end the
+  // engine sets W.over; runStep clears it again when the run goes on (the cabinet's game-over card waits for the run's
+  // end) and the table waits (stepGame) while the player picks 1 of 3 upgrades on the pick card. Run over or won: the
+  // cabinet's own game-over card, with the run's summary in place of its tiles. PinRun missing: Classic only.
+  var PR = window.PinRun, RUN = null, RS = { sel: 0, key: '', flash: 0, hitT: 0, pu: 0 }, HUD = null, BAN = null, PICK = null, OSUM = null, OVER = null;
+  function runOn(set) { return !!(PR && EMBER && !(set && set.game === 'classic')); }
+  function runWorld(R) { var W = PR.startRound(R); if (W) W.run = true; return W; }
+  function swapWorld(W, N) { Object.keys(W).forEach(function (k) { delete W[k]; }); Object.assign(W, N); }
+  function runStep(W) {
+    var ph = PR.update(RUN, W);
+    runNews(W);
+    if (ph === 'pick') {
+      W.over = false;   // (a round's end, not the game's)
+      for (var i = 0; i < W.events.length; i++) if (W.events[i] === 'over') W.events[i] = 'extra';   // a cheer, not the game-over sound
+      setTimeout(showPick, 0);
+    } else if (ph === 'over' || ph === 'won') setTimeout(showSummary, 0);   // (after the cabinet has shown its card)
+  }
+  function runNews(W) {   // run.js's announcements: the dot-matrix display and a banner over the table
+    var N = RUN.news; if (!N.length) return;
+    for (var i = 0; i < N.length; i++) {
+      var n = N[i];
+      if (n.kind === 'hit') { RS.hitT = performance.now(); continue; }   // the HP bar shakes; the display stays on the game
+      if (n.kind === 'mutation' || n.kind === 'over' || n.kind === 'won' || RUN.phase !== 'play') continue;   // (the pick and summary cards say these)
+      W.dmd = { big: n.big, small: n.small || '', t: 180, n: 0 };
+      if (n.kind === 'win') RS.flash = performance.now();
+      var sub = n.small || '', m = RUN.mutNext;
+      if ((n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1) sub += '|MUTATION: ' + m.name + ' — ' + m.text;
+      banner(n.kind === 'round' ? 'ROUND ' + RUN.round + ' · TARGET ' + fmt(RUN.target) : n.big, n.kind === 'round' ? (sub.split('|')[1] || '') : sub, n.kind);
+    }
+    N.length = 0;
+  }
+  function banner(big, small, kind) {
+    if (!BAN) return;
+    BAN.className = 'rb-' + kind;
+    BAN.innerHTML = '<b>' + esc(big) + '</b>' + (small ? small.split('|').map(function (s) { return '<small>' + esc(s) + '</small>'; }).join('') : '');
+    void BAN.offsetWidth; BAN.className = 'rb-' + kind + ' rb-go';   // (restarts the animation)
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function runHud(W, mode) {   // the round line and the target bar (or THE VOLCANO's HP), under the display; never takes a press
+    if (!HUD) return;
+    var on = !!(W && W.run && RUN && !W.demo && (mode === 'play' || mode === 'paused') && RUN.phase === 'play');
+    if (HUD.hidden === on) HUD.hidden = !on;
+    if (PICK && !PICK.hidden && (mode === 'title' || mode === 'over' || !RUN || RUN.phase !== 'pick')) PICK.hidden = true;
+    var w = screenEl ? screenEl.clientWidth : 0;
+    if (w && w !== RS.pu) { RS.pu = w; screenEl.parentNode.style.setProperty('--pu', (w / 270).toFixed(3) + 'px'); }   // one game pixel, for the overlays' type
+    if (!on) return;
+    var s = PR.status(RUN, W), now = performance.now(), fl = now - RS.flash < 1400, sh = now - RS.hitT < 400;
+    var key = [s.round, s.boss, Math.round(s.progress * 400), s.hp, s.hit, s.roundScore, fl, sh].join('|');
+    if (key === RS.key) return; RS.key = key;
+    HUD.className = (s.boss ? 'boss' : '') + (s.hit ? ' hit' : '') + (fl ? ' flash' : '') + (sh ? ' shake' : '');
+    HUD.innerHTML = '<div class="rh-l"><b>' + (s.boss ? 'THE VOLCANO' : 'ROUND ' + s.round + '/' + s.rounds) + '</b><span>' + (s.boss ? 'BOSS · ROUND ' + s.round + '/' + s.rounds : s.hit ? 'TARGET REACHED' : 'TARGET ' + fmt(s.target)) + '</span></div>'
+      + '<div class="rh-bar"><i style="width:' + (s.boss ? (s.hpMax ? 100 * s.hp / s.hpMax : 0) : 100 * s.progress).toFixed(2) + '%"></i><em>' + (s.boss ? 'HP ' + Math.ceil(s.hp) + ' / ' + s.hpMax : fmt(s.roundScore) + ' / ' + fmt(s.target)) + '</em></div>';
+  }
+  // the upgrades' little pictures (40 x 40, drawn in the card's colour)
+  var ICONS = {
+    fire: '<path d="M20 4c3 7 10 10 10 19a10 10 0 0 1-20 0c0-6 4-8 5-13 2 3 3 5 5 6 0-5-2-8 0-12z"/>',
+    pump: '<path d="M5 29a15 15 0 0 1 30 0"/><path d="M20 29l8-11"/><circle cx="20" cy="29" r="2.5"/>',
+    gold: '<path d="M5 34h8l18-24"/><path d="M23 9h9v9"/>',
+    crab: '<ellipse cx="20" cy="25" rx="10" ry="7"/><path d="M10 23l-5-7 3-6M30 23l5-7-3-6M12 30l-5 4M28 30l5 4"/>',
+    lavakick: '<path d="M20 33V8"/><path d="M11 17l9-9 9 9"/><path d="M8 34h24"/>',
+    net: '<path d="M6 10h28M6 20h28M6 30h28M10 6v28M20 6v28M30 6v28"/>',
+    bumper: '<circle cx="20" cy="20" r="14"/><circle cx="20" cy="20" r="7"/><circle cx="20" cy="20" r="1.5"/>',
+    lanes: '<path d="M10 6v18M20 6v18M30 6v18"/><circle cx="20" cy="32" r="3.5"/>',
+    twin: '<circle cx="14" cy="23" r="8"/><circle cx="27" cy="15" r="8"/>',
+    wind: '<path d="M4 14h20a5 5 0 1 0-5-5M4 22h27a5 5 0 1 1-5 5M4 30h12"/>',
+    interest: '<circle cx="12" cy="12" r="4"/><circle cx="28" cy="28" r="4"/><path d="M30 8L10 32"/>',
+    forge: '<path d="M6 25h28l-4 9H10z"/><path d="M12 25c0-6 4-10 8-10s8 4 8 10"/><path d="M20 4v7"/>',
+    tamer: '<path d="M4 34l11-20h10l11 20z"/><path d="M15 14l5 6 5-6"/>'
+  };
+  function icon(id) { return '<svg viewBox="0 0 40 40" aria-hidden="true">' + (ICONS[id] || '<circle cx="20" cy="20" r="12"/>') + '</svg>'; }
+  function showPick() {
+    if (!RUN || RUN.phase !== 'pick' || !PICK) return;
+    letGo(); var a = A3(); if (a) a.input.left = a.input.right = a.input.fire = a.input.up = a.input.down = false;
+    var L = RUN.log[RUN.log.length - 1] || {}, m = RUN.mutNext, nx = RUN.round + 1, boss = PR.BOSS && PR.BOSS[nx];
+    PICK.querySelector('.rp-h').textContent = L.boss ? 'VOLCANO DEFEATED' : 'ROUND ' + L.round + ' CLEARED';
+    PICK.querySelector('.rp-s').textContent = 'You scored ' + fmt(L.score || 0) + (L.boss ? '' : ' (target ' + fmt(L.target || 0) + ')') + ' · next: ' + (boss ? 'BOSS ROUND ' + nx : 'round ' + nx) + ' of ' + RUN.rounds;
+    PICK.querySelector('.rp-m').innerHTML = m ? '<small>TABLE MUTATION</small><b>' + esc(m.name) + '</b><span>' + esc(m.text) + '</span>' : '';
+    PICK.querySelector('.rp-cards').innerHTML = (RUN.offer || []).map(function (id, i) {
+      var u = PR.UP[id], have = RUN.ups[id] || 0;
+      return '<button type="button" class="rp-card" data-pick="' + id + '"><span class="rp-k">' + (i + 1) + '</span><span class="rp-ic">' + icon(id) + '</span><span class="rp-t"><b>' + esc(u.name) + (have ? ' <i>x' + (have + 1) + '</i>' : '') + '</b><small>' + esc(u.text) + '</small></span></button>';
+    }).join('');
+    PICK.hidden = false; RS.sel = 0; markSel(true); if (BAN) BAN.className = '';   // (no banner left fading behind the card)
+  }
+  function markSel(focus) {
+    var c = PICK.querySelectorAll('[data-pick]');
+    [].forEach.call(c, function (b, i) { b.classList.toggle('sel', i === RS.sel); });
+    if (focus && c[RS.sel]) try { c[RS.sel].focus({ preventScroll: true }); } catch (e) {}
+  }
+  function choose(id) {   // -> true if the upgrade was taken and the next round is on the table
+    var a = A3(); if (!RUN || RUN.phase !== 'pick' || !a || !a.world || !PR.pick(RUN, id)) return false;
+    var N = runWorld(RUN); if (!N) return false;
+    swapWorld(a.world, N); G3.slow = 0; RS.key = ''; PICK.hidden = true; letGo();
+    try { screenEl.focus({ preventScroll: true }); } catch (e) {}
+    return true;
+  }
+  function showSummary() {
+    if (!RUN || !OSUM || (RUN.phase !== 'over' && RUN.phase !== 'won')) return;
+    var S = PR.summary(RUN), nb = PR.saveBest(S), B = PR.loadBest();
+    var pips = ''; for (var r = 1; r <= RUN.rounds; r++) { var l = S.rounds[r - 1]; pips += '<i class="' + (l ? (l.hit ? 'ok' : 'no') : '') + (PR.BOSS && PR.BOSS[r] ? ' bs' : '') + '" title="Round ' + r + '"></i>'; }
+    OSUM.innerHTML = '<p class="rs-k">' + (S.won ? 'THE VOLCANO IS TAMED' : 'EMBER RUN') + '</p><div class="rs-pips" aria-label="Rounds cleared: ' + S.cleared + ' of ' + RUN.rounds + '">' + pips + '</div>'
+      + '<div class="tiles rs-tiles"><div class="tile"><b>' + S.cleared + '/' + RUN.rounds + '</b><span>Rounds cleared</span></div><div class="tile"><b>' + fmt(S.score) + '</b><span>Score</span></div></div>'
+      + '<div class="rs-ups">' + (S.upgrades.length ? RUN.taken.map(function (id) { return '<span class="rs-chip">' + icon(id) + esc(PR.UP[id].name) + '</span>'; }).join('') : '<span class="rs-none">No upgrades taken</span>') + '</div>'
+      + (S.mutations.length ? '<p class="rs-mu">Mutations: ' + esc(S.mutations.join(', ')) + '</p>' : '')
+      + '<p class="rs-best">' + (nb ? '<b>NEW BEST RUN!</b>' : B ? 'Best run: ' + (B.won ? 'won' : 'round ' + B.reached) + ' · ' + fmt(B.score) : '') + '</p>';
+    OVER.classList.add('runsum'); if (BAN) BAN.className = '';
   }
 
   A.start({
     id: 'pinball', store: 'pin365', title: '365 Pinball Hero', width: 270, height: 480, phoneFull: true, waveWord: 'ball',
     speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
-    newWorld: function (speed, set) { G3.slow = 0; return E.newWorld(speed, set, (Date.now() % 2147483646) + 1); },   // a different game every time
+    newWorld: function (speed, set) {   // a different game every time; EMBER RUN: a new run, its first round
+      G3.slow = 0; RS.key = ''; if (PICK) PICK.hidden = true; if (OVER) OVER.classList.remove('runsum');
+      var seed = (Date.now() % 2147483646) + 1;
+      if (!runOn(set)) { RUN = null; return E.newWorld(speed, set, seed); }
+      RUN = PR.newRun(seed, speed); return runWorld(RUN);
+    },
     step: stepGame,
-    hud: E.hud,
+    hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { h.wave = RUN.round; h.lives += RUN.wind; } return h; },   // EMBER RUN: the round in the Ball chip
+    // EMBER RUN keeps its own best scores (r1-r3), as Invaders keeps its two styles apart
+    statKey: function (W) { return (W && W.run ? 'r' : 'v') + W.speed; },
+    statKeyFor: function (set, speed) { return (runOn(set) ? 'r' : 'v') + speed; },
+    hofLevels: PR && EMBER ? [['v1', 'Gentle'], ['v2', 'Classic'], ['v3', 'Fast'], ['r1', 'Ember Run Gentle'], ['r2', 'Ember Run Classic'], ['r3', 'Ember Run Fast']] : undefined,
+    picker: PR && EMBER ? { key: 'game', label: 'Mode', options: [['run', 'EMBER RUN', '8 rounds, pick upgrades, beat the volcano'], ['classic', 'CLASSIC', 'The whole game: chase a high score']] } : undefined,
     // the look: 3D (the default) or the flat table. The 3D look draws on the screen at full sharpness (hires). The
     // camera: Calm (the default), Arcade or Classic (the default when the device asks for reduced motion)
     settings: [
       { key: 'look', type: 'seg', label: 'Look', small: G3.failed ? 'This browser can only show the flat table' : 'The 3D table or the flat one (R)', options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' },
+      PR && EMBER ? { key: 'game', type: 'seg', label: 'Mode', small: 'Ember Run: 8 rounds, an upgrade after each, a volcano boss. Classic: the game as it always was', options: [['run', 'Ember Run'], ['classic', 'Classic']], def: 'run' } : null,
       { key: 'cam', type: 'seg', label: 'Camera', small: 'Calm follows the ball now and then; Arcade more, with slow motion; Classic never moves', options: [['arcade', 'Arcade'], ['classic', 'Classic'], ['calm', 'Calm']], def: REDUCED ? 'classic' : 'calm' }
-    ],
+    ].filter(Boolean),
     hires: function (set) { G3.set = set; return want3d(set); },
     draw: function (g, W, t, mode, info) {
       // the title screen: the table plays itself behind the card (demo.js); it may step the title world itself (at the
@@ -352,6 +475,7 @@
         try { mode = PinDemo.frame(W, t, mode, dts) || mode; } catch (e) {}
       }
       if (mode !== 'play') letGo();   // paused, game over: nothing stays held
+      runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
       if (info.dw && want3d(info.set)) return draw3d(g, W, t, mode, info);
       hide3d();
       if (window.PinFlat && typeof PinFlat.draw === 'function') return PinFlat.draw(g, W, t, mode, info);
@@ -362,6 +486,7 @@
     frameAudio: function (W, kit, mode, set) { if (window.PinSound && typeof PinSound.frame === 'function') PinSound.frame(W, kit, mode, set); },
     quietSay: function () { return true; },   // the dot-matrix display shows the messages; the words are for screen readers
     overText: function (W) {
+      if (W && W.run && RUN) return RUN.won ? 'Run won!' : 'Run over: round ' + RUN.round;
       var s = W.stats || {}, bits = [];
       if (s.eruptions) bits.push(plural(s.eruptions, 'eruption', 'eruptions'));
       if (s.craters) bits.push(plural(s.craters, 'crater', 'craters'));
@@ -391,6 +516,62 @@
     var b = document.querySelector('#pad [data-pad="' + p[0] + '"]'); if (b) b.setAttribute('aria-label', p[1]);
   });
 
+  // EMBER RUN's overlays (30 Oct 2026): the round line and bar, the banner, the pick card, the summary on the game-over card
+  if (PR && EMBER) (function () {
+    var st = document.createElement('style'), wrap = document.getElementById('screenwrap');
+    st.textContent = '#runHud{position:absolute;left:5%;right:5%;top:7.6%;z-index:2;pointer-events:none;font:700 max(11px,calc(var(--pu,1px)*8.5))/1.1 Archivo,sans-serif;letter-spacing:.06em;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}'
+      + '#runHud[hidden],#runBan[hidden]{display:none}#runHud .rh-l{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px}#runHud .rh-l b{color:#ffb347}#runHud .rh-l span{opacity:.92}'
+      + '#runHud .rh-bar{position:relative;height:max(13px,calc(var(--pu,1px)*11));border-radius:99px;background:rgba(20,6,2,.78);border:1px solid rgba(255,140,50,.55);overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,.6)}'
+      + '#runHud .rh-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ff3d00,#ff8a1a 70%,#ffc04a);transition:width .25s}'
+      + '#runHud .rh-bar em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:.92em;color:#fff;text-shadow:0 1px 2px #000}'
+      + '#runHud.hit .rh-bar{border-color:#ffd84a}#runHud.hit .rh-bar i{background:linear-gradient(90deg,#ffb000,#ffe066)}#runHud.hit .rh-l span{color:#ffd84a}'
+      + '#runHud.flash .rh-bar{animation:rhFlash .35s 4 alternate}@keyframes rhFlash{to{box-shadow:0 0 22px #ffd84a,0 0 4px #fff;border-color:#fff}}'
+      + '#runHud.boss .rh-l b{color:#ff5a3c}#runHud.boss .rh-bar{border-color:#ff5a3c}#runHud.boss .rh-bar i{background:linear-gradient(90deg,#8a0d00,#e0261b 60%,#ff6a3c)}'
+      + '#runHud.shake .rh-bar{animation:rhShake .1s 4}@keyframes rhShake{50%{transform:translateX(3px)}}'
+      + '#runBan{position:absolute;left:4%;right:4%;top:24%;z-index:2;pointer-events:none;text-align:center;opacity:0}#runBan b{display:block;font:600 max(22px,calc(var(--pu,1px)*21))/1.05 "Clash Display",Archivo,sans-serif;letter-spacing:.03em;color:#ffd84a;text-shadow:0 0 14px rgba(255,106,26,.9),0 2px 3px #000}'
+      + '#runBan small{display:block;margin-top:6px;font:700 max(12px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
+      + '#runBan.rb-go{animation:rbGo 2.8s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.25)}10%{opacity:1;transform:scale(1)}78%{opacity:1}100%{opacity:0}}'
+      + '@media (prefers-reduced-motion:reduce){#runBan.rb-go{animation:rbFade 2.8s linear forwards}@keyframes rbFade{0%,80%{opacity:1}100%{opacity:0}}#runHud.flash .rh-bar,#runHud.shake .rh-bar{animation:none}}'
+      + '#ov_pick .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35);background:rgba(18,6,2,.92)}#ov_pick .rp-h{color:#ffd84a}#ov_pick .rp-s{color:#ffd9b0;font-size:14px;margin:4px 0 8px}'
+      + '#ov_pick .rp-m{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:rgba(255,60,0,.13);border:1px dashed rgba(255,120,40,.6);text-align:left;font-size:13.5px;line-height:1.3}#ov_pick .rp-m:empty{display:none}'
+      + '#ov_pick .rp-m small{display:block;font:700 11px Archivo,sans-serif;letter-spacing:.1em;color:#ff8a3a}#ov_pick .rp-m b{color:#ffb347;margin-right:6px}'
+      + '#ov_pick .rp-q{margin:0 0 6px;font:700 13px Archivo,sans-serif;letter-spacing:.12em;color:#ffb347}#ov_pick .rp-cards{display:grid;gap:9px}'
+      + '.rp-card{display:grid;grid-template-columns:22px 44px 1fr;align-items:center;gap:10px;width:100%;min-height:68px;padding:8px 12px 8px 8px;border-radius:14px;border:2px solid rgba(255,140,50,.45);background:linear-gradient(180deg,#2d1206,#170804);color:#ffe9c9;text-align:left;cursor:pointer;font:inherit}'
+      + '.rp-card:hover,.rp-card.sel,.rp-card:focus-visible{border-color:#ffd84a;box-shadow:0 0 16px rgba(255,170,40,.5);outline:none}.rp-card.sel{background:linear-gradient(180deg,#4a1d08,#231006)}'
+      + '.rp-k{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:rgba(255,216,74,.16);color:#ffd84a;font:700 13px Archivo,sans-serif}'
+      + '.rp-ic svg,.rs-chip svg{width:44px;height:44px;fill:none;stroke:#ff9a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.rp-card.sel .rp-ic svg{stroke:#ffd84a}'
+      + '.rp-t b{display:block;font:700 16px/1.15 Archivo,sans-serif;letter-spacing:.04em;color:#ffd84a}.rp-t b i{font-style:normal;color:#7fe8ff;font-size:13px}.rp-t small{display:block;margin-top:3px;font:500 13.5px/1.3 Archivo,sans-serif;color:#ffe9c9}'
+      + '#oRun{display:none}#oRun .rs-tiles{grid-template-columns:1fr 1fr}#ov_over.runsum #oRun{display:block}#ov_over.runsum .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35)}#ov_over.runsum .ovbox>.tiles{display:none}'
+      + '#oRun .rs-k{margin:0 0 6px;font:700 13px Archivo,sans-serif;letter-spacing:.14em;color:#ff8a3a}#oRun .rs-pips{display:flex;justify-content:center;gap:6px;margin:4px 0 8px}'
+      + '#oRun .rs-pips i{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.25)}#oRun .rs-pips i.bs{border-radius:4px}#oRun .rs-pips i.ok{background:#ffb000;border-color:#ffd84a}#oRun .rs-pips i.no{background:#5a0f08;border-color:#ff5a3c}'
+      + '#oRun .rs-ups{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px 0 4px}#oRun .rs-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 6px;border-radius:99px;background:rgba(255,106,26,.16);border:1px solid rgba(255,140,50,.5);font:700 12.5px Archivo,sans-serif;color:#ffd9b0}'
+      + '#oRun .rs-chip svg{width:18px;height:18px;stroke-width:4}#oRun .rs-none,#oRun .rs-mu{color:#a9b7d6;font-size:13px}#oRun .rs-best{margin:8px 0 0;color:#ffe8a3;font-size:14.5px}#oRun .rs-best b{color:#ffd84a}'
+      + '#ov_title .picker button[data-val="run"] b{color:#ffb347}#ov_title .picker button[data-opt="game"][aria-pressed="true"]{border-color:#ff8a2a;background:rgba(255,106,26,.18);box-shadow:0 0 16px rgba(255,106,26,.45)}'
+      + '#ov_title .picker button[data-val="run"]::before{content:"NEW";align-self:center;padding:1px 7px;border-radius:99px;background:#ff6a1a;color:#1a0702;font:700 10px Archivo,sans-serif;letter-spacing:.1em}';
+    document.head.appendChild(st);
+    HUD = document.createElement('div'); HUD.id = 'runHud'; HUD.hidden = true; HUD.setAttribute('aria-hidden', 'true');
+    BAN = document.createElement('div'); BAN.id = 'runBan'; BAN.setAttribute('role', 'status'); BAN.setAttribute('aria-live', 'polite');
+    PICK = document.createElement('div'); PICK.className = 'ov'; PICK.id = 'ov_pick'; PICK.hidden = true;
+    PICK.innerHTML = '<div class="ovbox" role="dialog" aria-label="Choose an upgrade"><h2 class="rp-h">ROUND CLEARED</h2><p class="rp-s"></p><div class="rp-m"></div><p class="rp-q">CHOOSE AN UPGRADE</p><div class="rp-cards"></div><p class="soft">Keys 1, 2, 3 &middot; or the arrows and Enter</p></div>';
+    wrap.appendChild(HUD); wrap.appendChild(BAN); wrap.appendChild(PICK);
+    OVER = document.getElementById('ov_over');
+    var why = document.getElementById('oWhy');
+    OSUM = document.createElement('div'); OSUM.id = 'oRun';
+    if (why && why.parentNode) why.parentNode.insertBefore(OSUM, why.nextSibling);
+    PICK.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-pick]'); if (b) choose(b.getAttribute('data-pick')); });
+    // keys on the pick card: 1 2 3, or the arrows and Enter (before the cabinet's own keys, which would flip the frozen table)
+    window.addEventListener('keydown', function (e) {
+      var a = A3(); if (PICK.hidden || !a || a.mode !== 'play' || busy(e)) return;
+      var k = e.key || '', c = PICK.querySelectorAll('[data-pick]'), n = c.length;
+      if (/^(p|escape|f)$/i.test(k) || !n) return;   // (pause and full screen still work)
+      if (/^[1-9]$/.test(k) && +k <= n) choose(c[+k - 1].getAttribute('data-pick'));
+      else if (/^(arrowleft|arrowup|a|w)$/i.test(k)) { RS.sel = (RS.sel + n - 1) % n; markSel(true); }
+      else if (/^(arrowright|arrowdown|d|s)$/i.test(k)) { RS.sel = (RS.sel + 1) % n; markSel(true); }
+      else if (k === 'Enter' || k === ' ') choose(c[RS.sel].getAttribute('data-pick'));
+      e.preventDefault(); e.stopImmediatePropagation();
+    }, true);
+  })();
+
   // for the tests (tools/pinball): the pieces of the controls that can be checked on their own
   // and the look (3D or flat; the last 240 3D draw times in ms, CPU side)
   window.PinLook = { get on() { return !!G3.world && document.body.classList.contains('pin3d'); }, get failed() { return G3.failed; }, get world() { return G3.world; }, ms: G3.ms, set: setLook,
@@ -398,5 +579,13 @@
   // slow motion: the scale the game is being stepped at now, and how many of the cabinet's steps it has skipped
   window.PinSlow = { get scale() { return timeScale(A3() ? A3().mode : 'play'); }, get skipped() { return G3.skipped; }, step: stepGame,
     force: function (ts) { G3.force = ts == null ? null : Math.max(0.15, Math.min(1, +ts)); G3.slow = 0; } };
+  // EMBER RUN: the run, whether the pick card is up, and a way to end the round now (hit: the target made, or the boss beaten)
+  window.PinRunPage = { get run() { return RUN; }, get picking() { return !!PICK && !PICK.hidden; }, choose: choose,
+    status: function () { var a = A3(); return RUN && a && a.world ? PR.status(RUN, a.world) : null; },
+    endRound: function (hit) {
+      var a = A3(), W = a && a.world; if (!RUN || !W || !W.run || RUN.phase !== 'play') return false;
+      if (RUN.boss) { if (hit) { RUN.hp = 0; RUN.hit = true; } } else W.score = hit ? Math.max(W.score, RUN.start + RUN.target) : RUN.start;
+      W.over = true; W.state = 'over'; return true;
+    } };
   window.PinControls = { sideOf: sideOf, waiting: waiting, letGo: letGo, held: function () { return { pointers: held, left: keysL, right: keysR }; } };
 })();

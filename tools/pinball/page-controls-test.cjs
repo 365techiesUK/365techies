@@ -8,6 +8,8 @@
  * an Ember world. Ember Peak (16 Oct 2026; one screen, one pair, 29 Oct 2026): the page plays it; each button works every flipper on its side; the Camera
  * and Look settings; slow motion steps the engine proportionally less (and a quick tap during a skipped step is still
  * seen); the attract mode's flythrough and the director; the flat look draws Ember Peak and scrolls with the ball.
+ * EMBER RUN (30 Oct 2026): the mode choice, the round line and banner, the pick card (rounds ended early through
+ * PinRunPage.endRound), keys, clicks and taps, the boss, the run summary, Classic untouched, and a 360 px phone.
  *
  *   py -m http.server 8481 --bind 127.0.0.1   (from the repo root, in another window)
  *   node tools/pinball/page-controls-test.cjs [http://127.0.0.1:8481] [out folder for screenshots]
@@ -258,6 +260,126 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     console.log('  (requests that failed, expected without the PHP server: ' + d.bad.length + ') ' + d.bad.slice(0, 4).join(', '));
     if (missing(d.bad).length) console.log('  NOTE: not on the server yet: ' + missing(d.bad).join(', '));
     await d.ctx.close();
+
+    // ------------------------------------------------------------ EMBER RUN (30 Oct 2026): the modes, a round, the pick card, a boss, the summary, Classic untouched
+    console.log('ember run 1280 x 900');
+    var er = await open(browser, { viewport: { width: 1280, height: 900 } });
+    p = er.page;
+    var rt = await p.evaluate(function () {
+      var bs = [].map.call(document.querySelectorAll('#ov_title [data-opt="game"]'), function (b) { return b.getAttribute('data-val') + ':' + b.getAttribute('aria-pressed'); });
+      return { run: !!window.PinRun, page: !!window.PinRunPage, modes: bs.join(','), set: document.querySelectorAll('#dSet [data-opt="game"]').length };
+    });
+    console.log('  ' + JSON.stringify(rt));
+    ok(rt.run && rt.page && rt.modes === 'run:true,classic:false', 'the title card offers EMBER RUN (picked by default) and CLASSIC');
+    ok(rt.set === 2, 'Settings has Mode too (Ember Run / Classic)');
+    await p.click('#tPlay'); await sleep(900);
+    var r1 = await p.evaluate(function () {
+      var W = ARCADE365.world, R = PinRunPage.run, hud = document.getElementById('runHud'), ban = document.getElementById('runBan');
+      return { mode: ARCADE365.mode, run: !!W.run, mod: !!W.mod, total: W.total, round: R && R.round, phase: R && R.phase, hud: !hud.hidden && hud.textContent, ban: ban.textContent, pe: getComputedStyle(hud).pointerEvents + ',' + getComputedStyle(ban).pointerEvents, ball: document.getElementById('vWave').textContent };
+    });
+    console.log('  ' + JSON.stringify(r1));
+    ok(r1.mode === 'play' && r1.run && r1.mod && r1.total === 1 && r1.round === 1 && r1.phase === 'play', 'Play starts an Ember Run: round 1, one ball, the run\'s table knobs (W.mod)');
+    ok(/ROUND 1\/8/.test(r1.hud) && /TARGET/.test(r1.hud), 'the round line and target bar show (' + r1.hud + ')');
+    ok(/ROUND 1 . TARGET/.test(r1.ban), 'the round banner shows (' + r1.ban + ')');
+    ok(r1.pe === 'none,none', 'the round line and banner never take a press (the flippers\' screen stays free)');
+    await p.screenshot({ path: path.join(OUT, 'run-round1-desktop.png') });
+    // the round's end (forced): the pick card, the table waiting
+    await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(400);
+    var pk = await p.evaluate(async function () {
+      var W = ARCADE365.world, f = W.frame; await new Promise(function (r) { setTimeout(r, 300); });
+      var cards = [].map.call(document.querySelectorAll('#ov_pick [data-pick]'), function (b) { return b.getAttribute('data-pick'); });
+      return { picking: PinRunPage.picking, mode: ARCADE365.mode, over: !document.getElementById('ov_over').hidden, cards: cards, offer: (PinRunPage.run.offer || []).join(), frozen: W.frame === f, phase: PinRunPage.run.phase,
+        named: [].every.call(document.querySelectorAll('#ov_pick .rp-card'), function (b) { return b.querySelector('svg') && b.querySelector('b').textContent.length > 2 && b.querySelector('small').textContent.length > 8; }), mut: document.querySelector('#ov_pick .rp-m').textContent };
+    });
+    console.log('  ' + JSON.stringify(pk));
+    ok(pk.picking && pk.phase === 'pick' && pk.mode === 'play' && !pk.over, 'a round made: the upgrade pick card, not the game-over card');
+    ok(pk.cards.length === 3 && pk.cards.join() === pk.offer && pk.named, 'three cards, the run\'s own offer, each with a picture, a name and its effect');
+    ok(pk.frozen, 'the table waits while the upgrade is picked');
+    ok(/TABLE MUTATION/.test(pk.mut), 'the pick card announces the table\'s mutation (' + pk.mut + ')');
+    await p.screenshot({ path: path.join(OUT, 'run-pick-desktop.png') });
+    await p.keyboard.press('2'); await sleep(500);
+    var r2 = await p.evaluate(function () { var R = PinRunPage.run, W = ARCADE365.world; return { picking: PinRunPage.picking, round: R.round, taken: R.taken.join(), ups: JSON.stringify(R.ups), muts: R.muts.length, frame: W.frame, run: W.run, score: W.score, banked: R.banked, ban: document.getElementById('runBan').textContent, ball: document.getElementById('vWave').textContent }; });
+    console.log('  ' + JSON.stringify(r2));
+    ok(!r2.picking && r2.round === 2 && r2.taken === pk.cards[1] && r2.muts === 1, 'key 2 takes the second upgrade and round 2 starts (' + r2.taken + ')');
+    ok(r2.run && r2.frame > 0 && r2.frame < 120 && r2.score === r2.banked, 'round 2 is a fresh world in the same object, carrying the banked score');
+    ok(/MUTATION/.test(r2.ban) && r2.ball === '2', 'round 2\'s banner names the mutation; the Ball chip shows the round');
+    // arrows + Enter, then a click
+    await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(400);
+    var off3 = await p.evaluate(function () { return PinRunPage.run.offer.slice(); });
+    await p.keyboard.press('ArrowDown'); await p.keyboard.press('ArrowDown'); await p.keyboard.press('Enter'); await sleep(400);
+    var r3 = await p.evaluate(function () { var R = PinRunPage.run; return { round: R.round, last: R.taken[R.taken.length - 1] }; });
+    ok(r3.round === 3 && r3.last === off3[2], 'arrows and Enter pick (the third card: ' + r3.last + ')');
+    await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(400);
+    var off4 = await p.evaluate(function () { return PinRunPage.run.offer.slice(); });
+    await p.click('#ov_pick [data-pick="' + off4[0] + '"]'); await sleep(900);
+    var bo = await p.evaluate(function () { var s = PinRunPage.status(), hud = document.getElementById('runHud'); return { round: s.round, boss: s.boss, hp: s.hp, hpMax: s.hpMax, hud: hud.textContent, cls: hud.className, ban: document.getElementById('runBan').textContent, ups: PinRunPage.run.taken.length }; });
+    console.log('  ' + JSON.stringify(bo));
+    ok(bo.ups === 3 && bo.round === 4, 'a click on a card picks it too');
+    ok(bo.boss && bo.hp === bo.hpMax && bo.hpMax > 0 && /THE VOLCANO/.test(bo.hud) && /HP/.test(bo.hud) && /boss/.test(bo.cls), 'round 4 is the boss: THE VOLCANO with its HP bar (' + bo.hud + ')');
+    ok(/VOLCANO WAKES/.test(bo.ban), 'the boss banner shows (' + bo.ban + ')');
+    await p.screenshot({ path: path.join(OUT, 'run-boss-desktop.png') });
+    // the boss not beaten: run over, the summary on the game-over card
+    await p.evaluate(function () { PinRunPage.endRound(false); }); await sleep(900);
+    var sm = await p.evaluate(function () {
+      var o = document.getElementById('ov_over'), s = document.getElementById('oRun');
+      return { mode: ARCADE365.mode, shown: !o.hidden, cls: o.classList.contains('runsum'), why: document.getElementById('oWhy').textContent, text: s.textContent, chips: s.querySelectorAll('.rs-chip').length, pips: s.querySelectorAll('.rs-pips i.ok').length,
+        best: (function () { try { return JSON.parse(localStorage.getItem('pinball365.emberRun.best')); } catch (e) { return null; } })(), tiles: getComputedStyle(o.querySelector('.ovbox > .tiles')).display, picking: PinRunPage.picking };
+    });
+    console.log('  ' + JSON.stringify(sm));
+    ok(sm.mode === 'over' && sm.shown && sm.cls && !sm.picking && /round 4/.test(sm.why), 'the boss survives: run over, the game-over card (' + sm.why + ')');
+    ok(/3\/8/.test(sm.text) && /Rounds cleared/.test(sm.text) && sm.chips === 3 && sm.pips === 3 && sm.tiles === 'none', 'the summary: rounds cleared, the three upgrades as chips, the round pips');
+    ok(sm.best && sm.best.cleared === 3 && /NEW BEST RUN/.test(sm.text), 'the best run is saved and said');
+    await p.screenshot({ path: path.join(OUT, 'run-summary-desktop.png') });
+    await p.click('#oPlay'); await sleep(500);
+    var ag = await p.evaluate(function () { var R = PinRunPage.run; return { mode: ARCADE365.mode, round: R && R.round, taken: R && R.taken.length, cls: document.getElementById('ov_over').classList.contains('runsum') }; });
+    ok(ag.mode === 'play' && ag.round === 1 && ag.taken === 0 && !ag.cls, 'Play again starts a new run from round 1');
+    // CLASSIC: exactly the game it was
+    var cl = await p.evaluate(async function () {
+      document.querySelector('#dSet [data-opt="game"][data-val="classic"]').click();
+      ARCADE365.begin(); await new Promise(function (r) { setTimeout(r, 700); });
+      var W = ARCADE365.world, E = PinEngine, F = E.newWorld(W.speed, null, 5);
+      return { mode: ARCADE365.mode, run: PinRunPage.run, wrun: !!W.run, mod: W.mod === undefined, total: W.total, balls: E.SPEEDS[W.speed].balls, keys: Object.keys(W).sort().join() === Object.keys(F).sort().join(),
+        hud: document.getElementById('runHud').hidden, end: PinRunPage.endRound(true), saved: (JSON.parse(localStorage.getItem('pin365:settings') || '{}') || {}).game, ball: document.getElementById('vWave').textContent };
+    });
+    console.log('  ' + JSON.stringify(cl));
+    ok(cl.mode === 'play' && cl.run === null && !cl.wrun && cl.mod && cl.total === cl.balls && cl.keys, 'CLASSIC: a plain world (no run, no W.mod, all ' + cl.balls + ' balls, the same fields as the engine\'s own)');
+    ok(cl.hud && cl.end === false && cl.saved === 'classic' && cl.ball === '1', 'CLASSIC: no round line, nothing to end early, and the choice is saved');
+    errs = realErrors(er.errors);
+    ok(errs.length === 0, 'ember run: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await er.ctx.close();
+
+    // ------------------------------------------------------------ EMBER RUN on a 360 px phone: readable, nothing off the screen
+    console.log('ember run phone 360 x 780, touch');
+    var ep = await open(browser, { viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+    p = ep.page;
+    var tp = await p.evaluate(function () {
+      return [].map.call(document.querySelectorAll('#ov_title [data-opt="game"]'), function (b) { var r = b.getBoundingClientRect(); return { l: Math.round(r.left), r: Math.round(r.right), h: Math.round(r.height), vis: r.width > 0 }; });
+    });
+    console.log('  ' + JSON.stringify(tp));
+    ok(tp.length === 2 && tp.every(function (b) { return b.vis && b.l >= 0 && b.r <= 360 && b.h >= 40; }), 'phone: both mode buttons on screen and big enough to tap');
+    await p.screenshot({ path: path.join(OUT, 'run-title-phone.png') });
+    await p.evaluate(function () { document.getElementById('tPlay').click(); }); await sleep(400);
+    await p.evaluate(function () { if (!ARCADE365.immersive) ARCADE365.full(true); }); await sleep(900);
+    var ph1 = await p.evaluate(function () { var h = document.getElementById('runHud'), r = h.getBoundingClientRect(), sc = document.getElementById('screen').getBoundingClientRect(); return { shown: !h.hidden, l: r.left, r: r.right, top: r.top - sc.top, bottom: r.bottom - sc.top, sh: sc.height, fs: parseFloat(getComputedStyle(h).fontSize) }; });
+    console.log('  ' + JSON.stringify(ph1));
+    ok(ph1.shown && ph1.l >= 0 && ph1.r <= 360 && ph1.fs >= 11 && ph1.bottom < ph1.sh * 0.25, 'phone: the round line sits at the top, on screen, at least 11 px (' + ph1.fs + ' px), far from the flippers');
+    await p.screenshot({ path: path.join(OUT, 'run-play-phone.png') });
+    await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(500);
+    var ph2 = await p.evaluate(function () {
+      var c = [].map.call(document.querySelectorAll('#ov_pick .rp-card'), function (b) { var r = b.getBoundingClientRect(); return { l: r.left, r: r.right, t: r.top, b: r.bottom, fs: parseFloat(getComputedStyle(b.querySelector('small')).fontSize), sw: b.scrollWidth <= b.clientWidth + 1 }; });
+      return { picking: PinRunPage.picking, cards: c, vh: innerHeight };
+    });
+    console.log('  ' + JSON.stringify(ph2));
+    ok(ph2.picking && ph2.cards.length === 3 && ph2.cards.every(function (c) { return c.l >= 0 && c.r <= 360 && c.fs >= 12 && c.sw && c.b <= ph2.vh; }), 'phone: the three upgrade cards fit 360 px across, every word at least 12 px, all on screen');
+    await p.screenshot({ path: path.join(OUT, 'run-pick-phone.png') });
+    var tb = await p.locator('#ov_pick .rp-card').nth(0).boundingBox();
+    var want0 = await p.evaluate(function () { return PinRunPage.run.offer[0]; });
+    await p.touchscreen.tap(tb.x + tb.width / 2, tb.y + tb.height / 2); await sleep(500);
+    var ph3 = await p.evaluate(function () { var R = PinRunPage.run, i = ARCADE365.input; return { round: R.round, last: R.taken[0], picking: PinRunPage.picking, held: i.pl || i.pr || i.pp }; });
+    ok(ph3.round === 2 && ph3.last === want0 && !ph3.picking && !ph3.held, 'phone: a tap on a card picks it, and the tap works no flipper');
+    errs = realErrors(ep.errors);
+    ok(errs.length === 0, 'ember run phone: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await ep.ctx.close();
 
     // ------------------------------------------------------------ a phone: title card, full screen, two fingers
     console.log('phone 412 x 915, touch');

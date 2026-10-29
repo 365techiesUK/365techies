@@ -36,6 +36,11 @@
  * lanes / round the arch. The speed setting scales every speed and push with the slope, so Gentle and Fast are the
  * same table in slower or faster motion (the same shot makes the same target on all three).
  *
+ * EMBER RUN (run.js, 30 Oct 2026, owner: "change how it plays") sets W.mod on its worlds: score multipliers by shot
+ * (W.mod.x: bumper, ramp, crater, erupt, crab, drop, lava, geyser), pressure gain (press), crab speed (crab), lava gate
+ * time (lava), geyser rest (gey), extra ball-save seconds (save), the kickback off (noKick) and pressure leak (decay).
+ * A Classic world has no W.mod, and every hook reads it only when it is there, so Classic plays exactly as before.
+ *
  * The game reports what happened in world.events (sound names and {say} for screen readers), shows messages on the
  * dot-matrix display (world.dmd) and keeps light timers in world.lit for the pictures. */
 (function (root, factory) {
@@ -256,8 +261,9 @@
   }
   function msg(W, big, small, steps) { W.dmd = { big: big, small: small || '', t: steps || 120, n: 0 }; }
   function say(W, text) { W.events.push({ say: text }); }
-  function add(W, pts, bonus) {
+  function add(W, pts, bonus, key) {   // key: the kind of shot, for EMBER RUN's multipliers (W.mod.x; Classic has no W.mod)
     if (W.tilted) return;
+    if (W.mod && key && W.mod.x[key]) pts = Math.round(pts * W.mod.x[key]);
     var before = W.score; W.score += pts; W.bonus += (bonus || 0) * B.BS;
     while (W.extraAt.length && before < W.extraAt[0] && W.score >= W.extraAt[0]) {
       W.extraAt.shift(); W.total++; W.events.push('extra'); msg(W, 'EXTRA BALL', 'REPLAY AT ' + fmt(W.score), 150); say(W, 'Extra ball!');
@@ -392,6 +398,7 @@
       var want = V.pressure > 1 ? 1 : V.pressure;
       V.rise += (want - V.rise) * 0.04;   // the cone rises (and settles) smoothly: the picture's height, 0-1
       if (V.rise < 1e-4 && want === 0) V.rise = 0;
+      if (W.mod && W.mod.decay && !V.busy && V.pressure > 0 && W.state === 'play') { V.pressure = Math.max(0, V.pressure - W.mod.decay); V.ready = B.PRESS && V.pressure >= B.PRESS.full; }   // EMBER RUN's COOLING CRUST: the pressure leaks away (30 Oct 2026)
       V.hold = V.busy && V.release > W.frame ? V.release - W.frame : 0;
     }
     var G = t.geyser;
@@ -441,7 +448,7 @@
     var d = C.d;
     if (c.stun > 0) { c.stun--; c.vx = 0; c.vy = 0; return; }
     if (c.wait > 0) { c.wait--; c.vx = 0; c.vy = 0; return; }
-    var nu = c.u + c.dir * d.speed * K.k / 60 / C.len;
+    var nu = c.u + c.dir * (W.mod ? d.speed * W.mod.crab : d.speed) * K.k / 60 / C.len;
     if (nu > 1) nu = 1; else if (nu < 0) nu = 0;
     var a = d.path[0], b = d.path[1], px = a[0] + (b[0] - a[0]) * nu, py = a[1] + (b[1] - a[1]) * nu, lim = BR + d.r + 1.5;
     for (var i = 0; i < W.balls.length; i++) {
@@ -508,7 +515,7 @@
     f.a = na;
   }
   function launched(W) {   // the ball has left the shooter lane: ball save starts now (once a ball)
-    if (W.saveArmed && !W.tilted) { W.saveArmed = false; W.saveT = SPEEDS[W.speed].save * 60; }
+    if (W.saveArmed && !W.tilted) { W.saveArmed = false; W.saveT = W.mod ? Math.max(2, SPEEDS[W.speed].save + W.mod.save) * 60 : SPEEDS[W.speed].save * 60; }
   }
   function drained(W) {
     W.events.push('drain');
@@ -582,7 +589,7 @@
       var vin = b.vx * nx + b.vy * ny;
       if (b.bump[i] === 0) {
         b.vx += (K.bump - vin) * nx; b.vy += (K.bump - vin) * ny; b.bump[i] = 18;
-        W.lit.bump[i] = 8; W.stats.bumpers++; add(W, P.bumper, 10); W.events.push({ sfx: 'bumper', i: i });
+        W.lit.bump[i] = 8; W.stats.bumpers++; add(W, P.bumper, 10, 'bumper'); W.events.push({ sfx: 'bumper', i: i });
         addP(W, 'bumper'); skillOver(W);
       } else if (vin < 0) { b.vx -= 1.5 * vin * nx; b.vy -= 1.5 * vin * ny; }
     }
@@ -689,7 +696,7 @@
     W.stats.ramps++;
     W.combo = W.comboT > 0 ? Math.min(5, W.combo + 1) : 1; W.comboT = 4 * 60;
     var pts = P.ramp * W.combo;
-    add(W, pts, 1000); W.lit.ramp = 60; addP(W, 'ramp');
+    add(W, pts, 1000, 'ramp'); W.lit.ramp = 60; addP(W, 'ramp');
     if (W.combo > 1) { W.events.push({ sfx: 'combo', n: W.combo }); msg(W, 'COMBO X' + W.combo, fmt(pts), 110); say(W, 'Ramp combo times ' + W.combo); }
     else { W.events.push('ramp'); msg(W, B.NAMES.ramp, fmt(pts), 90); }
   }
@@ -725,8 +732,8 @@
       b.x = GEY.x; b.y = GEY.y;
       if (--b.hold > 0) return;
       b.m = 'free'; b.at = null; b.vx = GEY.fling[0] * K.k; b.vy = GEY.fling[1] * K.k;
-      var G = W.toys.geyser; G.st = 'cool'; G.t = GEY.cool; G.ball = 0;
-      W.stats.geysers++; W.lit.geyser = 30; add(W, P.geyser, 1000); addP(W, 'geyser');
+      var G = W.toys.geyser; G.st = 'cool'; G.t = W.mod ? Math.round(GEY.cool * W.mod.gey) : GEY.cool; G.ball = 0;
+      W.stats.geysers++; W.lit.geyser = 30; add(W, P.geyser, 1000, 'geyser'); addP(W, 'geyser');
       W.events.push('geyser'); msg(W, 'GEYSER', fmt(P.geyser), 80);
       return;
     }
@@ -740,10 +747,10 @@
   function nearDrops(b) { for (var i = 0; i < DROPS.length; i++) if (nearSeg(b, DROPS[i], 3)) return true; return false; }
   function dropHit(W, i) {
     W.drops[i] = false; W.dropsDown++; W.stats.drops++; W.lit.drop[i] = 20;
-    add(W, P.drop, 200); W.events.push({ sfx: 'drop', i: i }); addP(W, 'drop');
+    add(W, P.drop, 200, 'drop'); W.events.push({ sfx: 'drop', i: i }); addP(W, 'drop');
     skillOver(W);
     if (W.dropsDown === DROPS.length) {
-      add(W, P.drops, 2000); W.kickback = true; W.lit.kick = 90; W.events.push('drops');
+      add(W, P.drops, 2000, 'drop'); W.kickback = true; W.lit.kick = 90; W.events.push('drops');
       if (SAU) {
         W.saucerLit = true; msg(W, B.NAMES.drops, B.NAMES.dropsSub, 150); say(W, 'All five targets down - the hangar is open');
         W.dropsT = 20 * 60;   // left open for 20 seconds
@@ -761,12 +768,12 @@
     W.stats.craters++; W.lit.crater = VOLC.hold;
     var p = V.pressure, full = PR && p >= PR.full, pts = P.crater + Math.round(p * P.pressure / 10000) * 10000;
     if (full) pts += P.eruption;
-    add(W, pts, 5000);
+    add(W, pts, 5000, full ? 'erupt' : 'crater');
     W.events.push('crater');
     if (full) {
       W.stats.eruptions++;
       var Lv = W.toys.lava;
-      if (Lv) { Lv.open = true; Lv.t = T.lava.time; Lv.gates.forEach(function (g) { g.solid = false; }); W.events.push('lavaopen'); }   // (rising out of the way is always safe)
+      if (Lv) { Lv.open = true; Lv.t = W.mod ? Math.round(T.lava.time * W.mod.lava) : T.lava.time; Lv.gates.forEach(function (g) { g.solid = false; }); W.events.push('lavaopen'); }   // (rising out of the way is always safe)
       msg(W, 'FULL ERUPTION', fmt(pts), VOLC.hold); say(W, 'Full eruption! The lava lanes are open');
     } else msg(W, 'CRATER', fmt(pts), VOLC.hold);
     V.pressure = 0; V.ready = false; V.red = false;
@@ -777,7 +784,7 @@
     var V = W.toys.volcano, PR = B.PRESS;
     if (!V || !PR || W.tilted || !PR[key]) return;
     var before = V.pressure;
-    V.pressure = Math.min(PR.max, before + PR[key]);
+    V.pressure = Math.min(PR.max, before + (W.mod ? PR[key] * W.mod.press : PR[key]));
     if (before < PR.full && V.pressure >= PR.full) {
       V.ready = true; W.events.push({ sfx: 'pressure', level: 'full' }); msg(W, 'ERUPT NOW', 'SHOOT THE CRATER', 150); say(W, 'Full pressure - shoot the crater to erupt');
     } else if (before < PR.warn && V.pressure >= PR.warn) {
@@ -793,7 +800,7 @@
   function crabHit(W, i) {
     var c = W.toys.crabs[i];
     c.stun = B.CRABS[i].d.stun; c.hits++; c.vx = 0; c.vy = 0;
-    W.stats.crabs++; W.lit.crab[i] = 30; add(W, P.crab, 1000); addP(W, 'crab');
+    W.stats.crabs++; W.lit.crab[i] = 30; add(W, P.crab, 1000, 'crab'); addP(W, 'crab');
     W.events.push({ sfx: 'crab', i: i }); msg(W, 'MAGMA CRAB', fmt(P.crab), 80);
     skillOver(W);
   }
@@ -870,7 +877,7 @@
     } else if (id === 'inL' || id === 'inR') { add(W, P.inlane, 100); W.events.push('inlane'); }
     else if (id === 'outL' || id === 'outR') { if (b.vy > 0) { add(W, P.outlane, 200); W.events.push('outlane'); } }
     else if (id === 'kick') {
-      if (W.kickback && b.vy > 0 && !W.tilted) {
+      if (W.kickback && b.vy > 0 && !W.tilted && !(W.mod && W.mod.noKick)) {
         b.vx = 0; b.vy = -K.kick; W.kickback = false; W.lit.kick = 40; W.stats.kickbacks++;
         W.events.push('kickback'); msg(W, 'KICKBACK', '', 90); say(W, 'Kickback!');
       }
@@ -888,7 +895,7 @@
     } else if (id === 'lavaL' || id === 'lavaR') {
       var Lv = W.toys.lava, li = id === 'lavaL' ? 0 : 1;
       if (Lv && Lv.open && b.vy < 0) {
-        W.stats.lava++; W.lit.lava[li] = 40; add(W, P.lava, 5000); addP(W, 'lava');
+        W.stats.lava++; W.lit.lava[li] = 40; add(W, P.lava, 5000, 'lava'); addP(W, 'lava');
         W.events.push('lava'); msg(W, 'LAVA LANE', fmt(P.lava), 100); say(W, 'Lava lane!');
         skillOver(W);
       }
