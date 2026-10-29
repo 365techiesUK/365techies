@@ -819,7 +819,10 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'company' => (string)($L['company'] ?? ''), 'topic' => (string)($L['topic'] ?? ''), 'page' => (string)($L['page'] ?? ''),
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 1200), 'at' => (string)($it['at'] ?? ''), 'done' => !empty($it['handled']),
             'done_by' => (string)($it['handled_by'] ?? ''), 'block_dom' => comms_block_domain_ok((string)($L['email'] ?? '')),
-            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
+            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''),
+            // 29 Oct 2026 (owner): what they want, in plain words, for the call back (comms-brief-lib.php)
+            'brief' => comms_lead_brief(array('label' => (string)($L['label'] ?? ''), 'topic' => (string)($L['topic'] ?? ''),
+                'company' => (string)($L['company'] ?? ''), 'body' => (string)($it['body'] ?? ''))));
     }
     // 2 Oct 2026: emails, newest first, each on its own: who (the name in their From line, else the address), the subject,
     // what they wrote, attachment names; "cust" when the address (or a number in it) is someone we hold
@@ -1074,6 +1077,7 @@ function comms_add_note($id, $text, $by, $now = null) {
    item['lead'] = {kind: web|callback, label, name, email, phone, company, topic, page}; body = what they wrote. */
 require_once __DIR__ . '/pcm-leadchase-lib.php';   // lc_lead(), lc_all_text(), lc_answered()
 require_once __DIR__ . '/comms-mail-lib.php';       // 2 Oct 2026: emails from the company mailboxes (comms_mail_poll)
+require_once __DIR__ . '/comms-brief-lib.php';      // 29 Oct 2026: comms_lead_brief(), "what they want" for each enquiry
 
 function comms_lead_unwrap($s) {   // Slack's own wrapping and escaping, off
     $s = (string)$s;
