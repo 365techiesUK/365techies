@@ -123,7 +123,7 @@
 
   // ---------------------------------------------------------------- an insert, unlit: tinted glass in a printed ring
   // (clearly coloured, so the table reads with every lamp off, but well short of lit)
-  function insertUnlit(g, l) {
+  function insertUnlit(g, l, ring) {   // ring: the printed ring's colour (white by default)
     var c = rgb(l.color), big = Math.max(l.w, l.h), NAVY = [10, 8, 40];
     g.save(); g.translate(l.x, l.y); g.rotate(l.rot || 0);
     if (l.shape === 'text') {
@@ -136,7 +136,7 @@
     }
     g.lineJoin = 'round';
     // the printed ring: white, then a black hairline against the glass
-    shapePath(g, l); g.lineWidth = 1.9; g.strokeStyle = 'rgba(255,255,255,0.62)'; g.stroke();
+    shapePath(g, l); g.lineWidth = 1.9; g.strokeStyle = ring || 'rgba(255,255,255,0.62)'; g.stroke();
     g.lineWidth = 0.9; g.strokeStyle = 'rgba(0,0,0,0.85)'; g.stroke();
     var gr = g.createRadialGradient(-big * 0.12, -big * 0.15, 0, 0, 0, big * 0.62);
     gr.addColorStop(0, css(mixc(c, [0, 0, 0], 0.22))); gr.addColorStop(0.6, css(mixc(c, [0, 0, 0], 0.45))); gr.addColorStop(1, css(mixc(c, NAVY, 0.68)));
@@ -1030,75 +1030,124 @@
           if (Math.hypot(x - ET.geyser.x, y - ET.geyser.y) < 20) break;
           pts.push([x, y]);
         }
-        veins.push({ pts: pts, w: 2.2 - veins.length * 0.15 });
+        veins.push({ pts: pts, w: 3 - veins.length * 0.2 });   // wider: lava falls down the painted flanks (30 Oct 2026)
       });
     })();
 
-    step('rock', function () {   // black volcanic rock: smooth noise worked out small and scaled up, speckles, cracks
-      var w = W0, h = H0, c = canvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h);   // a unit a pixel (was half): grain that reads as rock close up (29 Oct 2026)
-      for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
-        var n = fbm(i / 32, j / 32, 4, 11), m = fbm(i / 9, j / 9, 2, 23), gr = vn(i / 1.4, j / 1.4, 41), ox = fbm(i / 38 + 9, j / 38, 3, 5), k = (j * w + i) * 4, v = 0.45 * n + 0.3 * m + 0.25 * gr;
-        var red = sstep(0.58, 0.74, ox) * (0.55 + 0.45 * m);   // oxidised patches, broken up by the grain: hot rust red in the black
-        d.data[k] = 34 + v * 76 + red * 150; d.data[k + 1] = 22 + v * 48 + red * 34; d.data[k + 2] = 54 + v * 92 - red * 40; d.data[k + 3] = 255;   // deep violet basalt with hot red-orange patches, not mud brown (29 Oct 2026, owner: "bolder colours")
-      }
-      x.putImageData(d, 0, 0);
-      g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
-      unitT(g, S);
-      for (var q = 0; q < 10000; q++) { g.fillStyle = r() < 0.5 ? 'rgba(190,150,200,' + (0.06 + r() * 0.18) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * H0, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
+    // ---- the illustrated island (30 Oct 2026, owner: "illustrated edge to edge, like the top digital tables"): painting helpers
+    var INK = 'rgba(14,4,8,0.92)', PI2 = Math.PI * 2;
+    function lgr(c, x0, y0, x1, y1, st) { var q = c.createLinearGradient(x0, y0, x1, y1); st.forEach(function (s) { q.addColorStop(s[0], s[1]); }); return q; }
+    function rgr(c, x, y, r0, r1, st, fx, fy) { var q = c.createRadialGradient(fx == null ? x : fx, fy == null ? y : fy, r0, x, y, r1); st.forEach(function (s) { q.addColorStop(s[0], s[1]); }); return q; }
+    function smooth(c, P) { var n = P.length; c.beginPath(); c.moveTo((P[n - 1][0] + P[0][0]) / 2, (P[n - 1][1] + P[0][1]) / 2); for (var i = 0; i < n; i++) { var p = P[i], q = P[(i + 1) % n]; c.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); } c.closePath(); }
+    function resample(P, n) { var L = [0], i, tot; for (i = 0; i < P.length; i++) { var a = P[i], b = P[(i + 1) % P.length]; L.push(L[i] + Math.hypot(b[0] - a[0], b[1] - a[1])); } tot = L[P.length]; var out = [], j = 0; for (i = 0; i < n; i++) { var d = i / n * tot; while (L[j + 1] < d) j++; var f = (d - L[j]) / (L[j + 1] - L[j] || 1), A0 = P[j], B0 = P[(j + 1) % P.length]; out.push([A0[0] + (B0[0] - A0[0]) * f, A0[1] + (B0[1] - A0[1]) * f]); } return out; }
+    function inked(c, w) { c.lineJoin = 'round'; c.lineCap = 'round'; c.lineWidth = w || 0.6; c.strokeStyle = INK; c.stroke(); }
+    function shadowOf(blur, dx, dy, a, draw) { softly(g, S, 'rgba(0,0,0,' + a + ')', blur, dx, dy, draw); }
+    function leaf(c, x, y, L, Wd, a, c1, c2) {   // a pointed leaf from (x, y) along angle a: two curves, a gradient across, an inked edge, a pale midrib
+      c.save(); c.translate(x, y); c.rotate(a); c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(L * 0.45, -Wd, L, 0); c.quadraticCurveTo(L * 0.45, Wd, 0, 0); c.closePath();
+      c.fillStyle = lgr(c, 0, -Wd, 0, Wd, [[0, c2], [1, c1]]); c.fill(); inked(c, 0.32);
+      c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(L * 0.5, -Wd * 0.12, L * 0.92, 0); c.lineWidth = 0.18; c.strokeStyle = 'rgba(230,255,170,0.55)'; c.stroke(); c.restore();
+    }
+    var GREENS = [['#0b2a16', '#4fb33c'], ['#0a2e2a', '#36b08c'], ['#123a14', '#8ad04a'], ['#0e2a20', '#2e9a5a']];
+    function bush(x, y, rr, seed, up) {   // a clump of jungle leaves fanning up and out, a soft shadow under it
+      var rb = rng(seed), n = Math.round(9 + rr * 0.7);
+      shadowOf(2.5, 0.6, 1.6, 0.75, function (c) { c.beginPath(); c.ellipse(x, y + rr * 0.15, rr * 0.8, rr * 0.4, 0, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+      for (var i = 0; i < n; i++) { var t = i / (n - 1), a = (up == null ? -Math.PI / 2 : up) + (t - 0.5) * 2.6 + (rb() - 0.5) * 0.4, p = GREENS[Math.floor(rb() * 4)]; leaf(g, x + (rb() - 0.5) * rr * 0.3, y, rr * (0.6 + rb() * 0.45), rr * (0.16 + rb() * 0.1), a, p[0], p[1]); }
+    }
+    function fern(x, y, L, a, seed) {   // a fern frond: a curling stem and paired leaflets shrinking to the tip
+      var rf = rng(seed), bend = (rf() - 0.5) * 0.9, px = x, py = y, aa = a;
       g.lineCap = 'round';
-      for (q = 0; q < 110; q++) {
-        var cx = r() * W0, cy = r() * H0, a = r() * Math.PI * 2; g.beginPath(); g.moveTo(cx, cy);
-        for (var s2 = 0; s2 < 6; s2++) { a += (r() - 0.5) * 1.2; cx += Math.cos(a) * 4; cy += Math.sin(a) * 4; g.lineTo(cx, cy); }
-        g.lineWidth = 0.25 + r() * 0.35; g.strokeStyle = 'rgba(0,0,0,0.55)'; g.stroke();
+      for (var i = 0; i < 14; i++) { var t = i / 14, st = L / 14; aa += bend * 0.08; var nx = px + Math.cos(aa) * st, ny = py + Math.sin(aa) * st, ll = L * 0.32 * (1 - t * 0.8);
+        [-1, 1].forEach(function (sd) { leaf(g, px, py, ll, ll * 0.22, aa + sd * 1.0, '#0c3018', i % 2 ? '#5cc04a' : '#3ea83e'); });
+        g.beginPath(); g.moveTo(px, py); g.lineTo(nx, ny); g.lineWidth = 0.45; g.strokeStyle = '#1e4a1a'; g.stroke(); px = nx; py = ny; }
+    }
+    function palm(x, y, h, lean, seed) {   // a palm: a ringed trunk curving up, drooping fronds with leaflets, coconuts
+      var rp = rng(seed), tx = x + lean * h, ty = y - h, cx0 = x + lean * h * 0.15, cy0 = y - h * 0.55, k;
+      shadowOf(3, 2.5, 3, 0.7, function (c) { c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(cx0, cy0, tx, ty); c.lineWidth = 3; c.strokeStyle = '#000'; c.stroke(); c.beginPath(); c.arc(tx, ty, h * 0.36, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+      for (k = 0; k <= 16; k++) { var t = k / 16, u = 1 - t, px = u * u * x + 2 * u * t * cx0 + t * t * tx, py = u * u * y + 2 * u * t * cy0 + t * t * ty, rw = 2.1 - t * 0.9;
+        g.beginPath(); g.ellipse(px, py, rw, rw * 0.62, 0, 0, PI2); g.fillStyle = lgr(g, px - rw, 0, px + rw, 0, [[0, '#3a2414'], [0.55, '#b0804a'], [1, '#4a2e18']]); g.fill(); inked(g, 0.3); }
+      for (k = 0; k < 9; k++) { var a = -Math.PI / 2 + (k / 8 - 0.5) * 3.6 + (rp() - 0.5) * 0.3, L = h * (0.42 + rp() * 0.14), ex = tx + Math.cos(a) * L, ey = ty + Math.sin(a) * L * 0.7 + L * 0.42, mx2 = tx + Math.cos(a) * L * 0.55, my2 = ty + Math.sin(a) * L * 0.55 - L * 0.12;
+        for (var j = 1; j <= 12; j++) { var s = j / 12, w1 = 1 - s, qx = w1 * w1 * tx + 2 * w1 * s * mx2 + s * s * ex, qy = w1 * w1 * ty + 2 * w1 * s * my2 + s * s * ey, dx2 = 2 * w1 * (mx2 - tx) + 2 * s * (ex - mx2), dy2 = 2 * w1 * (my2 - ty) + 2 * s * (ey - my2), an = Math.atan2(dy2, dx2), ll = L * 0.3 * (1 - s * 0.55);
+          leaf(g, qx, qy, ll, ll * 0.2, an + 0.9 + 0.3, '#0a2a14', j % 3 ? '#48b03c' : '#7ccf48'); leaf(g, qx, qy, ll, ll * 0.2, an - 0.9 - 0.3, '#0a2a14', j % 3 ? '#3a9a3a' : '#6cc444'); }
+        g.beginPath(); g.moveTo(tx, ty); g.quadraticCurveTo(mx2, my2, ex, ey); g.lineWidth = 0.5; g.strokeStyle = '#2a4a18'; g.stroke(); }
+      for (k = 0; k < 3; k++) { var ca = k * 2.1 + 0.4; g.beginPath(); g.arc(tx + Math.cos(ca) * 1.6, ty + 1 + Math.sin(ca) * 1.2, 1.3, 0, PI2); g.fillStyle = rgr(g, tx + Math.cos(ca) * 1.6, ty + 1 + Math.sin(ca) * 1.2, 0, 1.3, [[0, '#a07040'], [1, '#3a2010']], tx + Math.cos(ca) * 1.6 - 0.4, ty + 0.6 + Math.sin(ca) * 1.2); g.fill(); inked(g, 0.25); }
+    }
+    function stoneBlock(x, y, w, h, seed, lit) {   // a carved stone block: lit top-left, dark bottom-right, inked joints, cracks and moss
+      var rs = rng(seed), b = 0.85 + rs() * 0.3;
+      g.fillStyle = lgr(g, x, y, x + w * 0.4, y + h, [[0, css(mixc([150, 136, 140], [255, 190, 140], lit || 0), 1)], [0.5, css([96 * b, 84 * b, 96 * b])], [1, css([46 * b, 38 * b, 50 * b])]]); g.fillRect(x, y, w, h);
+      g.beginPath(); g.rect(x, y, w, h); inked(g, 0.35);
+      if (rs() < 0.5) { g.beginPath(); var cx1 = x + rs() * w, cy1 = y; g.moveTo(cx1, cy1); for (var i = 0; i < 3; i++) { cx1 += (rs() - 0.5) * 2.5; cy1 += h / 3; g.lineTo(cx1, cy1); } g.lineWidth = 0.2; g.strokeStyle = 'rgba(10,4,8,0.7)'; g.stroke(); }
+      if (rs() < 0.35) { g.fillStyle = 'rgba(80,160,60,' + (0.4 + rs() * 0.3) + ')'; g.beginPath(); g.ellipse(x + rs() * w, y + h * (0.6 + rs() * 0.4), 1 + rs() * 2, 0.6 + rs(), 0, 0, PI2); g.fill(); }
+    }
+
+    var NZ = null, GR = null;   // the rock noise (a unit a pixel) and a neutral grain from it, laid over the painted scene for texture
+    step('rock', function () {   // smooth noise worked out small and scaled up: the base under the painting, and its grain
+      var w = W0, h = H0, c = canvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h), c2 = canvas(w, h), x2 = c2.getContext('2d'), d2 = x2.createImageData(w, h);
+      for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
+        var n = fbm(i / 32, j / 32, 4, 11), m = fbm(i / 9, j / 9, 2, 23), gr = vn(i / 1.4, j / 1.4, 41), k = (j * w + i) * 4, v = 0.45 * n + 0.3 * m + 0.25 * gr;
+        d.data[k] = 34 + v * 76; d.data[k + 1] = 22 + v * 48; d.data[k + 2] = 54 + v * 92; d.data[k + 3] = 255;
+        var gv = clamp(128 + (n - 0.5) * 110 + (m - 0.5) * 120 + (gr - 0.5) * 100, 0, 255); d2.data[k] = gv; d2.data[k + 1] = gv; d2.data[k + 2] = gv; d2.data[k + 3] = 255;
       }
+      x.putImageData(d, 0, 0); x2.putImageData(d2, 0, 0); NZ = c; GR = c2;
+      g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
     });
-    step('glowfield', function () {   // the lower half lit by the lava: a warm wash up from the river, hot cracks in the rock
+    var MC = [84, 112], MT = resample([[84, 88], [100, 92], [114, 101], [127, 114], [138, 132], [147, 156], [151, 184], [145, 210], [132, 234], [110, 252], [84, 258], [58, 254], [36, 242], [20, 224], [8, 200], [4, 170], [8, 140], [18, 118], [34, 104], [58, 94]], 150);
+    step('scene', function () {   // the ground, the dusk sky and sea, the volcano's strata, the ruined plaza under the fumaroles, the beach
       unitT(g, S); unitT(gg, GS);
-      var wash = g.createLinearGradient(0, 170, 0, 420); wash.addColorStop(0, 'rgba(255,60,10,0)'); wash.addColorStop(0.5, 'rgba(255,70,16,0.17)'); wash.addColorStop(1, 'rgba(255,100,20,0.27)');
-      g.fillStyle = wash; g.fillRect(0, 170, W0, 250);
-      var rc = rng(19);
-      both(function (c, glow) {   // hot cracks branching off the river across the lower rock (both canvases: they glow)
-        c.lineCap = 'round'; c.lineJoin = 'round';
-        for (var k = 0; k < 18; k++) {
-          var p = RIV[3 + Math.floor(rc() * (RIV.length - 5))], side = rc() < 0.5 ? -1 : 1, x = p[0] + side * p[2] * 0.4, y = p[1], a = side < 0 ? Math.PI + (rc() - 0.5) * 0.9 : (rc() - 0.5) * 0.9, pts = [[x, y]];
-          for (var j = 0; j < 4 + rc() * 6; j++) { a += (rc() - 0.5) * 0.8; x += Math.cos(a) * 4.5; y += Math.sin(a) * 4.5; if (x < 60 || x > 190 || y > 400) break; pts.push([x, y]); }
-          [[glow ? 2.4 : 1.8, glow ? 'rgba(255,80,10,0.55)' : 'rgba(30,6,2,0.8)'], [glow ? 1.1 : 0.8, glow ? '#ff8a1a' : '#ff6a10'], [0.3, glow ? '#ffe08a' : '#ffd060']].forEach(function (st) { path(c, pts); c.lineWidth = st[0]; c.strokeStyle = st[1]; c.stroke(); });
-        }
+      var k, rs = rng(808);
+      g.globalAlpha = 0.9; g.fillStyle = lgr(g, 0, 140, 0, 470, [[0, '#24402a'], [0.45, '#2e5030'], [0.8, '#3a5a2c'], [1, '#4a5228']]); g.fillRect(0, 120, W0, H0 - 120); g.globalAlpha = 1;   // the jungle floor
+      g.fillStyle = lgr(g, 0, 0, 0, 120, [[0, '#120a2c'], [0.32, '#34124a'], [0.6, '#8a2a48'], [0.8, '#e0602e'], [1, '#ffb04a']]); g.fillRect(0, 0, W0, 120);   // dusk
+      both(function (c, glow) { var rz = rng(4); for (k = 0; k < 90; k++) { var sx = rz() * W0, sy = rz() * 48, sr = 0.2 + rz() * 0.45; c.fillStyle = 'rgba(255,240,220,' + (glow ? 0.5 : 0.8) * (1 - sy / 60) + ')'; c.beginPath(); c.arc(sx, sy, sr, 0, PI2); c.fill(); } });
+      // the setting sun on the sea horizon (top right), its glitter path, far islands
+      var SX = 230, SY = 90;
+      both(function (c, glow) { c.fillStyle = rgr(c, SX, SY, 0, 30, [[0, glow ? 'rgba(255,200,120,0.8)' : 'rgba(255,220,140,0.85)'], [1, 'rgba(255,120,40,0)']]); c.fillRect(SX - 30, SY - 30, 60, 60); c.beginPath(); c.arc(SX, SY, 7.5, Math.PI, PI2); c.fillStyle = lgr(c, 0, SY - 8, 0, SY, [[0, '#fff6c8'], [1, '#ffb040']]); c.fill(); });
+      g.fillStyle = lgr(g, 0, SY, 0, 112, [[0, '#d0603a'], [0.25, '#5a2a54'], [1, '#14183a']]); g.fillRect(118, SY, W0 - 118, 22);
+      both(function (c, glow) { var rz = rng(12); for (k = 0; k < 60; k++) { var yy = SY + 1 + rz() * 20, sp = 2 + (yy - SY) * 0.5; c.fillStyle = 'rgba(255,214,140,' + (glow ? 0.55 : 0.8) + ')'; c.fillRect(SX + (rz() - 0.5) * sp * 2, yy, 0.6 + rz() * 2.2, 0.35); } });
+      [[124, 6, 18], [150, 4, 12], [196, 3, 10]].forEach(function (p) { g.beginPath(); g.moveTo(p[0], SY + 0.5); g.quadraticCurveTo(p[0] + p[2] * 0.35, SY - p[1] * 1.6, p[0] + p[2], SY + 0.5); g.closePath(); g.fillStyle = '#2a1430'; g.fill(); });
+      // the ash plume off the crater, drifting up and left: dark violet, lit orange from underneath
+      [[84, 96, 7], [80, 82, 9], [72, 64, 11], [60, 46, 13], [44, 32, 15], [26, 22, 16], [10, 16, 15], [100, 74, 7]].forEach(function (p, i) {
+        for (var j = 0; j < 4; j++) { var bx = p[0] + (rs() - 0.5) * p[2], by = p[1] + (rs() - 0.5) * p[2] * 0.6, br = p[2] * (0.55 + rs() * 0.4);
+          g.fillStyle = rgr(g, bx, by + br * 0.3, 0, br, [[0, 'rgba(255,120,60,0.55)'], [1, 'rgba(255,90,40,0)']]); g.beginPath(); g.arc(bx, by + br * 0.3, br, 0, PI2); g.fill();
+          g.fillStyle = rgr(g, bx, by - br * 0.1, 0, br, [[0, 'rgba(44,22,50,0.92)'], [0.7, 'rgba(60,28,64,0.6)'], [1, 'rgba(60,28,64,0)']]); g.beginPath(); g.arc(bx, by - br * 0.1, br, 0, PI2); g.fill(); }
       });
-      // warm pools of light round the slings (the lava lights their plastics from below)
-      ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 30, [255, 110, 30], 0.42); pool(gg, cx, cy, 28, [255, 100, 20], 0.55); });
-    });
-    step('mural', function () {   // printed playfield art over the bare rock (29 Oct 2026: the top tables print art edge to edge): a sunburst from the
-      // volcano, basalt hex columns fading in down the field, gold pinstripe rings round the peak, and printed ember sparks (they glow)
-      unitT(g, S); unitT(gg, GS);
-      var rm = rng(41), k, a;
-      g.save(); g.globalCompositeOperation = 'screen';
-      for (k = 0; k < 28; k++) {   // the sunburst: alternate warm and magenta wedges, fading out with distance
-        a = k / 28 * Math.PI * 2; var a1 = a + Math.PI / 28, sb = g.createRadialGradient(V.x, V.y, V.r + 6, V.x, V.y, 330);
-        sb.addColorStop(0, k % 2 ? 'rgba(255,120,40,0.26)' : 'rgba(220,60,160,0.2)'); sb.addColorStop(1, 'rgba(0,0,0,0)');
-        g.fillStyle = sb; g.beginPath(); g.moveTo(V.x, V.y); g.arc(V.x, V.y, 330, a, a1); g.closePath(); g.fill();
-      }
+      // the volcano's flanks: seven strata, each a little smaller round the cone, warm lit from below, inked, a rim light on each lip
+      var LAY = [[1, '#3a1a2a', '#7a3030'], [0.86, '#6a3a2a', '#c0682e'], [0.74, '#2a1220', '#5a1e28'], [0.63, '#7a4430', '#d07a36'], [0.53, '#301424', '#682a2a'], [0.44, '#6a3828', '#e0803a'], [0.36, '#24101a', '#5a1e1e']], OUT0 = null;
+      LAY.forEach(function (Ly, li) {
+        var P = MT.map(function (p, i) { var f = Ly[0] * (1 + (vn(i * 0.31, li * 3.1, 71) - 0.5) * (li ? 0.14 : 0.05)); return [MC[0] + (p[0] - MC[0]) * f, MC[1] + (p[1] - MC[1]) * f]; });
+        if (!li) OUT0 = P;
+        shadowOf(2.4, 0, 1.2, 0.65, function (c) { smooth(c, P); c.fillStyle = '#000'; c.fill(); });
+        smooth(g, P); g.fillStyle = lgr(g, 0, MC[1] + (88 - MC[1]) * Ly[0], 0, MC[1] + (258 - MC[1]) * Ly[0], [[0, Ly[1]], [1, Ly[2]]]); g.fill();
+        g.save(); g.translate(0, -0.5); smooth(g, P); g.lineWidth = 0.5; g.strokeStyle = 'rgba(255,170,100,0.5)'; g.stroke(); g.restore();
+        smooth(g, P); inked(g, 0.65);
+        [0.035, 0.07].forEach(function (df, q) { var Q = P.map(function (p, i) { var f = 1 - df / Ly[0] + (vn(i * 0.5, li * 7 + q, 73) - 0.5) * 0.02; return [MC[0] + (p[0] - MC[0]) * f, MC[1] + (p[1] - MC[1]) * f]; }); smooth(g, Q); g.lineWidth = 0.4; g.strokeStyle = q ? 'rgba(10,2,6,0.4)' : 'rgba(255,200,150,0.25)'; g.stroke(); });   // the strata's own bedding lines
+      });
+      g.save(); smooth(g, OUT0); g.clip(); g.lineCap = 'round';   // rock faces: short strokes running down the slope, dark and light
+      for (k = 0; k < 1100; k++) { var hx = 4 + rs() * 150, hy = 88 + rs() * 172, ang = Math.atan2(hy - MC[1], hx - MC[0]), ln = 1.2 + rs() * 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(hx + Math.cos(ang) * ln, hy + Math.sin(ang) * ln); g.lineWidth = 0.25 + rs() * 0.35; g.strokeStyle = rs() < 0.6 ? 'rgba(8,2,6,0.45)' : 'rgba(255,170,120,0.18)'; g.stroke(); }
       g.restore();
-      g.lineWidth = 0.45;   // basalt hex columns: outlines, strongest low on the field, broken up at random
-      for (var hy = 150, row = 0; hy < H0 - 30; hy += 8.7, row++) for (var hx = (row % 2) * 7.5; hx < W0; hx += 15) {
-        var f = Math.min(1, (hy - 150) / 160), al = f * (0.1 + rm() * 0.16);
-        if (rm() < 0.3 || al < 0.02) continue;
-        g.strokeStyle = 'rgba(255,190,110,' + al.toFixed(3) + ')'; g.beginPath();
-        for (k = 0; k <= 6; k++) { a = Math.PI / 6 + k * Math.PI / 3; var px = hx + Math.cos(a) * 5, py = hy + Math.sin(a) * 5; if (k) g.lineTo(px, py); else g.moveTo(px, py); }
-        g.stroke();
-      }
-      [V.r + 16, V.r + 27, V.r + 40].forEach(function (rr, i) {   // gold pinstripe rings round the peak, dashed outward
-        g.save(); g.setLineDash(i ? [3, 2.2 + i] : []); g.lineWidth = i ? 0.6 : 0.9; g.strokeStyle = 'rgba(255,205,110,' + (0.6 - i * 0.15) + ')';
-        g.beginPath(); g.arc(V.x, V.y, rr, 0, Math.PI * 2); g.stroke(); g.restore();
-      });
-      both(function (c, glow) {   // printed ember sparks scattered down the field
-        var rs = rng(57);
-        for (k = 0; k < 160; k++) {
-          var sx = 14 + rs() * (W0 - 40), sy = 40 + rs() * (H0 - 110), sr = 0.35 + rs() * 0.8, hot = rs();
-          c.fillStyle = hot > 0.7 ? 'rgba(255,230,140,' + (glow ? 0.9 : 0.85) + ')' : 'rgba(255,110,40,' + (glow ? 0.6 : 0.7) + ')';
-          c.beginPath(); c.arc(sx, sy, sr, 0, Math.PI * 2); c.fill();
-        }
-      });
+      // the ruined plaza the fumaroles stand on: a ring of cut blocks, a carved band of our own glyphs, a paved floor, a flame star
+      var PX = 179, PY = 136, PR = 50;
+      shadowOf(4, 0, 2, 0.9, function (c) { c.beginPath(); c.arc(PX, PY, PR, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+      g.beginPath(); g.arc(PX, PY, PR - 8, 0, PI2); g.fillStyle = rgr(g, PX, PY, 4, PR - 8, [[0, '#6a5a62'], [1, '#30262e']], PX - 10, PY - 12); g.fill();
+      for (k = 0; k < 30; k++) { var a0 = k / 30 * PI2, a1 = (k + 1) / 30 * PI2, bb = 0.8 + rs() * 0.35, lit = 0.5 + 0.5 * Math.cos(a0 + 2.2);
+        g.beginPath(); g.arc(PX, PY, PR, a0, a1); g.arc(PX, PY, PR - 8, a1, a0, true); g.closePath(); g.fillStyle = css(mixc([60 * bb, 50 * bb, 60 * bb], [168, 150, 150], lit * 0.6)); g.fill(); inked(g, 0.35);
+        if (rs() < 0.4) { var ma = (a0 + a1) / 2; g.fillStyle = 'rgba(70,150,60,0.55)'; g.beginPath(); g.ellipse(PX + Math.cos(ma) * (PR - 2), PY + Math.sin(ma) * (PR - 2), 2.2, 1.1, ma, 0, PI2); g.fill(); } }
+      g.beginPath(); g.arc(PX, PY, PR - 8, 0, PI2); g.fillStyle = '#2a2028'; g.fill(); g.beginPath(); g.arc(PX, PY, PR - 15, 0, PI2); g.fillStyle = rgr(g, PX, PY, 4, PR - 15, [[0, '#7a6870'], [0.7, '#4e4048'], [1, '#2e2430']], PX - 8, PY - 10); g.fill();
+      [PR - 8.6, PR - 14.4].forEach(function (rr) { g.beginPath(); g.arc(PX, PY, rr, 0, PI2); g.lineWidth = 0.6; g.strokeStyle = '#e8b04a'; g.stroke(); });
+      for (k = 0; k < 18; k++) { var ga = k / 18 * PI2, gx = PX + Math.cos(ga) * (PR - 11.5), gy = PY + Math.sin(ga) * (PR - 11.5); g.save(); g.translate(gx, gy); g.rotate(ga + Math.PI / 2); g.fillStyle = '#e8b04a'; g.beginPath();   // our glyphs: a flame, a wave, a peak, in turn
+        if (k % 3 === 0) { g.moveTo(0, -2); g.quadraticCurveTo(1.6, 0, 0, 1.6); g.quadraticCurveTo(-1.6, 0, 0, -2); g.fill(); } else if (k % 3 === 1) { g.moveTo(-2, 0.6); g.quadraticCurveTo(-1, -1.4, 0, 0.6); g.quadraticCurveTo(1, -1.4, 2, 0.6); g.lineWidth = 0.5; g.strokeStyle = '#e8b04a'; g.stroke(); } else { g.moveTo(-1.8, 1.4); g.lineTo(0, -1.8); g.lineTo(1.8, 1.4); g.closePath(); g.fill(); }
+        g.restore(); }
+      for (k = 0; k < 12; k++) { var ra = k / 12 * PI2; g.beginPath(); g.moveTo(PX + Math.cos(ra) * 8, PY + Math.sin(ra) * 8); g.lineTo(PX + Math.cos(ra) * (PR - 15), PY + Math.sin(ra) * (PR - 15)); g.lineWidth = 0.35; g.strokeStyle = 'rgba(14,6,10,0.7)'; g.stroke(); }
+      [14, 24].forEach(function (rr) { g.beginPath(); g.arc(PX, PY, rr, 0, PI2); g.lineWidth = 0.35; g.strokeStyle = 'rgba(14,6,10,0.7)'; g.stroke(); });
+      g.beginPath(); for (k = 0; k < 16; k++) { var fa = k / 16 * PI2, fr = k % 2 ? 6 : 15; g.lineTo(PX + Math.cos(fa) * fr, PY + Math.sin(fa) * fr); } g.closePath(); g.fillStyle = 'rgba(232,170,60,0.75)'; g.fill(); inked(g, 0.4);
+      // the jungle floor's life: dappled light, grass tufts, pebbles with a highlight (no plain ground left)
+      for (k = 0; k < 70; k++) { var dx = 10 + rs() * 230, dy = 250 + rs() * 100, dr = 4 + rs() * 9; g.fillStyle = rgr(g, dx, dy, 0, dr, [[0, 'rgba(200,230,120,0.3)'], [1, 'rgba(200,230,120,0)']]); g.fillRect(dx - dr, dy - dr, dr * 2, dr * 2); }
+      g.lineCap = 'round'; for (k = 0; k < 900; k++) { var tx2 = 8 + rs() * 236, ty2 = 236 + rs() * 120, tl = 0.8 + rs() * 1.6, ta = -Math.PI / 2 + (rs() - 0.5) * 1.2; g.beginPath(); g.moveTo(tx2, ty2); g.lineTo(tx2 + Math.cos(ta) * tl, ty2 + Math.sin(ta) * tl); g.lineWidth = 0.3; g.strokeStyle = rs() < 0.5 ? 'rgba(140,210,90,0.55)' : 'rgba(10,30,12,0.6)'; g.stroke(); }
+      for (k = 0; k < 90; k++) { var px2 = 8 + rs() * 236, py2 = 240 + rs() * 110, pr = 0.5 + rs() * 1.2; g.beginPath(); g.ellipse(px2, py2, pr * 1.3, pr, 0, 0, PI2); g.fillStyle = rgr(g, px2, py2, 0, pr * 1.3, [[0, '#a89a90'], [1, '#3a3032']], px2 - pr * 0.4, py2 - pr * 0.4); g.fill(); inked(g, 0.2); }
+      for (k = 0; k < 60; k++) { var fx2 = 8 + rs() * 236, fy2 = 240 + rs() * 110; g.fillStyle = ['#ff6a9a', '#ffd84a', '#ff8a3a', '#e0f0ff'][k % 4]; g.beginPath(); g.arc(fx2, fy2, 0.45 + rs() * 0.35, 0, PI2); g.fill(); }
+      // the beach between the slings: warm sand running down to the lagoon, wet and darker at the water
+      var BE = [[60, 344], [190, 344], [194, 358], [180, 398], [150, 408], [100, 408], [70, 398], [56, 358]];
+      smooth(g, BE); g.fillStyle = lgr(g, 0, 344, 0, 408, [[0, 'rgba(110,74,36,0.2)'], [0.22, '#8a5e30'], [0.65, '#c89448'], [1, '#e0b466']]); g.fill();
+      for (k = 0; k < 500; k++) { var sx2 = 62 + rs() * 126, sy2 = 348 + rs() * 58; g.fillStyle = rs() < 0.5 ? 'rgba(255,236,190,0.35)' : 'rgba(70,40,16,0.35)'; g.fillRect(sx2, sy2, 0.3 + rs() * 0.4, 0.3 + rs() * 0.4); }
+      g.save(); g.globalCompositeOperation = 'overlay'; g.globalAlpha = 0.55; g.imageSmoothingEnabled = true; g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(GR, 0, 0, W0 * S, H0 * S); g.restore();   // the grain over it all: paint on a printed, textured board
     });
     step('river', function () {   // the lava river under the glass: a dark crust bank, molten core, a yellow heart (glows)
       unitT(g, S); unitT(gg, GS);
@@ -1125,6 +1174,13 @@
       softly(g, S, 'rgba(0,0,0,0.6)', 3, 0, -1, function (c) { poly(c, LG); c.lineWidth = 9; c.strokeStyle = '#000'; c.stroke(); });
       g.save(); poly(g, LG); g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = '#ffbe3a'; g.stroke(); g.lineWidth = 5; g.strokeStyle = '#ffdc78'; g.stroke(); g.restore();
       water(LG, 404, H0, '#0870cc');
+      g.save(); poly(g, LG); g.clip(); (function () {   // the reef in the lagoon (30 Oct 2026): surf lines along the shore, corals, a few fish
+        var rr = rng(606), k, y, side;
+        for (k = 1; k <= 3; k++) { [-1, 1].forEach(function (sd) { g.beginPath(); for (y = 406; y <= H0; y += 2) { var hw = 9 + (y - 404) * 0.72 - k * 2.6 + Math.sin(y / 3 + k) * 0.5; if (y === 406) g.moveTo(MI + sd * hw, y); else g.lineTo(MI + sd * hw, y); } g.lineWidth = 0.5; g.strokeStyle = 'rgba(240,255,255,' + (0.75 - k * 0.18) + ')'; g.stroke(); }); }
+        [[101, 455, 5, '#ff6a8a'], [149, 455, 5, '#ff9a3a'], [112, 466, 4, '#ffd04a'], [139, 466, 4, '#c85aff'], [96, 466, 3.5, '#ff7a5a'], [154, 466, 3.5, '#5ae0c0']].forEach(function (c0) {
+          for (k = 0; k < 7; k++) { var a = -Math.PI / 2 + (k / 6 - 0.5) * 2.2, x = c0[0], yy = c0[1], L2 = c0[2] * (0.6 + rr() * 0.5); g.beginPath(); g.moveTo(x, yy); g.quadraticCurveTo(x + Math.cos(a) * L2 * 0.5 + (rr() - 0.5), yy + Math.sin(a) * L2 * 0.5, x + Math.cos(a) * L2, yy + Math.sin(a) * L2); g.lineCap = 'round'; g.lineWidth = 1.5; g.strokeStyle = INK; g.stroke(); g.lineWidth = 1; g.strokeStyle = c0[3]; g.stroke(); g.beginPath(); g.arc(x + Math.cos(a) * L2, yy + Math.sin(a) * L2, 0.6, 0, PI2); g.fillStyle = '#fff0f0'; g.fill(); } });
+        [[118, 444, 1], [132, 452, -1], [125, 430, 1]].forEach(function (f) { g.save(); g.translate(f[0], f[1]); g.scale(f[2], 1); g.beginPath(); g.ellipse(0, 0, 2.2, 1.1, 0, 0, PI2); g.moveTo(-1.8, 0); g.lineTo(-3.4, -1.1); g.lineTo(-3.4, 1.1); g.closePath(); g.fillStyle = '#ffa030'; g.fill(); inked(g, 0.25); g.fillStyle = '#fff'; g.fillRect(-0.4, -1, 0.5, 2); g.restore(); });
+      })(); g.restore();
       var ch = [[221, 150], [243, 150], [243, 300], [221, 300]];
       water(ch, 150, 300, '#0896d8');
       var sh = [[245, 150], [265, 150], [265, H0 + 2], [245, H0 + 2]];
@@ -1143,7 +1199,7 @@
     step('summit', function () {   // the scorched ring round the volcano, lava veins, the lava lanes, the fumaroles' crusts
       unitT(g, S); unitT(gg, GS);
       // a pale ash field round the cone's foot, so the black cone stands out against it at the home view
-      var sr = g.createRadialGradient(V.x, V.y, V.r + 4, V.x, V.y, V.r + 34); sr.addColorStop(0, 'rgba(196,180,168,0.95)'); sr.addColorStop(0.55, 'rgba(150,130,120,0.6)'); sr.addColorStop(1, 'rgba(120,100,90,0)');
+      var sr = g.createRadialGradient(V.x, V.y, V.r + 4, V.x, V.y, V.r + 34); sr.addColorStop(0, 'rgba(196,180,168,0.7)'); sr.addColorStop(0.55, 'rgba(150,130,120,0.35)'); sr.addColorStop(1, 'rgba(120,100,90,0)');
       g.fillStyle = sr; g.fillRect(V.x - 60, V.y - 60, 120, 120);
       var ra = rng(9); for (var q = 0; q < 500; q++) { var aa = ra() * Math.PI * 2, dd = V.r + 6 + Math.pow(ra(), 1.5) * 26; g.fillStyle = ra() < 0.6 ? 'rgba(40,30,30,0.5)' : 'rgba(230,220,210,0.5)'; g.fillRect(V.x + Math.cos(aa) * dd, V.y + Math.sin(aa) * dd, 0.4 + ra() * 0.6, 0.4 + ra() * 0.6); }
       both(function (c, glow) {
@@ -1166,15 +1222,14 @@
         });
       });
       ET.bumpers.forEach(function (b) {
-        var cr = g.createRadialGradient(b[0], b[1], b[2], b[0], b[1], b[2] + 13); cr.addColorStop(0, 'rgba(240,214,70,0.8)'); cr.addColorStop(0.6, 'rgba(220,170,40,0.35)'); cr.addColorStop(1, 'rgba(200,140,30,0)');
-        g.fillStyle = cr; g.beginPath(); g.arc(b[0], b[1], b[2] + 13, 0, Math.PI * 2); g.fill();
+        var cr = g.createRadialGradient(b[0], b[1], b[2], b[0], b[1], b[2] + 9); cr.addColorStop(0, 'rgba(255,170,60,0.55)'); cr.addColorStop(1, 'rgba(255,120,30,0)'); g.fillStyle = cr; g.beginPath(); g.arc(b[0], b[1], b[2] + 9, 0, Math.PI * 2); g.fill();   // a warm halo on the plaza's stone (was a gold crust till 30 Oct 2026)
         pool(gg, b[0], b[1], b[2] * 2.6, [255, 120, 30], 0.3);
       });
       for (var i = 0; i < 3; i++) { var sx = 146 + i * 24; g.fillStyle = 'rgba(14,8,10,0.85)'; g.fillRect(sx + 2.5, 62, 19, 30); g.strokeStyle = 'rgba(255,207,106,0.8)'; g.lineWidth = 0.6; g.strokeRect(sx + 2.5, 62, 19, 30); }
     });
     step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes (lit: they glow)
       unitT(g, S); unitT(gg, GS);
-      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#9a5a12'); lg.addColorStop(0.5, '#d8a040'); lg.addColorStop(1, '#9a5a12');
+      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#5a3010'); lg.addColorStop(0.5, '#a8742e'); lg.addColorStop(1, '#5a3010');   // darker under the ball's lane (30 Oct 2026)
       g.fillStyle = lg; g.fillRect(7, 140, 22, 160); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       var re = ET.ramp.entry;
@@ -1191,6 +1246,99 @@
         gg.fillStyle = lgg; gg.fillRect(x - 6, fy - 120, 12, 92);
       });
       [outX, 2 * MI - outX].forEach(function (x) { var lgg = gg.createLinearGradient(x - 7, 0, x + 7, 0); lgg.addColorStop(0, 'rgba(40,200,220,0)'); lgg.addColorStop(0.5, 'rgba(60,220,240,0.35)'); lgg.addColorStop(1, 'rgba(40,200,220,0)'); gg.fillStyle = lgg; gg.fillRect(x - 7, fy - 86, 14, 106); });
+    });
+    step('jungle', function () {   // the jungle edge: palms over the orbits' exits, bushes and ferns round the inlanes and the mountain's foot
+      unitT(g, S);
+      [[58, 262, 11, 31], [146, 250, 8, 32, -1.2], [212, 236, 9, 33], [40, 236, 8, 34], [62, 336, 9, 35, -1.9], [188, 336, 9, 36, -1.25], [36, 312, 9, 37], [214, 312, 9, 38], [100, 262, 7, 39], [228, 250, 8, 40], [20, 298, 8, 41]].forEach(function (b) { bush(b[0], b[1], b[2], b[3], b[4]); });
+      palm(44, 304, 50, -0.32, 5); palm(206, 304, 50, 0.32, 6); palm(156, 250, 30, 0.25, 7);
+      fern(64, 344, 14, -2.2, 8); fern(186, 344, 14, -0.95, 9); fern(54, 268, 12, -2.5, 10); fern(196, 268, 12, -0.6, 11);
+    });
+    step('ruins', function () {   // stone steps up to the plaza, the ERUPT tablet, our guardian heads (carved stone, ember eyes)
+      unitT(g, S); unitT(gg, GS);
+      var k, s;
+      shadowOf(2, 0, 1, 0.8, function (c) { c.fillStyle = '#000'; c.fillRect(156, 184, 40, 46); });
+      for (s = 0; s < 7; s++) {   // the temple steps under the ramp's return, from the plaza down towards the drop targets
+        var y0 = 186 + s * 6.4, x0 = 158 - s * 0.6, x1 = 194;
+        g.fillStyle = '#2a2028'; g.fillRect(x0, y0 + 3.6, x1 - x0, 2.8);
+        for (var bx = x0, bi = 0; bx < x1 - 0.5; bi++) { var bw = Math.min(x1 - bx, 5.5 + ((s * 7 + bi * 3) % 4)); stoneBlock(bx, y0, bw, 3.6, 900 + s * 20 + bi, 0.45); bx += bw; }
+      }
+      // the ERUPT tablet: a bevelled slab with a gold inlay that glows faintly
+      var TX0 = 78, TX1 = 172, TY0 = 312, TY1 = 353;
+      shadowOf(3, 0.5, 1.8, 0.9, function (c) { c.fillStyle = '#000'; c.fillRect(TX0, TY0, TX1 - TX0, TY1 - TY0); });
+      g.fillStyle = lgr(g, 0, TY0, 0, TY1, [[0, '#8a7a80'], [0.12, '#5a4a54'], [1, '#2a2028']]); g.fillRect(TX0, TY0, TX1 - TX0, TY1 - TY0);
+      g.fillStyle = lgr(g, 0, TY0, 0, TY1, [[0, '#2e2028'], [1, '#160c12']]); g.fillRect(TX0 + 2.2, TY0 + 2.2, TX1 - TX0 - 4.4, TY1 - TY0 - 4.4);
+      g.beginPath(); g.rect(TX0, TY0, TX1 - TX0, TY1 - TY0); inked(g, 0.6);
+      both(function (c, glow) { c.beginPath(); c.rect(TX0 + 3.2, TY0 + 3.2, TX1 - TX0 - 6.4, TY1 - TY0 - 6.4); c.lineWidth = glow ? 0.9 : 0.55; c.strokeStyle = glow ? 'rgba(255,150,50,0.55)' : '#e8b04a'; c.stroke(); });
+      [[TX0 + 3.2, TY0 + 3.2], [TX1 - 3.2, TY0 + 3.2], [TX0 + 3.2, TY1 - 3.2], [TX1 - 3.2, TY1 - 3.2]].forEach(function (p) { g.beginPath(); g.arc(p[0], p[1], 1.4, 0, PI2); g.fillStyle = '#ffd27a'; g.fill(); inked(g, 0.3); });
+      function guardian(x, y, s2, seed) {   // a guardian head of our own: a broad carved face, a heavy brow, ember eyes, a crown of three flame stones
+        var rq = rng(seed), w = s2, h = s2 * 1.25;
+        shadowOf(2.5, 0.8, 2, 0.85, function (c) { c.beginPath(); c.ellipse(x, y + h * 0.1, w * 0.6, h * 0.55, 0, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+        [-1, 0, 1].forEach(function (i) { var fx = x + i * w * 0.3, fh = i ? h * 0.32 : h * 0.44; g.beginPath(); g.moveTo(fx - w * 0.13, y - h * 0.42); g.quadraticCurveTo(fx - w * 0.1, y - h * 0.42 - fh * 0.6, fx, y - h * 0.42 - fh); g.quadraticCurveTo(fx + w * 0.1, y - h * 0.42 - fh * 0.6, fx + w * 0.13, y - h * 0.42); g.closePath(); g.fillStyle = lgr(g, fx - w * 0.13, 0, fx + w * 0.13, 0, [[0, '#a8949a'], [1, '#463844']]); g.fill(); inked(g, 0.4); });
+        g.beginPath(); g.moveTo(x - w * 0.5, y - h * 0.42); g.lineTo(x + w * 0.5, y - h * 0.42); g.lineTo(x + w * 0.46, y + h * 0.4); g.quadraticCurveTo(x, y + h * 0.56, x - w * 0.46, y + h * 0.4); g.closePath();
+        g.fillStyle = lgr(g, x - w * 0.5, y - h * 0.4, x + w * 0.4, y + h * 0.5, [[0, '#b8a4a8'], [0.45, '#6e5c66'], [1, '#2e2430']]); g.fill(); inked(g, 0.55);
+        g.fillStyle = 'rgba(20,10,16,0.6)'; g.fillRect(x - w * 0.46, y - h * 0.2, w * 0.92, h * 0.1);   // the brow's shadow
+        g.fillStyle = lgr(g, 0, y - h * 0.3, 0, y - h * 0.18, [[0, '#c8b4b8'], [1, '#5a4a54']]); g.fillRect(x - w * 0.48, y - h * 0.3, w * 0.96, h * 0.1); g.beginPath(); g.rect(x - w * 0.48, y - h * 0.3, w * 0.96, h * 0.1); inked(g, 0.35);
+        [-1, 1].forEach(function (sd) { var ex = x + sd * w * 0.22, ey = y - h * 0.06; g.beginPath(); g.ellipse(ex, ey, w * 0.13, h * 0.06, 0, 0, PI2); g.fillStyle = '#120608'; g.fill();
+          both(function (c, glow) { c.beginPath(); c.ellipse(ex, ey, w * 0.08, h * 0.035, 0, 0, PI2); c.fillStyle = glow ? '#ff9a2a' : '#ffb84a'; c.fill(); }); });
+        g.beginPath(); g.moveTo(x - w * 0.06, y - h * 0.05); g.lineTo(x + w * 0.06, y - h * 0.05); g.lineTo(x + w * 0.11, y + h * 0.13); g.lineTo(x - w * 0.11, y + h * 0.13); g.closePath(); g.fillStyle = lgr(g, x - w * 0.1, 0, x + w * 0.1, 0, [[0, '#a8949a'], [1, '#3e3040']]); g.fill(); inked(g, 0.35);
+        g.fillStyle = '#1a0c12'; g.fillRect(x - w * 0.28, y + h * 0.2, w * 0.56, h * 0.11); g.lineWidth = 0.3; g.strokeStyle = '#a89498'; for (var t2 = 1; t2 < 6; t2++) { g.beginPath(); g.moveTo(x - w * 0.28 + t2 * w * 0.0933, y + h * 0.2); g.lineTo(x - w * 0.28 + t2 * w * 0.0933, y + h * 0.31); g.stroke(); }
+        for (var m2 = 0; m2 < 4; m2++) { g.fillStyle = 'rgba(70,150,60,0.6)'; g.beginPath(); g.ellipse(x + (rq() - 0.5) * w * 0.8, y + (rq() - 0.2) * h * 0.5, 1 + rq() * 1.6, 0.6 + rq() * 0.8, rq() * 3, 0, PI2); g.fill(); }
+      }
+      guardian(126, 66, 22, 51); guardian(71, 358, 11, 52); guardian(179, 358, 11, 53);
+    });
+    step('characters', function () {   // our explorer hero (a rim-lit silhouette, torch raised to the peak) and the Magma Crabs
+      unitT(g, S); unitT(gg, GS);
+      function hero(c, fx, fy, u, fill, ox, oy, ink) {   // the shapes: fill one colour (a rim, a shadow, the shading) or an array, a colour a part (the painted figure); ink: outline each part
+        c.save(); c.translate(fx + ox, fy + oy); c.scale(u, u); c.lineJoin = 'round'; var n = 0;
+        function F() { c.fillStyle = Array.isArray(fill) ? fill[n] : fill; n++; c.fill(); if (ink) { c.lineWidth = 0.55; c.strokeStyle = INK; c.stroke(); } }
+        function P(pts) { c.beginPath(); pts.forEach(function (p, i) { if (i) c.lineTo(p[0], p[1]); else c.moveTo(p[0], p[1]); }); c.closePath(); F(); }
+        P([[-3, -18], [-0.2, -18], [-2.6, -2.2], [-3, -0.5], [-7.8, 0.6], [-8, -1.8], [-5.6, -2.4]]); P([[0.2, -18], [3.4, -18], [6.4, -2.6], [8.8, -1.6], [8.6, 0.6], [3.6, 0.2], [3.4, -2]]);   // the legs, wide apart, boots
+        P([[-5.8, -30.4], [5.4, -30.4], [5, -17], [-5.2, -17]]); c.beginPath(); c.rect(-5.2, -19.8, 10.4, 2); F();   // the jacket, a belt
+        c.beginPath(); c.ellipse(-7, -25, 3.4, 6, -0.1, 0, PI2); F();   // the pack
+        c.beginPath(); c.arc(0.4, -33.6, 3.3, 0, PI2); F();   // the head
+        c.beginPath(); c.ellipse(0.4, -36.4, 7.6, 1.6, -0.08, 0, PI2); F(); P([[-3.2, -36.6], [3.8, -37], [2.8, -40.8], [-2.4, -40.6]]);   // the hat
+        P([[3.6, -29.6], [6.4, -31.2], [12.2, -40.4], [9.8, -41.8]]); P([[-5, -29.2], [-2.8, -28], [-6, -19.4], [-8.4, -20]]);   // the arms: one raised (the torch), one down
+        P([[10.6, -40.4], [11.8, -40.8], [14.6, -47.6], [13.4, -47.9]]);   // the torch's handle
+        c.restore();
+      }
+      var HX = 80, HY = 313, HU = 0.95;
+      both(function (c, glow) { c.fillStyle = rgr(c, HX + 4, HY - 24, 0, 24, [[0, glow ? 'rgba(255,150,60,0.25)' : 'rgba(255,200,110,0.95)'], [0.55, glow ? 'rgba(255,110,40,0.12)' : 'rgba(255,120,50,0.6)'], [1, 'rgba(255,90,40,0)']]); c.fillRect(HX - 22, HY - 50, 52, 52); });   // a hot glow behind the hero, a poster's halo, so the figure reads
+      shadowOf(2, 0, 0, 0.8, function (c) { c.beginPath(); c.ellipse(HX, HY + 1.5, 10, 2.6, 0, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+      shadowOf(2.5, 0, 0, 0.55, function (c) { c.save(); c.translate(HX, HY); c.transform(1, 0, -0.5, 0.35, 0, 0); c.translate(-HX, -HY); hero(c, HX, HY + 1, HU, '#000', 0, 0); c.restore(); });   // the long shadow down the slab, cast by the volcano's light
+      g.fillStyle = rgr(g, HX + 12, HY - 46, 0, 26, [[0, 'rgba(255,160,60,0.5)'], [1, 'rgba(255,120,40,0)']]); g.fillRect(HX - 20, HY - 74, 60, 60);   // the torch's light round the figure
+      hero(g, HX, HY, HU, '#ffd890', 0.7, -0.6); hero(g, HX, HY, HU, '#ff6a2a', -0.55, -0.25);   // rim lights: the torch's and the lava's
+      hero(g, HX, HY, HU, ['#5a4632', '#5a4632', '#3e5634', '#2a1a10', '#8a5428', '#d09060', '#7a4a20', '#8a5a2a', '#3e5634', '#3e5634', '#5a3418'], 0, 0, true);   // the painted figure: khaki, an olive jacket, a leather hat and pack
+      hero(g, HX, HY, HU, lgr(g, -9, 0, 12, 0, [[0, 'rgba(12,4,12,0.6)'], [0.55, 'rgba(12,4,12,0.15)'], [1, 'rgba(255,190,110,0.25)']]), 0, 0);   // shading: dark on the side away from the torch
+      g.save(); g.translate(HX, HY); g.scale(HU, HU);   // the details: a red scarf blowing back, the hat's band, the pack's straps, a rope coil
+      g.beginPath(); g.moveTo(-3.6, -30.2); g.bezierCurveTo(-8, -32, -11, -28.6, -15.6, -31.6); g.lineTo(-14.4, -29.4); g.bezierCurveTo(-10.6, -26.6, -7.4, -29.4, -3.4, -28.6); g.closePath(); g.fillStyle = '#d8302a'; g.fill(); inked(g, 0.3);
+      g.fillStyle = '#c8862a'; g.fillRect(-3, -37.8, 6.6, 1); g.lineWidth = 0.6; g.strokeStyle = '#6a4a2a'; g.beginPath(); g.moveTo(-3.6, -29.6); g.lineTo(-1, -19.6); g.stroke();
+      g.beginPath(); g.arc(-7.2, -18.6, 2.2, 0, PI2); g.lineWidth = 0.7; g.strokeStyle = '#a07a40'; g.stroke(); g.restore();
+      both(function (c, glow) { var fx = HX + 13.9 * HU, fy = HY - 49 * HU; c.save(); c.translate(fx, fy); c.beginPath(); c.moveTo(0, -5.2); c.quadraticCurveTo(3, -1, 1.6, 1.4); c.quadraticCurveTo(0, 2.6, -1.6, 1.4); c.quadraticCurveTo(-2.6, -1.4, 0, -5.2); c.fillStyle = glow ? '#ff8a2a' : '#ff7a1a'; c.fill();
+        c.beginPath(); c.moveTo(0, -3); c.quadraticCurveTo(1.4, -0.4, 0.8, 1); c.quadraticCurveTo(0, 1.6, -0.8, 1); c.quadraticCurveTo(-1.2, -0.8, 0, -3); c.fillStyle = '#fff2a0'; c.fill(); c.restore(); if (glow) pool(c, fx, fy, 9, [255, 140, 40], 0.6); });
+      function crab(x, y, s2, seed) {   // a Magma Crab: a crusted shell with glowing cracks, big claws, jointed legs, eyes on stalks
+        var rc = rng(seed), w = s2, h = s2 * 0.62, k;
+        shadowOf(2.4, 0.6, 2.2, 0.85, function (c) { c.beginPath(); c.ellipse(x, y + h * 0.3, w * 0.95, h * 0.7, 0, 0, PI2); c.fillStyle = '#000'; c.fill(); });
+        g.lineCap = 'round'; g.lineJoin = 'round';
+        [-1, 1].forEach(function (sd) { for (k = 0; k < 3; k++) { var ax = x + sd * w * 0.38, ay = y + h * (-0.05 + k * 0.25), kx = ax + sd * w * (0.3 + k * 0.04), ky = ay - h * 0.3 + k * h * 0.18, ex = kx + sd * w * 0.1, ey = ky + h * 0.6;
+          [[w / 10 + 0.6, INK], [w / 10, '#c84a1c']].forEach(function (st) { g.beginPath(); g.moveTo(ax, ay); g.lineTo(kx, ky); g.lineTo(ex, ey); g.lineWidth = st[0]; g.strokeStyle = st[1]; g.stroke(); }); } });
+        [-1, 1].forEach(function (sd) { var ax = x + sd * w * 0.36, ay = y - h * 0.32, cx2 = x + sd * w * 0.82, cy2 = y - h * 1.15;   // the claws
+          [[w * 0.12 + 0.6, INK], [w * 0.12, '#c8481c']].forEach(function (st) { g.beginPath(); g.moveTo(ax, ay); g.quadraticCurveTo(x + sd * w * 0.86, y - h * 0.4, cx2, cy2 + h * 0.3); g.lineWidth = st[0]; g.strokeStyle = st[1]; g.stroke(); });
+          g.save(); g.translate(cx2, cy2); g.rotate(sd * 0.3); g.beginPath(); g.moveTo(-w * 0.2, h * 0.3); g.quadraticCurveTo(-w * 0.28, -h * 0.5, 0, -h * 0.62); g.quadraticCurveTo(w * 0.05, -h * 0.2, -w * 0.02, -h * 0.05); g.lineTo(w * 0.12, -h * 0.48); g.quadraticCurveTo(w * 0.3, -h * 0.1, w * 0.2, h * 0.3); g.closePath();
+          g.fillStyle = lgr(g, -w * 0.2, -h * 0.6, w * 0.2, h * 0.3, [[0, '#ff9a4a'], [0.5, '#c8401a'], [1, '#5a160a']]); g.fill(); inked(g, 0.45); g.restore(); });
+        g.beginPath(); g.ellipse(x, y, w * 0.5, h * 0.5, 0, 0, PI2); g.fillStyle = rgr(g, x, y, 0, w * 0.55, [[0, '#7a2a1a'], [0.6, '#4a160e'], [1, '#22080a']], x - w * 0.12, y - h * 0.22); g.fill(); inked(g, 0.55);
+        both(function (c, glow) { c.lineCap = 'round'; var r2 = rng(seed + 1); for (k = 0; k < 6; k++) { var a = r2() * PI2, px = x + Math.cos(a) * w * 0.1, py = y + Math.sin(a) * h * 0.1; c.beginPath(); c.moveTo(px, py); for (var j = 0; j < 3; j++) { a += (r2() - 0.5) * 1.1; px += Math.cos(a) * w * 0.12; py += Math.sin(a) * h * 0.12; c.lineTo(px, py); } c.lineWidth = glow ? 0.8 : 0.5; c.strokeStyle = glow ? '#ff8a1a' : '#ffb03a'; c.stroke(); } });
+        g.beginPath(); g.ellipse(x - w * 0.14, y - h * 0.24, w * 0.18, h * 0.1, -0.3, 0, PI2); g.fillStyle = 'rgba(255,220,180,0.35)'; g.fill();   // the shell's highlight
+        [-1, 1].forEach(function (sd) { var ex = x + sd * w * 0.16, ey = y - h * 0.82; g.beginPath(); g.moveTo(x + sd * w * 0.1, y - h * 0.4); g.lineTo(ex, ey); g.lineWidth = w / 16 + 0.3; g.strokeStyle = '#8a2a12'; g.stroke();
+          g.beginPath(); g.arc(ex, ey, w * 0.1, 0, PI2); g.fillStyle = '#fff6e8'; g.fill(); inked(g, 0.35); g.beginPath(); g.arc(ex + sd * w * 0.025, ey + w * 0.02, w * 0.05, 0, PI2); g.fillStyle = '#120608'; g.fill(); });
+        g.beginPath(); g.arc(x, y + h * 0.12, w * 0.12, 0.2, Math.PI - 0.2); g.lineWidth = 0.4; g.strokeStyle = '#ffd08a'; g.stroke();   // a grin
+      }
+      crab(184, 331, 24, 61); crab(40, 116, 14, 62);
+    });
+    step('light', function () {   // the lava's light: a warm wash up the lower field, pools round the slings, printed ember sparks (they glow)
+      unitT(g, S); unitT(gg, GS);
+      g.save(); g.globalCompositeOperation = 'screen'; g.fillStyle = lgr(g, 0, 200, 0, 420, [[0, 'rgba(255,60,10,0)'], [0.6, 'rgba(255,80,20,0.12)'], [1, 'rgba(255,110,30,0.2)']]); g.fillRect(0, 200, W0, 220); g.restore();
+      ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 26, [255, 110, 30], 0.3); pool(gg, cx, cy, 28, [255, 100, 20], 0.5); });
+      both(function (c, glow) { var rs = rng(57); for (var k = 0; k < 70; k++) { var sx = 20 + rs() * (W0 - 60), sy = 20 + rs() * 200, sr = 0.3 + rs() * 0.6, hot = rs(); c.fillStyle = hot > 0.6 ? 'rgba(255,230,140,' + (glow ? 0.9 : 0.85) + ')' : 'rgba(255,110,40,' + (glow ? 0.6 : 0.75) + ')'; c.beginPath(); c.arc(sx, sy, sr, 0, PI2); c.fill(); } });
     });
     step('guides', function () {   // contact shadows under the walls, then a printed band: gold edge, dark core
       unitT(g, S);
@@ -1226,8 +1374,45 @@
       // the closed spaces (the summit deck, the obsidian block): dark under the rock blocks the 3D look raises there
       (ET.voids || []).forEach(function (v) { poly(g, v); g.fillStyle = '#120e14'; g.fill(); });
     });
+    step('print', function () {   // the printing round the inserts (30 Oct 2026): gold-edged strips joining each shot's lamps, a bevelled surround on every insert, plaques and rules text in one typeface
+      unitT(g, S); unitT(gg, GS);
+      var LS = inserts('ember'), BY = {}; LS.forEach(function (l) { BY[l.id] = l; });
+      function gold(c, x0, y0, x1, y1) { return lgr(c, x0, y0, x1, y1, [[0, '#fff0b8'], [0.45, '#d89a30'], [0.55, '#8a5410'], [1, '#ffd870']]); }
+      [['orbitL.p1', 'orbitL.p0', 'orbitL'], ['orbitR.p1', 'orbitR.p0', 'orbitR'], ['ramp.p2', 'ramp.p1', 'ramp.p0', 'ramp', 'ramp.c0', 'ramp.c1'], ['obsidian.p2', 'obsidian.p1', 'obsidian.p0', 'obsidian'], ['crater.p1', 'crater.p0', 'crater'],
+        ['geyser.p0', 'geyser'], ['inL1', 'inL0'], ['inR1', 'inR0'], ['outL', 'kick'], ['outR', 'saveR'], ['orbitL.c0', 'orbitL.c1', 'orbitL.c2', 'orbitL.c3', 'orbitL.c4'], ['orbitR.c0', 'orbitR.c1', 'orbitR.c2', 'orbitR.c3', 'orbitR.c4'],
+        ['mult2', 'mult3', 'mult4', 'mult5'], ['drop0', 'drop1', 'drop2']].forEach(function (grp) {
+        var P = grp.map(function (id) { return BY[id]; }).filter(Boolean); if (P.length < 2) return;
+        var wmax = Math.max.apply(null, P.map(function (l) { return Math.min(l.w, 13); })), col = rgb(P[P.length - 1].color);
+        shadowOf(1.6, 0, 0.8, 0.8, function (c) { path(c, P.map(function (l) { return [l.x, l.y]; })); c.lineWidth = wmax + 5; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#000'; c.stroke(); });
+        [[wmax + 5, '#e8a83a'], [wmax + 3.8, '#5a3410'], [wmax + 3.2, '#140608'], [wmax + 1, css(mixc(col, [0, 0, 0], 0.55), 0.6)]].forEach(function (st) { path(g, P.map(function (l) { return [l.x, l.y]; })); g.lineWidth = st[0]; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = st[1]; g.stroke(); });
+      });
+      LS.forEach(function (l) {   // the surround: the insert's shape grown, a dark plate in a gold bevel (the letters: a plate each)
+        g.save(); g.translate(l.x, l.y); g.rotate(l.rot || 0);
+        var kk = l.shape === 'text' ? 0 : Math.max(1.2, Math.min(l.w, l.h) * 0.2);
+        if (l.shape === 'text') { var pw = l.w + 2.4, ph = l.h + 1.4; g.beginPath(); g.rect(-pw / 2, -ph / 2, pw, ph); }
+        else { g.save(); g.scale((l.w + 2 * kk) / l.w, (l.h + 2 * kk) / l.h); shapePath(g, l); g.restore(); }
+        g.fillStyle = '#100406'; g.fill(); g.lineWidth = 0.9; g.lineJoin = 'round'; g.strokeStyle = gold(g, -l.w / 2, -l.h / 2, l.w / 2, l.h / 2); g.stroke();
+        g.restore();
+      });
+      function txt(c, s, x, y, size, rot, fill, edge, k0) {   // the playfield's typeface: heavy condensed capitals with a dark edge
+        c.save(); c.translate(x, y); c.rotate(rot || 0); c.font = '900 ' + size + 'px ' + FONT; c.textAlign = 'center'; c.textBaseline = 'middle';
+        var wm = c.measureText(s).width, k = Math.min(1, (k0 || 0.74) * s.length * size / (wm || 1)); c.scale(k, 1);
+        if (edge) { c.lineJoin = 'round'; c.lineWidth = size * 0.34 / k; c.strokeStyle = edge; c.strokeText(s, 0, size * 0.04); }
+        c.fillStyle = fill; c.fillText(s, 0, size * 0.04); c.restore(); return wm * k;
+      }
+      function plaque(s, x, y, size, rot, col) {   // a label on a small gold-edged plate (the text also glows: printed neon)
+        unitT(g, S); g.save(); g.font = '900 ' + size + 'px ' + FONT; var w = Math.min(g.measureText(s).width, 0.74 * s.length * size) + size * 1.2, h = size * 1.5; g.translate(x, y); g.rotate(rot || 0);
+        g.beginPath(); g.moveTo(-w / 2 - h * 0.35, 0); g.lineTo(-w / 2, -h / 2); g.lineTo(w / 2, -h / 2); g.lineTo(w / 2 + h * 0.35, 0); g.lineTo(w / 2, h / 2); g.lineTo(-w / 2, h / 2); g.closePath();
+        g.fillStyle = 'rgba(16,4,8,0.92)'; g.fill(); g.lineWidth = 0.55; g.strokeStyle = gold(g, -w / 2, -h / 2, w / 2, h / 2); g.stroke(); g.restore();
+        txt(g, s, x, y, size, rot, col, null); txt(gg, s, x, y, size, rot, col, null);
+      }
+      function rules(lines, x, y, size, col) { lines.forEach(function (s, i) { txt(g, s, x, y + (i - (lines.length - 1) / 2) * size * 1.25, size, 0, col, 'rgba(16,4,8,0.9)', 0.66); }); }
+      plaque('LOOP', 62, 57, 3.2, -0.76, '#7ff6ea'); plaque('CRATER', 66, 168, 3, 0, '#ffb05a'); plaque('MAGMA CRAB', 186, 347, 2.4, 0, '#ff9a6a'); plaque('SKILL SHOT', 182, 48, 3, 0, '#9cff8a');
+      rules(['SPELL E-R-U-P-T TO BLOW THE PEAK'], 125, 348.6, 2.4, '#ffd88a');
+      rules(['SHOOT HEAT RAMP', 'TO BUILD PRESSURE'], 98, 374, 2.5, '#fff0c8'); rules(['OBSIDIAN TARGETS', 'LIGHT KICKBACK'], 152, 374, 2.5, '#fff0c8');
+    });
     step('inserts', function () {
-      unitT(g, S); inserts('ember').forEach(function (l) { insertUnlit(g, l); });
+      unitT(g, S); inserts('ember').forEach(function (l) { insertUnlit(g, l, 'rgba(255,214,120,0.7)'); });   // a gold ring on Ember Peak (30 Oct 2026)
       emberTagsOf('ember').forEach(function (t) {
         g.save(); g.translate(t.x, t.y); g.rotate(t.rot || 0);
         g.font = '900 ' + t.size + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle';

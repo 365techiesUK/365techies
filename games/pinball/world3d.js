@@ -10,7 +10,7 @@
  * step to the inlane), the STEAM GEYSER (a hot-spring vent and a column of steam puffs: wisps, a warning puff, the
  * burst), the MAGMA CRABS (jointed parts: a shell with a glowing back, six legs that step as it walks, claws, eye
  * stalks), the LAVA GATES (they rise to open the lava lanes, whose lava flows brighter), FUMAROLE bumpers, OBSIDIAN
- * drop targets, the lava river under the glass (one screen, 29 Oct 2026) and the sunset backbox. Beyond the cabinet: blue sky, a turquoise sea, the island's rock and a few
+ * drop targets, the lava river under the glass (one screen, 29 Oct 2026) and the lit backglass (wave 2). Beyond the cabinet: blue sky, a turquoise sea, the island's rock and a few
  * islands on the horizon (baked, a handful of draw calls), so a moving camera shows a world.
  *
  * Coordinates: table x 0..W left to right, y 0..H from the arch DOWN to the flippers, heights in the same units (the
@@ -38,7 +38,14 @@
  *
  * create({ canvas, width, height, pixelRatio? (the cap), tier? ('auto'|'high'|'medium'|'low'), table?, samples?,
  *   preserve?, reflect?, fill?, tilt?, fov?, cam? ('home' to ignore PinCam) })
- * -> { draw(W, t, mode, info), setView(v), setCam(c), setTier(name), homes(), resize(w, h), dispose(), stats(), debug } */
+ * -> { draw(W, t, mode, info), setView(v), setCam(c), setTier(name), setRoom(on|'auto'), roomShots(), homes(), resize(w, h), dispose(), stats(), debug }
+ *
+ * WAVE 2 (30 Oct 2026): Ember Peak's backbox is a tall lit backglass (a volcano erupting at night, our explorer, a magma crab, the
+ * title) in a chrome bezel with an arched topper, so a portrait phone's home has no dark band above it; the fumaroles are real pop
+ * bumpers (instanced, lower caps); the crabs are coral with glossy eyes; and THE GAMES ROOM: create({ room }) or setRoom(true |
+ * false | 'auto') - 'auto', the default, shows it in the title/attract only - a dim arcade round the cabinet (carpet, neon signs of
+ * our own, other machines, the cabinet's legs, side art and coin door), built on first use, 5 draw calls while shown and none in
+ * play; roomShots() gives trailer framings for setCam. */
 import * as THREE from 'three';
 import { EffectComposer } from '../common/vendor/three-r185/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/RenderPass.js';
@@ -55,6 +62,7 @@ const wx = (x) => x - HW, wz = (y) => y - ZC;
 const KEY = new THREE.Vector3(-60, 400, 230).normalize();
 const SHX = -KEY.x / KEY.y, SHY = -KEY.z / KEY.y;
 // heights (table units) - everything stands up
+const POP = { rim: 14.8, top: 20, ring: 8.6, skirt: 4.4 };   // Ember Peak's pop bumpers (30 Oct 2026, wave 2): the cap's rim and top (26 before), the ring's rest height, the skirt's
 const H = { rail: 18, guide: 13, arch: 21, wood: 30, front: 22, bumpCap: 26, drop: 17, apron: 6, sling: 16, rampWall: 16, post: 19, void: 12, gate: 9 };
 const WOOD_L = -36, WOOD_R = 308;
 const FOV = 32, HOME_TILT = 28;   // classic's home (and the bench's tilt studies)
@@ -543,28 +551,300 @@ function flipperShadowCanvas(f) {   // a soft shadow of a bat, pointing along +x
   g.beginPath(); g.moveTo(pad * k - 4000, m / 2 - f.r0 * k); g.lineTo((pad + f.len) * k - 4000, m / 2 - f.r1 * k); g.lineTo((pad + f.len) * k - 4000, m / 2 + f.r1 * k); g.lineTo(pad * k - 4000, m / 2 + f.r0 * k); g.fill();
   return { c, pad, w: n / k, h: m / k };
 }
-// Ember Peak's backbox panel (one screen, 29 Oct 2026: the strip above the arch the fill framing leaves when the phone's
-// width binds): a sunset over the sea, the volcano's silhouette smoking, our island's name. Same size as the speaker panel.
-function islandBackCanvas() {
-  const k = 4, w = (WOOD_R - WOOD_L) * k, h = 60 * k, c = cv(w, h), g = c.getContext('2d'), X = (x) => (x - WOOD_L) * k, r = rnd(29);
-  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#2a0f3a'); q.addColorStop(0.45, '#b8361a'); q.addColorStop(0.75, '#ff9a2e'); q.addColorStop(1, '#ffd36a');
-  g.fillStyle = q; g.fillRect(0, 0, w, h);
-  const sun = g.createRadialGradient(X(214), h * 0.86, 4, X(214), h * 0.86, 30 * k); sun.addColorStop(0, '#fff6c8'); sun.addColorStop(0.25, 'rgba(255,214,110,0.9)'); sun.addColorStop(1, 'rgba(255,150,60,0)');
-  g.fillStyle = sun; g.fillRect(0, 0, w, h);
-  g.fillStyle = '#1a0a10';   // the volcano and the island's ridge, black against the sky
-  g.beginPath(); g.moveTo(0, h); g.lineTo(0, h * 0.86); g.lineTo(X(20), h * 0.8); g.lineTo(X(70), h * 0.42); g.lineTo(X(84), h * 0.36); g.lineTo(X(98), h * 0.42); g.lineTo(X(150), h * 0.84); g.lineTo(X(240), h * 0.9); g.lineTo(w, h * 0.86); g.lineTo(w, h); g.closePath(); g.fill();
-  g.save(); g.shadowColor = '#ff6a1a'; g.shadowBlur = 18; g.strokeStyle = '#ff8a1a'; g.lineWidth = 6; g.lineCap = 'round';
-  for (const [x0, x1] of [[78, 64], [90, 104], [84, 86]]) { g.beginPath(); g.moveTo(X(x0), h * 0.4); g.quadraticCurveTo(X((x0 + x1) / 2 + 3), h * 0.55, X(x1), h * 0.7); g.stroke(); }
+// ---- wave 2 (30 Oct 2026, owner: "the most-watched digital pinball on YouTube"): a tall lit backglass and a topper, the
+// fumarole pop bumpers' printed caps, the magma crabs' eyes, and the games room round the cabinet (title screen, trailers)
+// the backglass (table x x0..x1, heights h0..h1, on the backbox's face at table y `face`) and the arched topper (tx0..tx1, th0 up, at table y tz)
+const BG = { x0: WOOD_L + 4, x1: WOOD_R - 4, h0: 32, h1: 218, tx0: 46, tx1: 226, th0: 228, th1: 276, top: 226, face: -18.0, tz: -30 };
+function topperArch(x) { const u = (x - (BG.tx0 + BG.tx1) / 2) / ((BG.tx1 - BG.tx0) / 2); return BG.th0 + 28 + 20 * Math.sqrt(Math.max(0, 1 - u * u)); }   // the topper's top edge at x
+function crabArt(g, x, y, s, r, k) {   // a magma crab, cartoon, claws up (units; s = its size; k = px a unit, for the glow): coral shell, lava cracks, eyes on stalks
+  g.save(); g.translate(x, y); g.lineCap = 'round'; g.lineJoin = 'round';
+  g.strokeStyle = '#7a1a0a'; g.lineWidth = s * 0.09;
+  for (const sd of [-1, 1]) for (let L = 0; L < 3; L++) { g.beginPath(); g.moveTo(sd * s * 0.5, s * 0.1 + L * s * 0.1); g.quadraticCurveTo(sd * s * (0.95 + L * 0.08), -s * 0.05 + L * s * 0.12, sd * s * (1.05 + L * 0.06), s * 0.45 + L * s * 0.1); g.stroke(); }
+  for (const sd of [-1, 1]) {   // arms up and the pincers
+    g.lineWidth = s * 0.12; g.beginPath(); g.moveTo(sd * s * 0.6, -s * 0.05); g.quadraticCurveTo(sd * s * 1.05, -s * 0.2, sd * s * 0.95, -s * 0.62); g.stroke();
+    g.save(); g.translate(sd * s * 0.95, -s * 0.78); g.rotate(sd * 0.35);
+    const q = g.createLinearGradient(0, -s * 0.4, 0, s * 0.2); q.addColorStop(0, '#ffb070'); q.addColorStop(1, '#d8401a'); g.fillStyle = q;
+    g.beginPath(); g.ellipse(0, 0, s * 0.26, s * 0.34, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#ff6a2a'; g.beginPath(); g.moveTo(-s * 0.2, -s * 0.2); g.quadraticCurveTo(-s * 0.32, -s * 0.62, -s * 0.06, -s * 0.66); g.quadraticCurveTo(-s * 0.08, -s * 0.36, -s * 0.02, -s * 0.24); g.fill();
+    g.beginPath(); g.moveTo(s * 0.2, -s * 0.18); g.quadraticCurveTo(s * 0.34, -s * 0.5, s * 0.12, -s * 0.56); g.quadraticCurveTo(s * 0.08, -s * 0.34, s * 0.02, -s * 0.24); g.fill();
+    g.restore();
+  }
+  const b = g.createRadialGradient(-s * 0.15, -s * 0.2, s * 0.05, 0, 0, s * 0.75); b.addColorStop(0, '#ffb070'); b.addColorStop(0.45, '#e2481c'); b.addColorStop(1, '#6a140a');
+  g.fillStyle = b; g.beginPath(); g.ellipse(0, 0, s * 0.68, s * 0.42, 0, 0, Math.PI * 2); g.fill();
+  g.save(); g.shadowColor = '#ffb02a'; g.shadowBlur = s * 0.25 * k; g.strokeStyle = '#ffd36a'; g.lineWidth = s * 0.035;
+  for (let i = 0; i < 5; i++) { g.beginPath(); let px = -s * 0.4 + r() * s * 0.8, py = -s * 0.25 + r() * s * 0.2; g.moveTo(px, py); for (let q = 0; q < 3; q++) { px += (r() - 0.5) * s * 0.3; py += r() * s * 0.15; g.lineTo(px, py); } g.stroke(); }
   g.restore();
-  for (let i = 0; i < 26; i++) { const t = i / 26, a = 0.35 * (1 - t); g.fillStyle = 'rgba(70,50,60,' + a + ')'; g.beginPath(); g.arc(X(84 + t * 46 + Math.sin(t * 7) * 6), h * (0.33 - t * 0.32), (5 + t * 14) * k, 0, Math.PI * 2); g.fill(); }
-  for (let i = 0; i < 60; i++) { g.fillStyle = 'rgba(255,' + (140 + r() * 100 | 0) + ',60,' + (0.4 + r() * 0.5) + ')'; g.fillRect(X(70 + r() * 30), h * (0.05 + r() * 0.3), 3, 3); }
-  g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.save(); g.shadowColor = '#ff6a1a'; g.shadowBlur = 24; g.lineJoin = 'round'; g.font = 'italic 900 ' + (25 * k) + 'px "Arial Black", Arial, sans-serif';
-  g.lineWidth = 16; g.strokeStyle = '#3a1206'; g.strokeText('EMBER PEAK', X(176), h * 0.46);
-  const tg = g.createLinearGradient(0, h * 0.3, 0, h * 0.62); tg.addColorStop(0, '#fff6c0'); tg.addColorStop(0.45, '#ffc23a'); tg.addColorStop(0.55, '#ff8a1a'); tg.addColorStop(1, '#e8501a');
-  g.fillStyle = tg; g.fillText('EMBER PEAK', X(176), h * 0.46); g.restore();
-  g.save(); g.fillStyle = '#fff3c4'; g.font = 'bold ' + (8 * k) + 'px "Arial Black", Arial, sans-serif'; g.shadowColor = '#000'; g.shadowBlur = 8; g.fillText('365 PINBALL HERO', X(176), h * 0.8); g.restore();
+  g.strokeStyle = '#3a0a06'; g.lineWidth = s * 0.03; g.beginPath(); g.ellipse(0, 0, s * 0.68, s * 0.42, 0, 0, Math.PI * 2); g.stroke();
+  for (const sd of [-1, 1]) {   // eyes on stalks, a glint in each
+    g.strokeStyle = '#b8301a'; g.lineWidth = s * 0.07; g.beginPath(); g.moveTo(sd * s * 0.16, -s * 0.3); g.lineTo(sd * s * 0.22, -s * 0.62); g.stroke();
+    g.fillStyle = '#fff8e0'; g.beginPath(); g.arc(sd * s * 0.22, -s * 0.68, s * 0.13, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#120808'; g.beginPath(); g.arc(sd * s * 0.2, -s * 0.66, s * 0.065, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(sd * s * 0.17, -s * 0.71, s * 0.03, 0, Math.PI * 2); g.fill();
+  }
+  g.strokeStyle = '#3a0a06'; g.lineWidth = s * 0.04; g.beginPath(); g.arc(0, -s * 0.05, s * 0.18, 0.2, Math.PI - 0.2); g.stroke();   // a grin
+  g.restore();
+}
+function explorerArt(g, x, y, s) {   // our explorer, a silhouette (feet at x, y; s = height): a wide hat, a pack, a torch held high
+  g.save(); g.translate(x, y); g.fillStyle = '#07040a'; g.strokeStyle = '#07040a'; g.lineCap = 'round'; g.lineJoin = 'round';
+  g.lineWidth = s * 0.1; g.beginPath(); g.moveTo(-s * 0.08, 0); g.lineTo(-s * 0.04, -s * 0.42); g.moveTo(s * 0.1, 0); g.lineTo(s * 0.05, -s * 0.42); g.stroke();   // legs
+  g.beginPath(); g.moveTo(-s * 0.12, -s * 0.4); g.lineTo(s * 0.12, -s * 0.4); g.lineTo(s * 0.1, -s * 0.74); g.lineTo(-s * 0.1, -s * 0.74); g.closePath(); g.fill();   // body
+  g.fillRect(-s * 0.26, -s * 0.72, s * 0.17, s * 0.3);   // the pack
+  g.beginPath(); g.arc(0, -s * 0.82, s * 0.08, 0, Math.PI * 2); g.fill();   // head
+  g.beginPath(); g.ellipse(0, -s * 0.87, s * 0.19, s * 0.035, 0, 0, Math.PI * 2); g.fill(); g.beginPath(); g.ellipse(0, -s * 0.89, s * 0.09, s * 0.07, 0, Math.PI, Math.PI * 2); g.fill();   // the hat
+  g.lineWidth = s * 0.06; g.beginPath(); g.moveTo(s * 0.08, -s * 0.7); g.lineTo(s * 0.22, -s * 0.86); g.lineTo(s * 0.28, -s * 1.06); g.stroke();   // the arm up
+  g.lineWidth = s * 0.035; g.beginPath(); g.moveTo(s * 0.24, -s * 1.0); g.lineTo(s * 0.32, -s * 1.16); g.stroke();   // the torch
+  const f = g.createRadialGradient(s * 0.33, -s * 1.2, 0, s * 0.33, -s * 1.2, s * 0.22); f.addColorStop(0, 'rgba(255,250,200,1)'); f.addColorStop(0.35, 'rgba(255,170,50,0.9)'); f.addColorStop(1, 'rgba(255,90,20,0)');
+  g.fillStyle = f; g.beginPath(); g.arc(s * 0.33, -s * 1.2, s * 0.22, 0, Math.PI * 2); g.fill();
+  g.lineWidth = s * 0.035; g.beginPath(); g.moveTo(-s * 0.08, -s * 0.66); g.lineTo(-s * 0.22, -s * 0.5); g.lineTo(-s * 0.3, -s * 0.06); g.stroke();   // the other arm, a stick
+  g.restore();
+}
+// Ember Peak's backglass and its topper, one canvas (the topper's art in the top rows): a volcano erupting at night over the
+// sea, our explorer on a ledge with a torch, a magma crab, EMBER PEAK in lava lettering (k px a unit: 4 on high, 2 on phones)
+function backglassCanvas(k) {
+  const GW = BG.x1 - BG.x0, GH = BG.h1 - BG.h0, TPH = BG.th1 - BG.th0, c = cv(GW * k, (GH + TPH) * k), g = c.getContext('2d'), r = rnd(365);
+  const X = (x) => x - BG.x0, Y = (h) => TPH + (BG.h1 - h), K = k;
+  g.scale(k, k);
+  // ---- the glass
+  g.save(); g.beginPath(); g.rect(0, TPH, GW, GH); g.clip();
+  let q = g.createLinearGradient(0, Y(BG.h1), 0, Y(56)); q.addColorStop(0, '#05030f'); q.addColorStop(0.35, '#160830'); q.addColorStop(0.7, '#4a1036'); q.addColorStop(1, '#b23a1a');
+  g.fillStyle = q; g.fillRect(0, TPH, GW, GH);
+  for (let i = 0; i < 160; i++) { const a = 0.3 + r() * 0.7, z = r() < 0.08 ? 1.1 : 0.55; g.fillStyle = 'rgba(255,245,230,' + a + ')'; g.fillRect(r() * GW, Y(BG.h1) + Math.pow(r(), 1.4) * (GH * 0.62), z, z); }
+  g.save(); g.shadowColor = '#fff2c8'; g.shadowBlur = 14 * K; g.fillStyle = '#fff4d6'; g.beginPath(); g.arc(X(282), Y(196), 10, 0, Math.PI * 2); g.fill(); g.restore();   // the moon, a crescent
+  g.fillStyle = '#0c0520'; g.beginPath(); g.arc(X(287), Y(199), 9.5, 0, Math.PI * 2); g.fill();
+  const vx = X(78), vy = Y(146);   // the crater
+  q = g.createRadialGradient(vx, vy, 4, vx, vy, 150); q.addColorStop(0, 'rgba(255,170,60,0.85)'); q.addColorStop(0.3, 'rgba(255,90,30,0.4)'); q.addColorStop(1, 'rgba(255,60,20,0)');
+  g.fillStyle = q; g.fillRect(0, TPH, GW, GH);
+  for (let i = 0; i < 34; i++) {   // the ash plume, lit from under
+    const t = i / 34, px = vx + t * 120 + Math.sin(t * 9) * 8, py = vy - 10 - t * 70, rad = 7 + t * 22;
+    q = g.createRadialGradient(px, py + rad * 0.3, 1, px, py, rad); q.addColorStop(0, 'rgba(120,60,60,' + (0.55 - t * 0.35) + ')'); q.addColorStop(0.6, 'rgba(50,30,50,' + (0.5 - t * 0.3) + ')'); q.addColorStop(1, 'rgba(30,20,40,0)');
+    g.fillStyle = q; g.beginPath(); g.arc(px, py, rad, 0, Math.PI * 2); g.fill();
+  }
+  g.save(); g.lineCap = 'round'; g.shadowColor = '#ff7a1a'; g.shadowBlur = 10 * K;   // the fountain: jets and falling bombs
+  for (let i = 0; i < 26; i++) {
+    const a = -Math.PI / 2 + (r() - 0.5) * 1.3, L = 24 + r() * 48, ex = vx + Math.cos(a) * L, ey = vy + Math.sin(a) * L;
+    q = g.createLinearGradient(vx, vy, ex, ey); q.addColorStop(0, 'rgba(255,250,200,1)'); q.addColorStop(0.5, 'rgba(255,170,40,0.9)'); q.addColorStop(1, 'rgba(255,80,20,0)');
+    g.strokeStyle = q; g.lineWidth = 0.8 + r() * 2.2; g.beginPath(); g.moveTo(vx + (r() - 0.5) * 6, vy); g.quadraticCurveTo((vx + ex) / 2, ey - 6, ex, ey); g.stroke();
+  }
+  for (let i = 0; i < 40; i++) { const a = -Math.PI / 2 + (r() - 0.5) * 2.2, L = 20 + r() * 60; g.fillStyle = r() < 0.5 ? '#ffe08a' : '#ff8a2a'; g.beginPath(); g.arc(vx + Math.cos(a) * L, vy + Math.sin(a) * L * 0.8, 0.6 + r() * 1.4, 0, Math.PI * 2); g.fill(); }
+  g.restore();
+  // the island's far ridge (right), then the sea
+  g.fillStyle = '#1c0c1e'; g.beginPath(); g.moveTo(X(150), Y(56)); for (let x = 150; x <= BG.x1 + 2; x += 6) g.lineTo(X(x), Y(60 + 7 * Math.sin(x * 0.05) + 4 * Math.sin(x * 0.13))); g.lineTo(X(BG.x1 + 2), Y(56)); g.closePath(); g.fill();
+  q = g.createLinearGradient(0, Y(58), 0, Y(BG.h0)); q.addColorStop(0, '#3a1430'); q.addColorStop(0.25, '#1a0c26'); q.addColorStop(1, '#06040e'); g.fillStyle = q; g.fillRect(0, Y(58), GW, Y(BG.h0) - Y(58));
+  for (let i = 0; i < 70; i++) { const yy = Y(57) + Math.pow(r(), 1.3) * 24, w = 4 + r() * 18; g.fillStyle = 'rgba(255,' + (120 + r() * 100 | 0) + ',50,' + (0.25 + r() * 0.5) + ')'; g.fillRect(vx - 40 + r() * 90 - w / 2, yy, w, 0.6); }
+  // the volcano: dark rock, lit on its right by the lava, lava rivers down its flanks
+  g.beginPath(); g.moveTo(X(-40), Y(54)); g.bezierCurveTo(X(10), Y(70), X(44), Y(108), X(64), Y(146)); g.lineTo(X(70), Y(149)); g.lineTo(X(86), Y(149)); g.lineTo(X(92), Y(146)); g.bezierCurveTo(X(110), Y(110), X(150), Y(72), X(200), Y(55)); g.closePath();
+  q = g.createLinearGradient(X(20), 0, X(170), 0); q.addColorStop(0, '#0d070c'); q.addColorStop(0.55, '#24101a'); q.addColorStop(1, '#3a1a1c'); g.fillStyle = q; g.fill();
+  g.save(); g.clip(); g.strokeStyle = 'rgba(90,40,50,0.5)'; g.lineWidth = 0.6;
+  for (let i = 0; i < 30; i++) { const yy = Y(60 + r() * 85); g.beginPath(); g.moveTo(X(-20 + r() * 80), yy); g.lineTo(X(60 + r() * 120), yy + (r() - 0.5) * 6); g.stroke(); }
+  g.restore();
+  g.save(); g.lineCap = 'round'; g.lineJoin = 'round';
+  for (const [x0, x1, x2, y2] of [[70, 50, 30, 64], [80, 84, 96, 58], [88, 116, 150, 60], [74, 66, 58, 90]]) {
+    for (const [w, col, bl] of [[4.2, 'rgba(255,90,20,0.6)', 10], [1.9, '#ff9a2a', 5], [0.7, '#fff2a0', 2]]) {
+      g.shadowColor = '#ff5a10'; g.shadowBlur = bl * K; g.strokeStyle = col; g.lineWidth = w;
+      g.beginPath(); g.moveTo(X(x0), Y(147)); g.bezierCurveTo(X(x1), Y(122), X((x1 + x2) / 2 + 4), Y(92), X(x2), Y(y2)); g.stroke();
+    }
+  }
+  g.restore();
+  q = g.createRadialGradient(vx, vy + 1, 1, vx, vy + 1, 14); q.addColorStop(0, '#fffbe0'); q.addColorStop(0.4, '#ffb02a'); q.addColorStop(1, 'rgba(255,90,20,0)');
+  g.fillStyle = q; g.beginPath(); g.ellipse(vx, vy + 1, 14, 4, 0, 0, Math.PI * 2); g.fill();
+  // the ledge (left, the foreground) and our explorer on it, black against the lava
+  const ledge = [[-10, 84], [8, 80], [30, 72], [44, 60], [56, 46]];
+  g.fillStyle = '#06030a'; g.beginPath(); g.moveTo(X(BG.x0 - 2), Y(BG.h0 - 2)); g.lineTo(X(BG.x0 - 2), Y(80)); ledge.forEach((p) => g.lineTo(X(p[0]), Y(p[1]))); g.lineTo(X(64), Y(BG.h0 - 2)); g.closePath(); g.fill();
+  g.save(); g.strokeStyle = 'rgba(255,120,40,0.75)'; g.lineWidth = 0.8; g.shadowColor = '#ff6a1a'; g.shadowBlur = 4 * K; g.beginPath(); ledge.slice(0, 4).forEach((p, i) => (i ? g.lineTo(X(p[0]), Y(p[1])) : g.moveTo(X(p[0]), Y(p[1])))); g.stroke(); g.restore();
+  explorerArt(g, X(-6), Y(83.5), 30);
+  // the rocks (right, the foreground) and a magma crab on them
+  g.fillStyle = '#06030a'; g.beginPath(); g.moveTo(X(232), Y(BG.h0 - 2)); g.lineTo(X(246), Y(44)); g.lineTo(X(268), Y(50)); g.lineTo(X(300), Y(47)); g.lineTo(X(BG.x1 + 2), Y(52)); g.lineTo(X(BG.x1 + 2), Y(BG.h0 - 2)); g.closePath(); g.fill();
+  crabArt(g, X(268), Y(50), 20, r, K);
+  // the title in lava lettering, and our name
+  g.save(); g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  const tx = X(206), ty = Y(124); g.font = 'italic 900 27px "Arial Black", Arial, sans-serif';
+  g.shadowColor = 'rgba(255,90,20,0.9)'; g.shadowBlur = 16 * K; g.lineWidth = 6; g.strokeStyle = '#2a0804'; g.strokeText('EMBER', tx - 26, ty - 13); g.strokeText('PEAK', tx + 22, ty + 15);
+  g.shadowBlur = 0; g.lineWidth = 2.6; g.strokeStyle = '#ffd890'; g.strokeText('EMBER', tx - 26, ty - 13); g.strokeText('PEAK', tx + 22, ty + 15);
+  q = g.createLinearGradient(0, ty - 26, 0, ty + 28); q.addColorStop(0, '#fff6c0'); q.addColorStop(0.3, '#ffc23a'); q.addColorStop(0.5, '#ff7a1a'); q.addColorStop(0.75, '#ffb02a'); q.addColorStop(1, '#e8401a');
+  g.fillStyle = q; g.fillText('EMBER', tx - 26, ty - 13); g.fillText('PEAK', tx + 22, ty + 15);
+  g.font = 'bold 8px "Arial Black", Arial, sans-serif'; g.fillStyle = '#fff3c4'; g.shadowColor = '#000'; g.shadowBlur = 3 * K; g.fillText('365 PINBALL HERO', tx - 4, Y(90));
+  g.restore();
+  for (let i = 0; i < 70; i++) { const z = 0.4 + r() * 0.9; g.fillStyle = 'rgba(255,' + (150 + r() * 100 | 0) + ',60,' + (0.4 + r() * 0.6) + ')'; g.fillRect(r() * GW, TPH + r() * GH * 0.85, z, z); }   // embers
+  q = g.createLinearGradient(0, Y(BG.h1), 0, Y(BG.h0)); q.addColorStop(0, 'rgba(0,0,0,0.25)'); q.addColorStop(0.2, 'rgba(0,0,0,0)'); q.addColorStop(0.9, 'rgba(0,0,0,0)'); q.addColorStop(1, 'rgba(0,0,0,0.35)'); g.fillStyle = q; g.fillRect(0, TPH, GW, GH);
+  g.strokeStyle = 'rgba(255,190,90,0.75)'; g.lineWidth = 0.7; g.strokeRect(2.5, TPH + 2.5, GW - 5, GH - 5);   // a gold pinstripe inside the frame
+  g.restore();
+  // ---- the topper (its own rows; table x tx0..tx1 squeezed across the full width)
+  const sx = GW / (BG.tx1 - BG.tx0), TX = (x) => x - BG.tx0, TY = (h) => BG.th1 - h, TWd = BG.tx1 - BG.tx0;
+  g.save(); g.scale(sx, 1);
+  q = g.createLinearGradient(0, 0, 0, TPH); q.addColorStop(0, '#3a0c10'); q.addColorStop(1, '#120408'); g.fillStyle = q; g.fillRect(0, 0, TWd, TPH);
+  q = g.createRadialGradient(TX(136), TY(240), 2, TX(136), TY(240), 70); q.addColorStop(0, 'rgba(255,120,30,0.7)'); q.addColorStop(1, 'rgba(255,60,20,0)'); g.fillStyle = q; g.fillRect(0, 0, TWd, TPH);
+  g.save(); g.lineJoin = 'round'; g.shadowColor = '#ff7a1a'; g.shadowBlur = 6 * K; g.strokeStyle = '#ffb04a'; g.lineWidth = 1.4; g.beginPath();
+  for (let x = BG.tx0 + 3; x <= BG.tx1 - 3; x += 2) { const h = topperArch(x) - 3; if (x === BG.tx0 + 3) g.moveTo(TX(x), TY(h)); else g.lineTo(TX(x), TY(h)); }
+  g.lineTo(TX(BG.tx1 - 3), TY(BG.th0 + 2)); g.lineTo(TX(BG.tx0 + 3), TY(BG.th0 + 2)); g.closePath(); g.stroke(); g.restore();
+  for (let i = 0; i < 9; i++) {   // flames along its foot
+    const x = BG.tx0 + 14 + i * 19.5; g.save(); g.shadowColor = '#ff5a10'; g.shadowBlur = 5 * K; q = g.createLinearGradient(0, TY(BG.th0 + 3), 0, TY(BG.th0 + 15)); q.addColorStop(0, '#ffe08a'); q.addColorStop(1, 'rgba(255,90,20,0)'); g.fillStyle = q;
+    g.beginPath(); g.moveTo(TX(x - 6), TY(BG.th0 + 3)); g.quadraticCurveTo(TX(x - 4), TY(BG.th0 + 10), TX(x + 1), TY(BG.th0 + 15 + (i % 2) * 4)); g.quadraticCurveTo(TX(x + 2), TY(BG.th0 + 8), TX(x + 6), TY(BG.th0 + 3)); g.fill(); g.restore();
+  }
+  g.restore();
+  g.save(); g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';   // (unsqueezed: the lettering keeps its shape)
+  const cx = GW / 2; g.font = 'italic 900 16px "Arial Black", Arial, sans-serif'; g.shadowColor = '#ff6a1a'; g.shadowBlur = 8 * K; g.lineWidth = 3.5; g.strokeStyle = '#2a0804'; g.strokeText('365', cx, TY(259));
+  q = g.createLinearGradient(0, TY(268), 0, TY(250)); q.addColorStop(0, '#fff6c0'); q.addColorStop(0.5, '#ffc23a'); q.addColorStop(1, '#ff7a1a'); g.fillStyle = q; g.shadowBlur = 0; g.fillText('365', cx, TY(259));
+  g.font = 'bold 9px "Arial Black", Arial, sans-serif'; g.shadowColor = '#000'; g.shadowBlur = 2 * K; g.fillStyle = '#fff0c8'; g.fillText('PINBALL  HERO', cx, TY(242));
+  g.restore();
+  crabArt(g, GW * 0.16, TY(241), 15, r, K); crabArt(g, GW * 0.84, TY(241), 15, r, K);
   return c;
+}
+// a fumarole pop bumper's printed cap (30 Oct 2026): cream plastic, an erupting vent printed in the middle, FUMAROLE round its
+// edge, the outer ring is the cap's lit side band. Neutral and warm: each bumper's own colour tints it as it glows.
+function fumaroleCapCanvas(pts) {   // pts: the table's own bumper score (30 Oct 2026, owner: the cap said 1000, Ember pays 5000)
+  const n = 256, c = cv(n, n), g = c.getContext('2d'), m = n / 2, r = rnd(73);
+  g.fillStyle = '#ffd890'; g.fillRect(0, 0, n, n);
+  const q = g.createRadialGradient(m, m, 4, m, m, m * 0.84); q.addColorStop(0, '#fff8e8'); q.addColorStop(0.7, '#f6dcb0'); q.addColorStop(1, '#e8b880'); g.fillStyle = q; g.beginPath(); g.arc(m, m, m * 0.84, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = '#3a1608'; g.lineWidth = 5; g.beginPath(); g.arc(m, m, m * 0.84, 0, Math.PI * 2); g.stroke();
+  g.lineWidth = 2; g.beginPath(); g.arc(m, m, m * 0.56, 0, Math.PI * 2); g.stroke();
+  g.save(); g.fillStyle = '#3a1608'; g.font = 'bold 21px "Arial Black", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const word = ('FUMAROLE • ' + pts + ' • ').repeat(2), N = word.length;
+  for (let i = 0; i < N; i++) { const a = i / N * Math.PI * 2 - Math.PI / 2; g.save(); g.translate(m + Math.cos(a) * m * 0.7, m + Math.sin(a) * m * 0.7); g.rotate(a + Math.PI / 2); g.fillText(word[i], 0, 0); g.restore(); }
+  g.restore();
+  g.fillStyle = '#2a1410'; g.beginPath(); g.moveTo(m - 46, m + 34); g.lineTo(m - 13, m - 18); g.lineTo(m + 13, m - 18); g.lineTo(m + 46, m + 34); g.closePath(); g.fill();   // the vent: a little volcano, erupting
+  g.save(); g.lineCap = 'round'; g.strokeStyle = '#e8501a'; g.lineWidth = 6;
+  for (const [a, L] of [[-1.57, 40], [-1.95, 32], [-1.2, 32], [-2.3, 22], [-0.85, 22]]) { g.beginPath(); g.moveTo(m, m - 20); g.lineTo(m + Math.cos(a) * L, m - 20 + Math.sin(a) * L); g.stroke(); }
+  g.strokeStyle = '#ffb02a'; g.lineWidth = 3; for (const x of [-22, 0, 20]) { g.beginPath(); g.moveTo(m + x * 0.4, m - 16); g.lineTo(m + x, m + 30); g.stroke(); }
+  g.restore();
+  for (let i = 0; i < 40; i++) { g.fillStyle = 'rgba(120,60,30,' + (0.05 + r() * 0.08) + ')'; g.beginPath(); g.arc(r() * n, r() * n, 2 + r() * 6, 0, Math.PI * 2); g.fill(); }
+  return c;
+}
+function crabEyeCanvas() {   // a magma crab's eye (a sphere's uvs; u 0.25 faces the player): glossy cream, a black pupil ringed amber
+  const w = 128, h = 64, c = cv(w, h), g = c.getContext('2d');
+  g.fillStyle = '#fff4d0'; g.fillRect(0, 0, w, h);
+  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, 'rgba(255,255,255,0)'); q.addColorStop(1, 'rgba(200,140,60,0.5)'); g.fillStyle = q; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#120806'; g.beginPath(); g.ellipse(w * 0.25, h * 0.45, w * 0.085, h * 0.22, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#ff9a2a'; g.beginPath(); g.ellipse(w * 0.25, h * 0.45, w * 0.04, h * 0.1, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#120806'; g.beginPath(); g.ellipse(w * 0.25, h * 0.45, w * 0.022, h * 0.065, 0, 0, Math.PI * 2); g.fill();
+  return c;
+}
+// ---- the games room (30 Oct 2026, owner: "a table in a room" for the title screen and trailers): all our own designs
+function neon(gs, text, x, y, px, col, font) {   // a neon sign's tube lettering on the colour and the glow canvases (gs: [g, glow-g])
+  gs.forEach((g, i) => {
+    g.save(); g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.font = (font || 'bold ') + px + 'px "Arial Black", Arial, sans-serif';
+    g.shadowColor = col; g.shadowBlur = px * 0.6; g.strokeStyle = col; g.lineWidth = px * 0.12; g.strokeText(text, x, y);
+    g.shadowBlur = px * 0.2; g.strokeStyle = i ? 'rgba(255,240,250,0.8)' : rgba(col, 1); g.lineWidth = px * 0.04; g.strokeText(text, x, y);
+    g.restore();
+  });
+}
+function neonPath(gs, col, w, draw) { gs.forEach((g, i) => { g.save(); g.lineCap = 'round'; g.lineJoin = 'round'; g.shadowColor = col; g.shadowBlur = w * 5; g.strokeStyle = col; g.lineWidth = w; g.beginPath(); draw(g); g.stroke(); g.shadowBlur = w; g.strokeStyle = i ? 'rgba(255,245,250,0.7)' : col; g.lineWidth = w * 0.35; g.stroke(); g.restore(); }); }
+function carpetCanvas(n) {   // the arcade carpet, one tile (tiles both ways): night blue, scattered neon shapes that glow under the blacklight
+  const col = cv(n, n), glo = cv(n, n), g = col.getContext('2d'), gg = glo.getContext('2d'), r = rnd(1365), u = n / 512;
+  g.fillStyle = '#0c0a1c'; g.fillRect(0, 0, n, n); gg.fillStyle = '#000'; gg.fillRect(0, 0, n, n);
+  for (let i = 0; i < 2600; i++) { g.fillStyle = r() < 0.5 ? 'rgba(40,30,70,0.5)' : 'rgba(5,4,12,0.5)'; g.fillRect(r() * n, r() * n, 2 * u, 2 * u); }   // the pile
+  const C = ['#ff3cac', '#2ee6ff', '#ff8a1a', '#ffe14a', '#7a5cff'];
+  const shapes = [
+    (q, s) => { q.beginPath(); q.moveTo(-s, s * 0.6); q.lineTo(-s * 0.25, -s * 0.6); q.lineTo(s * 0.25, -s * 0.6); q.lineTo(s, s * 0.6); q.stroke(); q.beginPath(); q.moveTo(0, -s * 0.7); q.lineTo(0, -s * 1.2); q.stroke(); },   // a little volcano
+    (q, s) => { q.beginPath(); for (let k = 0; k <= 24; k++) { const a = k / 24 * Math.PI * 3, rr = s * k / 24; q.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } q.stroke(); },   // a swirl
+    (q, s) => { q.beginPath(); for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * Math.PI * 4 / 5; q.lineTo(Math.cos(a) * s, Math.sin(a) * s); } q.closePath(); q.stroke(); },   // a star
+    (q, s) => { q.beginPath(); q.moveTo(-s, 0); for (let k = 1; k <= 4; k++) q.lineTo(-s + k * s / 2, (k % 2 ? -1 : 1) * s * 0.4); q.stroke(); },   // a zigzag
+    (q, s) => { q.beginPath(); q.arc(0, 0, s * 0.5, 0, Math.PI * 2); q.stroke(); q.beginPath(); q.arc(0, 0, s * 0.15, 0, Math.PI * 2); q.stroke(); }   // a ring
+  ];
+  for (let i = 0; i < 22; i++) {
+    const x = r() * n, y = r() * n, s = (9 + r() * 12) * u, a = r() * Math.PI * 2, c = C[i % C.length], f = shapes[Math.floor(r() * shapes.length)];
+    for (const [q, w, al] of [[g, 2.6 * u, 0.6], [gg, 2.6 * u, 0.8]]) for (const ox of [-n, 0, n]) for (const oy of [-n, 0, n]) {
+      if (x + ox < -s * 1.5 || x + ox > n + s * 1.5 || y + oy < -s * 1.5 || y + oy > n + s * 1.5) continue;
+      q.save(); q.translate(x + ox, y + oy); q.rotate(a); q.globalAlpha = al; q.strokeStyle = c; q.lineWidth = w; q.lineCap = 'round'; f(q, s); q.restore();
+    }
+  }
+  return { col, glo };
+}
+// the room's walls, one canvas: a dark panelled wall, a chair rail, and our neon signs (365 ARCADE, LAVA LOUNGE, HIGH SCORE, OPEN LATE)
+function wallCanvases(w) {
+  const h = w / 2, col = cv(w, h), glo = cv(w, h), g = col.getContext('2d'), gg = glo.getContext('2d'), u = w / 2048, r = rnd(52);
+  let q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#07060c'); q.addColorStop(0.6, '#15101f'); q.addColorStop(1, '#0c0a12'); g.fillStyle = q; g.fillRect(0, 0, w, h);
+  gg.fillStyle = '#000'; gg.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(0,0,0,0.35)'; for (let x = 0; x < w; x += 128 * u) g.fillRect(x, 0, 3 * u, h);   // panel seams
+  g.fillStyle = '#1e1428'; g.fillRect(0, h * 0.72, w, h * 0.28); g.fillStyle = '#2a1d33'; g.fillRect(0, h * 0.715, w, 8 * u);   // the wainscot and its rail
+  for (let i = 0; i < 300; i++) { g.fillStyle = 'rgba(255,255,255,' + r() * 0.03 + ')'; g.fillRect(r() * w, r() * h, 30 * u, 1 * u); }
+  const both = [g, gg];
+  neonPath(both, '#2ee6ff', 6 * u, (c) => { c.moveTo(40 * u, 60 * u); for (let x = 40; x <= 2008; x += 48) c.lineTo(x * u, (x / 48) % 2 ? 44 * u : 60 * u); });   // a zigzag tube along the top
+  neonPath(both, '#ff3cac', 5 * u, (c) => { c.moveTo(0, h * 0.705); c.lineTo(w, h * 0.705); });   // a tube along the rail
+  neon(both, '365 ARCADE', 760 * u, 250 * u, 150 * u, '#ff3cac', 'italic 900 ');
+  neonPath(both, '#2ee6ff', 7 * u, (c) => { c.moveTo(330 * u, 345 * u); c.lineTo(1190 * u, 345 * u); });
+  neonPath(both, '#ff8a1a', 8 * u, (c) => { c.moveTo(1500 * u, 330 * u); c.lineTo(1580 * u, 190 * u); c.lineTo(1620 * u, 190 * u); c.lineTo(1700 * u, 330 * u); });   // LAVA LOUNGE's volcano
+  neonPath(both, '#ffe14a', 6 * u, (c) => { c.moveTo(1600 * u, 180 * u); c.lineTo(1585 * u, 120 * u); c.moveTo(1600 * u, 180 * u); c.lineTo(1630 * u, 110 * u); c.moveTo(1600 * u, 180 * u); c.lineTo(1560 * u, 140 * u); });
+  neon(both, 'LAVA LOUNGE', 1600 * u, 400 * u, 60 * u, '#ff8a1a');
+  neon(both, 'HIGH SCORE', 260 * u, 560 * u, 54 * u, '#ffe14a');
+  neonPath(both, '#ffe14a', 5 * u, (c) => { for (let k = 0; k < 6; k++) { const a = -Math.PI / 2 + k * Math.PI * 4 / 5; c.lineTo(260 * u + Math.cos(a) * 40 * u, 480 * u + Math.sin(a) * 40 * u); } });
+  neon(both, 'OPEN LATE', 1840 * u, 590 * u, 44 * u, '#2ee6ff');
+  neon(both, 'PLAY', 1240 * u, 600 * u, 70 * u, '#7a5cff', 'italic 900 ');
+  neonPath(both, '#7a5cff', 7 * u, (c) => { c.moveTo(1340 * u, 600 * u); c.lineTo(1420 * u, 600 * u); c.moveTo(1395 * u, 575 * u); c.lineTo(1420 * u, 600 * u); c.lineTo(1395 * u, 625 * u); });
+  q = g.createLinearGradient(0, 0, w, 0); q.addColorStop(0, 'rgba(0,0,0,0.55)'); q.addColorStop(0.2, 'rgba(0,0,0,0)'); q.addColorStop(0.8, 'rgba(0,0,0,0)'); q.addColorStop(1, 'rgba(0,0,0,0.55)'); g.fillStyle = q; g.fillRect(0, 0, w, h);
+  return { col, glo };
+}
+// the room's cabinets, one atlas (fractions of the canvas, v down): RA the uprights' fronts, RB their sides, RC1/RC2 the other
+// pinballs' backglasses, RD our cabinet's side art, RE our coin door, RF brushed steel, RG black body, RH the other pinballs' playfields
+const RA = [0, 0, 0.25, 0.5], RB = [0.25, 0, 0.5, 0.5], RC1 = [0.5, 0, 0.75, 0.5], RC2 = [0.75, 0, 1, 0.5], RD = [0, 0.5, 0.5, 0.75], RE = [0.5, 0.5, 0.625, 0.75], RF = [0.64, 0.52, 0.735, 0.73], RG = [0.75, 0.5, 1, 0.75], RH = [0, 0.75, 0.5, 1], RH2 = [0.5, 0.75, 1, 1];
+function roomAtlas(S) {
+  const col = cv(S, S), glo = cv(S, S), g = col.getContext('2d'), gg = glo.getContext('2d'), r = rnd(908), u = S / 512;
+  gg.fillStyle = '#000'; gg.fillRect(0, 0, S, S);
+  const at = (R, f) => { const x = R[0] * S, y = R[1] * S, w = (R[2] - R[0]) * S, h = (R[3] - R[1]) * S; [g, gg].forEach((q, i) => { q.save(); q.beginPath(); q.rect(x, y, w, h); q.clip(); q.translate(x, y); f(q, w, h, i); q.restore(); }); };
+  // RA: an upright's front: a lit marquee, a glowing screen of our own pixel game, the control panel, a coin door
+  at(RA, (q, w, h, i) => {
+    q.fillStyle = i ? '#000' : '#16121e'; q.fillRect(0, 0, w, h);
+    let gr = q.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, '#ff3cac'); gr.addColorStop(1, '#7a5cff'); q.fillStyle = gr; q.fillRect(w * 0.06, h * 0.03, w * 0.88, h * 0.1);
+    q.fillStyle = '#fff'; q.font = 'italic 900 ' + (14 * u) + 'px Arial Black, Arial'; q.textAlign = 'center'; q.textBaseline = 'middle'; q.fillText('365 INVADERS', w / 2, h * 0.08);
+    q.fillStyle = '#05060c'; q.fillRect(w * 0.1, h * 0.18, w * 0.8, h * 0.34);
+    const cs = ['#ff5cc8', '#3fe0ff', '#ffd84a'], k = w * 0.0075;   // our own 365 Invaders on the screen
+    for (let yy = 0; yy < 3; yy++) for (let xx = 0; xx < 4; xx++) invader(q, ART[['orb', 'moth', 'bot'][yy]], w * (0.15 + xx * 0.18), h * (0.21 + yy * 0.07), k, cs[yy]);
+    q.fillStyle = '#fff'; q.fillRect(w * 0.47, h * 0.47, w * 0.12, h * 0.015); q.beginPath(); q.arc(w * 0.52, h * 0.43, w * 0.02, 0, Math.PI * 2); q.fill();
+    if (!i) { q.fillStyle = '#2a2232'; q.fillRect(0, h * 0.55, w, h * 0.1); q.fillStyle = '#ff3a3a'; q.beginPath(); q.arc(w * 0.3, h * 0.6, w * 0.05, 0, Math.PI * 2); q.fill(); q.fillStyle = '#ffe14a'; q.beginPath(); q.arc(w * 0.6, h * 0.6, w * 0.04, 0, Math.PI * 2); q.fill(); q.beginPath(); q.arc(w * 0.72, h * 0.6, w * 0.04, 0, Math.PI * 2); q.fill(); q.fillStyle = '#3a3440'; q.fillRect(w * 0.3, h * 0.72, w * 0.4, h * 0.16); }
+    q.fillStyle = '#ff3a2a'; q.fillRect(w * 0.38, h * 0.76, w * 0.07, h * 0.03); q.fillRect(w * 0.55, h * 0.76, w * 0.07, h * 0.03);
+  });
+  at(RB, (q, w, h, i) => { q.fillStyle = i ? '#000' : '#120e18'; q.fillRect(0, 0, w, h); q.save(); q.shadowColor = '#2ee6ff'; q.shadowBlur = 6 * u; q.strokeStyle = i ? '#2a8aa0' : '#2ee6ff'; q.lineWidth = 5 * u; q.beginPath(); q.moveTo(0, h * 0.9); q.lineTo(w, h * 0.35); q.stroke(); q.strokeStyle = i ? '#a02a70' : '#ff3cac'; q.beginPath(); q.moveTo(0, h * 0.97); q.lineTo(w, h * 0.45); q.stroke(); q.restore(); });
+  // RC1 / RC2: the other pinballs' backglasses (our own: a comet over a ringed planet; a sunburst over waves)
+  at(RC1, (q, w, h) => {
+    let gr = q.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0a1a4a'); gr.addColorStop(1, '#3a0a5a'); q.fillStyle = gr; q.fillRect(0, 0, w, h);
+    q.fillStyle = '#ffb02a'; q.beginPath(); q.arc(w * 0.6, h * 0.6, w * 0.22, 0, Math.PI * 2); q.fill(); q.strokeStyle = '#2ee6ff'; q.lineWidth = 4 * u; q.beginPath(); q.ellipse(w * 0.6, h * 0.6, w * 0.38, w * 0.08, -0.3, 0, Math.PI * 2); q.stroke();
+    gr = q.createLinearGradient(w * 0.1, h * 0.1, w * 0.4, h * 0.3); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, '#fff'); q.strokeStyle = gr; q.lineWidth = 6 * u; q.beginPath(); q.moveTo(w * 0.05, h * 0.08); q.lineTo(w * 0.4, h * 0.3); q.stroke();
+    for (let k = 0; k < 40; k++) { q.fillStyle = '#fff'; q.fillRect(r() * w, r() * h * 0.5, 1.5 * u, 1.5 * u); }
+  });
+  at(RC2, (q, w, h) => {
+    q.fillStyle = '#0a3a2a'; q.fillRect(0, 0, w, h);
+    for (let k = 0; k < 16; k++) { q.fillStyle = k % 2 ? '#ffe14a' : '#ff8a1a'; q.beginPath(); q.moveTo(w / 2, h * 0.55); const a0 = Math.PI + k / 16 * Math.PI, a1 = Math.PI + (k + 1) / 16 * Math.PI; q.lineTo(w / 2 + Math.cos(a0) * w, h * 0.55 + Math.sin(a0) * w); q.lineTo(w / 2 + Math.cos(a1) * w, h * 0.55 + Math.sin(a1) * w); q.fill(); }
+    for (let k = 0; k < 4; k++) { q.strokeStyle = k % 2 ? '#2ee6ff' : '#fff'; q.lineWidth = 5 * u; q.beginPath(); for (let x = 0; x <= w; x += 4) q.lineTo(x, h * (0.62 + k * 0.08) + Math.sin(x / w * 12 + k) * 6 * u); q.stroke(); }
+  });
+  // RD: Ember Peak's side art: black lacquer, lava flames rising from the foot, a volcano and the name
+  at(RD, (q, w, h, i) => {
+    q.fillStyle = i ? '#000' : '#100608'; q.fillRect(0, 0, w, h);
+    for (let k = 0; k < 26; k++) { const x = k / 25 * w, fh = h * (0.3 + r() * 0.45); const gr = q.createLinearGradient(0, h, 0, h - fh); gr.addColorStop(0, i ? 'rgba(255,90,20,0.6)' : '#ff6a1a'); gr.addColorStop(0.6, i ? 'rgba(255,60,10,0.15)' : '#a8200a'); gr.addColorStop(1, 'rgba(60,0,0,0)'); q.fillStyle = gr; q.beginPath(); q.moveTo(x - w * 0.04, h); q.quadraticCurveTo(x - w * 0.03, h - fh * 0.5, x + (r() - 0.5) * w * 0.03, h - fh); q.quadraticCurveTo(x + w * 0.02, h - fh * 0.5, x + w * 0.04, h); q.fill(); }
+    if (!i) { q.fillStyle = '#1a0a0e'; q.beginPath(); q.moveTo(w * 0.62, h * 0.85); q.lineTo(w * 0.74, h * 0.3); q.lineTo(w * 0.79, h * 0.3); q.lineTo(w * 0.92, h * 0.85); q.fill(); }
+    q.save(); q.strokeStyle = '#ffb02a'; q.lineWidth = 2 * u; q.shadowColor = '#ff6a1a'; q.shadowBlur = 6 * u; q.beginPath(); q.moveTo(w * 0.76, h * 0.3); q.lineTo(w * 0.72, h * 0.6); q.moveTo(w * 0.77, h * 0.3); q.lineTo(w * 0.83, h * 0.66); q.stroke(); q.restore();
+    q.save(); q.font = 'italic 900 ' + (26 * u) + 'px Arial Black, Arial'; q.textAlign = 'left'; q.textBaseline = 'middle'; q.lineJoin = 'round'; q.lineWidth = 5 * u; q.strokeStyle = '#2a0804'; q.strokeText('EMBER PEAK', w * 0.06, h * 0.3);
+    const gr = q.createLinearGradient(0, h * 0.2, 0, h * 0.4); gr.addColorStop(0, '#fff6c0'); gr.addColorStop(0.5, '#ffb02a'); gr.addColorStop(1, '#e8401a'); q.fillStyle = gr; q.fillText('EMBER PEAK', w * 0.06, h * 0.3); q.restore();
+    q.fillStyle = i ? '#000' : '#c8a060'; q.fillRect(0, 0, w, 2 * u); q.fillRect(0, h - 2 * u, w, 2 * u);
+  });
+  // RE: our coin door: steel, two lit coin entries (1 PLAY), the service plate
+  at(RE, (q, w, h, i) => {
+    let gr = q.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, '#5a5e66'); gr.addColorStop(0.5, '#a8acb4'); gr.addColorStop(1, '#5a5e66'); q.fillStyle = i ? '#000' : gr; q.fillRect(0, 0, w, h);
+    if (!i) { q.strokeStyle = '#2a2c30'; q.lineWidth = 2 * u; q.strokeRect(w * 0.08, h * 0.05, w * 0.84, h * 0.9); }
+    for (const yy of [0.2, 0.42]) { q.fillStyle = '#ff2a1a'; q.fillRect(w * 0.25, h * yy, w * 0.5, h * 0.12); q.fillStyle = i ? '#000' : '#1a0606'; q.fillRect(w * 0.47, h * (yy + 0.015), w * 0.06, h * 0.09); q.fillStyle = '#fff2c8'; q.font = 'bold ' + (7 * u) + 'px Arial'; q.textAlign = 'center'; q.fillText('1 PLAY', w / 2, h * (yy + 0.165)); }
+    if (!i) { q.fillStyle = '#2a2c30'; q.fillRect(w * 0.3, h * 0.7, w * 0.4, h * 0.05); q.beginPath(); q.arc(w * 0.5, h * 0.85, w * 0.06, 0, Math.PI * 2); q.fill(); }
+  });
+  at([0.625, 0.5, 0.75, 0.75], (q, w, h, i) => { q.fillStyle = i ? '#000' : '#9a9ea8'; q.fillRect(0, 0, w, h); if (!i) for (let k = 0; k < 60; k++) { q.fillStyle = 'rgba(255,255,255,' + r() * 0.15 + ')'; q.fillRect(0, r() * h, w, 1); } });
+  at(RG, (q, w, h, i) => { q.fillStyle = i ? '#000' : '#141018'; q.fillRect(0, 0, w, h); if (!i) { q.fillStyle = '#3a2f45'; q.fillRect(0, h * 0.82, w, h * 0.04); } });
+  // RH / RH2: the other pinballs' playfields under glass, seen from a distance: colour, lit inserts, chrome
+  [[RH, ['#1a3a8a', '#ff3cac', '#ffe14a', '#2ee6ff']], [RH2, ['#0a5a3a', '#ff8a1a', '#ffe14a', '#ff3a3a']]].forEach(([R, cs]) => at(R, (q, w, h, i) => {
+    q.fillStyle = i ? '#000' : cs[0]; q.fillRect(0, 0, w, h); if (!i) { q.fillStyle = 'rgba(0,0,0,0.45)'; q.fillRect(0, 0, w, h); }
+    for (let k = 0; k < 60; k++) { q.fillStyle = cs[1 + k % 3]; q.globalAlpha = i ? 0.45 : 0.8; q.beginPath(); q.arc(r() * w, r() * h, (2 + r() * 4) * u, 0, Math.PI * 2); q.fill(); }
+    q.globalAlpha = 1; q.strokeStyle = i ? '#000' : '#dde2ea'; q.lineWidth = 2 * u; q.beginPath(); q.arc(w * 0.5, h * 0.2, w * 0.3, Math.PI, 0); q.stroke();
+  }));
+  return { col, glo };
+}
+// a box in the room (raw scene units) with an atlas rect on each face it shows: R = { px, nx, py, pz, nz } (default R.all)
+function uvBox(G, x0, x1, y0, y1, z0, z1, R) {
+  const face = (a, b, c, d, n, rc) => {
+    if (!rc) return;
+    const uv = [[rc[0], 1 - rc[3]], [rc[2], 1 - rc[3]], [rc[2], 1 - rc[1]], [rc[0], 1 - rc[1]]], P = [a, b, c, d];
+    const ix = P.map((p, k) => G.v(p[0], p[1], p[2], n[0], n[1], n[2], uv[k][0], uv[k][1])); G.quad(ix[0], ix[1], ix[2], ix[3]);
+  };
+  const d = R.all;
+  face([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [0, 0, 1], R.pz || d);
+  face([x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [0, 0, -1], R.nz || d);
+  face([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [1, 0, 0], R.px || d);
+  face([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0], R.nx || d);
+  face([x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0], [0, 1, 0], R.py || d);
 }
 // the volcano's skin, wrapped round the cone (u round it, 0 = facing the player; v up it): black rock, a crusted rim,
 // and on the glow canvas lava veins running down from the crater and the glowing mouth at the front, at its foot
@@ -599,12 +879,12 @@ function coneCanvases() {
 }
 function shellCanvases() {   // a magma crab's shell (a sphere's uvs: v = 1 at the top): dark crust, glowing cracks on its back
   const w = 256, h = 128, col = cv(w, h), glo = cv(w, h), g = col.getContext('2d'), gg = glo.getContext('2d'), r = rnd(83);
-  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#3a2a26'); q.addColorStop(0.5, '#241a1a'); q.addColorStop(1, '#5a2414');
+  const q = g.createLinearGradient(0, 0, 0, h); q.addColorStop(0, '#ff8a4a'); q.addColorStop(0.28, '#e8481c'); q.addColorStop(0.46, '#8a1c0c'); q.addColorStop(0.5, '#ffd08a'); q.addColorStop(0.56, '#e8a060'); q.addColorStop(1, '#6a2a14');   // a coral shell, a cream rim (wave 2, 30 Oct 2026: it reads against the purple field; it was dark crust)
   g.fillStyle = q; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 300; i++) { g.fillStyle = r() < 0.5 ? 'rgba(90,70,70,0.4)' : 'rgba(0,0,0,0.4)'; g.fillRect(r() * w, r() * h * 0.6, 2 + r() * 4, 1 + r() * 3); }
+  for (let i = 0; i < 260; i++) { g.fillStyle = r() < 0.55 ? 'rgba(110,14,4,0.45)' : 'rgba(255,200,140,0.3)'; g.beginPath(); g.arc(r() * w, r() * h * 0.46, 1 + r() * 3, 0, Math.PI * 2); g.fill(); }
   gg.fillStyle = '#000'; gg.fillRect(0, 0, w, h);
   gg.lineCap = 'round';
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 10; i++) {
     let x = r() * w, y = r() * h * 0.42; gg.beginPath(); gg.moveTo(x, y);
     for (let k = 0; k < 5; k++) { x += (r() - 0.5) * 30; y += (r() - 0.3) * 12; gg.lineTo(x, Math.min(y, h * 0.48)); }
     gg.strokeStyle = '#ff8a1a'; gg.lineWidth = 2 + r() * 2.5; gg.shadowColor = '#ff5a10'; gg.shadowBlur = 6; gg.stroke();
@@ -833,7 +1113,7 @@ export function create(opts) {
     WALLS.forEach((w) => parts.push({ seg: [w[0], w[1], w[2], w[3]], r: w[4] + (w[6] === 'post' ? 0.3 : 0.6), h: w[6] === 'post' ? H.guide : cabinetSide(w) ? H.wood : H.rail }));
     (function () { const A = T.arch, pts = []; for (let k = 0; k <= 48; k++) { const a = Math.PI + Math.PI * k / 48; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } for (let k = 0; k < 48; k++) parts.push({ seg: [pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1]], r: 2.2, h: H.arch }); })();
     POSTS.forEach((p) => parts.push({ circle: [p.x, p.y, p.r + 0.4], h: H.post }));
-    BUMPERS.forEach((Bm) => parts.push({ circle: [Bm.x, Bm.y, Bm.r + 1], h: H.bumpCap }));
+    BUMPERS.forEach((Bm) => parts.push({ circle: [Bm.x, Bm.y, Bm.r + 1], h: ISLAND ? POP.top : H.bumpCap }));
     T.slings.forEach((s) => parts.push({ poly: offsetPoly([s.a, s.b, s.c], 3, 6), h: H.sling }));
     DROPS.forEach((d) => parts.push({ seg: [d.ax, d.ay, d.bx, d.by], r: 2.2, h: H.drop * 0.5 }));
     (T.voids || []).forEach((v) => parts.push({ poly: v, h: H.void }));
@@ -1032,8 +1312,25 @@ export function create(opts) {
     if (ISLAND) { box(wood, WOOD_L, WOOD_R, -14, -1.5, -18, TH + 24); }   // (its underside: seen from the low angles)
     group.add(RF(new THREE.Mesh(keep(wood.geometry()), M.wood)));
     const backbox = new THREE.Group(); group.add(backbox);
-    {   // the backbox: only its lit panel shows, in the strip above the arch (the old table's speakers, Ember Peak's sunset)
-      const sp = keep(tex(ISLAND ? islandBackCanvas() : speakerCanvas(), { aniso: ANISO })), pg = keep(new THREE.PlaneGeometry(WOOD_R - WOOD_L, 60));
+    if (ISLAND) {   // Ember Peak's backbox (30 Oct 2026, wave 2, owner: "the dark empty band above the backbox"): a tall lit backglass in a chrome bezel and an arched topper, filling the portrait home's top; 3 draw calls
+      const GH = BG.h1 - BG.h0, TPH = BG.th1 - BG.th0, vG = GH / (GH + TPH), bt = keep(tex(backglassCanvas(tierName === 'high' && !PHONE ? 4 : 2), { aniso: ANISO }));   // (2 px a unit on phones: less memory than the old strip)
+      const gl = new Geo(), lq = new Geo(), ch = new Geo(), Zg = wz(BG.face), TZ = wz(BG.tz), tu = (x) => (x - BG.tx0) / (BG.tx1 - BG.tx0), tv = (h) => vG + (h - BG.th0) / TPH * (1 - vG);
+      const q4 = (G, P, uv, n) => { const ix = P.map((p, k) => G.v(p[0], p[1], p[2], n[0], n[1], n[2], uv[k][0], uv[k][1])); G.quad(ix[0], ix[1], ix[2], ix[3]); };
+      q4(gl, [[wx(BG.x0), BG.h0, Zg], [wx(BG.x1), BG.h0, Zg], [wx(BG.x1), BG.h1, Zg], [wx(BG.x0), BG.h1, Zg]], [[0, 0], [1, 0], [1, vG], [0, vG]], [0, 0, 1]);
+      const rim = [[BG.tx0, BG.th0]]; for (let k = 0; k <= 32; k++) { const x = BG.tx0 + (BG.tx1 - BG.tx0) * k / 32; rim.push([x, topperArch(x)]); } rim.push([BG.tx1, BG.th0]);
+      const c0 = gl.v(wx((BG.tx0 + BG.tx1) / 2), BG.th0, TZ, 0, 0, 1, 0.5, tv(BG.th0)), ri = rim.map((p) => gl.v(wx(p[0]), p[1], TZ, 0, 0, 1, tu(p[0]), tv(p[1])));
+      for (let k = 0; k < ri.length - 1; k++) gl.tri(c0, ri[k], ri[k + 1]);   // the topper's face, a fan round its arch
+      const b0 = lq.v(wx((BG.tx0 + BG.tx1) / 2), BG.th0, TZ - 6, 0, 0, -1, 0, 0), rb = rim.map((p) => lq.v(wx(p[0]), p[1], TZ - 6, 0, 0, -1, p[0] / 120, p[1] / 120));
+      for (let k = 0; k < rb.length - 1; k++) lq.tri(b0, rb[k], rb[k + 1]);   // its back, and its edge
+      for (let k = 1; k < rim.length - 2; k++) { const a = rim[k], b = rim[k + 1], nx = -(b[1] - a[1]), ny = b[0] - a[0], l = Math.hypot(nx, ny) || 1; q4(lq, [[wx(a[0]), a[1], TZ], [wx(b[0]), b[1], TZ], [wx(b[0]), b[1], TZ - 6], [wx(a[0]), a[1], TZ - 6]], [[0, 0], [0.1, 0], [0.1, 0.05], [0, 0.05]], [nx / l, ny / l, 0]); }
+      box(lq, WOOD_L - 6, WOOD_R + 6, 0, BG.top, -46, -18.4);   // the box itself
+      [[BG.x0 - 3.2, BG.x1 + 3.2, BG.h0 - 3.2, BG.h0 + 0.6], [BG.x0 - 3.2, BG.x1 + 3.2, BG.h1 - 0.6, BG.h1 + 3.2], [BG.x0 - 3.2, BG.x0 + 0.6, BG.h0 - 3.2, BG.h1 + 3.2], [BG.x1 - 0.6, BG.x1 + 3.2, BG.h0 - 3.2, BG.h1 + 3.2]].forEach((b) => box(ch, b[0], b[1], b[2], b[3], BG.face - 1.6, BG.face + 1.4));   // the bezel
+      box(ch, WOOD_L - 7.5, WOOD_R + 7.5, BG.top, BG.top + 2.2, -47.5, -17.2);   // the crown trim
+      wire(ch, rim.slice(1, rim.length - 1).map((p) => [p[0], BG.tz + 0.4, p[1]]), 1.3, 6); wire(ch, [[BG.tx0, BG.tz + 0.4, BG.th0 + 0.5], [BG.tx1, BG.tz + 0.4, BG.th0 + 0.5]], 1.1, 6);   // the topper's chrome edge
+      const glass = new THREE.Mesh(keep(gl.geometry()), keep(new THREE.MeshStandardMaterial({ map: bt, emissiveMap: bt, emissive: 0xffffff, emissiveIntensity: 0.95, roughness: 0.14, metalness: 0, envMapIntensity: 0.7 }))); glass.name = 'backglass';
+      backbox.add(glass, new THREE.Mesh(keep(lq.geometry()), M.wood), new THREE.Mesh(keep(ch.geometry()), M.chrome));
+    } else {   // the old table's backbox: only its lit speaker panel shows, in the strip above the arch
+      const sp = keep(tex(speakerCanvas(), { aniso: ANISO })), pg = keep(new THREE.PlaneGeometry(WOOD_R - WOOD_L, 60));
       const panel = new THREE.Mesh(pg, keep(new THREE.MeshStandardMaterial({ map: sp, emissiveMap: sp, emissive: 0xffffff, emissiveIntensity: 1.0, roughness: 0.4, metalness: 0.3 })));
       panel.position.set(wx((WOOD_L + WOOD_R) / 2), H.wood + 30, wz(-18.3)); backbox.add(panel);
       const sides = new Geo(); box(sides, WOOD_L - 6, WOOD_R + 6, 0, H.wood + 64, -46, -18.4);
@@ -1096,7 +1393,32 @@ export function create(opts) {
 
     // ---- pop bumpers (Ember Peak: fumaroles - a rock chimney, a glowing collar, a vent cap)
     const cylinder = (rt, rb, h, seg, open) => keep(new THREE.CylinderGeometry(rt, rb, h, seg || 32, 1, !!open));
-    const bumpers = BUMPERS.map((Bm, i) => {
+    let pop = null;
+    const bumpers = ISLAND ? (function () {   // Ember Peak's fumaroles as real pop bumpers (30 Oct 2026, wave 2, owner: "stacked discs"): a rocky vent base, a black body, a lit amber skirt, a chrome ring that snaps down, a printed cap lit from inside, set lower (top 20, was 26: less ball hidden behind them). 5 draw calls for all (8 each before)
+      const n = BUMPERS.length, rockL = [], blackL = [], v2 = (a) => a.map((q) => new THREE.Vector2(q[0], q[1]));
+      BUMPERS.forEach((Bm, i) => {
+        const lg = new THREE.LatheGeometry(v2([[Bm.r + 4.6, 0.05], [Bm.r + 4.0, 1.3], [Bm.r + 2.4, 2.7], [Bm.r + 0.8, 3.6], [Bm.r - 1.2, 4.0]]), 30), P = lg.attributes.position;
+        for (let k = 0; k < P.count; k++) { const x = P.getX(k), y = P.getY(k), z = P.getZ(k), f = 1 + 0.16 * (fbm3(x * 0.35 + i * 7, y * 0.5, z * 0.35, 2) - 0.5) * Math.min(1, y / 1.2); P.setXYZ(k, x * f, y * (0.8 + 0.5 * fbm3(z * 0.4, x * 0.4, i, 2)), z * f); }
+        lg.computeVertexNormals(); lg.translate(wx(Bm.x), 0, wz(Bm.y)); rockL.push(lg);
+        const body = new THREE.CylinderGeometry(Bm.r - 4.6, Bm.r - 4.0, POP.rim - 3.6, 20, 1, true); body.translate(wx(Bm.x), 3.6 + (POP.rim - 3.6) / 2, wz(Bm.y)); blackL.push(body);
+      });
+      group.add(R1(new THREE.Mesh(keep(mergeGeos(rockL)), M.rock)), R1(new THREE.Mesh(keep(mergeGeos(blackL)), M.black))); rockL.concat(blackL).forEach((q) => q.dispose());
+      // the instanced parts glow each in its own bumper's colour: the instance colour tints the emissive only (the print keeps its colours lit)
+      const tintE = (m) => { m.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', '').replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n#ifdef USE_COLOR\n\ttotalEmissiveRadiance *= vColor.rgb;\n#endif'); }; m.customProgramCacheKey = () => 'tint-e'; return m; };
+      const Rb = BUMPERS[0].r, CR = Rb + 1.6, capT = keep(tex(fumaroleCapCanvas(B && B.PTS ? B.PTS.bumper : 100), { aniso: ANISO }));
+      const capG = keep(new THREE.LatheGeometry(v2([[0.01, POP.top + 0.1], [CR * 0.3, POP.top], [CR * 0.65, POP.top - 0.5], [CR - 1.0, POP.top - 1.5], [CR, POP.rim + 2.4], [CR, POP.rim + 0.3], [CR - 0.6, POP.rim - 0.2], [Rb - 4.4, POP.rim - 0.2]]).reverse(), 40));
+      { const P = capG.attributes.position, uv = capG.attributes.uv; for (let k = 0; k < P.count; k++) uv.setXY(k, P.getX(k) / (2 * CR) * 0.95 + 0.5, 0.5 - P.getZ(k) / (2 * CR) * 0.95); }
+      const capMat = keep(tintE(new THREE.MeshStandardMaterial({ map: capT, emissiveMap: capT, emissive: 0xffffff, roughness: 0.16, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 1.2 })));
+      const skirtG = keep(new THREE.CylinderGeometry(Rb + 1.4, Rb + 2.0, 1.1, 36)); skirtG.translate(0, POP.skirt, 0);
+      const skirtMat = keep(tintE(new THREE.MeshStandardMaterial({ color: 0xffc070, emissive: 0xffffff, roughness: 0.28, metalness: 0, envMapIntensity: 0.8 })));
+      const ringG = keep(new THREE.TorusGeometry(Rb + 0.3, 0.95, 8, 36)); ringG.rotateX(Math.PI / 2);
+      const caps = R1(new THREE.InstancedMesh(capG, capMat, n)), skirts = R1(new THREE.InstancedMesh(skirtG, skirtMat, n)), rings = R1(new THREE.InstancedMesh(ringG, M.chrome, n));
+      const m4 = new THREE.Matrix4(), c3 = new THREE.Color();
+      BUMPERS.forEach((Bm, i) => { m4.makeTranslation(wx(Bm.x), 0, wz(Bm.y)); caps.setMatrixAt(i, m4); skirts.setMatrixAt(i, m4); m4.makeTranslation(wx(Bm.x), POP.ring, wz(Bm.y)); rings.setMatrixAt(i, m4); c3.set(TH_.bump[i % 3].c); caps.setColorAt(i, c3); skirts.setColorAt(i, c3); });
+      [caps, skirts, rings].forEach((m) => { m.frustumCulled = false; m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); group.add(m); }); caps.name = 'bumper cap';
+      pop = { caps, skirts, rings };
+      return BUMPERS.map((Bm, i) => ({ col: new THREE.Color(TH_.bump[i % 3].c), hit: 0, x: Bm.x, y: Bm.y }));
+    })() : BUMPERS.map((Bm, i) => {
       const th = TH_.bump[i % 3], col = new THREE.Color(th.c), grp = new THREE.Group(); grp.position.set(wx(Bm.x), 0, wz(Bm.y)); group.add(grp);
       const v2 = (a) => a.map((q) => new THREE.Vector2(q[0], q[1]));
       const base = R1(new THREE.Mesh(cylinder(Bm.r + 2.6, Bm.r + 2.9, 0.8), M.black)); base.position.y = 0.4; grp.add(base);
@@ -1312,13 +1634,13 @@ export function create(opts) {
         if (y < 0) y *= 0.38; else y = y * (1 + 0.16 * (fbm3(x * 3, y * 3, z * 3, 2) - 0.5)) + 0.05 * Math.pow(Math.max(0, Math.cos(x * 9)), 6) * y;
         const sp = 1 + rim * (0.08 + 0.34 * Math.pow(Math.max(0, Math.cos(th * 9)), 8) * (Math.abs(th) > 0.5 ? 1 : 0));
         x *= sp * (1 + 0.12 * Math.max(0, z)); z *= sp; if (z > 0.3) z -= 0.22 * Math.exp(-x * x / 0.02) * Math.max(0, y + 0.3);
-        P.setXYZ(k, x * 9.6, y * 4.6, z * 7.2);
+        P.setXYZ(k, x * 10.8, y * 5.6, z * 8.2);   // (bigger, wave 2: 9.6 / 4.6 / 7.2; the engine's radius is still 7)
       } shellG.computeVertexNormals(); }
       const legG = keep(new THREE.CylinderGeometry(1, 0.75, 1, 6, 1)); legG.translate(0, 0.5, 0);
-      const legMat = keep(new THREE.MeshStandardMaterial({ color: 0x5a1a0e, roughness: 0.35, emissive: new THREE.Color('#ff4a10'), emissiveIntensity: 0.22, envMapIntensity: 1.2 }));   // (dark armour, a lava glow, 30 Oct 2026)
+      const legMat = keep(new THREE.MeshStandardMaterial({ color: 0xd8481c, roughness: 0.32, emissive: new THREE.Color('#ff4a10'), emissiveIntensity: 0.14, envMapIntensity: 1.3 }));   // (coral armour with a lava glow: wave 2, 30 Oct 2026; was dark)
       const clawG = keep((() => { const palm = new THREE.SphereGeometry(1, 14, 10); palm.scale(2.6, 1.8, 2.4); const f1 = new THREE.ConeGeometry(0.9, 3.6, 8); f1.rotateX(Math.PI / 2 + 0.25); f1.translate(-0.7, 0.4, 3.2); const f2 = new THREE.ConeGeometry(0.75, 3.0, 8); f2.rotateX(Math.PI / 2 - 0.3); f2.translate(0.9, -0.3, 2.9); const g = mergeGeos([palm, f1, f2]); [palm, f1, f2].forEach((q) => q.dispose()); return g; })());
-      const eyeG = keep(new THREE.SphereGeometry(1, 10, 8));
-      const eyeMat = keep(new THREE.MeshStandardMaterial({ color: 0xfff0a0, emissive: new THREE.Color('#ffd84a'), emissiveIntensity: 1.6, roughness: 0.2 }));
+      const eyeG = keep(new THREE.SphereGeometry(1, 14, 10)), eyeT = keep(tex(crabEyeCanvas()));   // glossy eyes with pupils that catch the lamps (wave 2, 30 Oct 2026; were glowing yellow beads)
+      const eyeMat = keep(new THREE.MeshPhysicalMaterial({ map: eyeT, emissiveMap: eyeT, emissive: new THREE.Color('#ffc070'), emissiveIntensity: 0.45, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 2.2 }));
       const legs = R1(new THREE.InstancedMesh(legG, legMat, n * 14)), claws = R1(new THREE.InstancedMesh(clawG, legMat, n * 2)), eyes = R1(new THREE.InstancedMesh(eyeG, eyeMat, n * 2));
       [legs, claws, eyes].forEach((m) => { m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; group.add(m); });
       const shadows = new THREE.InstancedMesh(shGeo, shadowMat, n); shadows.renderOrder = 1; shadows.frustumCulled = false; group.add(shadows);
@@ -1489,14 +1811,14 @@ export function create(opts) {
     }
     return {
       id: tid, T, B, TW, TH, MID, BR, ISLAND, theme: TH_, group, world, envRT, ballSky, M, liftU, LIFT, pfMatHi, pfMatLo, playfield, ledMat, rail,
-      slings, bumpers, flippers, drops, spinner, plunger, toys, lights, flash, flashK: 0, lamps, homeSpecs, fitPts, backbox,
+      slings, bumpers, pop, flippers, drops, spinner, plunger, toys, lights, flash, flashK: 0, lamps, homeSpecs, fitPts, backbox,
       artSource, artMs, occluders, dispose, buildLamps: () => (lamps = buildLamps()), get lampsObj() { return lamps; }, set lampsObj(v) { lamps = v; },
       rampAt, RAMP, giNow: 1, paintSky: null, skyKeyRef: { skyTex, skyKey }
     };
   }
 
   function useTable(id) {
-    if (TB) { if (TB.world) { scene.remove(TB.world.group); cab.remove(TB.world.skirt); } mover.remove(TB.group); TB.dispose(); }
+    if (TB) { if (TB.world) { scene.remove(TB.world.group); cab.remove(TB.world.skirt); } if (TB.room) { scene.remove(TB.room.group); TB.room.dispose(); } mover.remove(TB.group); TB.dispose(); }
     TB = buildTable(id);
     mover.add(TB.group);
     TB.group.add(glowPts.pts, puffPts.pts); pops.forEach((sp) => TB.group.add(sp)); balls.forEach((Bb) => { TB.group.add(Bb.m, Bb.s, Bb.s2); });
@@ -1760,7 +2082,7 @@ export function create(opts) {
   }
 
   // ---------------------------------------------------------------- the toys, every frame (they only read W.toys)
-  const _mm = new THREE.Matrix4(), _e = new THREE.Euler(), _qq = new THREE.Quaternion(), _sc = new THREE.Vector3(), _ps = new THREE.Vector3();
+  const _tc = new THREE.Color(), _mm = new THREE.Matrix4(), _e = new THREE.Euler(), _qq = new THREE.Quaternion(), _sc = new THREE.Vector3(), _ps = new THREE.Vector3();
   function updateToys(W, t, dt, play, dark) {
     const Tz = W.toys || {}, toys = TB.toys, lit = W.lit || {}, k60 = dt * 60;
     // the volcano
@@ -1824,20 +2146,20 @@ export function create(opts) {
         // legs: three each side, two segments, stepping in alternate threes
         for (let s = -1; s <= 1; s += 2) for (let L = 0; L < 3; L++) {
           const ph = S.phase + L * 2.1 + (s > 0 ? Math.PI : 0) + (L % 2) * Math.PI, sw = Math.cos(ph) * 1.8 * (moved > 0.01 || stun ? 1 : 0.25), lift = Math.max(0, Math.sin(ph)) * 2.2;
-          const hy = (L - 1) * 3.0 - 1, hx = s * 7.4, kx = s * 10.8, ky = hy * 1.2 + sw * 0.5, fx = s * 12.2 + sw * 0.3 * s, fy = hy * 1.35 + sw;
-          C.legs.setMatrixAt(li++, segMatrix(_mm, X + hx, 3.2 + bob, Z + hy, X + kx, 5.8 + lift + bob, Z + ky, 1.25));
-          C.legs.setMatrixAt(li++, segMatrix(_mm, X + kx, 5.8 + lift + bob, Z + ky, X + fx, 0.4 + lift * 0.6, Z + fy, 1.0));
+          const hy = (L - 1) * 3.4 - 1, hx = s * 8.4, kx = s * 12.6, ky = hy * 1.2 + sw * 0.5, fx = s * 14.4 + sw * 0.3 * s, fy = hy * 1.35 + sw;   // (wave 2: a wider stance for the bigger shell)
+          C.legs.setMatrixAt(li++, segMatrix(_mm, X + hx, 3.2 + bob, Z + hy, X + kx, 6.6 + lift + bob, Z + ky, 1.35));
+          C.legs.setMatrixAt(li++, segMatrix(_mm, X + kx, 6.6 + lift + bob, Z + ky, X + fx, 0.4 + lift * 0.6, Z + fy, 1.05));
         }
         // eye stalks, claws, eyes
         for (let s = -1; s <= 1; s += 2) {
-          C.legs.setMatrixAt(li++, segMatrix(_mm, X + s * 2.4, 5.5 + bob, Z + 5.2, X + s * 3.0, 9.4 + bob, Z + 6.6, 0.5));
-          const pinch = 0.85 + 0.15 * Math.sin(t / 160 + i * 2 + s), cx = X + s * 6.4, cz = Z + 9.2;
-          _e.set(0, s * 0.6, 0); _qq.setFromEuler(_e); _sc.set(pinch, pinch, pinch); _ps.set(cx, 3.4 + bob, cz);
+          C.legs.setMatrixAt(li++, segMatrix(_mm, X + s * 2.6, 6.2 + bob, Z + 5.6, X + s * 3.4, 11.6 + bob, Z + 7.2, 0.6));   // (wave 2: taller stalks, bigger glossy eyes, claws raised and bigger)
+          const pinch = 0.85 + 0.15 * Math.sin(t / 160 + i * 2 + s), cx = X + s * 7.8, cz = Z + 10.2, ck = 1.3 * pinch;
+          _e.set(-0.45, s * 0.55, 0); _qq.setFromEuler(_e); _sc.set(ck, ck, ck); _ps.set(cx, 5.4 + bob, cz);
           C.claws.setMatrixAt(i * 2 + (s > 0 ? 1 : 0), _mm.compose(_ps, _qq, _sc));
-          _sc.set(1.35, 1.35, 1.35); _ps.set(X + s * 3.1, 10.2 + bob, Z + 6.8); _qq.identity();
+          _sc.set(2.0, 2.0, 2.0); _ps.set(X + s * 3.5, 12.6 + bob, Z + 7.5); _qq.identity();
           C.eyes.setMatrixAt(i * 2 + (s > 0 ? 1 : 0), _mm.compose(_ps, _qq, _sc));
         }
-        _mm.makeScale(24, 1, 20); _mm.setPosition(wx(c.x + SHX * 4), 0.3, wz(c.y + SHY * 4)); C.shadows.setMatrixAt(i, _mm);
+        _mm.makeScale(29, 1, 24); _mm.setPosition(wx(c.x + SHX * 4), 0.3, wz(c.y + SHY * 4)); C.shadows.setMatrixAt(i, _mm);
       }
       C.legs.instanceMatrix.needsUpdate = true; C.claws.instanceMatrix.needsUpdate = true; C.eyes.instanceMatrix.needsUpdate = true; C.shadows.instanceMatrix.needsUpdate = true;
     }
@@ -1917,6 +2239,7 @@ export function create(opts) {
     if (!TB || TB.id !== (E.table ? E.table(id).id : 'orbit')) useTable(id);
     const T = TB.T, dt = lastT == null ? 0 : clamp((t - lastT) / 1000, 0, 0.25); lastT = t;
     const play = mode !== 'title', dark = !!(W.tilted || W.over), lit = W.lit || {};
+    applyRoom(mode);   // (the games room: the title, or when a bench asks, 30 Oct 2026)
     let st = null;
     if (window.PinFX) { try { if (typeof PinFX.update === 'function') PinFX.update(W, t, mode); st = PinFX.state || null; } catch (e) { st = null; } }
     renderer.info.reset();
@@ -1949,10 +2272,15 @@ export function create(opts) {
       const v = lit.bump ? lit.bump[i] : 0;
       if (v >= 7 && bp.hit < 0.5) {
         TB.flashK = 1; TB.flash.color.copy(bp.col); TB.flash.position.set(wx(bp.x), 24, wz(bp.y));
-        if (TB.ISLAND) for (let k = 0; k < 6 * tier.motes + 1; k++) emit('puff', bp.x + (mr() - 0.5) * 6, bp.y + (mr() - 0.5) * 6, H.bumpCap, (mr() - 0.5) * 20, (mr() - 0.5) * 20, 30 + mr() * 25, 1.2 + mr() * 0.6, 6 + mr() * 4, [0.55, 0.52, 0.5], 0.55, 0, 2);
+        if (TB.ISLAND) for (let k = 0; k < 6 * tier.motes + 1; k++) emit('puff', bp.x + (mr() - 0.5) * 6, bp.y + (mr() - 0.5) * 6, POP.top, (mr() - 0.5) * 20, (mr() - 0.5) * 20, 30 + mr() * 25, 1.2 + mr() * 0.6, 6 + mr() * 4, [0.55, 0.52, 0.5], 0.55, 0, 2);
       }
       bp.hit = v > 0 ? 1 : Math.max(0, bp.hit - dt * 7);
       const idle = play ? (dark ? 0.15 : 0.75 + 0.25 * Math.sin(t / 300 + i * 2.1)) : 0.6 + 0.6 * Math.max(0, Math.sin(t / 240 - i * 2.1));
+      if (TB.pop) {   // (the island's instanced pop bumpers, 30 Oct 2026: the ring snaps down, the cap and the skirt glow in the bumper's colour)
+        const P = TB.pop; _mm.makeTranslation(wx(bp.x), POP.ring - 4.2 * (v > 0 ? 1 : bp.hit), wz(bp.y)); P.rings.setMatrixAt(i, _mm);
+        _tc.copy(bp.col).multiplyScalar(0.5 * idle + bp.hit * 2.6); P.caps.setColorAt(i, _tc); _tc.copy(bp.col).multiplyScalar(0.55 * idle + bp.hit * 5); P.skirts.setColorAt(i, _tc);
+        P.rings.instanceMatrix.needsUpdate = true; P.caps.instanceColor.needsUpdate = true; P.skirts.instanceColor.needsUpdate = true; return;
+      }
       bp.ring.position.y = 11 - 4.4 * (v > 0 ? 1 : bp.hit);
       bp.skirtMat.emissiveIntensity = idle * (TB.ISLAND ? 0.45 : 0.9) + bp.hit * 5;   // (the island's: amber plastic lit from inside, not neon, 30 Oct 2026)
       bp.sideMat.emissiveIntensity = (TB.ISLAND ? 0.4 : 1) * idle + bp.hit * 4;
@@ -2042,6 +2370,67 @@ export function create(opts) {
     L.ca.needsUpdate = true;
   }
 
+  // ---------------------------------------------------------------- the games room (30 Oct 2026, wave 2, owner: "a table in a room" for the title screen and trailers)
+  // world.setRoom(true | false | 'auto'): 'auto' (the default; opts.room the same) shows it in the title/attract only. Ember Peak only.
+  // Built on first use (about 20-60 ms of canvas painting), then kept; 5 draw calls while shown, none while hidden, so in play it costs
+  // nothing unless a bench asks for it. While it shows, the island's sky and sea are hidden. world.roomShots(): framings for a trailer
+  // (table units, for setCam): hero (front left, standing), wide (the cabinet in the room), low (legs, coin door, side art), glass (the backglass).
+  let roomWant = opts.room != null ? opts.room : 'auto';
+  function setRoom(on) { roomWant = on === 'auto' ? 'auto' : !!on; }
+  function applyRoom(mode) {
+    const on = !!TB && TB.ISLAND && (roomWant === 'auto' ? mode === 'title' : !!roomWant);
+    if (on && !TB.room) { try { TB.room = buildRoom(); } catch (e) { console.warn('the room failed', e); TB.room = { group: new THREE.Group(), dispose() {}, ms: 0 }; } scene.add(TB.room.group); }
+    if (TB.room) TB.room.group.visible = on;
+    if (TB.world) { TB.world.group.visible = !on; TB.world.skirt.visible = !on; }
+    const Lr = TB.lights && TB.lights.rim; if (Lr) { if (Lr.userData.base == null) Lr.userData.base = Lr.intensity; Lr.intensity = on ? Lr.userData.base * 0.15 : Lr.userData.base; } if (TB.pfMatHi) TB.pfMatHi.clearcoatRoughness = on ? 0.24 : 0.06; const Mc = TB.M && TB.M.chrome; if (Mc) { if (Mc.userData.env == null) Mc.userData.env = Mc.envMapIntensity; Mc.envMapIntensity = on ? Mc.userData.env * 0.45 : Mc.userData.env; }   // (30 Oct 2026, owner: trailer: in the room the low back rim's mirror glint off the clear coat bloomed into a white blob from the front cameras; a softer clear coat there too, for the key light's glint; and the chrome's arcade reflection at 0.45, or the side rails glowed like neon tubes from the room)
+  }
+  function roomShots() {
+    const TH = TB ? TB.TH : 470;
+    const up = [0, -Math.sin(PITCH), Math.cos(PITCH)];   // the room's up, not the table's (the cabinet is pitched)
+    return { hero: { eye: [-220, TH + 640, 300], look: [150, 170, -40], fov: 40, up }, wide: { eye: [520, TH + 1350, 420], look: [135, 150, -180], fov: 44, up },
+      low: { eye: [560, TH + 420, -260], look: [135, 230, -120], fov: 44, up }, glass: { eye: [135, 440, 205], look: [135, -20, 150], fov: 36, up } };
+  }
+  function buildRoom() {
+    const r0 = performance.now(), junk = [], K = (x) => { junk.push(x); return x; }, grp = new THREE.Group(), hi = tierName === 'high' && !PHONE, TH = TB.TH;
+    const cabP = (x, y, h) => new THREE.Vector3(wx(x), h, wz(y)).applyQuaternion(CABQ), LB = 120, FLOOR = cabP(HW, TH + 24, -LB).y - 330;
+    // the carpet
+    const cc = carpetCanvas(hi ? 512 : 256), ct = K(tex(cc.col, { repeat: true, aniso: ANISO })), cgl = K(tex(cc.glo, { repeat: true, aniso: ANISO })); ct.repeat.set(16, 16); cgl.repeat.set(16, 16);
+    const fg = K(new THREE.PlaneGeometry(3400, 3400)); fg.rotateX(-Math.PI / 2);
+    const floor = new THREE.Mesh(fg, K(new THREE.MeshStandardMaterial({ map: ct, emissiveMap: cgl, emissive: 0xffffff, emissiveIntensity: 0.3, roughness: 0.95, metalness: 0, envMapIntensity: 0.1 }))); floor.position.set(0, FLOOR, 450); grp.add(floor);
+    // the walls and their neon signs
+    const wc = wallCanvases(hi ? 2048 : 1024), wt = K(tex(wc.col, { aniso: ANISO })), wgt = K(tex(wc.glo)), WG = new Geo(), WX = 1700, Z0 = -1250, Z1 = 2150, Y0 = FLOOR, Y1 = FLOOR + 1600;
+    const wq = (a, b, c, d, n) => { const uv = [[0, 0], [1, 0], [1, 1], [0, 1]], ix = [a, b, c, d].map((p, k) => WG.v(p[0], p[1], p[2], n[0], n[1], n[2], uv[k][0], uv[k][1])); WG.quad(ix[0], ix[1], ix[2], ix[3]); };
+    wq([-WX, Y0, Z0], [WX, Y0, Z0], [WX, Y1, Z0], [-WX, Y1, Z0], [0, 0, 1]); wq([-WX, Y0, Z1], [-WX, Y0, Z0], [-WX, Y1, Z0], [-WX, Y1, Z1], [1, 0, 0]); wq([WX, Y0, Z0], [WX, Y0, Z1], [WX, Y1, Z1], [WX, Y1, Z0], [-1, 0, 0]);
+    grp.add(new THREE.Mesh(K(WG.geometry()), K(new THREE.MeshStandardMaterial({ map: wt, emissiveMap: wgt, emissive: 0xffffff, emissiveIntensity: 0.9, roughness: 0.9, metalness: 0, envMapIntensity: 0.1 }))));
+    // the cabinets, one atlas: ours (its body, side art, coin door, legs) and the room's other machines
+    const ra = roomAtlas(hi ? 1024 : 512), at = K(tex(ra.col, { aniso: ANISO })), agt = K(tex(ra.glo)), CG = new Geo(), AG = new Geo();
+    uvBox(CG, wx(WOOD_L), wx(WOOD_R), -LB, -14, wz(-18), wz(TH + 24), { px: RD, nx: RD, pz: RG, nz: RG });   // our cabinet's body (built in the cabinet's pitched frame)
+    uvBox(CG, wx(HW - 36), wx(HW + 36), -LB + 12, -22, wz(TH + 24), wz(TH + 27), { all: RF, pz: RE });   // its coin door
+    uvBox(CG, wx(WOOD_L - 1), wx(WOOD_R + 1), -LB - 3, -LB, wz(-19), wz(TH + 25), { all: RF });   // a steel trim along its foot
+    const cgeo = CG.geometry(); cgeo.applyQuaternion(CABQ);
+    [[WOOD_L + 12, -6], [WOOD_R - 12, -6], [WOOD_L + 12, TH + 12], [WOOD_R - 12, TH + 12]].forEach(([x, y]) => {   // the legs, straight down to the floor, and their feet
+      const p = cabP(x, y, -LB); uvBox(AG, p.x - 7, p.x + 7, FLOOR + 6, p.y + 4, p.z - 7, p.z + 7, { all: RF }); uvBox(AG, p.x - 11, p.x + 11, FLOOR, FLOOR + 6, p.z - 11, p.z + 11, { all: RF });
+      uvBox(AG, p.x - 12, p.x + 12, p.y - 20, p.y + 4, p.z - 12, p.z + 12, { all: RF });   // the leg bracket
+    });
+    [[-640, RC1, RH], [640, RC2, RH2]].forEach(([cx, glass, pf]) => {   // two more pinball machines either side
+      uvBox(AG, cx - 172, cx + 172, FLOOR + 320, FLOOR + 436, -250, 270, { all: RG, py: pf });
+      uvBox(AG, cx - 178, cx - 164, FLOOR + 436, FLOOR + 448, -250, 270, { all: RF }); uvBox(AG, cx + 164, cx + 178, FLOOR + 436, FLOOR + 448, -250, 270, { all: RF }); uvBox(AG, cx - 178, cx + 178, FLOOR + 436, FLOOR + 450, 258, 274, { all: RF });   // its side rails and lockdown bar
+      uvBox(AG, cx - 180, cx + 180, FLOOR + 440, FLOOR + 820, -290, -230, { all: RG, pz: glass });
+      [[-158, -236], [158, -236], [-158, 256], [158, 256]].forEach(([dx, z]) => uvBox(AG, cx + dx - 6, cx + dx + 6, FLOOR, FLOOR + 320, z - 6, z + 6, { all: RF }));
+    });
+    for (let k = -3; k <= 3; k++) uvBox(AG, k * 460 - 160, k * 460 + 160, FLOOR, FLOOR + 920, Z0 + 20, Z0 + 320, { all: RG, pz: RA, px: RB, nx: RB });   // video uprights along the back wall
+    [-450, 150, 750].forEach((z) => { uvBox(AG, -WX + 20, -WX + 320, FLOOR, FLOOR + 920, z - 160, z + 160, { all: RG, px: RA, pz: RB, nz: RB }); uvBox(AG, WX - 320, WX - 20, FLOOR, FLOOR + 920, z - 160, z + 160, { all: RG, nx: RA, pz: RB, nz: RB }); });   // and along the side walls
+    const ag = AG.geometry(), merged = K(mergeGeos([cgeo, ag])); cgeo.dispose(); ag.dispose();
+    grp.add(new THREE.Mesh(merged, K(new THREE.MeshStandardMaterial({ map: at, emissiveMap: agt, emissive: 0xffffff, emissiveIntensity: 1.1, roughness: 0.75, metalness: 0, envMapIntensity: 0.04 }))));   // (barely any reflection: at a grazing angle it washed the other machines' tops out)
+    // the cabinet's shadow on the carpet and the warm light it throws round it
+    const cpos = cabP(HW, TH / 2, 0), sg = K(new THREE.PlaneGeometry(1, 1)); sg.rotateX(-Math.PI / 2);
+    const sh = new THREE.Mesh(sg, shadowMat); sh.scale.set(520, 1, 760); sh.position.set(cpos.x, FLOOR + 0.6, cpos.z); grp.add(sh);
+    const gm = K(new THREE.MeshBasicMaterial({ map: K(tex(softDot(128, 0.15))), color: new THREE.Color('#ff7a2a').multiplyScalar(0.16), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    const gw = new THREE.Mesh(sg, gm); gw.scale.set(1300, 1, 1500); gw.position.set(cpos.x, FLOOR + 1, cpos.z + 120); gw.renderOrder = 1; grp.add(gw);
+    grp.visible = false;
+    return { group: grp, FLOOR, ms: Math.round(performance.now() - r0), dispose() { junk.forEach((d) => { try { d.dispose(); } catch (e) {} }); } };
+  }
+
   function setView(v) { v = v || {}; view = Object.assign({}, view, v); if (v.eye == null && (v.tilt != null || v.fov != null)) view.eye = false; view.fill = !!view.fill; view.eye = !!view.eye && view.fill; fit(); }   // eye: home at camera.js's tilt and lens (a tilt or lens of your own turns it off)
 
   // ---------------------------------------------------------------- set up, compile, measure
@@ -2056,16 +2445,16 @@ export function create(opts) {
       buildMs, artMs: TB.artMs, table: TB.id, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, reflectCalls: refl.calls, reflectTriangles: refl.tris, art: TB.artSource,
       lamps: TB.lampsObj ? TB.lampsObj.list.length : 0, size: [Math.round(RW * PR), Math.round(RH * PR)], pixelRatio: PR, tier: tierName, auto: autoTier, tierChanges: perf.changes,
       view, cam: camSource, fx: !!window.PinFX, fxPoints: fxPts, motes: motes.length, pops: pops.filter((p) => p.visible).length, cpuMs: +cpuMs.toFixed(2),
-      particles: !!particles, post: !!post, phone: PHONE
+      particles: !!particles, post: !!post, phone: PHONE, room: !!(TB.room && TB.room.group.visible), roomMs: TB.room ? TB.room.ms : null
     };
   }
   function dispose() {
-    if (TB) TB.dispose();
+    if (TB) { if (TB.room) TB.room.dispose(); TB.dispose(); }
     shared.forEach((d) => { try { d.dispose(); } catch (e) {} });
     composer.dispose && composer.dispose(); rt.dispose(); renderer.dispose();
   }
   const api = {
-    draw, setView, setCam, setTier, resize, dispose, stats,
+    draw, setView, setCam, setTier, setRoom, roomShots, resize, dispose, stats,
     homes: () => JSON.parse(JSON.stringify(homes)),
     debug: { scene, camera, cab, mover, units, renderer, THREE, get table() { return TB.group; }, get TB() { return TB; }, occluders: () => TB.occluders(), ballZ: (b) => ballZ(b), toWorld: (x, y, h) => { mover.updateMatrixWorld(true); return new THREE.Vector3(wx(x), h, wz(y)).applyMatrix4(mover.matrixWorld); } }
   };
