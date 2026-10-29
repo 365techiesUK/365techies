@@ -233,6 +233,52 @@ function inst_extra_people(array $d, $db, $now = null) {
     return $out;
 }
 
+/* 29 Oct 2026 (owner: "build the trial count on the installs card"): how the free months are going, so we can see how many
+   people pay once theirs runs out. $trials = install id => its free month (pcm-plus-lib.php plus_trial_states); $bought =
+   install id => an Unlock key that wasn't a free month (plus_bought_installs). Every install, whatever the tab.
+   - had it: the PC received its free month (got); a month given that never reached the PC (it ran once, or never updated)
+     is counted apart, as not reached, and left out of everything else;
+   - plan: the PC is now linked to a customer or on a plan (a free month is only ever given to a PC that was neither);
+     bought: an Unlock key covers it. Either can happen before the month is over: both count as paid;
+   - of those whose month has ended without paying: still free = seen after its last day (kept the free version),
+     stopped = not seen since;
+   - decided = ended + paid early; rate = paid / decided. Split UK (GB, Isle of Man, Jersey, Guernsey) and abroad. */
+function inst_trial_summary(array $d, array $trials, array $bought = array(), $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $blank = array('had' => 0, 'running' => 0, 'ended' => 0, 'plan' => 0, 'bought' => 0, 'free' => 0, 'stopped' => 0, 'decided' => 0);
+    $out = array('given' => 0, 'not_reached' => 0, 'next_end' => 0, 'ends7' => 0, 'all' => $blank, 'uk' => $blank, 'abroad' => $blank);
+    foreach ($trials as $id => $t) {
+        if (!is_array($t)) continue;
+        $out['given']++;
+        $e = (isset($d['m'][$id]) && is_array($d['m'][$id])) ? $d['m'][$id] : array();
+        if (!empty($e['o'])) { $out['given']--; continue; }   // one of our own PCs: never a figure
+        if (!(int)(isset($t['got']) ? $t['got'] : 0)) { $out['not_reached']++; continue; }
+        $until = (int)(isset($t['until']) ? $t['until'] : 0);
+        $over = $until <= $now || (isset($t['state']) && $t['state'] === 'off');
+        $paid = (!empty($e['p']) || !empty($e['k'])) ? 'plan' : (isset($bought[$id]) ? 'bought' : '');
+        $c = strtoupper((string)(isset($e['c']) ? $e['c'] : ''));
+        $reg = in_array($c, array('GB', 'IM', 'JE', 'GG'), true) ? 'uk' : 'abroad';
+        foreach (array('all', $reg) as $g) {
+            $out[$g]['had']++;
+            if ($paid !== '') { $out[$g][$paid]++; $out[$g]['decided']++; }
+            if ($over) {
+                $out[$g]['ended']++;
+                if ($paid === '') {
+                    $out[$g]['decided']++;
+                    if ((string)(isset($e['l']) ? $e['l'] : '') > gmdate('Y-m-d', $until)) $out[$g]['free']++; else $out[$g]['stopped']++;
+                }
+            } elseif ($paid === '') $out[$g]['running']++;   // still in its month, not paid yet
+        }
+        if (!$over && $paid === '') {
+            if (!$out['next_end'] || $until < $out['next_end']) $out['next_end'] = $until;
+            if ($until <= $now + 7 * 86400) $out['ends7']++;
+        }
+    }
+    foreach (array('all', 'uk', 'abroad') as $g)
+        $out[$g]['rate'] = $out[$g]['decided'] ? (int)round(100 * ($out[$g]['plan'] + $out[$g]['bought']) / $out[$g]['decided']) : null;
+    return $out;
+}
+
 /* What the staff portal shows. $who: 'free' (not on a plan - linked or not; the default, as the owner asked),
    'unlinked' (never linked to us), 'plan' (on a plan) or 'all'. Active = seen in the last 7 / 30 days. */
 function inst_stats(array $d, $who, $now = null) {

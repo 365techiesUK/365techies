@@ -75,7 +75,10 @@ $out['note'] = $note;
 $out['given'] = $given;
 // 9 Oct 2026: the installs themselves (for "Give 30 days free"), with each one's free month
 plus_trial_tidy();
-$out['rows'] = inst_rows(is_array($d) ? $d : array(), $who, plus_trial_states());
+$tstates = plus_trial_states();
+$out['rows'] = inst_rows(is_array($d) ? $d : array(), $who, $tstates);
+// 29 Oct 2026 (owner: "build the trial count on the installs card"): how many free months turned into a plan or a sale
+$out['trial_sum'] = inst_trial_summary(is_array($d) ? $d : array(), $tstates, plus_bought_installs());
 $out['trial_days'] = PLUS_TRIAL_DAYS;
 $out['trial_min_ver'] = PLUS_TRIAL_MIN_VER;
 // 13 Oct 2026: the newest build (the self-updater's version.json), so the list can say which PCs still in use haven't updated yet

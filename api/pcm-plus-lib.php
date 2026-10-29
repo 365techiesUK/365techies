@@ -592,3 +592,16 @@ function plus_trial_states($now = null, $file = null) {
     }
     return $o;
 }
+// 29 Oct 2026 (owner: "build the trial count on the installs card"): the PCs an Unlock key that was NOT a free month has been
+// used on -> install id => {provider, at}. A refunded (revoked) key doesn't count; one that has since run out still does -
+// it was paid for. For pcm-installs-lib.php inst_trial_summary: which free months turned into a sale.
+function plus_bought_installs($file = null) {
+    $d = plus_load($file); $o = array();
+    foreach (($d && isset($d['keys']) && is_array($d['keys'])) ? $d['keys'] : array() as $e) {
+        if (!is_array($e) || ($e['provider'] ?? '') === 'trial' || ($e['status'] ?? '') === 'revoked') continue;
+        foreach ((isset($e['pcs']) && is_array($e['pcs'])) ? $e['pcs'] : array() as $mh => $x)
+            if (plus_is_mhash($mh) && (!isset($o[$mh]) || (int)($e['created'] ?? 0) > $o[$mh]['at']))
+                $o[$mh] = array('provider' => (string)($e['provider'] ?? ''), 'at' => (int)($e['created'] ?? 0));
+    }
+    return $o;
+}

@@ -267,6 +267,13 @@ $mhC = plus_mhash('dddddddd44444444'); plus_trial_give($mhC, 'Steve', $now);
 check(plus_trial_handover($mhC, 37, $now) !== null, '(a second PC given one)');
 foreach (plus_list() as $k) if ($k['trial'] && strpos($k['note'], $mhC) !== false) plus_set_status($k['id'], 'revoked');
 check(plus_trial_handover($mhC, 37, $now) === null && plus_trial_states($now)[$mhC]['state'] === 'off', 'switched off by staff: not handed over, shown as off');
+// 29 Oct 2026: which PCs a bought key covers (the installs card's free-month count)
+$mhE = plus_mhash('eeeeeeee55555555');
+check(!empty(plus_check($bought[0], 'eeeeeeee55555555', true, $now + 500)['ok']), '(the hand-sold key is used on a PC)');
+$bi = plus_bought_installs();
+check(isset($bi[$mhE]) && $bi[$mhE]['provider'] === 'staff' && !isset($bi[$mhA]) && !isset($bi[$mhC]), 'bought PCs: the PC a bought key is used on - never a free month\'s PC', json_encode($bi));
+foreach (plus_list() as $k) if (!$k['trial'] && $k['email'] === 'buyer@example.com') plus_set_status($k['id'], 'revoked');
+check(!isset(plus_bought_installs()[$mhE]), 'a refunded (revoked) key no longer counts as bought');
 
 echo "L  11 Oct 2026: US\$9.99 in lower-income countries, and \"about \u{20AC}17\" in the buyer's own money\n";
 $LSURL = 'https://365techies.lemonsqueezy.com/checkout/buy/fba7bdf3-7140-4601-84ab-94621a072a7b?checkout[custom][install]={id}';

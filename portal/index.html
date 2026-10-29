@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Oct 2026 &middot; 8d525b8c8a</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Oct 2026 &middot; 6ead410e03</p><script>
 (function () {
-  var P365BUILD = '8d525b8c8a';
+  var P365BUILD = '6ead410e03';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -10003,6 +10003,7 @@
       // 9 Oct 2026 (owner: "people that have got the free version ... a 30-day trial ... fully featured ... say that
       // they've been specially approved"): the installs one by one, each with "Give 30 days free" (api/pcm-installs.php
       // do=trial -> pcm-plus-lib.php plus_trial_give). Only PCs never linked to us; one free month per PC, ever.
+      h += instTrialSumHtml(d);   // 29 Oct 2026: how the free months are going (every tab)
       h += instListHtml(d);   // 13 Oct 2026: each PC, one by one, on every tab (it lived inside the free-month box)
       if (INST.who !== 'plan') h += instTrialHtml(d);
       // our own PCs (7 Oct 2026): pressed on the connection our PCs use; only a scrambled code of it is kept
@@ -10049,6 +10050,30 @@
     return ((INST.d && INST.d.rows) || []).filter(function (r) { return !r.k && !r.p && !r.trial && r.how === 'using'; }).map(function (r) { return r.id; });
   }
   function instDay(s) { if (!s) return ''; var t = new Date(s.length === 10 ? s + 'T12:00:00Z' : s * 1000); return t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+  // 29 Oct 2026 (owner: "build the trial count on the installs card"): how many free months turned into a plan or a sale
+  // once they ran out (api/pcm-installs-lib.php inst_trial_summary). Only PCs that received their month are counted.
+  function instTrialSumHtml(d) {
+    var s = d.trial_sum; if (!s || !s.given) return '';
+    var a = s.all || {}, n = function (x) { return x || 0; }, paid = n(a.plan) + n(a.bought);
+    var day = function (t) { try { return new Date(t * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
+    var stat = function (v, t, g) { return '<div class="stat' + (g ? ' g' : '') + '"><b>' + n(v) + '</b><span>' + t + '</span></div>'; };
+    var h = '<div class="insttrial" id="insttsum"><h3>\ud83d\udcca How the free months are going</h3><div class="stats">'
+      + stat(a.had, 'had a free month') + stat(a.running, 'still in their month') + stat(paid, 'paid', 1)
+      + stat(a.free, 'kept the free version') + stat(a.stopped, 'stopped using it') + '</div>';
+    h += '<p class="quiet" style="margin:.55rem 0 0">' + (a.decided
+        ? 'Paid so far: <b>' + paid + ' of ' + a.decided + '</b> whose month is over or who paid early (' + n(a.rate) + '%) \u2014 ' + n(a.plan) + ' went on a plan or were linked to a customer, ' + n(a.bought) + ' bought Unlock everything.'
+        : 'Nobody has decided yet' + (s.next_end ? ': the first month ends on <b>' + esc(day(s.next_end)) + '</b>' : '') + '.')
+      + (s.ends7 ? ' \u00b7 ending in the next 7 days: <b>' + s.ends7 + '</b>' : '')
+      + (s.not_reached ? ' \u00b7 given but never reached the PC: <b>' + s.not_reached + '</b> (ran once, or never updated)' : '') + '</p>';
+    var row = function (t, r) {
+      r = r || {};
+      return '<tr><td>' + t + '</td><td class="num">' + n(r.had) + '</td><td class="num">' + n(r.running) + '</td><td class="num">' + n(r.plan) + '</td><td class="num">' + n(r.bought)
+        + '</td><td class="num">' + n(r.free) + '</td><td class="num">' + n(r.stopped) + '</td><td class="num"><b>' + (r.rate === null || r.rate === undefined ? '\u2014' : r.rate + '%') + '</b></td></tr>';
+    };
+    h += '<div class="tblwrap" style="margin-top:.5rem"><table><thead><tr><th></th><th>Had it</th><th>In their month</th><th>Plan / linked</th><th>Bought</th><th>Kept free</th><th>Stopped</th><th>Paid</th></tr></thead><tbody>'
+      + row('UK', s.uk) + row('Abroad', s.abroad) + '</tbody></table></div>';
+    return h + '<details class="nx-how" style="margin-top:.4rem"><summary>How it\u2019s counted</summary><p class="quiet" style="font-size:.9rem;margin:.2rem 0 0">Only PCs that received their free month count. <b>Plan / linked</b> = the PC is now on a plan or linked to a customer (a free month only ever goes to a PC that was neither). <b>Bought</b> = an Unlock everything key that wasn\u2019t a free month is used on it; a refunded key doesn\u2019t count. Either can happen before the month is over. <b>Kept free</b> = seen after its month ended; <b>stopped</b> = not seen since. <b>Paid</b> = paid, out of those whose month is over or who paid early. UK = Great Britain, Northern Ireland, the Isle of Man and the Channel Islands. Abroad can only buy where Buy is on.</p></details></div>';
+  }
   function instTrialHtml(d) {
     var rows = d.rows || [], days = d.trial_days || 30, minv = d.trial_min_ver || 37;
     var using = instTrialIds();

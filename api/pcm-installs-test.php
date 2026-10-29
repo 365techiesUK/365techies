@@ -182,6 +182,36 @@ check(count($x) === 1 && $x[0]['cust'] === 'Example Customer' && $x[0]['pc'] ===
 check(inst_extra_people(json_decode(file_get_contents($F), true), $db, $Q + 8 * 86400) === array(), '...and it drops off after a week with no sign of the other copy');
 @unlink($F);
 
+echo "H  how the free months are going (29 Oct 2026)\n";
+$N = gmmktime(12, 0, 0, 11, 20, 2026); $DY = function ($s) use ($N) { return gmdate('Y-m-d', $N + $s * 86400); };
+$TD = array('m' => array(
+    'aaaaaaaaaaaaaaa1' => array('c' => 'GB', 'f' => $DY(-20), 'l' => $DY(0)),                    // in its month, ends in 5 days
+    'aaaaaaaaaaaaaaa2' => array('c' => 'GB', 'f' => $DY(-40), 'l' => $DY(-1)),                   // ended 5 days ago, still using it
+    'aaaaaaaaaaaaaaa3' => array('c' => 'JE', 'f' => $DY(-40), 'l' => $DY(-16)),                  // ended, not seen since (Jersey = UK)
+    'aaaaaaaaaaaaaaa4' => array('c' => 'GB', 'f' => $DY(-20), 'l' => $DY(0), 'k' => 1),          // linked to a customer mid-month
+    'aaaaaaaaaaaaaaa5' => array('c' => 'US', 'f' => $DY(-40), 'l' => $DY(0)),                    // bought an Unlock key
+    'aaaaaaaaaaaaaaa6' => array('c' => 'US', 'f' => $DY(-3), 'l' => $DY(-3)),                    // never reached the PC
+    'aaaaaaaaaaaaaaa7' => array('c' => 'DE', 'f' => $DY(-40), 'l' => $DY(0), 'o' => 1),          // one of ours
+    'aaaaaaaaaaaaaaa8' => array('c' => 'GB', 'f' => $DY(-40), 'l' => $DY(-1), 'p' => 1),         // on a plan, month over
+    'aaaaaaaaaaaaaaa9' => array('c' => 'FR', 'f' => $DY(-20), 'l' => $DY(-1)),                   // switched off by staff
+));
+$tr = function ($until, $got = 1, $state = 'has_it') use ($N) { return array('state' => $state, 'until' => $N + $until * 86400, 'got' => $got ? $N - 9 * 86400 : 0); };
+$TT = array('aaaaaaaaaaaaaaa1' => $tr(5), 'aaaaaaaaaaaaaaa2' => $tr(-5, 1, 'ended'), 'aaaaaaaaaaaaaaa3' => $tr(-15, 1, 'ended'),
+    'aaaaaaaaaaaaaaa4' => $tr(9), 'aaaaaaaaaaaaaaa5' => $tr(-2, 1, 'ended'), 'aaaaaaaaaaaaaaa6' => $tr(27, 0, 'waiting'),
+    'aaaaaaaaaaaaaaa7' => $tr(-1, 1, 'ended'), 'aaaaaaaaaaaaaaa8' => $tr(-3, 1, 'ended'), 'aaaaaaaaaaaaaaa9' => $tr(12, 1, 'off'),
+    'aaaaaaaaaaaaaaaa' => $tr(-1, 1, 'ended'));   // its install has dropped out of the store: counted abroad (country unknown)
+$TS = inst_trial_summary($TD, $TT, array('aaaaaaaaaaaaaaa5' => array('provider' => 'paypal', 'at' => $N)), $N);
+check($TS['given'] === 9 && $TS['not_reached'] === 1, 'given 9 (our own PC left out); 1 never reached its PC', json_encode($TS));
+$A = $TS['all'];
+check($A['had'] === 8 && $A['plan'] === 2 && $A['bought'] === 1 && $A['running'] === 1, 'had it 8: 2 went on a plan or linked (one mid-month), 1 bought, 1 still in its month', json_encode($A));
+check($A['ended'] === 6 && $A['free'] === 1 && $A['stopped'] === 3, 'ended 6 (staff switching one off counts as ended): 1 kept the free version, 3 stopped', json_encode($A));
+check($A['decided'] === 7 && $A['rate'] === 43, 'decided = ended + paid early = 7; paid 3 of 7 = 43%', json_encode($A));
+check($TS['uk']['had'] === 5 && $TS['uk']['plan'] === 2 && $TS['uk']['free'] === 1 && $TS['uk']['stopped'] === 1 && $TS['uk']['rate'] === 50, 'UK (Jersey too): 5 had it, 2 of 4 decided paid = 50%', json_encode($TS['uk']));
+check($TS['abroad']['had'] === 3 && $TS['abroad']['bought'] === 1 && $TS['abroad']['stopped'] === 2 && $TS['abroad']['rate'] === 33, 'abroad: 3 had it, 1 bought of 3 = 33%', json_encode($TS['abroad']));
+check($TS['next_end'] === $N + 5 * 86400 && $TS['ends7'] === 1, 'the next to end, and how many end in the coming week (a PC that already paid is not waiting to end)');
+$T0 = inst_trial_summary($TD, array(), array(), $N);
+check($T0['given'] === 0 && $T0['all']['rate'] === null && $T0['next_end'] === 0, 'no free months at all: zeros, no rate');
+
 echo "D  the wiring, at source level\n";
 $P = (string)file_get_contents(__DIR__ . '/pcm.php');
 $i1 = strpos($P, "if (\$action === 'checkin') {"); $i2 = strpos($P, 'inst_note($machine', $i1); $i3 = strpos($P, "if (\$key === '' || !isset(\$db['customers'][\$key])) out(", $i1);
