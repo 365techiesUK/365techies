@@ -246,7 +246,10 @@ function inst_extra_people(array $d, $db, $now = null) {
 function inst_trial_summary(array $d, array $trials, array $bought = array(), $now = null) {
     $now = $now === null ? time() : (int)$now;
     $blank = array('had' => 0, 'running' => 0, 'ended' => 0, 'plan' => 0, 'bought' => 0, 'free' => 0, 'stopped' => 0, 'decided' => 0);
-    $out = array('given' => 0, 'not_reached' => 0, 'next_end' => 0, 'ends7' => 0, 'all' => $blank, 'uk' => $blank, 'abroad' => $blank);
+    $out = array('given' => 0, 'not_reached' => 0, 'next_end' => 0, 'ends7' => 0, 'all' => $blank, 'uk' => $blank, 'abroad' => $blank,
+        // the extra-week test (pcm-plus-lib.php plus_trial_extra_week): ext = given 7 more days, ctl = the half that wasn't;
+        // _paid = paid since, _open = still in their (extra) time
+        'test' => array('ext' => 0, 'ext_paid' => 0, 'ext_open' => 0, 'ctl' => 0, 'ctl_paid' => 0, 'ctl_open' => 0));
     foreach ($trials as $id => $t) {
         if (!is_array($t)) continue;
         $out['given']++;
@@ -258,6 +261,8 @@ function inst_trial_summary(array $d, array $trials, array $bought = array(), $n
         $paid = (!empty($e['p']) || !empty($e['k'])) ? 'plan' : (isset($bought[$id]) ? 'bought' : '');
         $c = strtoupper((string)(isset($e['c']) ? $e['c'] : ''));
         $reg = in_array($c, array('GB', 'IM', 'JE', 'GG'), true) ? 'uk' : 'abroad';
+        foreach (array('ext', 'ctl') as $half)
+            if (!empty($t[$half])) { $out['test'][$half]++; if ($paid !== '') $out['test'][$half . '_paid']++; elseif (!$over) $out['test'][$half . '_open']++; }
         foreach (array('all', $reg) as $g) {
             $out[$g]['had']++;
             if ($paid !== '') { $out[$g][$paid]++; $out[$g]['decided']++; }

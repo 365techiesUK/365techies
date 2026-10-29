@@ -138,6 +138,12 @@ try { $ppt = ppts_sweep(); } catch (Throwable $e) { $ppt = array('error' => 'exc
 require_once __DIR__ . '/shop-ebay-lib.php';
 try { $eb = shop_ebay_sweep(); } catch (Throwable $e) { $eb = array(false, 'exception', array()); }
 
+/* PC Manager's free months (29 Oct 2026, pcm-plus-lib.php plus_trial_extra_week): the extra-week test - a keen user whose
+   month ends within 2 days without paying gets 7 more days if their install id's last digit is even; the odd half is noted
+   as the comparison. The installs card shows how each half did. Never a customer's PC. */
+require_once __DIR__ . '/pcm-plus-lib.php';
+try { $xw = plus_trial_extra_week(@json_decode((string)@file_get_contents(__DIR__ . '/pcm-installs.json'), true)); } catch (Throwable $e) { $xw = array('error' => 'exception'); }
+
 if (!tm_configured()) {
     $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp, 'paylinks' => $pl);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")

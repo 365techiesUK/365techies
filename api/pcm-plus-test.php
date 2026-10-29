@@ -274,6 +274,30 @@ $bi = plus_bought_installs();
 check(isset($bi[$mhE]) && $bi[$mhE]['provider'] === 'staff' && !isset($bi[$mhA]) && !isset($bi[$mhC]), 'bought PCs: the PC a bought key is used on - never a free month\'s PC', json_encode($bi));
 foreach (plus_list() as $k) if (!$k['trial'] && $k['email'] === 'buyer@example.com') plus_set_status($k['id'], 'revoked');
 check(!isset(plus_bought_installs()[$mhE]), 'a refunded (revoked) key no longer counts as bought');
+// 29 Oct 2026: the extra-week test - half the keen users about to end get 7 more days, the other half are the comparison
+$xn = 1792000000; $XK = array();
+foreach (array('abcdefabcdef0010', 'abcdefabcdef0011', 'abcdefabcdef0012', 'abcdefabcdef0014', 'abcdefabcdef0016', 'abcdefabcdef0018') as $xm) {
+    plus_trial_give($xm, 'auto (UK)', $xn); $XK[$xm] = plus_trial_handover($xm, 45, $xn + 60)['key']; plus_trial_of($XK[$xm], $xn + 120);
+}
+$xday = function ($s) use ($xn) { return gmdate('Y-m-d', $xn + $s * 86400); };
+$XI = array('m' => array(
+    'abcdefabcdef0010' => array('c' => 'GB', 'n' => 9, 'l' => $xday(29)),           // keen, even: extended
+    'abcdefabcdef0011' => array('c' => 'DE', 'n' => 6, 'l' => $xday(28)),           // keen, odd: the comparison
+    'abcdefabcdef0012' => array('c' => 'GB', 'n' => 9, 'l' => $xday(29), 'k' => 1), // a customer now: never
+    'abcdefabcdef0014' => array('c' => 'GB', 'n' => 2, 'l' => $xday(29)),           // used on 2 days only: not keen
+    'abcdefabcdef0016' => array('c' => 'GB', 'n' => 9, 'l' => $xday(20)),           // not seen for 9 days: not keen
+    'abcdefabcdef0018' => array('c' => 'GB', 'n' => 9, 'l' => $xday(29), 'o' => 1), // one of ours: never
+));
+$xr = plus_trial_extra_week($XI, $xn + 25 * 86400);
+check($xr === array('extended' => 0, 'control' => 0), 'five days before the end: too early, nothing yet', json_encode($xr));
+$xr = plus_trial_extra_week($XI, $xn + 29 * 86400);
+check($xr === array('extended' => 1, 'control' => 1), 'a day before the end: one keen PC given 7 more days, one keen PC noted for comparison', json_encode($xr));
+$xs = plus_trial_states($xn + 29 * 86400);
+check($xs['abcdefabcdef0010']['until'] === $xn + 37 * 86400 && $xs['abcdefabcdef0010']['ext'] > 0 && $xs['abcdefabcdef0011']['ctl'] > 0 && $xs['abcdefabcdef0011']['until'] === $xn + 30 * 86400, 'the extended month now ends 7 days later; the comparison PC\'s end is unchanged', json_encode(array($xs['abcdefabcdef0010'], $xs['abcdefabcdef0011'])));
+check(!$xs['abcdefabcdef0012']['ext'] && !$xs['abcdefabcdef0014']['ext'] && !$xs['abcdefabcdef0016']['ext'] && !$xs['abcdefabcdef0018']['ext'] && !$xs['abcdefabcdef0012']['ctl'] && !$xs['abcdefabcdef0018']['ctl'], 'never a customer, a light user, one who has gone quiet, or one of ours');
+check(!empty(plus_check($XK['abcdefabcdef0010'], 'x', false, $xn + 33 * 86400)['ok']) || plus_check($XK['abcdefabcdef0010'], 'x', false, $xn + 33 * 86400)['error'] !== 'expired', 'the key itself runs on into the extra week (the PC is told at its next check-in)');
+check(plus_check($XK['abcdefabcdef0011'], 'x', false, $xn + 33 * 86400)['error'] === 'expired', 'the comparison PC\'s key ends on time');
+check(plus_trial_extra_week($XI, $xn + 29 * 86400 + 3600) === array('extended' => 0, 'control' => 0), 'once per PC: the next run changes nothing');
 
 echo "L  11 Oct 2026: US\$9.99 in lower-income countries, and \"about \u{20AC}17\" in the buyer's own money\n";
 $LSURL = 'https://365techies.lemonsqueezy.com/checkout/buy/fba7bdf3-7140-4601-84ab-94621a072a7b?checkout[custom][install]={id}';

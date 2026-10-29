@@ -37,6 +37,8 @@ _CSS = r'''
       .pbuy__facts li{font-size:.86rem;padding:.3rem .65rem;border:1px solid var(--line);border-radius:var(--r-pill)}
       .pbuy h2{font-size:1.2rem;margin:0 0 .6rem}
       .pbuy__adds{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:.5rem;line-height:1.55}
+      .pbuy__keep{margin:1rem 0 0;line-height:1.55;font-size:1.02rem}
+      .pbuy__sure{margin:0 0 .7rem;font-size:.9rem;line-height:1.55;color:var(--cyan-soft)}
       .pbuy__btns{max-width:420px;margin:.4rem 0 0}
       .pbuy__fsbtn{width:100%;min-height:50px;font-size:1.05rem;justify-content:center}
       .pbuy__fsbtn[disabled]{opacity:.55;cursor:wait}
@@ -67,6 +69,7 @@ _JS = r'''
   function status(t, bad) { var s = el('pbuystatus'); s.textContent = t; s.className = 'pbuy__status' + (bad ? ' pbuy__status--bad' : ''); }
   var WHY = {
     uk: 'In the UK, 365 PC Manager comes with our support plans instead. <a href="/home-it-support-plans/">See the plans</a>.',
+    customer: 'This PC is linked to 365 Techies, so the key isn’t sold for it: on one of our <a href="/home-it-support-plans/">support plans</a> it has everything already. Questions? Email <a href="mailto:info@365techies.co.uk">info@365techies.co.uk</a>.',
     not_here: 'Unlock everything isn’t on sale in your country yet. 365 PC Manager stays free to use, and the app will offer it when it is.',
     no_sale: 'Unlock everything isn’t on sale in your country. 365 PC Manager stays free to use.',
     off: 'Unlock everything isn’t on sale just now. 365 PC Manager stays free to use in the meantime.',
@@ -159,6 +162,7 @@ _JS = r'''
   post({ 'do': 'config', install: install, test_cc: testCc }).then(function (c) {
     if (!c || !c.ok) { status('We couldn’t reach our server. Refresh the page in a minute.', true); return; }
     if (!c.available) { el('pbuyoffer').hidden = true; el('pbuywhy').innerHTML = WHY[c.reason] || WHY.off; el('pbuywhy').hidden = false; return; }
+    el('pbuyoffer').hidden = false;   // 29 Oct 2026: hidden until the server says this PC may buy - no price shown to anyone else, even for a moment
     el('pbuyamt').textContent = c.currency === 'GBP' ? '£' + c.amount : 'US$' + c.usd;
     el('pbuylocal').textContent = c.local ? '(about ' + c.local + ')' : '';
     // 13 Oct 2026: a UK PC that isn't on one of our plans - "service it yourself", with the plans one click away
@@ -188,16 +192,19 @@ def buy_page_content(task_head, bc, faq_html):
       <div class="pbuy__in">
         <p class="pbuy__test" id="pbuytest" hidden>TEST MODE: PayPal&rsquo;s sandbox. No real money is taken.</p>
         <div class="pbuy__card" id="pbuycard">
-          <div id="pbuyoffer">
-            <p class="pbuy__price"><b id="pbuyamt">US$19.99</b><span id="pbuylocal"></span><span>paid once</span></p>
+          <div id="pbuyoffer" hidden>
+            <p class="pbuy__price"><b id="pbuyamt"></b><span id="pbuylocal"></span><span>paid once</span></p>
             <ul class="pbuy__facts"><li>12 months</li><li>Up to 3 PCs</li><li>Does not renew</li><li>30-day refund</li></ul>
+            <p class="pbuy__keep">Had a free month? This keeps everything you had in it, for a whole year &mdash; and covers up to 3 PCs, so the laptop, the desktop and a family member&rsquo;s can all have it on one key.</p>
             <h2 style="margin-top:1.3rem">What it adds</h2>
             <ul class="pbuy__adds">
               <li><b>The full automatic service</b>, whenever you choose to run it: Windows, driver and app updates, a deep clean, security and repair checks and a performance check.</li>
               <li><b>Switching off programs that start with Windows</b>, from the app&rsquo;s Start-up page.</li>
               <li><b>Tidying old backups</b>: removing Windows File History copies older than 30 days. It asks first and always keeps your latest backup.</li>
             </ul>
+            <p class="pbuy__small" style="margin-top:.8rem">The free health check, Boost and every other free part of 365 PC Manager stay free either way.</p>
             <h2 style="margin-top:1.3rem">Pay with PayPal or a card</h2>
+            <p class="pbuy__sure">&#10003; 30 days to change your mind, no questions asked, even if you&rsquo;ve used it &nbsp;&middot;&nbsp; &#10003; Never charged again: it doesn&rsquo;t renew</p>
             <div class="pbuy__btns" id="pbuybtns"></div>
             <p class="pbuy__status" id="pbuystatus" role="status" aria-live="polite"></p>
             <p class="pbuy__small" id="pbuysmall">You&rsquo;re buying from <b>365 Techies Ltd</b>, the family IT business in Bournemouth, England that makes 365 PC Manager. PayPal takes the payment, so we never see your card. Your key is shown here and emailed to you. <a href="/pc-manager-licence/">Licence and 30-day refunds</a> &middot; <a href="/privacy-policy/#unlock-everything">Privacy</a>.</p>

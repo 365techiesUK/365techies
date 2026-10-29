@@ -59,6 +59,18 @@ function pp_country_of($install, $ip, $instFile = null) {
     }
     return strtoupper((string)geo_cc((string)$ip));
 }
+/* 29 Oct 2026 (owner: existing customers mustn't see that they can "get it cheaper ... they might cancel their subscription"):
+   whose PC is this install? 'customer' = linked to us or on a plan (never sold the key, anywhere); 'free' = an install we
+   know that isn't; '' = no install number, or one we don't know (in the UK the key is then not offered: the app's own Buy
+   link always carries the PC's install number). */
+function pp_install_kind($install, $instFile = null) {
+    $install = preg_replace('/[^a-f0-9]/', '', strtolower((string)$install));
+    if (strlen($install) !== 16) return '';
+    $d = @json_decode((string)@file_get_contents($instFile !== null ? $instFile : PP_DIR . '/pcm-installs.json'), true);
+    if (!is_array($d) || !isset($d['m'][$install]) || !is_array($d['m'][$install])) return '';
+    $e = $d['m'][$install];
+    return (!empty($e['k']) || !empty($e['p'])) ? 'customer' : 'free';
+}
 /* Can this country buy through PayPal now, and at what price? -> {ok, reason, usd, line}. reason: off | not_set_up | uk |
    no_sale | not_here. Sales are on when Buy is switched on, or while the keys file says sandbox (testing with PayPal's
    pretend money). */

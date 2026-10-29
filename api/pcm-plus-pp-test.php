@@ -67,6 +67,16 @@ echo "D  the PC's country\n";
 file_put_contents($TMP . '/inst.json', json_encode(array('v' => 1, 'm' => array('a1b2c3d4e5f60718' => array('c' => 'US'), 'bbbbbbbbbbbbbbbb' => array('c' => 'DE')))));
 check(pp_country_of('a1b2c3d4e5f60718', '', $TMP . '/inst.json') === 'US' && pp_country_of('BBBBBBBBBBBBBBBB', '', $TMP . '/inst.json') === 'DE', 'from its own check-ins');
 check(pp_country_of('', '', $TMP . '/inst.json') === '' && pp_country_of('zz', '', $TMP . '/inst.json') === '', 'no install: the asking address (none here)');
+// 29 Oct 2026: a customer's PC is never sold the key; in the UK only a PC we know (the app's own Buy link) is
+file_put_contents($TMP . '/inst2.json', json_encode(array('v' => 1, 'm' => array('1111111111111111' => array('c' => 'GB'),
+    '2222222222222222' => array('c' => 'GB', 'k' => 1), '3333333333333333' => array('c' => 'GB', 'p' => 1, 'k' => 1), '4444444444444444' => array('c' => 'US', 'p' => 1)))));
+$IK = function ($i) use ($TMP) { return pp_install_kind($i, $TMP . '/inst2.json'); };
+check($IK('1111111111111111') === 'free' && $IK('2222222222222222') === 'customer' && $IK('3333333333333333') === 'customer' && $IK('4444444444444444') === 'customer', 'whose PC: free / linked / on a plan / a customer\'s PC abroad');
+check($IK('') === '' && $IK('9999999999999999') === '' && $IK('zz') === '', 'no install number, or one we don\'t know: not known');
+$PPE = (string)file_get_contents(__DIR__ . '/pcm-plus-pp.php');
+$g1 = strpos($PPE, "if (\$kind === 'customer') \$offer = array('ok' => false, 'reason' => 'customer');"); $g2 = strpos($PPE, "elseif (!empty(\$offer['uk']) && \$kind !== 'free') \$offer = array('ok' => false, 'reason' => 'uk');");
+$g3 = strpos($PPE, "array('uk', 'no_sale', 'customer')"); $g4 = strpos($PPE, 'pp_create(pp_creds()');
+check($g1 !== false && $g2 !== false && $g3 !== false && $g1 < $g3 && $g3 < $g4, 'the buy page: a customer\'s PC, or a UK visitor without a known install, never gets an offer or an order (checked before FastSpring and before any order)');
 
 echo "E  only OUR orders become keys\n";
 $sent = array(); $mail = function ($to, $key, $exp) use (&$sent) { $sent[] = array($to, $key, $exp); return true; };

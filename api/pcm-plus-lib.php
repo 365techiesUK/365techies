@@ -588,9 +588,52 @@ function plus_trial_states($now = null, $file = null) {
         $off = false;
         foreach ($d['keys'] as $e) if (($e['id'] ?? '') === ($t['id'] ?? '-')) $off = ($e['status'] ?? '') !== 'active';
         $state = $off ? 'off' : ((int)$t['until'] <= $now ? 'ended' : ((int)$t['got'] ? 'has_it' : 'waiting'));
-        $o[$mh] = array('state' => $state, 'until' => (int)$t['until'], 'at' => (int)$t['at'], 'by' => (string)$t['by'], 'sent' => (int)$t['sent'], 'got' => (int)$t['got'], 'id' => (string)$t['id']);
+        $o[$mh] = array('state' => $state, 'until' => (int)$t['until'], 'at' => (int)$t['at'], 'by' => (string)$t['by'], 'sent' => (int)$t['sent'], 'got' => (int)$t['got'], 'id' => (string)$t['id'],
+            'ext' => (int)($t['ext'] ?? 0), 'ctl' => (int)($t['ctl'] ?? 0));   // 29 Oct 2026: the extra-week test (below)
     }
     return $o;
+}
+/* 29 Oct 2026 (owner: "[buy] page and the extra week test"): one more week, free, for a KEEN user whose free month is about
+   to end without paying - for half of them (the install id's last digit even), so the installs card can compare the halves
+   (pcm-installs-lib.php inst_trial_summary). Keen = used on PLUS_EXTRA_MIN_DAYS or more different days and seen in the last
+   3 days; about to end = within 2 days. The other half are marked 'ctl' at the same moment, so like is compared with like.
+   Once per PC; never a PC that is ours, linked, on a plan, bought a key, or whose month staff switched off. The PC hears of it
+   at its next check-in (the key's own end date moves too): the app's end date moves, and its last-days reminders come round
+   again. tm-cron.php runs it every 15 minutes; $inst = pcm-installs.json. -> {extended, control} */
+if (!defined('PLUS_EXTRA_DAYS')) define('PLUS_EXTRA_DAYS', 7);
+if (!defined('PLUS_EXTRA_MIN_DAYS')) define('PLUS_EXTRA_MIN_DAYS', 4);
+function plus_trial_extra_week($inst, $now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    $res = array('extended' => 0, 'control' => 0);
+    if (!is_array($inst) || !isset($inst['m']) || !is_array($inst['m'])) return $res;
+    $seen = gmdate('Y-m-d', $now - 3 * 86400);
+    $bought = plus_bought_installs($file);
+    plus_locked(function (&$d) use ($inst, $now, $seen, $bought, &$res) {
+        $ch = false;
+        foreach ((isset($d['trials']) && is_array($d['trials'])) ? $d['trials'] : array() as $mh => $t) {
+            if (!empty($t['ext']) || !empty($t['ctl']) || !(int)($t['got'] ?? 0)) continue;
+            $until = (int)$t['until'];
+            if ($until <= $now || $until > $now + 2 * 86400) continue;
+            $e = (isset($inst['m'][$mh]) && is_array($inst['m'][$mh])) ? $inst['m'][$mh] : null;
+            if (!$e || !empty($e['o']) || !empty($e['k']) || !empty($e['p']) || isset($bought[$mh])) continue;
+            if ((int)($e['n'] ?? 0) < PLUS_EXTRA_MIN_DAYS || (string)($e['l'] ?? '') < $seen) continue;
+            $h = '';
+            foreach ($d['keys'] as $kh => $k) if (($k['id'] ?? '') === ($t['id'] ?? '-')) { $h = $kh; break; }
+            if ($h === '' || ($d['keys'][$h]['status'] ?? '') !== 'active') continue;
+            if (hexdec(substr($mh, -1)) % 2 === 0) {
+                $d['trials'][$mh]['until'] = $until + PLUS_EXTRA_DAYS * 86400;
+                $d['trials'][$mh]['ext'] = $now;
+                $d['keys'][$h]['expires'] = $until + PLUS_EXTRA_DAYS * 86400;
+                $res['extended']++;
+            } else {
+                $d['trials'][$mh]['ctl'] = $now;
+                $res['control']++;
+            }
+            $ch = true;
+        }
+        return $ch;
+    }, $file);
+    return $res;
 }
 // 29 Oct 2026 (owner: "build the trial count on the installs card"): the PCs an Unlock key that was NOT a free month has been
 // used on -> install id => {provider, at}. A refunded (revoked) key doesn't count; one that has since run out still does -

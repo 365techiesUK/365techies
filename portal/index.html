@@ -783,9 +783,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Oct 2026 &middot; 6ead410e03</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Oct 2026 &middot; 571a790d40</p><script>
 (function () {
-  var P365BUILD = '6ead410e03';
+  var P365BUILD = '571a790d40';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -10072,6 +10072,11 @@
     };
     h += '<div class="tblwrap" style="margin-top:.5rem"><table><thead><tr><th></th><th>Had it</th><th>In their month</th><th>Plan / linked</th><th>Bought</th><th>Kept free</th><th>Stopped</th><th>Paid</th></tr></thead><tbody>'
       + row('UK', s.uk) + row('Abroad', s.abroad) + '</tbody></table></div>';
+    // 29 Oct 2026 (owner: "the extra week test"): keen users about to end unpaid - half given 7 more days (pcm-plus-lib.php
+    // plus_trial_extra_week), half not, so the two can be compared
+    var t = s.test || {};
+    if (n(t.ext) || n(t.ctl)) h += '<p class="quiet" style="margin:.5rem 0 0">\u23f3 <b>Extra-week test</b> (keen users whose month was ending unpaid, split in two): given 7 more days <b>' + n(t.ext) + '</b>, paid <b>' + n(t.ext_paid) + '</b>' + (n(t.ext_open) ? ' (' + n(t.ext_open) + ' still in their extra week)' : '')
+      + ' \u00b7 not given it <b>' + n(t.ctl) + '</b>, paid <b>' + n(t.ctl_paid) + '</b>. Give it a few weeks before reading much into it.</p>';
     return h + '<details class="nx-how" style="margin-top:.4rem"><summary>How it\u2019s counted</summary><p class="quiet" style="font-size:.9rem;margin:.2rem 0 0">Only PCs that received their free month count. <b>Plan / linked</b> = the PC is now on a plan or linked to a customer (a free month only ever goes to a PC that was neither). <b>Bought</b> = an Unlock everything key that wasn\u2019t a free month is used on it; a refunded key doesn\u2019t count. Either can happen before the month is over. <b>Kept free</b> = seen after its month ended; <b>stopped</b> = not seen since. <b>Paid</b> = paid, out of those whose month is over or who paid early. UK = Great Britain, Northern Ireland, the Isle of Man and the Channel Islands. Abroad can only buy where Buy is on.</p></details></div>';
   }
   function instTrialHtml(d) {

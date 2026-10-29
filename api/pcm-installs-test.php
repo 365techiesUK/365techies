@@ -196,7 +196,7 @@ $TD = array('m' => array(
     'aaaaaaaaaaaaaaa9' => array('c' => 'FR', 'f' => $DY(-20), 'l' => $DY(-1)),                   // switched off by staff
 ));
 $tr = function ($until, $got = 1, $state = 'has_it') use ($N) { return array('state' => $state, 'until' => $N + $until * 86400, 'got' => $got ? $N - 9 * 86400 : 0); };
-$TT = array('aaaaaaaaaaaaaaa1' => $tr(5), 'aaaaaaaaaaaaaaa2' => $tr(-5, 1, 'ended'), 'aaaaaaaaaaaaaaa3' => $tr(-15, 1, 'ended'),
+$TT = array('aaaaaaaaaaaaaaa1' => $tr(5) + array('ext' => $N - 2 * 86400), 'aaaaaaaaaaaaaaa2' => $tr(-5, 1, 'ended') + array('ext' => $N - 13 * 86400), 'aaaaaaaaaaaaaaa3' => $tr(-15, 1, 'ended') + array('ctl' => $N - 16 * 86400),
     'aaaaaaaaaaaaaaa4' => $tr(9), 'aaaaaaaaaaaaaaa5' => $tr(-2, 1, 'ended'), 'aaaaaaaaaaaaaaa6' => $tr(27, 0, 'waiting'),
     'aaaaaaaaaaaaaaa7' => $tr(-1, 1, 'ended'), 'aaaaaaaaaaaaaaa8' => $tr(-3, 1, 'ended'), 'aaaaaaaaaaaaaaa9' => $tr(12, 1, 'off'),
     'aaaaaaaaaaaaaaaa' => $tr(-1, 1, 'ended'));   // its install has dropped out of the store: counted abroad (country unknown)
@@ -209,6 +209,7 @@ check($A['decided'] === 7 && $A['rate'] === 43, 'decided = ended + paid early = 
 check($TS['uk']['had'] === 5 && $TS['uk']['plan'] === 2 && $TS['uk']['free'] === 1 && $TS['uk']['stopped'] === 1 && $TS['uk']['rate'] === 50, 'UK (Jersey too): 5 had it, 2 of 4 decided paid = 50%', json_encode($TS['uk']));
 check($TS['abroad']['had'] === 3 && $TS['abroad']['bought'] === 1 && $TS['abroad']['stopped'] === 2 && $TS['abroad']['rate'] === 33, 'abroad: 3 had it, 1 bought of 3 = 33%', json_encode($TS['abroad']));
 check($TS['next_end'] === $N + 5 * 86400 && $TS['ends7'] === 1, 'the next to end, and how many end in the coming week (a PC that already paid is not waiting to end)');
+check($TS['test'] === array('ext' => 2, 'ext_paid' => 0, 'ext_open' => 1, 'ctl' => 1, 'ctl_paid' => 0, 'ctl_open' => 0), 'the extra-week test: 2 given a week (1 still in it), 1 comparison', json_encode($TS['test']));
 $T0 = inst_trial_summary($TD, array(), array(), $N);
 check($T0['given'] === 0 && $T0['all']['rate'] === null && $T0['next_end'] === 0, 'no free months at all: zeros, no rate');
 

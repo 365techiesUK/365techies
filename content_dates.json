@@ -1230,7 +1230,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "ab40605a38259521",
+  "h": "a0a6fd01874970e5",
   "last": "2026-10-29"
  },
  "free-tools": {
@@ -2873,13 +2873,13 @@
  },
  "pc-manager-buy": {
   "first": "2026-10-12",
-  "h": "1d5efef3a059775d",
-  "last": "2026-10-13"
+  "h": "16519c324da7c6f9",
+  "last": "2026-10-29"
  },
  "pc-manager-licence": {
   "first": "2026-10-11",
-  "h": "3fc7925263584a21",
-  "last": "2026-10-18"
+  "h": "22f4bb2d9de9aaa6",
+  "last": "2026-10-29"
  },
  "pdf-to-word-without-uploading": {
   "first": "2026-10-25",

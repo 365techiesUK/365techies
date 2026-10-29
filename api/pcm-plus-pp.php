@@ -68,8 +68,13 @@ if ($do === 'config' || $do === 'create') {
     // ... and with FastSpring's TEST checkout, for a country PayPal does not sell to (so ?cc= never reaches live PayPal)
     elseif (strlen($tcc) === 2 && fs_mode() === 'test' && !in_array($tcc, pp_countries(), true)) $country = $tcc;
     $offer = pp_offer($country);
+    // 29 Oct 2026 (owner: existing customers mustn't see they can "get it cheaper"): never to a PC linked to us or on a plan,
+    // anywhere; and in the UK only to the PC the app's own Buy link came from - a UK visitor without one sees our plans instead
+    $kind = pp_install_kind($install);
+    if ($kind === 'customer') $offer = array('ok' => false, 'reason' => 'customer');
+    elseif (!empty($offer['uk']) && $kind !== 'free') $offer = array('ok' => false, 'reason' => 'uk');
     // 12 Oct 2026: not one of PayPal's countries -> FastSpring sells it there (pcm-plus-fs-lib.php); the page opens its checkout
-    if (!$offer['ok'] && !in_array($offer['reason'], array('uk', 'no_sale'), true)) {
+    if (!$offer['ok'] && !in_array($offer['reason'], array('uk', 'no_sale', 'customer'), true)) {
         $fo = fs_offer($country);
         if (!$fo['ok'] && in_array($fo['reason'], array('uk', 'no_sale'), true)) $offer = array('ok' => false, 'reason' => $fo['reason']);   // the clearer answer
         if ($fo['ok']) {
