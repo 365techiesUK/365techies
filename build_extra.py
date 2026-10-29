@@ -30539,6 +30539,7 @@ def write_portal_page():
         // 11 Oct 2026 (owner couldn't find them): Techies One Mail installs, beside the PC Manager installs card - they
         // were landing at the bottom of Today because this list didn't know them
         t1inst = cardOf('t1ibox'),
+        ideas = cardOf('ideabox'),   // 29 Oct 2026: Suggest an idea, from the app (build 47)
         cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
         m365 = cardOf('m365card'),   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
         shopc = cardOf('shopcard'),   // 14 Oct 2026: the refurbished Dells for sale + their QuickBooks entries, on its own Shop tab
@@ -30586,6 +30587,7 @@ def write_portal_page():
     if (fleet) panels.computers.appendChild(fleet);
     if (inst) panels.computers.appendChild(inst);
     if (t1inst) panels.computers.appendChild(t1inst);
+    if (ideas) panels.computers.appendChild(ideas);
     if (invq) panels.invoices.appendChild(invq);
     if (shopc) panels.shop.appendChild(shopc);
     // the "which plans can staff invite to" picker moved from Setup to sit under the list it feeds
@@ -31215,6 +31217,8 @@ def write_portal_page():
       h += '<div class="card"><h2>\\ud83d\\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\\u2026</p></div></div>';
       // 10 Oct 2026: Techies One Mail, counted from the email app's own check-in (api/t1-installs.php)
       h += '<div class="card"><h2>\\u2709\\ufe0f Techies One Mail installs</h2><div id="t1ibox"><p class="quiet">Counting\\u2026</p></div></div>';
+      // 29 Oct 2026 (build 47): what people send with Suggest an idea in PC Manager (api/pcm-installs.php -> ideas)
+      h += '<div class="card"><h2>\\ud83d\\udca1 Ideas from the app</h2><div id="ideabox"><p class="quiet">Loading\\u2026</p></div></div>';
       // 6 Oct 2026 (owner): find ANY customer - job cards, PC Manager, SimplyBook, the book - open them, edit them
       h += '<div class="card" id="custcard"><h2>\\ud83d\\udd0e Find a customer</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">Everyone we\\u2019ve written up a job for, everyone with PC Manager and everyone who has booked \\u2014 by name, company, phone, email or postcode.</p>'
@@ -34266,8 +34270,8 @@ def write_portal_page():
     var body = { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' }; for (var xk in (extra || {})) body[xk] = extra[xk];
     var who = INST.who;
     post('/api/pcm-installs.php', body)
-      .then(function (d) { INST.d = d; if (who === 'free' && d && d.ok) INST.cmp = d; renderInstalls(); renderGlance(); })
-      .catch(function () { INST.d = { ok: false }; if (!INST.cmp) INST.cmp = { ok: false }; renderInstalls(); renderGlance(); });
+      .then(function (d) { INST.d = d; if (who === 'free' && d && d.ok) INST.cmp = d; if (d && d.ideas) INST.ideas = d.ideas; renderInstalls(); renderGlance(); renderIdeas(); })
+      .catch(function () { INST.d = { ok: false }; if (!INST.cmp) INST.cmp = { ok: false }; renderInstalls(); renderGlance(); renderIdeas(); });
   }
   function instCountry(c) {
     if (!c || c === '--') return 'Not known';
@@ -34478,6 +34482,10 @@ def write_portal_page():
         + cell(om.d7 || 0, 'Techies Move', 'download clicks this week \\u00b7 ' + (om.d30 || 0) + ' in 30 days', '', 'store:XPFCXK6CK201FQ')
         + cell(og.d7 || 0, '365 Games', 'visitors this week \\u00b7 ' + (og.d30 || 0) + ' in 30 days', '', 'store:9P9JT29Z4NGV'));
     }
+    // 29 Oct 2026 (build 47): Suggest an idea, sent from inside PC Manager
+    var iv = INST.ideas;
+    if (iv) h += row('Ideas from the app', 'Suggest an idea in PC Manager',
+      cell(iv.d7 || 0, 'this week', '', iv.d7 ? 'g' : '', 'ideas') + cell(iv.d30 || 0, 'in 30 days', (iv.total || 0) + ' kept in all', '', 'ideas'));
     h += '<details class="nx-how"><summary>How these are counted</summary><p class="quiet">'
       + '<b>Customer PCs</b> are the copies of PC Manager linked to a customer. Each reports in at least hourly; <b>on right now</b> = reported in the last 70 minutes, '
       + '<b>on support</b> = on a Pro plan, <b>worth a call</b> = the PCs the list below ranks. <b>PC Manager</b> counts the copies not on a plan (the ones people download from us), '
@@ -34493,12 +34501,31 @@ def write_portal_page():
       var b = e.target.closest ? e.target.closest('[data-cg]') : null; if (!b) return;
       var go = b.getAttribute('data-cg');
       if (go.indexOf('store:') === 0) { window.open('https://apps.microsoft.com/detail/' + go.slice(6), '_blank', 'noopener'); return; }
-      var id = { on: 'ffleet', fleet: 'ffleet', call: 'worthcall', inst: 'instbox', t1: 't1ibox' }[go];
+      var id = { on: 'ffleet', fleet: 'ffleet', call: 'worthcall', inst: 'instbox', t1: 't1ibox', ideas: 'ideabox' }[go];
       if (go === 'on' && ftab !== 'on' && FLEET) { ftab = 'on'; renderFtabs(FLEET.filter(function (m) { return m.on; }).length); renderFleet(); }
       if (go === 'inst' && INST.who !== 'free') { INST.who = 'free'; INST.cc = null; INST.all = false; loadInstalls(); }
       var n = document.getElementById(id), c = n ? (n.closest('.card') || n) : null;
       if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
+  }
+  // 29 Oct 2026 (build 47, owner: "a part on the 365 PC Manager where people can leave suggestions"): newest first,
+  // 60 at most. An email shows only when they asked for a reply (UK copies only: the app hides the box abroad).
+  function renderIdeas() {
+    var box = document.getElementById('ideabox'); if (!box) return;
+    var iv = INST.ideas;
+    if (!iv) { box.innerHTML = '<p class="quiet">' + (INST.d && !INST.d.ok ? 'Couldn\\u2019t load the ideas - refresh to retry.' : 'Loading\\u2026') + '</p>'; return; }
+    var KIND = { feature: 'New feature', wrong: 'Isn\\u2019t right', confusing: 'Confusing', other: 'Idea' };
+    var h = '<p class="quiet" style="margin:.1rem 0 .6rem">Sent with <b>Suggest an idea</b> in PC Manager (Get help, or the tray menu). <b>' + (iv.d7 || 0) + '</b> this week, <b>' + (iv.d30 || 0) + '</b> in 30 days. '
+      + 'They also arrive in Slack. Only the ones with an email asked for a reply.</p>';
+    if (!iv.list || !iv.list.length) { box.innerHTML = h + '<p class="quiet">None yet: the button arrives with build 47.</p>'; return; }
+    h += '<div class="tblwrap"><table><thead><tr><th>When</th><th>What</th><th>They said</th><th>From</th></tr></thead><tbody>';
+    iv.list.forEach(function (i) {
+      h += '<tr><td style="white-space:nowrap">' + esc(i.at) + '</td><td>' + esc(KIND[i.kind] || 'Idea') + '</td>'
+        + '<td style="white-space:pre-wrap;min-width:16rem">' + esc(i.text) + '</td>'
+        + '<td>' + (i.linked ? 'a customer' : 'free user') + (i.cc ? ' \\u00b7 ' + esc(i.cc) : '') + (i.ver ? ' \\u00b7 build ' + i.ver : '')
+        + (i.email ? '<br><a href="mailto:' + esc(i.email) + '">' + esc(i.email) + '</a>' : '') + '</td></tr>';
+    });
+    box.innerHTML = h + '</tbody></table></div>';
   }
   function renderT1Installs() {
     var box = document.getElementById('t1ibox'); if (!box) return;

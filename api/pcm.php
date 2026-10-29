@@ -1233,6 +1233,49 @@ if ($action === 'photoup') {
     out(array('ok'=>true, 'n'=>$n, 'max'=>6));
 }
 
+// 29 Oct 2026 (build 47, owner: "a part on the 365 PC Manager where people can leave suggestions or features"): Suggest an
+// idea. Any copy of the app, linked or not, UK or abroad - but only one that has checked in (pcm-installs.json), so it
+// can't be fired from anywhere. Stored (pcm-ideas-lib.php) for the portal list and posted to Slack: its own webhook
+// (slack-webhook-ideas.php) when there is one, the main one otherwise. No reply is promised unless they left an email.
+if ($action === 'idea') {
+    require_once __DIR__ . '/pcm-installs-lib.php';
+    require_once __DIR__ . '/pcm-ideas-lib.php';
+    if (strlen($machine) < 8) out(array('ok'=>false,'error'=>'unknown'));
+    $iid = substr(sha1('365inst|' . $machine), 0, 16);
+    $inst = @json_decode((string)@file_get_contents(inst_file()), true);
+    $ie = (is_array($inst) && isset($inst['m'][$iid]) && is_array($inst['m'][$iid])) ? $inst['m'][$iid] : null;
+    $linked = $key !== '' && isset($db['customers'][$key]);
+    if (!$ie && !$linked) out(array('ok'=>false,'error'=>'unknown'));
+    $cc = $ie ? (string)($ie['c'] ?? '') : 'GB';
+    $r = ideas_add(array('k'=>(string)($in['kind'] ?? ''), 'x'=>(string)($in['text'] ?? ''), 'e'=>(string)($in['email'] ?? ''),
+        'v'=>(int)($in['ver'] ?? 0), 'c'=>$cc, 'l'=>$linked ? 1 : 0, 'm'=>$iid));
+    if ($r !== 'ok') out(array('ok'=>false,'error'=>$r));
+    $wh = file_exists(__DIR__ . '/slack-webhook-ideas.php') ? __DIR__ . '/slack-webhook-ideas.php' : $WEBHOOK;
+    $SLACK_WEBHOOK = '';
+    if (file_exists($wh)) { ob_start(); include $wh; ob_end_clean(); }
+    if (empty($SLACK_WEBHOOK) && file_exists($wh)) {
+        $rawWh = (string)@file_get_contents($wh);
+        if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+    }
+    if (!empty($SLACK_WEBHOOK)) {
+        $esc = function($s){ return str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), (string)$s); };
+        $kinds = array('feature'=>'a new feature', 'wrong'=>'something that isn\'t right', 'confusing'=>'something confusing', 'other'=>'an idea');
+        $k = (string)($in['kind'] ?? ''); $kt = $kinds[$k] ?? 'an idea';
+        $em = strtolower(trim((string)($in['email'] ?? '')));
+        $em = ($em !== '' && filter_var($em, FILTER_VALIDATE_EMAIL)) ? $em : '';
+        $who = $linked ? '*' . $esc(str_replace(array("\r","\n"), ' ', (string)($db['customers'][$key]['name'] ?? 'a customer'))) . '*' : 'a free user' . ($cc !== '' ? ' (' . $esc($cc) . ')' : '');
+        $txt = ":bulb: *PC Manager idea* - " . $kt . " - from " . $who . " \xC2\xB7 build " . (int)($in['ver'] ?? 0)
+             . "\n> " . str_replace("\n", "\n> ", $esc(ideas_clean_text($in['text'] ?? '')))
+             . ($em !== '' ? "\nWould like a reply: " . $esc($em) : "\nNo reply asked for.");
+        $ch = curl_init($SLACK_WEBHOOK);
+        curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+            CURLOPT_HTTPHEADER=>array('Content-Type: application/json'),
+            CURLOPT_POSTFIELDS=>json_encode(array('text'=>$txt, 'unfurl_links'=>false))));
+        curl_exec($ch); curl_close($ch);
+    }
+    out(array('ok'=>true));   // stored = sent: the portal list has it even if Slack didn't answer
+}
+
 if ($action === 'help') {
     // only registered machines can raise a help request (stops anonymous relay abuse)
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key','sent'=>false));

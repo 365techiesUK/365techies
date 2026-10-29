@@ -89,4 +89,7 @@ $out['sends'] = vis_dl_tally($vs, 'pcm', 8, 'send');
 // 28 Oct 2026: our other Store programs for the Computers banner. Techies PDF and Techies Move don't report installs, so
 // the site's download clicks; 365 Games = visits to /games/ (the Store app opens there)
 $out['others'] = array('tpdf' => vis_dl_tally($vs, 'tpdf', 0), 'tmove' => vis_dl_tally($vs, 'tmove', 0), 'games' => vis_page_tally($vs, '/games/'));
+// 29 Oct 2026 (build 47): what people sent with Suggest an idea in the app (pcm-ideas-lib.php), newest first
+require_once __DIR__ . '/pcm-ideas-lib.php';
+$out['ideas'] = ideas_recent(60);
 echo json_encode($out);
