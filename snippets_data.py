@@ -40,6 +40,12 @@ from html import unescape as _unescape
 
 # slug -> {"title": ..., "desc": ...}  (either key optional)
 SNIPPETS = {
+    "cyber-essentials": {
+        # 29 Oct 2026 (owner: "do all the pages ... SEO and AI"): rewritten as the April 2026 (v3.3) rules guide with the free
+        # app check and Cyber Essentials Ready. Bing: "cyber essentials requirements/certification/check" are the queries.
+        "title": "Cyber Essentials 2026: Requirements, Costs &amp; Free PC Check",
+        "desc": "The April 2026 Cyber Essentials rules in plain English: the 5 controls, the 14-day update rule, what it costs, and a free check for any Windows PC.",
+    },
     "printer-wont-connect-to-ee-smart-hub": {
         # 20 Oct 2026 (owner: "improve the SEO and the AI and the SERPs"): GSC ~2,000 imps, 65 clicks, 3.2% CTR at pos ~5 - low for
         # page one. The page now carries a real job (WPA3-Personal-Transition refused a 2013 HP; Compatible WiFi fixed it), so the

@@ -699,7 +699,115 @@ CUST_INTENTS = {
     ],
 }
 # ...and the box that goes straight under the first screen (the owner's GBP 60 per address, Virgin and Plusnet)
+# 29 Oct 2026 (owner: "do all the pages ... SEO and AI ... optimise"): the Cyber Essentials guide, inserted under the hero of
+# /cyber-essentials/. Facts from the NCSC "Requirements for IT Infrastructure v3.3" (April 2026) and IASME's published fees
+# (seo-research/cyber-essentials-pcm-2026-10-29). Never "compliant" or "certified by us": only an IASME certification body certifies.
+# The month's deadline is worked out in the reader's browser (second Tuesday + 14 days); without script it reads as the rule.
+def _ce_guide():
+    return """    <style>
+      .ce5{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1.4rem}
+      .ce5__card{background:var(--card,#111b3b);border:1px solid var(--line,#2a3b63);border-radius:14px;padding:1.1rem 1.2rem}
+      .ce5__card--key{border-color:rgba(224,179,65,.7);box-shadow:0 0 0 1px rgba(224,179,65,.25) inset}
+      .ce5__card h3{margin:.35rem 0 .45rem;font-size:1.06rem}
+      .ce5__card p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.55}
+      .ce5__n{display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;background:rgba(0,206,27,.14);color:#2bd94a;font-weight:700}
+      .ce-deadline{margin-top:1.6rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(29,151,227,.55);background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(0,206,27,.08))}
+      .ce-deadline__eyebrow{margin:0 0 .4rem;color:var(--muted);font-size:.8rem;letter-spacing:.08em}
+      .ce-deadline__big{margin:0 0 .5rem;font-size:1.15rem;line-height:1.5}
+      .ce-deadline__small{margin:0;color:var(--muted)}
+      .ce-shot{margin:0}.ce-shot img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line,#2a3b63);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+      .ce-shot figcaption{margin-top:.55rem;color:var(--muted);font-size:.88rem}
+      .ce-note{color:var(--muted);font-size:.92rem;border-left:3px solid rgba(224,179,65,.8);padding-left:.8rem;max-width:760px;margin-left:auto;margin-right:auto}
+      .split-2--media{align-items:center}
+      .ce-fees{width:100%;max-width:640px;border-collapse:collapse;margin:1rem auto}
+      .ce-fees th,.ce-fees td{padding:.7rem .9rem;border-bottom:1px solid var(--line,#2a3b63);text-align:left}
+      .ce-fees td:last-child,.ce-fees th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+      .table-wrap{overflow-x:auto}
+    </style>
+    <section class="section" aria-label="Cyber Essentials explained" id="requirements">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// THE APRIL 2026 RULES, IN PLAIN ENGLISH</p>
+          <h2 class="section-title" data-title>What Cyber Essentials actually asks for<span class="title-underline"></span></h2>
+          <p class="lede" data-reveal>Cyber Essentials is the UK government&rsquo;s basic security certificate, run by the National Cyber Security Centre (NCSC) with IASME. Since <strong>27 April 2026</strong> it&rsquo;s assessed against the NCSC&rsquo;s <em>Requirements for IT Infrastructure v3.3</em>. It covers five areas, on every computer, laptop, phone, tablet, server, router and cloud service your business uses for work.</p>
+        </div>
+        <div class="ce5" data-stagger>
+          <article class="ce5__card"><span class="ce5__n mono">1</span><h3>Firewalls</h3><p>A firewall on between every device and the internet: the router&rsquo;s, plus Windows Firewall on laptops that leave the office. The router&rsquo;s admin password changed from the one it came with, and nothing opened to the internet without a reason.</p></article>
+          <article class="ce5__card"><span class="ce5__n mono">2</span><h3>Secure set-up</h3><p>No spare or default accounts left on, no software you don&rsquo;t need, auto-run off, and a lock after <strong>10 wrong guesses or fewer</strong>. Passwords of at least <strong>12 characters</strong> (or 8 with two-step sign-in); a PIN that only unlocks the device can be 6.</p></article>
+          <article class="ce5__card ce5__card--key"><span class="ce5__n mono">3</span><h3>Security updates &mdash; 14 days</h3><p>Every <strong>critical or high-risk fix</strong> installed within <strong>14 days of release</strong>, for Windows, your programs, your router and your computers&rsquo; firmware (BIOS). Automatic updates on wherever possible, and anything that no longer gets fixes removed. <strong>Missing this fails the assessment.</strong></p></article>
+          <article class="ce5__card ce5__card--key"><span class="ce5__n mono">4</span><h3>Accounts &amp; two-step sign-in</h3><p>Everyday work in an everyday account; administrator accounts only for installing and setting up &mdash; never for email or browsing. <strong>Two-step sign-in (MFA) on every cloud service</strong> that offers it, Microsoft 365 and Google included. Since April 2026, <strong>missing it is an automatic fail.</strong></p></article>
+          <article class="ce5__card"><span class="ce5__n mono">5</span><h3>Malware protection</h3><p>Antivirus on every computer, kept up to date as its maker recommends (Microsoft Defender counts), and harmful websites blocked. On phones and tablets, apps only from the official stores.</p></article>
+        </div>
+        <div class="ce-deadline" data-reveal>
+          <p class="ce-deadline__eyebrow mono">// THE ONE THAT CATCHES PEOPLE OUT</p>
+          <p class="ce-deadline__big" id="ce-month">Microsoft releases Windows&rsquo; security fixes on the <strong>second Tuesday of every month</strong>. Under Cyber Essentials they need to be on every PC within <strong>14 days</strong> &mdash; every month, not just on assessment day.</p>
+          <p class="ce-deadline__small">That&rsquo;s why passing once isn&rsquo;t the hard part: staying ready all year is. An assessor checking for Cyber Essentials Plus looks for fixes older than 14 days.</p>
+        </div>
+        <script>(function(){try{function pt(y,m){var d=new Date(y,m,1);while(d.getDay()!==2)d.setDate(d.getDate()+1);d.setDate(d.getDate()+7);return d}var t=new Date();t.setHours(0,0,0,0);var y=t.getFullYear(),m=t.getMonth(),r=pt(y,m);if(t<r){m--;if(m<0){m=11;y--}r=pt(y,m)}var due=new Date(r);due.setDate(due.getDate()+14);var o={weekday:'long',day:'numeric',month:'long'},mn=r.toLocaleDateString('en-GB',{month:'long'});var left=Math.round((due-t)/864e5);var el=document.getElementById('ce-month');if(el)el.innerHTML=mn+'&rsquo;s Windows security update came out on <strong>'+r.toLocaleDateString('en-GB',o)+'</strong>. For Cyber Essentials it needs to be on every PC by <strong>'+due.toLocaleDateString('en-GB',o)+'</strong>'+(left>0?' &mdash; '+left+(left===1?' day':' days')+' from today.':left===0?' &mdash; that&rsquo;s today.':'. Next month&rsquo;s arrives on the second Tuesday.')}catch(e){}})();</script>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="Check a PC free with 365 PC Manager" id="free-check">
+      <div class="wrap split-2 split-2--media">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// FREE &middot; IN 365 PC MANAGER 36.7</p>
+          <h2 class="section-title" data-title>Is this PC ready? Check it free<span class="title-underline"></span></h2>
+          <p>Our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>, checks a PC against the parts of Cyber Essentials one computer can show: the firewall, spare accounts, the lock after wrong guesses, PIN length, programs that shouldn&rsquo;t be there, whether this month&rsquo;s update went in within 14 days, automatic updates, old programs that no longer get fixes, administrator accounts and antivirus. Each one says <strong>ready</strong> or <strong>what to fix</strong>, in plain English, with the button that opens the right Windows setting.</p>
+          <p>Switch on <strong>Stay ready all year round</strong> and it re-checks the PC every few hours, keeps a dated record you can save for your assessor or insurer, and reminds you a few days before each month&rsquo;s update deadline. Light or dark &mdash; it follows Windows.</p>
+          <p class="ce-note">It shows what one PC can show &mdash; it doesn&rsquo;t certify anything. Your router, cloud accounts and phones need checking too, and only an IASME certification body can award the certificate.</p>
+          <p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a></p>
+        </div>
+        <figure class="ce-shot" data-reveal>
+          <img src="/images/ce-readiness-light-v47.webp" width="1012" height="736" alt="The Cyber Essentials readiness page in 365 PC Manager 36.7 (light colours) on our office PC: 2 things need attention before Cyber Essentials, October's Windows update out 13 October and due by 27 October - installed, the firewall ready, and secure set-up needing attention for the PIN length" loading="lazy" decoding="async">
+          <figcaption>Real screen, our office PC: two things to fix, and this month&rsquo;s update already in.</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="section" aria-label="Cyber Essentials Ready for businesses" id="all-year">
+      <div class="wrap split-2 split-2--media">
+        <figure class="ce-shot" data-reveal>
+          <img src="/images/ce-stay-ready-business-v47.webp" width="1012" height="736" alt="365 PC Manager on a business plan PC: Stay ready all year round - your business plan includes Cyber Essentials Ready, 365 Techies watches this PC, with Save the record and the list of what a PC can't show" loading="lazy" decoding="async">
+          <figcaption>On a business plan, the app says we&rsquo;re watching, and keeps the record.</figcaption>
+        </figure>
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// INCLUDED IN OUR BUSINESS PLANS</p>
+          <h2 class="section-title" data-title>Cyber Essentials Ready, all year<span class="title-underline"></span></h2>
+          <p>Every <a href="/business-it-support-plans/">business support plan</a> now includes <strong>Cyber Essentials Ready</strong>, from &pound;24.38 a month per computer:</p>
+          <ul class="checklist">
+            <li>Every computer checked every few hours, on one screen in your portal</li>
+            <li>Anything flagged put right within 14 days &mdash; the monthly updates above all</li>
+            <li>A monthly evidence pack: each PC, each month&rsquo;s update and the day it went in</li>
+            <li>The checks a PC can&rsquo;t do: two-step sign-in on Microsoft 365 and your other accounts, the router, phones and firmware</li>
+            <li>A full service of every PC every six weeks, and a real local techie to ring</li>
+          </ul>
+          <p><a class="button primary" href="/contact/">Talk to us about your business</a> <a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>
+        </div>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="What Cyber Essentials costs" id="cost">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// WHAT IT COSTS</p>
+          <h2 class="section-title" data-title>The certificate, and getting ready for it<span class="title-underline"></span></h2>
+          <p class="lede" data-reveal>The assessment is marked by an independent IASME certification body, never by the IT firm that looks after you. IASME&rsquo;s fees for Cyber Essentials, excluding VAT:</p>
+        </div>
+        <div class="table-wrap" data-reveal>
+          <table class="ce-fees">
+            <thead><tr><th scope="col">Your organisation</th><th scope="col">Assessment fee (ex VAT)</th></tr></thead>
+            <tbody>
+              <tr><td>Micro &mdash; 0 to 9 staff</td><td>&pound;320</td></tr>
+              <tr><td>Small &mdash; 10 to 49 staff</td><td>&pound;440</td></tr>
+              <tr><td>Medium &mdash; 50 to 249 staff</td><td>&pound;500</td></tr>
+              <tr><td>Large &mdash; 250 staff or more</td><td>&pound;600</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="ce-note" data-reveal>Fees as published by IASME in October 2026. The certificate lasts 12 months. Cyber Essentials Plus adds a hands-on technical check by the assessor and costs more. Getting your computers and accounts ready is quoted before we start, like all our work &mdash; and for business plan customers the year-round part is already included.</p>
+      </div>
+    </section>
+"""
+
 CUST_OFFERS = {
+    "cyber-essentials": _ce_guide,   # 29 Oct 2026: the April 2026 rules guide, the free check, Cyber Essentials Ready, the fees
     "email-support": lambda: email_move_box("Email provider closing your address?", "We move your email to Gmail for you", [
         '<p class="vm-alt__h">Virgin Media, blueyonder, ntlworld, virgin.net</p>',
         '<p>Moving to Junara. Free for a year if you still have Virgin broadband, TV or a landline, then paid per mailbox; paid from the start if you have left Virgin.</p>',
@@ -1332,19 +1440,34 @@ EXTRA_SERVICES = [
    split=[("Set up &amp; secure","Gmail, Drive and accounts configured properly and protected.",["Gmail &amp; business email","Drive &amp; shared files","Users &amp; access","2-step security"]),("Move &amp; protect","Migrate cleanly and keep your Workspace data safely backed up.",["Migration to or from Google","Workspace backups","Friendly support","Works with your other tools"])],
    steps_title="Workspace sorted in three steps",
    step_items=[("We review","We look at your setup and what you need."),("We set up &amp; secure","We configure, secure and (if needed) migrate."),("We support","Friendly, ongoing Google Workspace support.")]),
- dict(slug="cyber-essentials", crumb_name="Cyber Essentials Help", accent="green",
-   eyebrow="// CYBER ESSENTIALS", h1='Cyber Essentials <em class="grad grad--green">certification help</em>',
-   lede="Get Cyber Essentials certified with friendly, practical help — we guide you through the requirements, get your systems up to standard, and support your certification so you can win work and prove you take security seriously.",
-   intro_head="Certified, without the headache",
-   intro_paras="<p>Cyber Essentials is the UK government-backed scheme that shows your business has the essential security controls in place &mdash; and it&rsquo;s increasingly required to win contracts.</p><p><strong>We make certification straightforward</strong>, getting your systems up to standard and guiding you through the requirements in plain English.</p><p>We support both the self-assessed <strong>Cyber Essentials</strong> and the independently-audited <strong>Cyber Essentials Plus</strong> &mdash; we&rsquo;ll advise which level you need and get you ready for the assessment.</p>",
-   feats=["Cyber Essentials guidance","Cyber Essentials Plus support","Readiness assessment","Get systems up to standard","Firewalls &amp; secure config","Access control &amp; MFA","Patching &amp; malware protection","Help with the questionnaire","Ongoing compliance"],
-   tile_items=[("shield","Readiness check","We assess where you stand against the requirements."),("lock","Secure configuration","Firewalls, devices and access controls brought up to standard."),("bolt","Patching","Systems kept updated to meet the malware and patching controls."),("check","The questionnaire","We help you complete the self-assessment with confidence."),("eye","Ongoing compliance","Stay certified year after year with our support."),("briefcase","Win more work","Prove your security and meet contract requirements.")],
-   faqs=[("What is Cyber Essentials?","It&rsquo;s a UK government-backed certification showing your business has essential cyber-security controls in place &mdash; often required to win contracts."),("What&rsquo;s the difference between Cyber Essentials and Cyber Essentials Plus?","Cyber Essentials is a self-assessment you complete and we help verify; Cyber Essentials Plus adds an independent, hands-on technical audit of your systems. Plus carries more weight for larger contracts &mdash; we&rsquo;ll advise which you need and get you ready for either."),("Can you help us get certified?","Yes &mdash; we assess your readiness, get your systems up to standard and guide you through the certification."),("How long does it take?","It varies, but with the right controls in place certification can often be achieved quite quickly &mdash; we&rsquo;ll give you a realistic timeline."),("Can you keep us compliant?","Yes &mdash; we support ongoing compliance so you can recertify each year with confidence."),("Do you help Dorset businesses get Cyber Essentials certified?","Yes &mdash; we guide businesses across Dorset, Bournemouth and Poole through Cyber Essentials certification from start to finish, in plain English."),("Who needs Cyber Essentials?","Any business that wants to prove its security &mdash; it&rsquo;s frequently required for government, NHS and larger contracts, asked for by cyber-insurers, and increasingly expected by customers. We&rsquo;ll tell you honestly if it&rsquo;s worth it for you.")],
-   chips=["Government-backed","Win more work","Guided process"],
-   split_eyebrow="FOR YOUR BUSINESS", split_title="Certification, made simple",
-   split=[("Get ready","We bring your systems up to the Cyber Essentials standard, the practical way.",["Readiness assessment","Secure configuration","Access control &amp; MFA","Patching &amp; malware protection"]),("Get certified","We guide you through the questionnaire and keep you compliant year on year.",["Help with the questionnaire","Plain-English guidance","Ongoing compliance","Recertification support"])],
-   steps_title="Certified in three steps",
-   step_items=[("We assess","We check your systems against the requirements."),("We get you ready","We fix the gaps and get you up to standard."),("We certify &amp; support","We guide you through certification and keep you compliant.")]),
+ dict(slug="cyber-essentials", crumb_name="Cyber Essentials", accent="green",
+   # 29 Oct 2026: rewritten as the plain-English guide to the April 2026 (v3.3) rules, with the free app check and Cyber
+   # Essentials Ready (business plans). Never "compliant" / "certified by us" - an IASME certification body certifies.
+   eyebrow="// CYBER ESSENTIALS &middot; APRIL 2026 RULES", h1='Cyber Essentials, <em class="grad grad--green">ready all year</em>',
+   lede="What the UK's Cyber Essentials certificate asks for under the April 2026 rules, in plain English: a free check for any Windows PC in our app, and Cyber Essentials Ready included in our business plans to keep every computer ready all year, not just on assessment day.",
+   intro_head="Passing once is the easy part",
+   intro_paras="<p>Cyber Essentials is the government-backed certificate that shows your business has the basic security controls in place. Central government contracts require it, and more and more customers, councils and insurers ask for it.</p><p><strong>The hard part is staying ready.</strong> Every month Microsoft releases security fixes that must be on every PC within 14 days, accounts and programs drift, and an old laptop can quietly stop getting updates. We check every computer continuously, fix what needs fixing, and keep the evidence.</p><p>We prepare you and keep you ready; an independent IASME certification body marks your assessment and awards the certificate.</p>",
+   feats=["The five controls, explained for your business","A free readiness check for any Windows PC","This month&rsquo;s 14-day update deadline, tracked","Two-step sign-in set up on every account","Router, firmware and phones checked too","Cyber Essentials Ready in every business plan","A monthly evidence pack for your assessor","Help with the IASME question set","Cyber Essentials Plus preparation"],
+   tile_items=[("shield","Free readiness check","365 PC Manager checks a PC against the parts one computer can show."),("bolt","14-day updates","Each month&rsquo;s fixes in on time, on every PC, all year."),("lock","Two-step sign-in","On Microsoft 365, Google and every account that offers it."),("check","Evidence pack","A dated record for your assessor, insurer or customer."),("eye","Watched all year","Every PC checked every few hours on a business plan.")],
+   faqs=[
+     ("What is Cyber Essentials?","A UK government-backed certificate, run by the National Cyber Security Centre with IASME, showing an organisation has five basic security controls in place: firewalls, secure set-up, security updates, account control and malware protection. Many contracts and insurers ask for it."),
+     ("What changed in April 2026?","Assessments from 27 April 2026 use the NCSC&rsquo;s Requirements for IT Infrastructure v3.3 (the &ldquo;Danzell&rdquo; question set). Two-step sign-in (MFA) on cloud services is now an automatic fail if it&rsquo;s missing, and the 14-day rule for critical and high-risk updates covers firmware as well as Windows and programs."),
+     ("Do updates really have to go in within 14 days?","Yes, for anything rated critical or high-risk (or not rated at all): Windows, your programs, your router and your computers&rsquo; firmware. Windows&rsquo; fixes come out on the second Tuesday of the month, so each month&rsquo;s are due two weeks later. Installing every update within 14 days is recommended rather than required."),
+     ("How much does Cyber Essentials cost?","IASME&rsquo;s assessment fee is &pound;320 plus VAT for 0 to 9 staff, &pound;440 for 10 to 49, &pound;500 for 50 to 249 and &pound;600 for 250 or more (October 2026). Getting ready is quoted before we start; on our business plans, keeping you ready all year is included."),
+     ("How long does the certificate last?","12 months. You renew it every year, and the requirements are updated most years, usually in April."),
+     ("Can 365 PC Manager make my business compliant?","No app can, and it never claims to. It checks what one Windows PC can show and tells you what to fix. Your router, cloud accounts, phones and policies need checking too, and only an IASME certification body can award the certificate."),
+     ("Is the readiness check really free?","Yes. It&rsquo;s part of 365 PC Manager, free for any Windows 10 or 11 PC, with no sign-up. The year-round watch, reminders and dated record are free on that PC too; Cyber Essentials Ready across all your computers comes with our business plans."),
+     ("Do you certify businesses yourselves?","No. We prepare you, fix what&rsquo;s needed and help with the question set; an independent IASME certification body marks the assessment. That independence is part of what makes the certificate worth having."),
+     ("What about Cyber Essentials Plus?","Plus adds a hands-on check by the assessor: they test a sample of your devices, including looking for missing updates more than 14 days old. Staying ready all year is what makes Plus straightforward."),
+     ("Do you cover businesses outside Bournemouth?","Yes. We look after businesses across Bournemouth, Christchurch, Poole and Dorset, and most of the work is done remotely, so we can help anywhere in the UK."),
+   ],
+   chips=["April 2026 rules","Free PC check","Ready all year"],
+   hero_cta1=("Check a PC free", "/free-pc-health-check/#download"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
+   cta_title="Get ready, and stay ready", cta_text="Tell us how many computers you have and what you need the certificate for. We&rsquo;ll check where you stand and quote before any work.",
+   split_eyebrow="FOR YOUR BUSINESS", split_title="Get ready, then stay ready",
+   split=[("Get ready","We bring your computers and accounts up to the April 2026 rules, the practical way.",["Every PC checked with 365 PC Manager","Two-step sign-in on every account","Router and firmware updated","Spare accounts and old software removed"]),("Stay ready","Cyber Essentials Ready, in every business plan, keeps it that way all year.",["Every PC checked every few hours","Monthly updates in within 14 days","A monthly evidence pack","Renewal help each year"])],
+   steps_title="Ready in three steps",
+   step_items=[("We check","365 PC Manager on every PC, plus your router and accounts, against the April 2026 rules."),("We fix","The gaps put right: updates, accounts, two-step sign-in, old software."),("You certify, we keep you ready","An IASME certification body marks your assessment; Cyber Essentials Ready keeps every PC ready all year.")]),
  # ai-training dict REMOVED 2026-08-10: /ai-training/ 301s to /ai/training/
  # (.htaccess). Two live self-canonical pages for one intent split link equity
  # (2026-08-10 competitor audit). The /ai/ estate page is the survivor.
