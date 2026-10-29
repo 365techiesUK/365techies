@@ -1,0 +1,2 @@
+# the .cube files are made by make_luts.py (about 1 MB each); only the packed games/coastrun/lut/moods.png is committed
+*.cube

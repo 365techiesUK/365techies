@@ -74,7 +74,7 @@
     function fit() {
       var cs = getComputedStyle(stage), pv = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0), ph = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
       var bw = stage.clientWidth - ph, bh = stage.clientHeight - pv - (pad.offsetParent ? pad.offsetHeight + 10 : 0);   // (the stage's own padding: 8px, more in full screen)
-      var dpr = Math.min(3, window.devicePixelRatio || 1);
+      var dpr = Math.min(D.maxDpr ? D.maxDpr() || 3 : 3, window.devicePixelRatio || 1);   // (a game can ask for fewer screen pixels: 365 Coast Run's phone tier)
       var s = Math.max(0.5, Math.min(bw / D.width, bh / D.height)), whole = Math.floor(s * dpr) / dpr;
       if (whole * dpr >= 2 && whole / s > 0.86) s = whole;   // a whole number of screen pixels per game pixel looks crisper
       var cssW = Math.floor(D.width * s), cssH = Math.floor(D.height * s);

@@ -80,18 +80,18 @@
     { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 45, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
   ];
   // t (each place): the seconds its checkpoint gives - its real drive time (stagetimes.mjs: the autopilot, a tidy driver, on every route,
-  // normal difficulty, the 6 Oct handling) plus 2%, so the clock runs low before each checkpoint the way OutRun's does (owner, 6 Oct)
+  // normal difficulty, the 6 Oct handling) plus 2%, so the clock runs low before each checkpoint (owner, 6 Oct)
   // the runs (owner, 6 Oct): round 1 the town, from Bournemouth out through its suburbs, every fork a real road (games/coastrun route
   // map, 6 Oct 2026). Reach a goal and round 2 goes on along the real roads from it: west along the coast from Poole Quay or Wimborne
   // (Wareham, then Corfe or Wool ...), east from Ferndown, Highcliffe or Hengistbury (Lymington, then the Forest or the island); the
   // coast's goals bring you back into town. Within a run of n levels: level L (1..n) has L places; from place j of a level, left goes to
   // j and right to j + 1 of the next. (The owner split the old coast run, 6 Oct: Christchurch to Old Harry was no real road.)
   var RUNS = [
-    // the coast first (owner, 7 Oct, after the OutRun 2 audit: the postcard places up front, the town as round 2). West to the left, east to the
+    // the coast first (owner, 7 Oct: the postcard places up front, the town as round 2). West to the left, east to the
     // right: Bournemouth > Sandbanks | Christchurch; Sandbanks > Old Harry (the chain ferry to Studland) | Wareham; Christchurch > Wareham |
     // Lymington; Old Harry > Kimmeridge | Corfe; Wareham > Corfe | Wool; Lymington > Wool | the New Forest; Kimmeridge > Lyme Regis | Durdle Door;
     // Corfe > Durdle Door | Portland; Wool > Portland | Weymouth; the Forest > Weymouth | the Needles (the car ferry from Lymington). The five
-    // goals: Lyme Regis, Durdle Door, Portland, Weymouth and the Needles. (Three links are a map's licence, as OutRun's own are.)
+    // goals: Lyme Regis, Durdle Door, Portland, Weymouth and the Needles. (Three links are a map's licence.)
     { key: 'coast', levels: 5, banner: 'Along the coast', places: ['bournemouth', 'sandbanks', 'christchurch', 'swanage', 'wareham', 'lymington', 'kimmeridge', 'purbeck', 'wool', 'forest', 'lyme', 'jurassic', 'portland', 'weymouth', 'needles'], names: {} },
     { key: 'town', levels: 5, tf: 1.05, banner: 'Back into town', places: ['bournemouth', 'winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury'], names: { harbour: 'POOLE QUAY' } },
   ];
@@ -121,8 +121,8 @@
     { id: 'sports', w: 0.95, l: 2.2, v: [0.52, 0.64] },
     { id: 'wedge', w: 1.0, l: 2.25, v: [1, 1], rival: true },   // the rivals (see rivals()): their pace is set there
     { id: 'lemans', w: 0.95, l: 2.1, v: [1, 1], rival: true },
-    { id: 'coupe9', w: 0.95, l: 2.1, v: [1, 1], rival: true }, { id: 'gtbrit', w: 0.96, l: 2.2, v: [1, 1], rival: true }, { id: 'raging', w: 1.0, l: 2.2, v: [1, 1], rival: true },
-    { id: 'trident', w: 0.95, l: 2.25, v: [1, 1], rival: true }, { id: 'barchetta', w: 0.97, l: 2.3, v: [1, 1], rival: true },
+    { id: 'coupe9', w: 0.95, l: 2.1, v: [1, 1], rival: true }, { id: 'tourer', w: 0.96, l: 2.2, v: [1, 1], rival: true }, { id: 'chisel', w: 1.0, l: 2.2, v: [1, 1], rival: true },
+    { id: 'grandee', w: 0.95, l: 2.25, v: [1, 1], rival: true }, { id: 'barchetta', w: 0.97, l: 2.3, v: [1, 1], rival: true },
     { id: 'police', w: 0.95, l: 2.3, v: [1, 1], cop: true }   // the Getaway's police cars (always last: COP)
   ];
   // the player's car: top speed, acceleration, grip, and how quickly it turns
@@ -139,7 +139,7 @@
     skimmer: { top: 1.12, acc: 1.04, grip: 0.98, yaw: 1.02, jet: true, launch: 42 }
   };
   // how tall the traffic is (m): the Skimmer can only clear what it's above
-  var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, gtbrit: 1.3, raging: 1.25, trident: 1.25, barchetta: 1.15, police: 1.5 };
+  var VEH_H = { hatch: 1.5, saloon: 1.45, van: 2.2, bus: 3.2, camper: 2.9, tractor: 2.7, lorry: 3.7, sports: 1.25, wedge: 1.2, lemans: 1.15, coupe9: 1.3, tourer: 1.3, chisel: 1.25, grandee: 1.25, barchetta: 1.15, police: 1.5 };
   // the Skimmer's gas: the tank (0-100), a burst from the rear nozzles, a lift, the hover while LIFT is held, the most it can hover to
   // (owner, 20 Oct 2026: "concentrate on the car going fast ... when you need to jump obstacles or cars in front, you press it and you fly up
   // over the vehicle in front, to save slowing down or going around it ... a lot more hyped"): the lift is now a quick, hard HOP - up fast,
@@ -262,7 +262,7 @@
         if (!og.tun && !og.brg && !og.crest && Math.abs(og.k) < 1 / 300 && free(oi - 4, oi + 4)) { used.push([oi - 4, oi + 4]); putAt(W, oi, t2, 0, 0, { v: n }); og.over = t2; for (var nq0 = oi - 9; nq0 <= oi + 9; nq0++) segAt(W, nq0).nearOver = 1; break; }
       }
     });
-    var OV = OVERS[S.key] || [], n2 = 0;   // OutRun's way: something over the road every half a kilometre or so (a critic counted too few), placed in step (no dice)
+    var OV = OVERS[S.key] || [], n2 = 0;   // something over the road every half a kilometre or so (a critic counted too few), placed in step (no dice)
     for (var oj = lo + 60; OV.length && oj < hi - 30; oj += 125) for (var d2 = 0; d2 < 30 && oj + d2 < hi; d2++) {
       var q2 = oj + d2, g2 = segAt(W, q2);
       if (!g2.tun && !g2.brg && !g2.crest && !g2.gate && !g2.fk && !g2.over && Math.abs(g2.k) < 1 / 250 && free(q2 - 3, q2 + 3)) { used.push([q2 - 3, q2 + 3]); putAt(W, q2, OV[n2 % OV.length], 0, 0, { v: n2 }); g2.over = OV[n2 % OV.length]; n2++; for (var nq = q2 - 9; nq <= q2 + 9; nq++) segAt(W, nq).nearOver = 1; break; }   // (nothing else stands in its legs)
@@ -803,7 +803,7 @@
     W.jetK = 0; W.liftK = 0; W.hopTo = null; W.roll = 0; W.rollDir = 0; W.rollT = 0; W.rollSide = 1;   // (how far the rear nozzles / the lift jets have spooled up, 0-1; the vehicle a hop is aimed over)
     if (W.jet) W.bottles = 0;   // (no nitro bottles: the tank instead)
     buildStage(W, 0); nextFork(W, 0);
-    W.time = W.D.time * STAGES[0].t + 10;   // (OutRun's start: a little in hand for the first stage)
+    W.time = W.D.time * STAGES[0].t + 10;   // (a little in hand for the first stage)
     W.s = 3 * SEG; W.h = heightAt(W, W.s);
     for (var z = W.s + 320; z < W.s + VIEW; z += W.D.gap * (0.85 + W.rng() * 1.1)) spawnCar(W, z);   // (the road ahead of the grid clear)
     makeField(W);
@@ -864,11 +864,11 @@
   // you and race the whole run, through whichever fork you take. Near you each is a car on the road; out of sight it's carried
   // along at its own pace. They pace themselves off how far ahead or behind you they are, so there's always someone to catch.
   var FIELD_N = 7, BOTTLES0 = 3, BOTTLE_MAX = 30, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
-  var CSCHEME = [[0, 0, 0, 0, 1, 0, 0], [1, 1, 1, 0, 0, 1, 0], [0, 0, 0, 1, 1, 0, 1], [1, 0, 1, 2, 0, 1, 3], [3, 2, 0, 0, 1, 0, 0]];   // per racer (wedge, lemans, raging, coupe9, barchetta, gtbrit, trident): which of its colours (never more than two red, or two silver/white, on one grid)
+  var CSCHEME = [[0, 0, 0, 0, 1, 0, 0], [1, 1, 1, 0, 0, 1, 0], [0, 0, 0, 1, 1, 0, 1], [1, 0, 1, 2, 0, 1, 3], [3, 2, 0, 0, 1, 0, 0]];   // per racer (wedge, lemans, chisel, coupe9, barchetta, tourer, grandee): which of its colours (never more than two red, or two silver/white, on one grid)
   var POS_BONUS = [0, 100000, 60000, 40000, 25000, 15000, 8000, 4000, 0];
-  function makeField(W) {   // (7 Oct: the seven racers taken out - the owner chose a ghost of your best run, OutRun 2's hook; the code stays, the field is empty)
+  function makeField(W) {   // (7 Oct: the seven racers taken out - the owner chose a ghost of your best run; the code stays, the field is empty)
     W.field = []; W.pos = 1; return;
-    var RT = [8, 9, 12, 10, 14, 11, 13];   // the fastest first: the wedge, the endurance racer, the sharp Italian, the turbo coupe, the open V12, the GT, the grand tourer
+    var RT = [8, 9, 12, 10, 14, 11, 13];   // the fastest first: the wedge, the endurance racer, the sharp-edged one, the turbo coupe, the open two-seater, the GT, the grand tourer
     for (var k = 0; k < FIELD_N; k++) W.field.push({ id: k, p: W.s + 70 - k * 8.5, x: k % 2 ? 4.6 : -4.6, v: 0, skill: SKILL[k], t: RT[k], col: CSCHEME[W.seed % CSCHEME.length][k], car: null });   // (a set colour scheme for the field: a mix, never more than two red cars)   // the grid: two columns, the fastest at the front; you at the back in the middle
     W.pos = FIELD_N + 1;
   }
@@ -1571,7 +1571,7 @@
       // a drift: the car's line holds the bend (just enough to cancel its push, trimmed a little by the keys) while its
       // nose swings in; the slide grows over the first moment
       var sIn2 = target * W.drift, hold = Math.asin(clamp(pushOut(W, k, v) / Math.max(5, v), -0.6, 0.6)) + W.drift * (sIn2 > 0 ? 0.045 : sIn2 < 0 ? -0.03 : 0);   // (held: a tighter line; caught: a wider one)
-      { var rh = roadHalf(g), oOut = -W.drift * W.x, oIn = W.drift * W.x;   // the slide follows the road (as OutRun 2's does): eased back off the outside edge, and off the inside one
+      { var rh = roadHalf(g), oOut = -W.drift * W.x, oIn = W.drift * W.x;   // the slide follows the road: eased back off the outside edge, and off the inside one
         hold += W.drift * (0.07 * clamp((oOut - (rh - 3)) / 2, 0, 1) - 0.07 * clamp((oIn - (rh - 2.4)) / 1.5, 0, 1)); }
       if (!W.air) W.phi += (hold - W.phi) * Math.min(1, 4 * DT);
       want = W.phi + W.drift * W.driftA;

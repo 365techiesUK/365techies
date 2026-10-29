@@ -6,8 +6,8 @@
  *
  * The look: physically lit materials with the sky as their surroundings (so the paintwork, the glass and the sea reflect
  * it), a sky with a glowing sun and drifting clouds, a sea you can see the sandy shallows through, surf on the beaches,
- * then a soft glow on the bright things (bloom), a colour grade for each place and a speed blur on the boost. A slow PC
- * (quality(true)) skips the glow, the grade and the shadows.
+ * then a soft glow on the bright things (bloom), a colour grade for each place and a speed blur on the boost. How much of it a
+ * machine gets is its tier (TIERS: phone, medium, high, capture), chosen once by coastrun.js and changed only between races.
  *
  * World axes: y up; a road heading th runs along (sin th, 0, -cos th) and its right is (cos th, 0, sin th), so a bend
  * to the right (k > 0) turns th up. At a fork the two roads are the main line moved out sideways by forkOff on each
@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=62';
+import * as MD from './models3d.js?v=63';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -114,7 +114,7 @@ const SANDY = { bournemouth: 1, sandbanks: 1, 'weymouth:preston': 1, 'weymouth:e
 const BIG = { kingstatue: 1.5, swanhall: 1.35, alfredcolumn: 1.25, lighthouse: 1.15, hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35, cobb: 1.2, clock: 1.2, needles: 1.3 };   // the landmarks, grown so they read from far off
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
-// OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
+// (owner, 5 Oct) the land side of the road ends at a boundary, and the place is packed in right behind it
 const VERGE_K = { 'weymouth:osmington': 'hedge', 'portland:causeway': 'vpost', 'swanage:shellbay': 'none', 'swanage:knoll': 'none', 'swanage:village': 'hedge', 'swanage:downs': 'wall', 'swanage:front': 'prom', 'wareham:heath': 'vpost', 'wareham:town': 'none', 'wareham:quay': 'none', 'wareham:causeway': 'vpost', 'wool:heath': 'vpost', 'wool:bovington': 'vpost', 'wool:village': 'hedge', 'kimmeridge:ridge': 'wall', 'kimmeridge:village': 'wall', 'kimmeridge:bay': 'vpost', 'wimborne:canford': 'hedge', 'wimborne:town': 'none', 'wimborne:square': 'none', 'ferndown:centre': 'none', 'ferndown:common': 'vpost', 'highcliffe:village': 'none', 'highcliffe:castle': 'vpost', 'bearcross:roundabout': 'none', 'bearcross:magna': 'hedge', 'hurn:holdenhurst': 'hedge', 'hurn:airport': 'vpost', 'hurn:village': 'vpost', 'towerpark:leisure': 'vpost', 'towerpark:mannings': 'vpost', 'kinson:village': 'none', 'muscliff:castlelane': 'hedge', 'muscliff:throop': 'vpost', 'littledown:castlepoint': 'none', 'littledown:park': 'hedge', 'winton:banks': 'none', 'charminster:road': 'none', winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   // the local run, plain for now: red-brick houses and shops both sides (Lyndhurst's will do until each place has its own)
@@ -272,6 +272,32 @@ const HERO = { bournemouth: 62, sandbanks: 46, christchurch: 44, purbeck: 56, sw
 const HERO_V = 9, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
+// ---------------------------------------------------------------- the quality tiers (revamp WS1, 22 Oct 2026). One is chosen at load (coastrun.js: ?tier=,
+// the remembered one, a guess from the screen, a short test on the title, or Settings) and only ever changed between races: changing the
+// shadows or the glow rebuilds every shader, and doing that mid-race froze a slow PC for 6.5 s.
+//   maxPx: the most pixels drawn (the picture is stretched up to the screen); dpr: the cabinet's sharpest screen pixels (arcade.js);
+//   msaa: smoothed edges (samples); bloom: the glow's resolution, of its usual; shadow: the sun's shadow map (0: none); view: metres of road built ahead;
+//   sky: the sky's cloud detail; thin: the plainer roadside (no hedges or rows of houses, half the dressing, no gulls or sun glare);
+//   pano: the painted panoramas' size (a phone's at half: 5 MB on the graphics card, not 20); people: the two of you as full people (people/people.js); chunkMs: how long a frame may spend building the road ahead, catchMs: the
+//   same when road that should already be in view is missing (a new race), ahead: chunks built beyond the view, so none is late;
+//   road / ground: the asphalt's and the land's pictures (tex/road-<n>.webp, tex/ground-<n>.webp: revamp WS2, the new look only), detail: the
+//   asphalt's fine bumps worked out from its picture (two more looks at it a pixel)
+export const TIERS = {
+  phone: { maxPx: 0.9e6, dpr: 2, msaa: 0, bloom: 0.25, shadow: 0, view: 650, sky: 3, thin: true, pano: 0.5, people: false, chunkMs: 3, catchMs: 10, ahead: 2, road: 512, ground: 256, detail: false, shHalf: 40, env: 64 },
+  medium: { maxPx: 2.1e6, dpr: 2, msaa: 2, bloom: 0.5, shadow: 2048, view: E.VIEW, sky: 5, thin: false, pano: 1, people: false, chunkMs: 2, catchMs: 8, ahead: 2, road: 1024, ground: 512, detail: true, shHalf: 40, env: 128 },
+  high: { maxPx: 4.2e6, dpr: 3, msaa: 4, bloom: 1, shadow: 2048, view: E.VIEW, sky: 5, thin: false, pano: 1, people: true, chunkMs: 2, catchMs: 5, ahead: 2, road: 1024, ground: 512, detail: true, shHalf: 52, env: 256 },
+  capture: { maxPx: 8.3e6, dpr: 3, msaa: 4, bloom: 1, shadow: 4096, view: E.VIEW, sky: 5, thin: false, pano: 1, people: true, chunkMs: 6, catchMs: 14, ahead: 1, road: 1024, ground: 512, detail: true, shHalf: 60, env: 256 }   // (filming only: ?tier=capture)
+  // (shHalf, revamp WS3: the new look's sun shadow covers this far either side of a point ahead of the car; the old look kept 70 m round it)
+  // (env, WS3 fix round: the new look's sky picture's size - smaller on Medium and a phone, where working it out at a place change cost 5-7 ms more
+  // than before WS3; reflections on a car are soft there anyway. The old look keeps 256)
+};
+const TEX_V = 1;   // the version of tex/*.webp (tools/coastrun/gen_road.py, gen_ground.py)
+export const TIER_ORDER = ['phone', 'medium', 'high'];
+// the clock the road-building budget is kept by: real time. The bench and the film scripts hold performance.now() still within a frame (their
+// virtual clock); the bench leaves the real one as window.__realNow, so the budget there is what a player gets, and the films, with no real
+// clock, build all they need each frame
+const realNow = () => (window.__realNow ? window.__realNow() : performance.now());
+
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
 const SKY_VS = 'varying vec3 vp; void main(){ vp = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
 const SKY_FS = [
@@ -298,7 +324,10 @@ const SKY_FS = [
   '    c = mix(c, cc, m * smoothstep(0.0, 0.16, h) * 0.96);',
   '  }',
   '#endif',
-  '#ifdef ENV',
+  '#ifdef ENVL',
+  '  vec3 land = mix(gnd * 1.6, hor, 0.3); c = mix(c, land, (1.0 - smoothstep(0.0, 0.05, h)) * 0.8);',   // (the new look's surroundings, WS3 fix round: a far land line on the horizon, darker than the sky over it,
+  '  if (h < 0.0) c = mix(land, gnd, smoothstep(0.0, 0.03, -h));',   // and the land dark straight under it - so a car's flank and bonnet show a sky / land split, not a pale rim)
+  '#elif defined(ENV)',
   '  if (h < 0.0) c = mix(hor, gnd, smoothstep(0.0, 0.2, -h));',
   '#else',
   '  if (h < 0.0) c = hor;',
@@ -332,26 +361,101 @@ const GRADE = {
     '}'
   ].join('\n')
 };
+// ---- the new look's last step (revamp WS3): one pass where there were two. It reads the glowing picture straight from the scene (linear
+// light), so the tone mapping and the turn into screen colour (three's OutputPass) happen here too, then the place's own saturation,
+// contrast, tint and lift, then the place's MOOD - a LUT made offline (tools/coastrun/make_luts.py, cube2png.py: five moods packed in
+// lut/moods.png, 33 slices of 33x33 each, a row of moods top to bottom) - mixing two moods while one place fades into the next. The speed
+// blur is now the boost's only, and works on the brightness alone: averaging colours along the streaks left pink and blue fringes at every
+// edge (the design critic's "dirty lens"); now each pixel keeps its own colour and only its brightness is smeared. Exposure: the place's,
+// times the eye's adaptation in and out of tunnels (render())
+const GRADE_NEW = {
+  uniforms: { tDiffuse: { value: null }, tLut: { value: null }, lutA: { value: 0 }, lutB: { value: 0 }, lutMix: { value: 0 }, lutK: { value: 0 }, expo: { value: 1 },
+    sat: { value: 1.12 }, con: { value: 1.05 }, vig: { value: 0.32 }, blur: { value: 0 }, tint: { value: new THREE.Color(1, 1, 1) }, flash: { value: 0 }, lift: { value: new THREE.Vector3() }, grain: { value: 0.018 }, time: { value: 0 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: [
+    'uniform sampler2D tDiffuse; uniform sampler2D tLut; uniform float lutA; uniform float lutB; uniform float lutMix; uniform float lutK; uniform float expo;',
+    'uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; uniform vec3 lift; uniform float grain; uniform float time; varying vec2 vUv;',
+    'const vec3 LW = vec3(0.299, 0.587, 0.114);',
+    'vec3 neutralTM(vec3 color) {',   // (three's own Neutral tone mapping, as the OutputPass did it)
+    '  const float sc = 0.8 - 0.04; const float ds = 0.15; color *= expo;',
+    '  float x = min(color.r, min(color.g, color.b)); float off = x < 0.08 ? x - 6.25 * x * x : 0.04; color -= off;',
+    '  float peak = max(color.r, max(color.g, color.b)); if (peak < sc) return color;',
+    '  float d = 1.0 - sc; float np = 1.0 - d * d / (peak + d - sc); color *= np / peak;',
+    '  float g = 1.0 - 1.0 / (ds * (peak - np) + 1.0); return mix(color, vec3(np), g); }',
+    'vec3 toSRGB(vec3 c) { return mix(c * 12.92, pow(c, vec3(0.41666)) * 1.055 - vec3(0.055), step(vec3(0.0031308), c)); }',
+    'vec3 lut(vec3 c, float row) {',   // a 3D lookup from the strip: two neighbouring blue slices, mixed
+    '  float b = c.b * 32.0, b0 = floor(b), b1 = min(b0 + 1.0, 32.0); float y = (row * 33.0 + c.g * 32.0 + 0.5) / 165.0, x = c.r * 32.0 + 0.5;',
+    '  return mix(texture2D(tLut, vec2((b0 * 33.0 + x) / 1089.0, y)).rgb, texture2D(tLut, vec2((b1 * 33.0 + x) / 1089.0, y)).rgb, b - b0); }',
+    'void main(){',
+    '  vec3 c = texture2D(tDiffuse, vUv).rgb;',
+    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.52)) * blur * 0.009 * smoothstep(0.12, 0.32, length((vUv - vec2(0.5, 0.25)) * vec2(1.3, 1.0))) * smoothstep(0.24, 0.44, length((vUv - vec2(0.5, 0.45)) * vec2(1.0, 1.4))) * (1.0 - smoothstep(0.52, 0.66, vUv.y));',
+    '    float l0 = dot(c, LW), s = l0; for (int i = 1; i < 8; i++) s += dot(texture2D(tDiffuse, vUv - dd * float(i)).rgb, LW); c = max(c + vec3(s / 8.0 - l0), 0.0); }',   // (the brightness smeared, as a neutral streak: no colour carried across an edge, none made stronger)
+    '  c = toSRGB(clamp(neutralTM(max(c, 0.0)), 0.0, 1.0));',
+    '  float l = dot(c, LW); c = mix(vec3(l), c, sat);',
+    '  c = (c - 0.5) * con + 0.5; c *= tint; c = clamp(c, 0.0, 1.0);',
+    '  c += lift * (1.0 - c);',   // a warm lift in the shadows (the sunset places)
+    '  if (lutK > 0.0) { vec3 m = lut(c, lutA); if (lutMix > 0.002) m = mix(m, lut(c, lutB), lutMix); c = mix(c, m, lutK); }',
+    '  vec2 q = vUv - 0.5; c *= 1.0 - vig * dot(q, q) * 1.9;',
+    '  c += grain * (fract(sin(dot(gl_FragCoord.xy + time * 61.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5);',   // a fine film grain
+    '  c = mix(c, vec3(1.0), flash);',
+    '  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);',
+    '}'
+  ].join('\n')
+};
+// ---- the new look's haze (revamp WS3, patchFog()): three's fog, worked out once for every material that has it - the land, the road, the
+// roadside, the cars, sprites and points alike, instanced and skinned too (it starts from the view-space position every shader already has).
+// Three things the plain fog didn't do: a thin aerial haze from the near distance on (it began only at the fog's near edge, 150-600 m off),
+// thinner up high (it's sea air: the hills above the road keep their colour), and warmed towards the sun (a golden haze round a low sun).
+// The numbers are shared by reference by every material (three copies uniforms' values only when they're vectors or colours, never plain arrays)
+const FOGW = { dir: new Float32Array([0, 1, 0]), col: new Float32Array(3), hz: new Float32Array([0, 1 / 70, 0.16, 0.35]) };   // hz: sea level, 1 / the haze's height, the aerial haze, how much height thins it
+function patchFog(lite) {   // lite (WS3 fix round): a page that starts on Phone leaves out the haze's thinning with height - an exp() a pixel in every material, for a
+  // difference you'd need the hills above the road to see; the aerial haze and its warmth towards the sun stay
+  const C = THREE.ShaderChunk; if (C.fog_fragment.indexOf('fogSunDir') >= 0) return;   // (once a page)
+  C.fog_pars_vertex = '#ifdef USE_FOG\n\tvarying float vFogDepth;\n\tvarying vec3 vFogW;\n#endif';
+  C.fog_vertex = '#ifdef USE_FOG\n\tvFogDepth = - mvPosition.z;\n\tvFogW = transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz );\n#endif';   // (the world position, from the view space's: a view matrix is turn + move only)
+  C.fog_pars_fragment = C.fog_pars_fragment.replace('varying float vFogDepth;', 'varying float vFogDepth;\n\tvarying vec3 vFogW;\n\tuniform vec3 fogSunDir;\n\tuniform vec3 fogSunCol;\n\tuniform vec4 fogHz;');
+  C.fog_fragment = ['#ifdef USE_FOG',
+    '\t#ifdef FOG_EXP2', '\t\tfloat fogFactor = 1.0 - exp( - fogDensity * fogDensity * vFogDepth * vFogDepth );', '\t#else',
+    '\t\tfloat fogR = vFogDepth / fogFar, fogFactor = max( smoothstep( fogNear, fogFar, vFogDepth ), fogHz.z * ( 1.0 - exp( - 2.2 * fogR * fogR ) ) );',
+    lite ? '' : '\t\tfogFactor *= mix( 1.0, exp( - max( 0.5 * ( vFogW.y + cameraPosition.y ) - fogHz.x, 0.0 ) * fogHz.y ), fogHz.w );', '\t#endif',
+    '\tfloat fogS = max( dot( normalize( vFogW - cameraPosition ), fogSunDir ), 0.0 ); fogS *= fogS; fogS *= fogS; fogS *= fogS;',
+    '\tgl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor + fogSunCol * fogS, fogFactor );', '#endif'].join('\n');
+  for (const k in THREE.ShaderLib) { const u = THREE.ShaderLib[k].uniforms; if (u && u.fogColor) { u.fogSunDir = { value: FOGW.dir }; u.fogSunCol = { value: FOGW.col }; u.fogHz = { value: FOGW.hz }; } }
+}
+const LUT_V = 1, MOODS = ['day', 'warm', 'golden', 'dusk', 'night'];   // (lut/moods.png's rows: tools/coastrun/make_luts.py)
+// which mood a place's light is: after dark, after sunset, a low sun, a late afternoon (or under trees), else midday
+const moodOf = (look) => (look.night ? 4 : look.dusk ? 3 : look.rays || look.sun[1] < 0.34 ? 2 : look.trees || look.sun[1] < 0.5 ? 1 : 0);
 
-export function createWorld() {
-  let renderer;
-  try { renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); } catch (e) { return null; }
+export function createWorld(opt) {
+  opt = opt || {};
+  let TIER = TIERS[opt.tier] || TIERS.medium, tierName = TIERS[opt.tier] ? opt.tier : 'medium';
+  const LOOK_NEW = opt.look !== 'classic';   // the revamp's new look (WS2 on), or the look as it was (?look=classic): for side-by-side pictures, and a way back
+  MD.LOOKS.neu = LOOK_NEW;   // (WS5: the models that differ by look - the police car's livery - built after this)
+  if (LOOK_NEW) patchFog(TIER === TIERS.phone);   // (WS3: before any material is made or compiled)
+  let renderer;   // (no smoothing on the screen's own buffer: every tier draws through the glow and grade below, and the last pass is a flat picture)
+  try { renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' }); } catch (e) { return null; }
   if (!renderer.getContext()) return null;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.0;   // keeps the colours true (the filmic curve greyed them)
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.enabled = TIER.shadow > 0; renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.setPixelRatio(1);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(62, 16 / 9, 0.4, 3000);
   const fog = new THREE.Fog('#cfe7f6', 150, 1300); scene.fog = fog;
 
-  // ---------------------------------------------------------------- the glow, the grade and the blur (not on a slow PC)
-  const rt = new THREE.WebGLRenderTarget(64, 64, { type: THREE.HalfFloatType, samples: 4 });
+  // ---------------------------------------------------------------- the glow, the grade and the blur (every tier: how sharp the glow is, and the edge smoothing, are the tier's)
+  const rt = new THREE.WebGLRenderTarget(64, 64, { type: THREE.HalfFloatType, samples: TIER.msaa });
   const composer = new EffectComposer(renderer, rt); composer.setPixelRatio(1);
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.3, 0.6, 1.6); composer.addPass(bloom);
-  composer.addPass(new OutputPass());
-  const grade = new ShaderPass(GRADE); composer.addPass(grade);
+  { const bs = bloom.setSize.bind(bloom); bloom.setSize = (w, h) => bs(Math.max(8, Math.round(w * TIER.bloom)), Math.max(8, Math.round(h * TIER.bloom))); }   // (a lower tier's glow from a smaller picture: it's soft anyway)
+  if (!LOOK_NEW) composer.addPass(new OutputPass());   // (the new look tone maps in its grade: one full-screen pass fewer)
+  const grade = new ShaderPass(LOOK_NEW ? GRADE_NEW : GRADE); composer.addPass(grade);
+  if (LOOK_NEW && window.createImageBitmap) fetch('lut/moods.png?v=' + LUT_V).then((r) => (r.ok ? r.blob() : Promise.reject(r.status))).then((b) => createImageBitmap(b, { premultiplyAlpha: 'none', colorSpaceConversion: 'none' })).then((bm) => {
+    const t = new THREE.Texture(bm); t.flipY = false; t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = false; t.minFilter = t.magFilter = THREE.LinearFilter; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.needsUpdate = true;
+    renderer.initTexture(t); grade.uniforms.tLut.value = t; grade.uniforms.lutK.value = 1;   // (93 KB, fetched once; till it's in, the grade runs without a mood - the same shader, so nothing to compile again)
+  }).catch(() => {});
+  if (LOOK_NEW) grade.uniforms.tLut.value = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1);   // (a stand-in, never read while lutK is 0)
 
   // ---------------------------------------------------------------- light
   const hemi = new THREE.HemisphereLight('#bfe3ff', '#6a8a50', 0.6); scene.add(hemi);
@@ -359,6 +463,7 @@ export function createWorld() {
   sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -70; sc.right = 70; sc.top = 70; sc.bottom = -70; sc.near = 10; sc.far = 400;
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.5; sun.shadow.radius = 2;
   scene.add(sun); scene.add(sun.target);
+  const SDM = new THREE.Matrix4(), SD0 = new THREE.Vector3(), SDUP = new THREE.Vector3(0, 1, 0), SDX = new THREE.Vector3(), SDY = new THREE.Vector3(), SDC = new THREE.Vector3();   // (the new look's snapped shadow: render())
   const headlight = new THREE.SpotLight('#fff1d0', 0, 120, 0.42, 0.65, 1.0); scene.add(headlight); scene.add(headlight.target);
   const glint = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: glintTexture(), color: '#dfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
   glint.rotation.order = 'YXZ'; glint.renderOrder = 2; glint.visible = false; scene.add(glint);   // the moon's path across the water
@@ -379,8 +484,14 @@ export function createWorld() {
   const skyMat = new THREE.ShaderMaterial({ uniforms: SU, vertexShader: SKY_VS, fragmentShader: SKY_FS, defines: { CLOUDS: '', OCT: 5 }, side: THREE.BackSide, depthWrite: false, fog: false });
   const sky = new THREE.Mesh(new THREE.SphereGeometry(2600, 32, 16), skyMat); sky.renderOrder = -10; sky.frustumCulled = false; scene.add(sky);
   const envScene = new THREE.Scene();
-  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), new THREE.ShaderMaterial({ uniforms: SU, vertexShader: SKY_VS, fragmentShader: SKY_FS, defines: { CLOUDS: '', OCT: 3, ENV: '' }, side: THREE.BackSide, depthWrite: false, fog: false })));
+  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), new THREE.ShaderMaterial({ uniforms: SU, vertexShader: SKY_VS, fragmentShader: SKY_FS, defines: Object.assign({ CLOUDS: '', OCT: 3, ENV: '' }, LOOK_NEW ? { ENVL: '' } : {}), side: THREE.BackSide, depthWrite: false, fog: false })));
   const pmrem = new THREE.PMREMGenerator(renderer);
+  // (WS3) the new look's surroundings have a land line: the place's far panorama, small, round the sky (and the sea's half below the horizon on
+  // the sea side), so a car's flank and glass reflect hills and the coast, not only sky over a grey floor. Built into the sky picture each time
+  // it's worked out (updateEnv(): twice a place change), so it costs nothing a frame; one shader, shared by the ring and the sea
+  const ENVR = LOOK_NEW ? { ring: new THREE.Mesh(new THREE.CylinderGeometry(45, 45, 1, 64, 1, true), new THREE.MeshBasicMaterial({ map: blank(), transparent: true, side: THREE.BackSide, depthWrite: false })),
+    sea: new THREE.Mesh(new THREE.CircleGeometry(48, 32, 0, Math.PI), new THREE.MeshBasicMaterial({ map: blank(), transparent: true, side: THREE.BackSide, depthWrite: false })) } : null;
+  if (ENVR) { ENVR.sea.rotation.order = 'YXZ'; ENVR.sea.rotation.x = Math.PI / 2; ENVR.sea.position.y = -1.4; ENVR.sea.material.map.image.data[3] = 255; ENVR.ring.renderOrder = 1; ENVR.ring.visible = ENVR.sea.visible = false; envScene.add(ENVR.sea); envScene.add(ENVR.ring); }
   const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: radial(128, [[0, 'rgba(255,255,250,1)'], [0.16, 'rgba(235,240,255,0.95)'], [0.3, 'rgba(180,200,255,0.3)'], [1, 'rgba(160,180,255,0)']]), fog: false, depthWrite: false, blending: THREE.AdditiveBlending }));
   moon.scale.set(170, 170, 1); moon.renderOrder = -8; moon.visible = false; scene.add(moon);
   const stars = makeStars(); stars.visible = false; scene.add(stars);
@@ -396,18 +507,20 @@ export function createWorld() {
     })); }
   const ringFar = new THREE.Mesh(new THREE.CylinderGeometry(2300, 2300, 1, 64, 1, true), new THREE.MeshBasicMaterial({ transparent: true, side: THREE.BackSide, fog: false, depthWrite: false }));
   ringFar.renderOrder = -7; ringFar.frustumCulled = false; scene.add(ringFar);
-  const heroMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, fog: false, opacity: 0 }));   // the place's landmark, large, in front of the panorama
+  const heroMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: blank(), transparent: true, depthWrite: false, fog: false, opacity: 0 }));   // the place's landmark, large, in front of the panorama
   heroMesh.renderOrder = -6; heroMesh.frustumCulled = false; heroMesh.visible = false; scene.add(heroMesh);
 
   // ---------------------------------------------------------------- materials
-  const leafy = (map) => { const m = new THREE.MeshStandardMaterial({ vertexColors: true, map: map, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.88 });
-    m.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <normal_fragment_begin>', THREE.ShaderChunk.normal_fragment_begin.replace('normal *= faceDirection;', '')); };   // the leaves keep their rounded normals on both faces
-    m.customProgramCacheKey = () => 'leafy'; return m; };
+  const leafy = (map, sway) => { const m = new THREE.MeshStandardMaterial({ vertexColors: true, map: map, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.88 });
+    m.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <normal_fragment_begin>', THREE.ShaderChunk.normal_fragment_begin.replace('normal *= faceDirection;', ''));   // the leaves keep their rounded normals on both faces
+      if (LOOK_NEW) { sh.uniforms.uT = WAVE_T; sh.uniforms.uSway = { value: sway }; sh.vertexShader = 'uniform float uT; uniform float uSway;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n'
+        + '{ float ph = position.x * 0.31 + position.z * 0.27; transformed.xz += vec2(sin(uT * 1.7 + ph), cos(uT * 1.3 + ph * 1.3)) * uSway * (0.65 + 0.35 * sin(uT * 0.41 + ph * 0.13)); }'); } };   // (WS3: a breeze in the leaves, fronds and grass - each card its own beat, by where it stands, in slow gusts)
+    m.customProgramCacheKey = () => (LOOK_NEW ? 'leafy2' : 'leafy'); return m; };
   const MAT = {
     lit: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 }),
     shiny: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.26, metalness: 0.2 }),
     glow: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.4, 2.4, 2.4) }),
-    leaf: leafy(tex(MD.paintLeaves())), frond: leafy(tex(MD.paintFrond())), grass: leafy(tex(MD.paintGrass())),
+    leaf: leafy(tex(MD.paintLeaves()), 0.05), frond: leafy(tex(MD.paintFrond()), 0.08), grass: leafy(tex(MD.paintGrass()), 0.02),
     wave: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }), bob: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }),
     troof: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, emissive: '#3a3026' }),
     eyes: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(0.7, 0.7, 0.66) }),
@@ -433,6 +546,8 @@ export function createWorld() {
     if (v === 1) k.ball(0.5, 0.2, 1.5, 0.4, '#e8e2d0', 1, 0.5, 1, 'lit', 6);   // may blossom
   }));
   const EYE = KIT((k) => k.box(0.1, 0.03, 0.07, 0, 0, 0, '#ffffff', 0, 0, 0, 'eyes'));
+  const EYE_R = LOOK_NEW ? KIT((k) => k.box(0.1, 0.03, 0.07, 0, 0, 0, '#ff3a26', 0, 0, 0, 'eyes')) : null, EYE_A = LOOK_NEW ? KIT((k) => k.box(0.1, 0.03, 0.07, 0, 0, 0, '#ffb028', 0, 0, 0, 'eyes')) : null;   // (new look: red studs on the left edge line, amber on the right)
+  const EYES = [[-HALF / 3, 0], [HALF / 3, 0], [-(HALF - 0.342), 1], [HALF - 0.342, 2]], EYEHEX = ['#fff2d8', '#ff3020', '#ffa020'];
   const shade = (hex, f) => '#' + new THREE.Color(hex).multiplyScalar(f).getHexString();
   const TWALLS = [1.05, 0.74, 0.52, 0.74].map((f) => KIT((k) => { for (const sd of [-1, 1]) {
     k.box(0.3, 2.9, SEG + 0.06, sd * 8.1, 0, 0, shade('#dedcd4', f), 0, 0, 0, 'twall');   // the lower wall, in the lamps' light
@@ -470,6 +585,39 @@ export function createWorld() {
     screen: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.1, envMapIntensity: 0.4, depthWrite: false }),
     lit: MAT.lit, glow: MAT.glow
   };
+  // ---- (revamp WS5) your car and the traffic in the new light. In the old look CAR.lamp is the glow and CAR.wtrim the trim: the same materials,
+  // the same picture. The new look:
+  //  - lamps (LAMPMAT): head, tail, indicator and reversing lamps their own row, lit by the time of day - a crisp coloured lens by day (at the
+  //    glow's 2.4 a red lamp went salmon-pink in the tone curve: it pulls very bright colours towards white), brighter at dusk, glowing at night;
+  //    the traffic's lamps too (packCar()), the roadside's glows untouched. Your brake lights as before (CAR.brake, brighter as you brake);
+  //  - a ceiling on a car's own light just under the glow's threshold, eased in (the table's ex2.z): the sun's glint off glass, chrome and
+  //    clearcoat bloomed into white stars; now it's a bright highlight that doesn't. The lamps and the brake lights still glow;
+  //  - glass that reflects the sky more as you see it edge-on and less face-on (ex2.w): the cabins read as glass, not black paint;
+  //  - your wheels' faces blurring into a disc as they spin up (CAR.alloy and CAR.wtrim to their mean colour and a softer shine): at 30 mph and
+  //    up the spokes strobed backwards at 60 frames a second
+  const LAMPMAT = LOOK_NEW ? new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.4, 2.4, 2.4) }) : null;
+  CAR.lamp = LAMPMAT || MAT.glow;
+  CAR.wtrim = LOOK_NEW ? CAR.trim.clone() : CAR.trim;
+  const SPECCAP = { value: 0 };
+  if (LOOK_NEW) {
+    for (const m of [CAR.paint, CAR.chrome, CAR.glass, CAR.tyre, CAR.trim, CAR.alloy, CAR.wtrim, MAT.rpaint, MAT.rglassp, MAT.rroof]) m.userData.ws5 = { cap: 1 };
+    CAR.glass.userData.ws5.glass = 0.6; MAT.rglassp.userData.ws5.glass = 0.6; CAR.alloy.userData.ws5.blur = 1; CAR.wtrim.userData.ws5.blur = 1; LAMPMAT.userData.ws5 = { lamp: 1 };
+    // (WS5 fix round) a pale paint's sky in it greyer: the blue sky and sea in a silver or white car turned it teal (the paint's red-that-stays-red
+    // then pulls the blue down to the green, leaving cyan). The sky's light and reflection on a paint of little colour mixed towards their own
+    // brightness - most of the way for a silver, none for a red (the table's flag 16). The clearcoat's lobe a touch tighter (the 'broad sun blob'
+    // on the GT's bonnet in WS5's stills was its headlamp's top coming up through the bonnet, lit: models3d.js lampSet())
+    CAR.paint.userData.ws5.desat = 1; MAT.rpaint.userData.ws5.desat = 1; CAR.paint.clearcoatRoughness = 0.045;
+    CAR.tyre.roughness = 0.93; CAR.tyre.envMapIntensity = 0.12;   // (and the tyres rubber: rough, with no sky sheen on them)
+  }
+  const GLASS_FR = (w, on) => '#if defined( RE_IndirectSpecular )\nif (' + on + ') { float fr = pow(1.0 - saturate(dot(geometryNormal, geometryViewDir)), 4.0), gk = mix(1.0 - 0.45 * ' + w + ', 1.0 + 1.6 * ' + w + ', fr); radiance *= gk;\n#ifdef USE_CLEARCOAT\nclearcoatRadiance *= gk;\n#endif\n}\n#endif';
+  const DESAT_GLSL = 'if ((pkF & 16) != 0) { float ps = max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)); ps = ps > 0.0 ? (ps - min(diffuseColor.r, min(diffuseColor.g, diffuseColor.b))) / ps : 0.0; float dk = 0.85 * (1.0 - smoothstep(0.12, 0.55, ps)); vec3 LW = vec3(0.2126, 0.7152, 0.0722);\n#if defined( RE_IndirectDiffuse )\niblIrradiance = mix(iblIrradiance, vec3(dot(iblIrradiance, LW)), dk); irradiance = mix(irradiance, vec3(dot(irradiance, LW)), dk * 0.85);\n#endif\n#if defined( RE_IndirectSpecular )\nradiance = mix(radiance, vec3(dot(radiance, LW)), dk);\n#ifdef USE_CLEARCOAT\nclearcoatRadiance = mix(clearcoatRadiance, vec3(dot(clearcoatRadiance, LW)), dk);\n#endif\n#endif\n}\n';   // (WS5 fix round: a pale paint's sky greyer - flag 16)
+  // (WS5 fix round: the ceiling measured on the brightest channel, not the luminance, and all three scaled by it alike - a highlight keeps its
+  // hue to the top and no channel runs past the glow's threshold; by the luminance a blue or red glint could still be well over it in one channel)
+  const CAP_GLSL = (c) => '{ float cL = max(outgoingLight.r, max(outgoingLight.g, outgoingLight.b)), k0 = ' + c + ' * 0.7, kr = ' + c + ' - k0; if (' + c + ' > 0.0 && cL > k0) outgoingLight *= (k0 + kr * (1.0 - exp(-(cL - k0) / kr))) / cL; }';
+  if (LOOK_NEW) {   // (the traffic's see-through glass, a material of its own, the same way)
+    MAT.rglass.onBeforeCompile = (sh) => { sh.uniforms.uCap = SPECCAP; sh.fragmentShader = 'uniform float uCap;\n' + sh.fragmentShader.replace('#include <lights_fragment_maps>', '#include <lights_fragment_maps>\n' + GLASS_FR('0.8', 'true')).replace('#include <opaque_fragment>', CAP_GLSL('uCap') + '\n#include <opaque_fragment>'); };
+    MAT.rglass.customProgramCacheKey = () => 'rglass5';
+  }
   const RIM = { value: new THREE.Color(0, 0, 0) }, PLIT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 });   // the two of you: a warm light round your edges, so you stand out from the road and from each other
   PLIT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM; sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf; }'); };
   PLIT.customProgramCacheKey = () => 'plit';
@@ -499,7 +647,7 @@ export function createWorld() {
     'float skN(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(mix(skH(i), skH(i + vec3(1,0,0)), f.x), mix(skH(i + vec3(0,1,0)), skH(i + vec3(1,1,0)), f.x), f.y), mix(mix(skH(i + vec3(0,0,1)), skH(i + vec3(1,0,1)), f.x), mix(skH(i + vec3(0,1,1)), skH(i + vec3(1,1,1)), f.x), f.y), f.z); }\n';
   const skinBefore = SKINMAT.onBeforeCompile;
   SKINMAT.onBeforeCompile = (sh) => { skinBefore(sh);
-    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSkinP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvSkinP = position;');
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSkinP;' + (NOPACK ? '' : ' attribute vec3 aSkinP;')).replace('#include <begin_vertex>', '#include <begin_vertex>\nvSkinP = ' + (NOPACK ? 'position' : 'aSkinP') + ';');   // (WS5: each part's own corners - the two of you are joined meshes now)
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + SKIN_NOISE)
       .replace('#include <color_fragment>', '#include <color_fragment>\n{ float sn = skN(vSkinP * 260.0) * 0.55 + skN(vSkinP * 70.0) * 0.45; diffuseColor.rgb *= 0.955 + 0.09 * sn; diffuseColor.r += 0.018 * (skN(vSkinP * 28.0) - 0.5); }')
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor * (0.9 + 0.2 * skN(vSkinP * 180.0)), 0.3, 1.0);'); };
@@ -511,9 +659,30 @@ export function createWorld() {
   const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
   CAR.paint.customProgramCacheKey = () => 'paint';
-  const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: groundDetail(), roughness: 0.95, metalness: 0 });
+  // ---- the road's and the land's pictures (revamp WS2, the new look): made offline (tools/coastrun/gen_road.py, gen_ground.py), fetched at
+  // the tier's size and decoded off the main thread, then sent to the graphics card after a frame is drawn (UPQ). Till then a flat grey
+  // stand-in, so the shaders are the same from the first frame and nothing is compiled again when they arrive
+  const stand = (r, g, b, a) => { const t = new THREE.DataTexture(new Uint8Array([r, g, b, a]), 1, 1); t.needsUpdate = true; return t; };
+  const TEXU = { road: { value: stand(118, 118, 118, 255), key: '' }, ground: { value: stand(160, 128, 160, 220), key: '' } };
+  function texLoad(kind, size) {   // the tier's picture of the road or the land (a tier change between races swaps it)
+    const U = TEXU[kind], key = kind + '-' + size; if (U.key === key || !window.createImageBitmap) return; U.key = key;
+    fetch('tex/' + key + '.webp?v=' + TEX_V).then((r) => (r.ok ? r.blob() : Promise.reject(r.status))).then((bl) => createImageBitmap(bl, { premultiplyAlpha: 'none', colorSpaceConversion: 'none' })).then((bm) => {
+      if (U.key !== key) { bm.close(); return; }
+      const t = new THREE.Texture(bm); t.flipY = false; t.colorSpace = THREE.NoColorSpace; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.wrapS = kind === 'road' ? THREE.MirroredRepeatWrapping : THREE.RepeatWrapping; t.wrapT = THREE.RepeatWrapping; t.anisotropy = kind === 'road' ? 8 : 4;
+      if (kind === 'road') t.format = THREE.RedFormat;   // (grey only: a quarter of the memory)
+      t.needsUpdate = true;
+      const put = () => { if (U.key !== key) { t.dispose(); return; } renderer.initTexture(t); const old = U.value; U.value = t; if (old && old.isTexture) old.dispose(); U.in = key; R.texIn = (R.texIn || 0) + 1; };
+      if (R.idle === false) UPQ.push(put); else put();   // (WS2 fix round: behind the title or the results it goes up at once - warmed() waits for it - not queued behind a panorama's
+      // strips into the first frames of the race; only one arriving mid-race takes its turn in the queue)
+    }).catch(() => { if (U.key === key) U.key = ''; });
+  }
+  const texWait = () => LOOK_NEW && (TEXU.road.key && TEXU.road.in !== TEXU.road.key || TEXU.ground.key && TEXU.ground.in !== TEXU.ground.key);   // (a picture asked for, not yet on the card)
+  const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: LOOK_NEW ? null : groundDetail(), roughness: 0.95, metalness: 0 });   // (the new look's grain is in its own picture)
   const FU = { uF0: { value: new THREE.Color('#79bb50') }, uF1: { value: new THREE.Color('#5f9e3c') }, uF2: { value: new THREE.Color('#9ccc5a') }, uF3: { value: new THREE.Color('#e2cf58') }, uF4: { value: new THREE.Color('#b49a62') }, uFK: { value: 0.5 }, uFlow: { value: 0 }, uDry: { value: 0.5 }, uDap: { value: 0 }, uRock: { value: new THREE.Color('#d8d3c6') } };
+  if (LOOK_NEW) Object.assign(FU, { tGrd: TEXU.ground, tAgg: TEXU.road, uNightG: { value: 0 } });
   groundMat.onBeforeCompile = (sh) => {   // far from the road the land is a patchwork of fields with dark hedge lines between them
+    if (LOOK_NEW) return groundNew(sh);
     Object.assign(sh.uniforms, FU);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aField; varying float vField; varying vec3 vWP;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvField = aField; vWP = (modelMatrix * vec4(transformed, 1.0)).xyz;');
@@ -552,9 +721,82 @@ export function createWorld() {
       '  diffuseColor.rgb = mix(diffuseColor.rgb, fc, clamp(vField * uFK, 0.0, 1.0));',
       '}'].join('\n'));
   };
-  const roadTex = roadTexture(), roadMat = new THREE.MeshStandardMaterial({ map: roadTex, emissiveMap: roadTex, emissive: '#000000', vertexColors: true, roughness: 0.6, metalness: 0, envMapIntensity: 0.55, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });   // (darker in tunnels)
+  // the land, new look (revamp WS2): the same patchwork and colours, with a picture of its own (tex/ground-*.webp) - a fine grain of blades and
+  // soil underfoot; in each field its own lusher and thinner patches, the rough dark grass along its hedges and, in the meadows, the mower's
+  // stripes - and by the road a verge: gravel and dust at the edge of the asphalt, then a scuffed, mown strip (aVd: metres from the road's edge)
+  function groundNew(sh) {
+    Object.assign(sh.uniforms, FU, SEA ? SEA.SH : {});   // (WS7 fix round: the sea's clock and night flag, for the foam line below)
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float aField; attribute float aVd; varying float vField; varying float vVd; varying vec3 vWP; varying vec2 vGUv;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvField = aField; vVd = aVd; vGUv = uv; vWP = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', [
+      '#include <common>', 'uniform vec3 uF0; uniform vec3 uF1; uniform vec3 uF2; uniform vec3 uF3; uniform vec3 uF4; uniform float uFK; uniform float uFlow; uniform float uDry; uniform float uDap; uniform vec3 uRock; varying float vField; varying vec3 vWP;',
+      'uniform sampler2D tGrd; uniform sampler2D tAgg; uniform float uNightG; varying float vVd; varying vec2 vGUv; uniform float uShT; uniform vec4 uShK;',
+      'float fh(vec2 p){ vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }',
+      'float fn(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f); return mix(mix(fh(i), fh(i + vec2(1.0, 0.0)), u.x), mix(fh(i + vec2(0.0, 1.0)), fh(i + vec2(1.0, 1.0)), u.x), u.y); }'].join('\n'))
+      .replace('#include <color_fragment>', [
+      '#include <color_fragment>',
+      'float grn = texture2D(tGrd, vGUv).a;',   // the fine grain: blades and soil, every 4.5 m (cliffs: up their faces)
+      'vec2 gp0 = vWP.xz, gw = gp0 + (vec2(fn(gp0 / 140.0), fn(gp0 / 140.0 + 7.3)) - 0.5) * 70.0;',
+      'vec2 gq = vec2(gw.x * 0.86 + gw.y * 0.5, -gw.x * 0.5 + gw.y * 0.86) / vec2(88.0, 64.0), gqx = dFdx(gq), gqy = dFdy(gq), gax = dFdx(vWP.xz / 3.2), gay = dFdy(vWP.xz / 3.2); float fvd = fwidth(vVd) + 0.04;',   // (the fields, and how fast they change across the screen: worked out here, outside any branch)
+      'diffuseColor.rgb *= grn;',
+      '{ vec2 pv = vWP.xz; float gn = step(diffuseColor.r * 1.06, diffuseColor.g);',
+      '  diffuseColor.rgb *= 0.9 + 0.12 * fn(pv / 3.1) + 0.07 * fn(pv / 0.9) - 0.06 * smoothstep(0.55, 0.85, fn(pv / 14.0));',
+      '  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.08, 1.02, 0.78), gn * smoothstep(0.55, 0.9, fn(pv / 17.0 + 3.1)) * 0.45);',
+      '  vec3 fN = normalize(cross(dFdx(vWP), dFdy(vWP))); float steep = 1.0 - smoothstep(0.6, 0.82, abs(fN.y));',
+      '  if (steep > 0.01) { vec3 rk = uRock * mix(0.95, 1.15, fn(vec2((vWP.x + vWP.z) / 9.0, vWP.y * 0.9))) * (0.88 + 0.12 * sin(vWP.y * 2.7 + fn(pv / 6.0) * 2.0)); rk *= 0.82 + 0.3 * fn(vec2((vWP.x + vWP.z) / 2.2, vWP.y * 2.4)); rk *= 1.0 - 0.28 * smoothstep(0.72, 0.9, fn(vec2((vWP.x - vWP.z) / 1.3, vWP.y * 0.7))); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
+      'if (vField > 0.005) {',
+      '  vec2 pm = vWP.xz; vec3 gc = diffuseColor.rgb;',
+      '  gc *= 0.86 + 0.16 * fn(pm / 2.6) + 0.1 * fn(pm / 0.8) - 0.08 * smoothstep(0.55, 0.8, fn(pm / 11.0));',
+      '  gc *= 0.84 + 0.3 * fn(pm / 23.0 + 1.7);',
+      '  gc = mix(gc, gc * vec3(1.16, 1.08, 0.7), smoothstep(0.6, 0.86, fn(pm / 9.0 + 5.3)) * 0.5 * uDry);',
+      '  gc = mix(gc, gc * vec3(0.74, 0.88, 0.74), smoothstep(0.64, 0.9, fn(pm / 1.9 + 9.1)) * 0.45);',
+      '  float vd = length(vViewPosition), fk = uFlow * (1.0 - smoothstep(18.0, 42.0, vd)) * (1.0 - smoothstep(0.3, 0.6, vField));',
+      '  if (fk > 0.01) { vec2 fp = pm * 1.6, fc2 = fract(fp) - 0.5; float fr = fh(floor(fp) + 0.71);',
+      '    if (fr > 0.972) { float dd = 1.0 - smoothstep(0.09, 0.17, length(fc2)); vec3 col = fr > 0.991 ? vec3(1.0, 0.86, 0.25) : fr > 0.982 ? vec3(0.98, 0.98, 0.95) : vec3(0.85, 0.55, 0.85); gc = mix(gc, col, dd * fk); } }',
+      '  float mp = smoothstep(0.36, 0.64, fn(pm / 9.0 + 2.7) * 0.55 + fn(pm / 27.0 + 8.1) * 0.45);',   // (WS2 fix round) lusher patches darker, thinner ones paler and yellower: +-12%
+      '  gc *= 1.12 - 0.24 * mp; gc = mix(gc * vec3(1.08, 1.03, 0.74), gc, 0.35 + 0.65 * mp);',
+      '  if (vVd > -0.5 && vVd < 3.0) {',   // the verge past the road's gravel lip (roadStripNew): where it shows, more gravel ending in a ragged grass edge cut hard (each pixel's
+      // share of it), then a scuffed, mown, yellower strip
+      '    float wob = 1.0 - smoothstep(30.0, 90.0, vd), vb = vVd + ((fn(pm * 1.3) - 0.5) * 0.5 + (fn(pm / 4.0) - 0.5) * 0.5) * wob;',
+      '    float agg = textureGrad(tAgg, vWP.xz / 3.2, gax, gay).r, rg = vb + (grn - 0.86) * 3.0 + (agg - 0.47) * 1.4, fe = fvd + 0.16 + 0.75 * smoothstep(12.0, 70.0, vd), grav = 1.0 - smoothstep(1.25 - fe, 1.25 + fe, rg), cut = 1.0 - smoothstep(1.4, 2.4, vb);',   // (WS3 fix round: the grass edge feathered, a hand's width close by and about 1.5 m off down the road - cut a pixel wide, at a low angle it had stair-stepped)
+      '    gc = mix(gc, gc * vec3(1.1, 1.05, 0.78) * (0.9 + 0.2 * grn), cut * 0.55 * (1.0 - 0.5 * uNightG));',
+      '    gc = mix(gc, vec3(0.44, 0.4, 0.32) * (0.72 + 0.62 * agg), grav);',
+      '  }',
+      '  if (uDap > 0.01) gc *= 1.0 - uDap * 0.38 * (1.0 - smoothstep(0.03, 0.3, vField)) * smoothstep(0.44, 0.58, fn(pm / 3.4 + 11.0) * 0.55 + fn(pm / 11.0 + 2.0) * 0.45);',
+      '  diffuseColor.rgb = gc;',
+      '}',
+      'if (vField > 0.03 && uFK > 0.01) {',
+      '  vec2 p = vWP.xz, cell = floor(gq), f = fract(gq);',
+      '  float h = fh(cell + 0.37);',
+      '  vec3 fc = h < 0.34 ? uF0 : h < 0.58 ? uF1 : h < 0.78 ? uF2 : h < 0.9 ? uF3 : uF4;',
+      '  vec2 fm = vec2(fh(cell + 0.53) > 0.5 ? 1.0 - f.x : f.x, fh(cell + 0.91) > 0.5 ? 1.0 - f.y : f.y);',   // (each field's picture mirrored its own way)
+      '  vec4 fd = textureGrad(tGrd, fm, gqx, gqy); float meadow = step(h, 0.58);',
+      '  float rows = mix(0.94 + 0.06 * sin((h > 0.5 ? gq.x * 88.0 : gq.y * 64.0) * 1.4), 1.0, meadow);',   // a crop's rows (a meadow's stripes are the mower's)
+      '  fc *= (0.9 + 0.16 * fn(p / 7.0)) * rows * (0.62 + 0.55 * fd.g);',   // the field's own patches, and the rough dark grass along its hedges
+      '  fc *= 1.0 + meadow * ((fh(cell + 0.19) > 0.5 ? fd.r : fd.b) - 0.5) * 0.16;',   // the mower's stripes, one way or the other (+-8%: they show from the chase camera)
+      '  float edge = min(min(f.x, 1.0 - f.x) * 88.0, min(f.y, 1.0 - f.y) * 64.0);',
+      '  fc = mix(fc, uF1 * 0.55, (1.0 - smoothstep(0.9, 2.4, edge)) * 0.9);',
+      '  diffuseColor.rgb = mix(diffuseColor.rgb, fc, clamp(vField * uFK, 0.0, 1.0));',
+      '}',
+      'if (vField > 0.005) diffuseColor.rgb = mix(vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), diffuseColor.rgb, 0.85);',
+      // (WS7 fix round) where the sea meets grass or a cliff's foot (no beach, so no shallows strip): a thin, broken white edge of wash lapping
+      // up the slope and back. Metres up the slope from the still waterline = height / the slope (rise over run); never more than ~0.6 m up a cliff
+      // (only the land within a metre of sea level gets this far: the smooth normal, not the screen's derivatives, so it can wait behind the test)
+      'if (vWP.y > -0.3 && vWP.y < 0.8) { vec3 wN = normalize((vec4(vNormal, 0.0) * viewMatrix).xyz); float ny = abs(wN.y), tn = sqrt(max(1.0 - ny * ny, 1e-4)) / max(ny, 0.05), wl = vWP.y / tn, aaW = 0.03 + 0.002 * length(vViewPosition);',
+      '  if (vField > 0.005 || tn > 0.6) {',
+      '    float sw = 0.5 + 0.5 * sin(uShT * 0.9 + fn(vWP.xz / 7.0) * 6.2832), reach = 0.3 + 0.9 * sw * (0.5 + fn(vWP.xz / 2.3 + 3.7));',   // (how far up it laps now: each stretch in its own time)
+      '    float br = fn(vWP.xz / 0.42 + vec2(uShT * 0.11, 0.0)) * 0.6 + fn(vWP.xz / 1.3 - vec2(0.0, uShT * 0.07)) * 0.4;',   // (broken, bubbly - not a painted line)
+      '    float fz = smoothstep(reach + aaW, reach * 0.35 - aaW, wl) * smoothstep(0.3, 0.62, br + 0.25 * (1.0 - clamp(wl / reach, 0.0, 1.0))) * (1.0 - smoothstep(0.35, 0.8, vWP.y));',
+      '    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.9, 0.94, 0.95), fz * 0.88 * (1.0 - 0.75 * uShK.w)); } }'].join('\n'));   // (the grass 15% less saturated than the old
+  // lime: done here, so WS3's mood LUTs mustn't take it down again)
+  }
+  if (LOOK_NEW) groundMat.customProgramCacheKey = () => 'ground2';
+  const roadTex = LOOK_NEW ? null : roadTexture(), roadMat = new THREE.MeshStandardMaterial(LOOK_NEW ? { emissive: '#000000', vertexColors: true, roughness: 0.6, metalness: 0, envMapIntensity: 0.55, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }   // (the new look: its asphalt in uniforms, its lines worked out)
+    : { map: roadTex, emissiveMap: roadTex, emissive: '#000000', vertexColors: true, roughness: 0.6, metalness: 0, envMapIntensity: 0.55, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });   // (darker in tunnels)
   const RU = { uDap: { value: 0 } };   // under trees: flecks of sun and shade on the road
+  if (LOOK_NEW) Object.assign(RU, { tAsph: TEXU.road, uDetail: { value: 1 }, uBias: { value: 0 }, uSpeedK: { value: 0 }, uRetro: { value: 0 }, uMB: { value: 0 } });
   roadMat.onBeforeCompile = (sh) => {
+    if (LOOK_NEW) return roadNew(sh);
     Object.assign(sh.uniforms, RU);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRW;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvRW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', ['#include <common>', 'varying vec3 vRW; uniform float uDap;',
@@ -568,7 +810,84 @@ export function createWorld() {
       'diffuseColor.rgb *= mix(age * (1.0 - rep), 1.0, paint);',
       'if (uDap > 0.01) diffuseColor.rgb *= 1.0 - uDap * 0.42 * smoothstep(0.44, 0.58, rn(rp / 3.4 + 11.0) * 0.55 + rn(rp / 11.0 + 2.0) * 0.45);'].join('\n'));
   };
-  roadMat.customProgramCacheKey = () => 'road';
+  roadMat.customProgramCacheKey = () => (LOOK_NEW ? 'road2' : 'road');
+  // the road, new look (revamp WS2, 22 Oct 2026). Its asphalt is a picture of the road's own width (tex/road-*.webp: stones, cracks, repairs,
+  // the tyres' polished tracks), its lines are worked out here, each pixel's share of a line smoothed by the pixel's own size (so nothing
+  // sparkles at 180 mph), in exactly the old picture's places: the edge lines, and on the lane lines the dashes (aMark.x 0), longer hazard
+  // dashes before a sharp bend (1) or two solid lines through it (2), the paint worn and, at night in the headlights, shining back. aMark.z
+  // says what this bit of road is: 0 the carriageway, 1 the asphalt run on past the edge line to a dusty edge, 2 the gutter by a kerb,
+  // 3 the kerb, 4 a ridged rumble strip (its red or white in the corner colours); aMark.y how hard the road bends here (the inside of a bend's
+  // tyre tracks carry more rubber). Close by, on the bigger screens, the picture's light and dark give the surface fine bumps, smoothed away
+  // with speed (uSpeedK) as the picture is blurred a touch (uBias): no shimmer flat out
+  function roadNew(sh) {
+    Object.assign(sh.uniforms, RU);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute vec3 aMark; flat varying vec3 vMk; varying vec3 vRW; varying vec2 vRU;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvRW = (modelMatrix * vec4(transformed, 1.0)).xyz; vRU = uv; vMk = aMark;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', ['#include <common>',
+      'varying vec3 vRW; varying vec2 vRU; flat varying vec3 vMk; uniform float uDap; uniform sampler2D tAsph; uniform float uDetail; uniform float uBias; uniform float uSpeedK; uniform float uRetro; uniform float uMB;',
+      'float rh(vec2 p){ vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }',
+      'float rn(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f); return mix(mix(rh(i), rh(i + vec2(1.0, 0.0)), u.x), mix(rh(i + vec2(0.0, 1.0)), rh(i + vec2(1.0, 1.0)), u.x), u.y); }',
+      'float boxC(float x, float a, float b, float f){ return clamp((min(b, x + f) - max(a, x - f)) / (2.0 * f), 0.0, 1.0); }',   // how much of [a, b] a pixel reaching f either side of x covers
+      'float dashI(float x, float d){ return floor(x) * d + min(fract(x), d); }',
+      'float dashC(float x, float d, float f){ return (dashI(x + f, d) - dashI(x - f, d)) / (2.0 * f); }'].join('\n'))   // the same for dashes [0, d) every 1
+      .replace('#include <color_fragment>', ['#include <color_fragment>',
+      'float ek = vMk.z, kf = step(5.5, ek);',   // (kf: a kerb's face - its uv.x runs 0-1 up its 12 cm, so it takes a 12 cm sliver of the picture, not a 25 cm one stretched up it)
+      'vec2 tu = vec2(mix(vRU.x, 0.62 + vRU.x * 0.0086, kf), vRU.y * 0.642857);',   // the asphalt picture: across, the road's width; along, 14 m (v counts 9 m)
+      'float a0 = texture2D(tAsph, tu, uBias).r, am = textureLod(tAsph, tu, 4.5).r, ah0 = 0.0, ah1 = 0.0;',   // (am: the picture blurred over 30 cm - its swells and oily strips, not its stones)
+      'if (uDetail > 0.5) { float l0 = textureLod(tAsph, tu, 1.5).r;',   // the fine bumps from the picture less a blurred copy of itself: its chips (under 4 cm), never
+      // its metre-wide swells or the oily strips - under a low sun those slopes made the asphalt rippled sand or hammered metal (WS2 fix round)
+      '  ah0 = texture2D(tAsph, tu + vec2(0.0009766, 0.0), uBias).r - textureLod(tAsph, tu + vec2(0.0009766, 0.0), 1.5).r - a0 + l0;',
+      '  ah1 = texture2D(tAsph, tu + vec2(0.0, 0.0009766), uBias).r - textureLod(tAsph, tu + vec2(0.0, 0.0009766), 1.5).r - a0 + l0; }',
+      'vec3 rdpx = dFdx(-vViewPosition), rdpy = dFdy(-vViewPosition); vec2 rdux = dFdx(tu), rduy = dFdy(tu);',   // (worked out here, outside any branch)
+      'float u = vRU.x, fu = max(0.5 * fwidth(u), 1e-5), xa = vRU.y * 2.0, fxa = max(max(0.5 * fwidth(xa), 1e-5), 0.5 * uMB / 4.5), sm = vRU.y * 9.0, fsm = max(max(0.5 * fwidth(sm), 1e-5), 0.5 * uMB), rd = length(vViewPosition);',   // (the dashes, joints,
+      // ridges and blocks also averaged over the stretch of road that passes in a frame - uMB metres: at 180 mph the 2 m rumble blocks strobed, 21 a second)
+      'vec2 rp = vRW.xz; float inR = step(0.0, u) * step(u, 1.0) * (1.0 - kf), near = 1.0 - smoothstep(25.0, 70.0, rd);',
+      'float lu = fract(clamp(u, 0.0, 0.9999) * 3.0), trk = exp(-pow((abs(lu - 0.5) - 0.24) * 15.6, 2.0)) * inR;',   // the tyres' tracks, polished
+      'float age = 0.9 + 0.18 * rn(rp / 46.0) + 0.06 * mix(0.5, rn(rp / 5.0), near), rep = smoothstep(0.6, 0.68, rn(rp / 8.5 + 3.3)) * 0.12;',   // older and newer stretches, darker repairs
+      'float rub = abs(vMk.y) * smoothstep(0.02, 0.25, (u - 0.5) * sign(vMk.y)) * trk;',   // the rubber laid on a bend's inside
+      'vec3 rA = mix(vec3(0.118, 0.116, 0.113), vec3(0.112, 0.116, 0.124), smoothstep(0.36, 0.46, am)) * mix(1.0, a0 * 2.2, 0.85) * age * (1.0 - rep) * (1.0 - 0.1 * trk - 0.22 * rub);',   // (the darker, oily stretches a neutral dark, not bluer)
+      'float rR = 1.0 - 0.32 * trk - 0.15 * rub + 0.25 * smoothstep(0.32, 0.12, a0) + 0.12 * smoothstep(0.44, 0.36, am), rP = 0.0;',   // (and duller - from the blurred picture: shine that changed stone by stone sparkled at speed)   // (a factor on the place's own: the tracks polished, the cracks dull; at 1.22 a low sun lost its sheen on the road)
+      'if (ek < 0.5) {',   // the carriageway: its lines - dashes, hazard dashes, and on the sharpest bends two solid lines on one lane line only, the bend's inside (never
+      // both: two pairs read as tram rails, and UK roads never bar changing lanes between lanes going the same way)
+      '  float mk = vMk.x, hz = step(0.5, mk), dbl = step(1.5, mk), kin = vMk.y > 0.0 ? 2.0 : 1.0;',
+      '  float edg = boxC(u, 0.015625, 0.033203, fu) + boxC(u, 0.966797, 0.984375, fu);',
+      '  float dash = mix(dashC(xa - 0.58, 0.42, fxa), dashC(xa - 0.25, 0.75, fxa), hz), ln = 0.0;',
+      '  for (int k = 1; k <= 2; k++) { float c = float(k) / 3.0, db = dbl * step(abs(float(k) - kin), 0.5); ln += mix(boxC(u, c - 0.009766, c + 0.009766, fu) * dash, boxC(u, c - 0.009766, c - 0.0034, fu) + boxC(u, c + 0.0034, c + 0.009766, fu), db); }',
+      '  float wear = 0.15 * mix(0.3, smoothstep(0.45, 0.8, rn(rp * 0.8 + 7.1) * 0.6 + rn(rp / 4.0 + 1.3) * 0.4), near);',   // worn: irregular patches, never more than 15% of it, and nothing
+      // in step with the asphalt picture (its 14 m cracks, the joints under the lines darkened the paint in bands: far off the solid edge line looked broken)
+      '  rP = clamp(edg + ln, 0.0, 1.0) * (1.0 - wear);',
+      '} else if (ek < 1.5) {',   // past the edge line: older, dusty, breaking up into the gravel lip
+      '  float oz = clamp((abs(u - 0.5) - 0.5) * 15.5, 0.0, 1.0), br = smoothstep(0.35, 1.0, oz + (rn(rp * 2.3) - 0.5) * 0.5 * near);',
+      '  rA = mix(rA * (1.1 + 0.2 * oz), vec3(0.44, 0.4, 0.32) * (0.72 + 0.62 * a0), br * 0.85); rR += 0.25 * oz;',
+      '} else if (ek < 2.5) { rA *= 0.8; rR -= 0.1; }',   // the gutter: grime
+      'else if (ek < 3.5 || kf > 0.5) {',   // the kerb: plain, cool concrete (it took the asphalt picture before, and its face read as warm wooden planks), a joint every 91.5 cm,
+      // the arris along the top of its face catching the light
+      '  float jt = dashC(sm / 0.915, 0.025, fsm / 0.915), ar = kf * smoothstep(0.84, 0.93, u);',
+      '  rA = vec3(0.5, 0.515, 0.53) * (0.95 + 0.4 * (a0 - 0.47)) * (1.0 - 0.5 * jt) * (1.0 + 0.32 * ar); rR = 1.3; }',
+      'else if (ek < 4.5) { float rib = dashC(sm / 0.45, 0.62, fsm / 0.45), b0 = floor(sm * 0.25) * 4.0, own = dashC((sm - b0) * 0.125, 0.5, fsm * 0.125);',   // a rumble strip: ridged every 45 cm,
+      // its 4 m blocks' colours each pixel's share of them (vMk.x: the other block's colour, packed - roadStripNew). WS2's 2 m blocks went by 21 times
+      // a second at 180 mph, a red and white strobe at 60 frames (moment c: flicker 37 against classic's 22); at 4 m it's 10 a second
+      '  vec3 oth = vec3(floor(vMk.x / 65536.0), mod(floor(vMk.x / 256.0), 256.0), mod(vMk.x, 256.0)) / 255.0;',
+      '  rA = mix(oth / max(vColor.rgb, vec3(0.02)), vec3(1.0), own) * vec3(0.84 + 0.18 * rib) * (0.9 + 0.2 * a0); rR = 1.15 - 0.15 * rib; }',
+      'else { rA = vec3(0.44, 0.4, 0.32) * (0.72 + 0.62 * a0) * (0.9 + 0.2 * mix(0.5, rn(rp * 2.3), near)) / max(diffuse, vec3(0.05)); rR = 1.7; }',   // the gravel lip past the strip: light,
+      // warm-grey gravel with the asphalt's own stones in it, as the land's verge past it (groundNew: there it ends in a ragged grass edge, cut hard) - not
+      // given the asphalt's cool counter-tint under an orange sky
+      'float fE = 1.0 / mix(0.9977, 0.9, clamp(abs(u - 0.5) * 4.0 - 1.0, 0.0, 1.0));',   // (the paint stays as white to the edge: this undoes the edges' grime in the corners' colour)
+      'vec3 pc = vec3(0.92, 0.92, 0.9) * (0.97 + 0.06 * mix(0.5, rn(rp * 9.0), near)) * mix(1.0, fE, step(ek, 0.5)), rAlb = mix(rA, pc, rP);',   // (as bright as the old painted lines)
+      'diffuseColor.rgb *= rAlb; rR = mix(rR, 0.72, rP);',
+      'if (uDap > 0.01) diffuseColor.rgb *= 1.0 - uDap * 0.42 * smoothstep(0.44, 0.58, rn(rp / 3.4 + 11.0) * 0.55 + rn(rp / 11.0 + 2.0) * 0.45);'].join('\n'))
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor * rR, 0.1, 1.0);')
+      .replace('#include <normal_fragment_maps>', ['#include <normal_fragment_maps>',
+      '{ float dk2 = uDetail * (1.0 - smoothstep(5.0, 15.0, rd)) * (1.0 - 0.75 * uSpeedK) * (1.0 - 0.6 * trk) * (1.0 - 0.75 * rP) * (1.0 - step(2.5, ek) * step(ek, 4.5)) * (1.0 - kf)',   // the fine bumps: close by, slower, not on the tracks,
+      // the paint, the kerb or the rumble strips; halved where you look along the road at a low angle (the grain there is the bump, not a ripple)
+      '    * clamp(dot(normal, normalize(vViewPosition)) * 2.0, 0.0, 1.0);',
+      '  if (dk2 > 0.01) { vec3 N0 = normal, r1 = cross(rdpy, N0), r2 = cross(N0, rdpx), T = r1 * rdux.x + r2 * rduy.x, B = r1 * rdux.y + r2 * rduy.y;',
+      '    float sc = inversesqrt(max(max(dot(T, T), dot(B, B)), 1e-24)); normal = normalize(N0 - (T * ah0 + B * ah1) * sc * 2.2 * dk2); } }',
+      'if (kf > 0.5) normal = normalize(mix(normal, normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz), 0.7 * smoothstep(0.84, 0.93, vRU.x)));'].join('\n'))   // (the arris: rounded over, it faces up)
+      .replace('#include <emissivemap_fragment>', ['#include <emissivemap_fragment>',
+      'totalEmissiveRadiance *= rAlb;',   // (a tunnel's lamps light the asphalt and the paint alike)
+      'totalEmissiveRadiance += pc * rP * uRetro * smoothstep(0.6, 0.12, abs(vViewPosition.x) / max(vViewPosition.z, 0.5)) * smoothstep(2.0, 10.0, vViewPosition.z) * (1.0 - smoothstep(50.0, 150.0, vViewPosition.z));'].join('\n'));   // the paint's glass beads shining back in the headlights
+  }
   const rumbleMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
   const slowMat = new THREE.MeshStandardMaterial({ map: slowTexture(), transparent: true, depthWrite: false, roughness: 0.55, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
   const poolMat = new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(255,212,150,0.5)'], [0.45, 'rgba(255,196,128,0.2)'], [1, 'rgba(255,186,120,0)']]), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
@@ -581,12 +900,235 @@ export function createWorld() {
   const seaMat = new THREE.MeshStandardMaterial({ color: '#1d8cc4', roughness: 0.05, metalness: 0, normalMap: seaNorm, normalScale: new THREE.Vector2(0.32, 0.32), transparent: true, opacity: 0.82, envMapIntensity: 0.85 });
   const sea = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), seaMat); sea.rotation.x = -Math.PI / 2; sea.receiveShadow = true; sea.renderOrder = 1; scene.add(sea);
   seaNorm.repeat.set(110, 110);
+  // (revamp WS7) the new look's sea: its own two wave pictures in place of the old one, crossing (seaNewShader()), the far panorama reflected, the
+  // shallows strip along the beaches (surfNew()). Built once; the uniforms are shared by reference and set in render() and setLook()
+  const SEA = LOOK_NEW ? { U: { uSeaA: { value: seaWaveTex(71, 36, 3, 15, 0.5, 0.75, 1.5) }, uSeaB: { value: seaWaveTex(97, 40, 5, 34, -1.1, 3.1, 1.25) }, uRing: { value: blank() }, uSeaT: { value: 0 },
+    uSeaK: { value: new THREE.Vector4(1, 0.75, 11, 1) }, uRingP: { value: new THREE.Vector4(0, 1, 0, 0) }, uSunC: { value: new THREE.Color() }, uSunD: { value: new THREE.Vector3(0, 1, 0) }, uScat: { value: new THREE.Color('#0c6c66') }, uSeaG: { value: 0 } },
+    SH: { uShT: { value: 0 }, uShK: { value: new THREE.Vector4(1, 1, 1, 0) } } } : null;
+  // the new look's sea colour where the place's own leans to violet (the golden-hour and dusk places): a deep blue-teal of about the same
+  // brightness, so with the light's colour kept off the water (SEA_END) the sea stays the postcard's blue under an orange or pink sky.
+  // (The opacity: nearly opaque, SEA_END - the shallows' strip shows the sand at the edge now, and the sea bed's chunks no longer show through as lighter patches)
+  const SHORE_FAR = { phone: 220, medium: 320, high: 420, capture: 600 };   // (metres: surfNew()'s strips are drawn this near the camera)
+  const SEA_COL = { jurassic: '#1e5a82', lyme: '#245c88', goldencap: '#205e8a', portland: '#24507c', hengistbury: '#235a86', needles: '#3f86b4', lymington: '#2f7aa6' };
+  if (SEA) {
+    if (TIER === TIERS.phone) for (const k of ['uSeaA', 'uSeaB']) SEA.U[k].value.anisotropy = 4;
+    seaMat.normalMap = null; seaMat.roughness = 0.06; seaMat.userData.seaU = SEA.U; seaMat.userData.shoreU = SEA.SH;   // (for the bench's probes)
+    seaMat.onBeforeCompile = (sh) => seaNewShader(sh, SEA.U, TIER === TIERS.phone); seaMat.customProgramCacheKey = () => (TIER === TIERS.phone ? 'sea2l' : 'sea2');   // (the tier's own version: a tier changes between races, and warmUp() compiles it again)
+    SEA.shore = new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, depthWrite: false, roughness: 0.5, metalness: 0, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
+    SEA.shore.onBeforeCompile = (sh) => shoreShader(sh, SEA.SH); SEA.shore.customProgramCacheKey = () => 'shore';
+  }
 
   // ---------------------------------------------------------------- your car, the traffic, coins, smoke and sparks
   const player = new THREE.Group(); scene.add(player);
   let playerCarId = null, wheels = [], carInfo = null;
   const traffic = new Map();
+  // the Getaway's stingers (revamp WS4): the strip and its spikes in two shared materials, the spikes merged into one shape per width (there
+  // are two: a lane's, the whole road's) - each stinger was 31 draws, 31 new shapes and two new materials in the frame it came into view
+  const STING = { strip: new THREE.MeshStandardMaterial({ color: '#1a1b1d', roughness: 0.7 }), spike: new THREE.MeshStandardMaterial({ color: '#d4d7db', roughness: 0.3, metalness: 0.8 }), geo: new Map() };
+  function stingerGeo(w) {
+    let G = STING.geo.get(w); if (G) return G;
+    const cone = new THREE.ConeGeometry(0.035, 0.12, 4), at = [];
+    for (let q = -w / 2 + 0.15; q < w / 2; q += 0.3) for (const dz of [-0.12, 0.12]) at.push([q, 0.14, dz]);   // (the spikes' places, worked out as they always were)
+    const cp = cone.attributes.position.array, cn = cone.attributes.normal.array, ci = cone.index.array, n = cone.attributes.position.count;
+    const pos = new Float32Array(n * 3 * at.length), nor = new Float32Array(n * 3 * at.length), idx = new Uint16Array(ci.length * at.length);
+    at.forEach(([x, y, z], s) => { for (let i = 0; i < n; i++) { pos[(s * n + i) * 3] = cp[i * 3] + x; pos[(s * n + i) * 3 + 1] = cp[i * 3 + 1] + y; pos[(s * n + i) * 3 + 2] = cp[i * 3 + 2] + z; } nor.set(cn, s * n * 3); for (let i = 0; i < ci.length; i++) idx[s * ci.length + i] = ci[i] + s * n; });
+    const sp = new THREE.BufferGeometry(); sp.setAttribute('position', new THREE.BufferAttribute(pos, 3)); sp.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); sp.setIndex(new THREE.BufferAttribute(idx, 1));
+    G = [new THREE.BoxGeometry(w, 0.07, 0.42), sp]; STING.geo.set(w, G); cone.dispose(); return G;
+  }
+  // ---- (revamp WS4) a car in one draw: every part of a traffic car lit like the rest (its paint, roof, trim, solid glass, wheels) or plainly
+  // coloured (its lamps, the police lights) in one mesh with one material; its see-through glass on its own, as before. Each corner carries
+  // the number of the material it had, and the shader takes that material's roughness, metalness, clearcoat and colour - or, for the plain
+  // ones, their flat colour - from a little table filled from the materials themselves each frame: the same sums three does for each of them
+  // apart (the standard material is the physical one with no clearcoat, and a clearcoat of 0 adds nothing; under the sky's light three uses
+  // the scene's reflection strength for all of them alike). A car's 8-10 meshes became 2 (and its soft shadow blob, as before); a police car's
+  // 24 became 8, with its lettering in one (and its four glows, as before).
+  // (revamp WS5: your car joins it too - its paint, chrome, glass, tyres and alloys, which keep the sky in them at their own strengths: a fourth
+  // row per material, ex2 = [how strongly it reflects the sky against the scene's, flags (1: the paint's red that stays red), 0, 0], 1 and 0
+  // for everything that was there before, so their sums are unchanged. 28 rows: the traffic's and the roadside's ~14, your car's ~10)
+  const PK = { mats: [], pbr: [], col: [], ext: [], ex2: [], cache: new WeakMap(), N: 28 };
+  for (let i = 0; i < PK.N; i++) { PK.pbr.push(new THREE.Vector4()); PK.col.push(new THREE.Vector3(1, 1, 1)); PK.ext.push(new THREE.Vector4()); PK.ex2.push(new THREE.Vector4(1, 0, 0, 0)); }
+  // (WS4 fix round: two of it. CARMAT is the standard material - no clearcoat lobe, no second sky lookup a pixel - for the scenery and any car
+  // with no clearcoated part; CARMAT_CC, the physical one with the clearcoat taken from the table, only for a mesh holding a physical part (a
+  // car's paint, roof or solid glass). With one physical material for everything, every roadside pixel paid for a clearcoat it set to nought)
+  const CARMAT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 });
+  const CARMAT_CC = new THREE.MeshPhysicalMaterial({ vertexColors: true, clearcoat: 1, roughness: 1, metalness: 0 });
+  // (the scenery joins it too - its roadside things in one draw a chunk: their rows in the table also carry a glow of their own, as the tunnel
+  // roofs' material has, and the crowd's arms waving and bobbing, worked out exactly as MAT.wave's and MAT.bob's own shaders do)
+  CARMAT.onBeforeCompile = CARMAT_CC.onBeforeCompile = (sh) => { sh.uniforms.uPbr = { value: PK.pbr }; sh.uniforms.uCol = { value: PK.col }; sh.uniforms.uExt = { value: PK.ext }; sh.uniforms.uEx2 = { value: PK.ex2 }; sh.uniforms.uT = WAVE_T;
+    sh.vertexShader = 'attribute float aMid; uniform vec4 uPbr[' + PK.N + ']; uniform vec3 uCol[' + PK.N + ']; uniform vec4 uExt[' + PK.N + ']; uniform vec4 uEx2[' + PK.N + ']; uniform float uT; flat varying vec4 vPbr; flat varying vec3 vMc; flat varying vec3 vEm; flat varying vec4 vEx2; varying float vWr; varying float vUnb;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvWr = length(position.yz);\n{ int mi = int(aMid + 0.5); vUnb = aMid - float(mi); vPbr = uPbr[mi]; vMc = uCol[mi]; vec4 ex = uExt[mi]; vEm = ex.yzw; vEx2 = uEx2[mi];\n' +
+      '  if (ex.x > 1.5) transformed.y += max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07;\n' +
+      '  else if (ex.x > 0.5) transformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16 + max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07; }');
+    sh.fragmentShader = 'flat varying vec4 vPbr; flat varying vec3 vMc; flat varying vec3 vEm; flat varying vec4 vEx2; varying float vWr; varying float vUnb;\n' + sh.fragmentShader
+      .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb *= vMc; int pkF = int(vEx2.y + 0.5); float pkOcc = 1.0 - max(vUnb, 0.0); if (vPbr.x >= 0.0) diffuseColor.rgb /= pkOcc; if ((pkF & 4) != 0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.42) * (1.0 + 0.22 * sin(vWr * 190.0) * smoothstep(0.08, 0.14, vWr)), vEx2.w);')   // (WS5 fix round: the blurred face at the alloy's own mean - metal, not a dark disc - with fine turned rings across it, as a spinning wheel's spokes and gaps smear into bands)   // (WS5: a spinning wheel's face, its mean colour).replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vEm;')
+      .replace('#include <roughnessmap_fragment>', 'float roughnessFactor = (pkF & 4) != 0 ? mix(vPbr.x, 0.3, vEx2.w) : vPbr.x;').replace('#include <metalnessmap_fragment>', 'float metalnessFactor = (pkF & 4) != 0 ? mix(vPbr.y, 0.6, vEx2.w) : vPbr.y;')
+      .replace('#include <lights_physical_fragment>', THREE.ShaderChunk.lights_physical_fragment.replace('material.clearcoat = clearcoat;', 'material.clearcoat = vPbr.z;').replace('material.clearcoatRoughness = clearcoatRoughness;', 'material.clearcoatRoughness = vPbr.w;'))
+      .replace('#include <opaque_fragment>', 'if (vPbr.x >= 0.0) ' + CAP_GLSL('vEx2.z') + '\nif (vPbr.x < 0.0) outgoingLight = diffuseColor.rgb;   // (a plain-coloured part: its colour, unlit)\nif ((pkF & 8) != 0) { float lmx = max(outgoingLight.r, max(outgoingLight.g, outgoingLight.b)); outgoingLight *= mix(vEx2.w, 1.0, lmx > 0.0 ? (lmx - min(outgoingLight.r, min(outgoingLight.g, outgoingLight.b))) / lmx : 0.0); }\n#include <opaque_fragment>')   // (WS5: a car's own light under the glow's threshold, eased)
+      // (WS5) the sky's light and its reflection at the part's own strength (three multiplies both by the one strength; so do we, after them), and
+      // the paint's red that stays red - CAR.paint's own last line - where the row says so
+      .replace('#include <lights_fragment_maps>', '#include <lights_fragment_maps>\niblIrradiance *= vEx2.x;\n#if defined( RE_IndirectSpecular )\nradiance *= vEx2.x;\n#ifdef USE_CLEARCOAT\nclearcoatRadiance *= vEx2.x;\n#endif\n#endif\n' + DESAT_GLSL + GLASS_FR('vEx2.w', '(pkF & 2) != 0'))   // (WS5: glass, more of the sky edge-on)
+      .replace('#include <lights_fragment_end>', '#if defined( RE_IndirectDiffuse )\nfloat pkAo = mix(1.0, pkOcc, 0.35); irradiance *= pkAo; iblIrradiance *= pkAo;\n#endif\n#include <lights_fragment_end>')   // (WS5 fix round: the top light baked into a car's colours taken back out above, and only a third of it kept, as a hint of occlusion in the sky's light (never the sun's): the sky's light already falls off on a face turned down - the hemisphere and the sky picture both see which way it faces - so all of it again was the lower sides darkened twice - see models3d.js OCC)
+      .replace('#include <dithering_fragment>', '#include <dithering_fragment>\nif ((pkF & 1) != 0) gl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };
+  CARMAT.customProgramCacheKey = () => 'carpack'; CARMAT_CC.customProgramCacheKey = () => 'carpack-cc';
+  const pkMat = (mts) => (mts.some((mt) => mt.isMeshPhysicalMaterial) ? CARMAT_CC : CARMAT);   // (the one for a mesh joining these materials: physical by kind, not by today's clearcoat, so a change to their numbers still shows)
+  function pkSlot(mt, car) {   // a material's row in the table (-1: it can't join - it has a picture, a shader of its own, or is see-through)
+    if (NOPACK) return -1;   // (?nopack: nothing joins - every part a mesh of its material, as before WS4)
+    let i = PK.mats.indexOf(mt); if (i >= 0) return i;
+    const anim = mt === MAT.wave ? 1 : mt === MAT.bob ? 2 : 0;   // (the crowd's two: their motion is in the table)
+    // (WS5, car: your car's own materials too - the paint's shader is the row's flag, and those that hold the sky themselves hold the scene's own
+    // sky picture (updateEnv()), so only their strength differs, and that's a row too: the two things the table didn't carry)
+    const env = car && OWN_ENV.includes(mt), paint = car && mt === CAR.paint;
+    const own = (mt.onBeforeCompile !== THREE.Material.prototype.onBeforeCompile && !anim && !paint) || mt.map || mt.transparent || !mt.vertexColors || mt.side !== THREE.FrontSide || mt.polygonOffset || mt.alphaTest > 0 || !mt.fog || mt.wireframe
+      // (WS4 fix round: nor anything CARMAT would draw differently - out of the tone mapping, blended or depth-tested its own way, unseen, cut
+      // out, dithered, clipped, or with a picture of any kind. None of today's materials is refused by these: they guard what WS3, WS5, WS8 add)
+      || mt.toneMapped === false || mt.blending !== THREE.NormalBlending || !mt.depthTest || !mt.depthWrite || mt.depthFunc !== THREE.LessEqualDepth || !mt.colorWrite || mt.stencilWrite || mt.visible === false
+      || mt.alphaMap || mt.alphaHash || mt.alphaToCoverage || mt.dithering || mt.specularMap || mt.displacementMap || (mt.clippingPlanes && mt.clippingPlanes.length);
+    const plain = !own && mt.isMeshBasicMaterial && !mt.envMap && !mt.aoMap && !mt.lightMap;
+    const lit = (!own && mt.isMeshStandardMaterial && !mt.flatShading && !mt.emissiveMap && !mt.normalMap && !mt.bumpMap && (!mt.envMap || env) && !mt.aoMap && !mt.lightMap && !mt.roughnessMap && !mt.metalnessMap
+      && (!mt.isMeshPhysicalMaterial || (mt.sheen === 0 && mt.iridescence === 0 && mt.transmission === 0 && mt.ior === 1.5 && mt.specularIntensity === 1 && mt.specularColor.getHex() === 0xffffff && mt.dispersion === 0 && mt.anisotropy === 0
+        && !mt.clearcoatMap && !mt.clearcoatRoughnessMap && !mt.clearcoatNormalMap && !mt.sheenColorMap && !mt.sheenRoughnessMap && !mt.specularIntensityMap && !mt.specularColorMap && !mt.iridescenceMap && !mt.iridescenceThicknessMap
+        && !mt.transmissionMap && !mt.thicknessMap && !mt.anisotropyMap)));
+    if (!(plain || lit) || PK.mats.length >= PK.N) return -1;
+    PK.mats.push(mt); mt.userData.pkAnim = anim; mt.userData.pkFlag = paint ? 1 : 0; return PK.mats.length - 1;
+  }
+  const pkJoin = (mt) => (mt.isMeshPhysicalMaterial ? -1 : pkSlot(mt));   // (the scenery's: a physical part stays a mesh of its own, as before, rather than make a chunk's whole joined mesh pay for a clearcoat - WS4 fix round)
+  function pkSync() {   // the table, from the materials as they are now (the police lights flash by their colour)
+    SPECCAP.value = LOOK_NEW ? bloom.threshold * 0.9 : 0;   // (WS5: just under where the glow begins - lower in a lit place's night)
+    PK.mats.forEach((mt, i) => { if (mt.isMeshBasicMaterial) PK.pbr[i].set(-1, 0, 0, 0); else PK.pbr[i].set(mt.roughness, mt.metalness, mt.isMeshPhysicalMaterial ? mt.clearcoat : 0, mt.isMeshPhysicalMaterial ? mt.clearcoatRoughness : 0); PK.col[i].set(mt.color.r, mt.color.g, mt.color.b);
+      const em = mt.emissive, ei = mt.emissiveIntensity == null ? 1 : mt.emissiveIntensity; PK.ext[i].set(mt.userData.pkAnim || 0, em ? em.r * ei : 0, em ? em.g * ei : 0, em ? em.b * ei : 0);
+      const w5 = mt.userData.ws5;   // (WS5, the new look: [flags: 1 the paint's red, 2 glass, 4 a spinning wheel's face], the ceiling on its light, the glass's or the blur's amount)
+      PK.ex2[i].set(mt.envMap ? mt.envMapIntensity / Math.max(1e-4, scene.environmentIntensity) : 1, (mt.userData.pkFlag || 0) + (w5 && w5.glass ? 2 : 0) + (w5 && w5.blur ? 4 : 0) + (w5 && w5.lamp ? 8 : 0) + (w5 && w5.desat ? 16 : 0), w5 && w5.cap ? SPECCAP.value : 0, w5 ? w5.glass || (w5.blur ? R.wBlur || 0 : 0) || (w5.lamp ? 2.4 / mt.color.r : 0) : 0); });   // (8: a lamp - a white one still glows at the glow's 2.4 by day, a coloured one keeps its colour)   // (WS5: one holding the sky itself drawn at its own strength, as three draws it)
+  }
+  // (WS4 fix round) a part's shadow can be drawn by a shared stand-in - one one-sided material for all of them - only if its own would be drawn
+  // the same: one-sided, no shadowSide of its own, shown, nothing cut out of it or pushed about by a picture, not clipped
+  const cutFree = (mt) => mt.visible !== false && !(mt.alphaTest > 0 && (mt.map || mt.alphaMap)) && !mt.alphaToCoverage && !mt.alphaHash && !mt.displacementMap && !(mt.clippingPlanes && mt.clippingPlanes.length);
+  const plainShadow = (mt) => mt.side === THREE.FrontSide && mt.shadowSide == null && cutFree(mt);
+  const f32 = (a, n) => a && !a.isInterleavedBufferAttribute && !a.normalized && a.itemSize === n && a.array instanceof Float32Array;
+  function packPart(g, o, pos, nor, col, mid, s) {   // one part's corners into the joined arrays from corner o (un-indexed; colour 1 where it has none); returns how many
+    const p = g.attributes.position, nn = g.attributes.normal, c = g.attributes.color, ix = g.index, cnt = ix ? ix.count : p.count;
+    if (!ix && f32(p, 3) && f32(nn, 3) && (!c || f32(c, 3))) { pos.set(p.array.subarray(0, cnt * 3), o * 3); nor.set(nn.array.subarray(0, cnt * 3), o * 3); if (c) col.set(c.array.subarray(0, cnt * 3), o * 3); else col.fill(1, o * 3, (o + cnt) * 3); }
+    else for (let i = 0; i < cnt; i++) {   // (indexed, packed, interleaved or four-channel colour: the slow sure way)
+      const j = ix ? ix.getX(i) : i, k = (o + i) * 3; pos[k] = p.getX(j); pos[k + 1] = p.getY(j); pos[k + 2] = p.getZ(j);
+      if (nn) { nor[k] = nn.getX(j); nor[k + 1] = nn.getY(j); nor[k + 2] = nn.getZ(j); }
+      if (c) { col[k] = c.getX(j); col[k + 1] = c.getY(j); col[k + 2] = c.getZ(j); } else col[k] = col[k + 1] = col[k + 2] = 1;
+    }
+    mid.fill(s, o, o + cnt);
+    const un = g.attributes.aUnb; if (un) for (let i = 0; i < cnt; i++) mid[o + i] += Math.min(0.45, un.getX(ix ? ix.getX(i) : i));   // (WS5 fix round: a car's baked top light rides in the row number's fraction - see CARMAT)
+    return cnt;
+  }
+  // a car in one draw, its shadow from one stand-in drawing the same corners. (WS4 fix round: the stand-in no longer copies them - it shares the
+  // joined shape's buffers, as a chunk's does. The joined shape holds, in order: the joined parts that aren't in the stand-in (the lamps' glow,
+  // and any whose shadow isn't one-sided); the joined parts that cast; and, while shadows are on when it's made, the see-through glass, which
+  // casts - past the car's own draw range. The car draws the first two, the stand-in the last two. It had held a copy of every corner and as
+  // many noughts for normals: 24 bytes a corner more in the graphics card's memory. Indexed and unusual parts are taken too)
+  // { one, mat, rest: [[geometry, material, casts by itself]], shOnly: [[geometry, material]] (joined, they cast, but not as the stand-in does), shadow }
+  // (WS5: M, the materials by key - your car's are CAR's - and car: its own materials may join; a key in NOCAST never casts. Your car's stand-in
+  // takes its glass whether or not there are shadows today: a tier change between races doesn't make your car again)
+  const NOCAST = { glow: 1, col: 1, lamp: 1 };
+  function packCar(mm, shadows, M, car) {
+    let P = PK.cache.get(mm); if (P) return P;
+    const A0 = [], J = [], S = [], rest = [], shOnly = [], sh = shadows && (car || renderer.shadowMap.enabled);
+    for (const k in mm) { const g = mm[k], mt = LAMPMAT && !M && k === 'glow' ? LAMPMAT : (M || MAT)[k]; if (!g || !mt || !g.attributes.position) continue;   // (WS5: a traffic car's glow is its lamps)
+      const s = g.attributes.normal ? pkSlot(mt, car) : -1, casts = shadows && !NOCAST[k], plain = casts && plainShadow(mt);
+      if (s >= 0) { if (plain) J.push([g, s, mt]); else { A0.push([g, s, mt]); if (casts) shOnly.push([g, mt]); } }
+      else if (plain && sh) { S.push([g, 0, mt]); rest.push([g, mt, false]); } else rest.push([g, mt, casts]); }
+    const cnt = (L) => L.reduce((a, [g]) => a + (g.index ? g.index.count : g.attributes.position.count), 0), nA = cnt(A0), nJ = cnt(J), nS = nA + nJ ? cnt(S) : 0;
+    if (!nS) for (const r of rest) if (S.some((e) => e[0] === r[0])) r[2] = true;   // (nothing joined to share buffers with: the glass casts by itself, as before)
+    let one = null, shadow = null;
+    if (nA + nJ) {
+      const n = nA + nJ + nS, pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), mid = new Float32Array(n); let o = 0;
+      for (const [g, s] of A0.concat(J, nS ? S : [])) o += packPart(g, o, pos, nor, col, mid, s);
+      one = new THREE.BufferGeometry(); one.setAttribute('position', new THREE.BufferAttribute(pos, 3)); one.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); one.setAttribute('color', new THREE.BufferAttribute(col, 3)); one.setAttribute('aMid', new THREE.BufferAttribute(mid, 1)); one.computeBoundingSphere();
+      if (nS) one.setDrawRange(0, nA + nJ);
+      if (nJ + nS) { shadow = new THREE.BufferGeometry(); shadow.setAttribute('position', one.attributes.position); shadow.setAttribute('normal', one.attributes.normal); shadow.setDrawRange(nA, nJ + nS); shadow.boundingSphere = one.boundingSphere; }
+    }
+    P = { one, mat: pkMat(A0.concat(J).map((j) => j[2])), rest, shOnly, shadow }; PK.cache.set(mm, P); return P;
+  }
+  // ---- (revamp WS4) the shadow stand-ins' layer: a stand-in is drawn into the sun's shadow map only (the camera sees that layer only while
+  // three draws the shadows - three tests shadow casters against the camera's layers, not the light's). A car's shadow from one stand-in
+  // holding all its shadow-casting parts is the same shadow, in one draw, not seven
+  const SHADOW_L = 3, PROXY_MAT = MAT.lit;   // (the stand-in's own material is never drawn: the shadow map uses its depth material, as for every plain part)
+  { const SM = renderer.shadowMap, r0 = SM.render; SM.render = function (lights, sc, cam) { const on = cam.layers.isEnabled(SHADOW_L); cam.layers.enable(SHADOW_L); try { r0.call(this, lights, sc, cam); } finally { if (!on) cam.layers.disable(SHADOW_L); } }; }
+  function shadowProxy(geo) { const m = new THREE.Mesh(geo, PROXY_MAT); m.castShadow = true; m.layers.set(SHADOW_L); m.userData.proxy = true; return m; }
+  function shadowOnly(geo, mt) { const m = new THREE.Mesh(geo, mt); m.castShadow = true; m.layers.set(SHADOW_L); m.userData.proxy = true; return m; }   // (a joined part's own shadow, with its own material's sides)
+  // (a stand-in's shape carries a normal attribute - three r185 compiles a shader of its own for a shape without one (vertexNormals is a
+  // program flag): 4-11 more programs - but the shadow map's depth shader never reads it (only with a displacement map, which no stand-in has:
+  // plainShadow()), so it is one corner long, and one for all of them: twelve bytes, where each stand-in had its own buffer of noughts as long
+  // as its corners (4 of the graphics card's megabytes on Medium). It is taken off before a stand-in's shape is let go of: three deletes the
+  // buffer of every attribute of a shape disposed - WS4 fix round)
+  const ZN1 = new THREE.BufferAttribute(new Float32Array(3), 3);
+  const bareNormal = (geo) => { geo.setAttribute('normal', ZN1); return geo; };
+  const proxyFree = (geo) => { if (geo.attributes.normal === ZN1) geo.deleteAttribute('normal'); geo.dispose(); };
+  // ---- (revamp WS4) stand-ins for things made of moving parts (your car and its wheels, the two of you): in each group, the parts that cast
+  // a plain shadow (one-sided, nothing cut out of them, not skinned or morphed) joined into one stand-in beside them, so it moves with them.
+  // Kept in step each frame: hidden when they're hidden (the GLB couple hides the old one), and if only some are hidden, or one has moved
+  // or changed shape since, they cast for themselves again
+  const PROXIES = [];
+  // (WS4 fix round: and only a part whose shadow is drawn as the stand-in's is - plainShadow(): no shadowSide of its own, shown - and that isn't
+  // mirrored in its own matrix: joined, its corners would wind the other way round, and the stand-in's one-sided shadow would draw the wrong faces)
+  const plainCaster = (o) => o.isMesh && !o.isSkinnedMesh && !o.isInstancedMesh && o.castShadow && !o.userData.proxy && !o.userData.pxMoved && o.geometry && o.geometry.attributes.position && !o.geometry.morphAttributes.position && o.geometry.drawRange.count === Infinity && !o.geometry.drawRange.start
+    && o.material && !Array.isArray(o.material) && plainShadow(o.material) && o.matrixAutoUpdate && (o.updateMatrix(), o.matrix.determinant() > 0);   // (a part with a matrix set by hand is left alone: proxySync() remakes each part's matrix from its place, turn and size every frame)
+  const proxyKeep = (pm, src) => ({ pm, src, m: src.map((o) => o.matrix.clone()), v: src.map((o) => o.geometry.attributes.position.version), geo: src.map((o) => o.geometry), sk: src.map((o) => o.skeleton), mt: src.map((o) => o.material) });
+  function proxyGone(P) { if (P.pm.parent) P.pm.parent.remove(P.pm); proxyFree(P.pm.geometry); for (const o of P.src) o.castShadow = true; }
+  // (WS4 fix round: rebuilt when what's under your car changes - the GLB couple seated again after a car change (people.js builds them after
+  // the car is made, with no warm-up), the old couple back after it lets go, a stand-in that gave way - behind the title or the results only
+  // (render()), never mid-race. Every group under the car is listened to for things added or taken away; the parts that moved or changed are
+  // marked and cast for themselves from then on, so a part animated within its group can't have its stand-in rebuilt over and over)
+  const PX = { dirty: false, ls: [] }, pxOn = (e) => { if (!e.child || !e.child.userData.proxy) PX.dirty = true; };
+  function proxyDrop() { for (const P of PROXIES) proxyGone(P); PROXIES.length = 0; for (const o of PX.ls) { o.removeEventListener('childadded', pxOn); o.removeEventListener('childremoved', pxOn); } PX.ls.length = 0; PX.dirty = false; }
+  function proxyBuild(root) {   // (again from scratch after your car is made, and after a warm-up - the GLB couple arriving)
+    proxyDrop(); if (NOPACK || !renderer.shadowMap.enabled) return; const groups = new Set(); root.traverse((o) => { if (o.isMesh && o.parent) groups.add(o.parent); if (!o.isMesh) { o.addEventListener('childadded', pxOn); o.addEventListener('childremoved', pxOn); PX.ls.push(o); } });
+    for (const g of groups) {
+      const src = g.children.filter(plainCaster); if (src.length < 2) continue;
+      let n = 0; for (const o of src) n += o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count;
+      const pos = new Float32Array(n * 3); let k = 0;
+      for (const o of src) { o.updateMatrix(); const e = o.matrix.elements, p = o.geometry.attributes.position, ix = o.geometry.index, cnt = ix ? ix.count : p.count;
+        for (let i = 0; i < cnt; i++) { const j = ix ? ix.getX(i) : i, x = p.getX(j), y = p.getY(j), z = p.getZ(j); pos[k++] = e[0] * x + e[4] * y + e[8] * z + e[12]; pos[k++] = e[1] * x + e[5] * y + e[9] * z + e[13]; pos[k++] = e[2] * x + e[6] * y + e[10] * z + e[14]; } }
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); bareNormal(geo); geo.computeBoundingSphere();
+      const pm = shadowProxy(geo); pm.frustumCulled = src.every((o) => o.frustumCulled); g.add(pm);
+      PROXIES.push(proxyKeep(pm, src));
+    }
+    // the skinned parts (the GLB couple: body, clothes, hair... on one skeleton each) the same way: those on the same bones, bound and placed
+    // alike, with no cut-outs or morphs, joined into one skinned stand-in on that skeleton (its material one of theirs: never drawn, it only
+    // tells the shadow map which faces to draw, as theirs do)
+    for (const g of groups) {
+      const sets = new Map();
+      for (const o of g.children) {
+        if (!o.isSkinnedMesh || !o.castShadow || o.userData.proxy || o.userData.pxMoved || !o.matrixAutoUpdate || !o.skeleton || !o.geometry.attributes.skinIndex || o.geometry.morphAttributes.position || o.geometry.drawRange.count !== Infinity) continue;
+        const mt = o.material; if (!mt || Array.isArray(mt) || !cutFree(mt)) continue;
+        o.updateMatrix(); const key = mt.side + '|' + mt.shadowSide + '|' + o.skeleton.bones.map((b) => b.id).join(',') + '|' + o.bindMatrix.elements.join(',') + '|' + o.matrix.elements.join(',');   // (sides and shadowSide alike: the stand-in draws with the first one's material)
+        (sets.get(key) || sets.set(key, []).get(key)).push(o);
+      }
+      for (const src of sets.values()) {
+        if (src.length < 2) continue;
+        let n = 0; for (const o of src) n += o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count;
+        const pos = new Float32Array(n * 3), si = new Uint16Array(n * 4), sw = new Float32Array(n * 4); let k = 0;
+        for (const o of src) { const G = o.geometry, p = G.attributes.position, a = G.attributes.skinIndex, w = G.attributes.skinWeight, ix = G.index, cnt = ix ? ix.count : p.count;
+          for (let i = 0; i < cnt; i++, k++) { const j = ix ? ix.getX(i) : i; pos[k * 3] = p.getX(j); pos[k * 3 + 1] = p.getY(j); pos[k * 3 + 2] = p.getZ(j);
+            si[k * 4] = a.getX(j); si[k * 4 + 1] = a.getY(j); si[k * 4 + 2] = a.getZ(j); si[k * 4 + 3] = a.getW(j); sw[k * 4] = w.getX(j); sw[k * 4 + 1] = w.getY(j); sw[k * 4 + 2] = w.getZ(j); sw[k * 4 + 3] = w.getW(j); } }
+        const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); bareNormal(geo); geo.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); geo.setAttribute('skinWeight', new THREE.BufferAttribute(sw, 4)); geo.computeBoundingSphere();
+        const o0 = src[0], pm = new THREE.SkinnedMesh(geo, o0.material); pm.position.copy(o0.position); pm.quaternion.copy(o0.quaternion); pm.scale.copy(o0.scale); pm.bindMode = o0.bindMode; pm.bind(o0.skeleton, o0.bindMatrix);
+        pm.castShadow = true; pm.layers.set(SHADOW_L); pm.userData.proxy = true; pm.frustumCulled = src.every((o) => o.frustumCulled); g.add(pm);
+        PROXIES.push(proxyKeep(pm, src));
+      }
+    }
+    proxySync();
+  }
+  function proxySync() {   // (each frame, before the shadows are drawn)
+    for (let i = PROXIES.length - 1; i >= 0; i--) {
+      const P = PROXIES[i]; let vis = 0, same = true;
+      P.src.forEach((o, q) => { if (o.visible) vis++; let ok = o.parent === P.pm.parent && o.geometry === P.geo[q] && o.skeleton === P.sk[q] && o.material === P.mt[q] && o.geometry.attributes.position.version === P.v[q];
+        if (ok) { o.updateMatrix(); ok = o.matrix.equals(P.m[q]); } if (!ok) { same = false; o.userData.pxMoved = true; } });
+      if (!same) { proxyGone(P); PROXIES.splice(i, 1); PX.dirty = true; continue; }   // (a part moved or changed - or took another material: they cast for themselves till the stand-ins are rebuilt without it)
+      const all = vis === P.src.length; P.pm.visible = all; for (const o of P.src) o.castShadow = !all;
+    }
+  }
   const blobGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), blobMat = new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.55)'], [0.6, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false });
+  // (WS3 fix round) the new look's contact shadow, under every car on every tier: a dark core where the body all but meets the road (the
+  // light the sun's shadow map can't take away: the sky's, under the sills) and a short soft skirt. The old blob sat 5 cm up, UNDER WS2's
+  // crowned road in most lanes, so the cars looked pasted on; now it rides the crown (render()) and is drawn over the road. Darker where
+  // the sun's shadow map is (High, Medium: blobK, applyTier()), a touch lighter on a phone, where it's the only shadow there is
+  const CONTACT = LOOK_NEW ? radial(64, [[0, 'rgba(0,0,0,0.86)'], [0.34, 'rgba(0,0,0,0.74)'], [0.62, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]) : null;
+  if (LOOK_NEW) { blobMat.map = CONTACT; blobMat.polygonOffset = true; blobMat.polygonOffsetFactor = blobMat.polygonOffsetUnits = -4; }
   const coinGeo = new THREE.LatheGeometry([[0, 0.045], [0.4, 0.045], [0.46, 0.085], [0.58, 0.085], [0.63, 0.03], [0.63, -0.03], [0.58, -0.085], [0.46, -0.085], [0.4, -0.045], [0, -0.045]].map((q) => new THREE.Vector2(q[0], q[1])), 28); coinGeo.rotateX(Math.PI / 2);
   coinGeo.scale(0.46, 0.32, 0.46);   // (smaller than they were: less like a toy)
   const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.3, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
@@ -638,11 +1180,12 @@ export function createWorld() {
     const glowT = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffb060', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); glowT.scale.setScalar(0.65); g.add(glowT);   // a glow at the pipe
     g.userData.dia = [0.26, 0.6, 0.94].map((z) => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); d.position.z = z; d.scale.setScalar(0.17); g.add(d); return d; });   // shock diamonds in the core
     g.visible = false; return g; });
-  const fworks = particles(2200, true, { near: [10, 40] }), FWP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // fireworks over Poole Harbour (summer nights, as in the owner's footage)
-  const smoke = particles(700, false), sparks = particles(500, true, { near: [0.8, 2.0] }), tyre = particles(1100, false, { near: [0.5, 1.4], lift: 0.12, flat: true }), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 }, STM = { quick: true, drag: 0.993 };   // (tyre: smoke and dust low along the road, right by the car)
+  const FXU = LOOK_NEW ? fxUniforms() : null, FXB = { live: 0, cap: 1e9 }, PO = (o) => (LOOK_NEW ? Object.assign({ neu: true, U: FXU, bud: FXB }, o) : o);   // (revamp WS6: the new look's pools share the light and the tier's particle budget)
+  const fworks = particles(2200, true, PO({ near: [10, 40], glow: LOOK_NEW })), FWP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // fireworks over Poole Harbour (summer nights, as in the owner's footage)
+  const smoke = particles(700, false, PO()), sparks = particles(500, true, PO({ near: [0.8, 2.0], glow: LOOK_NEW, streak: LOOK_NEW })), tyre = particles(1100, false, PO({ near: [0.5, 1.4], lift: 0.12, flat: true })), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 }, STM = { quick: true, drag: 0.993 };   // (tyre: smoke and dust low along the road, right by the car)
   scene.add(smoke.points); scene.add(sparks.points); scene.add(tyre.points); scene.add(fworks.points);
-  const skid = skidMarks(); scene.add(skid.mesh);
-  const glows = glowPoints(1200); scene.add(glows.points);
+  const skid = skidMarks(LOOK_NEW); scene.add(skid.mesh);
+  const glows = glowPoints(1200, LOOK_NEW); scene.add(glows.points);
 
   // ---------------------------------------------------------------- state
   // ---- the Skimmer's gas jets (19 Oct 2026, from the thruster car shown on 15 Oct; owner, evening: "look more like the actual
@@ -662,9 +1205,19 @@ export function createWorld() {
     const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#bfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); g.add(glow);
     const dia = [0.16, 0.32, 0.48, 0.64].map(() => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); g.add(d); return d; });
     g.userData = { x: x, parts: parts, glow: glow, dia: dia }; g.visible = false; return g; });
-  const steam = particles(2200, false, { near: [0.6, 1.8], lift: 0 }); scene.add(steam.points);   // the Skimmer's steam puffs (2200: 20 Oct, "a bit more ... smoke ... or steam")
+  const steam = particles(2200, false, PO({ near: [0.6, 1.8], lift: 0 })); scene.add(steam.points);
+  const FXL = { v: new THREE.Vector3(), c: new THREE.Vector3(), cam: null };
+  function fxLight(dt) {   // (revamp WS6) each frame: the sun's way and colour, the sky's and the ground's, as the camera sees them; how fast the camera's going; the picture's height
+    camera.updateMatrixWorld(); const iv = camera.matrixWorldInverse;
+    FXU.sunV.value.subVectors(sun.position, sun.target.position).normalize().transformDirection(iv); FXU.upV.value.set(0, 1, 0).transformDirection(iv);
+    FXU.sunC.value.copy(sun.color).multiplyScalar(sun.intensity); FXU.skyC.value.copy(hemi.color).multiplyScalar(hemi.intensity * 1.2); FXU.gndC.value.copy(hemi.groundColor).multiplyScalar(hemi.intensity * 1.2);
+    { const S = FXU.sunC.value, K = FXU.skyC.value, ref = 0.2126 * (S.r + K.r) + 0.7152 * (S.g + K.g) + 0.0722 * (S.b + K.b) + 1e-4; S.multiplyScalar(1 / ref); K.multiplyScalar(1 / ref); FXU.gndC.value.multiplyScalar(1 / ref);   // (as a share of full sun and sky: the place's light gives the puffs their shape and colour, amb their brightness as before)
+      FXU.bk.value = Math.pow(Math.max(0, -FXU.sunV.value.z), 3) * FXU.look.value.y; }
+    camera.getWorldPosition(FXL.c); if (FXL.cam && dt > 0) { FXL.v.subVectors(FXL.c, FXL.cam).divideScalar(dt); if (FXL.v.lengthSq() > 4e4) FXL.v.set(0, 0, 0); } FXL.cam = (FXL.cam || new THREE.Vector3()).copy(FXL.c);   // (a jump - a new race, a camera change - is not a speed)
+    FXU.camV.value.lerp(FXL.v, 0.5); FXU.res.value = composer.readBuffer.height; FXU.aspect.value = camera.aspect;
+  }   // the Skimmer's steam puffs (2200: 20 Oct, "a bit more ... smoke ... or steam")
   const R = { brakeK: 0, lastV: 0, slump: 0, flying: [], crashObj: null, hop: 0, crashK: 0, camShake: 0, hemiI: 0.6, sunI: 2.6, envI: 1, tunK: 0, flareK: 0, flareN: 0, lastBanner: null, pose: {}, W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camOff: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
-    fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
+    fxN: 0, low: false, view: E.VIEW, fresh: [], pre: 0, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
 
   // ---------------------------------------------------------------- where each segment is in the world
   function poses(W, upto) {
@@ -800,7 +1353,7 @@ export function createWorld() {
       out.copy(c.g0).lerp(c.g1, smooth(0.3, 0.7, fbm(x / 45, z / 45)));
       out.lerp(c.dry, smooth(0.62, 0.8, vnoise(x / 70 + 9, z / 70 + 3)) * 0.7);
       out.multiplyScalar(0.88 + vnoise(x / 8, z / 8) * 0.22);
-      if (dist != null && dist < 2.4 && !LOOK[PAL[st].key].night) out.lerp(GRAVEL, (1 - smooth(0.4, 2.4, dist)) * 0.45);   // a strip of gravel and dust beside the road
+      if (!LOOK_NEW && dist != null && dist < 2.4 && !LOOK[PAL[st].key].night) out.lerp(GRAVEL, (1 - smooth(0.4, 2.4, dist)) * 0.45);   // a strip of gravel and dust beside the road
     } else if (kind === 'sand') out.copy(c.beach).multiplyScalar(0.93 + vnoise(x / 5, z / 5) * 0.12).lerp(c.wet, smooth(1.5, -0.3, y) * 0.5);
     else if (kind === 'prom') out.copy(LOOK[PAL[st].key].night ? ROCK : PROM).multiplyScalar(0.9 + vnoise(x / 2, z / 2) * 0.12); else if (kind === 'beach') out.copy(c.wet).lerp(c.beach, smooth(-0.2, 0.7, y)).multiplyScalar(0.95 + vnoise(x / 6, z / 6) * 0.1);
     else if (kind === 'bluff') {   // Bournemouth's cliffs (owner's photos, 7 Oct): orange-yellow sand broken by scrub - gorse, bramble, holm oak - thicker higher up
@@ -849,6 +1402,7 @@ export function createWorld() {
         list.push([wx, h, wz, k2, lat - span]); prevH = h;
       }
       side[d] = list;
+      if (LOOK_NEW) (g.ek || (g.ek = {}))[d] = list.length ? list[0][3] : null;   // (what lies just past this side's verge strip: a pavement gets a kerb - roadStripNew)
     }
     const pts = [], kinds = [];
     for (let j = side[-1].length - 1; j >= 0; j--) { pts.push(side[-1][j]); kinds.push(QK[side[-1][j][3]]); }   // the gap inside each point on the left takes that point's kind
@@ -866,12 +1420,14 @@ export function createWorld() {
     for (let q = j - 24; q < j; q++) if (Math.abs(E.segAt(W, q).k) > 1 / 210) return false;
     return true;
   }
-  function buildChunk(W, c) {
+  // a chunk of road and land is built a slice at a time (revamp WS1): chunkJob is a generator, and each yield is a place it can stop when this
+  // frame's time for building is up (updateChunks), carrying on next frame - built whole, a chunk took 20-60 ms at once (a judder every second)
+  function* chunkJob(W, c) {
     const i0 = c * CH, last = E.lastIndex(W), i1 = Math.min((c + 1) * CH, last);
     if (i1 <= i0) return null;
     poses(W, Math.min(last, i1 + 1));
     const r0 = Math.max(W.base, i0 - 1), r1 = Math.min(last, i1 + 1), rows = [];
-    for (let i = r0; i <= r1; i++) rows.push(rowAt(W, i));
+    for (let i = r0; i <= r1; i++) { rows.push(rowAt(W, i)); if ((i - r0) % 8 === 7) yield 'rows'; }
     const off = i0 - r0, n = rows[0].pts.length;
     // smooth normals at each corner, from its neighbours along the road and across it
     const nrm = rows.map((row, r) => row.pts.map((p, k) => {
@@ -880,10 +1436,11 @@ export function createWorld() {
       const L = NN.length(); if (L < 1e-6 || NN.y / L < 0.05) return [0, 1, 0];
       return [NN.x / L, NN.y / L, NN.z / L];
     }));
+    yield 'normals';
     // ---- the ground: two triangles per patch, wound to face up
-    const pos = [], nor = [], col = [], uv = [], fld = [];
+    const pos = [], nor = [], col = [], uv = [], fld = [], vds = [];
     const corner = (p, nv, kind, st, row) => {
-      pos.push(p[0], p[1], p[2]); nor.push(nv[0], nv[1], nv[2]);
+      pos.push(p[0], p[1], p[2]); nor.push(nv[0], nv[1], nv[2]); if (LOOK_NEW) vds.push(kind === 'land' ? p[4] || 0 : -1);   // (the new look's verge: metres from the road's edge)
       colourAt(kind, st, p[0], p[1], p[2], C1, p[4]); if (kind === 'land' && row.lz && row.lz[1] > 0) landTint(row.lz[0], row.lz[1], p[0], p[2], C1); col.push(C1.r, C1.g, C1.b); fld.push(kind === 'land' ? 0.02 + 0.98 * smooth(16, 52, p[4] || 0) : 0);   // (any land: mottled; far land: fields)
       if (kind === 'cliff' || kind === 'rock' || kind === 'bluff') uv.push((p[0] + p[2]) / 5, p[1] / 3); else uv.push(p[0] / 4.5, p[2] / 4.5);
     };
@@ -904,18 +1461,58 @@ export function createWorld() {
     }
     const gg = new THREE.BufferGeometry();
     gg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); gg.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
-    gg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); gg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); gg.setAttribute('aField', new THREE.Float32BufferAttribute(fld, 1)); gg.computeBoundingSphere();
+    gg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); gg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); gg.setAttribute('aField', new THREE.Float32BufferAttribute(fld, 1)); if (LOOK_NEW) gg.setAttribute('aVd', new THREE.Float32BufferAttribute(vds, 1)); sphereOf(gg, gg.attributes.position.array);
     const ground = new THREE.Mesh(gg, groundMat); ground.receiveShadow = true;
     const group = new THREE.Group(); group.add(ground); group.userData.ground = ground;
-    surf(rows, off, i1 - i0, group);
+    yield 'ground';
+    surf(rows, off, i1 - i0, group, W, r0);
     // ---- the road (one, or two in a split) and its rumble strips
     for (const b of [0, -1, 1]) roadStrip(W, i0, i1, b, group);
+    yield 'road';
     // ---- roadside things
-    scenery(W, i0, i1, group);
+    yield* scenery(W, i0, i1, group);
     group.userData = Object.assign(group.userData || {}, { i0: i0, i1: i1 });
     return group;
   }
-  function surf(rows, off, count, group) {   // white water where a beach meets the sea
+  function surfNew(rows, off, count, group, W, r0) {   // (revamp WS7) the new look's water's edge: the shallows strip (SHORE_FRAG), one draw a piece as the foam was
+    const pos = [], col = [], sh = [], dir = [], nor = [], SHORE_END = 3, last = E.lastIndex(W);   // (WS7 fix round: the strip fades out over its last 3 segments, 12 m, wherever it ends)
+    for (const d of [-1, 1]) {
+      const edge = (row) => {   // the still waterline, which way is out to sea, and points along the line from the beach out: [x, y, z, u]
+        if (row.sea !== d || !(row.look.beachY > 0.05)) return null;
+        const m = row.pts.length / 2, k0 = d < 0 ? m - 3 : m + 2; let wi = -1;   // (out from the road's edge on the sea side, to the first point under the water)
+        for (let k = k0; k >= 0 && k < row.pts.length; k += d) if (row.pts[k][1] < 0) { wi = k; break; }
+        const F = row.pts[wi - d], Wt = row.pts[wi]; if (wi < 0 || !F || F[3] === 'mud' || !(F[1] > 0)) return null;   // (a beach of sand or shingle: not a saltmarsh's mud, nor a quay)
+        const f = F[1] / (F[1] - Wt[1]), dx = Wt[0] - F[0], dz = Wt[2] - F[2], L = Math.hypot(dx, dz); if (!(L > 0.5)) return null;   // (two points on top of each other: a bend's inside, folded in)
+        const ox = dx / L, oz = dz / L, x0 = F[0] + dx * f, z0 = F[2] + dz * f, up = -Math.min(5, f * L);
+        return { o: [ox, oz], c: cols(row.st).beach, p: [up, up * 0.55, -1.2, -0.4, 0, 1.5, 4, 8, 13, 19, 25].map((u) => [x0 + ox * u, u < 0 ? -u / (f * L) * F[1] + 0.04 : 0.06, z0 + oz * u, u]), v: (row.g.i * SEG) % 4096 };
+      };
+      // (WS7 fix round) where the strip ends - the start of the road, a quay, a cliff foot, a place with no beach - it fades out along the shore over
+      // SHORE_END segments, so the turquoise and the wet sand never stop in a straight wall across the water. Whether a row has a waterline is the same
+      // test either side of a chunk's edge, so two chunks' pieces meet at the same strength and an end shows only where the strip really ends: past
+      // this chunk's own rows only the place's side of the sea and its beach are asked (building those rows cost the phone ~1 ms a beach chunk) - a
+      // quay or a saltmarsh starting just past a chunk's edge is the one case it misses. Past the road built so far: taken to go on
+      const hasAt = (i) => {
+        if (i < W.base) return false; if (i > last) return true;
+        const r = i - r0; if (r >= 0 && r < rows.length) return !!edge(rows[r]);
+        const g = E.segAt(W, i); return g.sea === d && LOOK[E.STAGES[g.st].key].beachY > 0.05;
+      };
+      const fade = (r) => { const i = r0 + r; let n = SHORE_END; for (let j = 1; j <= SHORE_END && n === SHORE_END; j++) if (!hasAt(i - j) || !hasAt(i + j)) n = j - 1; return n / SHORE_END; };
+      for (let r = off; r < off + count; r++) {
+        const A = edge(rows[r]), B = edge(rows[r + 1]); if (!A || !B) continue;
+        const vA = A.v, vB = vA + (rows[r + 1].g.i - rows[r].g.i) * SEG, fA = fade(r), fB = fade(r + 1);
+        for (let k = 0; k < A.p.length - 1; k++) {
+          const q = [[A.p[k], vA, A, fA], [A.p[k + 1], vA, A, fA], [B.p[k], vB, B, fB], [B.p[k + 1], vB, B, fB]], tri = d > 0 ? [0, 2, 1, 1, 2, 3] : [0, 1, 2, 1, 3, 2];   // (wound to face up)
+          for (const i of tri) { const [P, v, E2, f] = q[i]; pos.push(P[0], P[1], P[2]); sh.push(P[3], v, f); dir.push(E2.o[0], E2.o[1]); col.push(E2.c.r, E2.c.g, E2.c.b); nor.push(0, 1, 0); }
+        }
+      }
+    }
+    if (!pos.length) return;
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    g.setAttribute('aSh', new THREE.Float32BufferAttribute(sh, 3)); g.setAttribute('aDir', new THREE.Float32BufferAttribute(dir, 2)); g.computeBoundingSphere();
+    const m = new THREE.Mesh(g, SEA.shore); m.renderOrder = 2; m.receiveShadow = true; group.add(m); group.userData.shore = m;
+  }
+  function surf(rows, off, count, group, W, r0) {   // white water where a beach meets the sea
+    if (SEA) return surfNew(rows, off, count, group, W, r0);
     const pos = [], uv = [];
     for (const d of [-1, 1]) {
       const fi = d < 0 ? rows[0].pts.length / 2 - 2 - 4 : rows[0].pts.length / 2 + 1 + 4;   // the cliff foot (the water is the next point out); the row's middle has 4 points (road edges, and the filler's two below the road)
@@ -938,6 +1535,7 @@ export function createWorld() {
     const m = new THREE.Mesh(g, foamMat); m.renderOrder = 2; group.add(m);
   }
   function roadStrip(W, i0, i1, b, group) {
+    if (LOOK_NEW) return roadStripNew(W, i0, i1, b, group);
     const pos = [], uv = [], rpos = [], rcol = [], dcol = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, Q = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
     for (let i = i0; i < i1; i++) {
       const g = E.segAt(W, i), split = !!(g.fk && g.fk.b), dk = g.tun ? 0.62 : 1, dk2 = E.segAt(W, i + 1).tun ? 0.62 : 1;
@@ -974,15 +1572,121 @@ export function createWorld() {
     if (pos.length) { const g1 = new THREE.BufferGeometry(); g1.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g1.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g1.setAttribute('color', new THREE.Float32BufferAttribute(dcol, 3)); g1.computeVertexNormals(); const m = new THREE.Mesh(g1, roadMat); m.receiveShadow = true; group.add(m); }
     if (rpos.length) { const g2 = new THREE.BufferGeometry(); g2.setAttribute('position', new THREE.Float32BufferAttribute(rpos, 3)); g2.setAttribute('color', new THREE.Float32BufferAttribute(rcol, 3)); g2.computeVertexNormals(); const m2 = new THREE.Mesh(g2, rumbleMat); m2.receiveShadow = true; group.add(m2); }
   }
+  // ---- the road, new look (revamp WS2, 22 Oct 2026). Across: a crown five corners wide (the middle CROWN higher, its slope shown in the light
+  // CROWN_N times over - the true 3.5 cm over 7 m is a fraction of a degree - and the edges a shade darker). Past each edge line the RUMBLE
+  // strip, as wide as ever (it's the rules'), is now one of three things: red and white ridged strips on the bends only (the old plain test,
+  // in 2 m blocks), a grey kerb where a pavement runs beside the road (the towns, the proms, the quays; not at a side street), or elsewhere the
+  // asphalt running on to a dusty, broken edge and the verge. The lines are no longer in a picture: aMark tells the shader what this stretch
+  // has (roadNew), and anything laid on the road (crossings, the start line, the SLOW words, cat's eyes, lamps' pools, tyre marks) sits up
+  // by the crown (crownY)
+  // (WS2 fix round: past a strip that isn't a kerb, a LIP of gravel on the road's own mesh - the land falls 15-25 cm just past the strip, so a
+  // verge drawn on the land was out of sight behind a rumble strip and a dark smear elsewhere)
+  const CROWN = 0.035, CROWN_N = 3, KERB_H = 0.12, KERB_W = 0.25, LIP = 0.8;
+  function crownY(lat, w) { if (!LOOK_NEW) return 0; const a = Math.abs(lat) / (w || HALF); return a >= 1 ? 0 : a < 0.5 ? CROWN * (1 - 0.5 * a) : CROWN * 1.5 * (1 - a); }   // (the five corners joined by straight lines, as the road is drawn)
+  const MK = { m: 0, bend: 0, kb: 0 };
+  function markOf(W, i) {   // MK: the lane lines here (m: 0 dashes, 1 longer hazard dashes - a bend, or a sharp one within 60 m - 2 two solid lines on one lane line, in
+    // the sharpest (tighter than 120 m)), the bend (-1 to 1, right +), and the sharpest bend within 6 segments (kb: the old plain test, for the rumble strips)
+    let k2 = 0, k6 = 0, ka = 0;
+    for (let j = -6; j <= 6; j++) { const k = E.segAt(W, i + j).k; ka += k; k6 = Math.max(k6, Math.abs(k)); if (j >= -2 && j <= 2) k2 = Math.max(k2, Math.abs(k)); }
+    let m = k2 > 1 / 120 ? 2 : k2 > 1 / 210 || k6 >= 1 / 420 ? 1 : 0;
+    for (let j = 3; j <= 15 && !m; j++) if (Math.abs(E.segAt(W, i + j).k) > 1 / 210) m = 1;
+    MK.m = m; MK.bend = clamp(ka / 13 * 150, -1, 1); MK.kb = k6; return MK;
+  }
+  const RUMP = new Map(), rumPair = (st) => { let p = RUMP.get(st); if (!p) { p = PAL[st].rumble.map((c) => { const rk = KERBC[c] || (KERBC[c] = '#' + new THREE.Color(c).lerp(KERBG, 0.18).getHexString()); return new THREE.Color(rk); }); RUMP.set(st, p); } return p; };   // (a place's two rumble colours, toned down as before)
+  const CA = [0, 0, 0, 0, 0], CB = [0, 0, 0, 0, 0], LAT = [-1, -0.5, 0, 0.5, 1];
+  function roadStripNew(W, i0, i1, b, group) {   // (one indexed mesh a chunk: the crown's corners shared by its strips; no little arrays made a corner - it runs on a phone)
+    const pos = [], nor = [], uv = [], col = [], mk = [], ix = [], rpos = [], rcol = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, Q = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, M = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+    let n = 0, mark = 0, bend = 0, bk = 1, nbx = 0, nby = 1, nbz = 0;
+    const vtx = (p, lat, w, v, dy, r, gg, bb, m2, nx, ny, nz, ux, mx) => {   // a corner: where, its place in the asphalt picture (ux: a kerb face's 0-1 up it), its colour, what it is (aMark.z), its up (none: the crown's),
+      // mx: aMark.x, if not the lane lines' (a rumble strip's other block's colour)
+      const c = Math.cos(p.th), sn = Math.sin(p.th);
+      pos.push(p.x + c * lat, p.y + lat * Math.sin(p.bank) * bk + 0.03 + crownY(lat, w) + dy, p.z + sn * lat); uv.push(ux === undefined ? 0.5 + lat / (2 * w) : ux, v); col.push(r, gg, bb); mk.push(mx === undefined ? mark : mx, bend, m2);
+      if (nx === undefined) { const sl = 2 * CROWN * lat / (w * w) * CROWN_N; nx = nbx + c * sl; ny = nby; nz = nbz + sn * sl; }   // (the crown: leaning out either side of the middle)
+      const Ln = Math.hypot(nx, ny, nz) || 1; nor.push(nx / Ln, ny / Ln, nz / Ln); return n++; };
+    const quad = (a, b2, c, d) => { ix.push(a, b2, c, b2, d, c); };   // (a, b2: the near corners left to right; c, d: the far ones)
+    const sideQ = (d, a, bo, c, dO) => (d < 0 ? quad(bo, a, dO, c) : quad(a, bo, c, dO));   // (a, c: a side strip's inner corners; bo, dO: its outer)
+    for (let i = i0; i < i1; i++) {
+      const g = E.segAt(W, i), split = !!(g.fk && g.fk.b), dk = g.tun ? 0.62 : 1, dk2 = E.segAt(W, i + 1).tun ? 0.62 : 1;
+      if (split !== !!b) continue;   // the one road, or (in a split) each of the two
+      const gn = E.segAt(W, i + 1), same = !!(gn.fk && gn.fk.b) === split && !gn.fk === !g.fk;   // end exactly where the next piece starts (no hairline seam)
+      at(W, i * SEG, b, P); at(W, (i + 1) * SEG - (same ? 0 : 0.001), b, Q);
+      const w1 = g.fk && g.fk.a ? g.fk.w1 : HALF, w2 = g.fk && g.fk.a ? g.fk.w2 : HALF, wm = (w1 + w2) / 2, v0 = i * SEG / 9, v1 = (i + 1) * SEG / 9, vm = (v0 + v1) / 2;
+      bk = g.fk ? 0 : 1; markOf(W, i); mark = MK.m; bend = MK.bend;
+      { const ax = Q.x - P.x, ay = Q.y - P.y, az = Q.z - P.z, cx2 = Math.cos(P.th), cy2 = Math.sin(P.bank) * bk, cz2 = Math.sin(P.th);   // the segment's own up (its slope and bank)
+        nbx = cy2 * az - cz2 * ay; nby = cz2 * ax - cx2 * az; nbz = cx2 * ay - cy2 * ax; const nl = (nby < 0 ? -1 : 1) / (Math.hypot(nbx, nby, nbz) || 1); nbx *= nl; nby *= nl; nbz *= nl; }
+      for (let q = 0; q < 5; q++) {   // the carriageway: five corners across at each end, the edges a shade darker (dust and grime)
+        const l = LAT[q], f = 1 - 0.1 * smooth(0.45, 1, Math.abs(l)), s1 = dk * f, s2 = dk2 * f;
+        CA[q] = vtx(P, l * w1, w1, v0, 0, s1, s1, s1, 0); CB[q] = vtx(Q, l * w2, w2, v1, 0, s2, s2, s2, 0);
+      }
+      for (let q = 0; q < 4; q++) quad(CA[q], CA[q + 1], CB[q], CB[q + 1]);
+      const plain = MK.kb < 1 / 420 && !g.line && !g.gate;
+      let midDone = false;
+      for (const d of [-1, 1]) {   // each side's strip
+        const kerb = !g.line && !g.gate && !g.fk && g.ek && g.ek[d] === 'prom' && !sideStreet(W, i, d, 1);
+        const o1 = d * w1, o2 = d * w2, O1 = d * (w1 + RUM), O2 = d * (w2 + RUM);
+        if (kerb) {   // a gutter, then the kerb: its face, its top, its back down to the pavement (the shader colours it concrete)
+          const g1 = d * (w1 + RUM - KERB_W), g2 = d * (w2 + RUM - KERB_W), fx = -d * Math.cos(P.th), fz = -d * Math.sin(P.th);
+          sideQ(d, vtx(P, o1, w1, v0, 0, dk, dk, dk, 2, nbx, nby, nbz), vtx(P, g1, w1, v0, -0.005, dk, dk, dk, 2, nbx, nby, nbz), vtx(Q, o2, w2, v1, 0, dk2, dk2, dk2, 2, nbx, nby, nbz), vtx(Q, g2, w2, v1, -0.005, dk2, dk2, dk2, 2, nbx, nby, nbz));
+          const fb1 = vtx(P, g1, w1, v0, -0.005, dk, dk, dk, 6, fx, 0.15, fz, 0), ft1 = vtx(P, g1, w1, v0, KERB_H, dk, dk, dk, 6, fx, 0.15, fz, 1), fb2 = vtx(Q, g2, w2, v1, -0.005, dk2, dk2, dk2, 6, fx, 0.15, fz, 0), ft2 = vtx(Q, g2, w2, v1, KERB_H, dk2, dk2, dk2, 6, fx, 0.15, fz, 1);
+          if (d < 0) quad(ft1, fb1, ft2, fb2); else quad(fb1, ft1, fb2, ft2);   // (its face, to the road: aMark.z 6, its own 0-1 up it)
+          sideQ(d, vtx(P, g1, w1, v0, KERB_H, dk, dk, dk, 3, nbx, nby, nbz), vtx(P, O1, w1, v0, KERB_H, dk, dk, dk, 3, nbx, nby, nbz), vtx(Q, g2, w2, v1, KERB_H, dk2, dk2, dk2, 3, nbx, nby, nbz), vtx(Q, O2, w2, v1, KERB_H, dk2, dk2, dk2, 3, nbx, nby, nbz));
+          const bt1 = vtx(P, O1, w1, v0, KERB_H, dk, dk, dk, 3, -fx, 0.15, -fz), bb1 = vtx(P, O1, w1, v0, -0.28, dk, dk, dk, 3, -fx, 0.15, -fz), bt2 = vtx(Q, O2, w2, v1, KERB_H, dk2, dk2, dk2, 3, -fx, 0.15, -fz), bb2 = vtx(Q, O2, w2, v1, -0.28, dk2, dk2, dk2, 3, -fx, 0.15, -fz);
+          if (d < 0) quad(bb1, bt1, bb2, bt2); else quad(bt1, bb1, bt2, bb2);   // (its back, down to the pavement)
+        } else if (!plain) {   // a bend's rumble strip: red and white in 4 m blocks (a segment each; drawn in two halves, for the curve), its outer edge a touch proud
+          if (!midDone) { at(W, (i + 0.5) * SEG, b, M); midDone = true; }
+          for (let h = 0; h < 2; h++) {
+            const A = h ? M : P, C2 = h ? Q : M, wa = h ? wm : w1, wc = h ? w2 : wm, va = h ? vm : v0, vc = h ? v1 : vm, da = h ? (dk + dk2) / 2 : dk, dc = h ? dk2 : (dk + dk2) / 2;
+            const pr = rumPair(g.st), RC = pr[i % 2 ? 0 : 1], RO = pr[i % 2 ? 1 : 0];   // (this block's colour and the other's, parsed once a place)
+            const ox = Math.round(RO.r * da * 255) * 65536 + Math.round(RO.g * da * 255) * 256 + Math.round(RO.b * da * 255);   // (the other block's colour, for the shader to blend at speed)
+            sideQ(d, vtx(A, d * wa, wa, va, 0, RC.r * da, RC.g * da, RC.b * da, 4, nbx, nby, nbz, undefined, ox), vtx(A, d * (wa + RUM), wa, va, 0.04, RC.r * da, RC.g * da, RC.b * da, 4, nbx, nby, nbz, undefined, ox),
+              vtx(C2, d * wc, wc, vc, 0, RC.r * dc, RC.g * dc, RC.b * dc, 4, nbx, nby, nbz, undefined, ox), vtx(C2, d * (wc + RUM), wc, vc, 0.04, RC.r * dc, RC.g * dc, RC.b * dc, 4, nbx, nby, nbz, undefined, ox));
+          }
+        } else {   // no kerb, no rumble strip: the asphalt runs on to its own broken edge
+          const e1 = dk * 0.92, e2 = dk2 * 0.92;
+          sideQ(d, vtx(P, o1, w1, v0, 0, e1, e1, e1, 1, nbx, nby, nbz), vtx(P, O1, w1, v0, -0.02, e1, e1, e1, 1, nbx, nby, nbz), vtx(Q, o2, w2, v1, 0, e2, e2, e2, 1, nbx, nby, nbz), vtx(Q, O2, w2, v1, -0.02, e2, e2, e2, 1, nbx, nby, nbz));
+        }
+        if (!kerb && !g.fk && !g.line && !g.tun && !g.brg && g.ek && (g.ek[d] === 'land' || g.ek[d] === 'verge') && !sideStreet(W, i, d, 1)) {   // then, by grass, the gravel lip: LIP wide,
+          // from the strip's outer edge falling 5 cm (aMark.z 5: roadNew shades it gravel; the land's verge past it carries on to a ragged grass edge)
+          const h0 = plain ? -0.02 : 0.04, x1 = d * (w1 + RUM + LIP), x2 = d * (w2 + RUM + LIP);
+          sideQ(d, vtx(P, O1, w1, v0, h0, 1, 1, 1, 5, nbx, nby, nbz), vtx(P, x1, w1, v0, h0 - 0.05, 1, 1, 1, 5, nbx, nby, nbz), vtx(Q, O2, w2, v1, h0, 1, 1, 1, 5, nbx, nby, nbz), vtx(Q, x2, w2, v1, h0 - 0.05, 1, 1, 1, 5, nbx, nby, nbz));
+        }
+      }
+      const e = (p, lat, w, dy) => [p.x + Math.cos(p.th) * lat, p.y + lat * Math.sin(p.bank) * bk + 0.03 + crownY(lat, w) + dy, p.z + Math.sin(p.th) * lat];   // (a point on the road's surface, for things laid on it)
+      if (LOOK[PAL[g.st].key].yellow && !NOYELLOW[zoneKey(W, g)] && !g.line && !g.gate && !(g.fk && g.fk.a)) for (const d of [-1, 1]) for (const off of [0.2, 0.44]) {   // the town's double yellow lines
+        const y1 = e(P, d * (w1 - off), w1, 0.012), y2 = e(P, d * (w1 - off - 0.14), w1, 0.012), y3 = e(Q, d * (w2 - off - 0.14), w2, 0.012), y4 = e(Q, d * (w2 - off), w2, 0.012);
+        if (d < 0) rpos.push(...y1, ...y2, ...y4, ...y2, ...y3, ...y4); else rpos.push(...y2, ...y1, ...y3, ...y1, ...y4, ...y3);
+        for (let q = 0; q < 6; q++) { const o = rcol.length; rcol.length += 3; lin('#d8a818', rcol, o); }
+      }
+      if (g.zebra) for (let q = 0; q < 12; q++) {   // a zebra crossing
+        const l0 = -6.6 + q * 1.2 - 0.27, l1 = l0 + 0.55, z1 = e(P, l0, w1, 0.012), z2 = e(P, l1, w1, 0.012), z3 = e(Q, l1, w2, 0.012), z4 = e(Q, l0, w2, 0.012);
+        rpos.push(...z1, ...z2, ...z4, ...z2, ...z3, ...z4); for (let k2 = 0; k2 < 6; k2++) { const o = rcol.length; rcol.length += 3; lin('#f2f2ee', rcol, o); }
+      }
+      if (g.line) for (let q = 0; q < 12; q++) {   // the start line: a chequered band across
+        const l0 = -HALF + q * HALF / 6, l1 = l0 + HALF / 6, f1 = e(P, l0, w1, 0.01), f2 = e(P, l1, w1, 0.01), f3 = e(Q, l1, w2, 0.01), f4 = e(Q, l0, w2, 0.01);
+        rpos.push(...f1, ...f2, ...f4, ...f2, ...f3, ...f4); for (let z = 0; z < 6; z++) { const o = rcol.length; rcol.length += 3; lin(q % 2 ? '#111111' : '#f4f4f4', rcol, o); }
+      }
+    }
+    if (pos.length) { const g1 = new THREE.BufferGeometry(); g1.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g1.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g1.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g1.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g1.setAttribute('aMark', new THREE.Float32BufferAttribute(mk, 3)); g1.setIndex(ix); sphereOf(g1, g1.attributes.position.array); const m = new THREE.Mesh(g1, roadMat); m.receiveShadow = true; group.add(m); }
+    if (rpos.length) { const g2 = new THREE.BufferGeometry(); g2.setAttribute('position', new THREE.Float32BufferAttribute(rpos, 3)); g2.setAttribute('color', new THREE.Float32BufferAttribute(rcol, 3)); g2.computeVertexNormals(); const m2 = new THREE.Mesh(g2, rumbleMat); m2.receiveShadow = true; group.add(m2); }
+  }
   // ---- everything that stands by the road in a chunk, merged into one mesh per material (and one per sign picture);
   //      things you can knock over keep their own little group so they can fly off
-  const TMP = new THREE.Object3D();
+  const TMP = new THREE.Object3D(), OWN_N = 20000;   // (OWN_N: corners from which a roadside shape is drawn as itself, not merged - see scenery(). At 8,000 the hedges and palms
+  // came in too, placed by the dozen: 80 more draws. From 20,000 it is a few big things - the crowds, the piers - 30-70 thousand each)
   const forkOut = (g) => !g.fk ? 0 : g.fk.a ? (g.fk.w1 + g.fk.w2) / 2 - HALF : (g.fk.o1 + g.fk.o2) / 2;   // where the road splits: how much further out its outside edge is
-  function scenery(W, i0, i1, group) {
-    const L = {}, signs = new Map(), lamps = [], pools = [], slows = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
-    const addModel = (geo, key, x, y, z, ry, s, temp) => { if (!geo) return; TMP.position.set(x, y, z); TMP.rotation.set(0, ry, 0); TMP.scale.setScalar(s || 1); TMP.updateMatrix(); (L[key] || (L[key] = [])).push([geo, TMP.matrix.clone(), temp]); };
+  const mdl = (t, v) => { const t0 = realNow(), m = MD.model(t, v), d = realNow() - t0; if (d > 3 && CQ.heavy.length < 200) CQ.heavy.push(t + ':' + (v || 0) + ' ' + d.toFixed(1)); return m; };   // (a roadside shape, its first making timed: the slow ones are listed for the bench)
+  function* scenery(W, i0, i1, group) {
+    const L = {}, signs = new Map(), lamps = [], pools = [], slows = [], eyes = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+    const own = [];   // (revamp WS1: a big shape - a crowd, a pier - stands as a mesh of its own, sharing the one copy MD.model keeps, rather than copied into the
+    // chunk's merged one: the start's crowds were 600,000 corners copied and sent to the graphics card again every race, 120 ms on a phone. Drawn
+    // behind the title first, they're on the card already when the race begins. A few more draws where they stand)
+    const addModel = (geo, key, x, y, z, ry, s, temp) => { if (!geo) return; TMP.position.set(x, y, z); TMP.rotation.set(0, ry, 0); TMP.scale.setScalar(s || 1); TMP.updateMatrix();
+      if (!temp && geo.attributes.position.count >= OWN_N) { own.push([geo, key, TMP.matrix.clone()]); return; }
+      (L[key] || (L[key] = [])).push([geo, TMP.matrix.clone(), temp]); };
     const addAll = (m, x, y, z, ry, s) => { for (const k in m) if (m[k] && MAT[k]) addModel(m[k], k, x, y, z, ry, s); };
+    for (let i = i0; i < i1; i++) { const g = E.segAt(W, i); if (g.spr) for (const it of g.spr) if (!it.done) { const t0 = realNow(); mdl(it.t, it.v); if (realNow() - t0 > 0.5) yield 'model ' + it.t; } }   // (the landmarks' shapes first, each new one a slice of its own: the first pier takes 10 ms)
     for (let i = i0; i < i1; i++) {
+      if (i > i0) yield 'seg';
       const g = E.segAt(W, i), S = E.STAGES[g.st], look = LOOK[S.key];
       // walls, fences and the sea wall: pieces end to end
       const walls = [];
@@ -997,16 +1701,16 @@ export function createWorld() {
       }
       if (g.sea && g.sh - 1.5 < 26 && look.edge && !open && !g.brg && !g.tun) walls.push([g.sea * (g.sh - 1.2), look.edge === 'rail' ? 'rail' : look.edge === 'quay' ? 'quay' : 'fence']);
       if (g.brg) walls.push([-E.BRG_W, 'rail'], [E.BRG_W, 'rail']);
-      for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(MD.model(wl[1], 0), P.x, P.y, P.z, -P.th); }
+      for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(mdl(wl[1], 0), P.x, P.y, P.z, -P.th); }
       const fo = forkOut(g);
       if (!g.tun && !g.brg && !g.gate && !g.wet) for (const d of [-1, 1]) {   // the boundary along the land side (the engine stops you at it)
         if ((d < 0 ? g.wl : g.wr) || g.sea === d) continue;
         if (LOOK[S.key].bluff) continue;   // (the beach huts stand along it)
         const vk = zt(VERGE_K, W, g) || 'vpost', lat = d * (E.VERGE + 0.3 + fo); if (vk === 'none' || sideStreet(W, i, d, 2)) continue; place(W, i * SEG + SEG / 2, lat, 0, P);
         const vy = groundAt(W, g, P, lat) - 0.05;
-        if (vk === 'hedge') addAll(HEDGE[i % 3], P.x, vy - 0.1, P.z, -P.th); else addAll(MD.model(vk, i % 2), P.x, vy, P.z, -P.th);
+        if (vk === 'hedge') addAll(HEDGE[i % 3], P.x, vy - 0.1, P.z, -P.th); else addAll(mdl(vk, i % 2), P.x, vy, P.z, -P.th);
       }
-      if (zt(BUNT, W, g) && i % 26 === 13 && !g.tun && !g.brg && !g.fk && !g.gate && !g.over) { place(W, i * SEG + SEG / 2, 0, 0, P); addAll(MD.model('bunting', i % 3), P.x, P.y, P.z, -P.th); }
+      if (zt(BUNT, W, g) && i % 26 === 13 && !g.tun && !g.brg && !g.fk && !g.gate && !g.over) { place(W, i * SEG + SEG / 2, 0, 0, P); addAll(mdl('bunting', i % 3), P.x, P.y, P.z, -P.th); }
       const rows = !R.low && !g.tun && !g.brg && !g.gate && !g.wet && zt(ROWS, W, g);
       if (rows) for (const [t, nv, every, lat0, jit] of rows) {
         if (i % every) continue;
@@ -1020,7 +1724,7 @@ export function createWorld() {
           if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse|gardenwall|lymhouse|precinct|purbeckcottage|terrace)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch|bearpub|minster|warehamhall|quayinn|granary|woolmanor|levelcross|stonepub|swanhall|kingstatue)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
           if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } for (let q = i - 8; q <= i + 8 && !busy; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'overstrand')) busy = true; } if (busy) continue; }
           const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse|lymhouse|lulcottage|caravan|parade|nightparade|vicvilla|semis|flatparade|estatehouse|precinct)$/.test(t) ? faceRoad(d, P.th) : t === 'gardenwall' ? -P.th + (d < 0 ? Math.PI : 0) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
-          addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
+          addAll(mdl(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
       }
       if (g.brg || g.tun) {   // the bridge's deck and its pillars down to the sea bed; the tunnel's roof, its lights and its portals
@@ -1032,7 +1736,7 @@ export function createWorld() {
           addAll(TROOF, P.x, P.y, P.z, -P.th); addAll(TWALLS[i % 4], P.x, P.y, P.z, -P.th); addAll(TCOVER, P.x, P.y, P.z, -P.th);
           if (i % 4 === 0) addAll(TLAMP, P.x, P.y, P.z, -P.th);
           if (i % 3 === 1) addAll(TRIB, P.x, P.y, P.z, -P.th);
-          if (i % 4 === 0) for (const d of [-1, 1]) pools.push([P.x + Math.cos(P.th) * d * 4.4, P.y + 0.06, P.z + Math.sin(P.th) * d * 4.4, 2.0, P.th, 2.6]);
+          if (i % 4 === 0) for (const d of [-1, 1]) pools.push([P.x + Math.cos(P.th) * d * 4.4, P.y + 0.06 + (LOOK_NEW ? CROWN : 0), P.z + Math.sin(P.th) * d * 4.4, 2.0, P.th, 2.6]);
           const a = E.segAt(W, i - 1), b = E.segAt(W, i + 1);
           if (!a.tun) { place(W, i * SEG, 0, 0, P); addAll(PORTAL, P.x, P.y, P.z, -P.th); }
           if (!b.tun) { place(W, (i + 1) * SEG, 0, 0, P); addAll(PORTAL, P.x, P.y, P.z, -P.th); }
@@ -1062,32 +1766,54 @@ export function createWorld() {
         else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge|chairlift|craneway)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
         if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll, group); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
-        const m = MD.model(it.t, it.v); if (!m) continue;
+        const m = mdl(it.t, it.v); if (!m) continue;
         if (it.soft) {
           const grp = new THREE.Group();
           for (const k in m) if (m[k] && MAT[k]) { const mesh = new THREE.Mesh(m[k], MAT[k]); mesh.castShadow = k !== 'glow'; mesh.userData.keep = true; grp.add(mesh); }
           grp.position.set(P.x, y, P.z); grp.rotation.y = ry; grp.userData.it = it; group.add(grp); continue;
         }
         addAll(m, P.x, y, P.z, ry, BIG[it.t]);
-        if (lit(look) && it.t === 'lamp') { TMP.position.set(0, 5.95, -1.5); TMP.rotation.set(0, ry, 0); TMP.position.applyEuler(TMP.rotation); lamps.push(P.x + TMP.position.x, y + TMP.position.y, P.z + TMP.position.z); { const dd = it.x < 0 ? -1 : 1; pools.push([P.x + TMP.position.x - Math.cos(P.th) * dd * 2, P.y + 0.06, P.z + TMP.position.z - Math.sin(P.th) * dd * 2, 5.2, P.th, 1.4]); } }
+        if (lit(look) && it.t === 'lamp') { TMP.position.set(0, 5.95, -1.5); TMP.rotation.set(0, ry, 0); TMP.position.applyEuler(TMP.rotation); lamps.push(P.x + TMP.position.x, y + TMP.position.y, P.z + TMP.position.z); { const dd = it.x < 0 ? -1 : 1; pools.push([P.x + TMP.position.x - Math.cos(P.th) * dd * 2, P.y + 0.06 + (LOOK_NEW ? CROWN : 0), P.z + TMP.position.z - Math.sin(P.th) * dd * 2, 5.2, P.th, 1.4]); } }
         if (look.night && (it.t === 'yacht' || it.t === 'buoy')) lamps.push(P.x, y + (it.t === 'yacht' ? 12.3 : 2.3), P.z);
       }
-      if (i % 3 === 0 && !g.fk) for (const lat of [-HALF / 3, HALF / 3]) { place(W, i * SEG + SEG / 2, lat, 0, P); addAll(EYE, P.x, P.y + 0.03, P.z, -P.th); }   // a cat's eye on each lane line
-      if (i % 12 === 0 && !g.tun && !g.brg && !g.fk && !g.gate) for (const d of [-1, 1]) { const mx = d * (HALF + RUM + 1.4); if (!(g.sea === d && g.sh < 14) && !(d < 0 ? g.wl : g.wr)) { place(W, i * SEG, mx, 0, P); addAll(MD.model('marker', 0), P.x, groundAt(W, g, P, mx) - 0.05, P.z, -P.th); } }
+      if (i % 3 === 0 && !g.fk) {
+        if (!LOOK_NEW) for (const lat of [-HALF / 3, HALF / 3]) { place(W, i * SEG + SEG / 2, lat, 0, P); addAll(EYE, P.x, P.y + 0.03, P.z, -P.th); }   // a cat's eye on each lane line
+        else for (const [lat, c] of EYES) { place(W, i * SEG + SEG / 2, lat, 0, P); const y = P.y + 0.03 + crownY(lat, HALF); addAll(c ? (c === 1 ? EYE_R : EYE_A) : EYE, P.x, y, P.z, -P.th); eyes.push(P.x, y, P.z, c); }   // (and on the edge lines; at dusk, at night and in tunnels they shine back - render())
+      }
+      if (i % 12 === 0 && !g.tun && !g.brg && !g.fk && !g.gate) for (const d of [-1, 1]) { const mx = d * (HALF + RUM + 1.4); if (!(g.sea === d && g.sh < 14) && !(d < 0 ? g.wl : g.wr)) { place(W, i * SEG, mx, 0, P); addAll(mdl('marker', 0), P.x, groundAt(W, g, P, mx) - 0.05, P.z, -P.th); } }
       dress(W, i, g, look, P, addAll);
     }
-    for (const k in L) {
-      const mesh = new THREE.Mesh(mergeT(L[k]), MAT[k]);
-      mesh.castShadow = k !== 'glow' && k !== 'grass' && k !== 'twall'; mesh.receiveShadow = k !== 'glow' && k !== 'twall';
-      group.add(mesh);
+    yield 'seg';
+    { // (revamp WS4) the roadside things the one-draw material can take (plain lit, shiny, glowing, the tunnel roofs, the crowd's arms...): one
+      // mesh a chunk. Those that cast shadows go first, so the chunk's shadow stand-in is the same corners drawn only as far as the last of them
+      const PKL = [], PKG = []; let castN = 0;
+      for (const k in L) { const s = pkJoin(MAT[k]); if (s < 0) continue; for (const e of L[k]) { (k === 'glow' ? PKG : PKL).push([e[0], e[1], e[2], s]); if (k !== 'glow') castN += e[0].index ? e[0].index.count : e[0].attributes.position.count; } }
+      if (PKL.length + PKG.length) {
+        const geo = yield* mergeT(PKL.concat(PKG)), mesh = new THREE.Mesh(geo, CARMAT); mesh.receiveShadow = true; group.add(mesh);
+        if (castN && renderer.shadowMap.enabled) { const sg = new THREE.BufferGeometry(); sg.setAttribute('position', geo.attributes.position); sg.setAttribute('normal', geo.attributes.normal); sg.setDrawRange(0, castN); sg.boundingSphere = geo.boundingSphere; group.add(shadowProxy(sg)); }
+        yield 'merge one ' + (PKL.length + PKG.length);
+      }
     }
-    for (const [key, list] of signs) { const m = new THREE.Mesh(mergeT(list), signMat(key)); m.castShadow = true; group.add(m); }
+    for (const k in L) {
+      if (pkJoin(MAT[k]) >= 0) continue;
+      const mesh = new THREE.Mesh(yield* mergeT(L[k]), MAT[k]);
+      mesh.castShadow = k !== 'glow' && k !== 'grass' && k !== 'twall'; mesh.receiveShadow = k !== 'glow' && k !== 'twall';
+      group.add(mesh); yield 'merge ' + k + ' ' + L[k].length;
+    }
+    for (const [geo, k, m] of own) {
+      const mesh = new THREE.Mesh(geo, MAT[k]); mesh.matrixAutoUpdate = false; mesh.matrix.copy(m); mesh.matrixWorldNeedsUpdate = true; mesh.userData.keep = true;
+      mesh.castShadow = k !== 'glow' && k !== 'grass' && k !== 'twall'; mesh.receiveShadow = k !== 'glow' && k !== 'twall'; group.add(mesh);
+    }
+    CQ.stats.own += own.length;
+    for (const [key, list] of signs) { const m = new THREE.Mesh(yield* mergeT(list), signMat(key)); m.castShadow = true; group.add(m);
+      const mp = m.material.map; if (mp && !mp.userData.up) { mp.userData.up = true; yield 'sign'; try { renderer.initTexture(mp); } catch (e) {} yield 'sign up'; } }   // (a new sign's picture sent to the graphics card now, a slice of its own, not as it first comes into view)
     if (lamps.length) group.userData.lamps = lamps;
+    if (eyes.length) group.userData.eyes = eyes;
     if (slows.length) {   // the painted words, laid flat along the road
       const pos = [], uv = [];
       for (const q of slows) {
         const r = q[2], ra = r * q[3];
-        const c = (sa, sb) => { place(W, q[0] + ra * sa, q[1] + r * sb, 0, P); return [P.x, P.y + 0.035, P.z]; };   // (each corner on the road itself: over a crest, a flat word half sank)
+        const c = (sa, sb) => { place(W, q[0] + ra * sa, q[1] + r * sb, 0, P); return [P.x, P.y + 0.035 + crownY(q[1] + r * sb, HALF), P.z]; };   // (each corner on the road itself: over a crest, a flat word half sank)
         for (let n = 0; n < 4; n++) { const s0 = -1 + n / 2, s1 = s0 + 0.5, v0 = (s0 + 1) / 2, v1 = (s1 + 1) / 2;   // (in four strips, bending with the road)
           pos.push(...c(s0, -1), ...c(s1, 1), ...c(s1, -1), ...c(s0, -1), ...c(s0, 1), ...c(s1, 1)); uv.push(0, v0, 1, v1, 0, v1, 0, v0, 1, v0, 1, v1); }
       }
@@ -1119,25 +1845,25 @@ export function createWorld() {
         const h0 = hash2(i * 13 + ti, d * 29 + 3); if (h0 > t[2]) return;
         const h1 = hash2(i * 19 + ti, ti * 5 + d), h2 = hash2(i * 3 + 7, ti * 9 - d), jet = t[0] === 'jetty', lat = look.harbour.from + t[3] + h1 * (t[4] - t[3]);
         place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
-        addAll(MD.model(t[0], Math.floor(hash2(i, ti * 7 + 1) * 991) % t[1]), DP.x, jet ? 0 : 0, DP.z, jet ? faceRoad(d, DP.th) + Math.PI / 2 : h2 * Math.PI * 2, 1);
+        addAll(mdl(t[0], Math.floor(hash2(i, ti * 7 + 1) * 991) % t[1]), DP.x, jet ? 0 : 0, DP.z, jet ? faceRoad(d, DP.th) + Math.PI / 2 : h2 * Math.PI * 2, 1);
       });
       if (g.sea === d) {   // the beach (people, deckchairs), the quay's lamps, and out on the water: windsurfers, boats, marinas
         const key = E.STAGES[g.st].key, bl = zt(BEACH, W, g), gk = zt(GROYNE, W, g);
         const hut = (j) => { const q = E.segAt(W, j); return q && q.spr && q.spr.some((it) => (it.t === 'hut' || it.t === 'crowd') && Math.sign(it.x) === d); };   // (never in a beach hut)
         let pierNear = false; for (let q = i - 7; q <= i + 40; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'pier')) pierNear = true; }
-        if (gk && i % 45 === 20 && g.sh && !pierNear) { place(W, i * SEG, d * (g.sh + 2), 0, DP); addAll(MD.model(gk, i % 3), DP.x, 0, DP.z, -DP.th + (d < 0 ? Math.PI : 0), 1); }   // groynes every 180 m
+        if (gk && i % 45 === 20 && g.sh && !pierNear) { place(W, i * SEG, d * (g.sh + 2), 0, DP); addAll(mdl(gk, i % 3), DP.x, 0, DP.z, -DP.th + (d < 0 ? Math.PI : 0), 1); }   // groynes every 180 m
         if (bl && g.sh > 15 && !g.over && !g.nearOver && !pierNear) bl.forEach((t, ti) => { const h0 = hash2(i * 9 + ti, d * 23 + 4); if (h0 > t[2]) return;
           const h1 = hash2(i * 17 + ti, ti * 7 - d), h2 = hash2(i * 5 + 1, ti * 11 + d), to = t[4] < 0 ? g.sh + t[4] : t[4], lat = t[3] + fo + h1 * Math.max(0, to - t[3]);
           if (lat > g.sh - 2.5 || (lat < 15 && (hut(i - 1) || hut(i) || hut(i + 1)))) return;
           place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
-          addAll(MD.model(t[0], Math.floor(hash2(i, ti * 13 + 2) * 997) % t[1]), DP.x, groundAt(W, g, DP, d * lat) - 0.05, DP.z, faceRoad(d, DP.th) + (t[0] === 'deckchairs' ? Math.PI : t[0] === 'lifeguard' ? Math.PI / 2 : 0) + (h2 - 0.5) * (t[0] === 'lifeguard' ? 0 : 0.6), 1); });
-        if (zt(QUAY, W, g) && g.sh > 4 && i % 2 === 0) { const ql = i % 6 === 0, at = g.sh - (ql ? 0.9 : 0.6); place(W, i * SEG, d * at, 0, DP); addAll(MD.model(ql ? 'quaylight' : 'quaybollard', (i / 2) % 4), DP.x, groundAt(W, g, DP, d * at), DP.z, faceRoad(d, DP.th) + Math.PI / 2, 1); }   // bollards along the edge, a lamp every so often
-        if (zt(FISH, W, g) && g.sh > 4 && i % 4 === 1 && hash2(i, 77) < 0.72 && !g.brg) { place(W, i * SEG + SEG, d * (g.sh + 3.4), 0, DP); addAll(MD.model('fishboat', Math.floor(hash2(i, 31) * 997) % 5), DP.x, 0, DP.z, -DP.th + (hash2(i, 5) < 0.5 ? Math.PI : 0), 1); }   // fishing boats moored alongside
+          addAll(mdl(t[0], Math.floor(hash2(i, ti * 13 + 2) * 997) % t[1]), DP.x, groundAt(W, g, DP, d * lat) - 0.05, DP.z, faceRoad(d, DP.th) + (t[0] === 'deckchairs' ? Math.PI : t[0] === 'lifeguard' ? Math.PI / 2 : 0) + (h2 - 0.5) * (t[0] === 'lifeguard' ? 0 : 0.6), 1); });
+        if (zt(QUAY, W, g) && g.sh > 4 && i % 2 === 0) { const ql = i % 6 === 0, at = g.sh - (ql ? 0.9 : 0.6); place(W, i * SEG, d * at, 0, DP); addAll(mdl(ql ? 'quaylight' : 'quaybollard', (i / 2) % 4), DP.x, groundAt(W, g, DP, d * at), DP.z, faceRoad(d, DP.th) + Math.PI / 2, 1); }   // bollards along the edge, a lamp every so often
+        if (zt(FISH, W, g) && g.sh > 4 && i % 4 === 1 && hash2(i, 77) < 0.72 && !g.brg) { place(W, i * SEG + SEG, d * (g.sh + 3.4), 0, DP); addAll(mdl('fishboat', Math.floor(hash2(i, 31) * 997) % 5), DP.x, 0, DP.z, -DP.th + (hash2(i, 5) < 0.5 ? Math.PI : 0), 1); }   // fishing boats moored alongside
         const sm = zt(SEA_MORE, W, g); if (!sm || !g.sh) continue;
         { let baths = false; for (let q = i - 14; q <= i + 20; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'seabaths')) baths = true; } if (baths) continue; }   // (the sea-water baths stand out over the water there)
         sm.forEach((t, ti) => { const h0 = hash2(i * 5 + ti, d * 17 + 9); if (h0 > t[2]) return;
           const h1 = hash2(i * 11, ti * 3 + d), h2 = hash2(i * 7 + 3, ti - d), mar = t[0] === 'marina'; place(W, i * SEG + h2 * SEG, d * (g.sh + t[3] + h1 * (t[4] - t[3])), 0, DP);
-          addAll(MD.model(t[0], key === 'harbour' && mar ? 3 + Math.floor(h1 * 991) % 3 : Math.floor(h1 * 991) % t[1]), DP.x, 0, DP.z, -DP.th + (mar ? (d < 0 ? Math.PI : 0) : (h2 - 0.5) * 1.2), 1); });   // (a marina lies along the shore, its boats out to sea)   // (a marina lies along the shore)
+          addAll(mdl(t[0], key === 'harbour' && mar ? 3 + Math.floor(h1 * 991) % 3 : Math.floor(h1 * 991) % t[1]), DP.x, 0, DP.z, -DP.th + (mar ? (d < 0 ? Math.PI : 0) : (h2 - 0.5) * 1.2), 1); });   // (a marina lies along the shore, its boats out to sea)   // (a marina lies along the shore)
         continue;
       }
       if (sideStreet(W, i, d, 3)) continue;   // (a side street's mouth: clear)
@@ -1150,7 +1876,7 @@ export function createWorld() {
           if (look.bluff && g.sea === -d && lat > look.bluff.toe && lat < look.bluff.top + 2 && /^(bush|gorse|heather)$/.test(t[0]) && bluffScrub(DP.x, groundAt(W, g, DP, d * lat), DP.z, lat - HALF - RUM) < 0.5) continue;   // (the scrub grows in patches: bare sand between)
           const y = groundAt(W, g, DP, d * lat) - (t[0] === 'tuft' ? 0.05 : 0.25) + (t[0] === 'balloon' ? 60 + h1 * 90 : 0);
           const ry = /^(hotel|building|villa|terrace|strollers|kiosk|carpark|boatyard|estatehouse|unitshed)$/.test(t[0]) ? faceRoad(d, DP.th) + (t[0] === 'strollers' ? (h3 - 0.5) * 0.6 : 0) : t[0] === 'drywall' ? -DP.th + (h3 - 0.5) * 0.5 : h3 * Math.PI * 2;
-          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|deer|caravan|kiosk|drywall|carpark|picnic|boatyard|estatehouse|thatch|unitshed)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
+          addAll(mdl(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|deer|caravan|kiosk|drywall|carpark|picnic|boatyard|estatehouse|thatch|unitshed)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
         }
       });
     }
@@ -1185,17 +1911,17 @@ export function createWorld() {
         for (const d of [-1, 1]) {
           if (g.sea === d && g.sh < 20) continue;
           const START = it.v === 0, CR = START ? [[-14, 'crowdlite', 12.6], [1, 'crowdlite', 12.6], [16, 'crowdlite', 12.6], [-9, 'herofans', 12.2], [7, 'herofans', 12.2],
-            [31, 'crowdlite', 12.6], [46, 'crowdfar', 12.6], [61, 'crowdfar', 12.6], [76, 'crowdfar', 12.6], [91, 'crowdfar', 12.6], [112, 'crowdfar', 12.6], [140, 'crowdfar', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
+            [31, 'crowdlite', 12.6], [46, 'crowdfar', 12.6], [61, 'crowdfar', 12.6], [76, 'crowdfar', 12.6], [91, 'crowdfar', 12.6], [112, 'crowdfar', 12.6], [140, 'crowdfar', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start": three deep from beside the car to past the arch)
             : [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]];
-          if (START && d < 0) { const s = i * SEG - 6, si = E.segIndex(s); if (si >= W.base) { place(W, s, -(HALF - 2.4), 0, P2); const sy = groundAt(W, E.segAt(W, si), P2, -(HALF - 2.4)) + 0.5, sr = faceRoad(-1, P2.th); addAll(MD.model('starter', 0), P2.x, sy, P2.z, sr);
-            const st = new THREE.Group(), arm = new THREE.Group(), fm = MD.model('starterflag', 0); st.position.set(P2.x, sy, P2.z); st.rotation.y = sr; arm.position.set(0.2, 1.98, 0); st.add(arm);   /* (st sits 0.5 up: the box) */
+          if (START && d < 0) { const s = i * SEG - 6, si = E.segIndex(s); if (si >= W.base) { place(W, s, -(HALF - 2.4), 0, P2); const sy = groundAt(W, E.segAt(W, si), P2, -(HALF - 2.4)) + 0.5, sr = faceRoad(-1, P2.th); addAll(mdl('starter', 0), P2.x, sy, P2.z, sr);
+            const st = new THREE.Group(), arm = new THREE.Group(), fm = mdl('starterflag', 0); st.position.set(P2.x, sy, P2.z); st.rotation.y = sr; arm.position.set(0.2, 1.98, 0); st.add(arm);   /* (st sits 0.5 up: the box) */
             for (const key in fm) if (fm[key] && MAT[key]) { const ms = new THREE.Mesh(fm[key], MAT[key]); ms.castShadow = true; arm.add(ms); } group.add(st); R.starterArm = arm; } }   // the starter by the line: his flag arm waves through the lights and sweeps down at GO
           for (const [o, t, lat] of CR) {
             const s = i * SEG + o, si = E.segIndex(s); if (si < W.base || si > E.lastIndex(W) - 1) continue;
             const gg = E.segAt(W, si); if (gg.fk) continue;
             if (START && /^crowd/.test(t)) { let big = false; for (let q = si - 5; q <= si + 5 && !big; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((x2) => /^(pier|overstrand|clifflift|zigzag)$/.test(x2.t) && Math.sign(x2.x) === d)) big = true; } if (big) continue; }   // (not across the pier's root)
             place(W, s, d * lat, 0, P2);
-            addAll(MD.model(t, (i + o + d * 3) & 7), P2.x, groundAt(W, gg, P2, d * lat), P2.z, faceRoad(d, P2.th));
+            addAll(mdl(t, (i + o + d * 3) & 7), P2.x, groundAt(W, gg, P2, d * lat), P2.z, faceRoad(d, P2.th));
           }
         }
         break;
@@ -1219,25 +1945,52 @@ export function createWorld() {
     }
   }
   const NM = new THREE.Matrix3(), VV = new THREE.Vector3();
-  function mergeT(list) {   // [geometry, matrix, temporary?] joined into one geometry: positions and normals moved, colours and uvs kept when all have them
+  function sphereOf(geo, pa) {   // the bounding sphere straight from the position array (three's own goes corner by corner through accessors: a third of a chunk's time)
+    let x0 = Infinity, y0 = Infinity, z0 = Infinity, x1 = -Infinity, y1 = -Infinity, z1 = -Infinity;
+    for (let k = 0; k < pa.length; k += 3) { const x = pa[k], y = pa[k + 1], z = pa[k + 2]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; if (z < z0) z0 = z; if (z > z1) z1 = z; }
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, cz = (z0 + z1) / 2; let r2 = 0;
+    for (let k = 0; k < pa.length; k += 3) { const dx = pa[k] - cx, dy = pa[k + 1] - cy, dz = pa[k + 2] - cz, d = dx * dx + dy * dy + dz * dz; if (d > r2) r2 = d; }
+    geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(pa.length ? cx : 0, pa.length ? cy : 0, pa.length ? cz : 0), pa.length ? Math.sqrt(r2) : 0);
+  }
+  function* mergeT(list) {   // [geometry, matrix, temporary?] joined into one geometry: positions and normals moved, colours and uvs kept when all have them
+    // (revamp WS1: straight loops over the arrays - no un-indexed copy of each part, no vector per corner, colours and uvs copied in one go
+    // where they can be; it was most of a chunk's time)
     let n = 0; for (const [g] of list) n += g.index ? g.index.count : g.attributes.position.count;
-    const hasC = list.every((e) => e[0].attributes.color), hasU = list.every((e) => e[0].attributes.uv);
-    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = hasC ? new Float32Array(n * 3) : null, uv = hasU ? new Float32Array(n * 2) : null; let o = 0;
-    for (const [g0, m, temp] of list) {
-      const g = g0.index ? g0.toNonIndexed() : g0, p = g.attributes.position, nn = g.attributes.normal, c = g.attributes.color, u = g.attributes.uv;
-      NM.getNormalMatrix(m);
-      for (let i = 0; i < p.count; i++) {
-        const k = (o + i) * 3;
-        VV.fromBufferAttribute(p, i).applyMatrix4(m); pos[k] = VV.x; pos[k + 1] = VV.y; pos[k + 2] = VV.z;
-        VV.fromBufferAttribute(nn, i).applyMatrix3(NM).normalize(); nor[k] = VV.x; nor[k + 1] = VV.y; nor[k + 2] = VV.z;
-        if (col) { col[k] = c.getX(i); col[k + 1] = c.getY(i); col[k + 2] = c.getZ(i); }
-        if (uv) { uv[(o + i) * 2] = u.getX(i); uv[(o + i) * 2 + 1] = u.getY(i); }
+    const slot = list.length && list[0][3] != null;   // (revamp WS4: each part's row in the one-draw material's table, as aMid - then no uvs: it doesn't use them)
+    const hasC = list.every((e) => e[0].attributes.color) || slot, hasU = !slot && list.every((e) => e[0].attributes.uv);   // (joined for the one-draw material, a part with no colours gets 1s - its material's own colour - rather than take the whole chunk's colours away: WS4 fix round)
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = hasC ? new Float32Array(n * 3) : null, uv = hasU ? new Float32Array(n * 2) : null, mid = slot ? new Float32Array(n) : null; let o = 0;
+    const plain = (a, size) => a && !a.isInterleavedBufferAttribute && !a.normalized && a.itemSize === size && a.array instanceof Float32Array;
+    let since = 0;
+    for (const [g, m, temp, sl] of list) {
+      if (since > 15000) { since = 0; yield 'merge part'; }   // (a big list in slices of its own: 15,000 corners is about 2 ms on a PC, 8 on a phone)
+      const p = g.attributes.position, nn = g.attributes.normal, c = g.attributes.color, u = g.attributes.uv, ix = g.index ? g.index.array : null, cnt = ix ? ix.length : p.count;
+      NM.getNormalMatrix(m); const e = m.elements, q = NM.elements;
+      if (plain(p, 3) && plain(nn, 3) && (!col || !c || plain(c, 3)) && (!uv || plain(u, 2))) {
+        const pa = p.array, na = nn.array, ca = col && c ? c.array : null, ua = uv ? u.array : null;
+        // (the matrices here are a turn, a move and one scale for all three axes, so a normal stays its length times one number: no square
+        // root per corner. Anything else is put right by the root.)
+        const s0 = Math.hypot(q[0], q[1], q[2]), s1 = Math.hypot(q[3], q[4], q[5]), s2 = Math.hypot(q[6], q[7], q[8]), uni = Math.abs(s0 - s1) < 1e-5 * s0 && Math.abs(s0 - s2) < 1e-5 * s0, inv = s0 > 0 ? 1 / s0 : 1;
+        for (let i = 0; i < cnt; i++) {
+          const j = ix ? ix[i] : i, j3 = j * 3, k = (o + i) * 3, x = pa[j3], y = pa[j3 + 1], z = pa[j3 + 2], a = na[j3], b = na[j3 + 1], cz = na[j3 + 2];
+          pos[k] = e[0] * x + e[4] * y + e[8] * z + e[12]; pos[k + 1] = e[1] * x + e[5] * y + e[9] * z + e[13]; pos[k + 2] = e[2] * x + e[6] * y + e[10] * z + e[14];
+          const nx = q[0] * a + q[3] * b + q[6] * cz, ny = q[1] * a + q[4] * b + q[7] * cz, nz = q[2] * a + q[5] * b + q[8] * cz, L = uni ? inv : 1 / (Math.sqrt(nx * nx + ny * ny + nz * nz) || 1);
+          nor[k] = nx * L; nor[k + 1] = ny * L; nor[k + 2] = nz * L;
+        }
+        if (ca) { if (ix) for (let i = 0; i < cnt; i++) { const j3 = ix[i] * 3, k = (o + i) * 3; col[k] = ca[j3]; col[k + 1] = ca[j3 + 1]; col[k + 2] = ca[j3 + 2]; } else col.set(ca.subarray(0, cnt * 3), o * 3); } else if (col) col.fill(1, o * 3, (o + cnt) * 3);
+        if (ua) { if (ix) for (let i = 0; i < cnt; i++) { const j2 = ix[i] * 2, k2 = (o + i) * 2; uv[k2] = ua[j2]; uv[k2 + 1] = ua[j2 + 1]; } else uv.set(ua.subarray(0, cnt * 2), o * 2); }
+      } else for (let i = 0; i < cnt; i++) {   // (anything unusual - interleaved, packed: the slow sure way)
+        const j = ix ? ix[i] : i, k = (o + i) * 3;
+        VV.fromBufferAttribute(p, j).applyMatrix4(m); pos[k] = VV.x; pos[k + 1] = VV.y; pos[k + 2] = VV.z;
+        VV.fromBufferAttribute(nn, j).applyMatrix3(NM).normalize(); nor[k] = VV.x; nor[k + 1] = VV.y; nor[k + 2] = VV.z;
+        if (col) { if (c) { col[k] = c.getX(j); col[k + 1] = c.getY(j); col[k + 2] = c.getZ(j); } else col[k] = col[k + 1] = col[k + 2] = 1; }
+        if (uv) { uv[(o + i) * 2] = u.getX(j); uv[(o + i) * 2 + 1] = u.getY(j); }
       }
-      o += p.count; if (g !== g0) g.dispose(); if (temp) g0.dispose();
+      if (mid) mid.fill(sl, o, o + cnt);
+      o += cnt; since += cnt; if (temp) g.dispose();
     }
     const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
-    if (col) out.setAttribute('color', new THREE.BufferAttribute(col, 3)); if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-    out.computeBoundingSphere();
+    if (col) out.setAttribute('color', new THREE.BufferAttribute(col, 3)); if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); if (mid) out.setAttribute('aMid', new THREE.BufferAttribute(mid, 1));
+    sphereOf(out, pos);
     return out;
   }
   function dropChunk(ch) { scene.remove(ch); ch.traverse((o) => { if (o.geometry && !o.userData.keep) o.geometry.dispose(); }); }
@@ -1270,30 +2023,51 @@ export function createWorld() {
     }
   }
 
-  function updateChunks(W) {
-    const s = W.s, need0 = Math.floor(Math.max(0, E.segIndex(s) - (R.keepBehind || 12)) / CH),   /* (keepBehind: the films' roadside cameras keep more road behind the car) */ need1 = Math.floor(Math.min(E.lastIndex(W), E.segIndex(s + R.view)) / CH);
-    for (const [c, ch] of R.chunks) if (c < need0 || c > need1 + 1) { dropChunk(ch); R.chunks.delete(c); }
-    let made = 0;
-    for (let c = need0; c <= need1; c++) {
-      const ch = R.chunks.get(c), want = Math.min((c + 1) * CH, E.lastIndex(W));
-      if (ch && ch.userData.i1 >= want && !ch.userData.dirty) continue;
-      if (made >= (R.built ? 2 : 4)) break;
-      if (ch) { dropChunk(ch); R.chunks.delete(c); }
-      const g = buildChunk(W, c); if (g) { scene.add(g); R.chunks.set(c, g); }
-      made++;
+  // ---- the road-building queue (revamp WS1): chunks are built nearest first, a slice at a time, for at most TIER.chunkMs a frame (catchMs
+  // while road that should be in view is missing: a new race), and TIER.ahead chunks past the view, kept hidden till they're in it, so none is
+  // late at speed. Should the road under the car be missing (a new race, or a jump such as the ferry), render() holds the last picture for
+  // the frames it takes - a few - rather than draw the car over nothing or stop for 30-60 ms to build it at once
+  const CQ = { job: null, c: -1, W: null, fs: [], heavy: [], stats: { built: 0, urgent: 0, ms: 0, maxStep: 0, maxFrame: 0, own: 0 } };
+  function chunkWanted(W, c) { const ch = R.chunks.get(c), want = Math.min((c + 1) * CH, E.lastIndex(W)); return !ch || ch.userData.i1 < want || ch.userData.dirty; }
+  function dropJob() { if (!CQ.job) return; try { CQ.job.return(); } catch (e) {} CQ.job = null; CQ.c = -1; }
+  function stepJob(W) {   // one slice of the chunk in hand: true once it's built (and in the scene, in place of any older copy)
+    const st = realNow(), r = CQ.job.next(), d = realNow() - st; if (d > CQ.stats.maxStep) { CQ.stats.maxStep = d; CQ.stats.maxWhat = (r.done ? 'last' : r.value) + ' (chunk ' + CQ.c + ')'; } if (d > 1.5) CQ.fs.push((r.done ? 'last' : r.value) + ' ' + d.toFixed(1));
+    if (!r.done) return false;
+    const c = CQ.c, old = R.chunks.get(c); if (old) { dropChunk(old); R.chunks.delete(c); }
+    if (r.value) { r.value.visible = c <= R.chunkVis; scene.add(r.value); R.chunks.set(c, r.value);
+      if (r.value.visible) { r.value.traverse((o) => { if (o.isMesh && o.frustumCulled) { o.frustumCulled = false; R.fresh.push(o); } }); }   // (drawn once now even out of view, so its shapes go to the graphics card a chunk at a time - not ten at once when the start's camera swings round)
     }
-    R.built = 1;
+    CQ.job = null; CQ.c = -1; CQ.stats.built++; return true;
+  }
+  function updateChunks(W) {
+    const s = W.s, last = E.lastIndex(W), here = E.segIndex(s), need0 = Math.floor(Math.max(0, here - (R.keepBehind || 12)) / CH),   /* (keepBehind: the films' roadside cameras keep more road behind the car) */ need1 = Math.floor(Math.min(last, E.segIndex(s + R.view)) / CH);
+    const ahead = Math.min(Math.floor(last / CH), need1 + TIER.ahead), cur = Math.floor(here / CH), t0 = realNow(); CQ.fs = [];
+    R.chunkVis = need1; for (const o of R.fresh) o.frustumCulled = true; R.fresh.length = 0;
+    for (const [c, ch] of R.chunks) { if (c < need0 || c > ahead + 1) { dropChunk(ch); R.chunks.delete(c); } else ch.visible = c <= need1; }
+    if (CQ.job && (CQ.W !== W || CQ.c < need0 || CQ.c > ahead)) dropJob();
+    let budget = TIER.chunkMs;
+    for (let c = cur; c <= need1; c++) if (chunkWanted(W, c)) { budget = TIER.catchMs; break; }
+    while (realNow() - t0 < budget) {   // the rest: nearest first, ahead and then behind, while this frame's time lasts
+      if (!CQ.job) {
+        let pick = -1; for (let c = cur; c <= ahead && pick < 0; c++) if (chunkWanted(W, c)) pick = c;
+        for (let c = cur - 1; c >= need0 && pick < 0; c--) if (chunkWanted(W, c)) pick = c;
+        if (pick < 0) break;
+        CQ.job = chunkJob(W, pick); CQ.c = pick; CQ.W = W;
+      }
+      stepJob(W);
+    }
+    const took = realNow() - t0; CQ.stats.ms += took; if (took > CQ.stats.maxFrame) CQ.stats.maxFrame = took;
     stubs(W);
   }
 
   // ---------------------------------------------------------------- the place's light, sky and haze (fading from one place to the next)
-  const KERBC = {}, KERBG = new THREE.Color('#8a8580'), EYEC = new THREE.Color(1, 0.94, 0.78), TMPC = new THREE.Color(), SUNV = new THREE.Vector3(), ROADGREY = new THREE.Color('#6c7076'), HEMIC = hemi.color.clone(), TUNC = new THREE.Color('#ffc890');
+  const KERBC = {}, KERBG = new THREE.Color('#8a8580'), EYEC = new THREE.Color(1, 0.94, 0.78), TMPC = new THREE.Color(), SUNV = new THREE.Vector3(), ROADGREY = new THREE.Color('#6c7076'), HEMIC = hemi.color.clone(), TUNC = new THREE.Color('#ffc890'), FSC = new THREE.Color(0, 0, 0);
   function setLook(st, k) {
     const pal = PAL[st], look = LOOK[pal.key], sk = pal.sky;
     const blend = (c, hex) => { TMPC.set(hex); c.lerp(TMPC, k); };
     const to = (v, x) => v + (x - v) * k;
     blend(SU.top.value, sk[0][1]); blend(SU.mid.value, sk[Math.min(2, sk.length - 2)][1]); blend(SU.hor.value, look.fogCol || sk[sk.length - 1][1]);
-    TMPC.set(pal.grass[0]).lerp(ROADGREY, 0.9).multiplyScalar(0.55); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road
+    TMPC.set(pal.grass[0]).lerp(ROADGREY, LOOK_NEW ? 0.6 : 0.9).multiplyScalar(LOOK_NEW ? 0.4 : 0.55); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road (the new look: road and land, darker - the ground half of the reflected horizon)
     blend(SU.cLit.value, look.cloud[0]); blend(SU.cDark.value, look.cloud[1]); blend(SU.sunCol.value, look.sunCol);
     { const F = FIELDS[R.fieldKey] || FIELDS[pal.key] || FIELDS.bournemouth; ['uF0', 'uF1', 'uF2', 'uF3', 'uF4'].forEach((u, i) => blend(FU[u].value, F.cols[i])); FU.uFK.value = to(FU.uFK.value, F.k); blend(FU.uRock.value, ROCKC[pal.key] || '#d8d3c6'); FU.uFlow.value = to(FU.uFlow.value, look.night ? 0 : (FLOWERS[pal.key] || 0)); FU.uDap.value = RU.uDap.value = to(FU.uDap.value, look.trees ? 1 : 0); FU.uDry.value = to(FU.uDry.value, look.dusk ? 0.3 : (DRY[pal.key] == null ? 0.6 : DRY[pal.key])); }
     { const want = look.night ? 0 : Math.min(1, look.cover * 2.1), op = look.night ? 0 : 1;   // the heaped clouds: as many as the place's cloud cover, its lit colour
@@ -1302,12 +2076,13 @@ export function createWorld() {
     blend(fog.color, look.fogCol || sk[sk.length - 1][1]);   // the haze is the sky's own colour at the horizon, never a grey
     const fogN = lit(look) ? 1 : 1.8, fogF = lit(look) ? 1 : 1.6;   // daytime: the haze starts twice as far out, so the middle distance keeps its colour
     fog.near += (look.fog[0] * fogN - fog.near) * k; fog.far += (look.fog[1] * fogF * (R.low ? 0.8 : 1) - fog.far) * k;
-    blend(HEMIC, look.hemi[0]); blend(hemi.groundColor, look.hemi[1]); R.hemiI = to(R.hemiI, look.hemi[2] * (lit(look) ? 1 : 0.8));
-    blend(sun.color, look.sunCol); R.sunI = to(R.sunI, look.sunI * (lit(look) ? 1 : 1.12));
+    blend(HEMIC, look.hemi[0]); blend(hemi.groundColor, look.hemi[1]); R.hemiI = to(R.hemiI, look.hemi[2] * (lit(look) ? 1 : 0.8) * (LOOK_NEW && moodOf(look) < 2 ? 0.78 : 1));   // (WS3 fix round: by day the new look's sky fills the shade less and the sun is stronger - the sun-to-shade split of real midday)
+    blend(sun.color, look.sunCol); R.sunI = to(R.sunI, look.sunI * (lit(look) ? 1 : 1.12) * (LOOK_NEW && moodOf(look) < 2 ? 1.1 : 1));
     R.envI = to(R.envI, look.env * (lit(look) ? 1 : 0.85));
     const dark = R.tunK;   // in a tunnel the sun and sky hardly reach you
     hemi.intensity = R.hemiI * (1 - 0.55 * dark); sun.intensity = R.sunI * (1 - 0.9 * dark); scene.environmentIntensity = R.envI * (1 - 0.85 * dark);
     hemi.color.copy(HEMIC).lerp(TUNC, dark * 0.75); roadMat.emissive.setRGB(0.27 * dark, 0.22 * dark, 0.16 * dark);
+    if (LOOK_NEW) { R.retro = to(R.retro || 0, look.night ? 0.6 : look.dusk ? 0.3 : 0); RU.uRetro.value = R.retro + 0.3 * dark; FU.uNightG.value = to(FU.uNightG.value, look.night ? 1 : 0); }   // (the lines' glass beads in the headlights)
     for (const m of OWN_ENV) m.envMapIntensity = m.userData.envBase * scene.environmentIntensity * (m === roadMat ? 1 - 0.9 * dark : 1);   // no sky to see reflected in a tunnel's road
     { const hz = Math.hypot(look.sun[0], 0.7); let az = Math.atan2(look.sun[0], 0.7);
       const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a)), hd = R.heading || 0;
@@ -1315,40 +2090,123 @@ export function createWorld() {
       else if (look.sun[1] < 0.45 && !look.night) { const cur = R.sunAz == null ? az : R.sunAz, d = wrap(az - hd); if (Math.abs(d) < 0.8) az = hd + (wrap(cur - hd) < 0 ? -0.8 : 0.8); }
       R.sunAz = R.sunAz == null || k >= 1 ? az : R.sunAz + wrap(az - R.sunAz) * Math.min(1, k * 0.4);
       SUNV.set(Math.sin(R.sunAz) * hz, look.sun[1], -Math.cos(R.sunAz) * hz).normalize(); SU.sunDir.value.lerp(SUNV, k).normalize(); }
-    blend(roadMat.color, look.roadK || '#ffffff');   // where the sky is orange the asphalt gets a cool counter-tint, so it stays charcoal
+    if (LOOK_NEW) {   // (WS3) the haze warmed towards the sun: most round a low one, none at night; the aerial haze a touch thicker at dusk and in the low sun
+      const sa = (look.night ? 0 : look.dusk ? 0.3 : look.rays ? 0.6 : look.sun[1] < 0.5 ? 0.32 : 0.16) * (1 - 0.9 * R.tunK);
+      TMPC.set(look.sunCol).multiplyScalar(sa); FSC.lerp(TMPC, k); FOGW.col[0] = FSC.r; FOGW.col[1] = FSC.g; FOGW.col[2] = FSC.b;
+      const sd = SU.sunDir.value; FOGW.dir[0] = sd.x; FOGW.dir[1] = sd.y; FOGW.dir[2] = sd.z;
+      FOGW.hz[2] = to(FOGW.hz[2], look.night ? 0.1 : lit(look) || look.rays ? 0.2 : 0.14);
+      sun.shadow.intensity = to(sun.shadow.intensity, lit(look) ? 1 : look.rays ? 0.92 : 0.95);   // (the blue sky fills the shade a touch by day; WS3 fix round: 0.86 had made midday's shadows soft and hazy - 0.95 reads as hard sunlight, and the day LUT keeps the shade blue, not black)
+    }
+    blend(roadMat.color, look.roadK || (LOOK_NEW && look.dusk ? '#e4ecdc' : '#ffffff'));   // where the sky is orange the asphalt gets a cool counter-tint, so it stays charcoal (WS3 fix round: under a violet dusk sky a green-grey one, so it reads as tarmac, not violet paint)
     blend(seaMat.color, look.sea || '#1d8cc4'); seaMat.normalScale.setScalar(to(seaMat.normalScale.x, look.night ? 0.12 : 0.32)); seaMat.opacity = to(seaMat.opacity, look.seaOp || 0.85);
-    const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.12)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); } gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18);
+    if (SEA) { blend(seaMat.color, SEA_COL[pal.key] || look.sea || '#1d8cc4'); const K = SEA.U.uSeaK.value; K.x = to(K.x, look.night ? 0.55 : 1); SEA.U.uSeaG.value = to(SEA.U.uSeaG.value, look.dusk || look.rays || look.sun[1] < 0.34 ? 0.6 : 0); SEA.SH.uShK.value.w = look.night ? 1 : 0; }   // (WS7: a calmer-looking sea after dark, as the old one's ripples were turned down; the shallows dark blue, not turquoise)
+    const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.12)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); }
+    if (!LOOK_NEW) { gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18); }
+    else {   // (WS3: the vibrance and the curve are in the mood LUT, which fades from one place's mood to the next)
+      const mi = moodOf(look);
+      if (gr.lutB.value !== mi) { if (gr.lutMix.value > 0.5) gr.lutA.value = gr.lutB.value; gr.lutB.value = mi; gr.lutMix.value = 0; }   // (A is shown, B faded in over it)
+      if (gr.lutA.value !== gr.lutB.value) { gr.lutMix.value = to(gr.lutMix.value, 1); if (gr.lutMix.value > 0.995) { gr.lutA.value = gr.lutB.value; gr.lutMix.value = 0; } }
+    }
     stars.visible = !!look.night; moon.visible = !!look.night;
     MAT.eyes.color.setScalar(look.night ? 2.6 : look.dusk ? 1.6 : R.tunK > 0.5 ? 1.2 : 0.5).multiply(EYEC);
-    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; cabinLight.intensity = look.night ? 1.2 : look.dusk ? 0.6 : 0; RIM.value.set('#ffd9b0').multiplyScalar(look.night ? 0.6 : look.dusk ? 0.5 : 0.46); { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg * 0.6; }); tailWash.material.opacity = tg * 0.9; } fill.intensity = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
+    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; cabinLight.intensity = look.night ? 1.2 : look.dusk ? 0.6 : 0; RIM.value.set('#ffd9b0').multiplyScalar(look.night ? 0.6 : look.dusk ? 0.5 : 0.46); if (LAMPMAT) LAMPMAT.color.setScalar(look.night ? 2.4 : look.dusk ? 1.8 : lit(look) ? 2.1 : 1.5); { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg * 0.6; s.visible = tg > 0; }); tailWash.material.opacity = tg * 0.9; tailWash.visible = tg > 0; }   /* (WS5: by day, when they're nothing, not drawn - three drew all three, see-through to nothing) */ fill.intensity = fill.userData.i = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
     roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
     R.gulls = !!(look.sea && !lit(look));
   }
   const GRADE_U = grade.uniforms;
-  function updateEnv(t) {   // the sky as everything's surroundings: worked out again as one place fades into the next
-    const rtE = pmrem.fromScene(envScene, 0, 0.1, 200);
+  function updateEnv(t, fin) {   // the sky as everything's surroundings: worked out again as one place fades into the next (revamp WS1: twice a fade, half way and at the end - every 350 ms it cost a few ms each time)
+    if (ENVR) { ENVR.ring.visible = ENVR.sea.visible = false; }   // (WS3 fix round: the land line only at the end of the fade, once a place - half way it's the sky alone, as before WS3)
+    if (ENVR && fin) {   // the land line: the panorama as it stands round you now (it turns slowly on the bends; the sky picture doesn't follow it, so the sun's glint stays where the sun is)
+      const mp = ringFar.material.map, f = 45 / 2300, rg = ENVR.ring; rg.visible = !!mp; rg.material.color.setScalar(0.72);   // (the painted hills a shade darker than the sky behind them, as land is: they had read as a pale band)
+      if (mp) {   // (WS3 fix round: the panorama above its horizon only - its painted shore and sea below it, light and hazy, showed in a bonnet's
+        // downturned nose as a pale rim; below the horizon the sky picture's own dark land and the sea half take over. A copy of the panorama's
+        // texture with its own offset and repeat shares the same picture on the graphics card, so it costs nothing more there)
+        const H = ringFar.scale.y, hz = ringFar.userData.hz || 0, v0 = Math.min(0.9, Math.max(0, 0.5 + hz / H));
+        if (ENVR.src !== mp) { if (ENVR.tex) ENVR.tex.dispose(); ENVR.src = mp; ENVR.tex = mp.clone(); rg.material.map = ENVR.tex; }
+        ENVR.tex.offset.y = v0; ENVR.tex.repeat.y = 1 - v0;
+        rg.scale.set(1, H * (1 - v0) * f, 1); rg.position.y = -30 * f + H * (1 - v0) * f / 2; rg.rotation.y = ringFar.rotation.y; }
+      const LK = LOOK[R.lookKey] || {}, W = R.W, side = W && LK.sea && !LK.night ? E.segAt(W, E.segIndex(W.s)).sea || 0 : 0, sm = ENVR.sea; sm.visible = !!side && R.heading != null && !TIER.thin && TIER.env > 128;   // (not on Phone: its six faces of the sky picture added 6-12 draws to a place change's frame, the busiest of a phone race; WS3 fix round: nor on Medium, where it was most of a place change's +5-7 ms - 22-25 ms against 17-18, and 17.6 without it)
+      if (sm.visible) { const th = R.heading; sm.rotation.y = Math.atan2(side * Math.cos(th), side * Math.sin(th)); sm.material.color.copy(seaMat.color).lerp(fog.color, 0.2).multiplyScalar(0.62); }   // (WS3 fix round: a deeper sea - a light one, lerped well into the haze, showed in a bonnet's nose as a pale grey rim)
+    }
+    const rtE = pmrem.fromScene(envScene, 0, 0.1, 200, LOOK_NEW ? { size: TIER.env } : undefined); R.envSize = TIER.env;
     if (R.envRT) R.envRT.dispose(); R.envRT = rtE; scene.environment = rtE.texture; R.envT = t;
     for (const m of OWN_ENV) m.envMap = rtE.texture;   // (three ignores a material's own envMapIntensity under scene.environment: these hold the sky themselves so theirs counts)
   }
+  // ---- the far panoramas (revamp WS1). Arriving in a new place used to cost 40-55 ms in one frame: the drawn panorama painted and sent to the
+  // graphics card, then the painted one decoded and sent as well. Now the places the next fork leads to are fetched as soon as it's known,
+  // decoded off the main thread (createImageBitmap) in strips, and sent a strip a frame (uploads()) into a texture made ready beforehand, so
+  // arriving is a texture swap. A place reached with no warning (the first, a new race) draws as before, and its painting swaps in when ready.
+  const PANO = new Map(), UPQ = [], BMO = { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' }, STRIP = 720;
+  function panoFetch(key) {   // the place you're going to: fetched, decoded and sent from the split, 3-5 s before you're there (only that way's: each
+    // one sent is 20 MB on the graphics card with its smaller copies, and both ways' at once, beside the place you're in, was 40 MB over the old
+    // game's; fetching both ways' files early also downloaded 0.7 MB more in two minutes, for the way you didn't go)
+    if (PANO.has(key) || !window.createImageBitmap) return;
+    const P = { key: key, tex: null, ready: false }; PANO.set(key, P);
+    const src = BG_IMG[key] ? fetch('bg/' + key + '.webp?v=' + BG_IMG[key]).then((r) => (r.ok ? r.blob() : Promise.reject(r.status))) : Promise.resolve().then(() => ART.bg(key, 2, true).far);   // (no painting: the drawn one, painted now - under a millisecond - and sent the same way)
+    src.then((img) => createImageBitmap(img, BMO)).then(async (full) => {
+      if (TIER.pano < 1 && BG_IMG[key]) { const sm = await createImageBitmap(full, { resizeWidth: Math.round(full.width * TIER.pano), resizeHeight: Math.round(full.height * TIER.pano), resizeQuality: 'high', premultiplyAlpha: 'none', colorSpaceConversion: 'none' }); full.close(); full = sm; }   // (a phone's: half the size, off the main thread)
+      const Wd = full.width, Hd = full.height, n = Math.max(1, Math.ceil(Wd / STRIP)), tw = Math.ceil(Wd / n), tiles = [];
+      for (let i = 0; i < n; i++) tiles.push(await createImageBitmap(full, i * tw, 0, Math.min(tw, Wd - i * tw), Hd));
+      full.close();
+      if (PANO.get(key) !== P) { tiles.forEach((b) => b.close()); return; }   // (let go while it was on its way)
+      const tx = new THREE.DataTexture(null, Wd, Hd); tx.source.dataReady = false; tx.colorSpace = THREE.SRGBColorSpace; tx.wrapS = THREE.RepeatWrapping; tx.anisotropy = 8;
+      tx.magFilter = THREE.LinearFilter; tx.minFilter = THREE.LinearMipmapLinearFilter; tx.generateMipmaps = true; tx.unpackAlignment = 4; tx.needsUpdate = true; P.tex = tx; P.painted = !!BG_IMG[key];
+      UPQ.push(() => { if (PANO.get(key) !== P) return; renderer.initTexture(tx); tx.generateMipmaps = false; });   // (room for it, with its smaller copies: nothing sent yet)
+      tiles.forEach((bm, i) => UPQ.push(() => {
+        if (PANO.get(key) !== P) { bm.close(); return; }
+        if (i === n - 1) tx.generateMipmaps = true;   // (the smaller copies made once, after the last strip)
+        const st = new THREE.Texture(bm); st.flipY = false; renderer.copyTextureToTexture(st, tx, null, new THREE.Vector2(i * tw, 0)); bm.close();
+        if (i === n - 1) { P.ready = true; if (R.bgKey === key && R.bgTemp) { if (R.bgHeld === key) { R.bgHeld = null; if (!P.painted) ringMark(key); } ringSet(tx, P.painted); } }   // (the place is already here: its painting takes over)
+      }));
+    }).catch(() => { if (PANO.get(key) === P) PANO.delete(key); if (R.bgHeld === key && R.bgKey === key) { R.bgHeld = null; ringMark(key); ringDrawn(key); } });   // (it failed while the last place's was held up: the drawn one)
+  }
+  const HEROP = new Map();   // the next places' landmarks, the same way (one picture each, small enough to send in one go)
+  function heroFetch(key, now) {   // (now: the place's own, wanted at once - heroStep())
+    if (!HERO[key] || HEROP.has(key) || (R.heroKey === key && !now) || !window.createImageBitmap) return;
+    const P = { tex: null, ready: false }; HEROP.set(key, P);
+    fetch('bg/hero-' + key + '.webp?v=' + HERO_V).then((r) => (r.ok ? r.blob() : Promise.reject(r.status))).then((b) => createImageBitmap(b, BMO)).then((bm) => {
+      if (HEROP.get(key) !== P) { bm.close(); return; }
+      const tx = new THREE.Texture(bm); tx.flipY = false; tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; tx.needsUpdate = true; P.tex = tx;
+      UPQ.push(() => { if (HEROP.get(key) !== P) return; renderer.initTexture(tx); P.ready = true; });
+    }).catch(() => { if (HEROP.get(key) === P) HEROP.delete(key); });
+  }
+  function panoKeep(keys) {   // let go of the panoramas no longer wanted (the fork's other way, the place left behind)
+    for (const [k, P] of PANO) if (!keys.includes(k) && ringFar.material.map !== P.tex) { if (P.tex) P.tex.dispose(); PANO.delete(k); }
+    for (const [k, P] of HEROP) if (!keys.includes(k)) { if (P.tex) P.tex.dispose(); HEROP.delete(k); }
+  }
+  function uploads() {   // one waiting strip a frame (after the frame is drawn): a panorama's strips, a landmark's picture
+    const f = UPQ.shift(); if (f) { try { f(); } catch (e) { if (window.console) console.warn('365 Coast Run: upload', e); } }
+  }
+  function ringSet(tx, painted) {   // the panorama round the horizon: tx (painted: the landmark sits a third of the way round, as gen_backdrop.py paints it)
+    const old = ringFar.material.map; if (old === tx) return;
+    ringFar.material.map = tx; if (!old) ringFar.material.needsUpdate = true;
+    if (old && ![...PANO.values()].some((P) => P.tex === old)) old.dispose();
+    R.bgTemp = !painted && !!BG_IMG[R.bgKey];
+    if (painted) { R.markT = Math.PI / 3; R.ringSnap = true; }
+  }
+  function ringMark(key) { const mk = ART.MARK && ART.MARK[key]; R.markT = mk != null ? 2 * Math.PI * mk / ART.BG_W : null; R.ringSnap = true; if (mk == null) ringFar.rotation.y = 0; }   // (where the place's landmark is round the drawn panorama)
+  function ringDrawn(key) { const B = ART.bg(key, 2, true), tx = new THREE.CanvasTexture(B.far); tx.colorSpace = THREE.SRGBColorSpace; tx.wrapS = THREE.RepeatWrapping; tx.anisotropy = 8; ringSet(tx, false); }   // the drawn panorama, now
   function setBackdrop(key, W) {
     R.heroWant = HERO[key] ? key : null;
-    if (BG_IMG[key]) {   // a painted panorama of the place (tools/coastrun/gen_backdrop.py): it takes over from the shapes when it arrives
-      BGL.load('bg/' + key + '.webp?v=' + BG_IMG[key], (t) => {
-        if (R.lookKey !== key) { t.dispose(); return; }
-        t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 8;
-        if (ringFar.material.map) ringFar.material.map.dispose();
-        ringFar.material.map = t; ringFar.material.needsUpdate = true; R.markT = Math.PI / 3; R.ringSnap = true;
-      });
-    }
-    const res = 2, B = ART.bg(key, res, true), tx = new THREE.CanvasTexture(B.far); tx.colorSpace = THREE.SRGBColorSpace; tx.wrapS = THREE.RepeatWrapping; tx.anisotropy = 8;
-    if (ringFar.material.map) ringFar.material.map.dispose();
-    ringFar.material.map = tx; ringFar.material.needsUpdate = true;
+    if (R.bgKey === key) return;   // (the same place again - a new race from where the title was: its panorama is still up)
+    R.bgKey = key;
     const H = 2 * Math.PI * 2300 / ART.BG_W * ART.BG_H * 0.55;   // the panorama wrapped once round, squashed so its hills sit low
     ringFar.scale.set(1, H, 1); ringFar.userData.hz = ((ART.BG_H - ART.HZ) / ART.BG_H - 0.5) * H;   // the horizon's height within the ring
-    const mk = ART.MARK && ART.MARK[key];
-    R.markT = mk != null ? 2 * Math.PI * mk / ART.BG_W : null; R.ringSnap = true; if (mk == null) ringFar.rotation.y = 0;
+    const P = PANO.get(key);
+    R.bgHeld = null; if (P && !P.ready && ringFar.material.map) { R.bgTemp = true; R.bgHeld = key; return; }   // (on its way, a strip a frame: the last place's stays up the moment till it's in -
+    // painting the drawn one and sending it at once cost 40-60 ms on a phone)
+    ringMark(key);
+    if (P && P.ready) { ringSet(P.tex, P.painted); return; }   // fetched as the fork came up: on the graphics card already
+    ringDrawn(key);
+    if (BG_IMG[key]) {   // the painted panorama (tools/coastrun/gen_backdrop.py) takes over from the drawn one when it arrives
+      if (window.createImageBitmap) { panoFetch(key); R.bgTemp = true; }
+      else BGL.load('bg/' + key + '.webp?v=' + BG_IMG[key], (t) => {
+        if (R.bgKey !== key) { t.dispose(); return; }
+        t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.anisotropy = 8; ringSet(t, true);
+      });
+    }
   }
   function turnRing(W, dt) {   // the far panorama slides round slowly on the bends (like the old arcade backdrops), keeping the place's landmark ahead, off to the sea side
     if (R.markT == null || R.heading == null) return;
@@ -1356,24 +2214,31 @@ export function createWorld() {
     const d = Math.atan2(Math.sin(want - ringFar.rotation.y), Math.cos(want - ringFar.rotation.y));
     ringFar.rotation.y += d * (R.ringSnap ? 1 : Math.min(1, dt * 0.6)); R.ringSnap = false;
   }
-  function heroStep(W, dt) {   // OutRun's way with a landmark: as a stage begins, the place's own swings into view round the bend, large, and
+  function heroShow(key, tx) {   // the place's landmark picture, in: it swings into view
+    R.heroLoading = false; if (R.heroKey !== key) { tx.dispose(); return; }
+    tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; const old = heroMesh.material.map; if (old && old !== tx) old.dispose();
+    heroMesh.material.map = tx; R.heroTexKey = key;   // (a stand-in picture from the start, so the shader made for it fits - no new one now)
+    const w = 2 * HERO_D * Math.tan(HERO[key] * Math.PI / 360); heroMesh.scale.set(w, w * tx.image.height / tx.image.width, 1);
+    heroMesh.material.color.setScalar(LOOK[key] && LOOK[key].night ? 1.7 : 1);   // (at night the painting is dark: lifted, so the place's landmark still reads)
+    R.heroT = 0; R.heroVis = 1; R.heroA = null; heroMesh.visible = true;
+  }
+  function heroStep(W, dt) {   // a landmark's entrance: as a stage begins, the place's own swings into view round the bend, large, and
     // then stays ahead off to the sea side, over the painted panorama's small one
     if (R.heroWant !== R.heroKey) {   // the last place's slips away first
       R.heroVis = heroMesh.visible ? Math.max(0, R.heroVis - dt * 2.5) : 0;
       if (R.heroVis <= 0 && !R.heroLoading) {
         const key = R.heroKey = R.heroWant; heroMesh.visible = false;
         if (key) { R.heroLoading = true;
-          BGL.load('bg/hero-' + key + '.webp?v=' + HERO_V, (tx) => {
-            R.heroLoading = false; if (R.heroKey !== key) { tx.dispose(); return; }
-            tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; if (heroMesh.material.map) heroMesh.material.map.dispose();
-            heroMesh.material.map = tx; heroMesh.material.needsUpdate = true;
-            const w = 2 * HERO_D * Math.tan(HERO[key] * Math.PI / 360); heroMesh.scale.set(w, w * tx.image.height / tx.image.width, 1);
-            heroMesh.material.color.setScalar(LOOK[key] && LOOK[key].night ? 1.7 : 1);   // (at night the painting is dark: lifted, so the place's landmark still reads)
-            R.heroT = 0; R.heroVis = 1; R.heroA = null; heroMesh.visible = true;
-          }, undefined, () => { R.heroLoading = false; });
+          const pre = HEROP.get(key);   // (fetched as the fork came up, and on the graphics card already; or still up from before a new race)
+          if (R.heroTexKey === key && heroMesh.material.map) heroShow(key, heroMesh.material.map);
+          else if (pre && pre.ready) { HEROP.delete(key); heroShow(key, pre.tex); }
+          else if (window.createImageBitmap) { R.heroWait = key; heroFetch(key, true); }   // (not ready: decoded off the main thread and sent between frames, as the
+          // fork's are, then shown - below. Loaded as a plain picture it was decoded and sent inside a frame: 30-40 ms on a phone)
+          else BGL.load('bg/hero-' + key + '.webp?v=' + HERO_V, (tx) => heroShow(key, tx), undefined, () => { R.heroLoading = false; });
         }
       }
     }
+    if (R.heroWait) { const k = R.heroWait, pre = HEROP.get(k); if (k !== R.heroKey || !pre) { R.heroWait = null; R.heroLoading = false; } else if (pre.ready) { R.heroWait = null; HEROP.delete(k); heroShow(k, pre.tex); } }
     if (!heroMesh.visible || R.heading == null) return;
     { const hf = HERO_FROM[R.heroKey]; if (hf != null && stageFrac(W, E.segAt(W, E.segIndex(W.s))) < hf) { R.heroT = 0; R.heroA = null; heroMesh.material.opacity = 0; return; } }
     { const hu = HERO_UNTIL[R.heroKey]; if (hu != null && stageFrac(W, E.segAt(W, E.segIndex(W.s))) > hu) { R.heroVis = Math.max(0, R.heroVis - dt * 0.5); if (R.heroVis <= 0) { heroMesh.visible = false; return; } } }
@@ -1388,13 +2253,58 @@ export function createWorld() {
   // ---------------------------------------------------------------- the player's car
   const COUPLE = MD.people();
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow' && k !== 'hair'; group.add(mesh); } }   // (hair cards would cast solid shadows)
+  // ---- (revamp WS5) each of you in a few draws, not ~30: every part in the same material joined into one skinned mesh whose bones are the
+  // groups that already move them (chest, neck, eyes and lids, brows, shoulders, elbows, forearms, locks, hair, scarf) - each part bound wholly
+  // to its own group, so it moves exactly as it did; the arms (already skinned to body, shoulder and elbow) keep their weights. The same
+  // materials, so the same shaders and the same picture. The mouth (it morphs) stays a mesh of its own. A part mirrored by its group (her left
+  // forearm) has its corners turned round, as three turns a mirrored mesh's faces. Her skin's pores are worked out from each part's own
+  // corners, as before (aSkinP: SKINMAT). Hiding his head for the driver's camera now also shrinks it to nothing (its corners are in the
+  // joined meshes). ?nopack: the parts as they were
+  const EMPTYG = new THREE.BufferGeometry(); EMPTYG.setAttribute('position', new THREE.BufferAttribute(new Float32Array(0), 3));
+  function personMerge(root, eyes) {
+    root.updateMatrixWorld(true);
+    const RI = new THREE.Matrix4().copy(root.matrixWorld).invert(), Mx = new THREE.Matrix4(), Nx = new THREE.Matrix3(), v = new THREE.Vector3(), bones = [], bix = new Map(), sets = new Map();
+    const bone = (g) => { let i = bix.get(g); if (i == null) { i = bones.length; bones.push(g); bix.set(g, i); } return i; };
+    root.traverse((o) => {
+      if (!o.isMesh || Array.isArray(o.material) || !o.geometry.attributes.position || o.geometry.morphAttributes.position || o.userData.proxy) return;   // (the mouth: morphs)
+      const key = o.material.id + '|' + (o.castShadow ? 1 : 0); (sets.get(key) || sets.set(key, []).get(key)).push(o);
+    });
+    const made = [];
+    for (const list of sets.values()) {
+      const mt = list[0].material, uv = !!mt.map, skp = mt === SKINMAT; let n = 0;
+      for (const o of list) n += o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count;
+      const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), uvs = uv ? new Float32Array(n * 2) : null, sp = skp ? new Float32Array(n * 3) : null, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4); let k = 0;
+      for (const o of list) {
+        const G = o.geometry, P = G.attributes.position, Nn = G.attributes.normal, C = G.attributes.color, U = G.attributes.uv, ix = G.index, cnt = ix ? ix.count : P.count, sk = o.isSkinnedMesh;
+        if (sk) Mx.identity(); else Mx.multiplyMatrices(RI, o.matrixWorld);   // (an arm: already in the root's own space - a child of it, bound in place)
+        Nx.getNormalMatrix(Mx); const flip = Mx.determinant() < 0, b0 = sk ? 0 : bone(o.parent), SI = sk && G.attributes.skinIndex, SW = sk && G.attributes.skinWeight;
+        for (let i = 0; i < cnt; i++, k++) {
+          const j0 = ix ? ix.getX(i) : i, j = flip && i % 3 ? (ix ? ix.getX(i - i % 3 + 3 - i % 3) : i - i % 3 + 3 - i % 3) : j0;   // (mirrored: each triangle's 2nd and 3rd corners swapped)
+          v.fromBufferAttribute(P, j); if (sp) { sp[k * 3] = v.x; sp[k * 3 + 1] = v.y; sp[k * 3 + 2] = v.z; } v.applyMatrix4(Mx); pos[k * 3] = v.x; pos[k * 3 + 1] = v.y; pos[k * 3 + 2] = v.z;
+          if (Nn) { v.fromBufferAttribute(Nn, j).applyMatrix3(Nx).normalize(); nor[k * 3] = v.x; nor[k * 3 + 1] = v.y; nor[k * 3 + 2] = v.z; }
+          if (C) { col[k * 3] = C.getX(j); col[k * 3 + 1] = C.getY(j); col[k * 3 + 2] = C.getZ(j); } else col[k * 3] = col[k * 3 + 1] = col[k * 3 + 2] = 1;
+          if (uvs && U) { uvs[k * 2] = U.getX(j); uvs[k * 2 + 1] = U.getY(j); }
+          if (sk) for (let q = 0; q < 4; q++) { si[k * 4 + q] = bone(o.skeleton.bones[SI.getComponent(j, q)]); sw[k * 4 + q] = SW.getComponent(j, q); } else { si[k * 4] = b0; sw[k * 4] = 1; }
+        }
+      }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      if (uvs) g.setAttribute('uv', new THREE.BufferAttribute(uvs, 2)); if (sp) g.setAttribute('aSkinP', new THREE.BufferAttribute(sp, 3));
+      g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.BufferAttribute(sw, 4)); g.computeBoundingSphere();
+      const m = new THREE.SkinnedMesh(g, mt); m.castShadow = list[0].castShadow; m.frustumCulled = false; made.push(m);
+      for (const o of list) o.parent.remove(o);
+    }
+    for (const m of made) root.add(m);
+    root.updateMatrixWorld(true); const sk = new THREE.Skeleton(bones); for (const m of made) m.bind(sk);
+    if (eyes) for (const e of eyes) if (!e.look.children.some((c) => c.isMesh)) { const ph = new THREE.Mesh(EMPTYG, EYEMAT); ph.visible = false; e.look.add(ph); }   // (people.js finds the eyes by the mesh in them: an empty stand-in, never drawn)
+    root.userData.merged = made;
+  }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); const chest = new THREE.Group(); root.add(chest); addParts(chest, spec.part.torso, PM);   // (pass 9: the chest group breathes)
     const neck = new THREE.Group(); neck.position.set(0, spec.neck, spec.neckZ || 0); neck.scale.setScalar(0.83);   /* (heads 1.09x: they read tiny on their bodies - skeptic, round 0) */ root.add(neck); addParts(neck, spec.part.head, PM);
     let eyes = null; if (spec.part.eye) { const E = spec.part.eye; eyes = E.at.map((p) => { const g = new THREE.Group(); g.position.set(p[0], p[1], p[2]); neck.add(g);   // (their eyes: each turns in its own place, its lids close)
       const look = new THREE.Group(); g.add(look); look.add(new THREE.Mesh(E.ball, EYEMAT)); const lu = new THREE.Group(); g.add(lu); addParts(lu, E.lidU, PM); const ll = new THREE.Group(); g.add(ll); addParts(ll, E.lidL, PM); return { look: look, lu: lu, ll: ll }; }); }
     const brows = spec.part.brows ? spec.part.brows.map((B) => { const g = new THREE.Group(); g.position.set(B.at[0], B.at[1], B.at[2]); g.userData.y0 = B.at[1]; g.userData.sd = B.sd; neck.add(g); addParts(g, B.geo, PM); return g; }) : null;   // (their brows, to lift and knit)
-    let mouth = null; if (spec.part.mouth) { mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
+    let mouth = null; if (spec.part.mouth) { if (PKP && !spec.part.mouth.attributes.aSkinP) spec.part.mouth.setAttribute('aSkinP', spec.part.mouth.attributes.position); mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); if (!spec.part.sleeve) addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
@@ -1427,6 +2337,7 @@ export function createWorld() {
     }
     root.rotation.order = 'YXZ'; if (spec.lean) root.rotation.x = spec.lean; if (spec.turn) root.rotation.y = spec.turn;   // leaning back in her seat, turned a little towards him
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
+    if (PKP) personMerge(root, eyes);
     const halo = new THREE.Group(); halo.position.set(0, 0.47, 0); halo.scale.setScalar(1.25); halo.visible = false; neck.add(halo); root.userData.halo = halo;   // the stars you see after a crash
     for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.34, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.34); s.scale.setScalar(0.32); halo.add(s); }
     return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks, mouth: mouth, chest: chest, eyes: eyes, brows: brows };
@@ -1458,25 +2369,44 @@ export function createWorld() {
     POS.x = R.ferryO[0] + fx * (go - S.deck[1]); POS.z = R.ferryO[1] + fz * (go - S.deck[1]); POS.y = S.deck[0] + boat.position.y; POS.th = th; POS.bank = 0;
     if (F.t % 2 === 0) for (const sd of [-1, 1]) tyre.emit(POS.x - fx * 26 + Math.cos(th) * sd * 5, 0.3, POS.z - fz * 26 + Math.sin(th) * sd * 5, (Math.random() - 0.5) * 2, 0.3, (Math.random() - 0.5) * 2, 2, 7, '#f4f8fa', 0.6, 2.2, 0, SMK);   // the wake
   }
+  // ---- (revamp WS5) your car in a handful of draws, not ~40: its body (paint, trim, leather, solid glass, lamps, chrome, the steering column)
+  // in one, each wheel in one, the steering wheel in one, through WS4's one-draw material with your car's own materials as rows of its
+  // table (packCar(.., CAR, true)): the same sums for each, so the same picture. The see-through windscreen and the number plate (a picture)
+  // stay meshes of their own; the shadow is one stand-in drawing the same corners, as a traffic car's. ?nopack: the old meshes
+  const PKP = !NOPACK, COLW = new THREE.MeshBasicMaterial({ vertexColors: true }), CARK = Object.assign({}, CAR, { col: LOOK_NEW ? CAR.trim : COLW });
+  // (the steering column and its shroud had MAT.trim, which doesn't exist - three's own plain white stood in. The old look keeps that white, in
+  // the table now (COLW: white, unlit, the same); the new look gives them the dark trim they were meant to have)
+  function columnGeo() {
+    const A = COUPLE.wheel.at, dy = -0.45, dz = -0.89, out = [], e = new THREE.Euler(Math.atan2(dz, dy), 0, 0), q = new THREE.Quaternion().setFromEuler(e), one = new THREE.Vector3(1, 1, 1), M4 = new THREE.Matrix4();
+    for (const [g, f] of [[new THREE.CylinderGeometry(0.023, 0.028, 0.27, 12), 0.16], [new THREE.CylinderGeometry(0.042, 0.05, 0.09, 14), 0.31]]) { const n = g.toNonIndexed(); g.dispose(); n.applyMatrix4(M4.compose(new THREE.Vector3(A[0], A[1] + dy * f, A[2] + dz * f), q, one)); n.deleteAttribute('uv'); out.push(n); }
+    const g = MD.merge(out.map((n) => { const c = new Float32Array(n.attributes.position.count * 3).fill(LOOK_NEW ? 0.012 : 1); n.setAttribute('color', new THREE.BufferAttribute(c, 3)); return n; })); out.forEach((n) => n.dispose()); return g;
+  }
+  function packedInto(g, P, rcv) {   // a packed shape under a group of your car: the one draw, what can't join (the screen, the plate) as before, and the stand-in for its shadow
+    if (P.one) { const q = new THREE.Mesh(P.one, P.mat); q.receiveShadow = rcv; g.add(q); }
+    for (const [geo, mt, cs] of P.rest) { const q = new THREE.Mesh(geo, mt); q.castShadow = cs; q.receiveShadow = rcv; g.add(q); }
+    if (P.shadow) g.add(shadowProxy(P.shadow)); for (const [geo, mt] of P.shOnly) g.add(shadowOnly(geo, mt));
+  }
   function makePlayer(id) {
     restore(); player.clear(); const m = MD.playerCar(id); carInfo = m; R.couple = null;
-    for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = k !== 'glow'; player.add(mesh); }
-    wheels = m.wheels.map((p) => { const w = new THREE.Group(); for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); w.scale.x = (p[0] < 0 ? -1 : 1) * (m.open && p[2] > 0 ? 1.2 : 1); w.userData.home = { p: w.position.clone(), r: new THREE.Euler(), s: w.scale.clone() }; player.add(w); return w; });   // (mirrored on the left, so the spokes face out)
+    if (PKP) { const bm = Object.assign({}, m.body); if (m.open) bm.col = columnGeo(); packedInto(player, packCar(bm, true, CARK, true), LOOK_NEW); }   // (revamp WS5: the body in one draw - see packedInto())
+    else for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = !NOCAST[k]; mesh.receiveShadow = LOOK_NEW && !NOCAST[k]; player.add(mesh); }   // (WS3: dappled shade on your car under the trees)
+    wheels = m.wheels.map((p) => { const w = new THREE.Group(); if (PKP) packedInto(w, packCar(m.wheel, true, CAR, true), false); else for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); w.scale.x = (p[0] < 0 ? -1 : 1) * (m.open && p[2] > 0 ? 1.2 : 1); w.userData.home = { p: w.position.clone(), r: new THREE.Euler(), s: w.scale.clone() }; player.add(w); return w; });   // (mirrored on the left, so the spokes face out)
     R.hubs = m.wheels.map((p) => { const s = new THREE.Mesh(STUB, CAR.trim); s.position.set(p[0], p[1], p[2]); s.rotation.z = Math.PI / 2; s.visible = false; player.add(s); return s; });   // a hub, seen when a wheel's gone
     if (R.ghostCar) scene.remove(R.ghostCar);   // your ghost (7 Oct): the same car in see-through blue
     R.ghostCar = new THREE.Group(); R.ghostCar.visible = false; scene.add(R.ghostCar);
-    for (const k in m.body) if (m.body[k] && k !== 'glow') R.ghostCar.add(new THREE.Mesh(m.body[k], GHOSTMAT));
+    for (const k in m.body) if (m.body[k] && k !== 'glow' && k !== 'lamp') R.ghostCar.add(new THREE.Mesh(m.body[k], GHOSTMAT));
     for (const p of m.wheels) for (const k in m.wheel) if (m.wheel[k]) { const w = new THREE.Mesh(m.wheel[k], GHOSTMAT); w.position.set(p[0], p[1], p[2]); w.scale.x = p[0] < 0 ? -1 : 1; R.ghostCar.add(w); }
     { const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#7fd0ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.5 })); gl.scale.set(5.5, 2.6, 1); gl.position.y = 0.9; R.ghostCar.add(gl); R.ghostGlow = gl; }   // (a soft blue glow: you can pick it out far down the road)
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.7, m.len * 2 + 0.7), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.6)'], [0.7, 'rgba(0,0,0,0.32)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.04; player.add(shadow); player.userData.shadow = shadow;
+    if (LOOK_NEW) { shadow.material.polygonOffset = true; shadow.material.polygonOffsetFactor = shadow.material.polygonOffsetUnits = -4; shadow.material.map = CONTACT; shadow.scale.set(0.82, 0.86, 1); }   // (WS3: over the crowned road - it had sunk under it, and a phone, with no shadow map, showed your car floating; the fix round: the contact shadow, as every car's)   // (WS3: over the crowned road - it had sunk under it, and a phone, with no shadow map, showed your car floating)
     if (m.open) {   // the roadster: the two of you, and the steering wheel
       const drv = personOf(COUPLE.driver), her = personOf(COUPLE.girl), sw = new THREE.Group();
       player.add(drv.root); player.add(her.root);
       R.keyL = new THREE.SpotLight('#fff0e0', 0, 7, 0.36, 0.6, 2); R.keyL.position.set(-1.6, 2.3, -2.6); R.keyL.target.position.set(0, 1.42, 0.5);   /* (8 Oct: aimed at their faces, a narrower cone - wide and low it blew a white glare onto the bonnet) */ player.add(R.keyL); player.add(R.keyL.target);   // (round 8: a key light and a rim light on the two of you,
       R.rimL = new THREE.SpotLight('#dfe8ff', 0, 7, 0.42, 0.7, 2); R.rimL.position.set(0.3, 3.0, 2.2); R.rimL.target.position.set(0, 1.42, 0.45);   /* (8 Oct: steeper and narrower - shallow, it bounced off the bonnet into the front cameras as a white glare) */ player.add(R.rimL); player.add(R.rimL.target);   // up only while the cameras are close on you: the lights and the goal)
-      sw.position.set(COUPLE.wheel.at[0], COUPLE.wheel.at[1], COUPLE.wheel.at[2]); sw.rotation.x = COUPLE.wheel.tilt; const inner = new THREE.Group(); sw.add(inner); addParts(inner, COUPLE.wheel.geo, {}); player.add(sw);
-      { const A = COUPLE.wheel.at, dy = -0.45, dz = -0.89, col = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.028, 0.27, 12), MAT.trim), shr = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.05, 0.09, 14), MAT.trim);   // the steering column, into the dash (round 2: slim)
+      sw.position.set(COUPLE.wheel.at[0], COUPLE.wheel.at[1], COUPLE.wheel.at[2]); sw.rotation.x = COUPLE.wheel.tilt; const inner = new THREE.Group(); sw.add(inner); if (PKP) packedInto(inner, packCar(COUPLE.wheel.geo, true, CAR, true), false); else addParts(inner, COUPLE.wheel.geo, {}); player.add(sw);
+      if (!PKP) { const A = COUPLE.wheel.at, dy = -0.45, dz = -0.89, col = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.028, 0.27, 12), MAT.trim), shr = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.05, 0.09, 14), MAT.trim);   // the steering column, into the dash (round 2: slim)
         col.position.set(A[0], A[1] + dy * 0.16, A[2] + dz * 0.16); shr.position.set(A[0], A[1] + dy * 0.31, A[2] + dz * 0.31); col.rotation.x = shr.rotation.x = Math.atan2(dz, dy); player.add(col); player.add(shr); }
       const NS = 11, sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NS * 2 * 3), 3));
       const idx = []; for (let tl = 0; tl < 1; tl++) for (let i = 0; i < NS - 1; i++) { const a = (tl * NS + i) * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } sg.setIndex(idx);
@@ -1497,7 +2427,7 @@ export function createWorld() {
   // ---------------------------------------------------------------- a big crash: the car somersaults and barrel-rolls on down the road,
   // bouncing twice; the two of you and a wheel are thrown clear; sparks, smoke and bits of red; then a flash and you're
   // back in your seats on the road (engine.js puts the car back in a lane and stops it)
-  const TG = 17;
+  const TG = 17, CHE = new THREE.Euler(), CHQ = new THREE.Quaternion(), CHQ2 = new THREE.Quaternion();   // (CH*: WS5's chassis, render())
   function tumble(cr) {
     const sec = cr.t / 60, v0 = cr.v0 || 40, vz0 = 7.5 + Math.min(5.5, v0 / 12), vz1 = vz0 * 0.42, vz2 = vz1 * 0.35;
     const T1 = 2 * vz0 / TG, T2 = 2 * vz1 / TG, T3 = 2 * vz2 / TG, Tf = T1 + T2 + T3;
@@ -1515,7 +2445,7 @@ export function createWorld() {
     const nShard = Math.min(18, Math.round(n / 4));
     for (let i = 0; i < nShard; i++) {
       const kind = i % 6, sz = kind < 3 ? [0.16 + Math.random() * 0.16, 0.05, 0.1 + Math.random() * 0.12] : kind < 5 ? [0.24, 0.05, 0.08] : [0.12, 0.03, 0.12], fv = v * (0.4 + Math.random() * 0.35) + 5;
-      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#a3111b' : kind < 5 ? '#26282c' : '#cfe6f4', y + 0.02);
+      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? (LOOK_NEW && carInfo && carInfo.col ? MD.shade(carInfo.col, -0.15) : '#a3111b') : kind < 5 ? '#26282c' : '#cfe6f4', y + 0.02);   // (WS5: the new look's bodywork in your car's own colour)
     }
     const dust = R.W && R.W.off ? '#a49a7c' : '#c4bcb0';
     for (let i = 0; i < 12; i++) { const a = Math.random() * Math.PI * 2; smoke.emit(x, y + 0.3, z, Math.cos(a) * 9, 0.4 + Math.random(), Math.sin(a) * 9, 2.2, 7.5, dust, 0.36, 2.8); }   // a ring of dust rolling out low
@@ -1637,7 +2567,7 @@ export function createWorld() {
     wave: [0.55, 0.12, 1.05, 0.2, 2.5, 0.6, -0.3, -0.1, 0, 0],
     scared: [1.5, 0.25, 2.3, 1.5, -0.25, 2.3, 0, 0.3, 0, 0],
     sad: [0.45, 0.05, 1.2, 0.45, -0.05, 1.2, 0, 0.35, 0, 0],
-    // 6 Oct (owner: "maybe she can do more than put her hands up ... look at OutRun"): holding on (nitro), a hand to her hair, clapping, arms folded
+    // 6 Oct (owner: "maybe she can do more than put her hands up"): holding on (nitro), a hand to her hair, clapping, arms folded
     hold: [0.95, 0.15, 0.35, 0.95, -0.15, 0.35, 0, -0.2, 0, 0],
     hair: [0.85, -1.5, 2.3, 0.14, -0.22, 0.9, 0.25, -0.05, 0.6, -0.35],
     clap: [0.95, 0.35, 1.5, 0.95, -0.35, 1.5, 0, -0.1, 0.5, -0.5],
@@ -1662,7 +2592,7 @@ export function createWorld() {
     /* (the lights: the countdown scene at the end of animateCouple poses the two of you now) */
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
-    if (her.k === 'idle' && !speaking && W.count <= 0 && W.v > 30 && !W.crash) { const ph = (t / 1000) % 18; if (ph > 11.5 && ph < 17) { const w = Math.sin(t / 230) * 0.13; tgt = POSES.idle.slice(); tgt[0] = 0.28; tgt[1] = -1.3 + w; tgt[2] = 0.32 + w * 0.8; tgt[8] = 0.12; tgt[6] = 0.38; tgt[7] = -0.05; } }   // (round 7: now and then at speed her outside hand out over the door, riding the wind - OutRun 2's girl)
+    if (her.k === 'idle' && !speaking && W.count <= 0 && W.v > 30 && !W.crash) { const ph = (t / 1000) % 18; if (ph > 11.5 && ph < 17) { const w = Math.sin(t / 230) * 0.13; tgt = POSES.idle.slice(); tgt[0] = 0.28; tgt[1] = -1.3 + w; tgt[2] = 0.32 + w * 0.8; tgt[8] = 0.12; tgt[6] = 0.38; tgt[7] = -0.05; } }   // (round 7: now and then at speed her outside hand out over the door, riding the wind)
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * (i === 6 ? Math.min(1, dt * 4.5) : k);   // (her head turns ease over ~0.4 s)
     {   // their mouths (pass 3): [smile, open, pout] - she laughs when she cheers, pouts in a sulk, and her mouth moves as she chats; he grins when she's happy, gapes at a crash
       const MO = { idle: [0.35, 0, 0], cheer: [1, 0.6, 0], wave: [0.95, 0.4, 0], clap: [1, 0.5, 0], sulk: [0, 0, 1], sad: [0, 0, 0.7], ask: [0.55, 0.25, 0], look: [0.4, 0.05, 0], hair: [0.45, 0, 0], hold: [0.6, 0.65, 0], point: [0.6, 0.3, 0] };
@@ -1773,12 +2703,15 @@ export function createWorld() {
   function render(W, t, mode) {
     const dt = R.lastT ? Math.min(0.1, (t - R.lastT) / 1000) : 1 / 60; R.lastT = t;
     if (R.W !== W) reset(W);
-    if (!R.warm && (R.frames = (R.frames || 0) + 1) > 3) warmUp();   // once the title is up and running
+    const PT = R.pt || (R.pt = {}), pt0 = realNow();   // (where this frame's time went, for the bench: stats().pt)
     poses(W, E.segIndex(W.s + E.VIEW + 240));
-    updateChunks(W);
+    updateChunks(W); PT.chunks = realNow() - pt0;
+    if (!R.chunks.has(Math.floor(E.segIndex(W.s) / CH)) && E.segIndex(W.s) <= E.lastIndex(W)) { R.held = (R.held || 0) + 1; return null; }   // (the road under the car not built yet: coastrun.js keeps the last picture)
+    if (!R.warm && (R.frames = (R.frames || 0) + 1) > 3) warmUp();   // once the title is up and running - its car and lights in place - and again after a tier change
+    warmStep(); prebuild(W); R.idle = !!(W.demo || W.over);   // (counted in frames actually drawn; idle: the title or the results, not a race - texLoad)
     // which place we're in: the light, the sky and the far hills follow it
     const here = E.segAt(W, E.segIndex(W.s)).st, key = PAL[here].key;
-    if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key, W); R.envDone = false; }
+    if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key, W); R.envDone = R.fade >= 1 && R.envKey === key; R.envHalf = false; }   // (a new race where the title was: its surroundings are still right)
     R.fade = Math.min(1, R.fade + dt / 2.5);
     R.tunK += ((E.segAt(W, E.segIndex(W.s)).tun ? 1 : 0) - R.tunK) * Math.min(1, dt * 3.5); WAVE_T.value = t / 1000;
     { const hero = W.count > 0 ? 1 : W.goalSeq ? Math.min(1, W.goalSeq.t / 40) : 0; R.heroL = (R.heroL || 0) + (hero - (R.heroL || 0)) * Math.min(1, dt * 3); if (R.keyL) { R.keyL.intensity = 7 * R.heroL; R.rimL.intensity = 9 * R.heroL; } }
@@ -1788,11 +2721,17 @@ export function createWorld() {
     }
     R.fieldKey = zoneKey(W, E.segAt(W, E.segIndex(W.s)));   // (a part of a stage with its own ground blends in as you arrive)
     setLook(here, R.fade >= 1 && !R.envDone ? 1 : Math.min(1, dt * 1.2));
-    if (!R.envDone && (R.fade >= 1 || t - R.envT > 350)) { updateEnv(t); if (R.fade >= 1) R.envDone = true; }
+    PT.env = 0; if (!R.envDone && (R.fade >= 1 || (R.fade >= 0.5 && !R.envHalf))) { const e0 = realNow(); updateEnv(t, R.fade >= 1); PT.env = realNow() - e0; if (R.fade >= 1) { R.envDone = true; R.envKey = key; } else R.envHalf = true; }
+    { const F = W.fork, keys = [key], go = [F && F.s && F.next ? F.next[F.s < 0 ? 0 : 1] : null, W.route && W.route.length ? W.route[W.route.length - 1] : null];   // the place
+      // you're going to made ready, from the split (F.s) - and kept till you're there: W.route's last, as the engine moves W.fork on to the fork
+      // after it a road's length before you arrive (the place you'd chosen was let go of, then fetched and sent at once on arrival: 40-60 ms on a phone)
+      for (const st of go) { const k2 = st != null && PAL[st] && PAL[st].key; if (k2 && k2 !== key && !keys.includes(k2)) { keys.push(k2); panoFetch(k2); heroFetch(k2); } } panoKeep(keys); }
     SU.time.value = t / 1000;
 
     // ---- the car
-    if (playerCarId !== W.car) makePlayer(W.car);
+    if (playerCarId !== W.car) { makePlayer(W.car); proxyBuild(player); }   // (revamp WS4: your car's shadow from stand-ins)
+    else if (PX.dirty && R.idle) proxyBuild(player);   // (WS4 fix round: what's under your car changed - rebuilt behind the title or the results, never mid-race)
+    if (!!W.cop !== !!R.copWant && (W.cop || R.idle)) { R.copWant = !!W.cop; decalUp(R.copWant); }   // (WS4 fix round: the police lettering's picture only in the Getaway: decalUp())
     const F = W.fork, b = F && F.s && E.segIndex(W.s) >= F.split ? F.s : 0;
     place(W, W.s, W.x, b, POS);
     if (W.ferry) ferryPlace(W, POS); else if (FERRYG.visible) { FERRYG.visible = false; R.ferryT0 = null; R.camInit = false; R.flash = Math.max(R.flash, 0.5); }
@@ -1838,8 +2777,14 @@ export function createWorld() {
     CAR.brake.color.setScalar(1.05 + R.brakeK * 2.6);
     animateCouple(W, dt, t);
     R.lockK = (R.lockK || 0) + ((Math.abs(R.visSlip || 0) > 0.06 ? 1 : 0) - (R.lockK || 0)) * Math.min(1, dt * 10);   // (opposite lock, eased in and out over ~0.1 s)
+    if (LOOK_NEW) R.wBlur = 0.85 * smooth(20, 70, Math.abs(W.v) / 0.34 + (W.wspin || 0) * 19);   // (WS5: rad/s; the spokes strobe from ~37 at 60 frames a second)
     wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? (1 - R.lockK) * -W.steer * 0.42 + R.lockK * Math.max(-0.52, Math.min(0.52, (R.visSlip || 0) * 0.8)) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
-    const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
+    if (LOOK_NEW) {   // (WS5) the chassis apart from the body: the body dips, squats and leans on its springs (bodyP, bodyR, latK) and the wheels stay square to
+      // the road under it - turned back by just that much about the car's foot - while the road's bank and slope, a roll over the traffic and a crash still turn everything
+      const live = !cr; CHE.set(pitch, 0, roll, 'YXZ'); CHQ.setFromEuler(CHE).invert(); CHE.set(pitch - (live ? R.bodyP : 0), 0, roll - (live ? R.latK * 0.06 + R.bodyR : 0), 'YXZ'); CHQ.multiply(CHQ2.setFromEuler(CHE));
+      wheels.forEach((w) => { if (w.parent !== player) return; w.position.copy(w.userData.home.p).applyQuaternion(CHQ); CHE.set(w.rotation.x, w.rotation.y, 0, 'YXZ'); w.quaternion.setFromEuler(CHE).premultiply(CHQ); });
+    }
+    const sh = player.userData.shadow; sh.position.y = 0.05 + crownY(W.x, HALF) - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2) * (LOOK_NEW ? R.blobK : 1);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
     { const fk = W.lift ? Math.min(1, Math.max(0, (W.h - E.heightAt(W, W.s)) / 6)) : 0; R.flyK = (R.flyK || 0) + (fk - (R.flyK || 0)) * Math.min(1, dt * 2.5); }   // (the Skimmer flying, 19 Oct: the camera pulls back and up a little, so you see the road drop away under it)
@@ -1868,6 +2813,7 @@ export function createWorld() {
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
+    if (LOOK_NEW) fill.intensity = R.couple ? fill.userData.i || 0 : 0;   // (WS5 fix round: the fill is for your faces - a closed car has none to light, and from a camera ahead it laid a broad white pool on the GT's pale bonnet)
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
     const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
     if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, Math.min(1.15, spd) - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
@@ -1895,7 +2841,7 @@ export function createWorld() {
     // the driver's seat: your eyes over the bonnet, the wheel and your hands in front of you, her beside you; looking the way the car
     // goes, turned a little into the bend ahead (not in a crash, nor aboard a ferry: the camera behind takes those)
     const drv = !!(R.camDrv && !cr && !W.ferry && !R.debugCam && R.couple && !R.flying.length);
-    if (R.couple) R.couple.drv.neck.visible = !drv;
+    if (R.couple) { R.couple.drv.neck.visible = !drv; if (R.couple.drv.root.userData.merged) R.couple.drv.neck.scale.setScalar(drv ? 0.00083 : 0.83); }   // (WS5: his head's in the joined meshes - shrunk to nothing as well)
     if (drv) {
       player.updateMatrixWorld(true); player.localToWorld(V3.set(DRV_EYE[0], DRV_EYE[1], DRV_EYE[2]));
       place(W, W.s + 24, W.x * 0.6, b, POSD);
@@ -1915,6 +2861,13 @@ export function createWorld() {
     turnRing(W, dt); heroStep(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
     sea.position.set(Math.round(camera.position.x / 100) * 100, 0, Math.round(camera.position.z / 100) * 100);
     seaNorm.offset.x = (t / 1000) * 0.012; seaNorm.offset.y = (t / 1000) * 0.008;
+    if (SEA) {   // (WS7) the new look's sea: the waves' clock, the far panorama it reflects (where it stands round you now), the sun for the light through the crests
+      const U = SEA.U, mp = ringFar.material.map; U.uSeaT.value = SEA.SH.uShT.value = t / 1000; if (mp) U.uRing.value = mp;
+      U.uRingP.value.set(ringFar.rotation.y, ringFar.scale.y, ringFar.position.y - ringFar.scale.y / 2, mp && ringFar.visible ? 1 : 0); U.uSunC.value.copy(sun.color).multiplyScalar(sun.intensity); U.uSunD.value.copy(SU.sunDir.value);
+      // the shallows' strips only within SHORE_FAR of the camera: one draw a piece of road with a beach, and past this they're a line a pixel or
+      // two wide (the sea's own colour carries on); kept the draw count where it was with the old foam, which only the cliff-foot beaches had
+      const far = SHORE_FAR[tierName] || 420; for (const gr of R.chunks.values()) { const m = gr.userData.shore; if (m) { const b = m.geometry.boundingSphere; m.visible = camera.position.distanceTo(b.center) < far + b.radius; } }
+    }
     foamTex.offset.x = Math.sin(t / 1300) * 0.12; foamTex.offset.y = t / 14000; foamMat.opacity = 0.75 + Math.sin(t / 1300 + 1.2) * 0.15;
     const sd = SU.sunDir.value;
     moon.position.copy(camera.position).addScaledVector(sd, 2000);
@@ -1923,7 +2876,16 @@ export function createWorld() {
     { const LK = LOOK[R.lookKey] || {}, hh = Math.hypot(sd.x, sd.z) || 1, dx = sd.x / hh, dz = sd.z / hh;
       glint.visible = !!(LK.sea && (LK.night || (LK.glow >= 1.4 && !lit(LK)))); glint.material.color.set(LK.night ? '#dfe6ff' : '#ffb070'); glint.material.opacity = LK.night ? 1 : 0.85;
       if (glint.visible) { glint.scale.set(70, 1500, 1); glint.position.set(cx + dx * 830, 0.12, cz + dz * 830); glint.rotation.set(-Math.PI / 2, Math.atan2(-dx, -dz), 0); } }
-    sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz);
+    if (!LOOK_NEW || !renderer.shadowMap.enabled) { sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz); }
+    else {   // (WS3) the shadow's square sits ahead of the car, where the camera looks (half of the old one lay behind it), and moves in whole texels of
+      // the shadow map, so the shadows' edges stand still as you drive instead of crawling. The sun's direction for it changes only in steps of a
+      // third of a degree (it turns with the road under a low sun), so between steps nothing shifts at all
+      if (!R.shDir || R.shDir.dot(sd) < 0.999983) { R.shDir = (R.shDir || new THREE.Vector3()).copy(sd); SDM.lookAt(R.shDir, SD0, SDUP); SDX.setFromMatrixColumn(SDM, 0); SDY.setFromMatrixColumn(SDM, 1); }
+      const ah = Math.min(35, TIER.shHalf - 12), tx = 2 * TIER.shHalf / sun.shadow.mapSize.x;
+      SDC.set(cx + Math.sin(heading) * ah, cy, cz - Math.cos(heading) * ah);
+      const u = SDC.dot(SDX), v = SDC.dot(SDY); SDC.addScaledVector(SDX, Math.round(u / tx) * tx - u).addScaledVector(SDY, Math.round(v / tx) * tx - v);
+      sun.target.position.copy(SDC); sun.position.copy(SDC).addScaledVector(R.shDir, 180);
+    }
     { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx, cy + 5.5, cz); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
 
     // ---- at the airport (Hurn), a plane comes in to land: it crosses low over the road ahead, descending, every quarter of a minute
@@ -1938,23 +2900,32 @@ export function createWorld() {
         FLY.rotation.order = 'YXZ'; FLY.rotation.set(0.07, Math.atan2(cs, sn), 0);   // (nose a touch down, the gear-down glide)
       }
     }
+    PT.mid = realNow() - pt0;
     // ---- traffic
     const seen = new Set();
     for (const c of W.cars) {
       let m = traffic.get(c.id);
       if (!m) {
         const mm = MD.trafficModel(c.t, c.col), V = E.VEH[c.t]; m = new THREE.Group();
-        for (const k in mm) if (mm[k] && MAT[k]) { const mesh = new THREE.Mesh(mm[k], MAT[k]); mesh.castShadow = !V.rival && k !== 'glow'; m.add(mesh); }   // (a racer: its soft blob shadow only - seven of them in the shadow pass cost a slow PC)
-        const blob = new THREE.Mesh(blobGeo, blobMat); blob.scale.set(V.w * 2.6, 1, V.l * 2.3); blob.position.y = 0.05; m.add(blob);
+        const pk = PK.cache.get(mm) || (R.pkLate = (R.pkLate || 0) + 1, packCar(mm, true));   // (revamp WS4: the car in one draw, its shadow from one stand-in; made behind the title - R.pkLate counts any made in a race)
+        if (pk.one) { const q = new THREE.Mesh(pk.one, pk.mat); q.receiveShadow = LOOK_NEW; m.add(q); }   // (WS3: the cars take the trees' and each other's shadows - a uniform, no new shader; outside the shadow's square it's simply lit)
+        for (const [g, mt, cs] of pk.rest) { const q = new THREE.Mesh(g, mt); q.castShadow = cs && !V.rival; m.add(q); }   // (its see-through glass, as before: its shadow in the stand-in's, unless it can't be)
+        if (!V.rival && renderer.shadowMap.enabled) { if (pk.shadow) m.add(shadowProxy(pk.shadow)); for (const [g, mt] of pk.shOnly) m.add(shadowOnly(g, mt)); }   // (a racer: its soft blob shadow only - seven of them in the shadow pass cost a slow PC. No shadows (Phone): no stand-in)
+        const blob = new THREE.Mesh(blobGeo, blobMat); blob.scale.set(V.w * (LOOK_NEW ? 1.75 : 2.6), 1, V.l * (LOOK_NEW ? 2.12 : 2.3)); blob.position.y = 0.05; m.add(blob); m.userData.blob = blob;   // (the new look's tighter: a contact shadow, not a pool)
         if (V.cop) { const CW = MD.COP_WHEELS, wm = MD.copWheel(); m.userData.wheels = [];   // its wheels: apart, so they turn
           for (const sd of [-1, 1]) for (const z of CW.z) { const side = new THREE.Group(), spin = new THREE.Group(); side.position.set(sd * CW.x, CW.r, z); if (sd < 0) side.rotation.y = Math.PI;
-            for (const k in wm) if (wm[k] && MAT[k]) spin.add(new THREE.Mesh(wm[k], MAT[k])); side.add(spin); m.add(side); m.userData.wheels.push([spin, sd]); } }
+            const wp = packCar(wm, false); if (wp.one) spin.add(new THREE.Mesh(wp.one, wp.mat)); for (const [g, mt] of wp.rest) spin.add(new THREE.Mesh(g, mt));   // (revamp WS4: a wheel in one draw)
+            side.add(spin); m.add(side); m.userData.wheels.push([spin, sd]); } }
         if (V.cop) {   // its POLICE lettering (bonnet, both doors, the boot lid) and the number on its roof, for the helicopter; the headlamps' wig-wag glow
-          const dec = (txt, w, h, x, y, z, rx, ry, rz, num) => { const d = new THREE.Mesh(new THREE.PlaneGeometry(w, h), decalMat(txt, num)); d.position.set(x, y, z); d.rotation.set(rx, ry, rz); d.renderOrder = 2; m.add(d); };
-          dec('POLICE', 0.98, 0.3, 0, 0.805, -1.47, -Math.PI / 2 + 0.06, 0, Math.PI);   // the bonnet: reads from in front
-          dec('POLICE', 0.84, 0.25, 0, 0.995, 1.93, -Math.PI / 2, 0, 0);   // the boot lid: reads from behind
-          for (const sd of [-1, 1]) dec('POLICE', 1.08, 0.17, sd * 0.947, 0.835, -0.12, 0, sd * Math.PI / 2, 0);   // the doors, over the checks
-          dec(copNumber(c.id), 0.66, 0.3, 0, 1.428, 0.68, -Math.PI / 2, 0, 0, true);   // the roof
+          const one = copDecals(c.id);   // (revamp WS4: all five in one mesh from the picture painted behind the title)
+          if (one) { const d = new THREE.Mesh(one, DA.mat); d.renderOrder = 2; m.add(d); }
+          else {
+            const dec = (txt, w, h, x, y, z, rx, ry, rz, num) => { const d = new THREE.Mesh(new THREE.PlaneGeometry(w, h), decalMat(txt, num)); d.position.set(x, y, z); d.rotation.set(rx, ry, rz); d.renderOrder = 2; m.add(d); };
+            dec('POLICE', 0.98, 0.3, 0, 0.805, -1.47, -Math.PI / 2 + 0.06, 0, Math.PI);   // the bonnet: reads from in front
+            dec('POLICE', 0.84, 0.25, 0, 0.995, 1.93, -Math.PI / 2, 0, 0);   // the boot lid: reads from behind
+            for (const sd of [-1, 1]) dec('POLICE', 1.08, 0.17, sd * 0.947, 0.835, -0.12, 0, sd * Math.PI / 2, 0);   // the doors, over the checks
+            dec(copNumber(c.id), 0.66, 0.3, 0, 1.428, 0.68, -Math.PI / 2, 0, 0, true);   // the roof
+          }
           for (const sd of [-1, 1]) { const hl = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); hl.scale.set(1.5, 1.5, 1); hl.position.set(sd * 0.68, 0.67, -2.32); hl.userData.sir = sd * 2; m.add(hl); }
         }
         if (V.cop) for (const sd of [-1, 1]) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: sirenGlow(), color: '#4a7bff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); sp.scale.set(2.6, 2.6, 1); sp.position.set(sd * 0.3, 1.56, 0.32); sp.userData.sir = sd; m.add(sp); }   // (the blue glow of its lights: seen a long way off, and at night)
@@ -1963,7 +2934,7 @@ export function createWorld() {
       }
       seen.add(c.id);
       place(W, c.s, c.x, c.b, POS);
-      m.position.set(POS.x, POS.y, POS.z);
+      m.position.set(POS.x, POS.y, POS.z); if (LOOK_NEW) m.userData.blob.position.y = 0.045 + crownY(c.x, HALF);   // (on the crown, wherever the lane is)
       m.rotation.order = 'YXZ'; m.rotation.y = -POS.th + (c.tx - c.x) * -0.04 + (c.spin > 0 ? c.spin * 0.15 : 0); m.rotation.z = POS.bank * 0.8;
       m.rotation.x = Math.atan((E.heightAt(W, c.s + 2) - E.heightAt(W, c.s - 2)) / 4);
       if (c.cop) {   // the Getaway's police: parked at an angle in a roadblock or a lay-by; a wreck spins, flips over onto its roof and smokes; the lights flash
@@ -1982,7 +2953,7 @@ export function createWorld() {
       }
       if (c.rival && W.goT != null && W.t - W.goT < 200 && c.v < 22) {   // a racer off the line: its tyres spinning too
         const V = E.VEH[c.t], k3 = 1 - c.v / 22, pts = [];
-        for (const sd of [-1, 1]) { place(W, c.s - V.l * 0.7, c.x + sd * 0.8, c.b, P2); pts.push([P2.x, P2.y + 0.3, P2.z]);
+        for (const sd of [-1, 1]) { place(W, c.s - V.l * 0.7, c.x + sd * 0.8, c.b, P2); pts.push([P2.x, P2.y + 0.3 + crownY(c.x + sd * 0.8, HALF), P2.z]);
           if (Math.random() < 0.8 * k3) tyre.emit(P2.x + (Math.random() - 0.5) * 0.4, P2.y + 0.18, P2.z + (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 2, 0.4 + Math.random() * 0.8, (Math.random() - 0.5) * 2, 0.8, 4.2, '#e2e6ea', 0.2 + 0.3 * k3, 1.6, 0, SMK); }
         const RS = R.rivalSkid || (R.rivalSkid = new Map()), pv = RS.get(c.id); skid.add(pts[0], pts[1], pv, 0.13, 0.4 + 0.5 * k3); RS.set(c.id, pts);
       } else if (R.rivalSkid && R.rivalSkid.has(c.id)) R.rivalSkid.delete(c.id);
@@ -1991,15 +2962,14 @@ export function createWorld() {
     { const ST = R.stingers || (R.stingers = new Map()), seenS = new Set();   // the Getaway's stingers: a black strip of spikes across the road
       for (const st of (W.stingers || [])) {
         let g = ST.get(st.id);
-        if (!g) { g = new THREE.Group(); const w = st.x1 - st.x0;
-          const strip = new THREE.Mesh(new THREE.BoxGeometry(w, 0.07, 0.42), new THREE.MeshStandardMaterial({ color: '#1a1b1d', roughness: 0.7 })); strip.position.y = 0.05; g.add(strip);
-          const spk = new THREE.MeshStandardMaterial({ color: '#d4d7db', roughness: 0.3, metalness: 0.8 });
-          for (let q = -w / 2 + 0.15; q < w / 2; q += 0.3) for (const dz of [-0.12, 0.12]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 4), spk); sp.position.set(q, 0.14, dz); g.add(sp); }
+        if (!g) { g = new THREE.Group(); const SG = stingerGeo(st.x1 - st.x0);   // (revamp WS4: its spikes one mesh, not 30; the shapes and the two materials made once)
+          const strip = new THREE.Mesh(SG[0], STING.strip); strip.position.y = 0.05; g.add(strip); g.add(new THREE.Mesh(SG[1], STING.spike));
           scene.add(g); ST.set(st.id, g); }
         seenS.add(st.id); place(W, st.s, (st.x0 + st.x1) / 2, 0, POS); g.position.set(POS.x, POS.y, POS.z); g.rotation.set(0, -POS.th, 0);
       }
       for (const [id, g] of ST) if (!seenS.has(id)) { scene.remove(g); ST.delete(id); }
       const on = Math.floor(W.t / 8) % 2; MAT.sirA.color.setScalar(on ? 2.8 : 0.28); MAT.sirB.color.setScalar(on ? 0.28 : 2.8);
+      pkSync(); proxySync();   // (the one-draw cars' table of materials, the police lights' colours with it; the shadow stand-ins kept in step: revamp WS4)
     }
     if (R.ghostCar) {   // your ghost: on the road where your best drive was at this moment (not in a split's other branch, not right on top of you)
       const G = W.ghost, gi = G ? E.segIndex(G.s) : 0, gs = G ? E.segAt(W, gi) : null;
@@ -2049,11 +3019,20 @@ export function createWorld() {
       ch.children.forEach((o) => { const it = o.userData.it; if (it && it.done) { const age = W.t - it.done; if (age > 50) o.visible = false; else { o.position.y += 0.25 - age * 0.012; o.rotation.x += 0.15; o.rotation.z += 0.1; } } });
       const Lp = ch.userData.lamps; if (Lp) for (let q = 0; q < Lp.length; q += 3) { if (ng >= 1200) break; glows.set(ng++, Lp[q], Lp[q + 1], Lp[q + 2], '#ffd98a', 1.5); }
     }
+    if (LOOK_NEW) {   // cat's eyes shining back at dusk, at night and in tunnels (revamp WS2): the studs ahead of the camera - not of the car: those between the two
+      // are the nearest and plainest in the picture (WS2 left them out) - those behind it skipped before they count, nearest chunks first, at most 300;
+      // each a small flat glint on its stud, 2 cm up (the glows' own shader pulls it clear of the road's depth offset)
+      const LK = LOOK[R.lookKey] || {}, ke = Math.max(LK.night ? 1 : LK.dusk ? 0.55 : 0, R.tunK * 0.8);
+      if (ke > 0.03) { const c0 = Math.floor(E.segIndex(W.s) / CH) - 1; let ne = 0; glows.points.material.uniforms.res.value = composer.readBuffer.height;
+        for (let c = c0; c <= c0 + 15 && ne < 300 && ng < 1200; c++) { const ch = R.chunks.get(c), Ey = ch && ch.visible && ch.userData.eyes; if (!Ey) continue;
+          for (let q = 0; q < Ey.length && ne < 300 && ng < 1200; q += 4) { const dx = Ey[q] - camera.position.x, dz = Ey[q + 2] - camera.position.z, al = dx * fx + dz * fz; if (al < 1.5 || al > 250) continue; glows.set(ng++, Ey[q], Ey[q + 1] + 0.02, Ey[q + 2], EYEHEX[Ey[q + 3]], 0.42, ke * 3.6, true); ne++; } } R.eyeN = ne; } else R.eyeN = 0;
+    }
     glows.draw(ng);
     effects(W, t, dt, cx, cy, cz, R.visHead, travel);
     flare(W); gulls(W, t, cx, cy, cz, fx, fz);
     if (W.banner && W.banner !== R.lastBanner) { R.lastBanner = W.banner; if (W.banner.kind === 'check' || W.banner.kind === 'goal' || W.banner.kind === 'go') confetti(cx, cy, cz, fx, fz, W.banner.kind === 'goal' ? 360 : 200); }
     { const LK = LOOK[R.lookKey] || {}, am = (1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1); smoke.amb(am); tyre.amb(am); steam.amb(am); }   // smoke takes the light it's in
+    if (FXU) fxLight(dt);   // (the new look: the puffs lit by the sun and sky they're in, the sparks streaked against the camera's own motion)
     smoke.update(dt); sparks.update(dt); tyre.update(dt); steam.update(dt); updateShards(dt); fworks.update(dt);
     if (LOOK[R.lookKey] && LOOK[R.lookKey].fireworks && !W.ferry && !W.crash) {   // a burst out over the water ahead every second or so, a rocket's trail under it
       R.fwT = (R.fwT || 0) - dt;
@@ -2066,10 +3045,19 @@ export function createWorld() {
         for (let k = 1; k < 8; k++) fworks.emit(FWP.x, y - k * 5, FWP.z, 0, 0, 0, 2.4, 0.6, '#ffd8a0', 0.6, 0.25 + k * 0.06, 0);
       }
     }
-    // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
+    // ---- draw: through the glow, the grade and the blur (every tier: the plainer tiers have a smaller glow and no edge smoothing)
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
-    if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, Math.min(1.2, W.v / E.VMAX) - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    if (LOOK_NEW) { const sk = smooth(28, 80, W.v); RU.uSpeedK.value = sk; RU.uBias.value = sk; RU.uMB.value = W.v * clamp(dt, 1 / 120, 1 / 30); skid.tick(t / 1000); }   // (the asphalt's grain softened with speed: no shimmer flat out)
+    GRADE_U.time.value = (t % 10000) / 1000;
+    if (!LOOK_NEW) GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, Math.min(1.2, W.v / E.VMAX) - 0.88) * 0.45;
+    else {   // (WS3: the streaks on the boost only - and past top speed, which only the boost reaches - the brightness smeared, not the colour)
+      GRADE_U.blur.value = R.boostK * 0.3 + Math.max(0, Math.min(1.2, W.v / E.VMAX) - 0.95) * 1.2;
+      // the eye in a tunnel: it opens up over a second or two in the dark (the tunnel's lamps come up), and coming out the day is too bright
+      // for a moment, then settles - R.adapt lags the tunnel's darkness (R.tunK)
+      R.adapt = (R.adapt || 0) + (R.tunK - (R.adapt || 0)) * Math.min(1, dt * (R.tunK > (R.adapt || 0) ? 0.9 : 0.55));
+      GRADE_U.expo.value = renderer.toneMappingExposure * (1 + 0.62 * R.adapt);
+    } GRADE_U.flash.value = R.flash * 0.5; const d0 = realNow(); PT.pre = d0 - pt0; composer.render(dt); const d1 = realNow(); PT.draw = d1 - d0;
+    uploads(); PT.up = realNow() - d1;
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -2155,7 +3143,7 @@ export function createWorld() {
     if (ws > 0.08 && !W.air && !W.crash) for (const sd of [-1, 1]) for (let q = 0; q < Math.ceil(3.5 * ws); q++) { const p = rear(sd), back = 1.5 + Math.random() * 3;
       tyre.emit(p[0] + rx * sd * 0.15 + (Math.random() - 0.5) * 0.35, p[1] - 0.14, p[2] + rz * sd * 0.15 + (Math.random() - 0.5) * 0.35, -tfx * back + rx * sd * Math.random() * 1.6, (W.count > 0 ? 0.12 : 0.35) + Math.random() * (W.count > 0 ? 0.3 : 0.9), -tfz * back + rz * sd * Math.random() * 1.6, 0.8, W.count > 0 ? 2.4 : 4.4, '#e2e6ea', (0.22 + 0.3 * ws) * (W.count > 0 ? 0.7 : 1), 1.8, 0, SMK); }
     // black lines: a drift lays wide ones, wheelspin two narrow dark ones from the rear tyres
-    if ((W.drift || ws > 0.12) && !W.air && !W.crash) { const a = rear(-1.12), b = rear(1.12); skid.add(a, b, R.prevSkid, W.drift ? 0.17 : 0.13, W.drift ? 0.7 : Math.min(0.9, 0.35 + ws * 0.7)); R.prevSkid = [a, b]; } else R.prevSkid = null;
+    if ((W.drift || ws > 0.12) && !W.air && !W.crash) { const a = rear(-1.12), b = rear(1.12); if (LOOK_NEW) { a[1] += crownY(W.x - 0.9, HALF); b[1] += crownY(W.x + 0.9, HALF); } skid.add(a, b, R.prevSkid, W.drift ? 0.17 : 0.13, W.drift ? 0.7 : Math.min(0.9, 0.35 + ws * 0.7)); R.prevSkid = [a, b]; } else R.prevSkid = null;
     // what the rules say happened
     for (const f of W.fx) {
       if (f.n <= R.fxN) continue; R.fxN = f.n;
@@ -2204,39 +3192,118 @@ export function createWorld() {
 
   function reset(W) {
     restore(); R.crashObj = null; R.crashK = 0;
-    R.W = W; R.poseHi = -1; R.camInit = false; FBC.clear(); R.tunK = 0; R.lastBanner = W.banner; R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.heroKey = null; R.heroVis = 0; heroMesh.visible = false; R.built = 0; R.stubKey = null; R.prevSkid = null; R.envDone = false; R.flash = 0;
-    for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear();
+    R.W = W; R.poseHi = -1; R.camInit = false; FBC.clear(); R.tunK = 0; R.adapt = 0; R.lastBanner = W.banner; R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.heroKey = null; R.heroVis = 0; heroMesh.visible = false; R.built = 0; R.stubKey = null; R.prevSkid = null; R.envDone = false; R.flash = 0;
+    for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear(); dropJob(); CQ.stats = { built: 0, urgent: 0, ms: 0, maxStep: 0, maxFrame: 0, own: 0 }; CQ.heavy = []; R.held = 0;   // (the road-building figures: this race's)
     R.stubs.forEach((m) => { scene.remove(m); m.geometry.dispose(); }); R.stubs = [];
     for (const [, m] of traffic) scene.remove(m); traffic.clear();
     smoke.clear(); sparks.clear(); tyre.clear(); steam.clear(); skid.clear();
     if (W.segs.length && W.segs[0].i === 0) { W.segs[0].px = 0; W.segs[0].pz = 0; W.segs[0].th = 0; }
   }
   function setSize(w, h) { if (w === R.w && h === R.h) return; R.w = w; R.h = h; renderer.setSize(w, h, false); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
-  function quality(low) {
-    R.low = low; renderer.shadowMap.enabled = !low; sun.castShadow = !low; R.view = low ? 650 : E.VIEW; renderer.shadowMap.needsUpdate = true;
-    skyMat.defines.OCT = low ? 3 : 5; skyMat.needsUpdate = true;
-    for (const [, ch] of R.chunks) ch.userData.dirty = true;   // rebuilt with less far scenery
+  function applyTier(name) {   // a tier's settings: at the start, then only between races (shadows on or off, or the edge smoothing, rebuild shaders and buffers)
+    const T = TIERS[name]; if (!T) return false;
+    const first = !R.tierSet, same = T === TIER && !first; R.tierSet = true; if (SEA && !first && (T === TIERS.phone) !== (TIER === TIERS.phone)) seaMat.needsUpdate = true;   /* (WS7: the sea's Phone version) */ TIER = T; tierName = name;
+    renderer.shadowMap.enabled = T.shadow > 0; sun.castShadow = T.shadow > 0;
+    if (T.shadow > 0 && sun.shadow.mapSize.x !== T.shadow) { sun.shadow.mapSize.set(T.shadow, T.shadow); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; } }
+    renderer.shadowMap.needsUpdate = true;
+    if (skyMat.defines.OCT !== T.sky) { skyMat.defines.OCT = T.sky; skyMat.needsUpdate = true; }
+    for (const t of [composer.renderTarget1, composer.renderTarget2]) if (t.samples !== T.msaa) { t.samples = T.msaa; t.dispose(); }
+    if (R.w) { const w = R.w, h = R.h; R.w = 0; setSize(w, h); }   // (the glow's buffers at the tier's size)
+    if (R.low !== T.thin || R.view !== T.view || R.shOn !== T.shadow > 0) for (const [, ch] of R.chunks) ch.userData.dirty = true;   // rebuilt with the tier's roadside (and with or without their shadow stand-ins: WS4 fix round)
+    R.low = T.thin; R.view = T.view; R.shOn = T.shadow > 0;
+    FXB.cap = LOOK_NEW ? FXCAP[name] || 1e9 : 1e9;   // (the tier's particle budget: revamp WS6)
+    if (LOOK_NEW) { texLoad('road', T.road); texLoad('ground', T.ground); RU.uDetail.value = T.detail ? 1 : 0; }   // (the road's and the land's pictures at the tier's size)
+    if (LOOK_NEW) { R.blobK = T.shadow > 0 ? 1 : 0.82; blobMat.opacity = R.blobK; }   // (WS3 fix round: the contact shadows darker where there's a sun shadow too)
+    if (LOOK_NEW && !first && R.envRT && R.envSize !== T.env) updateEnv(R.envT, true);   // (the sky picture at the tier's size now, before warmUp() compiles against it: its size is in every shiny material's shader)   // (WS3 fix round: the contact shadows darker where there's a sun shadow too)
+    if (LOOK_NEW) { sc.left = sc.bottom = -T.shHalf; sc.right = sc.top = T.shHalf; sc.updateProjectionMatrix(); R.shDir = null; }   // (WS3: the shadow's square, the tier's size, ahead of the car - render())
+    if (LOOK_NEW) for (const m of [MAT.leaf, MAT.frond, MAT.grass, HAIRMAT]) if (m.alphaToCoverage !== T.msaa > 0) { m.alphaToCoverage = T.msaa > 0; m.needsUpdate = true; }   // (WS3: soft-edged leaves and hair where there's edge smoothing to do it with; the phone keeps the hard cut)
+    if (!first && !same) { R.warm = false; R.warmed = false; }   // (everything compiled again for it, behind the title or the results, before the next race)
+    return !same;
+  }
+  // ---- warming up (revamp WS1): every shader a race could need, compiled behind the title, once the tier is known (and again after a tier
+  // change or the two of you arriving): one compiled mid-race stalls the picture (a slow PC's first police car, the first stone wall's shadow).
+  // Only the one colour space is compiled - every tier draws into the glow's buffer - which halves the shaders. compileAsync lets the driver
+  // build them side by side. Then the shadows' own shaders, which three builds only as each is first drawn into the shadow map, and which also
+  // change with what was drawn just before (three shares one depth material between plain, instanced and skinned things, picking its shader
+  // when the kind changes, with the picture of whatever it's drawing then): for three frames a speck of every material, as each kind in turn,
+  // is drawn into the shadow map, 40 m under the road (in the sun's view, out of the camera's)
+  const WARM_BOX = new THREE.BoxGeometry(0.01, 0.01, 0.01), WARM_SKIN = WARM_BOX.clone(), WARM_BARE = WARM_BOX.clone(); WARM_BARE.deleteAttribute('normal');
+  { const n = WARM_SKIN.attributes.position.count, sw = new Float32Array(n * 4); for (let i = 0; i < n; i++) sw[i * 4] = 1; WARM_SKIN.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(new Uint16Array(n * 4), 4)); WARM_SKIN.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4)); }
+  function warmMats() {
+    // (the police lettering: its shader warmed on a one-pixel stand-in, the same shader as the picture's and decalMat()'s - the picture itself is
+    // painted and sent only where police can come, decalUp(); ?nopack: the old two, as before WS4)
+    const decals = NOPACK ? [decalMat('POLICE'), decalMat('BD12', true)] : [DA.stub || (DA.stub = new THREE.MeshStandardMaterial({ map: blank(), transparent: true, depthWrite: false, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }))];
+    // (WS5: with your car and the two of you joined, your car's own materials are drawn only through the table - except its screen and plate - and
+    // the two of you's only skinned: those are warmed as skinned things, warmPeople(), not as plain ones no one draws any more)
+    return [...Object.values(MAT), ...(PKP ? [CAR.screen, CAR.plate, COLW] : Object.values(CAR)), roadMat, rumbleMat, slowMat, poolMat, groundMat, seaMat, GHOSTMAT, blobMat, ...(PKP ? [] : [PLIT, SKINMAT, HAIRMAT, SATIN, EYEMAT, LENSMAT]),
+      flameMat, flameCore, ...decals, signMat('chev'), STING.strip, STING.spike, shards.material, coins.material, pwMat, ...(NOPACK ? [] : [CARMAT, CARMAT_CC]), ...(SEA ? [SEA.shore] : [])];   // (WS7: the shallows' strip)
+  }
+  // (WS4 fix round) the lettering picture - 5.6 MB on the graphics card with its smaller copies - painted and sent only where police can come:
+  // the Getaway, whose world has W.cop from the title on (render()); let go of on the title when a drive without them is chosen. On every other
+  // drive it cost a phone 4.4 MB for nothing. If the font can't make it, POLICE is sent as before and each call sign painted as its car comes
+  function decalUp(on) {
+    if (on) { if (decalAtlas()) { if (!DA.up) { try { renderer.initTexture(DA.mat.map); } catch (e) {} DA.up = true; } } else try { renderer.initTexture(decalMat('POLICE').map); } catch (e) {} }
+    else if (DA.up) { DA.mat.map.dispose(); DA.up = false; }
   }
   function warmUp() {
-    if (R.warm) return; R.warm = true;
-    const g = new THREE.Group(), box = new THREE.BoxGeometry(0.01, 0.01, 0.01), mats = [...Object.values(MAT), ...Object.values(CAR), roadMat, rumbleMat, slowMat, poolMat, groundMat, seaMat];
-    for (const m of mats) if (m && m.isMaterial) g.add(new THREE.Mesh(box, m));
-    g.position.set(0, -500, 0); scene.add(g);
-    const hidden = [bubble, glint, ...flames, ...liftJets, ...rearJets, ...tailGlow, tailWash].filter(Boolean), was = hidden.map((o) => o.visible);
-    hidden.forEach((o) => { o.visible = true; });
-    const done = () => { scene.remove(g); hidden.forEach((o, i) => { o.visible = was[i]; }); R.warmed = true; };   // (the frame-rate watcher waits for this)
-    try {   // for the picture as drawn through the glow and grade (into a render target: linear colour) and straight to the screen (a slow PC)
-      const prev = renderer.getRenderTarget(); renderer.setRenderTarget(composer.readBuffer); renderer.compile(scene, camera); renderer.setRenderTarget(prev);
-      if (renderer.compileAsync) renderer.compileAsync(scene, camera).then(done, done); else { renderer.compile(scene, camera); done(); }
-    } catch (e) { done(); }
-    for (let tt = 0; tt < MD.TRAFFIC_ORDER.length; tt++) for (let cc = 0; cc < 6; cc++) MD.trafficModel(tt, cc);   // every car, van and bus built now, not as it first appears
+    if (R.warm) return; R.warm = true; R.warmed = false; R.warmStage = 0;
+    if (R.warmG) scene.remove(R.warmG);
+    const g = new THREE.Group(), mats = warmMats();
+    for (const m of mats) if (m && m.isMaterial) g.add(new THREE.Mesh(WARM_BOX, m));
+    if (PKP) { const b = new THREE.Bone(), sk = new THREE.Skeleton([b]); g.add(b); for (const m of [PLIT, SKINMAT, HAIRMAT, SATIN, EYEMAT, LENSMAT, CAR.chrome]) { const q = new THREE.SkinnedMesh(WARM_SKIN, m); q.bind(sk); g.add(q); } }   // (WS5: the two of you, joined, are skinned - his and her sunglasses' frames in your car's chrome)
+    g.add(new THREE.Mesh(WARM_BARE, poolMat));   // (the lamps' pools of light are flat, with no normals: a shader of their own)
+    g.position.set(0, -500, 0); g.visible = false; scene.add(g); R.warmG = g;   // (hidden: compile() takes hidden things too)
+    for (let tt = 0; tt < MD.TRAFFIC_ORDER.length; tt++) for (let cc = 0; cc < 8; cc++) packCar(MD.trafficModel(tt, cc), true);   // every car, van and bus built now, not as it first appears (in each of the eight colours the rules can pick) - and joined into one draw (revamp WS4)
+    packCar(MD.copWheel(), false);
+    proxyBuild(player);   // (the shadow stand-ins again: a tier change, the GLB couple arriving)
+    const ready = () => { R.warmStage = 1; };
+    try {   // (into the glow's buffer: linear colour, as every tier draws)
+      const prev = renderer.getRenderTarget(); renderer.setRenderTarget(composer.readBuffer);
+      const p = renderer.compileAsync ? renderer.compileAsync(scene, camera) : (renderer.compile(scene, camera), Promise.resolve());
+      renderer.setRenderTarget(prev); p.then(ready, ready);
+    } catch (e) { ready(); }
     for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
-    for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
+    for (const t of [rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (v) => { R.camNear = v !== 'far' && v !== false; R.camDrv = v === 'driver'; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, keepBehind: (n) => { R.keepBehind = n; }, warmed: () => !!R.warmed };
+  function warmStep() {   // each frame while warming: the shadows' shaders once the rest are ready, then done
+    if (!R.warmG || !R.warmStage) return;
+    if (R.warmStage === 1) {
+      scene.remove(R.warmG); R.warmG = null;
+      if (!renderer.shadowMap.enabled) { R.warmStage = 0; R.warmed = true; return; }
+      const set = new Set(warmMats()); scene.traverse((o) => { if (o.castShadow && o.material && !Array.isArray(o.material)) set.add(o.material); });
+      const g = new THREE.Group(), bone = new THREE.Bone(), sk = new THREE.Skeleton([bone]); g.add(bone);
+      for (const m of set) {
+        const im = new THREE.InstancedMesh(WARM_BOX, m, 1), sm = new THREE.SkinnedMesh(WARM_SKIN, m); sm.bind(sk);
+        for (const o of [im, new THREE.Mesh(WARM_BOX, m), sm, new THREE.Mesh(WARM_BOX, m)]) { o.castShadow = true; g.add(o); }
+      }
+      g.position.copy(sun.target.position); g.position.y -= 40; scene.add(g); R.warmG = g; R.warmStage = 2; R.warmN = 0; R.warmSk = sk;
+      return;
+    }
+    R.warmG.position.copy(sun.target.position); R.warmG.position.y -= 40;
+    if (++R.warmN < 3) return;
+    scene.remove(R.warmG); R.warmG = null; if (R.warmSk) { R.warmSk.dispose(); R.warmSk = null; } R.warmStage = 0; R.warmed = true;
+  }
+  // ---- the slowest roadside shapes, made behind the title (revamp WS1): each is made in one go the first time it's needed, and a few take
+  // 10-25 ms (a tree arch, a pier, the crowds) - a frame of their own mid-race. Measured on the bench (stats().heavy lists any over 3 ms) along
+  // the coast both ways and in the Getaway; made one a frame, on the title or the results only, and warmed() waits for them. The second
+  // line: those over 1 ms on a PC that the phone and laptop runs found (4x and 2.5x slower there: a hotel 28 ms, a marina 36 ms, on a phone)
+  const PREBUILD = [['treearch', 4], ['pier', 4], ['footbridge', 4], ['crowd', 7], ['chairlift', 5], ['carpark', 4], ['kiosk', 3], ['marsh', 4], ['reeds', 4],
+    ['alumcliffs', 1], ['landmarkpark', 1], ['hurstcastle', 1], ['seabaths', 1], ['obelisk', 1], ['lyndchurch', 1],
+    ['marina', 6], ['hotel', 5], ['castlekeep', 1], ['terrace', 6], ['stthomas', 1], ['rowboats', 1], ['pierarch', 3], ['palm', 3], ['windsurf', 3], ['motorboat', 4],
+    ['boatyard', 3], ['lymhouse', 8], ['mooring', 5], ['fishboat', 5], ['swans', 2], ['bandstand', 1], ['flowerbed', 3], ['prom', 1], ['placemill', 1], ['clifflift', 1]].flatMap(([t, n]) => Array.from({ length: n }, (_, v) => [t, v]))
+    .concat(...Object.values(FERRY_SCENE).map((S) => [[S.boat, 0]].concat(S.parts.map((p, i) => [p[0], p[5] != null ? p[5] : i % 3]))));   // (and the ferries' boats and shores: ferryBuild() made them all in the frame you drove aboard - 28 ms on a PC)
+  function prebuild(W) {
+    if (R.pre >= PREBUILD.length || !R.warmed || !(W.demo || W.over)) return;   // (never in a race: on the title, or after one)
+    const t0 = realNow(); while (R.pre < PREBUILD.length && realNow() - t0 < 4) { const [t, v] = PREBUILD[R.pre++]; if (MD.has(t)) MD.model(t, v); }
+  }
+  applyTier(tierName);
+  return { render: render, setSize: setSize, applyTier: applyTier, get tier() { return tierName; }, get T() { return TIER; }, look: LOOK_NEW ? 'new' : 'classic', LOOK_NEW: LOOK_NEW,
+    rewarm: () => { R.warm = false; R.warmed = false; }, hold: (on) => { R.hold = !!on; }, stats: () => Object.assign({ pt: R.pt, steps: CQ.fs, heavy: CQ.heavy, held: R.held || 0, tex: R.texIn || 0, eyes: R.eyeN || 0, pack: !NOPACK, da: DA.ok, daUp: !!DA.up, proxies: PROXIES.length, pkLate: R.pkLate || 0, light: LOOK_NEW ? { expo: +GRADE_U.expo.value.toFixed(3), adapt: +(R.adapt || 0).toFixed(3), tun: +R.tunK.toFixed(3), mood: [GRADE_U.lutA.value, GRADE_U.lutB.value, +GRADE_U.lutMix.value.toFixed(3), GRADE_U.lutK.value] } : null }, CQ.stats),   // (light: WS3's grade, for the bench)
+    reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (v) => { R.camNear = v !== 'far' && v !== false; R.camDrv = v === 'driver'; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, keepBehind: (n) => { R.keepBehind = n; }, warmed: () => !!R.warmed && !R.hold && R.pre >= PREBUILD.length && !texWait() };
 }
 
 // ---------------------------------------------------------------- textures made on the spot
+function blank() { const t = new THREE.DataTexture(new Uint8Array([255, 255, 255, 0]), 1, 1); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; return t; }   // a see-through stand-in, till a real picture arrives
 function radial(size, stops) { const c = canvas(size, size), x = c.getContext('2d'), g = x.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2); stops.forEach((s) => g.addColorStop(s[0], s[1])); x.fillStyle = g; x.fillRect(0, 0, size, size); return tex(c); }
 function roadTexture() {   // asphalt with the lane lines: across = the road's width, along = 9 metres
   const S = 1024, c = canvas(S, S), x = c.getContext('2d'), r = E.rnd(5);
@@ -2301,6 +3368,11 @@ function starTex() {   // a cartoon star, yellow with a white edge
   for (let i = 0; i < 10; i++) { const r = i % 2 ? 12 : 28, a = -Math.PI / 2 + i * Math.PI / 5; x.lineTo(32 + Math.cos(a) * r, 32 + Math.sin(a) * r); }
   x.closePath(); x.fillStyle = '#ffd83a'; x.fill(); x.lineWidth = 4; x.strokeStyle = '#fffbe8'; x.stroke(); return (STARTEX = tex(c, false));
 }
+// ?nopack (WS4 fix round): the draw-call diet's own shader and shapes off - no one-draw material (flat values from a table indexed in the
+// vertex shader), no shadow stand-ins, no lettering picture - and every car, roadside chunk and police car drawn the way it was before WS4,
+// one mesh a material, each part casting its own shadow. The diet isn't a look (?look=classic keeps it); this is the way back if a phone's
+// driver ever draws it wrong, without taking the code out. The fallbacks are the old code paths, still in use wherever the diet says no
+const NOPACK = typeof location !== 'undefined' && /[?&]nopack(?:[=&]|$)/.test(location.search || '');
 // the police cars' lettering and roof numbers (21 Oct 2026): a canvas each, cached - dark blue POLICE (white on the roof number's black)
 const DECALS = new Map();
 function decalMat(txt, num) {
@@ -2314,6 +3386,60 @@ function decalMat(txt, num) {
   DECALS.set(key, mt); return mt;
 }
 function copNumber(id) { return 'BD' + (12 + (id * 37) % 87); }   // (made-up call signs: a letter pair and a number)
+// ---- (revamp WS4) the lettering and every call sign in one picture, painted behind the title: a new police car's roof number was painted
+// and sent to the graphics card in the frame it first came into view (12-20 ms on a slow phone, mid-chase), and its five pieces of lettering
+// were five draws. The call signs are 'BD' and two digits, and the digits are all one width, so each number is three pieces laid side by side
+// (BD, the first digit, the second), each piece cut from the number as decalMat() paints it, to the pixel. POLICE is painted as it was.
+// A car's five decals become one mesh. If the font's digits aren't all one width (another font standing in), the old way is kept.
+const DA = { W: 1024, H: 1024, ok: null, mat: null, up: false, stub: null, cell: {}, geo: new Map(), NUMF: '900 170px "Arial Black", Arial, sans-serif', TXTF: '900 112px "Arial Black", Arial, sans-serif' };
+function decalAtlas() {
+  if (DA.ok !== null) return DA.ok;
+  DA.ok = false; if (NOPACK) return false;
+  try {
+    const c = canvas(DA.W, DA.H), x = c.getContext('2d'); x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.font = DA.NUMF; const wBD = x.measureText('BD').width, wd = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => x.measureText(String(d)).width), W0 = x.measureText('BD00').width;
+    if (wd.some((w) => Math.abs(w - wd[0]) > 1e-3)) return false;   // (digits of different widths: the old way)
+    for (let n = 12; n < 99; n++) if (Math.abs(x.measureText('BD' + n).width - W0) > 1e-3 || Math.abs(W0 - wBD - 2 * wd[0]) > 1e-3) return false;   // (or the pair kerned)
+    const xl = 256 - W0 / 2, b1 = Math.round(xl + wBD), b2 = Math.round(xl + wBD + wd[0]), a0 = Math.floor(xl) - 24, a3 = Math.ceil(xl + W0) + 24;   // the cuts (between the glyphs, where there's no ink) and 24 px either side
+    // cells in rows 256 high, 16 px apart, each placed so its picture keeps the original's pixel grid to a multiple of 16 (its first few
+    // smaller copies, the mipmaps, then match the original's too)
+    let cx = 0, cy = 0; const al = (s, b) => s + (((b - s) % 16) + 16) % 16, put = (w, b) => { let s = al(cx, b); if (s + w > DA.W) { cx = 0; cy += 256; s = al(0, b); } cx = s + w + 16; return [s, cy]; };
+    const piece = (key, txt, b, e) => { const at = put(e - b, b); x.save(); x.translate(at[0] - b, at[1]); x.beginPath(); x.rect(b, 0, e - b, 232); x.clip(); x.font = DA.NUMF; x.fillStyle = '#101114'; x.fillText(txt, 256, 122); x.restore(); DA.cell[key] = [at[0], at[1], b, e, 232]; };   // (as decalMat paints a number)
+    piece('BD', 'BD00', a0, b1);
+    for (let d = 0; d < 10; d++) piece('1' + d, 'BD' + d + '0', b1, b2);
+    for (let d = 0; d < 10; d++) piece('2' + d, 'BD0' + d, b2, a3);
+    const at = put(512, 0);
+    x.save(); x.translate(at[0], at[1]); x.font = DA.TXTF; x.fillStyle = '#14286e'; x.lineWidth = 10; x.strokeStyle = 'rgba(255,255,255,0.9)'; x.strokeText('POLICE', 256, 74); x.fillText('POLICE', 256, 74); x.restore();   // (as decalMat paints it)
+    DA.cell.P = [at[0], at[1], 0, 512, 140];
+    if (cy + 232 > DA.H) return false;
+    DA.mat = new THREE.MeshStandardMaterial({ map: tex(c, false), transparent: true, depthWrite: false, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+    DA.ok = true;
+  } catch (e) { DA.ok = false; }
+  return DA.ok;
+}
+const DQ = { M: new THREE.Matrix4(), Q: new THREE.Quaternion(), E: new THREE.Euler(), P: new THREE.Vector3(), S: new THREE.Vector3(1, 1, 1), V: new THREE.Vector3(), N: new THREE.Vector3() };
+function copDecals(id) {   // one car's lettering as one mesh, in the places, sizes and turns the five planes had (null: the old way)
+  if (!decalAtlas()) return null;
+  const num = copNumber(id); let g = DA.geo.get(num); if (g) return g;
+  const pos = [], nor = [], uv = [], idx = [];
+  const quad = (w, h, px, py, pz, rx, ry, rz, cell, b, e) => {   // the part of a w x h plane (its picture W0 wide) from column b to e of its picture
+    const [cx, cy, c0, , H0] = cell, W0 = 512, x0 = -w / 2 + w * b / W0, x1 = -w / 2 + w * e / W0, n0 = pos.length / 3;
+    DQ.E.set(rx, ry, rz); DQ.Q.setFromEuler(DQ.E); DQ.P.set(px, py, pz); DQ.M.compose(DQ.P, DQ.Q, DQ.S); DQ.N.set(0, 0, 1).applyQuaternion(DQ.Q);
+    for (const [xx, yy] of [[x0, h / 2], [x1, h / 2], [x0, -h / 2], [x1, -h / 2]]) {   // (PlaneGeometry's corner order)
+      DQ.V.set(xx, yy, 0).applyMatrix4(DQ.M); pos.push(DQ.V.x, DQ.V.y, DQ.V.z); nor.push(DQ.N.x, DQ.N.y, DQ.N.z);
+      const u = (xx + w / 2) / w, v = (yy + h / 2) / h; uv.push((cx + u * W0 - c0) / DA.W, 1 - (cy + (1 - v) * H0) / DA.H);
+    }
+    idx.push(n0, n0 + 2, n0 + 1, n0 + 2, n0 + 3, n0 + 1);
+  };
+  const P = DA.cell.P, pol = (w, h, px, py, pz, rx, ry, rz) => quad(w, h, px, py, pz, rx, ry, rz, P, 0, 512);
+  pol(0.98, 0.3, 0, 0.805, -1.47, -Math.PI / 2 + 0.06, 0, Math.PI);   // the bonnet: reads from in front
+  pol(0.84, 0.25, 0, 0.995, 1.93, -Math.PI / 2, 0, 0);   // the boot lid: reads from behind
+  for (const sd of [-1, 1]) pol(1.08, 0.17, sd * 0.947, 0.835, -0.12, 0, sd * Math.PI / 2, 0);   // the doors, over the checks
+  const roof = (key) => { const c = DA.cell[key]; quad(0.66, 0.3, 0, 1.428, 0.68, -Math.PI / 2, 0, 0, c, c[2], c[3]); };   // the roof: BD, then the two digits
+  roof('BD'); roof('1' + num[2]); roof('2' + num[3]);
+  g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+  DA.geo.set(num, g); return g;
+}
 let SGLOW = null;
 function sirenGlow() { if (SGLOW) return SGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.25, 'rgba(150,185,255,0.7)'); g.addColorStop(1, 'rgba(60,110,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (SGLOW = tex(c, false)); }
 function flameGlow() { if (FGLOW) return FGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,200,120,0.6)'); g.addColorStop(1, 'rgba(255,120,40,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (FGLOW = tex(c, false)); }
@@ -2385,6 +3511,157 @@ function waveNormals() {
   }
   x.putImageData(img, 0, 0);
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
+}
+// (revamp WS7) the new look's sea: two wave pictures of our own, made here in code (no download). Each is a sum of sea waves whose wave numbers are
+// whole numbers across the picture, so it tiles without a seam; r,g: the slope across and down (-1..1 as 0..255), a: the height. Long swell in one
+// (waves from about one way), short chop in the other (from all round). Separable: each wave's sine split into a row part and a column part, so a
+// 256-square picture of 36 waves is a few ms
+function seaWaveTex(seed, n, k0, k1, dir, spread, fall) {
+  const S = 256, r = E.rnd(seed), sl = new Float32Array(S * S * 2), hh = new Float32Array(S * S), sx = new Float32Array(S), cx = new Float32Array(S), sy = new Float32Array(S), cy = new Float32Array(S);
+  for (let w = 0; w < n; w++) {
+    const k = k0 + (k1 - k0) * Math.pow(r(), 1.4), th = dir + (r() * 2 - 1) * spread, kx = Math.round(Math.cos(th) * k), ky = Math.round(Math.sin(th) * k);
+    if (!kx && !ky) continue;
+    const a = Math.pow(Math.hypot(kx, ky), -fall) * (0.6 + 0.8 * r()), p = r() * 6.2832, tw = 2 * Math.PI;
+    for (let i = 0; i < S; i++) { const q = tw * kx * i / S; sx[i] = Math.sin(q); cx[i] = Math.cos(q); const q2 = tw * ky * i / S + p; sy[i] = Math.sin(q2); cy[i] = Math.cos(q2); }
+    for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) { const o = j * S + i, s = sx[i] * cy[j] + cx[i] * sy[j], c = cx[i] * cy[j] - sx[i] * sy[j]; hh[o] += a * s; sl[o * 2] += a * tw * kx * c; sl[o * 2 + 1] += a * tw * ky * c; }
+  }
+  let m = 0, h0 = 1e9, h1 = -1e9; for (let o = 0; o < S * S; o++) { m = Math.max(m, Math.abs(sl[o * 2]), Math.abs(sl[o * 2 + 1])); h0 = Math.min(h0, hh[o]); h1 = Math.max(h1, hh[o]); }
+  const d = new Uint8Array(S * S * 4);
+  for (let o = 0; o < S * S; o++) { d[o * 4] = Math.round((sl[o * 2] / m * 0.5 + 0.5) * 255); d[o * 4 + 1] = Math.round((sl[o * 2 + 1] / m * 0.5 + 0.5) * 255); d[o * 4 + 2] = 128; d[o * 4 + 3] = Math.round((hh[o] - h0) / (h1 - h0) * 255); }
+  const t = new THREE.DataTexture(d, S, S); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = 8; t.needsUpdate = true;
+  return t;
+}
+// the sea's own shader, three's lit one with these added (seaMat.onBeforeCompile): the two wave pictures crossing at angles that never line up,
+// a third, much larger, read from the swell picture to make patches of rougher and calmer water (so no tile repeats); waves that flatten with
+// distance (the chop first), roughness that grows with distance (a glitter path that widens toward the sun, as it does on a real sea, instead
+// of pixels flickering) plus the slopes' own spread on screen; the far panorama (ringFar) reflected in the water along the horizon; Fresnel:
+// clear looking down, a mirror at a low angle; and the light through a wave's crest
+const SEA_PARS = [
+  'uniform sampler2D uSeaA; uniform sampler2D uSeaB; uniform sampler2D uRing; uniform float uSeaT; uniform vec4 uSeaK; uniform vec4 uRingP; uniform vec3 uSunC; uniform vec3 uSunD; uniform vec3 uScat; uniform float uSeaG;',
+  'varying vec3 vSeaW;',
+  'vec2 sRot(vec2 p, float a) { float c = cos(a), s = sin(a); return vec2(c * p.x - s * p.y, s * p.x + c * p.y); }',
+  'vec2 ringUV(vec3 rf) {',   // where a reflected ray meets the far panorama's cylinder (2300 m round the camera, turned with ringFar): u round it, v up it
+  '  vec2 o = vSeaW.xz - cameraPosition.xz; float a = max(dot(rf.xz, rf.xz), 1e-6), b = dot(o, rf.xz), c = dot(o, o) - 5290000.0;',
+  '  float t = (-b + sqrt(max(b * b - a * c, 0.0))) / a; vec2 h = o + rf.xz * t; float cr = cos(uRingP.x), sr = sin(uRingP.x);',
+  '  return vec2(fract(atan(cr * h.x - sr * h.y, sr * h.x + cr * h.y) / 6.2831853 + 1.0), (vSeaW.y + rf.y * t - uRingP.z) / uRingP.y); }'].join('\n');
+const SEA_NORMAL = [
+  'vec3 sV = vSeaW - cameraPosition; float sD = length(sV); sV /= sD;',
+  'vec2 sp = vSeaW.xz; float fA = 1.0 / (1.0 + sD / 300.0), fB = 1.0 / (1.0 + sD / 75.0);',
+  'vec4 tA = texture2D(uSeaA, sRot(sp, 0.42) / 43.0 + uSeaT * vec2(0.0052, 0.0031));',
+  '#ifdef SEA_LITE', 'vec4 tM = vec4(0.5, 0.5, 0.5, 0.6);', '#else',   // (Phone: no third read - on a small screen the tiling it breaks up hardly shows)
+  'vec4 tM = texture2D(uSeaA, sRot(sp, -1.13) / 211.0 - uSeaT * vec2(0.0013, 0.0008));', '#endif',
+  'vec4 tB = texture2D(uSeaB, sRot(sp, -0.61) / 11.3 + uSeaT * vec2(-0.0133, 0.0191));',
+  'float chop = 0.45 + 1.1 * smoothstep(0.25, 0.8, tM.a);',   // (rougher and calmer patches, tens of metres across)
+  'vec2 sl = (sRot(tA.rg * 2.0 - 1.0, -0.42) * 0.17 + sRot(tM.rg * 2.0 - 1.0, 1.13) * 0.07) * fA + sRot(tB.rg * 2.0 - 1.0, 0.61) * (0.13 * fB * chop);',
+  'sl *= uSeaK.x; vec3 sN = normalize(vec3(-sl.x, 1.0, -sl.y));',
+  'normal = normalize((viewMatrix * vec4(sN, 0.0)).xyz);',
+  'float sCrest = clamp((tA.a - 0.55) * 2.2 * fA + (tB.a - 0.5) * fB * chop, 0.0, 1.0);'].join('\n');
+const SEA_ROUGH = [   // after three works out the material: the roughness the waves too small to see add, far off and where the slopes change fast on screen
+  '{ vec3 nx = dFdx(sN), ny = dFdy(sN); float k2 = min(2.0 * (dot(nx, nx) + dot(ny, ny)), 0.05), r0 = mix(0.05, 0.16, smoothstep(25.0, 1100.0, sD)) * uSeaK.w;',
+  // (WS7 fix round) a low sun's path: smoother water looking along the sun's bearing, so its glitter runs out to it as a gold road (sLow: 1 for a
+  // sun under ~7 degrees, 0 over ~27)
+  '  float sLow = 1.0 - smoothstep(0.12, 0.45, uSunD.y), sAz = dot(normalize(sV.xz + vec2(1e-5)), normalize(uSunD.xz + vec2(1e-5))); r0 *= 1.0 - 0.4 * sLow * smoothstep(0.55, 0.97, sAz);',
+  '  material.roughness = clamp(pow(r0 * r0 * r0 * r0 + k2, 0.25), 0.0525, 1.0); }'].join('\n');
+const SEA_RING = [   // the far panorama reflected: hills, cliffs and the far shore along the water's horizon, over the sky picture's own (soft) copy
+  '#if defined(USE_ENVMAP) && !defined(SEA_LITE)',   // (Phone: the sky picture's own soft land line only)
+  '{ vec3 rf = reflect(sV, sN), r0 = reflect(sV, vec3(0.0, 1.0, 0.0)); vec2 q0 = ringUV(r0), gx = dFdx(q0), gy = dFdy(q0); gx.x -= floor(gx.x + 0.5); gy.x -= floor(gy.x + 0.5);',   // (the slope-free reflection's own rate of change picks the detail, worked out outside any branch: no seam where u wraps)
+  '  if (uRingP.w > 0.5 && rf.y > 0.0) { vec2 q = ringUV(rf); vec4 rc = textureGrad(uRing, q, gx * 2.0, gy * 2.0); rc.a *= step(0.0, q.y) * step(q.y, 1.0);',
+  '    radiance = mix(radiance, rc.rgb * envMapIntensity, rc.a * 0.92); } }',
+  '#endif'].join('\n');
+const SEA_END = [   // the glints held under a ceiling (a bright sea, but no one pixel's flash), the light through a crest, and Fresnel in the opacity
+  // the water's own colour keeps its hue under any light (the light's brightness, not its colour): an orange sun had turned a blue sea lilac -
+  // the colour of the sun and sky are still in the reflections and the glitter, where they belong
+  '{ vec3 lw = vec3(0.2126, 0.7152, 0.0722); float dc = max(dot(diffuseColor.rgb, lw), 1e-4);',
+  '  reflectedLight.directDiffuse = mix(reflectedLight.directDiffuse, diffuseColor.rgb * dot(reflectedLight.directDiffuse, lw) / dc, uSeaK.y);',
+  '  reflectedLight.indirectDiffuse = mix(reflectedLight.indirectDiffuse, diffuseColor.rgb * dot(reflectedLight.indirectDiffuse, lw) / dc, uSeaK.y);',
+  // under a low sun or a dusk sky: the reflected sky's colour mostly taken out of the near and middle sea (kept toward the horizon, where the
+  // water is a mirror and a sunset sea does go gold) - its orange and pink on the waves' faces over the blue had made the sea lilac; the sun's
+  // own glitter keeps its gold
+  '  float g = uSeaG * (1.0 - smoothstep(350.0, 1400.0, sD));',
+  '  reflectedLight.indirectSpecular = mix(reflectedLight.indirectSpecular, vec3(0.78, 0.94, 1.12) * dot(reflectedLight.indirectSpecular, lw), g); }',
+  '{ float m = max(max(reflectedLight.directSpecular.r, reflectedLight.directSpecular.g), reflectedLight.directSpecular.b), sLo = 1.0 - smoothstep(0.12, 0.45, uSunD.y); reflectedLight.directSpecular *= min(1.0, uSeaK.z * (1.0 + 1.4 * sLo) / max(m, 1e-4)); }',   // (WS7 fix round: the ceiling higher under a low sun)
+  '{ float nv = clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0), fr = 0.02 + 0.98 * pow(1.0 - nv, 5.0);',
+  '  float bk = pow(clamp(dot(-sV, -uSunD) * 0.5 + 0.5, 0.0, 1.0), 3.0) * clamp(1.0 - abs(sV.y) * 2.0, 0.0, 1.0);',   // (the low sun behind a wave, looking toward it)
+  '  reflectedLight.indirectDiffuse += uScat * uSunC * sCrest * (0.35 + 1.2 * bk) * (1.0 - fr) * fA;',
+  // (WS7 fix round) the glitter: a sparse field of small glints toward the sun past ~40 m - the chop's steeper faces (its slopes taken three
+  // times as steep: the small faces the pictures are too smooth to hold) on the swell's upper half catching the sun, in scattered patches of
+  // a hand's breadth (a fixed pattern on the water: the waves moving over it make the twinkle); none near (it flickered), none far off
+  '  vec3 gN = normalize(vec3(-sl.x * 3.0, 1.0, -sl.y * 3.0)); float gl = max(dot(reflect(sV, gN), normalize(uSunD)), 0.0);',
+  '  reflectedLight.directSpecular += uSunC * (pow(gl, 60.0) * 5.0 * smoothstep(0.45, 0.65, tA.a) * step(0.6, fract(sin(dot(floor(sp * 1.4), vec2(12.9898, 78.233))) * 43758.5453)) * smoothstep(40.0, 90.0, sD) * (1.0 - smoothstep(500.0, 1300.0, sD)) * step(0.03, uSunD.y));',
+  // (WS7 fix round) opaque: the shallows strip shows the sand at the water's edge, and at 95% the lighter ground past the land built so far (behind
+  // the start, beyond a chunk's side) showed through as a straight-edged paler wedge
+  '  diffuseColor.a = 1.0; }'].join('\n');
+// (WS7 fix round) the horizon: the last ~36 px of sea under the far panorama blended into the panorama's own foot (its colour just above the sea's
+// far edge, at this bearing) or, where that's open sky, the sky's own colour just over the horizon (the sky picture), and never brighter than it -
+// the far sea, fogged to the haze, had made a hard pale stripe under the hills (a salmon one at golden hour). Phone: the sky picture only
+const SEA_HZ = [
+  '#ifdef USE_FOG',
+  '{ float py = max(fwidth(sV.y), 1e-5), np = max(-sV.y, 0.0) / py, hw = 1.0 - smoothstep(2.0, 36.0, np); vec3 lw = vec3(0.2126, 0.7152, 0.0722);',
+  '  if (hw > 0.0) {',
+  '#if defined(USE_ENVMAP) && defined(ENVMAP_TYPE_CUBE_UV)',   // (what lies just over the horizon at this bearing - the sky, or the land line - from the sky picture, blurred)
+  '    vec3 hz = textureCubeUV(envMap, envMapRotation * normalize(vec3(sV.x, 0.02, sV.z)), 0.2).rgb; float ha = 0.9;',
+  '#else',
+  '    vec3 hz = fogColor * 0.8; float ha = 0.6;',
+  '#endif',
+  '#if defined(USE_ENVMAP) && !defined(SEA_LITE)',
+  '    if (uRingP.w > 0.5) { vec2 qa = ringUV(vec3(sV.x, 0.0, sV.z)); vec4 bc = textureLod(uRing, vec2(qa.x, (cameraPosition.y * 0.233 - uRingP.z) / uRingP.y + 0.012), 2.0);',   // (the sea's far edge is ~3000 m off: at the ring, 2300 m, that's 0.767 of the camera's height down)
+  '      hz = mix(hz, bc.rgb, bc.a); ha = mix(ha, 1.0, bc.a); }',
+  '#endif',
+  '    vec3 c = mix(gl_FragColor.rgb, hz, hw * ha * 0.85); float lt = dot(hz, lw) * 1.15 + 0.01, lc = dot(c, lw);',
+  '    gl_FragColor.rgb = c * mix(1.0, min(1.0, lt / max(lc, 1e-4)), hw); } }',
+  '#endif'].join('\n');
+function seaNewShader(sh, U, lite) {
+  Object.assign(sh.uniforms, U); if (lite) sh.fragmentShader = '#define SEA_LITE\n' + sh.fragmentShader;
+  sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSeaW;').replace('#include <project_vertex>', '#include <project_vertex>\nvSeaW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+  sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + SEA_PARS)
+    .replace('#include <normal_fragment_maps>', SEA_NORMAL)
+    .replace('#include <lights_physical_fragment>', '#include <lights_physical_fragment>\n' + SEA_ROUGH)
+    .replace('#include <lights_fragment_maps>', '#include <lights_fragment_maps>\n' + SEA_RING)
+    .replace('#include <aomap_fragment>', '#include <aomap_fragment>\n' + SEA_END)
+    .replace('#include <fog_fragment>', '#include <fog_fragment>\n' + SEA_HZ);
+}
+// (revamp WS7) the shallows, the surf and the wet sand: one strip along each beach's water's edge, from ~5 m up the sand to 25 m out (surfNew()),
+// u = metres from the still waterline (up the sand: negative), v = metres along the shore. The swash runs up and back (wet sand: darker, and a
+// mirror just behind the water as it goes back), lines of waves roll in, steepen and break into white water, and the water is clear over the sand
+// at the edge, turquoise further out, fading into the sea's own colour by 25 m. The lines are smoothed out by their own size on screen (no shimmer far off)
+const SHORE_VS = ['attribute vec3 aSh; attribute vec2 aDir; varying vec3 vSh; varying vec2 vDir;', 'vSh = aSh; vDir = aDir;'];   // (aSh.z, WS7 fix round: 0-1 along the shore, fading out where the strip ends)
+const SHORE_PARS = [
+  'uniform float uShT; uniform vec4 uShK; varying vec3 vSh; varying vec2 vDir;',
+  'float shH(vec2 i) { return fract(sin(dot(i, vec2(127.1, 311.7))) * 43758.5453); }',
+  'float shN(vec2 x) { vec2 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(shH(i), shH(i + vec2(1.0, 0.0)), f.x), mix(shH(i + vec2(0.0, 1.0)), shH(i + vec2(1.0, 1.0)), f.x), f.y); }'].join('\n');
+const SHORE_FRAG = [
+  'float u = vSh.x, v = vSh.y, t = uShT, aaU = fwidth(u), ph = shN(vec2(v / 32.0, 0.5)) * 6.2832 + shN(vec2(v / 9.0, 3.5)) * 1.3, cyc = t * 0.5 + ph;',
+  'float e = mix(-2.9, 0.2, 0.5 + 0.5 * sin(cyc)) * (0.75 + 0.5 * shN(vec2(v / 16.0, 7.5))), back = smoothstep(-0.3, 0.3, -cos(cyc));',   // the water's edge now: the swash running up the sand and back (back: going back down)
+  'float wTop = -3.3 - 1.3 * shN(vec2(v / 24.0, 1.5)) + 0.4 * (shN(vec2(v / 2.3, u / 2.3)) - 0.5);',   // the highest it reaches: the top of the wet sand, a ragged line
+  'float wet = smoothstep(wTop - 0.4 - aaU, wTop + 0.6 + aaU, u), inW = smoothstep(e - 0.12 - aaU, e + 0.12 + aaU, u);',
+  'float film = (1.0 - inW) * smoothstep(e - 2.2, e, u) * back;',   // the sheet of water the wave leaves on the sand as it goes back: a mirror
+  'float d = max(u - e, 0.0), K = u / 7.0 + 0.45 * shN(vec2(v / 30.0, 9.5)), aa = clamp(fwidth(K) * 3.0, 0.0, 1.0), kt = K + t * 0.08, wp = fract(kt);',   // the lines of waves, ~7 m apart, rolling in
+  'float aw = smoothstep(0.3, 0.75, shN(vec2(v / 26.0, floor(kt) * 1.7)));',   // (each line comes and goes along the shore, and differently from the next)
+  'float y = smoothstep(0.0, 0.24, wp) * (1.0 - smoothstep(0.24, 1.0, wp)), amp = smoothstep(25.0, 10.0, u) * smoothstep(0.3, 2.5, d) * aw * (1.0 - aa) * uShK.y;',   // (a steeper face toward the shore, a long back; taller as they come in)
+  'float dy = (wp < 0.24 ? 3.2 : -1.0) * (1.0 - smoothstep(0.85, 1.0, wp));',
+  'float lace = mix(0.5, shN(vec2(v / 1.7, u / 1.1 + t * 0.12)) * 0.65 + shN(vec2(v / 0.55, u / 0.5 - t * 0.2)) * 0.35, 1.0 - clamp(fwidth(v) * 0.8, 0.0, 1.0));',   // (the foam's lace, smoothed out where it would be finer than a pixel)
+  'float foam = smoothstep(9.0, 4.0, u) * smoothstep(0.5, 2.0, d) * smoothstep(0.06, 0.0, abs(wp - 0.22)) * aw * smoothstep(0.25, 0.55, lace);',   // white water where a line breaks
+  'float brk = mix(0.55, shN(vec2(v / 0.31, u / 0.27 - t * 0.21)) * 0.6 + shN(vec2(v / 0.83, u / 0.7 + t * 0.09)) * 0.4, 1.0 - clamp(fwidth(v) * 2.5, 0.0, 1.0));',   // (WS7 fix round: the bubbles, finer than the lace; smoothed out where finer than a pixel)
+  'foam = max(foam, smoothstep(0.5, 0.0, abs(u - e)) * smoothstep(0.2 + 0.25 * back, 0.6 + 0.2 * back, lace * 0.75 + brk * 0.25));',   // the lace along the swash's edge (thinning as the wave goes back)
+  'foam = max(foam, smoothstep(5.5, 0.6, d) * inW * smoothstep(0.5 + 0.3 * back, 0.8 + 0.15 * back, lace * 0.7 + brk * 0.3) * 0.7 * (1.0 - 0.6 * back));',   // spent white water spreading up the beach - dissolving into holes as it drains back, not sliding
+  'foam = clamp(foam * (1.0 - aa * 0.6) * uShK.z, 0.0, 1.0);',
+  'vec3 sand = diffuseColor.rgb, tq = uShK.w > 0.5 ? vec3(0.03, 0.08, 0.15) : vec3(0.03, 0.4, 0.4);',   // (the sand's colour comes in the corners; turquoise water - at night a dark blue)
+  'vec3 water = mix(sand * vec3(0.7, 0.86, 0.86), tq, smoothstep(0.0, 12.0, d)) * (1.0 + 0.45 * y * amp);',   // (clear over the sand at the edge; the light through each line's crest)
+  'vec3 land = sand * mix(1.0, 0.5, max(wet, film));',   // (WS7 fix round: a shade darker, to read as wet beside the dry sand)
+  'float aW = mix(0.8, 0.0, smoothstep(7.0, 25.0, u)), aL = max(wet, film) * 0.85;',
+  'diffuseColor.rgb = mix(mix(land, water, inW), vec3(0.92, 0.95, 0.95), foam);',
+  'diffuseColor.a = max(mix(aL, aW, inW), foam * 0.95 * mix(0.6, 1.0, brk)) * uShK.x * vSh.z * vSh.z * (3.0 - 2.0 * vSh.z);',   // (the foam's alpha broken up; and the whole strip fading out where it ends)
+  'float shR = mix(mix(0.9, 0.3, wet), 0.07, max(inW, film)); shR = mix(shR, 0.8, foam);',   // (wet sand a little more of a mirror)
+  'float shS = dy * amp * 0.035;',
+  'vec3 shNw = normalize(vec3(-vDir.x * shS, 1.0, -vDir.y * shS));'].join('\n');
+function shoreShader(sh, U) {
+  Object.assign(sh.uniforms, U);
+  sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\n' + SHORE_VS[0]).replace('#include <begin_vertex>', '#include <begin_vertex>\n' + SHORE_VS[1]);
+  sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + SHORE_PARS)
+    .replace('#include <alphamap_fragment>', SHORE_FRAG + '\n#include <alphamap_fragment>')
+    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = shR;')
+    .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\nnormal = normalize((viewMatrix * vec4(shNw, 0.0)).xyz);')
+    .replace('#include <opaque_fragment>', '{ float nv = clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0); diffuseColor.a *= 1.0 - 0.55 * inW * (1.0 - clamp(foam, 0.0, 1.0)) * pow(1.0 - nv, 5.0); }\n#include <opaque_fragment>');   // (the water's part fades where the sea beneath is a mirror - by half at most (WS7 fix round): seen low from far off it had gone altogether, a hard sand-to-sea line)
 }
 function paintSign(key) {   // the faces of the signs: gates, direction boards, the split, the 365 boards, chevrons
   const parts = key.split('|'), kind = parts[0];
@@ -2481,11 +3758,14 @@ function puffTex(flat) {   // a soft, lumpy puff of smoke (and a few hard-edged 
 }
 const BLOB_VS = 'attribute float size; attribute float alpha; varying vec3 vC; varying float vA; uniform float scale; uniform vec4 fade; uniform float lift; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position + vec3(0.0, size * lift, 0.0), 1.0); float d = -mv.z; vA = alpha * smoothstep(fade.x, fade.y, d) * (1.0 - smoothstep(fade.z, fade.w, d)); gl_PointSize = min(size * scale / d, 260.0); gl_Position = projectionMatrix * mv; }';
 function particles(n, add, o) {   // a pool of soft round blobs: smoke and dust (normal), sparks and flames (added light); o: { near: [from, to] m - closer to the camera a puff fades, lift: how far it sits up by its size, flat: low wide puffs }
+  if (o && o.neu) return particlesNew(n, add, o);   // (the new look: revamp WS6, below)
   const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n), P = [];
   for (let i = 0; i < n; i++) P.push({ life: 0, max: 0 });
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, puff: { value: add ? null : puffTex(o && o.flat) }, amb: { value: 1 }, lift: { value: add ? 0 : o && o.lift != null ? o.lift : 0.3 }, fade: { value: new THREE.Vector4(o && o.near ? o.near[0] : 3, o && o.near ? o.near[1] : 10, 1e5, 1e6) } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, vertexShader: BLOB_VS, fragmentShader: add ? BLOB_FS : PUFF_FS, vertexColors: true });
+  const gl2 = !!(add && o && o.glow); if (gl2) g.setAttribute('kind', new THREE.BufferAttribute(new Float32Array(n), 1));   // (the new look: sparks and fireworks drawn with the glows' shaders, all kind 0 - the
+  // same as before - so they share the glows' one program rather than adding one)
+  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, puff: { value: add ? null : puffTex(o && o.flat) }, amb: { value: 1 }, lift: { value: add ? 0 : o && o.lift != null ? o.lift : 0.3 }, fade: { value: new THREE.Vector4(o && o.near ? o.near[0] : 3, o && o.near ? o.near[1] : 10, 1e5, 1e6) } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, vertexShader: gl2 ? GLOW_VS : BLOB_VS, fragmentShader: gl2 ? GLOW_FS : add ? BLOB_FS : PUFF_FS, vertexColors: true });
   const points = new THREE.Points(g, mat); points.frustumCulled = false; points.renderOrder = 3;
   let next = 0;
   const C2 = new THREE.Color();
@@ -2505,17 +3785,152 @@ function particles(n, add, o) {   // a pool of soft round blobs: smoke and dust 
     amb(v) { mat.uniforms.amb.value = v; }
   };
 }
-function glowPoints(n) {   // halos round the lamps at night
-  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n);
+// ---- steam, smoke and sparks in the new look (revamp WS6, 29 Oct 2026). The same puffs as many and as often, drawn as lit clouds: each
+// puff a heap of round lumps (puffAtlas(): four shapes, each pixel's slope, depth and thickness), turned at random and slowly as it rolls,
+// lit by the sun on one side and the sky all round, shaded in its thick middle away from the sun, its thin edges glowing when the sun is
+// behind it, and wearing away from the edges inwards as it thins (not just fading out). Sparks, the nozzles' flicker and the bursts are
+// drawn as streaks along how they move against the camera (what a camera's shutter would smear), so a shower reads as a shower at 180 mph.
+// Only what's alive is drawn and sent (all 6,700 were, every frame), newest first so the old puffs carried back towards the chase camera
+// lie over them; each tier keeps its particle budget (FXCAP) - past it a pool's oldest, by then worn thin, makes way for its new ones.
+// Two looks for the owner to choose between, the same puffs either way: ?steam=b shows the other. His pick is the letter below
+const STEAM_LOOKS = {   // [wrap (how far round the sun's light reaches), behind (thin edges lit from behind), shade (the thick middle's own shadow), wear (eaten from the edges as it ages)], [base, lit, edge softness]
+  a: [[0.65, 0.55, 0.35, 0.55], [0.6, 0.5, 0.62]],   // A: soft, lit, airy puffs that wear away (the plan's)
+  b: [[0.3, 1.0, 0.7, 0.4], [0.46, 0.7, 0.3]]   // B: sculpted billows - crisper lumps, deeper shade in their middles, bright sunlit rims
+};
+const STEAM_PICK = 'b';   // (the owner chose B, 29 Oct 2026; ?steam=a shows the soft puffs)
+const STEAM_Q = typeof location !== 'undefined' && /[?&]steam=([ab])\b/.exec(location.search || ''), STEAM_LOOK = STEAM_LOOKS[STEAM_Q ? STEAM_Q[1] : STEAM_PICK];
+const FXCAP = { phone: 1300, medium: 3700, high: 7600, capture: 7600 };   // the live particles a tier allows (plan: 1,500 / 4,000 / 8,000 with the lamps' glows and cat's eyes)
+let PUFFA = null;
+function puffAtlas() {   // four puffs in a 2 x 2 picture, 128 px each: r, g the surface's slope (x, y), b how thick it is there, a how dense
+  if (PUFFA) return PUFFA;
+  const S = 128, N = S * 2, d = new Uint8Array(N * N * 4), r = E.rnd(61);
+  for (let f = 0; f < 4; f++) {
+    const B = [], nb = 7 + Math.floor(r() * 4);
+    B.push([0, -0.02, 0.2 + r() * 0.03, 0.06]);   // (a big one in the middle, then lumps heaped round and on it)
+    for (let i = 1; i < nb; i++) { const a = r() * 6.2832, rr = 0.08 + r() * 0.17; B.push([Math.cos(a) * rr, Math.sin(a) * rr * 0.85 + 0.03, 0.09 + r() * 0.1, r() * 0.08]); }
+    const ox = (f % 2) * S, oy = Math.floor(f / 2) * S, ph = r() * 50;
+    for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) {
+      const px = (i + 0.5) / S - 0.5, py = (j + 0.5) / S - 0.5;
+      let den = 0, hs = 0, nx = 0, ny = 0, nw = 0, top = 0;
+      for (const b of B) { const dx = px - b[0], dy = py - b[1], q = (dx * dx + dy * dy) / (b[2] * b[2]); if (q >= 1) continue;
+        const h = b[2] * Math.sqrt(1 - q) + b[3], w = Math.exp(h * 40); den += Math.pow(1 - q, 1.5); hs += h; top = Math.max(top, h); nx += dx / b[2] * w; ny += dy / b[2] * w; nw += w; }
+      const rad = Math.hypot(px, py) / 0.5, env = Math.max(0, 1 - rad * rad);
+      const wisp = 0.78 + 0.44 * (0.5 + 0.25 * Math.sin(px * 37 + ph + Math.sin(py * 23) * 2) + 0.25 * Math.sin(py * 41 - ph * 0.7 + Math.sin(px * 29) * 2));   // (a ragged, wispy edge)
+      const a = Math.min(1, den * 0.8) * env * env, dd = Math.min(1, a * (den < 0.6 ? wisp : 1));
+      if (nw > 0) { nx /= nw; ny /= nw; } const nl = Math.hypot(nx, ny); if (nl > 0.97) { nx *= 0.97 / nl; ny *= 0.97 / nl; }
+      const k = ((oy + j) * N + ox + i) * 4;
+      d[k] = Math.round((nx * 0.5 + 0.5) * 255); d[k + 1] = Math.round((ny * 0.5 + 0.5) * 255); d[k + 2] = Math.round(Math.min(1, hs * 2.6) * 255); d[k + 3] = Math.round(dd * 255);
+    }
+  }
+  const T = new THREE.DataTexture(d, N, N, THREE.RGBAFormat); T.generateMipmaps = true; T.minFilter = THREE.LinearMipmapLinearFilter; T.magFilter = THREE.LinearFilter; T.needsUpdate = true;
+  PUFFA = T; return T;
+}
+// a puff: its lump (vF, one of four), turned (vR: cos, sin), its age (vK); flatY squashes it into a low wide one for the road
+const PUFF2_VS = 'attribute float size; attribute float alpha; attribute vec2 aux; varying vec3 vC; varying float vA; varying vec2 vR; varying vec2 vF; varying float vK; uniform float scale; uniform vec4 fade; uniform float lift; uniform float rotK; void main(){ vC = color;'
+  + ' vec4 mv = modelViewMatrix * vec4(position + vec3(0.0, size * lift, 0.0), 1.0); float d = -mv.z; vA = alpha * smoothstep(fade.x, fade.y, d) * (1.0 - smoothstep(fade.z, fade.w, d));'
+  + ' float an = (aux.x * 6.2832 + aux.y * (fract(aux.x * 7.13) - 0.5) * 1.8) * rotK; vR = vec2(cos(an), sin(an)); float fr = floor(fract(aux.x * 3.71) * 4.0); vF = vec2(mod(fr, 2.0), floor(fr * 0.5)) * 0.5; vK = aux.y;'
+  + ' gl_PointSize = vA > 0.002 ? min(size * scale / d, 260.0) : 0.0; gl_Position = projectionMatrix * mv; }';
+const PUFF2_FS = 'uniform sampler2D puff; uniform float amb; uniform float flatY; uniform vec3 sunV; uniform vec3 upV; uniform vec3 sunC; uniform vec3 skyC; uniform vec3 gndC; uniform vec4 look; uniform vec3 look2; uniform float bk;'
+  + ' varying vec3 vC; varying float vA; varying vec2 vR; varying vec2 vF; varying float vK; void main(){'
+  + ' vec2 p = gl_PointCoord - 0.5; p.y = -p.y / flatY; vec2 q = vec2(vR.x * p.x + vR.y * p.y, vR.x * p.y - vR.y * p.x); if (abs(q.x) > 0.49 || abs(q.y) > 0.49) discard;'
+  + ' vec4 t = texture2D(puff, vF + (q + 0.5) * 0.5); float th = vK * vK * look.w, a = vA * smoothstep(th, th + look2.z, t.a); if (a < 0.01) discard;'
+  + ' vec2 nt = t.rg * 2.0 - 1.0; vec2 ns = vec2(vR.x * nt.x - vR.y * nt.y, vR.y * nt.x + vR.x * nt.y); ns.y *= flatY; vec3 n = vec3(ns, sqrt(max(0.0, 1.0 - dot(ns, ns))));'
+  + ' float wr = clamp((dot(n, sunV) + look.x) / (1.0 + look.x), 0.0, 1.0), sh = 1.0 - look.z * t.b * (1.0 - wr); vec3 hm = mix(gndC, skyC, 0.72 + 0.28 * dot(n, upV));'
+  + ' gl_FragColor = vec4(amb * (vC * (look2.x + look2.y * (sunC * wr * sh + hm)) + sunC * (bk * (1.0 - t.a))), a);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
+// a streak (a quad per spark, its corners position.x 0 at the head - 1 at the tail, position.y across): from where it is back along its motion
+// against the camera over the shutter, at the old dot's width, a capsule bright at the head and fading down the tail, a little dimmer the
+// longer it is (the same light spread out); res: the picture's height in pixels, so it's as wide as the dot was
+const STREAK_VS = 'attribute vec3 iPos; attribute vec3 iVel; attribute vec3 iCol; attribute float size; attribute float alpha; varying vec3 vC; varying float vA; varying vec3 vU;'
+  + ' uniform float scale; uniform vec4 fade; uniform vec3 camV; uniform float shutter; uniform float res; uniform float aspect; void main(){ vC = iCol;'
+  + ' vec4 m0 = modelViewMatrix * vec4(iPos, 1.0); float d = max(-m0.z, 0.05); vA = alpha * smoothstep(fade.x, fade.y, d) * (1.0 - smoothstep(fade.z, fade.w, d));'
+  + ' vec3 rv = (iVel - camV) * shutter; float rl = length(rv); if (rl > 2.5) rv *= 2.5 / rl; vec4 m1 = modelViewMatrix * vec4(iPos - rv, 1.0); if (-m1.z < 0.1) m1 = m0;'
+  + ' vec4 c0 = projectionMatrix * m0, c1 = projectionMatrix * m1; vec2 asp = vec2(aspect, 1.0), s0 = c0.xy / c0.w * asp, dv = c1.xy / c1.w * asp - s0; float ln = min(length(dv), 0.5);'
+  + ' float hw = max(min(size * scale / d, 260.0), 1.0) / max(res, 1.0); vec2 ax = ln > 1e-5 ? normalize(dv) : vec2(1.0, 0.0), ay = vec2(-ax.y, ax.x);'
+  + ' vec2 pp = s0 + ax * (ln * position.x + (position.x * 2.0 - 1.0) * hw) + ay * position.y * hw; vU = vec3((position.x * (ln + 2.0 * hw) - hw) / hw, position.y, ln / hw);'
+  + ' if (vA < 0.002) pp = vec2(9.0); gl_Position = vec4(pp / asp * c0.w, c0.z, c0.w); }';
+const STREAK_FS = 'varying vec3 vC; varying float vA; varying vec3 vU; void main(){ float dx = max(0.0, -vU.x) + max(0.0, vU.x - vU.z), r = dx * dx + vU.y * vU.y; if (r > 1.0) discard;'
+  + ' float tail = clamp(vU.x / max(vU.z, 0.001), 0.0, 1.0); gl_FragColor = vec4(vC, vA * (1.0 - r) * (1.0 - r) * mix(1.0, 0.2, tail) / (1.0 + 0.12 * vU.z));\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
+function fxUniforms() {   // the light and the camera every new-look pool shares (set each frame: fxLight() in render)
+  return { sunV: { value: new THREE.Vector3(0, 1, 0) }, upV: { value: new THREE.Vector3(0, 1, 0) }, sunC: { value: new THREE.Color(2.6, 2.5, 2.3) }, skyC: { value: new THREE.Color(0.5, 0.55, 0.6) }, gndC: { value: new THREE.Color(0.3, 0.35, 0.25) },
+    look: { value: new THREE.Vector4().fromArray(STEAM_LOOK[0]) }, look2: { value: new THREE.Vector3().fromArray(STEAM_LOOK[1]) }, bk: { value: 0 }, camV: { value: new THREE.Vector3() }, res: { value: 720 }, aspect: { value: 16 / 9 } };
+}
+function particlesNew(n, add, o) {   // (the new look) particles(): the same pool, the same emit(), drawn as above; o.U: the shared light, o.bud: the tier's budget { live, cap }
+  const U = o.U, B = o.bud, streak = !!o.streak, glow = add && !!o.glow && !streak;
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n), aux = add ? null : new Float32Array(n * 2), vel = streak ? new Float32Array(n * 3) : null;
+  const L = [], spare = []; let own = 0, kill = 0;
+  const near = o.near || [3, 10], fade = { value: new THREE.Vector4(near[0], near[1], 1e5, 1e6) };
+  let g, obj, mat;
+  if (streak) {
+    g = new THREE.InstancedBufferGeometry(); g.setIndex([0, 1, 2, 0, 2, 3]); g.setAttribute('position', new THREE.Float32BufferAttribute([0, -1, 0, 1, -1, 0, 1, 1, 0, 0, 1, 0], 3));
+    g.setAttribute('iPos', new THREE.InstancedBufferAttribute(pos, 3)); g.setAttribute('iVel', new THREE.InstancedBufferAttribute(vel, 3)); g.setAttribute('iCol', new THREE.InstancedBufferAttribute(col, 3));
+    g.setAttribute('size', new THREE.InstancedBufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.InstancedBufferAttribute(alpha, 1)); g.instanceCount = 0;
+    mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, fade: fade, camV: U.camV, shutter: { value: 0.035 }, res: U.res, aspect: U.aspect }, vertexShader: STREAK_VS, fragmentShader: STREAK_FS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+    obj = new THREE.Mesh(g, mat);
+  } else {
+    g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
+    if (glow) g.setAttribute('kind', new THREE.BufferAttribute(new Float32Array(n), 1)); if (aux) g.setAttribute('aux', new THREE.BufferAttribute(aux, 2)); g.setDrawRange(0, 0);
+    mat = add ? new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, lift: { value: 0 }, fade: fade }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexShader: glow ? GLOW_VS : BLOB_VS, fragmentShader: glow ? GLOW_FS : BLOB_FS, vertexColors: true })
+      : new THREE.ShaderMaterial({ uniforms: Object.assign({ scale: { value: 600 }, puff: { value: puffAtlas() }, amb: { value: 1 }, lift: { value: o.lift != null ? o.lift : 0.3 }, fade: fade, rotK: { value: o.flat ? 0.12 : 1 }, flatY: { value: o.flat ? 0.45 : 1 } },
+        { sunV: U.sunV, upV: U.upV, sunC: U.sunC, skyC: U.skyC, gndC: U.gndC, look: U.look, look2: U.look2, bk: U.bk }), transparent: true, depthWrite: false, vertexShader: PUFF2_VS, fragmentShader: PUFF2_FS, vertexColors: true });
+    obj = new THREE.Points(g, mat);
+  }
+  obj.frustumCulled = false; obj.renderOrder = 3; obj.visible = false;
+  const C2 = new THREE.Color(), attrs = Object.keys(g.attributes).filter((k) => k !== 'kind' && !(streak && k === 'position')).map((k) => g.attributes[k]);   // (what changes each frame: only the live ones are sent)
+  return {
+    points: obj,
+    emit(x, y, z, vx, vy, vz, s0, s1, hex, a0, life, grav, o2) {
+      if (own >= n || B.live >= B.cap) {   // (the pool full, or the tier's budget spent: this pool's oldest goes now)
+        while (kill < L.length && L[kill].gone) kill++;
+        if (kill >= L.length) return;
+        const v = L[kill++]; v.gone = true; own--; B.live--;
+      }
+      const p = spare.pop() || {}; p.gone = false; L.push(p); own++; B.live++;
+      p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.quick = !!(o2 && o2.quick); p.drag = (o2 && o2.drag) || 0.98; p.a0 = !add && s1 > 1 ? Math.min(a0, p.quick ? 0.75 : 0.4) : a0; p.soft = !add && s1 > 1; p.life = 0; p.max = life; p.g = grav || 0; p.seed = Math.random();
+      C2.set(hex); if (add) C2.multiplyScalar(2.2); p.r = C2.r; p.gg = C2.g; p.b = C2.b;
+    },
+    update(dt) {
+      let m = 0;
+      for (let i = 0; i < L.length; i++) { const p = L[i];
+        if (p.gone) { spare.push(p); continue; }
+        p.life += dt; if (p.life >= p.max) { own--; B.live--; spare.push(p); continue; }
+        const dg = Math.pow(p.drag, dt * 60); p.vy -= p.g * dt; p.vx *= dg; p.vz *= dg; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; L[m++] = p; }
+      L.length = m; kill = 0;
+      for (let i = 0; i < m; i++) { const p = L[m - 1 - i], k = Math.min(1, p.life / p.max);   // (newest first)
+        pos[i * 3] = p.x; pos[i * 3 + 1] = p.y; pos[i * 3 + 2] = p.z; col[i * 3] = p.r; col[i * 3 + 1] = p.gg; col[i * 3 + 2] = p.b;
+        size[i] = p.s0 + (p.s1 - p.s0) * (p.soft ? Math.sqrt(k) : k); alpha[i] = Math.max(0, p.a0 * (1 - k) * (p.soft ? Math.min(1, k * (p.quick ? 40 : 6)) : 1));
+        if (aux) { aux[i * 2] = p.seed; aux[i * 2 + 1] = p.soft ? k : 0; }
+        if (vel) { vel[i * 3] = p.vx; vel[i * 3 + 1] = p.vy; vel[i * 3 + 2] = p.vz; } }
+      if (streak) g.instanceCount = m; else g.setDrawRange(0, m);
+      obj.visible = m > 0;
+      if (m) for (const a of attrs) { a.clearUpdateRanges(); a.addUpdateRange(0, m * a.itemSize); a.needsUpdate = true; }
+    },
+    clear() { for (const p of L) { if (!p.gone) { own--; B.live--; } spare.push(p); } L.length = 0; kill = 0; },
+    amb(v) { if (mat.uniforms.amb) mat.uniforms.amb.value = v; }
+  };
+}
+// (revamp WS2 fix round, the new look) the glows' own shaders: a cat's eye (kind 1) is a small flat ellipse - 2-4 pixels high, three times as wide,
+// however near - not a soft round halo, and it sits on the road at its stud's height, drawn pulled towards the camera by what the road's own
+// depth offset pulls the road there (polygonOffset -2: two pixels' worth of the road's depth slope, d * radians a pixel / the sine of the angle you
+// see the road at - 5 m at 50 m from the chase camera), with a margin. So the road no longer hides it beyond 30 m and it needn't float 18 cm up.
+// It fades only from 150 m, so a row of them runs on into the dark (res: the picture's height in pixels)
+const GLOW_VS = 'attribute float size; attribute float alpha; attribute float kind; varying vec3 vC; varying float vA; varying float vK; uniform float scale; uniform vec4 fade; uniform float lift; uniform float res; void main(){ vC = color; vK = kind; vec4 mv = modelViewMatrix * vec4(position + vec3(0.0, size * lift, 0.0), 1.0); float d = -mv.z; vA = alpha * smoothstep(fade.x, fade.y, d) * (1.0 - smoothstep(fade.z, fade.w, d)); float ps = min(size * scale / d, 260.0);'
+  + ' if (kind > 0.5) { vec3 nv = normalize((viewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz); float px = 2.0 / (projectionMatrix[1][1] * max(res, 1.0)), pull = min(0.6 * d, 2.6 * d * px * abs(nv.y) / max(abs(dot(nv, normalize(mv.xyz))), 0.003) + 0.03);'
+  + ' ps = clamp(ps, 2.0, 4.0) * 3.0; vA = (1.0 - smoothstep(150.0, 260.0, d)); mv.xyz *= 1.0 - pull / max(d, 0.1); } gl_PointSize = ps; gl_Position = projectionMatrix * mv; }';
+const GLOW_FS = 'varying vec3 vC; varying float vA; varying float vK; void main(){ vec2 d = gl_PointCoord - 0.5; float r = (d.x * d.x + d.y * d.y * (vK > 0.5 ? 9.0 : 1.0)) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC, vA * (vK > 0.5 ? 1.0 - r * r : (1.0 - r) * (1.0 - r)));\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
+function glowPoints(n, neu) {   // halos round the lamps at night (neu: the new look's, with cat's eyes too)
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n), kind = neu ? new Float32Array(n) : null;
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, fade: { value: new THREE.Vector4(-1, 0, 70, 260) }, lift: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, vertexShader: BLOB_VS, fragmentShader: BLOB_FS });
+  if (neu) g.setAttribute('kind', new THREE.BufferAttribute(kind, 1));
+  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, fade: { value: new THREE.Vector4(-1, 0, 70, 260) }, lift: { value: 0 }, res: { value: 720 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, vertexShader: neu ? GLOW_VS : BLOB_VS, fragmentShader: neu ? GLOW_FS : BLOB_FS });
   const points = new THREE.Points(g, mat); points.frustumCulled = false; points.renderOrder = 3;
   const C2 = new THREE.Color();
-  return { points: points, set(i, x, y, z, hex, s) { pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z; C2.set(hex); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; size[i] = s; alpha[i] = 0.55; },
-    draw(count) { g.setDrawRange(0, count); points.visible = count > 0; for (const k of ['position', 'color', 'size', 'alpha']) g.attributes[k].needsUpdate = true; } };
+  return { points: points, set(i, x, y, z, hex, s, k, eye) { pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z; C2.set(hex); if (k) C2.multiplyScalar(k); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; size[i] = s; alpha[i] = 0.55; if (kind) kind[i] = eye ? 1 : 0; },
+    draw(count) { g.setDrawRange(0, count); points.visible = count > 0; for (const k of ['position', 'color', 'size', 'alpha', 'kind']) if (g.attributes[k]) g.attributes[k].needsUpdate = true; } };
 }
-function skidMarks() {   // dark stripes left on the road: a drift's, wheelspin's (narrow, darker the harder it spins)
+function skidMarks(neu) {   // dark stripes left on the road: a drift's, wheelspin's (narrow, darker the harder it spins)
+  if (neu) return skidNew(2400);
   const N = 2400, pos = new Float32Array(N * 18), al = new Float32Array(N * 6);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('alpha', new THREE.BufferAttribute(al, 1));
   const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4, fog: false,
@@ -2526,4 +3941,24 @@ function skidMarks() {   // dark stripes left on the road: a drift's, wheelspin'
     pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); al.fill(d, (k % N) * 6, (k % N) * 6 + 6); k++; };
   return { mesh: mesh, add(a, b, prev, w, d) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, w || 0.17, d == null ? 0.7 : d); strip(prev[1], b, w || 0.17, d == null ? 0.7 : d); g.attributes.position.needsUpdate = true; g.attributes.alpha.needsUpdate = true; },
     clear() { pos.fill(0); al.fill(0); g.attributes.position.needsUpdate = true; g.attributes.alpha.needsUpdate = true; } };
+}
+function skidNew(N) {   // (revamp WS2, the new look) the same marks with soft edges and a grain of rubber along them, fading into the haze as the road
+  // does and wearing away over half a minute (aSk: across the mark 0-1, when it was laid). Fix round: a tyre's width (24 cm, dark nearly edge to
+  // edge - they read as pencil lines), four tread bands along each (smoothed away once a band is under a pixel), and darker where a slide began,
+  // the first 3.5 m (each mark's corner carries how far its slide has run: a.sd)
+  const pos = new Float32Array(N * 18), al = new Float32Array(N * 6), sk = new Float32Array(N * 12), S0 = [0, 0, 1, 0, 1, 1]; let now = 0, k = 0;
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('alpha', new THREE.BufferAttribute(al, 1)); g.setAttribute('aSk', new THREE.BufferAttribute(sk, 2));
+  const U = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uNow: { value: 0 } }]);
+  const mat = new THREE.ShaderMaterial({ uniforms: U, fog: true, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4,
+    vertexShader: '#include <fog_pars_vertex>\nattribute float alpha; attribute vec2 aSk; varying float vA; varying vec2 vS; void main() { vA = alpha; vS = aSk; vec4 mvPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mvPosition;\n#include <fog_vertex>\n}',
+    fragmentShader: '#include <fog_pars_fragment>\nuniform float uNow; varying float vA; varying vec2 vS; void main() { float tb = abs(fract(vS.x * 4.0) - 0.5) * 2.0, bk = 1.0 - smoothstep(0.08, 0.2, fwidth(vS.x));'
+      + ' float a = min(1.0, vA) * smoothstep(0.0, 0.07, vS.x) * smoothstep(1.0, 0.93, vS.x) * mix(1.0, 0.7 + 0.3 * smoothstep(0.12, 0.42, tb), bk) * (1.0 - smoothstep(16.0, 45.0, uNow - vS.y));\n#ifdef USE_FOG\n  a *= 1.0 - smoothstep(fogNear, fogFar, vFogDepth);\n#endif\n  gl_FragColor = vec4(0.02, 0.02, 0.022, a); }' });
+  const mesh = new THREE.Mesh(g, mat); mesh.frustumCulled = false;
+  const strip = (a, b, w, d) => { const dx = b[0] - a[0], dz = b[2] - a[2], L = Math.hypot(dx, dz) || 1, nx = -dz / L * w, nz = dx / L * w, o = (k % N) * 18; const y0 = a[1] - 0.26, y1 = b[1] - 0.26;
+    b.sd = (a.sd || 0) + L; const d0 = d * (1 + 0.45 * (1 - smooth(0, 3.5, a.sd || 0))), d1 = d * (1 + 0.45 * (1 - smooth(0, 3.5, b.sd)));   // (darker where the slide began)
+    pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); al.set([d0, d1, d1, d0, d1, d0], (k % N) * 6);
+    for (let q = 0; q < 6; q++) { sk[(k % N) * 12 + q * 2] = S0[q]; sk[(k % N) * 12 + q * 2 + 1] = now; } k++; };
+  const up = () => { g.attributes.position.needsUpdate = true; g.attributes.alpha.needsUpdate = true; g.attributes.aSk.needsUpdate = true; };
+  return { mesh: mesh, add(a, b, prev, w, d) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, 0.12, d == null ? 0.7 : d); strip(prev[1], b, 0.12, d == null ? 0.7 : d); up(); },
+    clear() { pos.fill(0); al.fill(0); sk.fill(0); up(); }, tick(t) { now = t; U.uNow.value = t; } };
 }

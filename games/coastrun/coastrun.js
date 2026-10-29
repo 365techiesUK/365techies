@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off); in the Getaway, the police radio
  * (radio/, with its subtitles). A browser without 3D graphics gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=78';
+import { createWorld, TIERS, TIER_ORDER } from './world3d.js?v=79';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -20,14 +20,71 @@ function wideGW() {   // the game's width in its own units for the space on the 
 const reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 let world = null, worldTried = false;
 window.COAST3D = { get world() { return world; } };   // for the tests (read-only look at the 3D world)
-// the two of you as people (8 Oct 2026: people/people.js - MPFB models laid over the original couple), loaded once the 3D is warm; not on a
-// data saver or a small device, nor with ?nopeople (the original couple, for comparing)
-function peopleLoad() {
-  const nc = navigator.connection, small = navigator.deviceMemory && navigator.deviceMemory < 4;
-  if ((nc && nc.saveData) || small || /[?&]nopeople/.test(location.search)) return;
-  import('./people/people.js?v=1').then((m) => m.attach({})).catch((e) => { if (window.console) console.warn('365 Coast Run: people', e); });
+// ---------------------------------------------------------------- the quality tier (revamp WS1, 22 Oct 2026): how much of the 3D look this machine gets (world3d.js
+// TIERS). Chosen at load - ?tier= (the bench, filming), else Settings > Graphics, else the one remembered here from last time, else a guess (a
+// touch screen or a small one: phone; anything else: medium), which a 3 s look at the title can raise to high - and only ever changed between
+// races: a race too slow for its tier means one tier lower from the next (remembered), while the picture's resolution still steps down mid-race
+const TIER_KEY = 'coast365.tier', TIER_Q = (/[?&]tier=(phone|medium|high|capture)\b/.exec(location.search) || [])[1] || null;
+const LOOK = /[?&]look=classic\b/.test(location.search) ? 'classic' : 'new';   // (?look=classic: the look as it was before the revamp, side by side)
+const TQ = { memo: null, gfx: undefined, by: '', bench: null, slow: false };
+function tierStored() { try { const o = JSON.parse(localStorage.getItem(TIER_KEY) || 'null'); return o && TIERS[o.tier] && o.tier !== 'capture' ? o : null; } catch (e) { return null; } }
+function tierStore(tier, by) { try { localStorage.setItem(TIER_KEY, JSON.stringify({ tier: tier, by: by, at: Date.now() })); } catch (e) {} TQ.memo = null; }
+function tierGuess() { const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches), small = Math.min(screen.width || 9999, screen.height || 9999) < 500; return coarse || small ? 'phone' : 'medium'; }
+function tierWanted(SET) {   // [the tier, how it was chosen]
+  const gfx = SET && SET.gfx;
+  if (TQ.memo && TQ.gfx === gfx) return TQ.memo;
+  const st = TIER_Q ? null : tierStored();
+  TQ.gfx = gfx; TQ.memo = TIER_Q ? [TIER_Q, 'url'] : gfx && gfx !== 'auto' && TIERS[gfx] ? [gfx, 'settings'] : st ? [st.tier, st.by === 'bench' || st.by === 'slow' ? st.by : 'stored'] : [tierGuess(), 'guess'];
+  return TQ.memo;
 }
-function getWorld() { if (!worldTried) { worldTried = true; try { world = createWorld(); } catch (e) { world = null; if (window.console) console.warn('365 Coast Run: 3D failed', e); } } return world; }
+const SET0 = (() => { try { return JSON.parse(localStorage.getItem('coast365:settings') || '{}') || {}; } catch (e) { return {}; } })();   // (before the cabinet has read them: for its first screen size)
+// the two of you as people (8 Oct 2026: people/people.js - MPFB models laid over the original couple): only on a tier that has them (high,
+// capture), loaded behind the title or the results - never mid-race - with the world told to wait (warmed() false) till they're in and their
+// shaders built; not on a data saver or a small device, nor with ?nopeople (the original couple, for comparing)
+const PPL = { busy: false, failed: false };
+function peopleStep(wd, mode) {
+  const nc = navigator.connection, small = navigator.deviceMemory && navigator.deviceMemory < 4, P = window.COAST_PEOPLE, isIn = !!(P && !P.off);
+  const want = wd.T.people && !((nc && nc.saveData) || small || /[?&]nopeople/.test(location.search)) && !PPL.failed;
+  if (!want) { if (isIn && mode !== 'play' && mode !== 'paused') P.detach(); return; }   // (a tier without them: the original couple back, between races)
+  if (isIn || PPL.busy || mode === 'play' || mode === 'paused' || !wd.warmed()) return;
+  PPL.busy = true; wd.hold(true);
+  import('./people/people.js?v=2').then((m) => m.attach({})).then((st) => {
+    PPL.busy = false;
+    const A2 = window.ARCADE365; if (A2 && (A2.mode === 'play' || A2.mode === 'paused')) { if (st && st.detach) st.detach(); }   // (the race began while they loaded: not now - after it)
+    else wd.rewarm();   // (their shaders built before the next race, as everything else's)
+    wd.hold(false);
+  }).catch((e) => { PPL.busy = false; PPL.failed = true; wd.hold(false); if (window.console) console.warn('365 Coast Run: people', e); });
+}
+function getWorld(SET) {
+  if (!worldTried) { worldTried = true; const tw = tierWanted(SET); TQ.by = tw[1];
+    try { world = createWorld({ tier: tw[0], look: LOOK }); } catch (e) { world = null; if (window.console) console.warn('365 Coast Run: 3D failed', e); }
+    if (world && world.T.dpr < 3) try { window.dispatchEvent(new Event('resize')); } catch (e) {}   // (the cabinet sizes its screen again, at the tier's sharpness)
+  }
+  return world;
+}
+function tierFrame(wd, W, t, mode, SET, frameDt, took) {   // each picture: the title's test, and any change of tier - between races only
+  const between = mode === 'title' || mode === 'over';
+  if (TQ.by === 'guess' && wd.tier === 'medium' && mode === 'title' && wd.warmed() && !TQ.bench) TQ.bench = { t0: t, ft: [], took: [] };
+  const B = TQ.bench;
+  if (B && !B.done) {   // 3 s of the title on medium: comfortably quick, and it's high from now on (remembered either way)
+    if (mode !== 'title') { B.t0 = t; B.ft.length = 0; B.took.length = 0; }   // (the race began: tried again on the next title)
+    else if (t - B.t0 > 400) { B.ft.push(frameDt * 1000); B.took.push(took); }
+    if (mode === 'title' && t - B.t0 > 3400 && B.ft.length > 60) {
+      const q = (a, f) => a.slice().sort((x, y) => x - y)[Math.floor(a.length * f)], fast = q(B.ft, 0.5) <= 17.6 && q(B.ft, 0.9) <= 21 && q(B.took, 0.9) <= 6;
+      B.done = true; B.res = { ft50: +q(B.ft, 0.5).toFixed(1), ft90: +q(B.ft, 0.9).toFixed(1), took90: +q(B.took, 0.9).toFixed(1), n: B.ft.length, fast: fast };
+      tierStore(fast ? 'high' : 'medium', 'bench');
+    }
+  }
+  if (TQ.slow && between && TQ.by !== 'url' && TQ.by !== 'settings') {   // the last race was too slow for this tier: one lower from the next
+    const i = TIER_ORDER.indexOf(wd.tier); if (i > 0) tierStore(TIER_ORDER[i - 1], 'slow');
+    TQ.slow = false;
+  }
+  if (between) {
+    const tw = tierWanted(SET); TQ.by = tw[1];
+    if (tw[0] !== wd.tier && TIERS[tw[0]]) { wd.applyTier(tw[0]); R.scale = 1; R.lowN = 0; try { window.dispatchEvent(new Event('resize')); } catch (e) {} }
+  }
+  peopleStep(wd, mode);
+}
 
 const BEST_KEY = 'coast365.best';
 let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') || {}; } catch (e) { BEST = {}; }
@@ -38,7 +95,7 @@ let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') |
 })();
 const placeKey = (st) => (E.STAGES[st] ? E.STAGES[st].key : String(st));
 function bestOf(W, st) { const d = BEST[(W.cop ? 'g' : 'd') + W.diff];   /* (the Getaway keeps its own) */ return d && d[placeKey(st)] ? d[placeKey(st)] : 0; }
-// ---- your ghost (owner, 7 Oct, after the OutRun 2 audit: in place of the seven rubber-band racers): your best drive through each stage, kept
+// ---- your ghost (owner, 7 Oct: in place of the seven rubber-band racers): your best drive through each stage, kept
 // on this device by place and speed, played back beside you as a see-through car; the gap to it shows where your place in the race used to
 const GST = { W: null, leg: -1, rec: null, done: null, play: null, s0: 0 };
 const ghostKey = (W, key) => 'coast365.ghost.d' + W.diff + '.' + key;
@@ -86,7 +143,7 @@ function ghostTag(g, W, t, mode) {   // where the race place was: the gap to you
 function saveBest(W, st, sec) { const k = (W.cop ? 'g' : 'd') + W.diff; (BEST[k] || (BEST[k] = {}))[placeKey(st)] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
 const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, warmAt: 0, shakeOn: true };
 const FIXEDRES = /[?&]fixedres/.test(location.search);   // (for the test pictures: never step the resolution down)
-window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: R.plain, ft: +R.ft.toFixed(1) });   // for checking: the picture's width, resolution step and frame time
+window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: TQ.slow, ft: +R.ft.toFixed(1), tier: world ? world.tier : null, by: TQ.by, look: LOOK, bench: TQ.bench ? TQ.bench.res || 'running' : null, chunks: world ? world.stats() : null });   // for checking: the picture's width, resolution step, frame time and tier
 let K = 3;
 function roundRect(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
 const GLOW = {};
@@ -136,7 +193,7 @@ function draw(g, W, t, mode, info) {
   R.braking = (W.v < R.lastV - 0.2) && !W.timeUp && !W.crash; R.lastV = W.v;
   R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, frameDt * 4);
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
-  const wd = getWorld();
+  const wd = getWorld(info.set);
   if (!wd) {
     g.fillStyle = '#0b1220'; g.fillRect(0, 0, info.dw, info.dh);
     g.setTransform(K, 0, 0, K, 0, 0);
@@ -145,23 +202,25 @@ function draw(g, W, t, mode, info) {
     return;
   }
   const t0 = performance.now();
-  const cap = Math.sqrt(4.2e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
+  const cap = Math.sqrt(wd.T.maxPx / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;   // (the tier's most pixels: a phone 0.9 million, a PC 2.1 or 4.2)
   wd.setSize(Math.max(64, Math.round(info.dw * k)), Math.max(64, Math.round(info.dh * k)));
   wd.setShake(R.shakeOn); wd.setCam((RAD.set && RAD.set.cam) || 'near');
   ghostFrame(W, mode);   // (your ghost: where it is now, for the 3D world to draw)
   const lerped = smoothApply(W, alpha);
   let cv; try { cv = wd.render(W, t, mode); } finally { if (lerped) smoothUndo(W); }
+  if (!cv) return;   // (the road under the car still being built - the first frames of a race: the last picture stays up)
   g.imageSmoothingEnabled = true; g.drawImage(cv, 0, 0, info.dw, info.dh);
   // a slow PC: the picture a step smaller (and back up when there's room); the plainer look only as a last resort
   const took = performance.now() - t0;
   R.ft = R.ft * 0.92 + Math.max(frameDt * 1000, took) * 0.08; R.took = R.took * 0.92 + took * 0.08;
   if (!R.warmAt && wd.warmed && wd.warmed()) R.warmAt = t;
-  if (R.warmAt && !R.plain && !R.pplTried && t - R.warmAt > 6000 && R.scale >= 1 && (R.ft < 19 || FIXEDRES)) { R.pplTried = true; peopleLoad(); }   // (the two of you as people: only on a PC that has shown it runs the 3D smoothly at full size - a slow one stalled loading them, then dropped them anyway)
-  if (R.plain && window.COAST_PEOPLE && !window.COAST_PEOPLE.off) window.COAST_PEOPLE.detach();   // (dropped to the plainer look: the original couple back)
+  tierFrame(wd, W, t, mode, info.set, frameDt, took);
+  // a slow PC: the picture a step smaller (and back up when there's room). Still too slow at the smallest: a tier lower from the next race -
+  // never now (the plainer look switched on mid-race rebuilt every shader: a 6.5 s freeze, on exactly the slowest machines)
   if (R.warmAt && t - R.warmAt > 5000 && t - R.adj > 700 && !FIXEDRES) {
     if (R.ft > 20.5 && R.scale > 0.6) { R.scale = Math.max(0.6, +(R.scale - 0.08).toFixed(2)); R.adj = t; }
     else if (R.ft < 18 && R.took < 8 && R.scale < 1) { R.scale = Math.min(1, +(R.scale + 0.04).toFixed(2)); R.adj = t; }
-    else if (R.ft > 26 && R.scale <= 0.6 && !R.plain) { if (++R.lowN > 12) { R.plain = true; wd.quality(true); } R.adj = t; }
+    else if (R.ft > 26 && R.scale <= 0.6 && mode === 'play') { if (++R.lowN > 12) TQ.slow = true; R.adj = t; }
     else if (R.ft <= 26) R.lowN = 0;
   }
   g.setTransform(K, 0, 0, K, 0, 0);
@@ -443,7 +502,7 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
     else hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
     if (Rz.pos) hudText(g, 'FINISHED P' + Rz.pos + ' OF ' + Rz.of2 + (Rz.posBonus ? '  +' + Rz.posBonus.toLocaleString('en-GB') : ''), x + 12, yb + 22, 7, Rz.pos === 1 ? '#ffd23f' : '#ffffff', 'left', false);
   }
-  if (age > 110 + Rz.legs.length * 12) {   // her verdict on the drive (OutRun 2's Heart Attack grades), and how to carry on
+  if (age > 110 + Rz.legs.length * 12) {   // her verdict on the drive (a grade from her hearts), and how to carry on
     const SAY = { S: 'SHE SAYS: BEST DAY EVER!', A: 'SHE SAYS: THAT WAS AMAZING!', B: 'SHE SAYS: NICE DRIVING!', C: 'SHE SAYS: NOT BAD...', D: 'SHE SAYS: HMPH.' };
     hudText(g, SAY[Rz.rank] || '', x + 12, yb + 35, 6.6, Rz.rank === 'S' || Rz.rank === 'A' ? '#ff9ec4' : Rz.rank === 'D' ? '#9fb3c8' : '#ffd1df', 'left', false);
     if (W.goalSeq && W.goalSeq.t > 60) { const left = Math.max(0, Math.ceil((480 - W.goalSeq.t) / 60)); hudText(g, W.cop ? 'SPACE: FINISH  (' + left + ')' : 'SPACE: CARRY ON TO ROUND ' + W.round + '   ·   ↓ FINISH  (' + left + ')', x + w / 2, y + h - 4, 5.2, (t / 400 | 0) % 2 ? '#ffffff' : '#ffc23a', 'center', false); }
@@ -1057,8 +1116,11 @@ function music(W, S, mode, SET) {
   }
   MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.22 : mode === 'play' ? 0.32 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
   if (want) loadMusic(a, want);
-  if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && trackOf(ART.PAL[st].key)));   // the next places, ready for the checkpoint
+  const next = MUS.on && W && !demo && W.fork && W.fork.next ? W.fork.next.map((st) => ART.PAL[st] && trackOf(ART.PAL[st].key)).filter(Boolean) : [];
+  next.forEach((n) => loadMusic(a, n));   // the next places, ready for the checkpoint
   if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
+  if (MUS.on && demo && mode === 'title' && !(SET.radio && SET.radio !== 'place')) loadMusic(a, 'bournemouth');   // (the start's track ready behind the title, for Play)
+  musicKeep(want, next, mode, SET);
   if (want !== (MUS.cur ? MUS.cur.name : null) && (!want || MBUF[want])) {
     const sting = want && !LOOPS[want];
     if (MUS.cur) hush(a, MUS.cur, sting ? 0.4 : 2.2);
@@ -1068,6 +1130,18 @@ function music(W, S, mode, SET) {
     const old = MUS.cur; MUS.cur = voice(a, old.name, 2.4); hush(a, old, 2.4);
   }
 }
+// the decoded music let go of (revamp WS1): a track decoded is 20 MB or more of sound held in memory, and every place's used to be kept for
+// good (75 MB growing to 163 MB over a run: too much for a phone). Now only what can be wanted soon is held - the track playing, the places
+// the next fork leads to, the goal jingle and the time-up sting, and the title's tune and the start's track between races - the rest let go
+// (fetched again from the browser's cache if it's wanted later)
+const MKEEP = { key: '' };
+function musicKeep(want, next, mode, SET) {
+  const keep = [want, MUS.cur && MUS.cur.name, MUS.sting, 'goal', 'timeup'].concat(next);
+  if (mode !== 'play' && mode !== 'paused') keep.push('title', SET.radio && SET.radio !== 'place' ? SET.radio : 'bournemouth');
+  const key = keep.join('|') + '#' + Object.keys(MBUF).length; if (key === MKEEP.key) return; MKEEP.key = key;   // (looked at again when that changes, or a track arrives)
+  for (const n in MBUF) if (!keep.includes(n)) { delete MBUF[n]; MLOAD[n] = false; }
+}
+window.CRmusic = () => { let b = 0; for (const n in MBUF) b += MBUF[n].length * MBUF[n].numberOfChannels * 4; return { held: Object.keys(MBUF), MB: +(b / 1048576).toFixed(1) }; };   // (for checking: the music held now)
 function sting(name) {   // the goal jingle / the time-up sting, in place of the little tune made on the spot (true when it will play)
   if (!MUS.on || !MBUF[name] || !MUS.gain) return false;
   MUS.sting = name; MUS.stingEnd = MUS.gain.context.currentTime + MBUF[name].duration - 0.3;
@@ -1297,13 +1371,15 @@ A.start({
     { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
     { key: 'touch', type: 'seg', label: 'Touch steering', small: 'Phones and tablets. Sides: touch anywhere on the left of the screen to steer left, the right to steer right, both at once for nitro. Buttons: ◀ ▶ under your left thumb, Brake and Nitro under your right.', options: [['sides', 'Sides'], ['buttons', 'Buttons']], def: 'sides' },
     { key: 'touchfull', type: 'switch', label: 'Full screen when you race', small: 'Phones and tablets: Play takes the game full screen and sideways. An iPhone can\'t do that for a web page: add the game to your Home Screen instead.', def: true },
-    { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
+    { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' },
+    { key: 'gfx', type: 'seg', label: 'Graphics', small: 'Auto picks for this device, and steps down by itself if a race runs slowly. Light suits phones and older laptops; High has the sharpest picture and the two of you in full. Changes from the next race.', options: [['auto', 'Auto'], ['phone', 'Light'], ['medium', 'Medium'], ['high', 'High']], def: 'auto' }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy'], ['skimmer', 'Spindrift', 'Orange · flies'], ['getaway', 'Getaway', 'Police chase · NEW']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
   statKey: (W) => (W.cop ? 'g' : 'v') + W.diff,   // (the Getaway: its own boards, so the race's stay fair)
   statKeyFor: (SET, speed) => (SET.car === 'getaway' ? 'g' : 'v') + speed,
   hires: () => true,
+  maxDpr: () => TIERS[world ? world.tier : tierWanted(SET0)[0]].dpr,   // (the screen's sharpness: a phone's tier draws at 2 screen pixels per point, not 3)
   step: smoothStep, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
   overText: (W) => W.cop && W.cop.busted && !W.complete ? 'Busted! ' + W.cop.busted.why.toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) + ' – stage ' + W.stageNo : W.cop && W.complete ? 'Escaped to ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + '! – rank ' + W.complete.rank : W.complete ? 'Goal! ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + ' – rank ' + W.complete.rank + (W.complete.round > 1 ? ', round ' + W.complete.round : '') : 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),

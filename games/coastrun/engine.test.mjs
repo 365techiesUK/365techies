@@ -5,6 +5,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 const E = createRequire(import.meta.url)('./engine.js');
 
 const quiet = (W) => { W.events.length = 0; W.fx.length = 0; };
@@ -533,4 +535,61 @@ test('the Getaway: damage to the limit and you\'re BUSTED; the game ends with th
 test('the Getaway: a whole chase replays exactly from the same seed and input', () => {
   const run = () => { const W = E.newWorld(2, { car: 'getaway' }, 13); go(W); drive(W, 60 * 60, (W2) => getawayDriver(W2)); return [W.s.toFixed(4), W.x.toFixed(4), W.score, W.cop.dmg, W.cop.down, W.cars.length].join(); };
   assert.equal(run(), run());
+});
+
+// ---------------------------------------------------------------- WS0 (22 Oct 2026, the revamp's first step): three guards
+// The traffic's ids: models3d.js draws car t of VEH from TRAFFIC_ORDER[t], so the two lists must stay in step (three of the rivals took
+// neutral ids on 22 Oct - tourer, chisel, grandee - in the same places in both lists).
+test('the traffic: VEH ids match models3d.js TRAFFIC_ORDER one for one and in order, each with a height, a model and colours', () => {
+  const src = readFileSync(new URL('./models3d.js', import.meta.url), 'utf8'), m = /export const TRAFFIC_ORDER = \[([^\]]*)\]/.exec(src);
+  assert.ok(m, 'TRAFFIC_ORDER found in models3d.js'); const order = m[1].split(',').map((q) => q.trim().replace(/^'|'$/g, ''));
+  assert.deepEqual(order, E.VEH.map((v) => v.id), 'the same ids in the same order'); assert.equal(E.VEH[E.COP].id, 'police'); assert.equal(E.COP, order.length - 1, 'the police last');
+  const tcol = /const TCOL = \{([\s\S]*?)\};/.exec(src)[1];
+  for (const id of order) { assert.ok(E.VEH_H[id] > 0, id + ' has a height'); assert.ok(new RegExp('\\n  ' + id + '\\(k, col').test(src), id + ' has a model'); assert.ok(new RegExp('\\b' + id + ': \\[').test(tcol), id + ' has its colours'); }
+});
+
+// The golden hash: the revamp's first waves change the pictures, never the rules (no engine.js logic change in M1 or M2). 3 seeds x 3 speeds
+// x 5 cars (the Getaway with the chase driver above), 60 s each on the autopilot, Math.random fed from a seeded stream (the step's own
+// dice: the nitro's kick, her lines) and snap() hashed every 60 steps, with the dice thrown and the events sent. Recorded from the engine
+// at 11fd0633, the M1 baseline (the same with WS0's comment edits and renames). A mismatch is a change to the rules: if one is meant (M3 on), re-record with
+// GOLDEN=print node --test games/coastrun/engine.test.mjs, say why in the commit, and check the owner's recorded runs still replay.
+const GOLDEN = {
+  'roadster|1|1': '9e551f59fc25a8c8', 'roadster|1|7': '333a552c9a34a6d2', 'roadster|1|12': '06fc097cef4ea0e3', 'roadster|2|1': '5c14505b1ef1a82d', 'roadster|2|7': '3f8ddd835be7faba', 'roadster|2|12': 'd5a6080f27107a0a', 'roadster|3|1': '772c7bbd1c3d89e9', 'roadster|3|7': '77a7d0f3e7d272e9', 'roadster|3|12': '4d3ca29862d37ff6',
+  'gt|1|1': '1746b9be20ebb23a', 'gt|1|7': '0dc945c3931919f2', 'gt|1|12': '15ffb561e86d68c7', 'gt|2|1': 'fcf216d8a56d6091', 'gt|2|7': 'dc04cbd275cc3f89', 'gt|2|12': 'faf7bda3649d8b44', 'gt|3|1': '17b130ea6a7bf871', 'gt|3|7': '7107c0902004b181', 'gt|3|12': 'adfdf1e44c90a863',
+  'hatch|1|1': '9fdb075483f75fd9', 'hatch|1|7': '3a5c4e488a798192', 'hatch|1|12': '0991a7dde7ad9cae', 'hatch|2|1': '0c3b46a0869258fa', 'hatch|2|7': 'c220d5c3d59af365', 'hatch|2|12': '7093dc0e6b19fe06', 'hatch|3|1': 'e92735cbf58a8522', 'hatch|3|7': '73076a5e1d7760c1', 'hatch|3|12': '97d942a09e44aeb6',
+  'skimmer|1|1': 'a56f289cff2eece7', 'skimmer|1|7': 'f47d1021d893864a', 'skimmer|1|12': '75a3c03a7e1056ca', 'skimmer|2|1': '2a4645f71b67961c', 'skimmer|2|7': '83ce3666da032ffa', 'skimmer|2|12': '6c50549ae17d80c7', 'skimmer|3|1': '9a1c8ceaefb50d2e', 'skimmer|3|7': '2b6929a902905df8', 'skimmer|3|12': 'ed1d95b3faebdb34',
+  'getaway|1|1': '3ce0ec562fa85d97', 'getaway|1|7': '3b2a4a2c8e16f56d', 'getaway|1|12': 'bf61974b43d0e3e1', 'getaway|2|1': 'd666572bf9232365', 'getaway|2|7': '68a296a1248f2a36', 'getaway|2|12': 'b3db5f02fcffb8ca', 'getaway|3|1': '5cc0d50f8ab674bd', 'getaway|3|7': '4baad0fa7d448c9c', 'getaway|3|12': 'fd64cd9c3b597e6b'
+};
+function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const snap = (W) => [+W.s.toFixed(3), +W.x.toFixed(4), +W.v.toFixed(4), W.score, +(W.gas || 0).toFixed(3), W.stage, W.stageNo, +W.time.toFixed(3), W.hearts, W.cars.length, W.cop ? [W.cop.dmg, W.cop.down, W.cop.cleared] : 0, !!W.over, W.voiceT, W.her.k, W.req ? W.req.k : 0];   // (replay-check.cjs's five, and more)
+function goldenHash(car, sp, seed) {   // one 60 s drive, hashed: snap(), how many dice were thrown (one more or one fewer breaks a recorded run)
+  // and every event the step sent (her lines are 'v:' events), each 60 steps; the events and pop-ups cleared each step, as replay-check.cjs does
+  const R = Math.random, r = mulberry(seed * 1000003 + sp * 7919 + car.length); let draws = 0; Math.random = () => { draws++; return r(); };
+  try { const W = E.newWorld(sp, { car }, seed), h = createHash('sha256'); let n = 0, ev = '';
+    while (n < 3600 && !W.over) { E.step(W, car === 'getaway' ? getawayDriver(W) : E.autopilot(W)); n++; for (const e of W.events) ev += (e.sfx || e.say || '?') + ','; W.events.length = 0; W.pops.length = 0; if (n % 60 === 0) { h.update(JSON.stringify(snap(W)) + draws + ev + ';'); ev = ''; } }
+    return h.update(n + ':' + JSON.stringify(snap(W)) + draws + ev).digest('hex').slice(0, 16);
+  } finally { Math.random = R; }
+}
+test('the golden hash: 45 drives on the autopilot come out exactly as they did on the M1 baseline (the rules unchanged)', () => {
+  const got = {}, bad = [];
+  for (const car of ['roadster', 'gt', 'hatch', 'skimmer', 'getaway']) for (const sp of [1, 2, 3]) for (const seed of [1, 7, 12]) { const k = car + '|' + sp + '|' + seed; got[k] = goldenHash(car, sp, seed); if (got[k] !== GOLDEN[k]) bad.push(k); }
+  if (process.env.GOLDEN === 'print') console.log(JSON.stringify(got));
+  assert.deepEqual(bad, [], 'drives that no longer match (car|speed|seed): ' + bad.join(', '));
+});
+
+// Our own names: the game's files never name another game, its maker or a real car make, in code or in comments. The names are kept here
+// only as hashes (sha256, the first 12 hex digits), so this file names none of them either: any word, or two words run together, that
+// hashes to one of them fails.
+const NOT_OURS = new Set([
+  '87c3abf1fbee', '44cddc3f1be2', 'b8510932dad3', 'c798ceefaebc', '9c15e8160699', '61058a8bd466', '94baebcb5e5e', '1ed60b8439cc', '559054694ada', '38be2a9dc14e', 'fa5bf879acb9',
+  '27df9ed9a477', 'b51026e4444f', '917ebb3396b2', '337b8d2c1e13', '44e8dd36c54c', '8417659f46b5', 'aa59343f9ebb', 'dd6c5828ddc6', 'c40677cf313f', '573abb3ca06e', 'c5626fc850ed',
+  'a4a04fefd983', '7358bd4ec877', 'ac85892205b9', 'bccae4ce7be6', '9a046660abc6', '40fc6718a81f', '4d13e1dbe7ab', '36b53ead480d', '9c4569379694', 'd6528ea197f1', 'e607ae52e4bc',
+  '9e48bad6e31c', '09c587fb282c', '784109ed21a6', 'd5e34819841c', 'afd14f44fbfa', '37c59599e516', '3535539f0b42', '28d47d8f4c73', '16103dd07c46', '915b2b89192d', '363554e2e3d9'
+]);
+test('our own names: no other game, its maker or a real car make named anywhere in the game\'s own files', () => {
+  const hit = [], seen = new Map(), bad = (w) => { if (!seen.has(w)) seen.set(w, NOT_OURS.has(createHash('sha256').update(w).digest('hex').slice(0, 12))); return seen.get(w); };
+  for (const f of ['engine.js', 'coastrun.js', 'world3d.js', 'models3d.js', 'art.js', 'engine-worklet.js', 'index.html', 'people/people.js']) {
+    readFileSync(new URL('./' + f, import.meta.url), 'utf8').split(/\r?\n/).forEach((line, n) => { const w = line.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); for (let i = 0; i < w.length; i++) if (bad(w[i]) || (i + 1 < w.length && bad(w[i] + w[i + 1]))) { hit.push(f + ':' + (n + 1)); break; } });
+  }
+  assert.deepEqual(hit, [], 'lines naming someone else\'s game, company or car');
 });

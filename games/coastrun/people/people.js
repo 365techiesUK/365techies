@@ -14,6 +14,17 @@ const v4 = new THREE.Vector3(), v5 = new THREE.Vector3();
 const q1 = new THREE.Quaternion(), q2 = new THREE.Quaternion(), q3 = new THREE.Quaternion(), q4 = new THREE.Quaternion(), QI = new THREE.Quaternion();
 const ease = (a, b, k) => a + (b - a) * k, cl = (x, a, b) => Math.min(b, Math.max(a, x)), win = (x, a, b, r) => cl(Math.min((x - a) / r, (b - x) / r), 0, 1);
 const wp = (o) => o.getWorldPosition(new THREE.Vector3()), bell = (x) => { x = cl(x, 0, 1); return Math.sin(Math.PI * x); };
+// (revamp WS5 fix round) rigid parts that never move apart and share a material, joined into one mesh in their parent's space: her shades'
+// frames, arms and bridge (5 draws -> 1), their two lenses (2 -> 1), her headscarf's band and knot (2 -> 1) - 6 draws a frame fewer, each
+// also cast into the shadows. Each part's own place, turn and size baked into its corners (a mirrored one wound back the right way round)
+function joinRigid(list) {
+  if (list.length < 2) return list[0]; const par = list[0].parent, mt = list[0].material, pos = [], nor = [], uv = [], M = new THREE.Matrix4(), N3 = new THREE.Matrix3(), a = new THREE.Vector3();
+  for (const m of list) { m.updateMatrix(); M.copy(m.matrix); N3.getNormalMatrix(M); const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry, p = g.attributes.position, n = g.attributes.normal, t = g.attributes.uv, flip = M.determinant() < 0;
+    for (let i = 0; i < p.count; i += 3) for (const j of flip ? [0, 2, 1] : [0, 1, 2]) { const k = i + j; a.fromBufferAttribute(p, k).applyMatrix4(M); pos.push(a.x, a.y, a.z); a.fromBufferAttribute(n, k).applyMatrix3(N3).normalize(); nor.push(a.x, a.y, a.z); if (t) uv.push(t.getX(k), t.getY(k)); else uv.push(0, 0); }
+    if (g !== m.geometry) g.dispose(); m.geometry.dispose(); par.remove(m); }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  const one = new THREE.Mesh(geo, mt); one.castShadow = list.some((m) => m.castShadow); one.receiveShadow = list.some((m) => m.receiveShadow); one.frustumCulled = list.every((m) => m.frustumCulled); one.userData.mh = true; par.add(one); return one;
+}
 
 function findCar(scene) { let car = null; scene.traverse((o) => { if (!car && o.isGroup && o.children.some((c) => c.isGroup && Math.abs(c.position.x - 0.4) < 0.02 && Math.abs(c.position.y - 0.58) < 0.03 && Math.abs(c.position.z - 0.42) < 0.03)) car = o; }); return car; }
 function oldRig(root) {
@@ -107,8 +118,10 @@ export async function attach(opt) {
       const br = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.004, 0.004), fr); br.position.set(0, 0.008, 0.002); sun.add(br);
       const basis = new THREE.Matrix4().makeBasis(Sp, Yp, F), q0 = new THREE.Quaternion().setFromRotationMatrix(basis), p0 = em.clone().add(F.clone().multiplyScalar(0.03)).add(Yp.clone().multiplyScalar(0.002));
       const p1 = at(1, NB / 2).add(F2.clone().multiplyScalar(0.014)), q1 = q0.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -1.2));
-      sun.position.copy(p0); sun.quaternion.copy(q0); sun.traverse((o) => { o.castShadow = true; o.userData.mh = true; }); hd.add(sun); P.sun = { g: sun, p0: p0, q0: q0, p1: p1, q1: q1 }; P.sunK = 1; }
+      sun.position.copy(p0); sun.quaternion.copy(q0); sun.traverse((o) => { o.castShadow = true; o.userData.mh = true; }); hd.add(sun); P.sun = { g: sun, p0: p0, q0: q0, p1: p1, q1: q1 }; P.sunK = 1;
+      for (const mt of [fr, lensM]) joinRigid(sun.children.filter((o) => o.isMesh && o.material === mt)); }   // (WS5 fix round: see joinRigid())
     const kn = new THREE.Mesh(new THREE.SphereGeometry(0.02, 12, 8), mat); kn.scale.set(1.25, 0.85, 0.7); kn.position.copy(knot); kn.userData.mh = true; hd.add(kn); P.knot = knot;
+    joinRigid([band, kn]);
     if (!car.userData.mhTails) {
       const NS = 11, g = new THREE.BufferGeometry(), tuv = [], ti = []; g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(2 * NS * 2 * 3), 3));
       for (let tl = 0; tl < 2; tl++) for (let i = 0; i < NS; i++) { tuv.push(i / (NS - 1) * 8, 0, i / (NS - 1) * 8, 0.66); if (i < NS - 1) { const a = (tl * NS + i) * 2; ti.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
@@ -163,6 +176,9 @@ export async function attach(opt) {
       }
       state.people.push(P);
     }
+    // (revamp WS5 fix round) the game's own couple, hidden under these from now on: its shapes let go of on the graphics card (up to ~10 MB on
+    // High - its joined, skinned copies). Kept in memory here, so if this lets go (detach()) three sends them up again as they come back
+    for (const P of state.people) for (const o of P.hide) if (o.geometry && !o.userData.proxy) o.geometry.dispose();
     for (const P of state.people) if (P.glasses) P.model.traverse((o) => {   // (his shades pushed up: a rigid copy on his head, swung up about his ears - turning the glasses bone that far stretched the frame across his face)
       if (!o.isSkinnedMesh || !/sunglasses/.test(o.name + ' ' + (o.material.name || ''))) return; o.updateMatrixWorld(true);
       const pa = o.geometry.attributes.position, v = new THREE.Vector3(), arr = new Float32Array(pa.count * 3), C = new THREE.Vector3(), pts = [];
@@ -205,9 +221,14 @@ export async function attach(opt) {
   const laughAt = (who, secs) => { state.laughUntil[who] = Math.max(state.laughUntil[who], (performance.now() - state.t0) / 1000 + secs); };
 
   function update() {
-    const car = state.car, now = performance.now(), dt = Math.min(0.1, (now - (state.tick || now)) / 1000), t = (now - state.t0) / 1000; state.tick = now;
-    if (!car || !car.parent || state.people.some((P) => !P.model.parent || P.model.parent.parent !== car)) build();
-    if (!state.people.length) return;
+    let car = state.car; const now = performance.now(), dt = Math.min(0.1, (now - (state.tick || now)) / 1000), t = (now - state.t0) / 1000; state.tick = now;
+    // thrown out in a crash (world3d.js eject(): their seats fly off, and restore() puts them back in the car): hidden till they're back - as
+    // before, when they were taken off and built again, which took 60-70 ms in one frame (revamp WS1) - and kept, not built again
+    const away = (P) => P.model.parent === P.root && P.root.parent && P.root.parent !== car;
+    if (car && car.parent && state.people.length && state.people.some(away)) { for (const P of state.people) P.model.visible = !away(P); return; }
+    for (const P of state.people) P.model.visible = true;
+    if (!car || !car.parent || state.people.some((P) => !P.model.parent || P.model.parent.parent !== car)) { build(); car = state.car; }   // (the car as found again: it was read before)
+    if (!state.people.length || !car) return;
     const W = window.ARCADE365 && window.ARCADE365.world; if (!W) return;
     const live = W.count <= 0 && !W.goalSeq && !W.crash && !W.ferry, her = W.her || { k: 'idle' }, idle = her.k === 'idle', cnt = W.count, cam = wp(W3.camera);
     const speaking = W.voiceT != null && W.t - W.voiceT < 80, ccheek = opt.cheek ? 1 : 0;
