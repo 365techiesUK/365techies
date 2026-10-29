@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>365 Star Paws - free, no adverts | 365 Techies</title>
+<!-- 4 Oct 2026: hand-made game page (not built by build_blog.py). Rebuilt 27 Oct 2026 as a cinematic 3D space shooter in
+     chapters (three.js r185 from games/common/vendor/), in the style of the 90s rail shooters: a canyon run seen from behind
+     your ship, then a cockpit dogfight round your carrier - our own name, ships, places, story and sounds. 29 Oct 2026:
+     LIVE as 365 Star Paws (three chapters, the rescue of Noodle Doodles), listed on the Games page and in PC Manager's
+     Games menu (Arcade section) from games/games.json. noindex like the other game pages (the games page carries the words). -->
+<meta name="robots" content="noindex" />
+<meta name="description" content="365 Star Paws: the Magpie has stolen Noodle Doodles the chihuahua - chase him down a canyon, through a warship and an asteroid belt in a cinematic 3D space shooter, and bring her home. No adverts, no sign-in." />
+<!-- what WhatsApp, Facebook and email show when someone shares this game (games/common/social.js) -->
+<link rel="canonical" href="https://365techies.co.uk/games/starrun/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="365 Techies" />
+<meta property="og:title" content="365 Star Paws &ndash; free, no adverts" />
+<meta property="og:description" content="365 Star Paws: the Magpie has stolen Noodle Doodles the chihuahua - chase him down a canyon, through a warship and an asteroid belt in a cinematic 3D space shooter, and bring her home. No adverts, no sign-in." />
+<meta property="og:url" content="https://365techies.co.uk/games/starrun/" />
+<meta property="og:image" content="https://365techies.co.uk/games/img/starrun-share-v1.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="365 Star Paws, from 365 Techies: free, no adverts, no sign-in" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#000000" />
+<script>/* 365 Games as one app (6 Oct 2026): this game is the one the app opens back into; the manifest for every browser but Samsung Internet (its own app packages trip Google Play Protect) */try{localStorage.setItem("games365:last",location.pathname)}catch(e){}if(!/SamsungBrowser/i.test(navigator.userAgent)){var m365=document.createElement("link");m365.rel="manifest";m365.href="/games/app.webmanifest";document.head.appendChild(m365);}</script>
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="365 Games" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/games/img/app-games-192-v1.png" />
+<link rel="preload" href="/fonts/archivo-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="../common/table.css?v=8" />
+<link rel="stylesheet" href="../common/arcade.css?v=4" />
+<style>
+#screen { cursor: none; }   /* the game draws its own aiming cursor */
+/* a phone held upright: the 4:3 screen is short, so the title and game-over cards may spill over the empty space above and below it */
+@media (max-aspect-ratio: 4/5) { #screenwrap .ovbox { max-height: calc(100dvh - 120px); } }
+/* full screen, playing (Star Paws sets body.sr-immersive): the cabinet's bar goes and the game has the whole screen; it fills it, wide */
+body.sr-immersive .bar { display: none; }
+body.sr-immersive #stage { padding: 0; }
+body.sr-immersive #screen { border-radius: 0; box-shadow: none; }
+</style>
+</head>
+<body class="arcade-sky">
+<!-- the bar, the game screen and the pop-up sheets are drawn by ../common/arcade.js (the arcade cabinet) -->
+<script src="engine.js?v=2"></script>
+<script src="../common/social.js?v=5"></script>
+<script src="../common/hof.js?v=2"></script>
+<script src="../common/a11y365.js?v=2"></script>
+<script src="../common/looks.js?v=4"></script>
+<script src="../common/keep.js?v=1"></script>
+<script src="../common/arcade.js?v=17"></script>
+<script src="starrun.js?v=2"></script>
+<!-- the 3D picture (three.js, ../common/vendor/three-r185) - a module, so it loads after the game has started; without WebGL the game says so -->
+<script type="module" src="sr3d.js?v=2"></script>
+<!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
+<script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
+</body>
+</html>
