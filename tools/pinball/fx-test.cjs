@@ -372,6 +372,41 @@ function hasKind(st, kind, min) { return st.bursts.some(function (b) { return b.
   FX.quiet = null;
 })();
 
+// the big moments (29 Oct 2026, owner: "bigger light shows"): Ember's lamp set plays its own whole-table shows (lamps.js), so the
+// effects leave those lamps alone; the light dips then surges over normal, the colour richens, the fringe spikes - and the old
+// table's lamps still get the effects' own shows
+(function bigMoments() {
+  ok(LE.shows && LE.shows.extra && LE.shows.eruption, 'Ember lamps declare the shows they light themselves');
+  var W = emberWorld(); FX.update(W, 0, 'play'); FX.events(W, ['extra']);
+  var lampsLit = 0, giHi = 0, satHi = 0, frHi = 0, vigHi = 0, confetti = 0, st;
+  for (var i = 1; i <= 150; i++) {
+    st = FX.update(W, i * FRAME, 'play');
+    for (var id in st.lamps) if (st.lamps[id] > 0) lampsLit++;
+    giHi = Math.max(giHi, st.gi); satHi = Math.max(satHi, st.post.sat); frHi = Math.max(frHi, st.post.fringe); vigHi = Math.max(vigHi, st.post.vignette);
+    st.bursts.forEach(function (q) { if (q.kind === 'confetti') confetti += q.n; }); st.bursts.length = 0; st.shocks.length = 0;
+  }
+  ok(lampsLit === 0, 'Ember extra ball: the effects leave the lamps to the lamp set (' + lampsLit + ' lamp-frames lit)');
+  ok(giHi > 1.2 && giHi <= 1.5, 'Ember extra ball: the light surges over normal (GI ' + giHi.toFixed(2) + ')');
+  ok(satHi > 1.2 && satHi <= 1.4, 'Ember extra ball: the colour richens (sat ' + satHi.toFixed(2) + ')');
+  ok(frHi > 0.4 && vigHi > 0.3, 'Ember extra ball: a colour-fringe spike and the edges drawn in (fringe ' + frHi.toFixed(2) + ', vignette ' + vigHi.toFixed(2) + ')');
+  ok(confetti >= 300, 'Ember extra ball: a big confetti burst (' + confetti + ')');
+  st = frameRun(W, 150 * FRAME, 240);
+  ok(st.gi <= 1.01 && st.post.sat <= 1.01 && st.post.fringe === 0 && st.post.vignette <= 0.19, 'and it all settles (GI ' + st.gi.toFixed(2) + ', sat ' + st.post.sat.toFixed(2) + ')');
+  // everyday hits stay modest: no surge, no fringe, no richer colour
+  W = emberWorld(); FX.update(W, 0, 'play'); giHi = 0; satHi = 0; frHi = 0;
+  for (i = 1; i <= 120; i++) { if (i % 12 === 1) FX.events(W, [{ sfx: 'bumper', i: i % 3 }, { sfx: 'sling', side: -1 }]); st = FX.update(W, i * FRAME, 'play'); giHi = Math.max(giHi, st.gi); satHi = Math.max(satHi, st.post.sat); frHi = Math.max(frHi, st.post.fringe); }
+  ok(giHi <= 1 && satHi <= 1 && frHi === 0, 'everyday hits stay modest (GI ' + giHi.toFixed(2) + ', sat ' + satHi.toFixed(2) + ', fringe ' + frHi.toFixed(2) + ')');
+  // reduced motion: no fringe from the big moments either
+  W = emberWorld(); FX.reduce = true; FX.update(W, 0, 'play'); FX.events(W, ['extra', 'skill', 'lava']); frHi = 0;
+  for (i = 1; i <= 60; i++) frHi = Math.max(frHi, FX.update(W, i * FRAME, 'play').post.fringe);
+  ok(frHi === 0, 'reduced motion: no colour fringe on the big moments');
+  FX.reduce = false;
+  // the old table: its lamps still get the effects' extra ball show
+  FX.reset(); FX.reduce = false; W = E.newWorld(2, 0, 9, 'orbit'); FX.update(W, 0, 'play'); FX.events(W, ['extra']);
+  lampsLit = 0; for (i = 1; i <= 60; i++) { st = FX.update(W, i * FRAME, 'play'); for (id in st.lamps) if (st.lamps[id] > 0) lampsLit++; }
+  ok(lampsLit > 50, 'the old table keeps the effects\' own lamp shows (' + lampsLit + ')');
+})();
+
 // the old table is untouched by Ember's effects: no bursts of lava, no table movement
 (function orbitStill() {
   FX.reset(); FX.reduce = false; FX.quiet = function () { return true; };

@@ -73,7 +73,7 @@ const THEMES = {
     drops: { order: ['orb', 'moth', 'bot', 'moth', 'orb'], col: { orb: '#ff5cc8', moth: '#3fe0ff', bot: '#ffd84a' } }
   },
   ember: {
-    world: 'island', exposure: 1.16, bloomT: 1.5, cabinet: 'lacquer',
+    world: 'island', exposure: 1.22, bloomT: 1.4, cabinet: 'lacquer',
     bump: [{ c: '#ff7a1a', art: 'vent' }, { c: '#ffb21a', art: 'vent' }, { c: '#ff5a2a', art: 'vent' }],
     sling: ['#ff8a1a', '#ff8a1a'], slingArt: [null, null], ramp: 0xffc890, rampWall: '#ff9a2e', led: '#ffae3a',
     lava: '#ff6a1a', steam: '#f4f8ff', sea: '#29d3d6'
@@ -266,7 +266,7 @@ function woodCanvas() {
 }
 function lacquerCanvas() {   // Ember Peak's cabinet: glossy ocean-blue lacquer with waves and a gold pinstripe
   const c = cv(512, 256), g = c.getContext('2d'), r = rnd(9);
-  const q = g.createLinearGradient(0, 0, 0, 256); q.addColorStop(0, '#0b3c8c'); q.addColorStop(1, '#082c6c');
+  const q = g.createLinearGradient(0, 0, 0, 256); q.addColorStop(0, '#0e4cb4'); q.addColorStop(1, '#0a3690');
   g.fillStyle = q; g.fillRect(0, 0, 512, 256);
   for (let i = 0; i < 9; i++) {
     const y0 = 20 + i * 27 + r() * 6; g.strokeStyle = i % 3 ? 'rgba(80,190,255,0.14)' : 'rgba(255,255,255,0.1)'; g.lineWidth = 3 + r() * 4; g.beginPath();
@@ -701,7 +701,7 @@ export function create(opts) {
   }
 
   // the ball pool: chrome balls reflecting the table round them
-  const BR0 = 7, BVIS = 1.15;   // the ball is drawn 15% bigger than the engine's (owner, 29 Oct 2026: "bigger ball") so it reads on a phone
+  const BR0 = 7, BVIS = 1.3;   // the ball is drawn 30% bigger than the engine's (owner, 29 Oct 2026: "bigger ball", then "push it further") so it reads on a phone
   const cubeRT = keepS(new THREE.WebGLCubeRenderTarget(opts.reflectSize || (PHONE ? 64 : 128), { type: THREE.HalfFloatType, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter }));
   const cubeCam = new THREE.CubeCamera(2, 2500, cubeRT); scene.add(cubeCam);
   cubeCam.children.forEach((c) => c.layers.set(1));
@@ -757,12 +757,12 @@ export function create(opts) {
     if (!artBase) artBase = standInArt(T, ART_SCALE);
     const pfTex = keep(tex(bakePlayfield(B || { T, BUMPERS, RAMP, rampAt }, artBase, parts, artSource !== 'PinArt', TH_), { aniso: ANISO }));
     pfTex.generateMipmaps = true; pfTex.minFilter = THREE.LinearMipmapLinearFilter;
-    const LIFT = opts.lift != null ? opts.lift : ISLAND ? 0.3 : 0.34, liftU = { value: LIFT };
+    const LIFT = opts.lift != null ? opts.lift : ISLAND ? 0.36 : 0.34, liftU = { value: LIFT };
     const lift = (m) => { m.onBeforeCompile = (sh) => { sh.uniforms.uLift = liftU; sh.fragmentShader = 'uniform float uLift;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance += diffuseColor.rgb * uLift;'); }; m.customProgramCacheKey = () => 'lift'; return m; };
     const pfMatHi = keep(lift(new THREE.MeshPhysicalMaterial({ map: pfTex, roughness: 0.62, metalness: 0, clearcoat: ISLAND ? 0.3 : 0.45, clearcoatRoughness: ISLAND ? 0.22 : 0.05, envMapIntensity: ISLAND ? 0.035 : 0.1 })));
     const pfMatLo = keep(lift(new THREE.MeshStandardMaterial({ map: pfTex, roughness: 0.5, metalness: 0, envMapIntensity: ISLAND ? 0.05 : 0.18 })));
     let glowTex = null;
-    if (artGlow) { glowTex = keep(tex(artGlow, { aniso: ANISO })); [pfMatHi, pfMatLo].forEach((m) => { m.emissiveMap = glowTex; m.emissive = new THREE.Color(0xffffff); m.emissiveIntensity = 1.1; }); }
+    if (artGlow) { glowTex = keep(tex(artGlow, { aniso: ANISO })); [pfMatHi, pfMatLo].forEach((m) => { m.emissiveMap = glowTex; m.emissive = new THREE.Color(0xffffff); m.emissiveIntensity = ISLAND ? 1.45 : 1.1; }); }
     const pfGeo = keep(new THREE.PlaneGeometry(TW, TH)); pfGeo.rotateX(-Math.PI / 2);
     const playfield = RF(new THREE.Mesh(pfGeo, tier.clearcoat ? pfMatHi : pfMatLo)); group.add(playfield);
 
@@ -1026,12 +1026,12 @@ export function create(opts) {
       rg.rotateX(-Math.PI / 2); rg.translate(0, 1.9, 0);
       const bg = keep(new THREE.ExtrudeGeometry(batShape(f.r0 - 1.3, f.r1 - 1.25, f.len), { depth: 7.2, bevelEnabled: true, bevelThickness: 0.9, bevelSize: 0.8, bevelSegments: 3, curveSegments: 24 }));
       bg.rotateX(-Math.PI / 2); bg.translate(0, 1.4, 0);
-      const bat = new THREE.Group(); grp.add(bat); bat.scale.set(1, 1.15, 1.18);   // drawn chunkier than the engine's bat (29 Oct 2026)
+      const bat = new THREE.Group(); grp.add(bat); bat.scale.set(1, 1.42, 1.08);   // drawn taller and a little wider than the engine's bat, same pivot and length; width kept near 1 so the bigger drawn ball (BVIS) sinks ~2.4-2.6 into the drawn rubber at contact (3.0-3.8 at width 1.26), and the tip matches the engine's (29 Oct 2026, owner: "push it further"; review fix)
       bat.add(R1(new THREE.Mesh(rg, M.rubberR)), R1(new THREE.Mesh(bg, M.batW)));
       const pin = R1(new THREE.Mesh(cylinder(2.4, 2.6, 1.2, 20), M.chrome)); pin.position.y = 10.4; bat.add(pin);
       const sc = flipperShadowCanvas(f), sg = keep(new THREE.PlaneGeometry(sc.w, sc.h)); sg.rotateX(-Math.PI / 2); sg.translate(sc.w / 2 - sc.pad, 0, 0);
       const sh = new THREE.Mesh(sg, keep(new THREE.MeshBasicMaterial({ map: keep(tex(sc.c)), transparent: true, depthWrite: false, opacity: 0.7, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })));
-      sh.position.y = 0.06; grp.add(sh);
+      sh.position.y = 0.06; sh.scale.set(1, 1, 1.08); grp.add(sh);
       return { grp, bat, sh };
     });
 
@@ -1218,7 +1218,7 @@ export function create(opts) {
     // the lava's own glow at the crater; both: one flash light
     const lights = { gi: [] };
     if (ISLAND) {
-      lights.hemi = RF(new THREE.HemisphereLight(0xf4f6ff, 0x9a7050, 1.45)); group.add(lights.hemi);
+      lights.hemi = RF(new THREE.HemisphereLight(0xf8f4ff, 0xc8703a, 1.5)); group.add(lights.hemi);
       lights.key = RF(new THREE.DirectionalLight(0xfff0d8, 3.15)); lights.key.position.copy(KEY).multiplyScalar(600); group.add(lights.key); group.add(lights.key.target);
       lights.rim = RF(new THREE.DirectionalLight(0x9fd8ff, 0.7)); lights.rim.position.set(0, 120, -420); group.add(lights.rim); group.add(lights.rim.target);
     } else {
@@ -1538,7 +1538,7 @@ export function create(opts) {
       const z = ballZ(b);
       let h = trails.get(b.id); if (!h) { h = []; trails.set(b.id, h); } seen.add(b.id);
       h.unshift([b.x, b.y, z]); if (h.length > 10) h.length = 10;
-      if (b.at !== 'crater') put(b.x, b.y, z + BR, TB.ISLAND ? '#ffe2b0' : '#bfefff', 0.22, BR * 3.4);   // the hero ball's halo: always findable
+      if (b.at !== 'crater') put(b.x, b.y, z + BR * BVIS, TB.ISLAND ? '#ffe2b0' : '#bfefff', 0.22, BR * 3.4 * BVIS);   // the hero ball's halo: always findable
       const sp = b.m === 'ramp' ? Math.abs(b.vs || 0) : Math.hypot(b.vx || 0, b.vy || 0), k = clamp((sp - 280) / 380, 0, 1);
       if (k <= 0 || b.m === 'held' || b.carry) return;
       for (let i = 0; i < h.length - 1; i++) for (let j = 0; j < 3; j++) {
@@ -1730,7 +1730,7 @@ export function create(opts) {
   function postOpts(W) {
     _po.project = screenOf;
     const b = W.balls && W.balls[0];
-    if (b) { const p = screenOf(b.x, b.y, ballZ(b) + TB.BR); if (p) { _pb.x = p.x; _pb.y = p.y; _po.ball = _pb; } else _po.ball = null; } else _po.ball = null;
+    if (b) { const p = screenOf(b.x, b.y, ballZ(b) + TB.BR * BVIS); if (p) { _pb.x = p.x; _pb.y = p.y; _po.ball = _pb; } else _po.ball = null; } else _po.ball = null;
     return _po;
   }
 
@@ -1811,7 +1811,7 @@ export function create(opts) {
     for (let i = 0; i < balls.length; i++) {
       const b = W.balls && W.balls[i], Bb = balls[i];
       if (!b) { Bb.m.visible = Bb.s.visible = Bb.s2.visible = false; continue; }
-      const z = ballZ(b), cy = TB.BR * BVIS + z, onFloor = b.m !== 'held' && !(b.m === 'ramp' && b.carry);
+      const z = ballZ(b), cy = TB.BR * BVIS + z - (b.at === 'crater' ? TB.BR * (BVIS - 1) : 0), onFloor = b.m !== 'held' && !(b.m === 'ramp' && b.carry);
       Bb.m.position.set(wx(b.x), cy, wz(b.y)); Bb.m.visible = true; Bb.m.children[0].visible = b.at !== 'crater';
       const sz = (15 + z * 0.05) * BVIS;
       Bb.s.position.set(wx(b.x + SHX * TB.BR * 0.6), (b.m === 'ramp' && !b.carry ? z : 0) + 0.45, wz(b.y + SHY * TB.BR * 0.6)); Bb.s.scale.set(sz, 1, sz * 1.15); Bb.s.visible = onFloor || (b.m === 'ramp' && !b.carry);

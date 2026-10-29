@@ -17,6 +17,7 @@
 (function (root) {
   'use strict';
   var MAXS = 3, LIFE = 700;   // ms a ring lives (it runs out to about 0.75 of the screen's height)
+  // 29 Oct 2026 (owner: "bigger light shows"): a stronger colour fringe (0.022 -> 0.03 at full) and a warmer lava grade on the big moments
   var VERT = [
     'precision highp float;',
     'uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix;',
@@ -45,12 +46,12 @@
     '  vec2 suv = clamp(vUv - off, 0.0, 1.0);',
     '  vec4 col = texture2D(tDiffuse, suv);',
     '#ifdef FRINGE',
-    '  if (uFringe > 0.002) { vec2 cd = vUv - 0.5; vec2 k = cd * uFringe * 0.022 * dot(cd, cd) * 4.0;',
+    '  if (uFringe > 0.002) { vec2 cd = vUv - 0.5; vec2 k = cd * uFringe * 0.03 * dot(cd, cd) * 4.0;',
     '    col.r = texture2D(tDiffuse, clamp(suv + k, 0.0, 1.0)).r; col.b = texture2D(tDiffuse, clamp(suv - k, 0.0, 1.0)).b; }',
     '#endif',
     '  float l = dot(col.rgb, vec3(0.2126, 0.7152, 0.0722));',
     '  col.rgb = mix(vec3(l), col.rgb, uSat);',
-    '  col.rgb *= mix(vec3(1.0), vec3(1.08, 1.0, 0.84), uWarm);',
+    '  col.rgb *= mix(vec3(1.0), vec3(1.12, 1.01, 0.8), uWarm);',
     '  col.rgb += uFlash.rgb * uFlash.a;',
     '  gl_FragColor = col;',
     '#ifdef LINEAR_TONE_MAPPING',

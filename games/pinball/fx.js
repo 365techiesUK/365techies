@@ -75,29 +75,29 @@
     newball:  { pri: 3, ms: 1100, wide: true, look: 'sweepUp', color: C.cyan },
     drain:    { pri: 5, ms: 1200, wide: true, look: 'sweepDown', gi: 0.3 },
     ballend:  { pri: 4, ms: 1400, wide: true, look: 'sweepDown', gi: 0.6 },
-    combo:    { pri: 6, ms: 1500, wide: true, look: 'spiral', sparks: 34, pop: 'big', gi: 0.5, flash: 0.45, shake: 0.4, color: C.pink },
-    loop:     { pri: 6, ms: 1500, wide: true, look: 'sides', sparks: 30, pop: 'big', gi: 0.5, flash: 0.4, color: C.cyan },
+    combo:    { pri: 6, ms: 1500, wide: true, look: 'spiral', sparks: 34, pop: 'big', gi: 0.5, flash: 0.45, shake: 0.4, surge: 0.16, sat: 0.2, color: C.pink },
+    loop:     { pri: 6, ms: 1500, wide: true, look: 'sides', sparks: 30, pop: 'big', gi: 0.5, flash: 0.4, surge: 0.12, sat: 0.15, color: C.cyan },
     mult:     { pri: 6, ms: 1500, wide: true, look: 'sweepUp', sparks: 24, pop: 'big', gi: 0.5, flash: 0.4, color: C.orange },
-    save:     { pri: 7, ms: 1300, wide: true, look: 'sweepUp', only: 'blue', sparks: 30, gi: 0.6, color: C.blue, word: 'BALL SAVED' },
-    skill:    { pri: 7, ms: 1800, wide: true, look: 'rain', sparks: 40, pop: 'big', gi: 0.45, flash: 0.6, shake: 0.5, color: C.green },
-    jackpot:  { pri: 8, ms: 2200, wide: true, look: 'burst', sparks: 60, pop: 'big', gi: 0.35, flash: 0.7, flashes: 2, shake: 0.9, color: C.yellow },
-    extra:    { pri: 9, ms: 2400, wide: true, look: 'spiral', sparks: 60, gi: 0.35, flash: 0.7, flashes: 2, shake: 0.6, color: C.yellow, word: 'EXTRA BALL' },
+    save:     { pri: 7, ms: 1300, wide: true, look: 'sweepUp', only: 'blue', sparks: 30, gi: 0.6, surge: 0.15, sat: 0.15, color: C.blue, word: 'BALL SAVED' },
+    skill:    { pri: 7, ms: 1800, wide: true, look: 'rain', sparks: 40, pop: 'big', gi: 0.45, flash: 0.6, shake: 0.5, surge: 0.22, sat: 0.25, vig: 0.15, color: C.green },
+    jackpot:  { pri: 8, ms: 2200, wide: true, look: 'burst', sparks: 60, pop: 'big', gi: 0.35, flash: 0.7, flashes: 2, shake: 0.9, surge: 0.28, sat: 0.3, vig: 0.2, color: C.yellow },
+    extra:    { pri: 9, ms: 2400, wide: true, look: 'spiral', sparks: 60, gi: 0.35, flash: 0.7, flashes: 2, shake: 0.6, surge: 0.32, sat: 0.32, vig: 0.2, color: C.yellow, word: 'EXTRA BALL' },
     // ---- Ember Peak's
     crater:   { pri: 5, ms: 900, look: 'ring', r: 64, sparks: 16, pop: 'big', gi: 0.75, shake: 0.3, color: C.lava },
     ash:      { pri: 8, ms: 2750, wide: true, look: 'ashes', base: 0.12, color: C.ash },            // (its ms is the crater's hold)
-    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.9, flashes: 2, shake: 1, color: C.flood },
+    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.9, flashes: 2, shake: 1, sat: 0.3, vig: 0.12, color: C.flood },
     erupt:    { pri: 5, ms: 1100, look: 'burst', sparks: 24, flash: 0.4, shake: 0.5, color: C.ember },   // a crater's release (not full)
     rail:     { pri: 3, ms: 1700, look: 'chase', sparks: 10, color: C.sea },
     railout:  { pri: 2, ms: 500, look: 'ring', r: 30, sparks: 10, color: C.yellow },
     puff:     { pri: 2, ms: 420, look: 'ring', r: 34, color: C.steam },
     geyser:   { pri: 4, ms: 1000, look: 'column', w: 40, sparks: 12, pop: 'big', color: C.steam },
     crab:     { pri: 3, ms: 600, look: 'ring', r: 34, sparks: 16, shake: 0.2, pop: 'small', color: C.crab },
-    lava:     { pri: 5, ms: 1200, look: 'column', w: 26, sparks: 24, flash: 0.35, pop: 'big', color: C.ember },
-    lavaopen: { pri: 7, ms: 1800, wide: true, look: 'sides', gi: 0.6, color: C.lava },
+    lava:     { pri: 5, ms: 1200, look: 'column', w: 26, sparks: 24, flash: 0.35, pop: 'big', surge: 0.22, sat: 0.25, warm: 0.35, vig: 0.15, color: C.ember },
+    lavaopen: { pri: 7, ms: 1800, wide: true, look: 'sides', gi: 0.6, sat: 0.2, warm: 0.4, color: C.lava },
     lavaclose:{ pri: 3, ms: 900, look: 'sweepDown', color: C.steam },
     quake:    { pri: 7, ms: 900, wide: true, look: 'flicker', gi: 0.55, color: C.ember },
-    overload: { pri: 6, ms: 1500, wide: true, look: 'flicker', gi: 0.5, shake: 0.5, color: C.ember },
-    pfull:    { pri: 6, ms: 1400, wide: true, look: 'sweepUp', gi: 0.6, flash: 0.35, color: C.yellow },
+    overload: { pri: 6, ms: 1500, wide: true, look: 'flicker', gi: 0.5, shake: 0.5, warm: 0.35, color: C.ember },
+    pfull:    { pri: 6, ms: 1400, wide: true, look: 'sweepUp', gi: 0.6, flash: 0.35, surge: 0.15, sat: 0.2, warm: 0.3, color: C.yellow },
     pwarn:    { pri: 4, ms: 900, look: 'ring', r: 70, color: C.orange }
   };
   // which shows a score is credited to first (the pop goes where the best of them happened)
@@ -113,28 +113,29 @@
     bumper:   { bursts: [['sparks', 22, 1.1], ['lava', 10, 0.5], ['steam', 12, 0.6, C.steam, 8]], shock: 0.15, move: { dy: 0.35 } },
     sling:    { bursts: [['sparks', 16, 0.9], ['lava', 6, 0.4]], move: { roll: 0.25 } },
     drop:     { bursts: [['debris', 40, 1, C.rock], ['sparks', 14, 0.9, C.violet]], move: { pitch: 0.3 } },
-    drops:    { bursts: [['debris', 180, 1.3, C.rock], ['sparks', 60, 1.3, C.violet]], shock: 0.5, move: { pitch: 0.7, dy: 1 } },
+    drops:    { bursts: [['debris', 180, 1.3, C.rock], ['sparks', 80, 1.4, C.violet]], shock: 0.5, fringe: 0.3, move: { pitch: 0.7, dy: 1 } },
     crater:   { bursts: [['lava', 80, 0.8], ['steam', 40, 0.7, C.steam, 10]], shock: 0.4, trauma: 0.3, move: { pitch: 0.4, dy: 0.6 } },
-    erupt:    { bursts: [['lava', 260, 1.1], ['steam', 80, 0.9, C.steam, 16], ['debris', 30, 1, C.rock], ['sparks', 40, 1.2, C.ember]], shock: 0.6, move: { pitch: 0.9, dy: 1.2 }, fringe: 0.35, trauma: 0.45 },
-    eruption: { bursts: [['lava', 1100, 1.7], ['lava', 300, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 220, 1.6, C.ember], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.6, move: { pitch: 2, dy: 3 }, fringe: 0.9, trauma: 1 },
+    erupt:    { bursts: [['lava', 320, 1.2], ['steam', 80, 0.9, C.steam, 16], ['debris', 40, 1, C.rock], ['sparks', 60, 1.3, C.ember]], shock: 0.7, move: { pitch: 0.9, dy: 1.2 }, fringe: 0.45, trauma: 0.45 },
+    eruption: { bursts: [['lava', 1100, 1.7], ['lava', 300, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 220, 1.6, C.ember], ['sparks', 120, 1.8, C.yellow, 20], ['sparks', 80, 1.5, C.sea, 10], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 1, trauma: 1 },
     rail:     { bursts: [['sparks', 18, 0.9, C.yellow]] },
     railout:  { bursts: [['sparks', 12, 0.8, C.yellow]] },
     puff:     { bursts: [['steam', 40, 0.5, C.steam, 4]] },
     geyser:   { bursts: [['steam', 220, 0.6, C.steam, 4, null, [0, 0, 2.2]], ['sparks', 20, 1, C.white]], shock: 0.4, move: { pitch: 0.5, dy: 0.8 } },
     crab:     { bursts: [['sparks', 22, 1.1, C.crab], ['debris', 18, 0.9, C.crab]], shock: 0.25, move: { roll: 0.35 } },
-    lava:     { bursts: [['lava', 200, 1.3], ['sparks', 40, 1.2, C.ember]], shock: 0.5, fringe: 0.3, move: { pitch: 0.5, dy: 0.9 } },
-    lavaopen: { bursts: [['lava', 120, 1, null, 0, 'gates'], ['steam', 60, 0.8, C.steam, 6, 'gates']], trauma: 0.4, move: { dy: 1 } },
+    lava:     { bursts: [['lava', 300, 1.4], ['sparks', 80, 1.4, C.ember], ['sparks', 40, 1.2, C.yellow, 8], ['confetti', 70, 1.1]], shock: 0.7, shock2: 0.4, fringe: 0.5, trauma: 0.25, move: { pitch: 0.5, dy: 0.9 } },
+    lavaopen: { bursts: [['lava', 200, 1.1, null, 0, 'gates'], ['sparks', 40, 1.2, C.ember, 4, 'gates'], ['steam', 60, 0.8, C.steam, 6, 'gates']], shock: 0.5, fringe: 0.4, trauma: 0.5, move: { dy: 1 } },
     lavaclose:{ bursts: [['steam', 70, 0.8, C.steam, 6, 'gates']] },
-    quake:    { bursts: [['ash', 80, 1, C.ash, 10], ['debris', 60, 1, C.rock, 30]], trauma: 1, move: { pitch: 0.5 } },
-    overload: { bursts: [['steam', 140, 1.2, C.steam, 16], ['lava', 60, 0.8]], shock: 0.5, trauma: 0.5 },
-    pfull:    { bursts: [['steam', 90, 1, C.steam, 16], ['lava', 40, 0.7]], shock: 0.3 },
+    quake:    { bursts: [['ash', 80, 1, C.ash, 10], ['debris', 80, 1.1, C.rock, 30]], fringe: 0.3, trauma: 1, move: { pitch: 0.5 } },
+    overload: { bursts: [['steam', 140, 1.2, C.steam, 16], ['lava', 120, 0.9], ['sparks', 50, 1.2, C.ember, 10]], shock: 0.55, fringe: 0.45, trauma: 0.5 },
+    pfull:    { bursts: [['steam', 90, 1, C.steam, 16], ['lava', 80, 0.8], ['sparks', 60, 1.3, C.yellow, 10]], shock: 0.45, fringe: 0.35 },
     pwarn:    { bursts: [['steam', 50, 0.8, C.steam, 16]] },
-    skill:    { bursts: [['confetti', 180, 1.2]] },
-    extra:    { bursts: [['confetti', 260, 1.4]], shock: 0.5 },
-    loop:     { bursts: [['sparks', 40, 1.2, C.cyan]] },
-    combo:    { bursts: [['sparks', 50, 1.3, C.pink]], shock: 0.35 },
-    jackpot:  { bursts: [['confetti', 160, 1.2], ['sparks', 60, 1.4, C.yellow]], shock: 0.6 },
-    launch:   { bursts: [['steam', 24, 0.6, C.steam, 4]] },
+    skill:    { bursts: [['confetti', 240, 1.3], ['sparks', 60, 1.3, C.green, 6]], shock: 0.5, fringe: 0.4 },
+    extra:    { bursts: [['confetti', 360, 1.5], ['sparks', 80, 1.5, C.yellow, 10], ['sparks', 60, 1.3, C.sea, 10]], shock: 0.8, shock2: 0.5, fringe: 0.6, trauma: 0.3 },
+    save:     { bursts: [['sparks', 70, 1.2, C.blue, 4], ['sparks', 30, 1, C.white, 4]], shock: 0.35, fringe: 0.25 },
+    loop:     { bursts: [['sparks', 70, 1.3, C.cyan], ['sparks', 30, 1.1, C.white]], shock: 0.35, fringe: 0.25 },
+    combo:    { bursts: [['sparks', 90, 1.4, C.pink], ['confetti', 60, 1.1]], shock: 0.5, fringe: 0.35 },
+    jackpot:  { bursts: [['confetti', 220, 1.3], ['sparks', 90, 1.5, C.yellow]], shock: 0.8, shock2: 0.5, fringe: 0.5 },
+    launch:   { bursts: [['steam', 24, 0.6, C.steam, 4], ['sparks', 24, 0.9, C.yellow, 4]] },
     drain:    { bursts: [['ash', 30, 0.5, C.ash, 4]] }
   };
 
@@ -194,6 +195,15 @@
 
   // ------------------------------------------------------------------ the lamps (for the world's table)
   function lampList() { if (!X) return []; if (!X.list || !X.list.length) X.list = lampsFor(X.id); return X.list; }
+  var NONE = {};
+  function ownShows() {   // the big moments the table's lamp set lights itself (PinLamps.forTable(id).shows): their lamps are left to it
+    if (!X) return NONE;
+    if (X.own) return X.own;
+    var Lm = null; try { Lm = getLamps(); } catch (e) { Lm = null; }
+    var set = null; try { set = Lm && typeof Lm.forTable === 'function' ? Lm.forTable(X.id) : null; } catch (e) { set = null; }
+    if (set && set.list && set.list.length) X.own = set.shows || NONE;
+    return X.own || NONE;
+  }
   function blue(l) {   // a blue or cyan lamp (the ball save's sweep uses only these)
     var c = String(l.color || ''), m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(c);
     if (!m) return false;
@@ -308,7 +318,7 @@
     shows: [], flashAt: -1e9, flashQ: [], dipAt: -1e9, warnAt: -1e9, nudgeAt: -1e9,
     sh: { x: 0, y: 0, vx: 0, vy: 0 }, reducedAt: -1e9, reduced: false,
     // Ember Peak: the full eruption (ash, then flood), the rumble, the table's springs, the colour fringe, timed bursts
-    full: false, ashAt: -1e9, ashEnd: -1e9, ashEmit: 0, floodAt: -1e9, trauma: 0, fringe: 0, warm: 0, railEmit: 0, later: [],
+    full: false, ashAt: -1e9, ashEnd: -1e9, ashEmit: 0, floodAt: -1e9, trauma: 0, fringe: 0, warm: 0, satK: 0, vigK: 0, railEmit: 0, later: [],
     tm: { pitch: { x: 0, v: 0 }, roll: { x: 0, v: 0 }, dy: { x: 0, v: 0 } }, quiet: false
   };
   var state = { gi: 1, flash: 0, flashColor: C.white, shake: { x: 0, y: 0 }, pops: [], sparks: [], lamps: {}, base: 1,
@@ -330,14 +340,14 @@
     S.shows.length = 0; S.flashQ.length = 0; S.dipAt = -1e9; S.warnAt = -1e9; S.later.length = 0;
     state.pops.length = 0; state.sparks.length = 0; state.flash = 0; state.base = 1; state.bursts.length = 0; state.shocks.length = 0;
     S.sh.x = S.sh.y = S.sh.vx = S.sh.vy = 0; state.shake.x = state.shake.y = 0;
-    S.full = false; S.ashAt = S.ashEnd = S.floodAt = -1e9; S.trauma = 0; S.fringe = 0; S.warm = 0;
+    S.full = false; S.ashAt = S.ashEnd = S.floodAt = -1e9; S.trauma = 0; S.fringe = 0; S.warm = 0; S.satK = 0; S.vigK = 0;
     ['pitch', 'roll', 'dy'].forEach(function (k) { S.tm[k].x = S.tm[k].v = 0; state.table[k] = 0; }); state.table.shake = 0;
     for (var k in state.lamps) if (Object.prototype.hasOwnProperty.call(state.lamps, k)) delete state.lamps[k];   // (a new world may be a different table)
   }
   function adopt(W) {   // a new world (a new game, or the title screen's demo starting again in the same object)
     clear(); S.W = W; S.frame = W ? W.frame : 0; S.score = W ? W.score : 0; state.gi = 1;
     X = ctxFor(W && W.tableId ? W.tableId : (E.DEFAULT || 'orbit'));
-    X.list = null;   // (the lamp list is looked up again: lamps.js may have loaded since)
+    X.list = null; X.own = null;   // (the lamp list is looked up again: lamps.js may have loaded since)
   }
 
   // ------------------------------------------------------------------ making things happen
@@ -361,6 +371,9 @@
     if (S.shows.length > 24) S.shows.shift();
     if (d.flash) { flash(d.flash, at.color || d.color); if (d.flashes > 1) S.flashQ.push({ at: S.clock + FLASH_GAP + 10, v: d.flash * 0.8, c: d.flash2 || d.color }); }
     if (d.shake) knock((at.x < X.MID ? -1 : 1) * d.shake * 0.6, -d.shake);
+    if (d.sat) S.satK = Math.max(S.satK, d.sat);   // the big moments' grade: richer colour, the lava's warmth, the edges drawn in (29 Oct 2026, owner: "bigger light shows")
+    if (d.warm) S.warm = Math.max(S.warm, d.warm);
+    if (d.vig) S.vigK = Math.max(S.vigK, d.vig);
     return s;
   }
   function flash(v, color) {
@@ -585,12 +598,14 @@
     for (i = S.later.length - 1; i >= 0; i--) if (S.clock >= S.later[i].at) { var f = S.later[i].fn; S.later.splice(i, 1); f(); }
 
     // the shows: drop the finished ones; the wide one in charge (if any) sets the background light
-    var top = 0, giShow = 1, baseTo = 1;
+    var top = 0, giShow = 1, baseTo = 1, surge = 0;
     for (i = S.shows.length - 1; i >= 0; i--) {
       var s = S.shows[i];
       if (S.clock - s.t0 >= s.d.ms) { S.shows.splice(i, 1); continue; }
       if (s.d.wide && s.d.pri > top) { top = s.d.pri; baseTo = s.d.base != null ? s.d.base : 0.3; }
       if (s.d.gi != null) giShow = Math.min(giShow, s.d.gi + (1 - s.d.gi) * Math.pow((S.clock - s.t0) / s.d.ms, 3));
+      var sp0 = (S.clock - s.t0) / s.d.ms;
+      if (s.d.surge && sp0 > 0.5) surge = Math.max(surge, s.d.surge * Math.sin(PI * (sp0 - 0.5) / 0.5));   // the light dips, then surges back over normal
     }
     // the lamps
     var L = lampList(), out = state.lamps;
@@ -598,6 +613,7 @@
     for (i = 0; i < S.shows.length; i++) {
       s = S.shows[i];
       if (top && s.d.pri < top) continue;   // a whole-table show pauses everything below it
+      if (s.d.wide && ownShows()[s.name]) continue;   // (the lamp set plays its own show for this one: lamps.js, 29 Oct 2026)
       var look = LOOKS[s.d.look]; if (!look) continue;
       var p = (S.clock - s.t0) / s.d.ms;
       for (var j = 0; j < L.length; j++) {
@@ -623,6 +639,7 @@
       if (since < 1700) gi = Math.min(gi, since < 200 ? 0.3 : 0.3 + 0.7 * smooth((since - 200) / 1500));
       if (S.clock - S.warnAt < 260) gi = Math.min(gi, 0.65);
       gi = Math.min(gi, giShow);
+      if (surge > 0 && since >= 1700) gi = Math.max(gi, 1 + surge);
       if (ashK > 0) gi = Math.min(gi, 1 - 0.85 * ashK);
       if (floodK > 0) gi = Math.max(gi, 1 + 0.38 * floodK);
     }
@@ -708,12 +725,13 @@
 
     // the final pass's grade: a brief colour fringe, the ash's vignette and grey, the lava's warmth
     S.fringe = Math.max(0, S.fringe - k * 6.5);
-    S.warm = Math.max(floodK * 0.55, ashK * 0.2, S.warm - k * 0.8);
+    S.warm = Math.max(floodK * 0.6, ashK * 0.2, S.warm - k * 0.8);
+    S.satK = Math.max(0, S.satK - k * 0.35); S.vigK = Math.max(0, S.vigK - k * 0.3);
     var post = state.post;
     post.fringe = red ? 0 : S.fringe;
-    post.vignette = 0.18 + 0.4 * ashK;
+    post.vignette = 0.18 + 0.4 * ashK + S.vigK;
     post.warm = S.warm;
-    post.sat = 1 - 0.4 * ashK + 0.15 * floodK;
+    post.sat = 1 - 0.4 * ashK + 0.2 * floodK + S.satK;
     post.ash = ashK;
 
     // the pops rise, swell and fade

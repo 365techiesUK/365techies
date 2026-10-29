@@ -14,10 +14,12 @@
  *   PinCam.project(shot, aspect, x, y, z) -> [sx, sy]   the same model: 0..1 across and down the screen
  *   PinCam.quiet()  -> true when no ball can reach any flipper's approach line in the next 0.8 s (fx.js asks before
  *                      moving the table)
- *   PinCam.setMode('calm' | 'arcade' | 'classic')   calm is the default (about 6 push-ins a minute); classic never
- *                      zooms, swings or slows: it only scrolls when the ball is out of the picture
- *   also: setAspect(a), home(aspect), reset(), stats(), info(), configure(opts), forecast(W, input, horizon, pathN),
- *         decided(W, ball), boxes(tableId), director(on)
+ *   PinCam.setMode('calm' | 'arcade' | 'classic')   calm is the default (about 6 push-ins a minute); arcade about 13
+ *                      (short, punchy, swinging); classic never zooms, swings or slows: it only scrolls when the ball is
+ *                      out of the picture
+ *   also: setAspect(a), home(aspect), reset(), stats(), info(), configure(opts), timing(mode) (the mode's need, settle,
+ *         early, look, back and spare), forecast(W, input, horizon, pathN, nudged), decided(W, ball), boxes(tableId),
+ *         director(on)
  *
  * THE GUARANTEE (note 12 as corrected by note 17): game time at exactly 1.0, and every storey's flippers fully on screen
  * and still, for the 0.5 s before any ball can cross a storey's approach line. "Can cross" comes from the engine's own
@@ -25,21 +27,32 @@
  * (re-asked on every change of the buttons, and whenever the answer runs out); until an answer arrives the ball counts
  * as close, so the camera never leaves home on a guess and starts home if it is away. If a fresh answer says a ball is
  * now too close for a normal return (a nudge changed its path) the camera CUTS home - counted (aim: under 1 per 100
- * balls). Every move home is the same 0.35 s smootherstep, started 1.45 s before the ball can arrive, so the picture
- * is still for a full second: half a second for the rule, half a second more for a press made early.
+ * balls). CALM and CLASSIC: every move home is the same 0.35 s smootherstep, started 1.45 s before the ball can arrive,
+ * so the picture is still for a full second: half a second for the rule, half a second more for a press made early.
+ * ARCADE (29 Oct 2026, the owner's call: "the camera really moving"): the rule itself is unchanged, but the move home is
+ * a 0.25 s smootherstep started 1.05 s before the ball can arrive, so the picture is still for 0.8 s: the rule's half
+ * second, 0.1 s for a press made early and a 0.2 s spare (twice calm's: with 0.1 the farm's cuts ran at 0.5-1.2 per 100
+ * balls depending on the seed, with 0.2 at 0.2-0.9). A press made more than 0.1 s before the ball reaches the
+ * line may see the camera still settling (the farm measures those as earlyBeyondPromise, outside its pass). To keep the
+ * cuts down with the shorter wait, arcade only LEAVES home if a nudge pressed now would still leave the time (the
+ * look-ahead's minN). Its moves: follow at 1.15-1.8 swinging up to 24 degrees with the ball, short punch-ins (zoom 2)
+ * on a fresh bumper, crab, drop, lane, lava, ramp or orbit hit, every unscripted push-in home again after 0.5 s and in
+ * again after 0.1 s, and a slow drift round the volcano through the bonus count (no ball: nothing to keep still).
  *
  * HOME shows the WHOLE TABLE (Ember Peak is one screen since 29 Oct 2026, the owner's call: 270 x 470, one storey): every
  * storey's flipper box, the ball on the plunger and the top of the arch. In a portrait picture the width-filling shot
  * already shows it all (the table fills the width, the flippers low on the screen, the spare room above the arch); on
  * a wider screen the camera backs off until the arch's top is in. Follow and the close-ups are push-ins from there.
  *
- * States: home; follow (ball high and forecast to stay away; slow, damped, dead-zoned; zoom 1.25 calm, 1.35 arcade, a
- * plain scroll in classic); launch (two moves: the plunger, then up the lane to the skill lanes); closeup (the crater's
- * 2.75 s hold: the dive, then the pull-back over the island in slow motion as the ball fires skyward); rail (following
- * the ball down the wire rail); drain (decided by POSITION: the ball is past every bottom flipper's reach, below the
- * pivots, falling too fast for a nudge to save it, and clear of a lit kickback; slow motion 0.35 for 0.6 s); back (the
- * move home); director (attract and replays: free). Multiball, a tilt and the bonus count stay home. Slow motion only in
- * holds, the rail ride, a decided drain and the director, and never once a ball is under 0.75 s from an approach line. */
+ * States: home; follow (ball high and forecast to stay away; slow, damped, dead-zoned; zoom up to 1.25 calm, 1.8
+ * arcade, a plain scroll in classic); punch (arcade: the hit and the ball, for half a second); launch (two moves: the
+ * plunger, then up the lane to the skill lanes); closeup (the crater's 2.75 s hold: the dive, then the pull-back over
+ * the island in slow motion as the ball fires skyward); rail (following the ball down the wire rail); drain (decided by
+ * POSITION: the ball is past every bottom flipper's reach, below the pivots, falling too fast for a nudge to save it,
+ * and clear of a lit kickback; slow motion 0.35 for 0.6 s); bonus (arcade's drift through the bonus count, home half a
+ * second before the next ball); back (the move home); director (attract and replays: free). Multiball and a tilt stay
+ * home, and so does the bonus count but in arcade. Slow motion only in holds, the rail ride, a decided drain and the
+ * director, and never once a ball is under 0.75 s from an approach line. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(function () { return require('./engine.js'); }, null);
   else root.PinCam = factory(function () { return root.PinEngine; }, root);
@@ -50,7 +63,7 @@
     tilt: 28,         // home's tilt (degrees from straight down), as the owner picked from the stills
     margin: 0.012,    // the flipper boxes keep this share of the screen clear at every edge
     pad: 4,           // table units round each flipper box: the shake (1.5) and the table's nudge slide (2.5)
-    back: 0.35,       // seconds: every move home
+    back: 0.35,       // seconds: every move home (arcade: its own, MODES.arcade.back)
     settle: 0.5,      // seconds home and still, at game speed 1.0, before any ball can cross an approach line (the rule)
     early: 0.5,       // and this much more on a normal move home, so a press made up to half a second before the ball
                       // arrives has also seen a still picture for half a second (the farm checks those presses too)
@@ -65,12 +78,22 @@
     //          follow zoom, window (s free needed to push in), home dwell between push-ins, push-ins a minute,
     //          crater dive ('all' | 'first' | 'nod' | 'none'), yaw arc, slow motion, launch and drain shots, reach (how far
     //          below the top approach line a ball still counts as "high" enough to follow; the forecast still decides)
+    //          ARCADE ONLY (29 Oct 2026, owner: "the camera really moving"): early (s of extra still picture for an early
+    //          press; calm and classic use CFG.early), back and spare (its own move home and safety), look (steps it must be
+    //          able to look before it has to turn for home), zmin (a follow only when the ball's next half second fits this
+    //          close: every follow is a real push-in), swing (yaw with the ball's side), punch (the zoom of a short push-in
+    //          on a fresh bumper, crab, drop, lane, lava, ramp or orbit hit), punchT (its steps), nudged (leave home only if
+    //          a nudge pressed now would still leave the time: fewer cuts for the shorter wait), hold (s: an unscripted
+    //          push-in goes home after this, then in again: more, shorter moves) and bonus (the bonus count's drift zoom)
     calm:    { follow: 1.25, window: 2.2, dwell: 3.0, perMin: 6, dive: 'first', yaw: 8, slow: true, shots: true, reach: 40 },
-    arcade:  { follow: 1.5, window: 1.75, dwell: 0.4, perMin: 20, dive: 'all', yaw: 16, slow: true, shots: true, reach: 110 },
+    arcade:  { follow: 1.8, window: 0, dwell: 0.1, perMin: 40, dive: 'all', yaw: 24, slow: true, shots: true, reach: 140, early: 0.1, look: 10, zmin: 1.15, swing: true, punch: 2.0, punchT: 30, nudged: true, hold: 0.5, back: 0.25, spare: 0.2, bonus: 1.45 },
     classic: { follow: 1.0, window: 1.6, dwell: 0.6, perMin: 0, dive: 'none', yaw: 0, slow: false, shots: false, reach: 40 }
   };
   var NEED = Math.ceil((CFG.back + CFG.settle + CFG.early + CFG.spare) * 60);   // steps before an arrival that the move home starts
   var SETTLE = Math.round(CFG.settle * 60);
+  function earlyOf(M) { return M.early != null ? M.early : CFG.early; }
+  function backOf(M) { return M.early != null && M.back != null ? M.back : CFG.back; }
+  function needOf(M) { return M.early != null ? Math.ceil((backOf(M) + CFG.settle + M.early + (M.spare != null ? M.spare : CFG.spare)) * 60) : NEED; }   // per mode (29 Oct 2026): calm and classic exactly as before
 
   // ------------------------------------------------------------ the camera model
   function basis(s, aspect) {
@@ -178,7 +201,7 @@
   // approach zone (and which storey); min: the soonest (-1: none within the horizon - then it is at least the horizon);
   // path: every ball's position every 2 steps for the first pathN steps; check: one ball's spot a few steps on (the
   // page compares it with the real game, so a worker that loaded a different engine is caught)
-  function forecast(W, input, horizon, pathN) {
+  function forecast(W, input, horizon, pathN, nudged) {
     var E = getE(), C = E.clone(W), arrive = {}, storey = {}, path = {}, min = -1, check = null, want = 0, got = 0, k;
     var lone = function () { return C.balls.length === 1; };
     horizon = horizon || CFG.horizon; pathN = pathN == null ? 32 : pathN;
@@ -200,7 +223,23 @@
       if (k === 4 && C.balls.length) check = { k: 4, id: C.balls[0].id, x: C.balls[0].x, y: C.balls[0].y };
       if (got >= want && k >= pathN && k >= 4) break;
     }
-    return { frame: W.frame, horizon: horizon, steps: k, arrive: arrive, storey: storey, min: min, path: path, check: check };
+    // nudged (arcade, 29 Oct 2026): minN, the soonest arrival if a nudge were pressed on the next step or the one after (the
+    // push alternates sides by frame), looked for only 90 steps (1.5 s: more than any wait it is checked against). Arcade
+    // only LEAVES home when even that leaves time; the move home still runs on min
+    var minN = min, steps = k;
+    if (nudged && !input.up && W.state === 'play') for (var p = 1; p <= 2; p++) {
+      var N = E.clone(W), lim = Math.min(minN >= 0 ? minN - 1 : horizon, 90), nin = { left: input.left, right: input.right, fire: input.fire, up: false }, gone = {};
+      N.events = [];
+      N.balls.forEach(function (q0) { if (N.balls.length === 1 && decided(N, q0)) gone[q0.id] = true; });   // a decided drain stays decided (it allows for two nudges)
+      for (var q = 1; q <= lim; q++) {
+        if (N.over) break;
+        nin.up = q >= p; E.step(N, nin); N.events.length = 0; steps++;
+        var nl = N.balls.length === 1, hitN = false;
+        for (var j = 0; j < N.balls.length; j++) if (!gone[N.balls[j].id] && E.inApproach(N, N.balls[j]) >= 0 && !(nl && decided(N, N.balls[j]))) hitN = true;
+        if (hitN) { minN = q; break; }
+      }
+    }
+    return { frame: W.frame, horizon: horizon, steps: steps, arrive: arrive, storey: storey, min: min, minN: minN, path: path, check: check };
   }
 
   // ------------------------------------------------------------ asking the look-ahead (a worker in the page; in-line in node)
@@ -235,8 +274,9 @@
     var id = ++seq, w = !WK_BAD ? worker() : null;
     ASKED = { key: key, frame: W.frame };
     STATS.asks++;
-    if (w) { w.postMessage({ type: 'forecast', id: id, key: key, W: getE().clone(W), input: input, horizon: CFG.horizon }); return; }
-    var r = forecast(W, input, CFG.horizon, 32);
+    var nz = !!MODES[MODE].nudged;
+    if (w) { w.postMessage({ type: 'forecast', id: id, key: key, W: getE().clone(W), input: input, horizon: CFG.horizon, nudged: nz }); return; }
+    var r = forecast(W, input, CFG.horizon, 32, nz);
     STATS.steps += r.steps;
     if (CFG.latency > 0) PENDING.push({ due: CFG.latency, r: r, key: key }); else take(r, key);
   }
@@ -311,9 +351,9 @@
     var ik = inputKey(W) + (inZone ? 'z' : '');
     if (ik !== S.ik) { S.ik = ik; EPOCH++; }
     var V = W.toys && W.toys.volcano, craterOnly = lone && V && V.busy && V.ball === W.balls[0].id && V.land > W.frame;
-    if (W.state !== 'play' || W.balls.length === 0) { S.A = 1e9; S.Aknown = true; return; }
-    if (inZone) { S.A = 0; S.Aknown = true; FC = null; ASKED = null; return; }
-    if (craterOnly) { S.A = V.land - W.frame; S.Aknown = true; return; }   // the crater's timetable is exact, whatever the buttons
+    if (W.state !== 'play' || W.balls.length === 0) { S.A = S.AN = 1e9; S.Aknown = true; return; }
+    if (inZone) { S.A = S.AN = 0; S.Aknown = true; FC = null; ASKED = null; return; }
+    if (craterOnly) { S.A = S.AN = V.land - W.frame; S.Aknown = true; return; }   // the crater's timetable is exact, whatever the buttons
     var key = ik + '#' + EPOCH;
     for (i = PENDING.length - 1; i >= 0; i--) if (--PENDING[i].due <= 0) { var pd = PENDING.splice(i, 1)[0]; take(pd.r, pd.key); }
     var ok = FC && FC.key === key && FC.frame <= W.frame && W.frame - FC.frame < 600;
@@ -330,13 +370,13 @@
       var A = FC.min >= 0 ? FC.frame + FC.min - W.frame : FC.frame + FC.horizon - W.frame;
       if (FC.min >= 0 && A < 0) ok = false;   // it should have arrived by now: the answer is out of date
       else if (FC.min < 0 && A < FC.horizon - 50) ok = false;   // a 'not within the horizon' answer is refreshed every 50 steps
-      else { S.A = A; S.Aknown = true; }
+      else { S.A = A; S.Aknown = true; S.AN = FC.minN != null && FC.minN !== FC.min ? (FC.minN >= 0 ? FC.frame + FC.minN - W.frame : A) : A; }
     }
     if (!ok) {
       if (!ASKED || ASKED.key !== key || W.frame - ASKED.frame > 30) ask(W, key);
       var fresh = FC && FC.key === key && FC.frame === W.frame;
-      if (fresh) { S.A = FC.min >= 0 ? FC.min : FC.horizon; S.Aknown = true; }
-      else { S.A = 0; S.Aknown = false; }
+      if (fresh) { S.A = FC.min >= 0 ? FC.min : FC.horizon; S.Aknown = true; S.AN = FC.minN != null && FC.minN >= 0 ? FC.minN : S.A; }
+      else { S.A = 0; S.Aknown = false; S.AN = 0; }
     }
   }
   function leadPath(W, b) {   // the ball now and its next 0.5 s (from the look-ahead), as points
@@ -350,7 +390,7 @@
     var E = getE();
     if (aspect && Math.abs(aspect - ASPECT) > 1e-4) { ASPECT = aspect; if (S.pose) { S.pose = copyShot(homeFor(W.tableId, ASPECT)); S.state = 'home'; still(); } }
     if (W !== S.W || W.frame < S.frame) { reset(); S.W = W; }
-    var T = E.table(W.tableId).T, H = homeFor(W.tableId, ASPECT), M = MODES[MODE];
+    var T = E.table(W.tableId).T, H = homeFor(W.tableId, ASPECT), M = MODES[MODE], BACK = backOf(M), NEEDM = needOf(M), EARLY = Math.round(earlyOf(M) * 60), LOOK = M.look || 30;
     var dt = S.t == null ? 0 : Math.max(0, Math.min(0.1, (t - S.t) / 1000));
     S.t = t;
     var newFrame = W.frame !== S.frame;
@@ -363,6 +403,14 @@
     var playing = W.state === 'play' && !W.over && !W.tilted && W.balls.length > 0;
     if (b && b.x > T.shooter.x0 && b.vy < -200 && S.fired !== b.id + ':' + W.ball) { S.lastFire = W.frame; S.fired = b.id + ':' + W.ball; }
 
+    if (M.punch && newFrame && W.lit) {   // a fresh hit: any light timer that went up since the last drawn frame (arcade's punch-ins, 29 Oct 2026)
+      var LT = W.lit, sig = [], hit = false, pv = S.litPrev;
+      ['bump', 'drop', 'crab', 'lava', 'lane'].forEach(function (n) { (LT[n] || []).forEach(function (v) { sig.push(v); }); });
+      ['ramp', 'orbitL', 'orbitR', 'geyser'].forEach(function (n) { sig.push(LT[n] || 0); });
+      if (pv && pv.length === sig.length) for (var j = 0; j < sig.length; j++) if (sig[j] > pv[j]) hit = true;
+      S.litPrev = sig;
+      if (hit && b && W.balls.length === 1) { S.punchF = W.frame; S.punchXY = [b.x, b.y]; }
+    }
     // ---- what the director would like to show, and the slow motion it asks for
     var want = 'home', goal = H, w = 6, slow = 1, scripted = false;
     if (director && b) {
@@ -411,12 +459,19 @@
             if (p0[0] < 0.3 || p1[0] > 0.7 || p0[1] < 0.3 || p1[1] > 0.7) S.goalC = [(x0 + x1) / 2, (y0 + y1) / 2];
           }
           var zf = Math.max(1, Math.min(M.follow, H.span / (Math.max(x1 - x0, (y1 - y0) * 0.8) + 90)));
-          if (zf > 1.05 || off) { want = 'follow'; goal = shotAt(S.goalC[0], S.goalC[1] + 20, zf, T); w = 4; }
+          if (zf > (M.zmin || 1.05) || off) { want = 'follow'; goal = shotAt(S.goalC[0], S.goalC[1] + 20, zf, T); w = M.swing ? 6 : 4; if (M.swing) goal.yaw = -M.yaw * Math.max(-1, Math.min(1, (S.goalC[0] - T.MID) / (T.W * 0.4))); }   // arcade swings round with the ball (29 Oct 2026; turning the other way loses it off the picture)
+        }
+        if (M.punch && S.punchXY && W.frame - S.punchF < M.punchT && b.y < T.storeys[bottomStorey(T)].approach) {   // the punch-in: a quick, close look at the hit
+          var pu = (W.frame - S.punchF) / M.punchT, pmx = (S.punchXY[0] + b.x) / 2, pmy = (S.punchXY[1] + b.y) / 2, pz = Math.max(M.zmin || 1, Math.min(M.punch - 0.4 * pu, H.span / (Math.max(Math.abs(b.x - S.punchXY[0]), Math.abs(b.y - S.punchXY[1]) * 0.8) + 110)));
+          want = 'punch'; goal = shotAt(pmx, pmy + 14, pz, T); w = 12; goal.yaw = -M.yaw * 0.6 * Math.max(-1, Math.min(1, (pmx - T.MID) / (T.W * 0.4)));   // the hit and the ball both in the picture
         }
       }
     }
     if (!director && M.shots && S.state === 'drain' && W.state === 'bonus' && t - S.drainT < 1500) {   // the drain shot holds a moment after the ball has gone
       want = 'drain'; goal = shotAt(T.MID, T.H - 30, 1.7, T); w = 6; scripted = true;
+    } else if (!director && M.bonus && W.state === 'bonus' && W.balls.length === 0 && !W.tilted && bonusLeft(W) > 30) {   // arcade: no ball, nothing to keep still - a slow drift round the volcano through the bonus count, home before the next ball (29 Oct 2026)
+      var Vb = T.volcano || { x: T.MID, y: T.H * 0.4 };
+      want = 'bonus'; scripted = true; goal = shotAt(Vb.x, Vb.y + 40, M.bonus, T); goal.yaw = M.yaw * 0.7 * Math.sin(t / 1400); w = 2.5;
     }
     if (want !== 'drain') { S.drainT = -1; S.drainId = 0; }
     var push = H.span / goal.span > 1.1, away = !same(S.pose, H);
@@ -424,18 +479,19 @@
     // ---- the guarantee. Leave home only with a fresh answer that leaves time to go, look and come back (and, for an
     // unscripted push-in, a token and the dwell); come home NEED steps before any ball can arrive; too late: cut.
     if (!director && want !== 'home') {
-      var win = want === 'follow' ? Math.max(M.window * 60, NEED + 30) : want === 'launch2' ? NEED + 54 : NEED + 27;
+      var win = want === 'follow' || want === 'punch' ? Math.max(M.window * 60, NEEDM + LOOK) : want === 'launch2' ? NEEDM + 54 : NEEDM + 27;
       var leaving = S.state === 'home' || S.state === 'back';
-      if (!known || A < (leaving ? win : NEED)) { want = 'home'; goal = H; }
-      else if (S.state === 'home' && push && !scripted && (S.tokens < 1 || (t - S.homeAt) / 1000 < M.dwell)) { want = 'home'; goal = H; }
+      if (!known || A < (leaving ? win : NEEDM) || (!scripted && M.nudged && S.AN < (leaving ? win : NEEDM))) { want = 'home'; goal = H; }
+      else if (S.state === 'home' && push && !scripted && want !== 'punch' && (S.tokens < 1 || (t - S.homeAt) / 1000 < M.dwell)) { want = 'home'; goal = H; }
+      else if (M.hold && !scripted && (S.held || ((S.state === 'follow' || S.state === 'punch') && t - S.pushT > M.hold * 1000))) { want = 'home'; goal = H; S.held = true; }   // arcade: short push-ins, then home and in again
     }
     // an EMERGENCY: a fresh answer (after a nudge, mostly) leaves less than the full second of still picture before a
     // ball arrives. Counted once per arrival. If even the half-second rule can't be kept by moving home, CUT.
     var cut = false, emergency = false, left = 0;
     if (!director && playing && known && A > 0 && A < 1e8) {
-      left = !away ? 0 : S.state === 'back' ? Math.ceil(Math.max(0, CFG.back - (t - S.t0) / 1000) * 60) + 1 : Math.ceil(CFG.back * 60) + 1;
+      left = !away ? 0 : S.state === 'back' ? Math.ceil(Math.max(0, BACK - (t - S.t0) / 1000) * 60) + 1 : Math.ceil(BACK * 60) + 1;
       var stillFor = !away && S.stillAt != null ? W.frame - S.stillAt : -left;
-      if (stillFor + A < SETTLE + Math.round(CFG.early * 60) && S.emergFor !== W.frame + A && (want === 'home' || stillFor + A < NEED - left)) {
+      if (stillFor + A < SETTLE + EARLY && S.emergFor !== W.frame + A && (want === 'home' || stillFor + A < NEEDM - left)) {
         emergency = stillFor + A < SETTLE ? 'rule' : 'short'; S.emergFor = W.frame + A;
         if (emergency === 'rule') STATS.emergencies++; else STATS.short++;
       }
@@ -444,19 +500,20 @@
 
     // ---- move
     if (cut) {
-      S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; STATS.cuts++; S.cutFrame = W.frame; S.stillAt = W.frame;
+      S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; S.held = false; STATS.cuts++; S.cutFrame = W.frame; S.stillAt = W.frame;
     } else if (want === 'home') {
-      if (!away) { if (S.state !== 'home') { S.state = 'home'; S.homeAt = t; } if (S.stillAt == null) S.stillAt = W.frame; S.pose = copyShot(H); still(); }
+      if (!away) { S.held = false; if (S.state !== 'home') { S.state = 'home'; S.homeAt = t; } if (S.stillAt == null) S.stillAt = W.frame; S.pose = copyShot(H); still(); }
       else {
         if (S.state !== 'back') { S.state = 'back'; S.t0 = t; S.from = copyShot(S.pose); }
-        var u = smoother((t - S.t0) / 1000 / CFG.back);
+        var u = smoother((t - S.t0) / 1000 / BACK);
         ['cx', 'cy', 'span', 'tilt', 'yaw'].forEach(function (k) { S.pose[k] = S.from[k] + (H[k] - S.from[k]) * u; });
-        if (u >= 1) { S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; S.stillAt = W.frame; } else S.stillAt = null;
+        if (u >= 1) { S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; S.stillAt = W.frame; S.held = false; } else S.stillAt = null;
       }
     } else {
-      if (S.state === 'home' && push) { STATS.pushIns++; S.tokens = Math.max(-1, S.tokens - 1); }
+      if (S.state === 'home' && push) { STATS.pushIns++; S.tokens = Math.max(-1, S.tokens - 1); S.pushT = t; }
       if (S.state === 'back') still();
       if (S.state !== want) S.since = t;
+      if ((want === 'follow' || want === 'punch') && S.state !== 'follow' && S.state !== 'punch') S.pushT = t;   // the hold counts from every way in (a scripted shot straight to follow too)
       S.stillAt = null;
       S.state = want;
       // every way in is quick (most of the way in about 0.4 s); then each state tracks at its own, gentler pace
@@ -482,6 +539,10 @@
     return { cx: S.pose.cx, cy: S.pose.cy, span: S.pose.span, tilt: S.pose.tilt, yaw: S.pose.yaw || 0, timeScale: S.ts,
       state: S.state, zoom: zoomOf(S.pose), A: known ? A : -1, next: nx, cut: cut, emergency: cut ? 'rule' : emergency };
   }
+  function bonusLeft(W) {   // steps until the bonus count ends and the next ball comes (the engine's bonusStep, read only)
+    var stepAmt = Math.max(100, Math.ceil((W.bonusAdd || 0) / 50 / 100) * 100), n = Math.ceil(Math.max(0, (W.bonusAdd || 0) - (W.bonusShow || 0)) / stepAmt);
+    return Math.max(110 - (W.bonusT || 0), Math.max(0, 40 - (W.bonusT || 0)) + n);
+  }
   function topApproach(T) { var a = 1e9; T.storeys.forEach(function (s) { a = Math.min(a, s.approach); }); return a; }
 
   function quiet() { return S.Aknown && S.A > 48; }
@@ -495,13 +556,14 @@
   }
   function stats() { var s = STATS; return JSON.parse(JSON.stringify(s)); }
   function resetStats() { STATS = freshStats(); }
-  function info() { return { state: S.state, A: S.A, known: S.Aknown, ts: S.ts, mode: MODE, aspect: ASPECT, forecast: FC, worker: !!WK && !WK_BAD, need: NEED, settle: SETTLE }; }
+  function info() { return { state: S.state, A: S.A, known: S.Aknown, ts: S.ts, mode: MODE, aspect: ASPECT, forecast: FC, worker: !!WK && !WK_BAD, need: needOf(MODES[MODE]), settle: SETTLE, early: earlyOf(MODES[MODE]) }; }
+  function timing(m) { var M = MODES[m || MODE]; return { need: needOf(M), settle: SETTLE, early: earlyOf(M), look: M.look || 30, back: backOf(M), spare: M.early != null && M.spare != null ? M.spare : CFG.spare }; }
 
   return {
     update: update, frame: frame, project: project, quiet: quiet, setMode: setMode, setAspect: setAspect,
     home: function (aspect, id) { return homeFor(id || (S.W ? S.W.tableId : getE().DEFAULT), aspect || ASPECT); },
     reset: function () { reset(); resetStats(); }, stats: stats, resetStats: resetStats, info: info, configure: configure,
     forecast: forecast, decided: decided, boxes: boxes, director: function (on) { DIRECTOR = !!on; },
-    MODES: MODES, CFG: CFG, FOV: FOV, yEdges: function (s, aspect) { var a = ASPECT; ASPECT = aspect || a; var r = yEdges(s); ASPECT = a; return r; }
+    MODES: MODES, CFG: CFG, FOV: FOV, timing: timing, yEdges: function (s, aspect) { var a = ASPECT; ASPECT = aspect || a; var r = yEdges(s); ASPECT = a; return r; }
   };
 });

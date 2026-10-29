@@ -3,13 +3,14 @@
  * (table.js, tables/*.js, engine.js, then camera.js), so the worker steps the very same engine as the game. Then each
  * { type: 'forecast', id, key, W, input, horizon } (W: a copy of the world, E.clone) is stepped ahead with the buttons
  * held and answered { id, key, r } - per ball, the steps until it is first inside a storey's approach zone (camera.js
- * PinCam.forecast). Until an answer arrives, camera.js treats every ball as close. */
+ * PinCam.forecast; with nudged: true, as Arcade asks since 29 Oct 2026, also minN: the soonest arrival had a nudge been
+ * pressed on the next two steps). Until an answer arrives, camera.js treats every ball as close. */
 /* global importScripts, self */
 'use strict';
 var ready = false, latest = null, busy = false;
 function run(d) {
   var r = null;
-  try { r = self.PinCam.forecast(d.W, d.input, d.horizon, 32); } catch (e) { r = null; }
+  try { r = self.PinCam.forecast(d.W, d.input, d.horizon, 32, !!d.nudged); } catch (e) { r = null; }   // nudged: arcade's minN too (29 Oct 2026)
   if (r) self.postMessage({ id: d.id, key: d.key, r: r });
 }
 // only the newest question matters: questions that pile up while one is being stepped are dropped

@@ -1035,18 +1035,18 @@
     })();
 
     step('rock', function () {   // black volcanic rock: smooth noise worked out small and scaled up, speckles, cracks
-      var w = Math.ceil(W0 / 2), h = Math.ceil(H0 / 2), c = canvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h);
+      var w = W0, h = H0, c = canvas(w, h), x = c.getContext('2d'), d = x.createImageData(w, h);   // a unit a pixel (was half): grain that reads as rock close up (29 Oct 2026)
       for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
-        var n = fbm(i / 16, j / 16, 4, 11), m = fbm(i / 4.5, j / 4.5, 2, 23), ox = fbm(i / 30 + 9, j / 30, 3, 5), k = (j * w + i) * 4, v = 0.6 * n + 0.4 * m;
-        var red = sstep(0.55, 0.75, ox);   // oxidised patches: rust red-brown in the black
-        d.data[k] = 44 + v * 66 + red * 74; d.data[k + 1] = 30 + v * 50 + red * 22; d.data[k + 2] = 42 + v * 58 - red * 8; d.data[k + 3] = 255;   // lifted 29 Oct 2026 (owner: "brighter and more colourful")
+        var n = fbm(i / 32, j / 32, 4, 11), m = fbm(i / 9, j / 9, 2, 23), gr = vn(i / 1.4, j / 1.4, 41), ox = fbm(i / 38 + 9, j / 38, 3, 5), k = (j * w + i) * 4, v = 0.45 * n + 0.3 * m + 0.25 * gr;
+        var red = sstep(0.58, 0.74, ox) * (0.55 + 0.45 * m);   // oxidised patches, broken up by the grain: hot rust red in the black
+        d.data[k] = 34 + v * 76 + red * 150; d.data[k + 1] = 22 + v * 48 + red * 34; d.data[k + 2] = 54 + v * 92 - red * 40; d.data[k + 3] = 255;   // deep violet basalt with hot red-orange patches, not mud brown (29 Oct 2026, owner: "bolder colours")
       }
       x.putImageData(d, 0, 0);
       g.imageSmoothingEnabled = true; g.drawImage(c, 0, 0, W0 * S, H0 * S);
       unitT(g, S);
-      for (var q = 0; q < 6000; q++) { g.fillStyle = r() < 0.55 ? 'rgba(150,140,160,' + (0.08 + r() * 0.2) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * H0, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
+      for (var q = 0; q < 10000; q++) { g.fillStyle = r() < 0.5 ? 'rgba(190,150,200,' + (0.06 + r() * 0.18) + ')' : 'rgba(0,0,0,' + (0.15 + r() * 0.3) + ')'; g.fillRect(r() * W0, r() * H0, 0.3 + r() * 0.6, 0.3 + r() * 0.5); }
       g.lineCap = 'round';
-      for (q = 0; q < 40; q++) {
+      for (q = 0; q < 110; q++) {
         var cx = r() * W0, cy = r() * H0, a = r() * Math.PI * 2; g.beginPath(); g.moveTo(cx, cy);
         for (var s2 = 0; s2 < 6; s2++) { a += (r() - 0.5) * 1.2; cx += Math.cos(a) * 4; cy += Math.sin(a) * 4; g.lineTo(cx, cy); }
         g.lineWidth = 0.25 + r() * 0.35; g.strokeStyle = 'rgba(0,0,0,0.55)'; g.stroke();
@@ -1054,7 +1054,7 @@
     });
     step('glowfield', function () {   // the lower half lit by the lava: a warm wash up from the river, hot cracks in the rock
       unitT(g, S); unitT(gg, GS);
-      var wash = g.createLinearGradient(0, 170, 0, 420); wash.addColorStop(0, 'rgba(255,90,20,0)'); wash.addColorStop(0.5, 'rgba(255,100,24,0.22)'); wash.addColorStop(1, 'rgba(255,130,36,0.34)');
+      var wash = g.createLinearGradient(0, 170, 0, 420); wash.addColorStop(0, 'rgba(255,60,10,0)'); wash.addColorStop(0.5, 'rgba(255,70,16,0.17)'); wash.addColorStop(1, 'rgba(255,100,20,0.27)');
       g.fillStyle = wash; g.fillRect(0, 170, W0, 250);
       var rc = rng(19);
       both(function (c, glow) {   // hot cracks branching off the river across the lower rock (both canvases: they glow)
@@ -1066,22 +1066,22 @@
         }
       });
       // warm pools of light round the slings (the lava lights their plastics from below)
-      ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 30, [255, 110, 30], 0.35); pool(gg, cx, cy, 26, [255, 100, 20], 0.4); });
+      ET.slings.forEach(function (s2) { var cx = (s2.a[0] + s2.b[0] + s2.c[0]) / 3, cy = (s2.a[1] + s2.b[1] + s2.c[1]) / 3; pool(g, cx, cy, 30, [255, 110, 30], 0.42); pool(gg, cx, cy, 28, [255, 100, 20], 0.55); });
     });
     step('river', function () {   // the lava river under the glass: a dark crust bank, molten core, a yellow heart (glows)
       unitT(g, S); unitT(gg, GS);
       function band(c, k, col) { c.lineCap = 'round'; c.lineJoin = 'round'; for (var i = 1; i < RIV.length; i++) { var a = RIV[i - 1], b = RIV[i]; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.lineWidth = (a[2] + b[2]) / 2 * k; c.strokeStyle = col; c.stroke(); } }
-      softly(g, S, 'rgba(255,90,20,0.8)', 4, 0, 0, function (c) { band(c, 1.25, '#ff5a10'); });
-      band(g, 1.15, '#2a0c04'); band(g, 0.9, '#a8300a'); band(g, 0.62, '#ff6a10'); band(g, 0.26, '#ffd060');
+      softly(g, S, 'rgba(255,80,10,0.9)', 5, 0, 0, function (c) { band(c, 1.3, '#ff4a00'); });
+      band(g, 1.15, '#2a0a02'); band(g, 0.92, '#c8300a'); band(g, 0.66, '#ff5a08'); band(g, 0.34, '#ffb020'); band(g, 0.16, '#fff0a0');   // hotter (29 Oct 2026, owner: "bolder colours")
       var rl = rng(31);   // crust plates drifting on it
       for (var q = 0; q < 70; q++) { var i = 1 + Math.floor(rl() * (RIV.length - 2)), p = RIV[i], o = (rl() - 0.5) * p[2] * 0.6; g.fillStyle = 'rgba(40,10,4,' + (0.5 + rl() * 0.4) + ')'; g.beginPath(); g.ellipse(p[0] + o, p[1] + (rl() - 0.5) * 20, 0.8 + rl() * 1.8, 1.2 + rl() * 2.5, rl() * 3, 0, Math.PI * 2); g.fill(); }
-      band(gg, 1.6, 'rgba(255,80,10,0.5)'); band(gg, 0.8, '#ff8a1a'); band(gg, 0.3, '#ffe08a');
+      band(gg, 1.8, 'rgba(255,70,0,0.6)'); band(gg, 0.9, '#ff8010'); band(gg, 0.36, '#ffe890');
     });
     step('water', function () {   // the lagoon (the drain is the open sea, a golden sand rim round it), the right orbit's channel, the shooter lane
       unitT(g, S); unitT(gg, GS);
       function water(P, top, bottom, deep) {
         g.save(); poly(g, P);
-        var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#6ff0e4'); gr.addColorStop(0.35, '#22cfd8'); gr.addColorStop(1, deep);
+        var gr = g.createLinearGradient(0, top, 0, bottom); gr.addColorStop(0, '#86fff0'); gr.addColorStop(0.35, '#14e2ea'); gr.addColorStop(1, deep);
         g.fillStyle = gr; g.fill(); g.clip();
         g.globalCompositeOperation = 'lighter'; g.lineWidth = 0.3;
         for (var i = 0; i < 200; i++) { var x = r() * W0, y = top + r() * (bottom - top), l = 1.5 + r() * 4; g.strokeStyle = 'rgba(210,255,255,' + (0.12 + r() * 0.25) + ')'; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 0.8, x + l, y); g.stroke(); }
@@ -1091,10 +1091,10 @@
       }
       var LG = lagoon();
       softly(g, S, 'rgba(0,0,0,0.6)', 3, 0, -1, function (c) { poly(c, LG); c.lineWidth = 9; c.strokeStyle = '#000'; c.stroke(); });
-      g.save(); poly(g, LG); g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = '#f7c766'; g.stroke(); g.lineWidth = 5; g.strokeStyle = '#ffd986'; g.stroke(); g.restore();
-      water(LG, 404, H0, '#0a5fa8');
+      g.save(); poly(g, LG); g.lineWidth = 8; g.lineJoin = 'round'; g.strokeStyle = '#ffbe3a'; g.stroke(); g.lineWidth = 5; g.strokeStyle = '#ffdc78'; g.stroke(); g.restore();
+      water(LG, 404, H0, '#0870cc');
       var ch = [[221, 150], [243, 150], [243, 300], [221, 300]];
-      water(ch, 150, 300, '#0e86c4');
+      water(ch, 150, 300, '#0896d8');
       var sh = [[245, 150], [265, 150], [265, H0 + 2], [245, H0 + 2]];
       g.save(); poly(g, sh); var sg = g.createLinearGradient(0, 150, 0, H0); sg.addColorStop(0, '#1b78d8'); sg.addColorStop(1, '#0b3f8e'); g.fillStyle = sg; g.fill(); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
@@ -1142,7 +1142,7 @@
     });
     step('lanes', function () {   // the left orbit (gold sand under the wire rail), the ramp lane, the inlanes and outlanes (lit: they glow)
       unitT(g, S); unitT(gg, GS);
-      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#d49a3a'); lg.addColorStop(0.5, '#ffd27a'); lg.addColorStop(1, '#d49a3a');
+      g.save(); var lg = g.createLinearGradient(6, 0, 30, 0); lg.addColorStop(0, '#e8a020'); lg.addColorStop(0.5, '#ffd862'); lg.addColorStop(1, '#e8a020');
       g.fillStyle = lg; g.fillRect(7, 140, 22, 160); g.restore();
       g.lineWidth = 1.1; g.lineCap = 'round'; g.lineJoin = 'round';
       var re = ET.ramp.entry;
@@ -1150,12 +1150,12 @@
       g.fillStyle = rg; g.fillRect(re.x0 - 1, re.y - 34, re.x1 - re.x0 + 2, 40); g.restore();
       var F0 = ET.flippers[0], fy = F0.y, inX = 38, outX = 16;
       // the outlanes: shallow water running out to the sea (danger); the inlanes: lava-lit gold, glowing
-      lanePanel(g, [[outX, fy - 86], [outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
-      lanePanel(g, [[2 * MI - outX, fy - 86], [2 * MI - outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#2fd0d8');
-      lanePanel(g, [[inX - 0.5, fy - 120], [inX - 0.5, fy - 30], [inX + 14, fy - 16]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
-      lanePanel(g, [[2 * MI - inX + 0.5, fy - 120], [2 * MI - inX + 0.5, fy - 30], [2 * MI - inX - 14, fy - 16]], 13, 'rgba(160,80,10,0.8)', '#ffcf6a');
+      lanePanel(g, [[outX, fy - 86], [outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#14dce6');
+      lanePanel(g, [[2 * MI - outX, fy - 86], [2 * MI - outX, fy + 20]], 15, 'rgba(255,255,255,0.9)', '#14dce6');
+      lanePanel(g, [[inX - 0.5, fy - 120], [inX - 0.5, fy - 30], [inX + 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#ffc640');
+      lanePanel(g, [[2 * MI - inX + 0.5, fy - 120], [2 * MI - inX + 0.5, fy - 30], [2 * MI - inX - 14, fy - 16]], 13, 'rgba(190,80,0,0.85)', '#ffc640');
       [inX - 0.5, 2 * MI - inX + 0.5].forEach(function (x) {   // the inlanes' glow (emissive), a hot line down each middle
-        var lgg = gg.createLinearGradient(x - 6, 0, x + 6, 0); lgg.addColorStop(0, 'rgba(255,120,20,0)'); lgg.addColorStop(0.5, 'rgba(255,170,60,0.55)'); lgg.addColorStop(1, 'rgba(255,120,20,0)');
+        var lgg = gg.createLinearGradient(x - 6, 0, x + 6, 0); lgg.addColorStop(0, 'rgba(255,120,20,0)'); lgg.addColorStop(0.5, 'rgba(255,170,60,0.7)'); lgg.addColorStop(1, 'rgba(255,120,20,0)');
         gg.fillStyle = lgg; gg.fillRect(x - 6, fy - 120, 12, 92);
       });
       [outX, 2 * MI - outX].forEach(function (x) { var lgg = gg.createLinearGradient(x - 7, 0, x + 7, 0); lgg.addColorStop(0, 'rgba(40,200,220,0)'); lgg.addColorStop(0.5, 'rgba(60,220,240,0.35)'); lgg.addColorStop(1, 'rgba(40,200,220,0)'); gg.fillStyle = lgg; gg.fillRect(x - 7, fy - 86, 14, 106); });

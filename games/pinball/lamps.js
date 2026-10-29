@@ -530,6 +530,135 @@
     (groups.slings || []).forEach(function (i) { SLING[list[i].side].push(i); });
     var SHOTS = ['crater', 'ramp', 'orbitL', 'orbitR', 'obsidian', 'geyser', 'lavaL', 'lavaR'];
 
+    // ---------------------------------------------------------------- the big moments' light shows (29 Oct 2026, owner: "push it
+    // further", "bigger light shows"): short whole-table shows, choreographed from where each lamp sits (worked out once
+    // here) and started by what the world shows changed (its counters and toys), so level() still only reads the world.
+    // The base lamps dip while a show runs; a whole-table blink alternates lamp by lamp (the table's light stays even),
+    // so nothing flashes the whole table more than 3 times a second.
+    var PX = new Float32Array(N), PY = new Float32Array(N), DV = new Float32Array(N), AV = new Float32Array(N), DB = new Float32Array(N), DM = new Float32Array(N), AM = new Float32Array(N), HB = new Uint8Array(N), KIND = new Uint8Array(N);
+    var DMAX = Math.hypot(TW, TH), bnk = { x: bank.x, y: bank.y }, mid = { x: M, y: TH * 0.52 };
+    function hueOf(c) { var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(c || ''); if (!m) return 4; var r = parseInt(m[1], 16) / 255, g2 = parseInt(m[2], 16) / 255, b2 = parseInt(m[3], 16) / 255, mx2 = Math.max(r, g2, b2), mn = Math.min(r, g2, b2), d = mx2 - mn, h; if (d < 0.2) return 4; h = mx2 === r ? ((g2 - b2) / d + 6) % 6 : mx2 === g2 ? (b2 - r) / d + 2 : (r - g2) / d + 4; h *= 60; return h < 20 || h > 330 ? 4 : h < 40 ? 1 : h < 75 ? 0 : h < 140 ? 4 : h < 210 ? 2 : h < 300 ? 3 : 4; }   // 0 gold, 1 orange, 2 teal, 3 violet, 4 the rest
+    for (var li = 0; li < N; li++) {
+      var Li = list[li], i = li;
+      PX[i] = Li.x / TW; PY[i] = Li.y / TH; DV[i] = Math.hypot(Li.x - V.x, Li.y - V.y) / (DMAX * 0.8); AV[i] = (Math.atan2(Li.y - V.y, Li.x - V.x) / (2 * PI) + 1) % 1;
+      DB[i] = Math.hypot(Li.x - bnk.x, Li.y - bnk.y) / (DMAX * 0.8); DM[i] = Math.hypot(Li.x - mid.x, Li.y - mid.y) / (DMAX * 0.55); AM[i] = (Math.atan2(Li.y - mid.y, Li.x - mid.x) / (2 * PI) + 1) % 1;
+      HB[i] = hueOf(Li.color);
+      KIND[i] = Li.group === 'gauge' || Li.group === 'crater' || Li.group === 'erupt' ? 1 : Li.group === 'lava' || Li.group === 'river' || Li.group === 'slings' ? 2 : Li.id === 'save' || Li.id === 'saveR' || Li.id === 'outR' ? 3 : 0;   // 1 the volcano's own, 2 the lava's, 3 the ball save's
+    }
+    var LANETOP = [list[byId['lavaL.c3']], list[byId['lavaR.c3']]], SKILLAT = [0, 1, 2].map(function (k) { return list[byId['lane' + k]]; });
+    // name: [ms, priority, how far the base lamps dip]
+    var SHOWDEF = {
+      launch: [1400, 3, 0.55], drops: [1000, 4, 0.6], loop: [1000, 4, 0.6], combo: [1300, 5, 0.7], crater: [1000, 5, 0.5], quake: [900, 6, 0.5],
+      overload: [1300, 6, 0.85], ready: [1400, 6, 0.75], save: [1500, 7, 0.8], skill: [1700, 7, 0.85], lavashot: [1900, 7, 0.85], lavaopen: [950, 8, 0.85],
+      extra: [2400, 9, 0.92], eruption: [2500, 10, 0.92]
+    };
+    Object.keys(SHOWDEF).forEach(function (nm) { SHOWDEF[nm][3] = ['launch', 'drops', 'loop', 'combo', 'crater', 'quake', 'overload', 'ready', 'save', 'skill', 'lavashot', 'lavaopen', 'extra', 'eruption'].indexOf(nm); });   // (showLamp switches on a number: quicker than on the name)
+    function bandF(d, f, w) { var e = d - f; if (e < 0) e = -e; return e < w ? 1 - e / w : 0; }
+    function rings3(d, f, w) { return Math.max(bandF(d, f, w), 0.8 * bandF(d, f - 0.32, w), 0.6 * bandF(d, f - 0.64, w)); }
+    function colourWave(i, q) { return bandF(HB[i] * 0.9 + PY[i] * 1.6, q * 6.2 - 0.8, 0.85); }   // the colours in turn (gold, orange, teal, violet, the rest), rolling down the table
+    function checker(i, e, ms) { return ((i + Math.floor(e / ms)) & 1) ? 1 : 0.12; }   // half the lamps on, swapping (an even light: never a whole-table flash)
+    function fadeEnd(p, from) { return p < from ? 1 : (1 - p) / (1 - from); }
+    var LX = new Float32Array(N), LY = new Float32Array(N), RD = 1 / (DMAX * 0.75);
+    for (var lj = 0; lj < N; lj++) { LX[lj] = list[lj].x; LY[lj] = list[lj].y; }
+    function distTo(i) { var dx = LX[i] - SH.x, dy = LY[i] - SH.y; return Math.sqrt(dx * dx + dy * dy) * RD; }   // (from the show's own point; no Math.hypot: it is slow)
+    var SH = { W: null, f: -1, name: '', code: -1, t0: 0, ms: 0, pri: 0, dip: 0, x: 0, y: 0, side: 0, rel: -1, full: false, ashT0: 0, s: null };
+    function snapOf(W) {
+      var st = W.stats || {}, tq = W.toys || {}, lid = 0, bs = W.balls || [];
+      for (var q = 0; q < bs.length; q++) if (bs[q].launched && bs[q].id > lid) lid = bs[q].id;
+      return { er: st.eruptions || 0, cr: st.craters || 0, sv: st.saves || 0, sk: st.skill || 0, qk: st.quakes || 0, lv: st.lava || 0, lp: st.loops || 0, tot: W.total || 0,
+        cb: W.combo || 0, dd: W.dropsDown || 0, rd: !!(tq.volcano && tq.volcano.ready), pend: !!(tq.quake && tq.quake.pending), lid: Math.max(lid, SH.s ? SH.s.lid : 0) };
+    }
+    function startShow(name, t, x, y, side) {
+      var d = SHOWDEF[name];
+      if (SH.name && t - SH.t0 < SH.ms && SH.pri > d[1]) return;   // a bigger show is running
+      SH.name = name; SH.code = d[3]; SH.t0 = t; SH.ms = d[0]; SH.pri = d[1]; SH.dip = d[2]; SH.x = x || 0; SH.y = y || 0; SH.side = side || 0;
+    }
+    function watch(W, t) {   // what changed since the last call: start the show it deserves (a new world, or a jump of over half a second, starts afresh, quietly)
+      if (W !== SH.W || W.frame < SH.f || W.frame > SH.f + 30) { SH.W = W; SH.s = null; SH.s = snapOf(W); SH.name = ''; SH.rel = -1; SH.full = false; SH.f = W.frame; return; }
+      if (t < SH.t0) SH.name = '';   // (the clock went back)
+      SH.f = W.frame;
+      var o = SH.s, n = snapOf(W), Vw = W.toys && W.toys.volcano;
+      SH.s = n;
+      if (n.lid > o.lid) startShow('launch', t);
+      if (n.dd >= NDROP && o.dd < NDROP) startShow('drops', t);
+      if (n.lp > o.lp) startShow('loop', t);
+      if (n.cb > o.cb && n.cb > 1) startShow('combo', t);
+      if (n.qk > o.qk) startShow('quake', t);
+      if (n.pend && !o.pend) startShow('overload', t);
+      if (n.rd && !o.rd) startShow('ready', t);
+      if (SH.name === 'ready' && !n.rd) SH.name = '';   // (the pressure gone: the crater took it, or a new ball)
+      if (n.sv > o.sv) startShow('save', t);
+      if (n.sk > o.sk) { var sa = SKILLAT[W.skill] || SKILLAT[1]; startShow('skill', t, sa.x, sa.y); }
+      if (n.lv > o.lv) { var sd = W.lit && W.lit.lava && W.lit.lava[1] > W.lit.lava[0] ? 1 : 0; startShow('lavashot', t, LANETOP[sd].x, LANETOP[sd].y, sd); }
+      if (n.cr > o.cr && Vw) { SH.rel = Vw.release; SH.full = n.er > o.er; if (SH.full) { SH.ashT0 = t; startShow('lavaopen', t); } }
+      if (n.tot > o.tot) startShow('extra', t);
+      if (SH.rel >= 0 && W.frame >= SH.rel) { startShow(SH.full ? 'eruption' : 'crater', t); SH.rel = -1; SH.full = false; }
+    }
+    // how a show lights lamp i at p (0..1 through it), e ms in
+    function showLamp(code, i, p, e) {
+      var v = 0, k = KIND[i];
+      switch (code) {
+        case 0:  /* launch */   // a wave up the table from the shore, then rings closing in on the volcano, which lights up
+          v = p < 0.6 ? bandF(1 - PY[i], -0.1 + 1.3 * p / 0.6, 0.15) : 0;
+          if (p > 0.4) v = Math.max(v, bandF(DV[i], 1.05 - 1.2 * (p - 0.4) / 0.6, 0.12), k === 1 && p > 0.8 ? checker(i, e, 70) : 0);
+          return v;
+        case 1:  /* drops */ return rings3(DB[i], p * 1.5, 0.12) * fadeEnd(p, 0.7) + (HB[i] === 3 ? 0.5 * checker(i, e, 80) * (1 - p) : 0);
+        case 2:  /* loop */ { var q = (p * 2) % 1, x = q < 0.5 ? q * 2 : 2 - q * 2; return bandF(PX[i], -0.1 + 1.2 * x, 0.18) * (HB[i] === 2 ? 1 : 0.8) + (HB[i] === 2 ? 0.25 * checker(i, e, 90) : 0); }
+        case 3:  /* combo */ { var a = AV[i] * 3 - p * 3.5; a -= Math.floor(a); return Math.max(bandF(a, 0.5, 0.26), 0.7 * bandF(DV[i], (p * 2.2) % 1.1, 0.1)) * fadeEnd(p, 0.85); }
+        case 4:  /* crater */ return Math.max(rings3(DV[i], p * 1.4, 0.13), k === 1 ? 1 - p : 0) * fadeEnd(p, 0.6);
+        case 5:  /* quake */ return Math.max(bandF(PX[i], 0.5 + 0.6 * Math.sin(p * PI * 3), 0.16), k === 1 ? checker(i, e, 60) : 0) * fadeEnd(p, 0.8);
+        case 6:  /* overload */   // the hot lamps flicker wildly, everything else holds its breath
+          return HB[i] <= 1 || k === 1 ? (hashF(i, Math.floor(e / 45)) > 0.45 ? 1 : 0.1) * fadeEnd(p, 0.75) : 0;
+        case 7:  /* ready */ return Math.max(bandF(DV[i], 1.05 - 1.25 * ((p * 2) % 1), 0.12), k === 1 ? checker(i, e, 80) : 0) * fadeEnd(p, 0.85);
+        case 8:  /* save */   // the ball save lamps race, two sweeps up the table (teal brightest), then a settle
+          if (k === 3) return checker(i, e, 70);
+          return bandF(1 - PY[i], -0.15 + 1.3 * ((p * 2) % 1), 0.22) * (HB[i] === 2 ? 1 : 0.85) * fadeEnd(p, 0.85);
+        case 9:  /* skill */ {   // rings out of the skill lane, then the colours roll down the table
+          var d = distTo(i);
+          return Math.max(p < 0.65 ? rings3(d, p * 2.1, 0.11) : 0, p > 0.5 ? colourWave(i, (p - 0.5) / 0.5) : 0) * fadeEnd(p, 0.9);
+        }
+        case 10:  /* lavashot */ {   // up the lane, rings out of its top, the hot colours roll, then everything chases and settles
+          var sx = SH.side ? 1 - PX[i] : PX[i], dl = distTo(i);
+          if (p < 0.3) return sx < 0.3 ? bandF(1 - PY[i], -0.1 + 1.4 * p / 0.3, 0.16) : 0;
+          if (p < 0.7) return Math.max(rings3(dl, (p - 0.25) * 2.6, 0.12), HB[i] <= 1 ? 0.6 * colourWave(i, (p - 0.3) / 0.4) : 0);
+          return (HB[i] <= 1 || k === 2 ? checker(i, e, 90) : 0.5 * checker(i + 1, e, 90)) * fadeEnd(p, 0.75);
+        }
+        case 11:  /* lavaopen */   // the lava pours out of the volcano down its lanes and the river; rings follow it out
+          return k === 2 ? Math.max(bandF(DV[i], p * 1.4, 0.2), p > 0.5 ? 0.6 : 0) : k === 1 ? 1 : 0.7 * bandF(DV[i], p * 1.4 - 0.15, 0.1);
+        case 12:  /* extra */ {   // a spiral round the middle, the colours rolling, then the whole table chasing, and a settle
+          var b = AM[i] * 4 - p * 5; b -= Math.floor(b);
+          if (p < 0.45) return Math.max(bandF(b, 0.5, 0.22), bandF(DM[i], p * 2.4, 0.12));
+          if (p < 0.75) return Math.max(colourWave(i, (p - 0.45) / 0.3), 0.4 * bandF(b, 0.5, 0.2));
+          return checker(i, e, 85) * fadeEnd(p, 0.85) + (k === 3 ? 0.4 : 0);
+        }
+        case 13:  /* eruption */ {   // white-hot, rings racing out of the crater with glitter, the colours rolling, a chase, a settle
+          if (e < 260) return 1 - 0.3 * (e / 260);
+          if (p < 0.55) return Math.max(rings3(DV[i], (e - 260) / (SH.ms * 0.55 - 260) * 1.7, 0.11), hashF(i, Math.floor(e / 60)) > 0.7 ? 0.8 : 0, k === 1 ? 0.9 : 0);
+          if (p < 0.78) return Math.max(colourWave(i, (p - 0.55) / 0.23), k ? 0.6 : 0);
+          return Math.max(checker(i, e, 80) * fadeEnd(p, 0.84), k === 2 ? 0.5 * (1 - p) * 4 : 0);
+        }
+      }
+      return v;
+    }
+    function shows(W, t, out) {
+      watch(W, t);
+      var Vw = W.toys && W.toys.volcano, i;
+      // under the ash (a full eruption on its way, after the lava pours): the table goes dark but for the volcano and the lava
+      if (SH.rel >= 0 && SH.full && Vw && Vw.busy && t - SH.ashT0 > 700) {
+        var ak = Math.min(1, (t - SH.ashT0 - 700) / 500), left = Math.max(0, (SH.rel - W.frame) / (T.volcano.hold || 165)), per = 70 + 190 * left;
+        for (i = 0; i < N; i++) {
+          var kk = KIND[i];
+          out[i] = kk === 1 ? (Math.floor((t - SH.ashT0) / per) & 1 ? 1 : 0.25) : kk === 2 ? Math.max(out[i] * (1 - ak), 0.12 + 0.18 * hashF(i, Math.floor(t / 90))) : out[i] * (1 - 0.9 * ak);
+        }
+      }
+      if (!SH.name) return;
+      var e = t - SH.t0;
+      if (e >= SH.ms || e < 0) { SH.name = ''; return; }
+      var p = e / SH.ms, dip = SH.dip * (e < 100 ? e / 100 : p > 0.8 ? (1 - p) / 0.2 : 1), keep = 1 - dip;
+      var hot = SH.name === 'ready';   // (full pressure: the gauge and the crater's shot keep their own race under the show)
+      for (i = 0; i < N; i++) { var sv = showLamp(SH.code, i, p, e); out[i] = Math.min(1, Math.max(hot && KIND[i] === 1 ? out[i] : out[i] * keep, sv)); }
+    }
+
     // ---------------------------------------------------------------- how bright each lamp should be
     function shotLamps(out, id, t, state, count) {   // 'idle': a slow dim chase in towards the shot; 'lit': racing; 'made': flashing
       var ch = chains[id], a = byId[id], k;
@@ -681,9 +810,13 @@
       }
       // a quake: the whole table shudders (each lamp drops out at random, fast)
       if (Q && Q.t > 0) { var qt = Math.floor(t / 40); for (i = 0; i < N; i++) if (hashF(i, qt) < 0.45) out[i] *= 0.2; }
+      // the big moments' shows, over everything (29 Oct 2026)
+      shows(W, t, out);
       return out;
     }
-    return { id: 'ember', list: list, tags: tags, chains: chains, level: level, byId: byId, groups: groups, colors: COL };
+    // shows: the big moments this set lights itself (fx.js leaves the lamps of its own whole-table shows of these names alone)
+    var OWN = { eruption: 1, erupt: 1, lavaopen: 1, extra: 1, save: 1, skill: 1, combo: 1, loop: 1, drops: 1, quake: 1, overload: 1, pfull: 1 };
+    return { id: 'ember', list: list, tags: tags, chains: chains, level: level, byId: byId, groups: groups, colors: COL, shows: OWN, showNow: function () { return SH.name && SH.W ? { name: SH.name, t0: SH.t0, ms: SH.ms } : null; } };
   }
 
   // ================================================================ the sets, one per table, made when first asked for

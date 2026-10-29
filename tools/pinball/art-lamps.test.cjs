@@ -332,3 +332,56 @@ test('Ember Peak level(): the lamps never stand still, and the attract show move
   assert.ok(us < 20, us.toFixed(2) + ' us a call');
   console.log('Ember level(): ' + us.toFixed(2) + ' us a call, ' + LE.list.length + ' lamps');
 });
+
+// ================================================================ the big moments' light shows (29 Oct 2026, owner: "bigger light shows")
+test('Ember Peak level(): whole-table shows for the big moments - they take the table over, settle, and never flash it more than 3 times a second', () => {
+  const N = LE.list.length, FR = 1000 / 60;
+  const trig = {
+    launch: (w) => { w.balls[0].launched = true; }, drops: (w) => { w.dropsDown = LE.groups.drops.length; }, loop: (w) => { w.stats.loops++; }, combo: (w) => { w.combo = 2; },
+    quake: (w) => { w.stats.quakes++; }, overload: (w) => { w.toys.quake.pending = true; }, ready: (w) => { w.toys.volcano.ready = true; w.toys.volcano.pressure = 1; },
+    save: (w) => { w.stats.saves++; }, skill: (w) => { w.stats.skill++; }, lavashot: (w) => { w.stats.lava++; w.lit.lava = [0, 40]; }, extra: (w) => { w.total++; },
+    eruption: (w) => { w.stats.craters++; w.stats.eruptions++; w.toys.volcano.release = w.frame + 165; w.toys.volcano.busy = true; }
+  };
+  const runOf = (name) => {
+    const w = E.newWorld(2, 0, 365, 'ember'), base = [], show = [];
+    LE.level(w, 0, 'play'); trig[name](w);
+    for (let t = FR, n = 0; n < 330; t += FR, n++) {
+      if (name === 'eruption') { w.frame++; if (w.frame >= w.toys.volcano.release) w.toys.volcano.busy = false; }
+      const before = JSON.stringify(w), v = LE.level(w, t, 'play');
+      assert.equal(JSON.stringify(w), before, name + ': level() must not change the world');
+      show.push(Array.from(v)); base.push(LE.showNow() ? LE.showNow().name : '');
+    }
+    return { show, names: base };
+  };
+  for (const name of Object.keys(trig)) {
+    const r = runOf(name), seen = new Set(r.names.filter(Boolean));
+    assert.ok(seen.has(name), name + ': its show runs (' + [...seen].join(' ') + ')');
+    let most = 0, bad = 0; const mean = r.show.map((v) => { let s = 0, c = 0; for (const x of v) { if (!(x >= 0 && x <= 1)) bad++; s += x; if (x > 0.8) c++; } most = Math.max(most, c); return s / N; });
+    assert.equal(bad, 0, name + ': levels 0..1');
+    assert.ok(most >= 7, name + ': lights lamps right across the table (' + most + ' at once)');
+    assert.equal(r.names[r.names.length - 1], '', name + ': it ends (and the table settles)');
+    // a whole-table flash: the table's mean light rising by 0.2 (of 1) within 150 ms; never more than 3 starting in any second
+    const fl = [];
+    for (let i = 0; i < mean.length; i++) for (let j = 1; j <= 9 && i - j >= 0; j++) if (mean[i] - mean[i - j] >= 0.2 && (!fl.length || i - fl[fl.length - 1] > 9)) { fl.push(i); break; }
+    let worst = 0; fl.forEach((a, i) => { let c = 0; for (let j = i; j < fl.length && fl[j] < a + 60; j++) c++; worst = Math.max(worst, c); });
+    assert.ok(worst <= 3, name + ': at most 3 whole-table flashes a second (' + worst + ')');
+    assert.equal(JSON.stringify(runOf(name).show), JSON.stringify(r.show), name + ': the same world and clock light the same show (deterministic)');
+  }
+  // the ash cloud: after the lava pours, the table goes dark but for the volcano's own lamps (they pulse) and the lava's
+  const w = E.newWorld(2, 0, 365, 'ember'), V = w.toys.volcano; w.lanes = [true, true, true];
+  LE.level(w, 0, 'play'); w.stats.craters++; w.stats.eruptions++; V.release = w.frame + 165; V.busy = true;
+  let v; for (let t = FR; t < 2000; t += FR) { w.frame++; v = LE.level(w, t, 'play'); }
+  assert.ok(LE.groups.lanes.every((i) => v[i] < 0.15), 'under the ash the lit lanes go dark');
+  assert.ok(LE.groups.gauge.some((i) => v[i] >= 0.25), 'and the gauge still pulses');
+  // a bigger show is never cut short by a smaller one; tilt turns a show off
+  const w2 = E.newWorld(2, 0, 365, 'ember'); LE.level(w2, 0, 'play'); w2.total++; LE.level(w2, 100, 'play'); w2.stats.loops++; LE.level(w2, 200, 'play');
+  assert.equal(LE.showNow().name, 'extra', 'a loop during an extra ball show waits');
+  w2.tilted = true; assert.equal(Math.max(...LE.level(w2, 300, 'play')), 0, 'tilt: all off');
+  // still cheap with a show running
+  const w3 = E.newWorld(2, 0, 365, 'ember'), out = new Float32Array(N); LE.level(w3, 0, 'play', out); w3.total++;
+  const t0 = process.hrtime.bigint();
+  for (let i = 0; i < 20000; i++) LE.level(w3, 1 + (i % 140) * 16, 'play', out);
+  const us = Number(process.hrtime.bigint() - t0) / 1000 / 20000;
+  assert.ok(us < 20, us.toFixed(2) + ' us a call during a show');
+  console.log('Ember level() during a show: ' + us.toFixed(2) + ' us a call');
+});

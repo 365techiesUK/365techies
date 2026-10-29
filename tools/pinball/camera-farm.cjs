@@ -4,6 +4,7 @@
  *
  *   node tools/pinball/camera-farm.cjs [--balls=1000] [--mode=calm|arcade|classic] [--aspect=0.5] [--speed=2]
  *        [--latency=2] [--workers=24] [--seed=1] [--json=out.json]
+ *        [--early=0.5] [--set=key:value,...]   (the active mode's early allowance; any of its MODES knobs, to try them)
  *
  * Each drawn frame (60 a second) the game takes as many steps as the camera's timeScale allows (as the page must), then
  * the camera updates. Checked:
@@ -11,8 +12,10 @@
  *    been shown at game speed 1.0, with that storey's flipper box fully on screen (camera.js boxes(): the zone and the
  *    flippers, padded for shake and the table's nudge slide) and still (no part of the box moving more than 0.5% of
  *    the screen's height a second);
- *  - every LIVE FLIP: a press of a flipper button while a ball is in (or within 0.5 s of entering) that storey's zone:
- *    the same three things for the half second before the press;
+ *  - every LIVE FLIP: a press of a flipper button while a ball is in that storey's zone: the same three things for the
+ *    half second before the press; and every EARLY press, made before the ball enters but within the active mode's
+ *    `early` allowance (camera.js timing(): 0.5 s calm and classic, 0.1 s arcade since 29 Oct 2026): the same again
+ *    (presses made sooner than that are measured as earlyBeyondPromise, outside the pass);
  *  - emergency cuts (aim: under 1 per 100 balls), and that no "decided" drain was ever saved;
  * and reported: time away from home and zoomed, push-ins a minute, the ball off screen, the time in each state, how
  * often the look-ahead was asked and how far it stepped. */
@@ -32,8 +35,12 @@ function args() {
 
 // ------------------------------------------------------------ one game, measured
 function playGame(seed, o, acc) {
-  C.configure({ forecaster: 'sync', latency: o.latency, early: o.early == null ? 0.5 : o.early });
+  // the early-press allowance is the ACTIVE mode's (29 Oct 2026: arcade 0.1 s, calm and classic 0.5 s); --early= overrides it for that mode
+  C.configure({ forecaster: 'sync', latency: o.latency, early: o.early !== '' && o.early != null && C.MODES[o.mode].early == null ? o.early : 0.5 });
+  if (o.early !== '' && o.early != null && C.MODES[o.mode].early != null) C.MODES[o.mode].early = o.early;
+  if (o.set) String(o.set).split(',').forEach((kv) => { const p = kv.split(':'); C.MODES[o.mode][p[0]] = isNaN(+p[1]) ? p[1] : +p[1]; });   // --set=look:12,spare:0.2 tries the mode's knobs
   C.setMode(o.mode); C.setAspect(o.aspect); C.reset();
+  const EARLY = Math.round(C.timing(o.mode).early * 60);   // steps: an early press made up to this long before a ball arrives is checked
   const W = E.newWorld(o.speed, null, seed, 'ember'), bot = Messy.create(seed), Bt = E.table(W.tableId), T = Bt.T;
   const boxes = C.boxes(W.tableId), NS = T.storeys.length, home = C.home(o.aspect, W.tableId);
   const ring = [];   // the drawn frames: { g: game frame when drawn, shot, ts, on: [box fully on screen per storey], pts }
@@ -71,7 +78,7 @@ function playGame(seed, o, acc) {
   }
   function tally(kind, res) {
     if (res.skip) return;
-    if ((!res.ts || !res.on || !res.still) && !res.cut && !recentCut() && acc.badList.length < 30) acc.badList.push({ kind, seed, frame: W.frame, ts: res.ts, on: res.on, still: res.still, states: res.states });
+    if ((!res.ts || !res.on || !res.still) && !res.cut && !recentCut() && kind !== 'beyond' && acc.badList.length < 30) acc.badList.push({ kind, seed, frame: W.frame, ts: res.ts, on: res.on, still: res.still, states: res.states });
     acc[kind].n++;
     if (!res.ts) acc[kind].ts++;
     if (!res.on) acc[kind].off++;
@@ -135,7 +142,8 @@ function playGame(seed, o, acc) {
         let lead = -1;
         for (let g = pf.f; g <= pf.f + 30; g++) if (zoneHist[g] & (1 << s)) { lead = g - pf.f; break; }
         if (lead === 0) { acc.liveFlips++; tally('flip', pf.res[s]); }
-        else if (lead > 0) { acc.earlyFlips++; const r = pf.res2[s]; if (!r.skip && explained(pf.f, true, pf.f + lead)) r.cut = true; tally('early', r); }
+        else if (lead > 0 && lead <= EARLY) { acc.earlyFlips++; const r = pf.res2[s]; if (!r.skip && explained(pf.f, true, pf.f + lead)) r.cut = true; tally('early', r); }
+        else if (lead > 0) { acc.earlyBeyond++; const r = pf.res2[s]; if (!r.skip && explained(pf.f, true, pf.f + lead)) r.cut = true; tally('beyond', r); }   // pressed sooner than the mode promises a still picture for (arcade: more than 0.1 s early): measured, not in the pass
       }
     }
   }
@@ -175,8 +183,8 @@ function playGame(seed, o, acc) {
 function blank() {
   const k = () => ({ n: 0, bad: 0, ts: 0, off: 0, moving: 0, badAfterCut: 0 });
   return { games: 0, balls: 0, gameFrames: 0, drawn: 0, away: 0, zoomed: 0, slow: 0, states: {}, ballFrames: 0, ballOff: 0,
-    entries: 0, flips: 0, liveFlips: 0, entry: k(), flip: k(), cuts: 0, emerg: 0, short: 0, cutsCam: 0, pushIns: 0, asks: 0, steps: 0,
-    decidedSaved: 0, decidedN: 0, badList: [], earlyFlips: 0, early: k(), craters: 0, nudges: 0, tilts: 0, multiFrames: 0, scores: [] };
+    entries: 0, flips: 0, liveFlips: 0, entry: k(), flip: k(), beyond: k(), cuts: 0, emerg: 0, short: 0, cutsCam: 0, pushIns: 0, asks: 0, steps: 0,
+    decidedSaved: 0, decidedN: 0, badList: [], earlyFlips: 0, earlyBeyond: 0, early: k(), craters: 0, nudges: 0, tilts: 0, multiFrames: 0, scores: [] };
 }
 function merge(a, b) {
   for (const k of Object.keys(b)) {
@@ -194,6 +202,8 @@ if (!isMainThread) {
   parentPort.postMessage(acc);
 } else {
   const o = args(), t0 = Date.now();
+  if (o.set) String(o.set).split(',').forEach((kv) => { const p = kv.split(':'); C.MODES[o.mode][p[0]] = isNaN(+p[1]) ? p[1] : +p[1]; });   // so config.timing reports what the workers ran
+  if (o.early !== '' && o.early != null) { if (C.MODES[o.mode].early != null) C.MODES[o.mode].early = o.early; else C.configure({ early: o.early }); }
   // about 4 balls a game (3 and the saves / extras): give each worker enough seeds, stop at its quota of balls
   const nW = Math.max(1, Math.min(o.workers, Math.ceil(o.balls / 20)));
   const quota = Math.ceil(o.balls / nW), jobs = [];
@@ -205,9 +215,9 @@ if (!isMainThread) {
     const a = parts.reduce(merge, blank()), pct = (x, n) => (100 * x / Math.max(1, n)).toFixed(1) + '%';
     const realMin = a.drawn / 3600, sc = a.scores.sort((x, y) => x - y);
     const out = {
-      config: { mode: o.mode, aspect: o.aspect, speed: o.speed, latency: o.latency },
+      config: { mode: o.mode, aspect: o.aspect, speed: o.speed, latency: o.latency, set: o.set || '', timing: C.timing(o.mode) },
       games: a.games, balls: a.balls, gameMinutes: +(a.gameFrames / 3600).toFixed(1), realMinutes: +realMin.toFixed(1),
-      approaches: a.entry, liveFlips: a.flip, earlyFlips: a.early, flips: a.flips,
+      approaches: a.entry, liveFlips: a.flip, earlyFlips: a.early, earlyBeyondPromise: a.beyond, flips: a.flips,
       cuts: a.cuts, cutsPer100Balls: +(100 * a.cuts / Math.max(1, a.balls)).toFixed(2), emergencies: a.emerg, emergenciesPer100Balls: +(100 * a.emerg / Math.max(1, a.balls)).toFixed(2), shortStills: a.short, shortStillsPer100Balls: +(100 * a.short / Math.max(1, a.balls)).toFixed(2), decidedDrains: a.decidedN, decidedSaved: a.decidedSaved,
       away: pct(a.away, a.drawn), zoomed: pct(a.zoomed, a.drawn), slowMotion: pct(a.slow, a.drawn), pushInsPerMin: +(a.pushIns / Math.max(1e-9, realMin)).toFixed(2),
       ballOffScreen: pct(a.ballOff, a.ballFrames), states: Object.fromEntries(Object.entries(a.states).map(([k, v]) => [k, pct(v, a.drawn)])),
