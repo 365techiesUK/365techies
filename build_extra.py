@@ -28997,8 +28997,12 @@ def write_portal_page():
       for (var ym = ceCur(first); ym <= cur; ym = ceNext(ym)) {
         var dd = ceDue(ym), seen = mon[ym] || '', res;
         if (!seen) { var later = Object.keys(mon).sort().filter(function (k) { return k > ym; }); seen = later.length ? mon[later[0]] : ''; }
-        if (!seen) res = today > dd ? '<b class="bad">not seen installed &mdash; overdue</b>' : 'not in yet';
-        else if (seen <= first && ym <= ceCur(first)) res = 'already installed when the record began (' + ceDay(first) + ')';
+        // 36.7 audit: a month with no reading between release and deadline is "no record", never "overdue" or "late"
+        var pt = ceIso(cePt(ym)), upto = dd < today ? dd : today, rec = keys.some(function (k) { return k >= pt && k <= upto; }), known = Object.keys(mon).length > 0;
+        if (!known) res = 'couldn&rsquo;t tell &mdash; Windows Update&rsquo;s history didn&rsquo;t name the monthly update';
+        else if (seen && seen <= first && ym <= ceCur(first)) res = 'already installed when the record began (' + ceDay(first) + ')';
+        else if (!rec) res = 'no record for this period (not checked between release and deadline)';
+        else if (!seen) res = today > dd ? '<b class="bad">not seen installed &mdash; overdue</b>' : 'not in yet';
         else res = 'first seen installed ' + ceDay(seen) + (seen <= dd ? ' &mdash; <b class="ok">on time</b>' : ' &mdash; <b class="bad">late</b>');
         var tot = 0, rd = 0; keys.forEach(function (k) { if (k.slice(0, 7) === ym) { tot++; if (+days[k].slice(5) === 0) rd++; } });
         rows += '<tr><td>' + ceMonth(ym) + '</td><td>' + ceDay(dd) + '</td><td>' + res + '</td><td>' + (tot ? rd + ' of ' + tot : '&ndash;') + '</td></tr>';
