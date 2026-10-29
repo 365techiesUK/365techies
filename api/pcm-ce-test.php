@@ -5,7 +5,8 @@ $fails = 0;
 function ck($name, $ok) { global $fails; echo ($ok ? 'PASS ' : 'FAIL ') . $name . "\n"; if (!$ok) $fails++; }
 
 ck('a business plan with CE Ready on', pce_ready(array('tier'=>'pro', 'plan'=>'business', 'ceready'=>true)));
-ck('a business plan with it off', !pce_ready(array('tier'=>'pro', 'plan'=>'business')));
+ck('part of every business plan (no switch needed)', pce_ready(array('tier'=>'pro', 'plan'=>'business')));
+ck('switched off for one customer', !pce_ready(array('tier'=>'pro', 'plan'=>'business', 'ceready'=>false)));
 ck('never on a home plan', !pce_ready(array('tier'=>'pro', 'plan'=>'home', 'ceready'=>true)));
 ck('never for a free member', !pce_ready(array('tier'=>'free', 'plan'=>'business', 'ceready'=>true)));
 

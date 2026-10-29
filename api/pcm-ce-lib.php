@@ -2,8 +2,8 @@
 /**
  * Cyber Essentials Ready (29 Oct 2026, app 36.7). Owner: "a business one ... which basically does all the cyber essentials".
  *
- * A service on a BUSINESS support plan, never a paid unlock in the app: the owner switches it on per customer in pcm-admin
- * ('ceready', only offered on a business plan). Then the check-in reply says ceready=1, the app switches its year-round
+ * Part of every BUSINESS support plan (owner, 29 Oct 2026: "I do want it to be part of the business plan"), never a paid unlock in
+ * the app. On for every business customer unless the owner switches it off for one in pcm-admin ('ceready' === false). Then the check-in reply says ceready=1, the app switches its year-round
  * watch on (CyberEss.cs CeWatch) and says we watch the PC, and the portal shows the business every PC's readiness and the
  * month-by-month record as an evidence pack.
  *
@@ -18,7 +18,7 @@ if (!defined('PCM_CE_LIB')) {
     define('PCM_CE_LIB', 1);
 
 function pce_ready($c) {
-    return is_array($c) && (($c['tier'] ?? 'free') === 'pro') && ((string)($c['plan'] ?? '') === 'business') && !empty($c['ceready']);
+    return is_array($c) && (($c['tier'] ?? 'free') === 'pro') && ((string)($c['plan'] ?? '') === 'business') && (($c['ceready'] ?? true) !== false);
 }
 
 // $now is the check-in's gmdate('Y-m-d H:i'); call after ce/cen are stored
