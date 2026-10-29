@@ -35326,6 +35326,16 @@ def write_portal_page():
     if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + (d.vn || d.ver) + ')', 'It updates itself when it next restarts.']);
     return w;
   }
+  // 29 Oct 2026 (app 36.7, CyberEss.cs): "ready" or what needs attention, by area; never "compliant" - the app checks
+  // what one PC can show (the router, cloud two-step sign-in and policies are checked with the customer)
+  function pcCe(d) {
+    var names = ['firewall', 'set-up', 'updates', 'accounts', 'malware'], bad = [], unk = [];
+    String(d.ce || '').split('').forEach(function (c, i) { if (c === 'a') bad.push(names[i]); else if (c === 'u') unk.push(names[i]); });
+    var t = !bad.length ? '<span style="color:var(--pok, #22c55e)">ready on everything the PC can show</span>'
+      : '<span style="color:var(--pwarn)">' + d.cen + ' to fix</span> \u2014 ' + bad.join(', ');
+    if (unk.length) t += ' <span class="quiet" style="font-size:.85rem">(couldn\u2019t check ' + unk.join(', ') + ')</span>';
+    return t + (d.cev ? ' <span class="quiet" style="font-size:.85rem">\u00b7 v' + esc(d.cev.charAt(0) + '.' + d.cev.slice(1)) + '</span>' : '');
+  }
   function pcOfc(o) {
     if (!o) return '';
     var p = String(o).split(':'), id = p[0] || '', st = p[1] || '', till = p[2] || '';
@@ -35431,6 +35441,8 @@ def write_portal_page():
       + (d.dtemp > 0 ? '<dt>Temperature</dt><dd>hottest drive ' + d.dtemp + '\\u00b0C (limit ' + d.dwarn + '\\u00b0C)' + (d.heatslow ? ' \\u00b7 <span style="color:var(--pwarn)">Windows slowing it for heat</span>' : '') + '</dd>' : '')
       + (d.espmb > 0 && d.espfree >= 0 ? '<dt>Start-up partition</dt><dd>' + espWords(d) + (espFull(d) ? ' <span style="color:var(--pwarn)">\\u2014 too full for big updates</span>' : '') + '</dd>' : '')
       + (d.ofc ? '<dt>Office</dt><dd>' + pcOfc(d.ofc) + '</dd>' : '')
+      // 29 Oct 2026 (app 36.7): Cyber Essentials readiness, area by area (r ready, a attention, u couldn't check)
+      + (d.ce ? '<dt>Cyber Essentials</dt><dd>' + pcCe(d) + '</dd>' : '')
       + '<dt>Backup</dt><dd>' + esc(bk[1]) + '</dd>'
       + (d.batt ? '<dt>Battery</dt><dd>' + d.batt + '% health</dd>' : '')
       + (d.upd ? '<dt>Restarted</dt><dd>' + d.upd + ' day' + (d.upd === 1 ? '' : 's') + ' ago</dd>' : '')

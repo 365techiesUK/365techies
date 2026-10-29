@@ -3544,6 +3544,8 @@ function staff_pc_detail($db, $k, $pc, $cid2) {
         'help_done' => (isset($m['help_done']) && is_array($m['help_done'])) ? $m['help_done'] : null, 'shot' => (string)$g('shot', ''),
         'backup' => !empty($m['backup']), 'bstate' => (string)$g('bstate', ''), 'bwhen' => (string)$g('bwhen', ''), 'bkind' => (string)$g('bkind', ''), 'bnote' => (string)$g('bnote', ''),
         'wv' => (string)$g('wv', ''), 'sbc' => (string)$g('sbc', ''), 'ofc' => (string)$g('ofc', ''),
+        // app 36.7: Cyber Essentials readiness per area (r/a/u), how many to fix, requirements version (33 = v3.3)
+        'ce' => (string)$g('ce', ''), 'cen' => (int)$g('cen', 0), 'cev' => (string)$g('cev', ''),
         // app 36.4: Windows' start-up partition, size in MB and free space in KB (-1 = not reported)
         'espmb' => isset($m['espmb']) ? (int)$m['espmb'] : -1, 'espfree' => isset($m['espfree']) ? (int)$m['espfree'] : -1,
         // app 36.4: the hottest drive and its warning level (-1 = not reported), Windows slowing it for heat

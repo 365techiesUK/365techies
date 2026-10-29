@@ -318,6 +318,9 @@ if ($action === 'checkin') {
         // still waiting. Only a v31+ app sends them; an older app's check-in leaves what was there.
         if (isset($in['wv'])) $c['machines'][$machine]['wv'] = substr(preg_replace('/[^A-Za-z0-9]/', '', (string)$in['wv']), 0, 8);
         if (isset($in['sbc'])) { $sbc = (string)$in['sbc']; $c['machines'][$machine]['sbc'] = in_array($sbc, array('Updated', 'InProgress', 'NotStarted', 'Error', 'nosb', ''), true) ? $sbc : ''; }
+        // 29 Oct 2026 (36.7): Cyber Essentials readiness - one letter per area (r ready, a attention, u couldn't check: firewall,
+        // set-up, updates, accounts, malware), how many things need attention, and the requirements version (33 = v3.3)
+        if (isset($in['ce'])) { $c['machines'][$machine]['ce'] = substr(preg_replace('/[^rau]/', '', (string)$in['ce']), 0, 5); $c['machines'][$machine]['cen'] = max(0, min(99, intval($in['cen'] ?? 0))); $c['machines'][$machine]['cev'] = substr(preg_replace('/[^0-9]/', '', (string)($in['cev'] ?? '')), 0, 3); $c['machines'][$machine]['ceat'] = $now; }
         // 9 Oct 2026 (owner: "more information on each customer's PC ... spec ... how quickly does it refresh"): WHY there is
         // or isn't a backup - every app since v28 sends bstate, the server used to drop it, so the portal could only say
         // "no backup" for a backup that ran but failed. v37 adds when, which kind, its own words, and the PC's spec and
@@ -611,6 +614,7 @@ if ($action === 'overview') {
             'avon'=>($avr==='on'), 'avoff'=>($avr==='off'), 'w10'=>!empty($m['w10']),
             'reboot'=>!empty($m['reboot']), 'rmaint'=>!empty($m['rmaint']),
             'wv'=>(string)($m['wv'] ?? ''), 'sbc'=>(string)($m['sbc'] ?? ''),   // v31: stored sanitised at check-in
+            'ce'=>(string)($m['ce'] ?? ''), 'cen'=>intval($m['cen'] ?? 0), 'cev'=>(string)($m['cev'] ?? ''), 'ceat'=>(string)($m['ceat'] ?? ''),   // 36.7: Cyber Essentials readiness
             'ofc'=>(string)($m['ofc'] ?? ''),   // v32: Office licence, stored sanitised at check-in
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
