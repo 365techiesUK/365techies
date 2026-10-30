@@ -24,6 +24,7 @@ import bournemouth_data     # Bournemouth365 section, page 1 of 5: Friday Firewo
 from ps5_emulator_post import PS5_EMULATOR_POST   # IT Advice post: PS5 emulators, real or fake (10 Oct 2026)
 import tips_by_email        # /tips-by-email/ + the sign-up box under every article (10 Oct 2026; double opt-in via api/t1-signup.php)
 import techies_one_boxes    # Techies One Mail box on the 9 email fix pages it genuinely helps (10 Oct 2026; a write_all page filter)
+import health_check_links   # links to /free-pc-health-check/ on busy pages with none in the article (30 Oct 2026)
 import pcm_problem_boxes   # 365 PC Manager boxes on 12 existing problem pages (13 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)
 import techies_pdf_page     # /techies-pdf/ - the Techies PDF product page and download (18 Oct 2026)
