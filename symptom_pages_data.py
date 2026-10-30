@@ -2116,6 +2116,258 @@ NOSOUND = {
 }
 
 
+# ============================================================ 27. Camera or microphone not working
+# 30 Oct 2026 (owner: "now do 4, 5 and 6"; seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "laptop camera not working"
+# 1.6K (UK 249), "camera not working windows 11" 514, "webcam not working" 400, "camera privacy settings windows 11" 291,
+# "microphone not working windows 11" 793, "microphone not working on laptop" 528; YouTube top videos ~230K views (median).
+# Steps as Microsoft Support (Camera doesn't work in Windows; Fix microphone problems): Settings > Privacy & security > Camera /
+# Microphone (Camera access, Let apps access, Let desktop apps access); Settings > System > Sound > Input; Device Manager >
+# Cameras. The app (CamMic.cs + Sound.cs, build 47): no camera found (laptop: the slider or camera key), switched off in Device
+# Manager, a device problem code, Windows' privacy switch off for every program, another program using it now; which programs
+# used camera/mic and when; the Sound check's microphone test with a live bar.
+CAMMIC = {
+    'slug': 'camera-or-microphone-not-working',
+    'title': 'Camera or Microphone Not Working on Your PC? How to Fix It',
+    'metaDesc': 'Laptop camera or microphone not working in Teams, Zoom or anything else? Check Windows&rsquo; privacy switches, the camera slider or key, the right device and the driver.',
+    'ogTitle': 'Camera or microphone not working on your PC? How to fix it',
+    'crumbName': 'Camera or Microphone Not Working',
+    'eyebrow': '// CAN&rsquo;T SEE YOU? CAN&rsquo;T HEAR YOU?',
+    'h1': 'Camera or <em class="grad grad--cyan">microphone</em> not working? Fix it',
+    'lede': 'The call starts, but the picture is black, says &ldquo;no camera found&rdquo;, or nobody can hear you. Most of the time it&rsquo;s one of three things: Windows&rsquo; own privacy switch, a slider or key on the laptop, or the call program using the wrong device. Here&rsquo;s the order to check them.',
+    'chips': ['Teams, Zoom, WhatsApp and more', 'Windows 11 and 10', 'Laptops and webcams'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the quick checks', '#s1'],
+    'ctaHead': 'Still can&rsquo;t see or hear you?',
+    'ctaSub': 'With your permission we connect to your Windows PC, get the camera and microphone working, and test them on a call with you. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Black picture', 'Look for a slider over the lens, or a key with a camera picture on it.'),
+        ('Privacy switch', 'Settings, Privacy &amp; security, Camera (or Microphone): access on, for apps and for desktop apps.'),
+        ('One program at a time', 'Many cameras work in one program at a time: close the others.'),
+        ('The wrong device', 'In Teams or Zoom, pick the right camera, microphone and speaker in its own settings.'),
+        ('&ldquo;No camera found&rdquo;', 'Device Manager: is it switched off, or showing a warning?'),
+        ('Test it', 'Our free webcam and microphone test, in your browser.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; QUICK CHECKS', 'h2': 'Try these first',
+         'html': '<ol>'
+                 '<li><strong>Black picture?</strong> Many laptops have a little <strong>slider over the lens</strong>, or a key with a camera picture on it that switches the camera off. Slide it open or press the key.</li>'
+                 '<li><strong>Close other programs that might be using it</strong>: another call program, the Camera app, a browser tab with a video call. Many cameras only work in one program at a time.</li>'
+                 '<li><strong>A plug-in webcam or headset?</strong> Unplug it, wait ten seconds and plug it into a different USB socket, straight into the PC rather than a hub.</li>'
+                 '<li><strong>Restart the computer</strong> (Restart, not Shut down).</li>'
+                 '<li><strong>Test it on its own:</strong> our <a href="/webcam-mic-test/">webcam and microphone test</a> shows the picture and a sound level in your browser. If it works there, the problem is the call program&rsquo;s settings (step 4).</li>'
+                 '</ol>'},
+        {'eyebrow': '/02 &mdash; WINDOWS&rsquo; PRIVACY SWITCHES', 'h2': 'Check Windows hasn&rsquo;t switched them off',
+         'html': '<p>Windows has its own on/off switches for the camera and microphone, and when they&rsquo;re off every program sees nothing at all. They get switched off by accident, by a privacy tool or after an update.</p>'
+                 '<ol>'
+                 '<li><strong>Windows 11:</strong> Settings, <strong>Privacy &amp; security</strong>, <strong>Camera</strong>. Switch on <strong>Camera access</strong> and <strong>Let apps access your camera</strong>, then further down <strong>Let desktop apps access your camera</strong>: Zoom, the Teams program and most browsers are desktop apps.</li>'
+                 '<li>Then the same for <strong>Microphone</strong>, under Privacy &amp; security.</li>'
+                 '<li><strong>Windows 10:</strong> Settings, <strong>Privacy</strong>, <strong>Camera</strong> (and <strong>Microphone</strong>): &ldquo;Allow access on this device&rdquo; (press Change), &ldquo;Allow apps to access&rdquo; and &ldquo;Allow desktop apps to access&rdquo;.</li>'
+                 '</ol>'
+                 '<p><strong>Security software can block it too.</strong> Some antivirus programs have their own webcam protection: if it asks whether a program may use the camera, allow the one you trust.</p>'},
+        {'eyebrow': '/03 &mdash; THE MICROPHONE', 'h2': 'When they can&rsquo;t hear you',
+         'html': '<ol>'
+                 '<li><strong>Muted?</strong> Check the mute button in the call itself, the mute switch on a headset&rsquo;s cable, and any microphone key on the laptop (often with a light).</li>'
+                 '<li><strong>The right microphone:</strong> Settings, System, Sound, under <strong>Input</strong>, pick the one you&rsquo;re talking into: a headset, a webcam&rsquo;s microphone or the laptop&rsquo;s own.</li>'
+                 '<li><strong>Test it:</strong> on the same Input page, choose the microphone and speak: the bar should move. Turn its <strong>Input volume</strong> up if it barely moves.</li>'
+                 '</ol>'},
+        {'eyebrow': '/04 &mdash; THE CALL PROGRAM', 'h2': 'Pick the right devices in Teams, Zoom or WhatsApp',
+         'html': '<p>Call programs choose their own camera, microphone and speaker, and don&rsquo;t always follow Windows:</p>'
+                 '<ul>'
+                 '<li><strong>Teams:</strong> Settings, <strong>Devices</strong> (or the arrow next to the camera and microphone buttons during a call).</li>'
+                 '<li><strong>Zoom:</strong> Settings, <strong>Video</strong> and <strong>Audio</strong>, or the small arrows next to Start Video and Mute.</li>'
+                 '<li><strong>WhatsApp and browsers:</strong> when the website asks to use the camera or microphone, choose Allow. Blocked by mistake? Click the padlock or camera icon at the left of the address bar and allow it.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; NO CAMERA FOUND', 'h2': 'When Windows can&rsquo;t find the camera at all',
+         'html': '<ol>'
+                 '<li>Right-click Start and open <strong>Device Manager</strong>. Open <strong>Cameras</strong> (or <strong>Imaging devices</strong>).</li>'
+                 '<li><strong>A down arrow on it</strong> means it&rsquo;s switched off: right-click it, <strong>Enable device</strong>.</li>'
+                 '<li><strong>A yellow warning sign:</strong> right-click it, <strong>Uninstall device</strong>, then restart: Windows sets it up again by itself. Still showing? Settings, Windows Update, Advanced options, Optional updates, or the PC maker&rsquo;s support site.</li>'
+                 '<li><strong>Not listed at all</strong> on a laptop: check the slider and camera key again, and look in the PC&rsquo;s start-up settings for a camera switch. Still nothing usually means a hardware fault.</li>'
+                 '</ol>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check them', 'html': '__APP_BOX_CAMMIC__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' If the camera or microphone has failed, we can fit a replacement or set up a plug-in webcam or headset for you: see <a href="/computer-repairs/">computer repairs</a>.')},
+    ],
+    'howToName': 'How to fix a camera or microphone that isn’t working on a Windows PC',
+    'howToSteps': [
+        {'name': 'Check the slider and keys', 'text': 'Open any slider over the lens, press the camera or microphone key if there is one, and close other programs that might be using the camera.'},
+        {'name': 'Switch on Windows’ privacy settings', 'text': 'Settings, Privacy & security, Camera and Microphone: switch on access, Let apps access and Let desktop apps access.'},
+        {'name': 'Pick the right microphone', 'text': 'Settings, System, Sound, Input: choose the microphone you talk into and check the bar moves.'},
+        {'name': 'Pick the devices in the call program', 'text': 'In Teams, Zoom or the browser, choose the same camera, microphone and speaker, and allow access when asked.'},
+        {'name': 'Check Device Manager', 'text': 'Under Cameras, enable it if it is switched off, or uninstall it and restart if it shows a warning.'},
+    ],
+    'faqs': [
+        {'q': 'Why is my laptop camera showing a black screen?', 'a': '<p>Usually a slider over the lens or a camera key has switched it off, or another program is using it. Open the slider, press the key, close other call programs and try again.</p>'},
+        {'q': 'Why does Teams or Zoom say no camera found?', 'a': '<p>Check Windows&rsquo; privacy settings first: Settings, Privacy &amp; security, Camera, with Let desktop apps access your camera switched on. Then pick the camera in the program&rsquo;s own settings, and look in Device Manager if it&rsquo;s still missing.</p>'},
+        {'q': 'Why can&rsquo;t people hear me on calls?', 'a': '<p>Check you aren&rsquo;t muted in the call or on the headset, that the right microphone is chosen in Settings, System, Sound, Input and in the call program, and that the microphone privacy switch is on.</p>'},
+        {'q': 'Where are the camera privacy settings in Windows 11?', 'a': '<p>Settings, Privacy &amp; security, Camera. Switch on Camera access, Let apps access your camera and Let desktop apps access your camera. The microphone has the same three, under Microphone.</p>'},
+        {'q': 'Can I test my camera and microphone online?', 'a': '<p>Yes: our free <a href="/webcam-mic-test/">webcam and microphone test</a> shows the picture and a sound level in your browser. Nothing is recorded or sent.</p>'},
+        {'q': 'Can I see which programs used my camera?', 'a': '<p>Yes. Windows keeps a record: Settings, Privacy &amp; security, Camera, Recent activity. Our free app lists it too, with when each program last used the camera and microphone.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: settings, drivers and call programs are a remote job, and we test it on a call with you. A failed camera or microphone needs a repair or a plug-in replacement.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/webcam-mic-test/">webcam and microphone test</a>, <a href="/no-sound-on-computer/">no sound on your computer</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">Bluetooth headphones sound muffled</a> and <a href="/youve-been-hacked-email-bitcoin-scam/">the &ldquo;I recorded you through your webcam&rdquo; email</a>.</p>',
+}
+
+# ============================================================ 28. Memory integrity is off
+# 30 Oct 2026 (seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "memory integrity" 17.6K (UK 1.9K), "core isolation" 13.5K
+# (UK 902), "core isolation memory integrity" 1K, "smartscreen" 7.7K, "user account control" 6.1K, "show file extensions
+# windows 11" 1.1K (UK 312). As Microsoft Support (Core isolation / memory integrity): Windows Security > Device security > Core
+# isolation details > Memory integrity; a restart; incompatible drivers stop it switching on (Review incompatible drivers); on
+# by default on many new PCs; a possible slowdown on older processors. The app (WinSafety.cs / Ui.cs, build 47): memory integrity
+# on, or "off (optional)" as advice - never a mark - with a button to Device security; SmartScreen (and a policy switching it off),
+# the "allow changes?" prompt, hidden file name endings (one switch the customer presses), antivirus and tamper protection.
+MEMINT = {
+    'slug': 'memory-integrity-is-off',
+    'title': 'Memory Integrity Is Off? What It Means and Whether to Turn It On',
+    'metaDesc': 'Windows Security says memory integrity (core isolation) is off? What it protects, how to switch it on, and what to do about incompatible drivers that stop it.',
+    'ogTitle': 'Memory integrity is off? What it means and whether to turn it on',
+    'crumbName': 'Memory Integrity Is Off',
+    'eyebrow': '// A YELLOW WARNING IN WINDOWS SECURITY?',
+    'h1': 'Memory integrity is <em class="grad grad--cyan">off</em>: should you turn it on?',
+    'lede': 'Windows Security shows a yellow warning: &ldquo;Memory integrity is off. Your device may be vulnerable.&rdquo; It&rsquo;s worth switching on if your PC can take it, it isn&rsquo;t an emergency if it can&rsquo;t, and the usual reason it won&rsquo;t switch on is an old driver. Here&rsquo;s what it does, how to switch it on, and the other Windows safety settings worth a look while you&rsquo;re there.',
+    'chips': ['Windows 11 and 10', 'Incompatible drivers', 'Windows&rsquo; other safety switches'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Switch it on', '#s2'],
+    'ctaHead': 'Won&rsquo;t switch on?',
+    'ctaSub': 'With your permission we connect to your Windows PC, find the driver that&rsquo;s blocking it and sort it safely, backed up first. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it is', 'Part of core isolation: a protected area that stops harmful code getting into the heart of Windows.'),
+        ('Worth it?', 'Yes, if the PC can take it. Off isn&rsquo;t an emergency: your antivirus still protects you.'),
+        ('Switch it on', 'Windows Security, Device security, Core isolation details, Memory integrity, then restart.'),
+        ('Won&rsquo;t switch on', 'Usually an incompatible driver, listed under Review incompatible drivers.'),
+        ('Slower?', 'Hardly noticeable on modern PCs; possibly a little on older processors and in some games.'),
+        ('Also check', 'SmartScreen, the &ldquo;allow changes?&rdquo; prompt and file name endings.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT IS', 'h2': 'What memory integrity does',
+         'html': '<p>Memory integrity is part of <strong>core isolation</strong>. It uses the processor&rsquo;s virtualisation features to keep a walled-off area where Windows checks drivers and other low-level code before it runs, so a harmful driver can&rsquo;t slip into the heart of Windows and take it over.</p>'
+                 '<p>Many new PCs come with it switched on. It&rsquo;s often off on PCs that were upgraded from older Windows, or where an older driver can&rsquo;t work with it. <strong>Off doesn&rsquo;t mean unprotected</strong>: your antivirus, SmartScreen and Windows&rsquo; other defences still work. It&rsquo;s an extra layer, and worth having when the PC can.</p>'},
+        {'eyebrow': '/02 &mdash; SWITCH IT ON', 'h2': 'How to switch memory integrity on',
+         'html': '<ol>'
+                 '<li>Click Start, type <strong>Windows Security</strong> and open it.</li>'
+                 '<li>Choose <strong>Device security</strong>, then <strong>Core isolation details</strong>.</li>'
+                 '<li>Switch <strong>Memory integrity</strong> on, and say Yes if Windows asks for permission.</li>'
+                 '<li><strong>Restart the PC</strong> when it asks. It only takes effect after the restart.</li>'
+                 '</ol>'
+                 '<p>If the switch is greyed out, or it says <strong>Incompatible drivers</strong>, go to the next step. If the page says your PC doesn&rsquo;t support it, virtualisation may be switched off in the PC&rsquo;s start-up settings, or the PC is too old for it.</p>'},
+        {'eyebrow': '/03 &mdash; INCOMPATIBLE DRIVERS', 'h2': 'When an incompatible driver stops it',
+         'html': '<p>Click <strong>Review incompatible drivers</strong> on the same page. Each line names a driver file, such as oem42.inf, and often its maker. They&rsquo;re usually left behind by old hardware or software: a printer, a scanner, a game controller, an old VPN or antivirus.</p>'
+                 '<ol>'
+                 '<li><strong>Update it:</strong> look for a newer version on the maker&rsquo;s site, or in Settings, Windows Update, Advanced options, Optional updates. A newer driver often works with memory integrity.</li>'
+                 '<li><strong>Remove what you no longer use:</strong> uninstall the old program in Settings, Apps, or the device in Device Manager (tick the box to delete its driver if offered), then restart and try again.</li>'
+                 '<li><strong>Still listed?</strong> Removing a leftover driver by its file name is possible with Windows&rsquo; own tools, but remove the wrong one and a device stops working. That&rsquo;s one we&rsquo;d do with you, backed up first.</li>'
+                 '</ol>'
+                 '<p><strong>If the driver is for something you still need</strong> and there&rsquo;s no newer version, leaving memory integrity off is a reasonable choice. Keep everything else up to date.</p>'},
+        {'eyebrow': '/04 &mdash; WHILE YOU&rsquo;RE THERE', 'h2': 'Windows&rsquo; other safety switches worth checking',
+         'html': '<ul>'
+                 '<li><strong>SmartScreen</strong> (Windows Security, App &amp; browser control, <strong>Reputation-based protection</strong>): warns before you open a download or website known to be harmful. Keep its switches on.</li>'
+                 '<li><strong>The &ldquo;allow this app to make changes?&rdquo; question</strong> (User Account Control): leave it at the default, <strong>Notify me only when apps try to make changes</strong>. It&rsquo;s the moment to stop and think before something installs. Click Start and type <strong>UAC</strong> to see the setting.</li>'
+                 '<li><strong>File name endings:</strong> Windows hides them, so a fake &ldquo;invoice.pdf.exe&rdquo; looks like a PDF. In File Explorer, <strong>View</strong>, <strong>Show</strong>, tick <strong>File name extensions</strong> (Windows 10: the View tab).</li>'
+                 '<li><strong>Tamper protection</strong> (Windows Security, Virus &amp; threat protection settings): stops harmful programs switching Microsoft Defender off. Keep it on if Defender is your antivirus.</li>'
+                 '</ul>'
+                 '<p>Smart App Control is in the same place; see <a href="/smart-app-control-blocked-an-app/">Smart App Control blocked an app</a> before changing it.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check them all', 'html': '__APP_BOX_MEMINT__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We find the driver that&rsquo;s blocking memory integrity, update or remove it safely, and check Windows&rsquo; other protections while we&rsquo;re there.')},
+    ],
+    'howToName': 'How to switch on memory integrity in Windows',
+    'howToSteps': [
+        {'name': 'Open core isolation', 'text': 'Open Windows Security, then Device security, then Core isolation details.'},
+        {'name': 'Switch it on', 'text': 'Switch Memory integrity on and restart the PC.'},
+        {'name': 'Review incompatible drivers', 'text': 'If it will not switch on, click Review incompatible drivers to see which driver files are blocking it.'},
+        {'name': 'Update or remove them', 'text': 'Get a newer driver from the maker or Windows Update, or uninstall the old program or device you no longer use, then restart and try again.'},
+    ],
+    'faqs': [
+        {'q': 'Should I turn memory integrity on?', 'a': '<p>Yes, if your PC can take it: it&rsquo;s an extra layer of protection against harmful drivers. If an incompatible driver you still need stops it, leaving it off is reasonable; your antivirus and Windows&rsquo; other defences still protect you.</p>'},
+        {'q': 'Why won&rsquo;t memory integrity turn on?', 'a': '<p>Usually an incompatible driver. Click Review incompatible drivers in Core isolation details to see which. Update it from the maker, or remove the old program or device it belongs to, then restart.</p>'},
+        {'q': 'Does memory integrity slow down my PC?', 'a': '<p>On modern PCs the difference is hard to notice. On older processors, and in some games, it can cost a little speed.</p>'},
+        {'q': 'What is core isolation?', 'a': '<p>A Windows security feature that uses the processor&rsquo;s virtualisation to keep important parts of Windows in a protected area. Memory integrity is its main switch.</p>'},
+        {'q': 'Is it safe to delete an incompatible driver?', 'a': '<p>Only if you know what it belongs to and no longer use it. Removing the driver for something you still need stops that device working. Uninstalling the program or device in Settings or Device Manager is the safer way.</p>'},
+        {'q': 'Memory integrity is off: am I hacked?', 'a': '<p>No. It just means an extra protection isn&rsquo;t switched on. It&rsquo;s off on many PCs. If you&rsquo;re worried about being hacked, see <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a>.</p>'},
+        {'q': 'Can you sort it remotely?', 'a': '<p>Yes. With your permission we connect, find the blocking driver, update or remove it safely, and switch memory integrity on.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/smart-app-control-blocked-an-app/">Smart App Control blocked an app</a>, <a href="/antimalware-service-executable-high-cpu/">Antimalware Service Executable slowing the PC</a>, <a href="/mcafee-or-norton-expired-do-i-need-to-renew/">McAfee or Norton expired?</a> and <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a>.</p>',
+}
+
+# ============================================================ 29. Update all your programs, free
+# 30 Oct 2026 (seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "ninite" 590K (UK 25.6K - people looking for Ninite itself),
+# "patch my pc" 9.4K (UK 1.6K), "winget upgrade all" 6.3K (UK 568), "ninite alternative" 414, "software updater" 436.
+# winget = Windows Package Manager, part of App Installer on Windows 11 and recent Windows 10 (Microsoft Learn): "winget upgrade"
+# lists, "winget upgrade --all" updates. Ninite: free for home use, installs/updates a set list of popular programs. Patch My PC
+# Home Updater: free for home use. Microsoft Store: Library, Get updates. The app (AppUpdates.cs, build 47): Programs check >
+# Updates for your programs - winget from Microsoft's community repository only, lists newer versions, updates one or all on
+# the customer's tap; programs that need admin make Windows ask. The Programs check flags programs that no longer get fixes.
+UPDATEALL = {
+    'slug': 'update-all-your-programs',
+    'title': 'How to Update All Your Programs at Once, Free (Windows)',
+    'metaDesc': 'Keep every program on your Windows PC up to date for free: Windows&rsquo; own winget, the Microsoft Store, Ninite or Patch My PC, and which programs need replacing.',
+    'ogTitle': 'How to update all your programs at once, free',
+    'crumbName': 'Update All Your Programs',
+    'eyebrow': '// OUT-OF-DATE PROGRAMS?',
+    'h1': 'Update <em class="grad grad--cyan">all your programs</em> at once, free',
+    'lede': 'Windows Update keeps Windows itself up to date, but not your other programs: the PDF reader, Zoom, 7-Zip, VLC, Firefox. Old versions are how a lot of attacks get in. Here&rsquo;s how to update them all at once for free, with the tool already built into Windows, and the free alternatives.',
+    'chips': ['Free', 'Windows 11 and 10', 'No extra software needed'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['The built-in way', '#s2'],
+    'ctaHead': 'Rather we kept them up to date?',
+    'ctaSub': 'On a support plan every program is brought up to date at each six-weekly service, and we tell you about any that need replacing. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Why bother', 'Out-of-date programs are a common way in for attacks. Windows Update doesn&rsquo;t update them.'),
+        ('Built in', 'Windows&rsquo; own winget: winget upgrade --all updates most programs in one go.'),
+        ('Store apps', 'Microsoft Store, Library, Get updates.'),
+        ('Free tools', 'Ninite and Patch My PC both have free versions for home use.'),
+        ('No longer updated?', 'Programs that no longer get security fixes need replacing, not updating.'),
+        ('Close programs first', 'An update can&rsquo;t finish while the program is open.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHY IT MATTERS', 'h2': 'Why your other programs need updating too',
+         'html': '<p>Windows Update looks after Windows, Microsoft Defender and, if you tick the option, Microsoft Office. It doesn&rsquo;t touch the other programs you&rsquo;ve installed. Browsers like Chrome and Firefox update themselves; many others only update when you open them and say yes, or never.</p>'
+                 '<p>Each update fixes problems, and many fix security holes that attackers already know about. An old PDF reader, media player or zip program is a common way in. Keeping everything current is one of the five controls of the UK&rsquo;s <a href="/cyber-essentials/">Cyber Essentials</a> scheme for exactly that reason.</p>'},
+        {'eyebrow': '/02 &mdash; THE BUILT-IN WAY', 'h2': 'Update them all with Windows&rsquo; own winget',
+         'html': '<p>Windows 11 and recent Windows 10 include Microsoft&rsquo;s own app installer, <strong>winget</strong>. It can see which of your programs have a newer version and update them.</p>'
+                 '<ol>'
+                 '<li>Right-click Start and open <strong>Terminal</strong> (Windows 10: type <strong>PowerShell</strong> in the Start menu and open it).</li>'
+                 '<li>Type <strong>winget upgrade</strong> and press Enter. The first time, say Y to accept the source agreement. It lists each program with a newer version.</li>'
+                 '<li>To update the lot, type <strong>winget upgrade --all</strong> and press Enter. Some programs ask &ldquo;Do you want to allow this app to make changes?&rdquo;: say Yes to the ones you recognise.</li>'
+                 '<li>Or update one at a time: <strong>winget upgrade</strong> followed by the program&rsquo;s name in quotes.</li>'
+                 '</ol>'
+                 '<p><strong>Close the programs first</strong>: an update can&rsquo;t finish while the program is open. And winget only knows programs in Microsoft&rsquo;s community list; a few won&rsquo;t show, so check those from their own Help menu (Help, Check for updates).</p>'},
+        {'eyebrow': '/03 &mdash; STORE APPS', 'h2': 'Microsoft Store apps',
+         'html': '<p>Apps from the Microsoft Store update themselves by default. To check: open the <strong>Microsoft Store</strong>, click <strong>Library</strong> at the bottom left, then <strong>Get updates</strong>.</p>'},
+        {'eyebrow': '/04 &mdash; FREE TOOLS', 'h2': 'Ninite and Patch My PC',
+         'html': '<p>If you&rsquo;d rather click than type, two long-standing tools do the same job, free for home use:</p>'
+                 '<ul>'
+                 '<li><strong>Ninite</strong> (ninite.com): tick the popular programs you want, download one installer, and running it again later updates them all. It covers its own set list of programs, not everything on your PC.</li>'
+                 '<li><strong>Patch My PC Home Updater</strong> (patchmypc.com): scans for a long list of common programs and updates the ones that are out of date.</li>'
+                 '</ul>'
+                 '<p>Download them only from their own websites. Avoid &ldquo;driver updater&rdquo; and &ldquo;PC booster&rdquo; programs that promise to update everything for a subscription: Windows Update already handles drivers.</p>'},
+        {'eyebrow': '/05 &mdash; TOO OLD TO UPDATE', 'h2': 'Programs that no longer get updates',
+         'html': '<p>Some programs have simply stopped: their maker no longer releases security fixes. Updating doesn&rsquo;t help; replacing them does. Common ones on older PCs are Adobe Flash Player (it ended in 2020), Office 2016 and Office 2019 (their support ended in October 2025) and programs whose maker&rsquo;s website no longer offers a download. Uninstall them in Settings, Apps, and use a supported alternative.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app do it with one button', 'html': '__APP_BOX_APPUPD__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' On a <a href="/home-it-support-plans/">support plan</a> every program is brought up to date at each six-weekly service, and the written report lists what changed.')},
+    ],
+    'howToName': 'How to update all your programs at once on Windows',
+    'howToSteps': [
+        {'name': 'Close your programs', 'text': 'Save your work and close the programs you want to update.'},
+        {'name': 'Open Terminal', 'text': 'Right-click Start and open Terminal (or PowerShell on Windows 10).'},
+        {'name': 'See what needs updating', 'text': 'Type winget upgrade and press Enter to list programs with a newer version.'},
+        {'name': 'Update them all', 'text': 'Type winget upgrade --all and press Enter, and say Yes to the programs you recognise.'},
+        {'name': 'Update Store apps', 'text': 'Microsoft Store, Library, Get updates.'},
+    ],
+    'faqs': [
+        {'q': 'How do I update all my programs at once?', 'a': '<p>Open Terminal (right-click Start), type winget upgrade --all and press Enter. Windows&rsquo; own app installer updates every program it knows that has a newer version. For Microsoft Store apps, open the Store, Library, Get updates.</p>'},
+        {'q': 'Does Windows Update update my programs?', 'a': '<p>No. It updates Windows, Microsoft Defender and, if you switch on the option, Microsoft Office. Other programs need updating separately.</p>'},
+        {'q': 'Is winget safe?', 'a': '<p>Yes. It&rsquo;s Microsoft&rsquo;s own tool, built into Windows, and it installs the programs&rsquo; official versions. It only updates programs you already have unless you ask it to install something new.</p>'},
+        {'q': 'Is Ninite free?', 'a': '<p>Ninite is free for home use and updates the programs on its own list. Patch My PC Home Updater is free for home use too.</p>'},
+        {'q': 'What is a good Ninite alternative?', 'a': '<p>Windows&rsquo; own winget (winget upgrade --all), Patch My PC Home Updater, or our free 365 PC Manager, which uses winget behind a button.</p>'},
+        {'q': 'Should I use a driver updater program?', 'a': '<p>No. Windows Update looks after drivers, and the PC maker&rsquo;s own site has the rest. Paid driver updaters are one of the programs our app suggests removing.</p>'},
+        {'q': 'Can you keep my programs up to date for me?', 'a': '<p>Yes. On a support plan every program is updated at each six-weekly service, and we tell you about any that need replacing.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/cyber-essentials/">Cyber Essentials</a> and <a href="/old-program-wont-open-on-windows-11/">an old program won&rsquo;t open on Windows 11</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -2170,9 +2422,19 @@ def symptom_pages(setup_url):
         '__APP_BOX_SOUND__': pfp._app_box('sound', 'Sound check: where is the sound going?',
             '<p style="margin:0">It shows which device Windows is sending the sound to &mdash; laptop speakers, headphones or a TV over HDMI &mdash; whether it&rsquo;s muted, the volume, and a live level bar, with a <strong>test sound</strong> to be sure. '
             'It tests the microphone with a live bar too, and names Bluetooth headphones stuck in their muffled phone-call mode. Picking another device is Windows&rsquo; own job, so a button opens Windows&rsquo; Sound settings at the right place.</p>', setup_url),
+        # 30 Oct 2026 (owner: "now do 4, 5 and 6"): what the app really shows (CamMic.cs, Sound.cs, WinSafety.cs, AppUpdates.cs; build 47)
+        '__APP_BOX_CAMMIC__': pfp._app_box('cammic', 'Camera &amp; microphone: what&rsquo;s stopping them?',
+            '<p style="margin:0">It says in plain words whether Windows can see the camera, whether it&rsquo;s <strong>switched off in Device Manager</strong> or reporting a problem, whether Windows&rsquo; <strong>privacy settings</strong> have the camera or microphone off for every program, and which program is <strong>using the camera right now</strong>. '
+            'It lists which programs used the camera and microphone and when, and buttons open the camera and Windows&rsquo; privacy settings. Its <strong>Sound check</strong> tests the microphone with a live bar. It only reads.</p>', setup_url),
+        '__APP_BOX_MEMINT__': pfp._app_box('winsafety', 'Safety settings: Windows&rsquo; own protections, at a glance',
+            '<p style="margin:0">It reads Windows&rsquo; own protections and says which are on: <strong>memory integrity</strong> (shown as optional advice, never a black mark, with a button to Device security), <strong>SmartScreen</strong> and whether a policy switched it off, the <strong>&ldquo;allow this app to make changes?&rdquo;</strong> question, which antivirus is on duty and Defender&rsquo;s tamper protection. '
+            'Hidden file name endings get one switch you press yourself, and it can be switched back. Everything else only reads.</p>', setup_url),
+        '__APP_BOX_APPUPD__': pfp._app_box('appupdates', 'Updates for your programs: one button',
+            '<p style="margin:0">On its <strong>Programs check</strong> page, <strong>Updates for your programs</strong> asks Windows&rsquo; own app installer (winget, from Microsoft&rsquo;s community list only) which of your programs have a newer version, and updates one, or <strong>all of them</strong>, when you press the button. '
+            'Programs that need permission make Windows ask as usual. The same page names programs that no longer get security fixes, and ones the PC doesn&rsquo;t need.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2277,4 +2539,16 @@ SYMPTOM_FLOWS = {
     NOSOUND['slug']: {'h2': 'Get the sound back, step by step', 'ask': 'Can you hear it now?',
                       'tip': 'Play something for a minute to be sure it stays.',
                       'h3s': 'Still silent after every step? That is a remote job.'},
+    CAMMIC['slug']: {'h2': 'Get them working, step by step', 'ask': 'Do the camera and microphone work now?',
+                     'tip': 'Make a test call with a friend, or use our webcam and microphone test.',
+                     'h3s': 'Still not working after every step? That is a remote job.'},
+    MEMINT['slug']: {'h2': 'Switch it on, step by step', 'ask': 'Is memory integrity on now?',
+                     'tip': 'Check Windows Security again after the next big Windows update.',
+                     'h3s': 'Still blocked by a driver? That is a remote job.'},
+    UPDATEALL['slug']: {'h2': 'Update everything, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all up to date', 'ask': 'Done that step?',
+                        'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All up to date{mins}. Nice work.',
+                        'tip': 'Do it again once a month, or let our free app remind you.',
+                        'h3s': 'Stuck at a step? We can update them with you, remotely.'},
 }

@@ -373,7 +373,7 @@ SPEAKER = {
         {'q': 'Can it test my microphone too?', 'a': '<p>This page tests what you hear. Our <a href="/webcam-mic-test/">webcam and mic test</a> checks your microphone and camera.</p>'},
         {'q': 'Can you fix my laptop speakers?', 'a': '<p>Yes. We check the settings and driver remotely first. If the speakers or headphone socket are faulty, we collect the laptop locally, tell you the price before any work, and repair it.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/bluetooth-headphones-sound-muffled-on-pc/">Bluetooth headphones sound muffled</a>, <a href="/webcam-mic-test/">webcam and mic test</a>, <a href="/keyboard-test/">keyboard test</a>, <a href="/windows-accessibility-features-guide/">Windows accessibility features</a> and <a href="/free-tools/">all our free tools</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/no-sound-on-computer/">no sound on your computer</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">Bluetooth headphones sound muffled</a>, <a href="/webcam-mic-test/">webcam and mic test</a>, <a href="/keyboard-test/">keyboard test</a>, <a href="/windows-accessibility-features-guide/">Windows accessibility features</a> and <a href="/free-tools/">all our free tools</a>.</p>',
 }
 
 # ================================================================ 3. Visual timer (12 Oct 2026, "do everything")

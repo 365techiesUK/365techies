@@ -100,6 +100,7 @@ SPECIALIST = [
      ("/learn-about-this-picture/", "A &ldquo;Learn about this picture&rdquo; icon appeared on the desktop"),
      ("/monitor-stuck-at-60hz/", "A 144Hz monitor is stuck at 60Hz"),
      ("/no-sound-on-computer/", "No sound from the computer at all"),   # 30 Oct 2026
+     ("/camera-or-microphone-not-working/", "The camera or microphone is not working"),   # 30 Oct 2026
      ("/bluetooth-headphones-sound-muffled-on-pc/", "Bluetooth headphones sound muffled or tinny"),
      ("/how-to-play-a-cd-on-windows-11/", "A CD will not play, or there is no CD drive"),
      ("/how-to-set-an-alarm-on-your-computer/", "The alarm did not go off"),
@@ -126,6 +127,8 @@ SPECIALIST = [
      ("/system-restore-vs-reset-this-pc/", "Something went wrong: System Restore or Reset this PC?"),
      ("/antimalware-service-executable-high-cpu/", "Antimalware Service Executable is slowing the PC"),
      ("/smart-app-control-blocked-an-app/", "Smart App Control blocked an app"),
+     ("/memory-integrity-is-off/", "Windows Security says memory integrity is off"),   # 30 Oct 2026
+     ("/update-all-your-programs/", "Update all your programs at once, free"),   # 30 Oct 2026
      ("/what-windows-backup-backs-up/", "Is Windows Backup really backing up the PC?"),
      ("/we-couldnt-update-the-system-reserved-partition/", "The yearly update says it couldn&rsquo;t update the system reserved partition"),
      ("/why-does-my-pc-keep-crashing/", "The PC keeps crashing or restarting"),
@@ -12946,7 +12949,7 @@ def webcam_mic_test():
     faqs = [
       ("Is this safe? Can you see my camera?", "No &mdash; and that&rsquo;s the point. The video and audio never leave your device: the test runs entirely in your browser with no recording and no uploading. When you leave the page (or click stop), everything stops."),
       ("It works here but not in Teams or Zoom &mdash; why?", "Then your hardware is fine and it&rsquo;s a settings problem: usually the meeting app has permission blocked, or it&rsquo;s pointing at the wrong device (very common with laptops + webcams). Check the app&rsquo;s device settings &mdash; or we&rsquo;ll fix it remotely in minutes."),
-      ("My camera shows a black screen", "Close every other app that might be using it (Teams, Zoom, Skype run in the background), check the physical privacy shutter some webcams have, then try again. Still black? The Windows privacy settings may be blocking it &mdash; Settings &#8594; Privacy &amp; security &#8594; Camera."),
+      ("My camera shows a black screen", "Close every other app that might be using it (Teams, Zoom, Skype run in the background), check the physical privacy shutter some webcams have, then try again. Still black? The Windows privacy settings may be blocking it &mdash; Settings &#8594; Privacy &amp; security &#8594; Camera. Step by step: <a href=\"/camera-or-microphone-not-working/\">camera or microphone not working</a>."),
       ("The mic meter barely moves", "Get closer and speak normally &mdash; if it still barely registers, check Windows Settings &#8594; System &#8594; Sound &#8594; Input: right device selected and input volume up. Headset mics often have a physical mute switch too."),
       ("Can you set up my video calling properly?", "Yes &mdash; cameras, mics, lighting, Teams and Zoom, all working reliably. It&rsquo;s bread and butter for our <a href=\"/it-support-for-home-workers/\">home worker support</a>."),
     ]

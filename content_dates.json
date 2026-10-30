@@ -1644,7 +1644,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "34646bbec6d2fe61",
+  "h": "fd398684f45bcf46",
   "last": "2026-10-30"
  },
  "it-health-check-tool": {
@@ -3454,7 +3454,8 @@
  },
  "speaker-and-headphone-test": {
   "first": "2026-10-12",
-  "h": "69e835bc52c1881d"
+  "h": "fa186708caa02a26",
+  "last": "2026-10-30"
  },
  "splashtop-business-guide": {
   "first": "2026-07-28",
@@ -3721,8 +3722,8 @@
  },
  "webcam-mic-test": {
   "first": "2026-07-28",
-  "h": "63a14d0cf23a0e27",
-  "last": "2026-10-11"
+  "h": "e847b76a89f35167",
+  "last": "2026-10-30"
  },
  "website-checker": {
   "first": "2026-07-28",
@@ -3960,7 +3961,7 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "782875211f4a0cc1",
+  "h": "67478f0dd9837bf8",
   "last": "2026-10-30"
  },
  "windows-11-upgrade-service": {
@@ -4076,5 +4077,17 @@
  "no-sound-on-computer": {
   "first": "2026-10-30",
   "h": "cceadf3a134b21d3"
+ },
+ "camera-or-microphone-not-working": {
+  "first": "2026-10-30",
+  "h": "158c177786134de2"
+ },
+ "memory-integrity-is-off": {
+  "first": "2026-10-30",
+  "h": "cd96a7c164eed39f"
+ },
+ "update-all-your-programs": {
+  "first": "2026-10-30",
+  "h": "c199640bda563630"
  }
 }
