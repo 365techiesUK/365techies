@@ -33145,7 +33145,7 @@ def write_portal_page():
         if (!rows.length) {
           v.innerHTML = '<p class="quiet" style="margin:0 0 .5rem">No <em>upcoming booking</em> matches \\u201c' + esc(q) + '\\u201d in the next 60 days \\u2014 but they may still be a customer.</p>'
             + '<button class="sm" id="allcust" style="margin:0">\\ud83d\\udd0e Search ALL customers for \\u201c' + esc(q) + '\\u201d</button>'
-            + '<p class="quiet" style="margin:.35rem 0 0;font-size:.82rem">Finds anyone in SimplyBook \\u2014 new members, past remote jobs, no booking needed \\u2014 so you can invoice or invite them.</p>'
+            + '<p class="quiet" style="margin:.35rem 0 0;font-size:.82rem">Finds anyone in SimplyBook or our job records \\u2014 new members, past remote jobs, no booking needed \\u2014 so you can book, invoice or invite them.</p>'
             + '<div id="allcustres" style="margin-top:.6rem"></div>';
           var ab = document.getElementById('allcust');
           if (ab) ab.onclick = function () { ab.disabled = true; searchAllCustomers(q); };
@@ -33170,29 +33170,57 @@ def write_portal_page():
       else if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t search just now - try again.</p>';
     }).catch(function () { if (mySeq === searchSeq) v.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
   }
-  /* Find ANY customer in SimplyBook (not just those with an upcoming booking) so
-     staff can reach the contact card - and its invoice / invite / quote buttons -
-     for a brand-new member or a past remote-support customer. Uses the same
-     staffclients search the "Book a new job" wizard uses. */
+  /* Find ANY customer (not just those with an upcoming booking) so staff can reach the contact card - and its
+     invoice / invite / quote buttons - for a brand-new member or a past remote-support customer. The same two
+     searches the "Book a new job" wizard uses: SimplyBook's clients AND our own records (job cards, PC Manager).
+     30 Oct 2026 (owner: a customer from a Slack job card wasn't found here) - job-record people get "Book them in". */
   function searchAllCustomers(q) {
     var res = document.getElementById('allcustres'); if (!res) return;
     res.innerHTML = '<p class="quiet">Searching all customers\\u2026</p>';
-    post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: q }).then(function (d) {
-      if (!d || !d.ok) { res.innerHTML = '<p class="quiet">Couldn\\u2019t search customers just now \\u2014 ' + esc((d && d.error) || 'try again') + '.</p>'; return; }
-      if (!d.clients || !d.clients.length) {
-        res.innerHTML = '<p class="quiet">No customer in SimplyBook matches \\u201c' + esc(q) + '\\u201d either. If they\\u2019re brand new, add them with \\u201cBook a new job\\u201d (you can close the wizard after \\u2014 it creates the SimplyBook record).</p>';
+    Promise.all([
+      post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: q }).catch(function () { return null; }),
+      post(BK, { action: 'custfind', stoken: S.stoken, machine: mid(), q: q }).catch(function () { return null; })
+    ]).then(function (both) {
+      var d = both[0], cf = both[1], sbOk = !!(d && d.ok), cfOk = !!(cf && cf.ok), seen = {};
+      if (!sbOk && !cfOk) { res.innerHTML = '<p class="quiet">Couldn\\u2019t search customers just now \\u2014 ' + esc((d && d.error) || (cf && cf.error) || 'try again') + '.</p>'; return; }
+      var clients = (sbOk && d.clients) || [];
+      clients.forEach(function (c) { seen[c.id] = true; });
+      var people = ((cfOk && cf.people) || []).filter(function (p) { return !(p.sb && seen[p.sb]); });   // not twice: already listed as their SimplyBook client
+      var miss = !sbOk ? '<p class="quiet">SimplyBook didn\\u2019t answer, so people who only booked may be missing.</p>'
+        : (!cfOk ? '<p class="quiet">Our job records didn\\u2019t answer, so customers from job cards may be missing.</p>' : '');
+      if (!clients.length && !people.length) {
+        res.innerHTML = '<p class="quiet">Nobody in SimplyBook or our job records matches \\u201c' + esc(q) + '\\u201d either. If they\\u2019re brand new, add them with \\u201cBook a new job\\u201d (you can close the wizard after \\u2014 it creates the SimplyBook record).</p>' + miss;
         return;
       }
-      var hh = '<p class="quiet" style="margin:0 0 .35rem"><strong>' + d.clients.length + '</strong> customer' + (d.clients.length === 1 ? '' : 's') + ' found (any status):</p>';
-      d.clients.forEach(function (c, i) {
+      var n = clients.length + people.length;
+      var hh = '<p class="quiet" style="margin:0 0 .35rem"><strong>' + n + '</strong> customer' + (n === 1 ? '' : 's') + ' found (any status):</p>';
+      clients.forEach(function (c, i) {
         hh += '<div class="tline"><div class="tblock"><strong>' + esc(c.name) + '</strong>'
           + '<br />' + (c.phone ? '<a href="tel:' + esc((c.phone || '').replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(c.phone) + '</a>' : '<span class="quiet">no number</span>')
           + (c.email ? ' <a href="mailto:' + esc(c.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(c.email) + '</a>' : '')
           + ' <button class="sm ghost cib" data-cid="' + esc(c.id) + '" data-p="ac' + i + '">\\ud83d\\udccd Invoice / invite</button>'
           + '<div class="cipanel" id="cipac' + i + '" style="display:none;margin-top:.4rem"></div></div></div>';
       });
-      res.innerHTML = hh;
+      people.forEach(function (p, i) {   // from job cards / PC Manager (custfind): book them straight in, or open their card
+        var f = p.fields, ph = f.mobile || f.phone;
+        hh += '<div class="tline"><div class="tblock"><strong>' + esc(cbkWho(p)) + '</strong>' + (f.company && f.name ? ' <span class="quiet">' + esc(f.company) + '</span>' : '')
+          + '<br />' + (ph ? '<a href="tel:' + esc(ph.replace(/\\s/g, '')) + '" class="tphone">\\ud83d\\udcde ' + esc(ph) + '</a>' : '<span class="quiet">no number</span>')
+          + (f.email ? ' <a href="mailto:' + esc(f.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(f.email) + '</a>' : '')
+          + (p.sb ? '' : '<br /><span class="quiet" style="font-size:.82rem">From our job records \\u2014 not in SimplyBook yet. Booking them in makes their SimplyBook record.</span>')
+          + '<br /><button class="sm ghost acjbook" data-i="' + i + '">\\ud83d\\udcc5 Book them in</button>'
+          + ' <button class="sm ghost acjcard" data-i="' + i + '">\\ud83d\\udc64 Customer card</button>'
+          + (p.sb ? ' <button class="sm ghost cib" data-cid="' + esc(p.sb) + '" data-p="aj' + i + '">\\ud83d\\udccd Invoice / invite</button>'
+            + '<div class="cipanel" id="cipaj' + i + '" style="display:none;margin-top:.4rem"></div>' : '')
+          + '</div></div>';
+      });
+      res.innerHTML = hh + miss;
       bindContactCards(res);
+      Array.prototype.forEach.call(res.querySelectorAll('.acjbook'), function (b) {
+        b.onclick = function () { cbkBook(people[+b.getAttribute('data-i')]); };
+      });
+      Array.prototype.forEach.call(res.querySelectorAll('.acjcard'), function (b) {
+        b.onclick = function () { var p = people[+b.getAttribute('data-i')]; if (NXL.show) NXL.show('customers'); cbkOpen(p.ref); };
+      });
     }).catch(function () { res.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
   }
   /* Open a contact card (with its QuickBooks + invite buttons) for any .cib button
