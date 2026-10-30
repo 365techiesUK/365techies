@@ -128,6 +128,11 @@ CAPS = {'updates': 'The real app, on our office PC.', 'remote': 'The real app, o
 # 30 Oct 2026: Updates for your programs sits further down the Programs check page - the same real screenshot, captioned so
 SHOTS['appupdates'] = ('/images/pcm-feat-programs-v36.webp', 1272, 1168, 'The Programs check page in 365 PC Manager: two security programs protecting at once, McAfee LiveSafe and Norton 360, then programs this PC doesn&rsquo;t need and one that no longer gets security fixes. Updates for your programs is further down the same page', ('Safety', 'Programs check'))
 CAPS['appupdates'] = 'The real app&rsquo;s Programs check page (a sample PC); Updates for your programs is further down the same page.'
+# 30 Oct 2026: real build-47 screens (session audit47): Hardware on This PC (our office PC), Duplicates (sample files, banner cropped)
+SHOTS['hardware'] = ('/images/pcm-feat-hardware-v47.webp', 704, 494, 'This PC in 365 PC Manager on our office PC: the processor, memory and four drives, all healthy, the graphics card, and Hardware saying Windows reports no faults, with a note that Windows has no driver for one gadget plugged in once - nothing to do unless it should work', ('My PC', 'This PC'))
+CAPS['hardware'] = 'The real app, on our office PC.'
+SHOTS['dupes'] = ('/images/pcm-feat-dupes-v47.webp', 752, 484, 'Duplicate photos and music in 365 PC Manager: 4 extra copies taking 21 MB - a song and a photo saved more than once, exactly the same file each time, each showing the copy that stays and where the extras are, and a note that nothing is deleted', ('My PC', 'Duplicate photos &amp; music'))
+CAPS['dupes'] = 'The real app (sample files).'
 SHOTS['devices'] = ('/images/pcm-feat-devices-v40.webp', 1272, 1334, 'Devices on your network in 365 PC Manager: 4 devices found in 9 seconds on a cable connection - the router (Linksys, 192.168.1.1), a phone hiding its identity with a private Wi-Fi address and an ASUS device - and the network printer this PC has set up, an HP ENVY Photo 6200', ('Internet &amp; email', 'Devices on your network'))
 CAPS['devices'] = 'The real app, on our office network.'
 # 28 Oct 2026 (PC-problem sweep): Photos & files > Backup, rendered from build 47 (PCM_SNAPTABS=backup) on our office PC

@@ -1644,7 +1644,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "fd398684f45bcf46",
+  "h": "1c952390ef9cedbc",
   "last": "2026-10-30"
  },
  "it-health-check-tool": {
@@ -3961,7 +3961,7 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "67478f0dd9837bf8",
+  "h": "91f30c292948561d",
   "last": "2026-10-30"
  },
  "windows-11-upgrade-service": {
@@ -4089,5 +4089,13 @@
  "update-all-your-programs": {
   "first": "2026-10-30",
   "h": "c199640bda563630"
+ },
+ "usb-device-not-recognised": {
+  "first": "2026-10-30",
+  "h": "bd7c52b23dfaea34"
+ },
+ "find-and-remove-duplicate-photos": {
+  "first": "2026-10-30",
+  "h": "f21477cbeeb9eae7"
  }
 }

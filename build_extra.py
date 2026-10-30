@@ -129,6 +129,8 @@ SPECIALIST = [
      ("/smart-app-control-blocked-an-app/", "Smart App Control blocked an app"),
      ("/memory-integrity-is-off/", "Windows Security says memory integrity is off"),   # 30 Oct 2026
      ("/update-all-your-programs/", "Update all your programs at once, free"),   # 30 Oct 2026
+     ("/usb-device-not-recognised/", "A USB device is not recognised"),   # 30 Oct 2026
+     ("/find-and-remove-duplicate-photos/", "Thousands of duplicate photos: clear them safely"),   # 30 Oct 2026
      ("/what-windows-backup-backs-up/", "Is Windows Backup really backing up the PC?"),
      ("/we-couldnt-update-the-system-reserved-partition/", "The yearly update says it couldn&rsquo;t update the system reserved partition"),
      ("/why-does-my-pc-keep-crashing/", "The PC keeps crashing or restarting"),

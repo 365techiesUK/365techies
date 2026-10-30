@@ -2368,6 +2368,170 @@ UPDATEALL = {
 }
 
 
+# ============================================================ 30. USB device not recognised
+# 30 Oct 2026 (owner: "do the USB and duplicate photos pages too"; seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "usb device
+# not recognized" 2.6K (UK 397), "code 43" 639; YouTube top videos ~140K views (median). Steps as Microsoft Support (fix USB
+# problems; Device Manager error codes 43, 10, 28, 22): another port and cable, straight into the PC, restart, Device Manager >
+# Universal Serial Bus controllers, uninstall + Scan for hardware changes, USB selective suspend and the hub's power management,
+# Disk Management for a drive with no letter. The app (DeviceFaults.cs, build 47): This PC > Hardware reads Windows' own verdict
+# (ConfigManagerErrorCode); switched off on purpose (22) and not plugged in now (45) ignored; no driver (28) and needs a restart
+# (14) as advice; real failures (can't start, stopped responding, driver blocked or damaged) reach Home. Picture: our office PC.
+USBNR = {
+    'slug': 'usb-device-not-recognised',
+    'title': 'USB Device Not Recognised? How to Fix It (Windows 11 and 10)',
+    'metaDesc': 'USB device not recognised (or recognized), code 43, or a USB drive that won&rsquo;t show up? Try another port and cable, then Device Manager, power settings and Disk Management.',
+    'ogTitle': 'USB device not recognised? How to fix it',
+    'crumbName': 'USB Device Not Recognised',
+    'eyebrow': '// PLUGGED IN, NOTHING HAPPENS?',
+    'h1': 'USB device <em class="grad grad--cyan">not recognised</em>? Fix it',
+    'lede': 'You plug in a memory stick, printer, phone or mouse and Windows says &ldquo;USB device not recognised&rdquo; (some versions spell it &ldquo;recognized&rdquo;), or nothing happens at all. Very often it&rsquo;s the cable or the socket, not the device. Here&rsquo;s the order to check, quickest first.',
+    'chips': ['Quickest checks first', 'Windows 11 and 10', 'Sticks, drives, printers, phones'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the quick checks', '#s1'],
+    'ctaHead': 'Still not recognised?',
+    'ctaSub': 'With your permission we connect to your Windows PC, find out whether it&rsquo;s the device, the cable, the socket or Windows, and fix what can be fixed. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('First', 'Another USB socket, straight into the PC, and another cable if the device has one.'),
+        ('Charge-only cables', 'Some phone cables only charge: the PC never sees the phone.'),
+        ('Restart properly', 'Restart, not Shut down, so Windows starts afresh.'),
+        ('Device Manager', 'An unknown device or code 43: uninstall it and scan for hardware changes.'),
+        ('Power saving', 'Windows can switch USB sockets off to save power: turn that off.'),
+        ('Drive not showing?', 'Disk Management: it may just need a drive letter.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; QUICK CHECKS', 'h2': 'Try these first',
+         'html': '<ol>'
+                 '<li><strong>Try another USB socket.</strong> On a desktop, use the sockets on the back: they&rsquo;re fixed to the main board and give steadier power than the front ones.</li>'
+                 '<li><strong>Plug it straight into the PC,</strong> not through a hub, extension lead, keyboard or monitor.</li>'
+                 '<li><strong>Try another cable.</strong> Cables fail more than devices do, and many phone cables only charge: the PC never sees the phone. Use the cable that came with it, or one sold for data.</li>'
+                 '<li><strong>Try the device on another computer.</strong> Not recognised there either? It&rsquo;s the device. Works there? It&rsquo;s this PC.</li>'
+                 '<li><strong>Restart the computer</strong> (Restart, not Shut down).</li>'
+                 '<li><strong>A phone?</strong> Unlock it, and when it asks, choose to allow access or file transfer (on Android, pull down the notification and choose File transfer).</li>'
+                 '</ol>'},
+        {'eyebrow': '/02 &mdash; DEVICE MANAGER', 'h2': 'What Device Manager says about it',
+         'html': '<p>Right-click Start and open <strong>Device Manager</strong>. Plug the device in and watch the list refresh. Look under <strong>Universal Serial Bus controllers</strong>, <strong>Other devices</strong> and the device&rsquo;s own heading (Disk drives, Printers, Portable devices). A yellow warning sign marks the problem one; right-click it, Properties, and the <strong>Device status</strong> box gives a code:</p>'
+                 '<ul>'
+                 '<li><strong>Code 43</strong> &ldquo;Windows has stopped this device because it has reported problems&rdquo;, often an <strong>Unknown USB Device (Device Descriptor Request Failed)</strong>: the device didn&rsquo;t answer properly. Usually the cable, the socket or the device itself.</li>'
+                 '<li><strong>Code 10</strong> &ldquo;This device cannot start&rdquo;: usually the driver.</li>'
+                 '<li><strong>Code 28</strong> &ldquo;The drivers for this device are not installed&rdquo;.</li>'
+                 '<li><strong>Code 22</strong> &ldquo;This device is disabled&rdquo;: right-click it, <strong>Enable device</strong>.</li>'
+                 '</ul>'
+                 '<p><strong>To reset it:</strong> unplug the device, right-click the faulty entry, <strong>Uninstall device</strong>, then the Action menu, <strong>Scan for hardware changes</strong>, and plug it back in. For drivers, check Settings, Windows Update, Advanced options, <strong>Optional updates</strong>, or the maker&rsquo;s website.</p>'},
+        {'eyebrow': '/03 &mdash; POWER SAVING', 'h2': 'Stop Windows switching the USB sockets off',
+         'html': '<p>To save power, Windows can switch USB sockets off, and some devices don&rsquo;t wake up again. Two settings to change, especially on laptops:</p>'
+                 '<ol>'
+                 '<li><strong>USB selective suspend:</strong> Control Panel, Power Options, <strong>Change plan settings</strong> next to your plan, <strong>Change advanced power settings</strong>, USB settings, <strong>USB selective suspend setting</strong>: Disabled (for both On battery and Plugged in, on a laptop).</li>'
+                 '<li><strong>Each USB Root Hub:</strong> in Device Manager under Universal Serial Bus controllers, right-click each <strong>USB Root Hub</strong>, Properties, <strong>Power Management</strong>, and untick <strong>Allow the computer to turn off this device to save power</strong>.</li>'
+                 '</ol>'
+                 '<p>Then restart. If the problem was a device that worked and then disappeared after a while, this is usually the fix.</p>'},
+        {'eyebrow': '/04 &mdash; A DRIVE THAT DOESN&rsquo;T SHOW', 'h2': 'A memory stick or drive that doesn&rsquo;t appear in File Explorer',
+         'html': '<ol>'
+                 '<li>Right-click Start and open <strong>Disk Management</strong>.</li>'
+                 '<li><strong>Listed, but with no letter?</strong> Right-click its box, <strong>Change Drive Letter and Paths</strong>, Add, and pick a letter. It shows in File Explorer at once.</li>'
+                 '<li><strong>Says Not Initialized or Unallocated?</strong> Stop there if it has files on it. Initialising or formatting <strong>wipes it</strong>: that&rsquo;s only for a brand-new, empty drive.</li>'
+                 '<li><strong>Not listed at all,</strong> clicking, or getting hot? Don&rsquo;t keep plugging it in. If the files matter, see <a href="/data-recovery/">data recovery</a>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app read Windows&rsquo; verdict', 'html': '__APP_BOX_USB__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' A loose or broken USB socket is a bench repair: we collect it and tell you the price first. See <a href="/computer-repairs/">computer repairs</a>.')},
+    ],
+    'howToName': 'How to fix a USB device that Windows doesn’t recognise',
+    'howToSteps': [
+        {'name': 'Change the socket and cable', 'text': 'Plug it straight into another USB socket on the PC (the back ones on a desktop), with another cable if it has one, and restart.'},
+        {'name': 'Check Device Manager', 'text': 'Find the entry with a yellow warning, read its code, then Uninstall device and Scan for hardware changes.'},
+        {'name': 'Update the driver', 'text': 'Settings, Windows Update, Advanced options, Optional updates, or the maker’s website.'},
+        {'name': 'Turn off USB power saving', 'text': 'Disable USB selective suspend in Power Options, and untick Allow the computer to turn off this device on each USB Root Hub.'},
+        {'name': 'Give a drive a letter', 'text': 'In Disk Management, use Change Drive Letter and Paths. Never initialise or format a drive that has files on it.'},
+    ],
+    'faqs': [
+        {'q': 'Why does my PC say USB device not recognized?', 'a': '<p>The device didn&rsquo;t answer Windows properly when it was plugged in. Most often it&rsquo;s the cable, the socket, a hub or power saving; sometimes the driver or the device itself. Try another socket and cable first, then Device Manager.</p>'},
+        {'q': 'What is code 43 on a USB device?', 'a': '<p>&ldquo;Windows has stopped this device because it has reported problems.&rdquo; Uninstall it in Device Manager, scan for hardware changes, and try another socket and cable. If it fails on other computers too, the device is faulty.</p>'},
+        {'q': 'Why is my phone not showing up on my PC?', 'a': '<p>Unlock the phone and allow access when it asks; on Android choose File transfer. Many phone cables only charge, so try the one that came with the phone.</p>'},
+        {'q': 'Why doesn&rsquo;t my USB stick show in File Explorer?', 'a': '<p>It may need a drive letter: Disk Management, right-click it, Change Drive Letter and Paths. Don&rsquo;t initialise or format it if it has files on it.</p>'},
+        {'q': 'Why do USB devices keep disconnecting?', 'a': '<p>Usually power saving: turn off USB selective suspend in Power Options, and untick Allow the computer to turn off this device on each USB Root Hub. A worn cable or a loose socket does it too.</p>'},
+        {'q': 'Is the USB port broken?', 'a': '<p>If nothing works in that socket but everything works in the others, the socket is likely faulty. It&rsquo;s a bench repair; meanwhile use another socket.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Settings, drivers and power management, yes. A broken socket or faulty device needs a repair or replacement.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/printer-offline/">printer offline</a>, <a href="/data-recovery/">data recovery</a>, <a href="/how-to-back-up-your-photos/">how to back up your photos</a> and <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a></p>',
+}
+
+# ============================================================ 31. Find and remove duplicate photos
+# 30 Oct 2026 (seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "duplicate photo finder" 1K (UK 130), "remove duplicate photos"
+# 379, "find duplicate photos" 284, "duplicate file finder windows 11" 460; an older audience with years of phone imports. The app
+# (Dupes.cs, build 47): EXACT copies only (size, quick fingerprint, then full SHA-256) in Pictures, Videos, Music, Desktop,
+# Documents, Downloads and OneDrive's folder; cloud-only OneDrive files skipped; nothing deleted - "Move the extra copies" into one
+# folder, Put them back; iTunes copies only listed. Picture: build 47 with sample files (audit47, banner cropped off).
+DUPES = {
+    'slug': 'find-and-remove-duplicate-photos',
+    'title': 'How to Find and Remove Duplicate Photos on Windows, Safely',
+    'metaDesc': 'Thousands of duplicate photos on your PC? Why they appear, how to find exact copies for free, and how to clear them safely without losing the only copy.',
+    'ogTitle': 'How to find and remove duplicate photos on Windows, safely',
+    'crumbName': 'Find Duplicate Photos',
+    'eyebrow': '// THE SAME PHOTO, THREE TIMES?',
+    'h1': 'Find and remove <em class="grad grad--cyan">duplicate photos</em>, safely',
+    'lede': 'Years of plugging in phones and cameras leave the same photos in two, three or four places, filling the drive and making the good ones hard to find. Clearing them is worthwhile, as long as you never delete the only copy. Here&rsquo;s why they appear, how to find them for free, and the safe way to clear them.',
+    'chips': ['Free', 'Windows 11 and 10', 'Nothing lost'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['The safe way', '#s3'],
+    'ctaHead': 'Rather we sorted them?',
+    'ctaSub': 'We can tidy your photos with you remotely: copies cleared, the rest backed up, nothing lost. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Why they appear', 'Phones imported twice, backups copied back, OneDrive and Pictures holding the same photos, WhatsApp saving copies.'),
+        ('Back up first', 'Before deleting anything, make sure your photos are backed up somewhere else.'),
+        ('Exact copies only', 'Only delete files that are byte-for-byte the same. Edited or resized versions are different photos.'),
+        ('Move, don&rsquo;t delete', 'Move the extra copies to one folder, check it, then delete it.'),
+        ('OneDrive', 'Deleting from a OneDrive folder deletes it everywhere that syncs.'),
+        ('Free ways', 'File Explorer by hand, a free tool such as dupeGuru, or our free app.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHY THEY APPEAR', 'h2': 'Where duplicate photos come from',
+         'html': '<ul>'
+                 '<li><strong>Importing the phone more than once.</strong> Each import copies everything again, often into a new dated folder.</li>'
+                 '<li><strong>Backups copied back:</strong> an old backup drive or a new PC set up from a copy, with the originals still there.</li>'
+                 '<li><strong>OneDrive and Pictures both:</strong> photos in your Pictures folder and the same photos in OneDrive&rsquo;s Camera Roll.</li>'
+                 '<li><strong>Downloads and email:</strong> the same photo saved from an email or WhatsApp several times, ending in (1), (2) and so on.</li>'
+                 '</ul>'},
+        {'eyebrow': '/02 &mdash; BEFORE YOU START', 'h2': 'Before you delete anything',
+         'html': '<ol>'
+                 '<li><strong>Back up your photos</strong> to a USB drive or the cloud first: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>. If a duplicate finder gets it wrong, you can put things back.</li>'
+                 '<li><strong>Exact copies only.</strong> A photo you&rsquo;ve cropped, edited or shrunk to email is a different file. &ldquo;Similar photo&rdquo; finders group bursts and edits together: look at each one yourself before removing any.</li>'
+                 '<li><strong>Mind OneDrive.</strong> Deleting a photo from a OneDrive folder deletes it from OneDrive and every device that syncs it. If the only other copy is in OneDrive, keep that one.</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; THE SAFE WAY', 'h2': 'How to find and clear them, free',
+         'html': '<p><strong>By hand, for a handful:</strong> in File Explorer, open Pictures and type <strong>(1)</strong> in the search box. Windows adds (1), (2) to a file saved twice in the same folder, so those are usually copies. Open each to be sure it matches the original before deleting it.</p>'
+                 '<p><strong>For thousands, use a duplicate finder</strong> that compares the files themselves, not just their names. Free choices include dupeGuru (free and open source) and our own free app (below). Whichever you use:</p>'
+                 '<ol>'
+                 '<li>Point it at your photo folders, and include Pictures, Desktop, Documents and Downloads.</li>'
+                 '<li>Choose which copy stays: usually the one in your tidy dated folder, not the one in Downloads.</li>'
+                 '<li><strong>Move the extras into one folder</strong> rather than deleting them straight away.</li>'
+                 '<li>Look through that folder, use the PC as normal for a week, then delete the folder and empty the Recycle Bin to get the space back.</li>'
+                 '</ol>'
+                 '<p><strong>Music too?</strong> If you use iTunes, remove its copies inside iTunes, which keeps its own list of songs; deleting the files behind its back leaves gaps in the library.</p>'},
+        {'eyebrow': '/04 &mdash; THE QUICK WAY', 'h2': 'Let our free app find the exact copies', 'html': '__APP_BOX_DUPES__'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We can tidy and back up your photos with you, or move them to a new computer: see <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving photos to a new computer</a>.')},
+    ],
+    'howToName': 'How to remove duplicate photos on Windows safely',
+    'howToSteps': [
+        {'name': 'Back up your photos', 'text': 'Copy your photos to a USB drive or the cloud before removing anything.'},
+        {'name': 'Find exact copies', 'text': 'Search for (1) in File Explorer for a few, or use a duplicate finder that compares the files themselves for many.'},
+        {'name': 'Choose which copy stays', 'text': 'Keep the copy in your tidy dated folder, not the one in Downloads or Desktop.'},
+        {'name': 'Move the extras to one folder', 'text': 'Move them rather than delete them, and check the folder.'},
+        {'name': 'Delete the folder later', 'text': 'After a week of normal use, delete the folder and empty the Recycle Bin.'},
+    ],
+    'faqs': [
+        {'q': 'How do I find duplicate photos on my computer for free?', 'a': '<p>For a few, search for (1) in File Explorer&rsquo;s Pictures folder. For many, use a free duplicate finder that compares the files themselves, such as dupeGuru or our free 365 PC Manager.</p>'},
+        {'q': 'Is it safe to delete duplicate photos?', 'a': '<p>Yes, if they really are exact copies and you have a backup. Move the extras to one folder first, check it, then delete it. Never delete the only copy, and remember that deleting from a OneDrive folder deletes it everywhere.</p>'},
+        {'q': 'Why do I have so many duplicate photos?', 'a': '<p>Usually from importing a phone more than once, copying old backups back onto the PC, or having the same photos in both Pictures and OneDrive.</p>'},
+        {'q': 'What about photos that are similar but not the same?', 'a': '<p>Edited, cropped or resized versions and bursts are different files. Look at them yourself and keep the best; don&rsquo;t let a program decide.</p>'},
+        {'q': 'Can File Explorer find duplicate photos?', 'a': '<p>Not by itself, but it can help you spot copies by hand: search for (1) in your Pictures folder, or sort a folder by size. For thousands of photos, a free duplicate finder is far quicker.</p>'},
+        {'q': 'How much space will I get back?', 'a': '<p>It depends how many copies there are; a phone imported twice doubles its photos. Our free app adds up the space the extra copies take before you move anything.</p>'},
+        {'q': 'Can you do it for me?', 'a': '<p>Yes, remotely: we clear the copies with you, back up the rest and make sure nothing is lost.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/how-to-free-up-storage-space/">how to free up storage space</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a> and <a href="/digital-photos-course/">digital photos course</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -2432,9 +2596,16 @@ def symptom_pages(setup_url):
         '__APP_BOX_APPUPD__': pfp._app_box('appupdates', 'Updates for your programs: one button',
             '<p style="margin:0">On its <strong>Programs check</strong> page, <strong>Updates for your programs</strong> asks Windows&rsquo; own app installer (winget, from Microsoft&rsquo;s community list only) which of your programs have a newer version, and updates one, or <strong>all of them</strong>, when you press the button. '
             'Programs that need permission make Windows ask as usual. The same page names programs that no longer get security fixes, and ones the PC doesn&rsquo;t need.</p>', setup_url),
+        # 30 Oct 2026 (owner: "do the USB and duplicate photos pages too"): DeviceFaults.cs and Dupes.cs, build 47
+        '__APP_BOX_USB__': pfp._app_box('hardware', 'This PC: what Windows itself says isn&rsquo;t working',
+            '<p style="margin:0">Its <strong>Hardware</strong> line reads Device Manager&rsquo;s own verdict for every device, in plain words: a device that <strong>can&rsquo;t start</strong>, has <strong>stopped responding</strong> or has a <strong>damaged or blocked driver</strong> goes on the Home page. A device with no driver, or one waiting for a restart, is a calm note, and anything switched off on purpose or not plugged in now is left out. '
+            'No &ldquo;driver updater&rdquo; scare: it never judges a driver by its age. It only reads.</p>', setup_url),
+        '__APP_BOX_DUPES__': pfp._app_box('dupes', 'Duplicate photos &amp; music: exact copies only',
+            '<p style="margin:0">It looks through Pictures, Videos, Music, Desktop, Documents, Downloads and OneDrive&rsquo;s folder for files that are <strong>exactly the same</strong>, byte for byte, and shows which copy stays and how much space the extras take. Edited versions and different recordings of a song are never called duplicates. '
+            '<strong>Nothing is deleted:</strong> &ldquo;Move the extra copies&rdquo; puts them in one folder for you to check, and <strong>Put them back</strong> undoes it. Photos only in OneDrive&rsquo;s cloud are skipped, and iTunes copies are only listed, to remove inside iTunes.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2551,4 +2722,13 @@ SYMPTOM_FLOWS = {
                         'h3f': 'All up to date{mins}. Nice work.',
                         'tip': 'Do it again once a month, or let our free app remind you.',
                         'h3s': 'Stuck at a step? We can update them with you, remotely.'},
+    USBNR['slug']: {'h2': 'Get it recognised, step by step', 'ask': 'Does Windows see it now?',
+                    'tip': 'Unplug it and plug it back in once more to be sure it stays.',
+                    'h3s': 'Still not recognised after every step? That is a remote job, or the device.'},
+    DUPES['slug']: {'h2': 'Clear the copies, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                    'last_yes': 'Done, all tidy', 'ask': 'Done that step?',
+                    'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                    'h3f': 'All tidy{mins}. Nice work.',
+                    'tip': 'Import the phone into one folder from now on, so the copies don&rsquo;t come back.',
+                    'h3s': 'Stuck at a step? We can tidy them with you, remotely.'},
 }
