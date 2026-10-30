@@ -399,7 +399,7 @@ NAV_MENUS = [
     ("For Home", "/home-it-support-subscriptions/", {"cols": [[(None, [
         ("Home IT Support", "/home-it-support-subscriptions/"),
         ("Home Support Plans", "/home-it-support-plans/"),
-        ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
+        ("Free PC Health Check &mdash; 365 PC Manager", "/free-pc-health-check/"),   # 30 Oct 2026 (owner): was "365 PC Manager &mdash; free app"
         ("Techies One Mail &mdash; free email app", "/techies-one-mail/"),   # 10 Oct 2026
         ("Techies PDF &mdash; free PDF app", "/techies-pdf/"),   # 18 Oct 2026
         ("Techies Move &mdash; free PC move app", "/techies-move/"),   # 22 Oct 2026
@@ -461,7 +461,7 @@ NAV_MENUS = [
             ("PC Spec Checker", "/computer-spec-checker/"),
             ("PC Speed Test", "/pc-benchmark/"),
             ("Laptop Battery Health Check", "/how-to-check-laptop-battery-health/"),   # 19 Oct 2026 (app first, then the report checker)
-            ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
+            ("Free PC Health Check &mdash; 365 PC Manager", "/free-pc-health-check/"),   # 30 Oct 2026 (owner): was "365 PC Manager &mdash; free app"
             ("PC Build Budget Planner", "/custom-pc-builder/"),
         ]), ("Local &amp; specialist", [
             ("Bournemouth Live Map", "/bournemouth/live-map/"),
@@ -835,7 +835,7 @@ FOOTER = '''  <footer class="site-footer">
         <div class="footer-fold__body">
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
-        <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+        <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
         <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
         <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
         <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
