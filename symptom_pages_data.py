@@ -1932,6 +1932,190 @@ VANTAGE = {
     'crossLinksHtml': '<p>Related: <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a>, <a href="/dell-supportassist-keeps-popping-up/">Dell SupportAssist pop-ups</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/how-to-check-laptop-battery-health/">laptop battery health</a> and <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>.</p>',
 }
 
+# ============================================================ 25. This PC can't run Windows 11 (any make)
+# 30 Oct 2026 (owner: "do 1, 2 and 3"; seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "pc health check" 109K (UK 12.2K),
+# "pc health check app" 22.8K (UK 2.0K), "pc health check windows 11" 11K (UK 1.2K). Only the Dell page existed.
+# Microsoft's requirements: a supported processor (its own list; roughly Intel 8th generation / AMD Ryzen 2000 on), TPM 2.0,
+# UEFI firmware with Secure Boot, 4 GB memory, 64 GB storage. tpm.msc shows the TPM's Specification Version; System Information
+# shows BIOS Mode (UEFI / Legacy) and Secure Boot State. ESU and the registry workaround worded as the rest of the site
+# (windows-10-end-of-life, will-i-lose-files-upgrading-to-windows-11). The app's This PC page names the TPM, Secure Boot and
+# processor results itself (Ui.cs "Windows 11 check", build 47).
+W11CHECK = {
+    'slug': 'this-pc-cant-run-windows-11',
+    'title': 'This PC Can&rsquo;t Run Windows 11? What It Means and What to Do',
+    'metaDesc': 'PC Health Check says this PC can&rsquo;t run Windows 11? Find which check failed: TPM 2.0, Secure Boot or the processor. Most are settings; if not, here&rsquo;s what to do.',
+    'ogTitle': 'This PC can&rsquo;t run Windows 11? What it means and what to do',
+    'crumbName': 'This PC Can&rsquo;t Run Windows 11',
+    'eyebrow': '// PC HEALTH CHECK SAID NO?',
+    'h1': 'This PC can&rsquo;t run <em class="grad grad--cyan">Windows 11</em>? What to do',
+    'lede': 'Microsoft&rsquo;s PC Health Check app, or Windows Update, says this PC doesn&rsquo;t meet the requirements. It often doesn&rsquo;t say which one, and plenty of perfectly good PCs fail only because a setting is switched off. Here&rsquo;s how to find the real reason, switch on what can be switched on, and what to do if the PC really is too old.',
+    'chips': ['Any make of PC', 'Find the real reason', 'Settings first'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Find which check failed', '#s2'],
+    'ctaHead': 'Not sure what yours is telling you?',
+    'ctaSub': 'With your permission we connect to your Windows PC, check every Windows 11 requirement and tell you honestly whether it&rsquo;s a setting, an upgrade or time for a new one. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it checks', 'A supported processor, a TPM 2.0 security chip, Secure Boot (UEFI), 4 GB of memory and 64 GB of storage.'),
+        ('Often a setting', 'The TPM and Secure Boot are frequently just switched off in the PC&rsquo;s start-up settings.'),
+        ('Find the reason', 'In PC Health Check choose See all results, or look in tpm.msc and System Information.'),
+        ('Processor too old', 'That one can&rsquo;t be switched on. Windows 10 with Extended Security Updates gets updates until 12 October 2027.'),
+        ('Workarounds', 'There are ways to force Windows 11 on, but Microsoft says those PCs aren&rsquo;t entitled to updates.'),
+        ('Back up first', 'Before changing start-up settings or upgrading, copy your files somewhere safe.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT IT CHECKS', 'h2': 'What Windows 11 needs, and which parts trip people up',
+         'html': '<p>Microsoft&rsquo;s check looks at five things. Most PCs from the last few years pass the last two easily:</p>'
+                 '<ul>'
+                 '<li><strong>A supported processor.</strong> Microsoft publishes the list: roughly Intel Core 8th generation (2017 to 2018) or newer, or AMD Ryzen 2000 or newer. This is the only one that&rsquo;s purely about age.</li>'
+                 '<li><strong>TPM 2.0.</strong> A security chip, or the same thing built into the processor (Intel calls it PTT, AMD calls it fTPM). Often present but <strong>switched off</strong>.</li>'
+                 '<li><strong>Secure Boot, on a UEFI PC.</strong> The PC must start in modern UEFI mode, not the old Legacy (BIOS) mode, with Secure Boot available. Again, often a setting.</li>'
+                 '<li><strong>4 GB of memory</strong> and <strong>64 GB of storage</strong>.</li>'
+                 '</ul>'
+                 '<p>So &ldquo;this PC can&rsquo;t run Windows 11&rdquo; can mean anything from a five-minute setting to a PC that really is too old. Finding out which comes first.</p>'},
+        {'eyebrow': '/02 &mdash; FIND THE REASON', 'h2': 'Find which check failed',
+         'html': '<ol>'
+                 '<li><strong>In PC Health Check,</strong> click <strong>See all results</strong> under the Windows 11 box. Each requirement gets a tick or a cross.</li>'
+                 '<li><strong>The TPM:</strong> click Start, type <strong>tpm.msc</strong> and press Enter. Under TPM Manufacturer Information, <strong>Specification Version</strong> should say <strong>2.0</strong>. &ldquo;Compatible TPM cannot be found&rdquo; usually means it&rsquo;s switched off, not missing.</li>'
+                 '<li><strong>Secure Boot and UEFI:</strong> click Start, type <strong>System Information</strong> and open it. Look at <strong>BIOS Mode</strong> (UEFI or Legacy) and <strong>Secure Boot State</strong> (On, Off or Unsupported).</li>'
+                 '<li><strong>The processor:</strong> the Processor line in the same window gives the model, such as Intel Core i5-7500 or i5-8250U. In most Intel names the first digit after the dash is the generation: 7 is too old, 8 or more is usually fine.</li>'
+                 '</ol>'
+                 '<p>Our <a href="/computer-spec-checker/#windows-11">Can this PC run Windows 11?</a> check in your browser gives a quick first answer too.</p>'},
+        {'eyebrow': '/03 &mdash; SWITCH THEM ON', 'h2': 'When it&rsquo;s the TPM or Secure Boot: switch them on',
+         'html': '<p>Both live in the PC&rsquo;s own start-up settings (the firmware, often still called the BIOS), not in Windows. <strong>Back up your files first</strong>, and if the drive is encrypted with BitLocker, have its <a href="/computer-asking-for-bitlocker-recovery-key/">recovery key</a> to hand: changing these settings can make it ask.</p>'
+                 '<ol>'
+                 '<li><strong>Open the start-up settings:</strong> in Windows 11, Settings, System, Recovery, then <strong>Restart now</strong> next to Advanced startup (Windows 10: Settings, Update &amp; Security, Recovery). Then Troubleshoot, Advanced options, <strong>UEFI Firmware Settings</strong>, Restart. Or tap the maker&rsquo;s key as the PC starts: usually F2 or Delete, F10 on HP, F1 or Enter on Lenovo.</li>'
+                 '<li><strong>The TPM:</strong> usually under Security or Advanced. Switch on <strong>TPM</strong>, <strong>Intel PTT</strong> or <strong>AMD fTPM</strong>.</li>'
+                 '<li><strong>Secure Boot:</strong> usually under Boot or Security. Switch it on. If the PC is in <strong>Legacy</strong> mode, Secure Boot can&rsquo;t be switched on yet: see below.</li>'
+                 '<li><strong>Save and exit</strong> (often F10), let Windows start, then run PC Health Check again.</li>'
+                 '</ol>'
+                 '<p><strong>Legacy mode is the awkward one.</strong> Switching to UEFI also needs the drive converted to the newer layout (GPT), which Windows&rsquo; own MBR2GPT tool can do without wiping it. Done in the wrong order the PC won&rsquo;t start, so that&rsquo;s one we&rsquo;d do with you, backed up first. On a Dell, see <a href="/dell-this-pc-cant-run-windows-11/">this Dell can&rsquo;t run Windows 11</a> for the exact menus.</p>'},
+        {'eyebrow': '/04 &mdash; TOO OLD?', 'h2': 'When the processor is too old',
+         'html': '<p>No setting changes the processor. You still have sensible choices:</p>'
+                 '<ul>'
+                 '<li><strong>Stay on Windows 10 for now, safely.</strong> Enrolled in Extended Security Updates, Windows 10 keeps getting security updates until <strong>12 October 2027</strong>, free for home users who sync their settings to a Microsoft account. See <a href="/windows-10-esu-free-enrolment-help/">enrolling in Extended Security Updates</a>.</li>'
+                 '<li><strong>Plan the replacement</strong> before then rather than in a rush. Is it worth upgrading parts or not? Our <a href="/repair-or-replace-advisor/">repair or replace advisor</a> helps, and a <a href="/refurbished-laptops-dorset/">refurbished business laptop</a> that runs Windows 11 costs far less than new.</li>'
+                 '<li><strong>Forcing it on.</strong> There are registry workarounds that install Windows 11 on unsupported PCs, but Microsoft warns those machines aren&rsquo;t entitled to updates and the install can be unstable. We don&rsquo;t recommend it for a PC you rely on.</li>'
+                 '</ul>'
+                 '<p>Worried about your files either way? <a href="/will-i-lose-files-upgrading-to-windows-11/">Will I lose my files upgrading?</a> answers it.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app say which one failed', 'html': '__APP_BOX_W11__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We&rsquo;ll check every requirement, switch on what can be switched on, and back up before any upgrade. Prefer it all done for you? See our <a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a>.')},
+    ],
+    'howToName': 'How to find why a PC can’t run Windows 11, and fix it',
+    'howToSteps': [
+        {'name': 'See which check failed', 'text': 'In PC Health Check, click See all results under the Windows 11 box.'},
+        {'name': 'Check the TPM', 'text': 'Run tpm.msc: Specification Version should say 2.0. Compatible TPM cannot be found usually means it is switched off.'},
+        {'name': 'Check Secure Boot and UEFI', 'text': 'Open System Information: BIOS Mode should say UEFI and Secure Boot State On.'},
+        {'name': 'Switch them on', 'text': 'Back up, then in the PC’s start-up settings switch on TPM (Intel PTT or AMD fTPM) and Secure Boot. Save, restart and check again.'},
+        {'name': 'If the processor is too old', 'text': 'Enrol Windows 10 in Extended Security Updates (updates until 12 October 2027) and plan a replacement.'},
+    ],
+    'faqs': [
+        {'q': 'Why does PC Health Check say this PC can&rsquo;t run Windows 11?', 'a': '<p>It failed at least one of Microsoft&rsquo;s requirements: a supported processor, TPM 2.0, Secure Boot on a UEFI PC, 4 GB of memory or 64 GB of storage. Click See all results to see which. The TPM and Secure Boot are often just switched off.</p>'},
+        {'q': 'How do I know if my PC has TPM 2.0?', 'a': '<p>Click Start, type tpm.msc and press Enter. Specification Version should say 2.0. If it says Compatible TPM cannot be found, it&rsquo;s usually switched off in the PC&rsquo;s start-up settings, often as Intel PTT or AMD fTPM.</p>'},
+        {'q': 'Is it safe to switch on TPM and Secure Boot?', 'a': '<p>Yes, both are normal settings. Back up first, and have your BitLocker recovery key if the drive is encrypted. The one change to leave to someone confident is switching from Legacy to UEFI mode, because the drive has to be converted first.</p>'},
+        {'q': 'What if my processor is too old?', 'a': '<p>It can&rsquo;t be fixed with a setting. Windows 10 enrolled in Extended Security Updates keeps getting security updates until 12 October 2027, free for home users who sync their settings to a Microsoft account; plan a replacement before then.</p>'},
+        {'q': 'Can I install Windows 11 anyway?', 'a': '<p>There are registry workarounds, but Microsoft warns that PCs below the requirements aren&rsquo;t entitled to updates and can be unstable. For a PC you rely on, we don&rsquo;t recommend it.</p>'},
+        {'q': 'Is PC Health Check the same as 365 PC Manager?', 'a': '<p>No. Microsoft&rsquo;s PC Health Check mainly answers whether the PC can run Windows 11. Our free <a href="/free-pc-health-check/">365 PC Manager</a> checks the whole PC, and its This PC page says which Windows 11 requirement fails.</p>'},
+        {'q': 'Will upgrading to Windows 11 delete my files?', 'a': '<p>An upgrade through Windows Update keeps your files, programs and settings. We still back up first, just in case.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/is-my-windows-still-supported/">is my Windows still supported?</a>, <a href="/windows-10-end-of-life/">Windows 10 end of life</a>, <a href="/should-you-upgrade-to-windows-11/">should you upgrade to Windows 11?</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files?</a>, <a href="/dell-this-pc-cant-run-windows-11/">on a Dell</a> and <a href="/windows-11-upgrade-service/">our upgrade service</a>.</p>',
+}
+
+# ============================================================ 26. No sound on the computer
+# 30 Oct 2026 (seo-research/pcm-gaps-2026-10-30): Bing, 3 months, "sound settings" 162K (UK 5.1K), "audio troubleshooter"
+# 22K (UK 1.7K), "no sound on computer" 4.1K, "laptop speakers not working" 713, "sound not working windows 11" 422,
+# "headphones not working on pc" 214; YouTube top videos ~260K views (median). No page existed.
+# Steps as Microsoft Support (Fix sound or audio problems in Windows): choose the output from the taskbar's sound settings
+# (Windows 11: the arrow next to the volume slider), Settings > System > Sound > Volume mixer, the audio troubleshooter (it opens
+# in Get Help on newer Windows 11), Services > Windows Audio, Device Manager > Sound, video and game controllers. The app's Sound
+# check (Sound.cs, build 47) reads where sound goes, mute, volume and a live level, plays a test sound, tests the microphone and
+# names a Bluetooth headset stuck in Hands-Free; it can't change the default device (no documented API) - it opens Sound settings.
+NOSOUND = {
+    'slug': 'no-sound-on-computer',
+    'title': 'No Sound on Your Computer? Fixes for Windows 11 and 10',
+    'metaDesc': 'No sound from your PC or laptop? Check where the sound is going, the mute key and the volume mixer, then the troubleshooter, the audio service and the driver.',
+    'ogTitle': 'No sound on your computer? Fixes for Windows 11 and 10',
+    'crumbName': 'No Sound on Computer',
+    'eyebrow': '// CAN&rsquo;T HEAR ANYTHING?',
+    'h1': 'No <em class="grad grad--cyan">sound</em> on your computer? Get it back',
+    'lede': 'Videos play but there&rsquo;s silence, or one program has gone quiet while everything else is fine. Nine times out of ten the sound is simply going somewhere else: a TV or monitor, headphones you forgot about, or a mute key. Here are the quickest checks first, then the deeper fixes.',
+    'chips': ['Quickest checks first', 'Windows 11 and 10', 'PCs and laptops'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the quick checks', '#s1'],
+    'ctaHead': 'Still silent?',
+    'ctaSub': 'With your permission we connect to your Windows PC, find where the sound has gone and get it playing while you listen. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Most common', 'The sound is going to another device: a TV or monitor over HDMI, or headphones.'),
+        ('Quick checks', 'The volume icon, the laptop&rsquo;s mute key, and the speakers&rsquo; own power and volume.'),
+        ('One program silent', 'Check the Volume mixer, and that the browser tab isn&rsquo;t muted.'),
+        ('Troubleshooter', 'Windows&rsquo; audio troubleshooter fixes many cases by itself.'),
+        ('&ldquo;No audio output device&rdquo;', 'The driver: Device Manager, Sound, video and game controllers.'),
+        ('Muffled, not silent', 'Bluetooth headphones stuck in call mode: a different fix.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; QUICK CHECKS', 'h2': 'Try these first',
+         'html': '<ol>'
+                 '<li><strong>Look at the speaker icon</strong> by the clock. A cross or a line through it means muted: click it and turn the volume up.</li>'
+                 '<li><strong>Laptops have a mute key,</strong> usually one of the F keys with a speaker symbol, sometimes with a small light. Press it once (with Fn on some laptops).</li>'
+                 '<li><strong>Desktop speakers</strong> need their own power and volume knob turned up, and the plug in the green socket (or USB).</li>'
+                 '<li><strong>Headphones plugged in?</strong> The sound goes to them, not the speakers. Unplug them, and switch off Bluetooth headphones that might still be connected from the next room.</li>'
+                 '<li><strong>Restart the computer</strong> (Restart, not Shut down).</li>'
+                 '</ol>'
+                 '<p>Want to test the speakers on their own? Our <a href="/speaker-and-headphone-test/">speaker and headphone test</a> plays left, right and both, in your browser.</p>'},
+        {'eyebrow': '/02 &mdash; THE USUAL CAUSE', 'h2': 'Make sure the sound is going to the right place',
+         'html': '<p>Windows sends sound to one device at a time, and it sometimes picks the wrong one by itself: after a monitor or TV is plugged in, a headset is used for a call, or an update.</p>'
+                 '<ol>'
+                 '<li><strong>Windows 11:</strong> click the speaker icon by the clock, then the small <strong>&gt;</strong> arrow at the end of the volume slider. Pick your speakers or headphones from the list.</li>'
+                 '<li><strong>Windows 10:</strong> click the speaker icon; the device&rsquo;s name is above the slider. Click it and pick the right one.</li>'
+                 '<li>Or open <strong>Settings</strong>, <strong>System</strong>, <strong>Sound</strong> and choose under <strong>Output</strong>.</li>'
+                 '</ol>'
+                 '<p><strong>The usual culprits:</strong> a monitor connected by HDMI or DisplayPort (many have no speakers, or very quiet ones), a TV, Bluetooth headphones and USB headsets.</p>'},
+        {'eyebrow': '/03 &mdash; ONE PROGRAM SILENT', 'h2': 'When only one program has no sound',
+         'html': '<ul>'
+                 '<li><strong>The Volume mixer:</strong> Settings, System, Sound, <strong>Volume mixer</strong>. Each program has its own slider and can be sent to its own device: check yours isn&rsquo;t at zero or going elsewhere.</li>'
+                 '<li><strong>A browser tab:</strong> a muted tab shows a crossed-out speaker. Right-click the tab and choose <strong>Unmute site</strong>.</li>'
+                 '<li><strong>Teams, Zoom and the like</strong> have their own speaker setting: in the program&rsquo;s settings, under Devices or Audio, pick the same speakers Windows is using.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; LET WINDOWS LOOK', 'h2': 'Run the troubleshooter and restart the audio service',
+         'html': '<ol>'
+                 '<li><strong>The audio troubleshooter:</strong> Windows 11, Settings, System, Troubleshoot, Other troubleshooters, <strong>Audio</strong> (on newer versions it opens in the Get Help app). Windows 10, Settings, Update &amp; Security, Troubleshoot, Additional troubleshooters, <strong>Playing Audio</strong>.</li>'
+                 '<li><strong>Restart Windows&rsquo; audio service:</strong> click Start, type <strong>Services</strong> and open it, find <strong>Windows Audio</strong>, right-click it and choose <strong>Restart</strong>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/05 &mdash; THE DRIVER', 'h2': '&ldquo;No audio output device is installed&rdquo;',
+         'html': '<p>That message, or a red cross on the speaker icon, means Windows can&rsquo;t see the sound hardware. Usually it&rsquo;s the driver.</p>'
+                 '<ol>'
+                 '<li>Right-click Start and open <strong>Device Manager</strong>. Open <strong>Sound, video and game controllers</strong>.</li>'
+                 '<li><strong>Nothing listed, or a yellow warning sign?</strong> Click the Action menu, <strong>Scan for hardware changes</strong>.</li>'
+                 '<li><strong>Started after an update?</strong> Right-click the sound device (often Realtek or Intel), Properties, Driver, <strong>Roll Back Driver</strong> if it&rsquo;s available.</li>'
+                 '<li><strong>Otherwise</strong> right-click it, <strong>Uninstall device</strong>, and restart: Windows puts the driver back by itself.</li>'
+                 '<li><strong>Still nothing?</strong> Settings, Windows Update, Advanced options, <strong>Optional updates</strong>, or the PC maker&rsquo;s own support site for your model.</li>'
+                 '</ol>'
+                 '<p>Sound there but <strong>muffled or tinny on Bluetooth headphones</strong>? That&rsquo;s a different problem: see <a href="/bluetooth-headphones-sound-muffled-on-pc/">Bluetooth headphones sound muffled</a>.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check the sound', 'html': '__APP_BOX_SOUND__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' If it&rsquo;s the hardware, a broken headphone socket or laptop speakers, we collect it and repair it on the bench: see <a href="/computer-repairs/">computer repairs</a>.')},
+    ],
+    'howToName': 'How to fix no sound on a Windows computer',
+    'howToSteps': [
+        {'name': 'Check mute and volume', 'text': 'Click the speaker icon by the clock, unmute and turn it up. On a laptop press the mute key; on a desktop check the speakers’ own power and volume.'},
+        {'name': 'Pick the right output', 'text': 'Windows 11: speaker icon, then the arrow by the volume slider, and choose your speakers or headphones. Windows 10: click the device name above the slider.'},
+        {'name': 'Check the Volume mixer', 'text': 'Settings, System, Sound, Volume mixer: make sure the program isn’t at zero or sent to another device.'},
+        {'name': 'Run the troubleshooter', 'text': 'Settings, System, Troubleshoot, Other troubleshooters, Audio, then restart the Windows Audio service.'},
+        {'name': 'Reinstall the driver', 'text': 'Device Manager, Sound, video and game controllers: roll back or uninstall the sound device and restart.'},
+    ],
+    'faqs': [
+        {'q': 'Why is there suddenly no sound on my computer?', 'a': '<p>Most often Windows has started sending the sound to another device, such as a monitor or TV over HDMI or a pair of headphones. Click the speaker icon by the clock and pick your speakers. Otherwise it&rsquo;s a mute key, the volume mixer or the driver.</p>'},
+        {'q': 'What does &ldquo;No audio output device is installed&rdquo; mean?', 'a': '<p>Windows can&rsquo;t see the sound hardware, usually because of the driver. In Device Manager, under Sound, video and game controllers, uninstall the sound device and restart, or roll the driver back if it started after an update.</p>'},
+        {'q': 'Why does only one program have no sound?', 'a': '<p>Check its slider in Settings, System, Sound, Volume mixer, and that it isn&rsquo;t sent to another device. In a browser, make sure the tab isn&rsquo;t muted. Teams and Zoom have their own speaker setting too.</p>'},
+        {'q': 'My monitor is plugged in by HDMI and there&rsquo;s no sound. Why?', 'a': '<p>Windows may be sending the sound to the monitor, and many monitors have no speakers. Pick your speakers or headphones as the output instead.</p>'},
+        {'q': 'Where is the audio troubleshooter in Windows 11?', 'a': '<p>Settings, System, Troubleshoot, Other troubleshooters, Audio. On newer versions of Windows 11 it opens in the Get Help app.</p>'},
+        {'q': 'The sound works but my Bluetooth headphones sound muffled. Why?', 'a': '<p>They&rsquo;re usually stuck in their phone-call (Hands-Free) mode, which Windows plays in low quality. See our page on <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled Bluetooth headphones</a>.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Usually, yes: settings and drivers are a remote job. If the speakers or the headphone socket are faulty, we collect the computer and repair it.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/speaker-and-headphone-test/">speaker and headphone test</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">Bluetooth headphones sound muffled</a>, <a href="/webcam-mic-test/">webcam and microphone test</a> and <a href="/how-to-play-a-cd-on-windows-11/">playing a CD on Windows 11</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -1979,9 +2163,16 @@ def symptom_pages(setup_url):
         '__APP_BOX_BACKUP__': pfp._app_box('backup', 'Backup: is it on, and would your files fit on a drive?',
             '<p style="margin:0">It says which backup is switched on &mdash; File History, OneDrive folder backup or Windows 7&rsquo;s Backup and Restore &mdash; and when it last finished, how big your important files are, and how much space each drive has, so you can see whether a USB drive would hold them. '
             '<strong>Test my backup</strong> opens one real file from the backup and checks it reads back. It never deletes anything without asking.</p>', setup_url),
+        # 30 Oct 2026 (seo-research/pcm-gaps-2026-10-30): what the app really shows (Ui.cs "Windows 11 check", Sound.cs; build 47)
+        '__APP_BOX_W11__': pfp._app_box('keepreplace', 'This PC: which Windows 11 check fails, in plain words',
+            '<p style="margin:0">On a Windows 10 PC its <strong>This PC</strong> page gives its own Windows 11 verdict &mdash; looks ready, nearly (one setting to check) or not ready as it stands &mdash; and names each part: the <strong>TPM 2.0</strong> security chip (found, older, or not found and maybe switched off), <strong>Secure Boot</strong> (on, off, or not available) and whether the <strong>processor</strong> is new enough. '
+            'It also says until when this PC gets security updates, including whether it&rsquo;s enrolled in Extended Security Updates, and gives a plain keep, upgrade or replace verdict. It only reads.</p>', setup_url),
+        '__APP_BOX_SOUND__': pfp._app_box('sound', 'Sound check: where is the sound going?',
+            '<p style="margin:0">It shows which device Windows is sending the sound to &mdash; laptop speakers, headphones or a TV over HDMI &mdash; whether it&rsquo;s muted, the volume, and a live level bar, with a <strong>test sound</strong> to be sure. '
+            'It tests the microphone with a live bar too, and names Bluetooth headphones stuck in their muffled phone-call mode. Picking another device is Windows&rsquo; own job, so a button opens Windows&rsquo; Sound settings at the right place.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2080,4 +2271,10 @@ SYMPTOM_FLOWS = {
                       'yes': 'Yes, it&rsquo;s quiet', 'no': 'Not yet',
                       'tip': 'If the laptop is plugged in most of the time, use the battery conservation mode.',
                       'h3s': 'Still popping up? That is a quick remote job.'},
+    W11CHECK['slug']: {'h2': 'Find the reason and fix it, step by step', 'ask': 'Does PC Health Check pass now?',
+                       'tip': 'Run PC Health Check once more after a restart to be sure.',
+                       'h3s': 'Still failing, or the processor is too old? Ring us for the honest options.'},
+    NOSOUND['slug']: {'h2': 'Get the sound back, step by step', 'ask': 'Can you hear it now?',
+                      'tip': 'Play something for a minute to be sure it stays.',
+                      'h3s': 'Still silent after every step? That is a remote job.'},
 }

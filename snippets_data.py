@@ -961,8 +961,9 @@ SNIPPETS = {
         "desc": "Techies One, free for Windows 10 and 11: email that replaces Windows Live Mail, Outlook Express and Windows Mail, plus photo albums, letters and sums.",
     },
     "free-pc-health-check": {   # 11 Oct 2026: 1,723 impressions / 3 clicks in 28 days - say what it checks, drop the "must-have"
-        "title": "Free PC Health Check for Windows 10 &amp; 11 | 365 PC Manager",
-        "desc": "Free Windows 10 and 11 app that checks updates, drives, backup, Wi-Fi, start-up and scams in plain English. No sign-up, no fake errors, signed by us.",
+        # 30 Oct 2026: "computer health check(s)" 616 impressions / 3 months at position 32-34 and the page never said it
+        "title": "Free Computer Health Check for Windows 10 &amp; 11 | 365 PC Manager",
+        "desc": "Free computer health check for Windows 10 and 11: updates, drives, backup, Wi-Fi, start-up and scams in plain English. No sign-up, no fake errors.",
     },
     "it-support-for-home-workers": {
         "desc": "Reliable IT support for people working from home. Email, Microsoft 365, Teams, printers, Wi-Fi, security and backups, all kept working so you can stay put.",

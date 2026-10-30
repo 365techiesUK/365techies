@@ -1233,8 +1233,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "a0a6fd01874970e5",
-  "last": "2026-10-29"
+  "h": "ae81dc617a22fba5",
+  "last": "2026-10-30"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -1644,8 +1644,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "807b66ae52bd5baf",
-  "last": "2026-10-29"
+  "h": "34646bbec6d2fe61",
+  "last": "2026-10-30"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -3960,8 +3960,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "c0060d2ec9563329",
-  "last": "2026-10-28"
+  "h": "782875211f4a0cc1",
+  "last": "2026-10-30"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
@@ -4067,5 +4067,14 @@
  "lenovo-vantage-keeps-popping-up": {
   "first": "2026-10-29",
   "h": "b50cb7691e3586d0"
+ },
+ "this-pc-cant-run-windows-11": {
+  "first": "2026-10-30",
+  "h": "d5bd883c29e736d0",
+  "last": "2026-10-30"
+ },
+ "no-sound-on-computer": {
+  "first": "2026-10-30",
+  "h": "cceadf3a134b21d3"
  }
 }
