@@ -6869,6 +6869,23 @@ add(
         </div>
       </div>
     </section>''',
+   # 31 Oct 2026 (owner: "shouldn't we also have ... programs and games ... in the Microsoft Store?"): our own software,
+   # the same five as the Store card on /accreditations/, linked to our publisher page in the Store. It follows the press
+   # story on purpose: our software then, our software now.
+   f'''    <section class="section" aria-label="Our apps on the Microsoft Store">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// OUR OWN SOFTWARE</p>
+          <h2 class="section-title section-title--center" data-title>Our own apps, on the Microsoft Store<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The same know-how goes into software we write ourselves. Our four free Windows programs and our free card and arcade games are published on the Microsoft Store under our own name: five in all, each one checked by Microsoft before it was listed (October 2026).</p>
+        </div>
+        <ul class="checklist" data-stagger style="max-width:820px;margin:0 auto">
+{checklist(['<strong><a href="/free-pc-health-check/">365 PC Manager</a></strong> &mdash; a free health check for Windows 10 and 11: updates, drives, backup, Wi-Fi, start-up and scams, in plain English.', '<strong><a href="/techies-pdf/">Techies PDF</a></strong> &mdash; a free offline PDF editor: fill in and sign forms, merge, split and compress, with nothing uploaded.', '<strong><a href="/techies-move/">Techies Move</a></strong> &mdash; moves your files, photos, favourites and Outlook email files from your old PC to a new one by USB stick.', '<strong><a href="/techies-one-mail/">Techies One</a></strong> &mdash; free email that replaces Windows Live Mail, Outlook Express and Windows Mail, plus photo albums and letters.', '<strong><a href="/games/">365 Games</a></strong> &mdash; free Solitaire, FreeCell, Spider, Hearts, Cribbage and arcade games, with no adverts.'])}
+        </ul>
+        <p class="lede lede--center" data-reveal style="margin-top:1.6rem"><a href="https://apps.microsoft.com/search/publisher?name=365%20Techies" aria-label="365 Techies in the Microsoft Store: all our apps"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44" loading="lazy" style="display:inline-block;height:2.75rem;width:auto;vertical-align:middle"></a></p>
+        <p class="lede lede--center" data-reveal><a href="https://apps.microsoft.com/search/publisher?name=365%20Techies" style="color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px">See all five in the Microsoft Store</a> &middot; <a href="/accreditations/" style="color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px">Our accreditations</a></p>
+      </div>
+    </section>''',
    # Listed on #HelpAndKindness (live 2026-07-27, confirmed by their CEO) - a third
    # party describing how we work, which is worth more than us saying it ourselves.
    f'''    <section class="section section--alt" aria-label="Listed on Help and Kindness">
