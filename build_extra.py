@@ -17349,7 +17349,7 @@ _TEAM_POST = _bp.promise_strip(items=[_bp.PROMISE_CALL, _bp.PROMISE_ETA, _bp.PRO
         </div>
         <div class="tile-grid" data-stagger>
 ''' + tiles([
-        ("windows","Microsoft Partner","A verified Microsoft partner: 365 Techies Limited passed Microsoft Partner Center&rsquo;s business verification in August 2026. We have supported Microsoft Office since 1995, when it arrived on floppy disks."),
+        ("handshake","Microsoft Partner","A verified Microsoft partner, Partner ID 5190646: 365 Techies Limited passed Microsoft Partner Center&rsquo;s business verification in August 2026 and is authorised to supply Microsoft 365 through Microsoft&rsquo;s CSP programme. We have supported Microsoft Office since 1995, when it arrived on floppy disks."),
         ("spark","Microsoft Office Specialist teachers","Certified Microsoft Office Specialists on the team, qualified when the programme was still called Microsoft Office User Specialist, and ECDL-certified with the British Computer Society."),
         ("monitor","Dell reseller since 2001","Supplying new and tested refurbished business-grade Dell for over two decades, set up and supported by us. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner. The protection included on our support plans is the one we manage every day."),
@@ -17419,8 +17419,10 @@ info_page(
 # ---- Accreditations & Partners
 # 24 Oct 2026 (owner: "shouldn't it have the Microsoft Store logo there ... clicking on that links to our store ... so they can
 # see all our apps"): the Store card carries Microsoft's own badge (self-hosted, unaltered) in place of an icon, linked to our
-# publisher page in the Store, which lists all five. When the official Microsoft partner badge comes (AI Cloud Partner
-# Program, support request 2610240050000506), the Microsoft Partner card gets the same treatment.
+# publisher page in the Store, which lists all five. 31 Oct 2026: there is NO official Microsoft partner badge for us -
+# Logo Builder badges come with a Solutions Partner designation, not with the AI Cloud Partner Program or its paid
+# packages, and CSP logos aren't offered at all. So the Microsoft Partner card stays text (Partner ID + the CSP route) with
+# a neutral handshake icon: never a Microsoft or Windows logo look-alike.
 _ACC_STORE_URL = "https://apps.microsoft.com/search/publisher?name=365%20Techies"
 _ACC_STORE_TILE = ('        <div class="tile"><style>.tile-logo{display:inline-block;margin:0 0 1rem}.tile-logo img{display:block;height:2.75rem;width:auto}.tile p a{color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px}</style>'
     f'<a class="tile-logo" href="{_ACC_STORE_URL}" aria-label="365 Techies in the Microsoft Store: all our apps">'
@@ -17445,7 +17447,7 @@ info_page(
         </div>
         <div class="tile-grid" data-stagger>
 ''' + tiles([
-        ("windows","Microsoft Partner","A verified Microsoft partner &mdash; 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026 &mdash; and certified Microsoft Office Specialists. Deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
+        ("handshake","Microsoft Partner","A verified Microsoft partner, Partner ID 5190646. 365 Techies Limited passed Microsoft Partner Center&rsquo;s legal-business verification in August 2026, and since October 2026 we have been authorised to supply Microsoft 365 through Microsoft&rsquo;s Cloud Solution Provider (CSP) programme, as an indirect reseller through Pax8. We are certified Microsoft Office Specialists too: deep, daily Microsoft 365 expertise, and the delegated-admin route to support your tenant properly."),
       ]) + "\n" + _ACC_STORE_TILE + "\n" + tiles([
         ("monitor","Dell Reseller Since 2001","A Dell reseller for over two decades &mdash; we supply brand-new and tested refurbished business-grade Dell (Latitude laptops, OptiPlex desktops), set up and supported. Repairs we handle independently."),
         # 24 Oct 2026 (owner: "how come it hasn't got any mention of our Victron ... we're listed on their website"): accepted 21 Jul
