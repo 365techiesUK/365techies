@@ -44,12 +44,16 @@ PCM_STORE_BADGE = ('<a class="ms-store-badge vmc__store" href="https://apps.micr
                    'alt="Download from the Microsoft Store" width="161" height="44" loading="lazy"></a>')
 
 # the owner's GBP 60 move: what they get (the same promises the pages made before the free app, plus the PC service)
+# 31 Oct 2026 (owner: "add it to the public Virgin pages too"): ANY DEVICE. With two app passwords from the customer we do
+# the move on our own computers (365 Mail Mover v2.6 -Imap), so an iPhone, iPad or Android is fine; the steps are on
+# MOVE_STEPS (virgin_phone_page.py). Every move ends with the change list: every organisation that emails the old address.
+MOVE_STEPS = "/move-my-virgin-email/"
 VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
-               "Works even if Virgin won&rsquo;t give you an app password",
-               "A full service of your PC, with a written health report",
-               "Forwarding set up, and checked on your phone if you like",
-               "Done remotely: we phone first, and you watch us start")
-VM_US_SMALL = "For Windows PCs &middot; agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
+               "Any device: iPhone, iPad, Android or a Windows PC",
+               "Your change list: every place that has your old address, banks and bills first",
+               "On a Windows PC, a full service of it too, with a written health report",
+               "No Virgin app password? On a Windows PC we can still move it")
+VM_US_SMALL = "Any device &middot; agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
 # 1 Oct 2026: the card's ring-me-back form (js/forms.js posts it to the Slack lead relay; GA4 virgin_move_request)
 VM_FORM_OK = "&#10003; Got it, thank you. We&rsquo;ll ring you, Mon&ndash;Fri 9&ndash;5. Nothing is booked until we&rsquo;ve spoken."
 # 25 Oct 2026 (owner, after a month with ~2,100 Virgin-page clicks and few moves): most Virgin customers rightly take
@@ -190,15 +194,18 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
     if paid_first:
         # 6 Oct 2026 (owner: "trim it so the text button is on the first screen"): only the one condition sits between the
         # price and the buttons; the description follows them. Six phone lines above the buttons became one.
-        paid_d = "<b>For Windows PCs only.</b>"
-        paid_after = ("\n          <p class=\"vmc__d vmc__d--after\">We move every folder into Gmail for you, remotely. No app "
-                      "passwords, no settings, nothing to learn, and the price includes a full service of your PC with a written report.</p>"
+        paid_d = "<b>Any device: phone, tablet or PC.</b>"   # one short line, as before: the Text button stays on the first phone screen
+        paid_after = ("\n          <p class=\"vmc__d vmc__d--after\">We move every folder into Gmail for you, and send you your "
+                      "change list: every place that has your old address. On a phone or tablet, <a href=\"" + MOVE_STEPS + "\">get two "
+                      "codes ready</a> and text them to us. On a Windows PC we can do it all remotely, with a full service of your PC "
+                      "and a written report.</p>"
                       + _vm_now_html())
         paid_cta = ('<a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a>'
                     '<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>')
     else:
-        paid_d = ("No app passwords, no settings, nothing to learn. We move every folder into Gmail for you, remotely, and the "
-                  "price includes a full service of your PC with a written report.")
+        paid_d = ("We move every folder into Gmail for you, and send you your change list: every place that has your old "
+                  "address. Any device: on a phone or tablet, <a href=\"" + MOVE_STEPS + "\">get two codes ready</a>; on a Windows "
+                  "PC we do it all remotely, with a full service of your PC and a written report.")
         paid_after = ""
         paid_cta = ('<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>'
                     '<a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a>')
@@ -207,7 +214,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <{h} class="vmc__h">{diy_or} it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
           <p class="vmc__cta"><a class="button {dl_btn} button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a>{PCM_STORE_BADGE}</p>
-          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. {_vmc_stuck()}</p>
+          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. No Windows PC, just a phone, tablet or Mac? <a href="{MOVE_STEPS}">We do it for you</a>. {_vmc_stuck()}</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
             <li><b>Move it to Gmail myself:</b> folders and dates kept. Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days &mdash; it carries on by itself.</li>
@@ -442,14 +449,14 @@ TOOL_FAQS = [
      "press Copy my email to this PC. Then in 365 PC Manager open Internet &amp; email, then Virgin email - free, press Check my Virgin "
      "email, add your Gmail address and a <a href=\"/" + GAPP_SLUG + "/\">Google app password</a>, and start. It copies "
      "every folder into Gmail, carries on by itself each day, and checks at the end that everything arrived. The video on "
-     "this page shows every step. Or we do the whole move for you for &pound;60 per email address, including a full "
-     "service of your PC with a written report."),
+     "this page shows every step. Or we do the whole move for you for &pound;60 per email address, from any device, with "
+     "a list of every place that has your old address (and on a Windows PC, a full service of it with a written report)."),
     ("Is it free?",
      "Yes. The 365 Email Mover add-on and 365 PC Manager are both free, with no sign-up and no card: checking your Virgin "
      "mailbox, moving it to Gmail and the list of where your address is used. We make it free because a lot of people are "
      "being asked to pay to keep an address they have had for years. If you would rather we did the whole move for you, "
-     "that is &pound;60 per email address, agreed before we start, and it includes a full service of your PC with a "
-     "written report."),
+     "that is &pound;60 per email address, agreed before we start, from any device, and you get a list of every place "
+     "that has your old address."),
     ("Do I need a Virgin app password?",
      "No. The 365 Email Mover add-on copies your email from Virgin Media&rsquo;s own webmail in your Chrome, where you are "
      "already signed in, so there is no app password and no new sign-in. That is why it also works for a second mailbox on "
@@ -859,7 +866,7 @@ def virgin_tool_page(setup_url):
         <div class="prose" data-reveal style="max-width:760px;margin:0 auto">
           <p>Anyone with a <strong>virginmedia.com, blueyonder.co.uk, ntlworld.com or virgin.net</strong> address who wants their email in Gmail. Virgin is handing all four to a company called Junara: to keep the address you sign up with Junara and pay for each mailbox after any free period, or you move it once, to an address that stays yours whoever supplies your broadband. <a href="{JUNARA}">What is happening, and your deadline</a>.</p>
           <p>It works <strong>without a Virgin app password</strong>, so it suits the many people who can&rsquo;t get one since the Virgin Media O2 ID change &mdash; most often for a second mailbox on the account.</p>
-          <p>It is for <strong>Windows PCs only</strong>, and so is our remote support: we don&rsquo;t support Macs, iPads or iPhones. If your Virgin mailbox is already suspended, ring us before you start. Plusnet address? That is a different move: <a href="/move-plusnet-email-to-gmail/">Plusnet email to Gmail</a>.</p>
+          <p>The free tools are for <strong>Windows PCs only</strong>, and so is our remote support. On an iPhone, iPad, Android phone or a Mac? <a href="{MOVE_STEPS}">We can still move it for you</a>: you get two codes ready, and we do the move on our own computers. If your Virgin mailbox is already suspended, ring us before you start. Plusnet address? That is a different move: <a href="/move-plusnet-email-to-gmail/">Plusnet email to Gmail</a>.</p>
         </div>
       </div>
     </section>'''
@@ -876,7 +883,7 @@ def virgin_tool_page(setup_url):
           <p style="margin-top:.7rem">Windows SmartScreen shows that blue box for <em>any</em> program it hasn&rsquo;t seen many people download yet &mdash; even signed ones. To check the file is genuinely ours: click <strong>More info</strong> and look for the publisher <strong>365 Techies Ltd</strong>, then <strong>Run anyway</strong>. If it says &ldquo;Unknown publisher&rdquo;, don&rsquo;t run it &mdash; ring us on 01202 775566.</p>
           <p>Or right-click the file &rarr; Properties &rarr; Digital Signatures: it should show <strong>365 Techies Ltd</strong>. If you&rsquo;d rather we set it up for you, ring us.</p>
         </details>
-        <p style="text-align:center;color:var(--muted);font-size:.95rem;margin-top:1.2rem" data-reveal>Rather not do it yourself? <a href="#move-for-me">We move it for you for &pound;60 per address</a>, with a full PC service included.</p>
+        <p style="text-align:center;color:var(--muted);font-size:.95rem;margin-top:1.2rem" data-reveal>Rather not do it yourself? <a href="#move-for-me">We move it for you for &pound;60 per address</a>, from any device, with a list of every place that has your old address.</p>
       </div>
     </section>'''
     related = f'''    <section class="section" aria-label="Related">
@@ -886,7 +893,7 @@ def virgin_tool_page(setup_url):
       </div>
     </section>'''
     content = "\n".join([head, watch, choices, how, how_long, need, safety, who, download, related, bp.faq_html(TOOL_FAQS),
-                         bp.cta("Rather we just did it for you?", "We move every folder into Gmail for you, remotely, for &pound;60 per email address, agreed before we start &mdash; and it includes a full service of your PC with a written report.",
+                         bp.cta("Rather we just did it for you?", "We move every folder into Gmail for you for &pound;60 per email address, from any device, agreed before we start &mdash; and send you a list of every place that has your old address.",
                              primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332"))])
 
     steps = [(_strip(t), _strip(x)) for t, x, *_ in chrome + app]

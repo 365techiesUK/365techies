@@ -1506,6 +1506,8 @@ _APPLE_NOTICE_SKIP = {'email-basics-course', 'email-security-checker', 'email-si
                       'youve-been-hacked-email-bitcoin-scam', 'business-email-compromise', 'simplybook-custom-email-notifications',
                       'business-email-when-closing-your-company', 'take-over-email-domain-after-buying-business'}   # email-migration added 12 Sep (owner)
 
+_VIRGIN_ANY_DEVICE = {'move-virgin-media-email-to-gmail', 'virgin-media-email-moving-to-junara'}   # the Virgin move pages
+
 def apple_notice_inner(slug):
     """The bare callout (for a blog article body), or None when the page is not an Outlook/email support page."""
     if slug in _APPLE_NOTICE_SKIP or not ('outlook' in slug or 'email' in slug or 'onedrive' in slug): return None
@@ -1514,7 +1516,11 @@ def apple_notice_inner(slug):
     elif 'onedrive' in slug: what, help_ = 'OneDrive', _APPLE_HELP_ONEDRIVE   # added 12 Sep 2026 (owner)
     else: what, help_ = 'email', _APPLE_HELP_MAIL
     tpl = _APPLE_NOTICE_PHONE if ('android' in slug or 'phone' in slug) else _APPLE_NOTICE_PC
-    return tpl.replace('{what}', what).replace('{help}', help_)
+    out = tpl.replace('{what}', what).replace('{help}', help_)
+    if slug in _VIRGIN_ANY_DEVICE:   # 31 Oct 2026 (owner): a Virgin email MOVE works from any device - nothing is done on it
+        out = out.replace(' is the place to start. </p>', ' is the place to start. <strong>Moving your Virgin email is different:</strong> '
+                          'we can do that whatever device you have. <a href="/move-my-virgin-email/">How it works</a>.</p>')
+    return out
 
 def apple_notice_for(slug):
     """The callout as a page section, or None."""

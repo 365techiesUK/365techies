@@ -1233,8 +1233,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "ae81dc617a22fba5",
-  "last": "2026-10-30"
+  "h": "1172739d5ac38ca5",
+  "last": "2026-10-31"
  },
  "free-tools": {
   "first": "2026-07-28",
@@ -2342,6 +2342,11 @@
   "h": "f91be4b1b07e43f4",
   "last": "2026-09-26"
  },
+ "move-my-virgin-email": {
+  "first": "2026-10-31",
+  "h": "7166b7c467613062",
+  "last": "2026-10-31"
+ },
  "move-plusnet-email-to-gmail": {
   "first": "2026-07-28",
   "h": "abd3c7a79c741c7b",
@@ -2349,8 +2354,8 @@
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "7389a84cc30f907b",
-  "last": "2026-10-25"
+  "h": "b1016791ff1d3436",
+  "last": "2026-10-31"
  },
  "music-visualiser-for-windows": {
   "first": "2026-10-17",
@@ -3663,13 +3668,13 @@
  },
  "virgin-email-mover": {
   "first": "2026-09-29",
-  "h": "42a0e10f3678a36c",
-  "last": "2026-10-25"
+  "h": "adfef90aa6be57ce",
+  "last": "2026-10-31"
  },
  "virgin-media-email-moving-to-junara": {
   "first": "2026-09-26",
-  "h": "78da7bd0d20df28d",
-  "last": "2026-10-25"
+  "h": "21346c6fca0fead1",
+  "last": "2026-10-31"
  },
  "virgin-media-email-wont-add-to-new-outlook": {
   "first": "2026-09-05",

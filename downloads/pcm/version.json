@@ -1,11 +1,11 @@
 {
-  "ver": 47,
-  "version": "1.0.47",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v47.exe",
-  "sha256": "e910a2ca900407db65af808f73f0bdf829b23e53e4dbe460c8778201a2f8684d",
-  "notes": "Version 36.7: Cyber Essentials readiness - is this PC ready for the UK's Cyber Essentials certificate, checked against the April 2026 requirements, and it can keep watch all year: a dated record and a reminder before each month's update deadline. Choose your colours: Light, Dark, or match Windows (under Text size). Suggest an idea - tell us what you'd like the app to do, or what isn't right, from Get help or the tray menu, and we read every one. A Rate us in the Microsoft Store button. Plus everything from 36.6: see how your laptop's battery is wearing, and a safer drive check on PCs that use Intel's storage driver (Intel RST). Signed by 365 Techies Ltd.",
+  "ver": 48,
+  "version": "1.0.48",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v48.exe",
+  "sha256": "8d9f133ef7aabc52e7d0e55d581e412254041c7f2f50926b6b99ec17241b8a09",
+  "notes": "Version 36.8: move your Virgin Media email to Gmail with an app password. If you can get one from the My Virgin Media app, Your Virgin email now checks and moves your mailbox with it - no browser window, nothing to install, and nothing for Virgin's security check to stop. And when the move is done, a printable change list: every company that emails your old address, the most important first, with a box to tick. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v47.exe",
-    "sha256": "0ecc9e48c417dd997dab498e12c257af9e8c9ed83affb2a31231ff948d5d214b"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v48.exe",
+    "sha256": "bd231d1c56f63ea98333b3b8e282633ebb9fa26c1d016f11bde38a303c4eaa76"
   }
 }
