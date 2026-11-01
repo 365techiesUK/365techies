@@ -24053,10 +24053,14 @@ def junara_v2(d, crumbs):
              '.taskhead .jvid-top .ytw{margin:0;min-height:2.75rem}'
              '@media (max-width:600px){.taskhead .tshare-btn{width:2.75rem;padding:0;justify-content:center}'
              '.taskhead .tshare-btn span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
-             '.taskhead .taskhead__h{font-size:1.72rem}.taskhead .taskhead__lede{margin-bottom:.45rem}.taskhead .page-hero__byline{margin-top:.35rem}}</style>')
+             '.taskhead .taskhead__h{font-size:1.72rem}.taskhead .taskhead__lede{margin-bottom:.45rem}.taskhead .page-hero__byline{margin-top:.35rem}'
+             # 1 Nov 2026: phones drop the trust chips for the longer byline below; measured: Text button +3 px at
+             # 360 x 800 (was +1), +15 px at 375 x 812.
+             'main .taskhead .taskhead__trust{display:none}main .taskhead .jvid-top,main .taskhead .tshare-top{margin-top:.5rem}main .taskhead .page-hero__byline{margin-top:.25rem}}</style>')
     _by = 'Reviewed __LASTMOD_HUMAN__</p>'
     assert head.count(_by) == 1, 'task_head byline changed'
     head = head.replace(_by, _by + short)
+    head = _VL.independent_byline(head, _VL.INDEPENDENT_GUIDE)   # 1 Nov 2026: Netcraft / Edge, see virgin_launch.py
     # 25 Oct 2026 (owner: "free-year reminder"): for the many taking Junara's free year, under the facts table, whose
     # "Free period" row has just explained it. The 6 Oct first-screen measurements above are untouched.
     return (head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html()

@@ -21,7 +21,7 @@ Facts, read 31 Oct 2026:
   A mailbox already moved to Junara uses imap.junara.com and the Junara password - a different conversation, so "text us first".
 """
 import build_pages as bp
-from virgin_launch import TASK_TRUST, TASK_PHONE_CSS, ADDR_SLUG, JUNARA, MOVE_STEPS
+from virgin_launch import TASK_TRUST, TASK_PHONE_CSS, ADDR_SLUG, JUNARA, MOVE_STEPS, independent_byline, INDEPENDENT_SERVICE
 
 SLUG = MOVE_STEPS.strip("/")   # /move-my-virgin-email/
 # The owner's price for this move (GBP per email address). Empty: the page says the price is agreed first.
@@ -124,6 +124,7 @@ def virgin_phone_page():
         "Do these steps on your iPhone, iPad, Android phone or computer, then text us two codes. We move every email into "
         "Gmail for you, and give you a list of every place that has your old address.",
         trust=TASK_TRUST[:2] + ["Nothing on Virgin is deleted"])
+    head = independent_byline(head, INDEPENDENT_SERVICE)   # 1 Nov 2026: Netcraft / Edge, see virgin_launch.py
     price = (f"The move costs <b>&pound;{PHONE_MOVE_PRICE} per email address</b>, agreed before we start."
              if PHONE_MOVE_PRICE else "We agree the price with you before we start.")
     overview = f'''    <section class="dh dh-sec vr" id="how" aria-labelledby="how-title">

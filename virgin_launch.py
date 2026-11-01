@@ -263,6 +263,20 @@ TASK_TRUST = ['<a href="/reviews/">&#9733; 4.9 on Google</a>', "Family-run since
 # a phone shows the first two only, on one line, so the choice below starts higher
 TASK_PHONE_CSS = "<style>@media (max-width:600px){.taskhead__trust span:nth-child(n+3){display:none}.taskhead__lede{margin-bottom:.55rem}}</style>"
 
+# 1 Nov 2026 (owner: "yes, add the line to both pages"): Netcraft, for Virgin Media O2, reported the Junara page as
+# phishing (issue 97820440) and Edge blocked it. A page that uses Virgin's name beside forms, a download or codes says
+# who we are, in the byline. The byline is stripped from the content hash, so rewording this re-dates nothing.
+BYLINE_BY = '<span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; '
+INDEPENDENT_GUIDE = ('An independent guide by the <a href="/meet-the-team/">365 Techies team</a>. We are not Virgin Media or Junara, '
+                     'and we never ask for your password.')
+INDEPENDENT_SERVICE = ('An independent service from the <a href="/meet-the-team/">365 Techies team</a>. We are not Virgin Media or Junara, '
+                       'and we never ask for your Virgin password, only the two codes on this page.')
+
+
+def independent_byline(head, sentence):
+    assert head.count(BYLINE_BY) == 1, 'task_head byline changed'
+    return head.replace(BYLINE_BY, sentence + ' &middot; ')
+
 # ============================================================ Junara: what it costs (coordinator's SEO brief, 29 Sep 2026)
 # Searchers ask "how much does Junara email cost" far more than anything else (Search Console, 24 h to 29 Sep 2026).
 # Junara publishes NO Virgin price. The only Junara price made public is the Isle of Man one: when Manx Telecom handed
