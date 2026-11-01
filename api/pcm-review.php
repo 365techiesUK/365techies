@@ -150,6 +150,25 @@ $LA_UNTIL = 1798675200;    // 31 Dec 2026 00:00 UTC: no seeding or sending after
 $LA_PLAN_MAX = 150;        // the same plausibility rail as $BF_PLAN_MAX
 $LA_EXCLUDE = array('info@365techies.co.uk');
 
+/* ---- "WOULD YOU RATE 365 PC MANAGER?" Microsoft Store review ask ------------
+   Owner, 1 Nov 2026: "build the review email". Asks EVERY customer whose computer PC
+   Manager has seen lately for an honest Microsoft Store rating: never only the happy
+   ones, and nothing offered in return (Microsoft Store Policies: no ratings
+   manipulation; UK DMCC Act 2024 and the CMA's guidance: no incentivised or cherry-picked
+   reviews). The LinkedIn email's pattern: a read-only seed, opt-outs honoured, one email
+   per inbox ever, a day cap, and a census (no sends) while off. Two more rails so nobody
+   gets two of our marketing emails close together: nothing before $MSR_FROM, and never
+   within $MSR_GAP of the LinkedIn email reaching the same inbox. */
+$MSR_LIVE = false;         // HOLD (owner, 1 Nov 2026): switch on only on his word, after a test to info@
+$MSR_DAY_CAP = 10;         // per day, the LinkedIn email's pace
+$MSR_FROM = 1794355200;    // 11 Nov 2026 00:00 UTC: nothing is sent before this (the LinkedIn email runs until about then)
+$MSR_UNTIL = 1801353600;   // 31 Jan 2027 00:00 UTC: no seeding or sending after this
+$MSR_GAP = 1209600;        // 14 days: never this soon after the LinkedIn email reached the same inbox
+$MSR_SEEN_DAYS = 45;       // "uses PC Manager" = one of their linked computers checked in within this many days
+$MSR_MAX = 150;            // the same plausibility rail as $LA_PLAN_MAX
+$MSR_EXCLUDE = array('info@365techies.co.uk');
+$MSR_STORE_ID = 'XP99J1CFV8W876';   // 365 PC Manager on the Microsoft Store
+
 if (!function_exists('rvq_open')) {
 
 date_default_timezone_set('Europe/London');   // SimplyBook datetimes are company-local
@@ -195,6 +214,8 @@ function rvq_open() {
     if (!isset($q['sr']) || !is_array($q['sr'])) $q['sr'] = array();            // six-weekly service report emails, keyed kh-machine-ts
     if (!isset($q['la']) || !is_array($q['la'])) $q['la'] = array();            // "we're now on LinkedIn" ledger, keyed by customer key
     if (!isset($q['la_day']) || !is_array($q['la_day'])) $q['la_day'] = array();   // date => sends, for its day cap
+    if (!isset($q['msr']) || !is_array($q['msr'])) $q['msr'] = array();          // Store review ask ledger, keyed by customer key
+    if (!isset($q['msr_day']) || !is_array($q['msr_day'])) $q['msr_day'] = array();   // date => sends, for its day cap
     /* Per-install salt for unsubscribe tokens, generated once on first use so the
        feature needs no new secret file and no owner step. Kept in the queue, which
        is already gitignored and .htaccess-denied. */
@@ -1577,6 +1598,253 @@ function la_process($cap = 0) {
     if ($sent > 0 || $failed > 0)
         rv_slack('LinkedIn email: ' . $sent . ' sent' . rv_name_list($who) . ', ' . $failed . ' failed, ' . max(0, $due - $sent) . ' still to go.');
     return array('mode' => 'live', 'sent' => $sent, 'failed' => $failed, 'eligible_now' => $due, 'day_cap' => (int)$LA_DAY_CAP);
+}
+
+/* ==========================================================================
+   "WOULD YOU RATE 365 PC MANAGER?" (see $MSR_LIVE). Words from the draft the owner
+   approved on 1 Nov 2026, with "A small favour" dropped from the subject (we never
+   use "small"). One button, to our own ?rate page: email programs strip the Store's
+   ms-windows-store: links, and that page also tells a phone or iPad reader to open it
+   on their PC. No referral panel: one ask per email.
+   ========================================================================== */
+
+function msr_rate_url() { return 'https://365techies.co.uk/api/pcm-review.php?rate=1'; }
+function msr_store_uri() { return 'ms-windows-store://review/?ProductId=' . $GLOBALS['MSR_STORE_ID']; }
+function msr_web_url() { return 'https://apps.microsoft.com/detail/' . $GLOBALS['MSR_STORE_ID']; }
+function msr_subject() { return 'Would you rate 365 PC Manager?'; }
+function msr_body($first, $to = '', $salt = '') {
+    return 'Hi ' . $first . ",\r\n\r\n"
+    . "A quick one from David and Steve at 365 Techies.\r\n\r\n"
+    . "Your computer runs our free 365 PC Manager. It's what sends us your PC's\r\n"
+    . "health reports, so we can spot problems before they bite. It's now on the\r\n"
+    . "Microsoft Store, and honest reviews help other people find it.\r\n\r\n"
+    . "If you have a minute, open this on your Windows computer:\r\n"
+    . msr_rate_url() . "\r\n\r\n"
+    . "The Store may ask you to sign in with your Microsoft account. If you're not\r\n"
+    . "sure of yours, don't worry, just skip it. Whatever you think of it, good or\r\n"
+    . "bad, we'd like to hear, and you can simply reply to this email.\r\n\r\n"
+    . "Thank you, as ever, for being with us.\r\n\r\n"
+    . "David & Steve\r\n"
+    . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+    . "01202 775566 - https://365techies.co.uk\r\n\r\n"
+    . "(You're getting this because you're a 365 Techies customer. To hear nothing\r\n"
+    . "like this again, reply \"no thanks\""
+    . (($to !== '' && $salt !== '') ? " or click here:\r\n" . rv_unsub_url($to, $salt) . "\r\n" : ".\r\n")
+    . "It never affects your support.)\r\n";
+}
+/** HTML twin on the house shell: one button (to our ?rate page) and the marketing legal line. */
+function msr_body_html($first, $to = '', $salt = '') {
+    $unsub = ($to !== '' && $salt !== '') ? rv_unsub_url($to, $salt) : '';
+    return rv_html_shell(array(
+        'title' => 'Would you rate 365 PC Manager?',
+        'eyebrow' => 'A favour to ask',
+        'heading' => 'Would you rate 365 PC Manager?',
+        'preview' => "Honest reviews on the Microsoft Store help other people find it. Good or bad, we'd like to hear.",
+        'blocks' => array(
+            rv_h_p('Hi ' . rv_h($first) . ','),
+            rv_h_p('A quick one from David and Steve at 365 Techies.'),
+            rv_h_p('Your computer runs our free <strong style="color:#0b1226;">365 PC Manager</strong>. It&rsquo;s what sends us your PC&rsquo;s health reports, so we can spot problems before they bite. It&rsquo;s now on the Microsoft Store, and honest reviews help other people find it.'),
+            rv_h_p('If you have a minute, open this on your Windows computer:'),
+            rv_h_cta('Rate 365 PC Manager', msr_rate_url()),
+            '<div style="height:14px;line-height:14px;font-size:0;">&nbsp;</div>',
+            rv_h_note('The Store may ask you to sign in with your Microsoft account. <strong style="color:#0b1226;">If you&rsquo;re not sure of yours, don&rsquo;t worry, just skip it.</strong>'),
+            rv_h_p('Whatever you think of it, good or bad, we&rsquo;d like to hear, and you can simply reply to this email.'),
+            rv_h_p('Thank you, as ever, for being with us.'),
+        ),
+        'legal' => 'You are receiving this because you are a 365 Techies customer.',
+        'footnote' => 'Don&rsquo;t want emails like this? '
+            . ($unsub !== '' ? '<a href="' . rv_h($unsub) . '" style="color:#7c8aa5;">Unsubscribe</a>' : 'Reply &ldquo;no thanks&rdquo;')
+            . ' &ndash; it never affects your support.',
+    ));
+}
+function msr_send($to, $nm) {
+    // the test suite's stub, so its live-path checks never reach a real mail server
+    if (isset($GLOBALS['MSR_TEST_SEND']) && is_callable($GLOBALS['MSR_TEST_SEND'])) return (bool)call_user_func($GLOBALS['MSR_TEST_SEND'], $to, $nm);
+    $sl = rv_salt();
+    $f = rv_first($nm);
+    return rv_send_raw($to, msr_subject(), msr_body($f, $to, $sl), '', '', msr_body_html($f, $to, $sl));
+}
+
+/** The ?rate page the email's button opens. Fixed words, no script, writes nothing. */
+function msr_landing_html() {
+    return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+       . '<meta name="viewport" content="width=device-width,initial-scale=1">'
+       . '<meta name="robots" content="noindex,nofollow"><title>Rate 365 PC Manager - 365 Techies</title>'
+       . '<style>body{font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;'
+       . 'background:#070d22;color:#eaf4ff;max-width:34rem;margin:0 auto;padding:2.5rem 1.2rem}'
+       . 'a{color:#6cc4f5}.btn{display:inline-block;font-weight:700;background:#1d97e3;color:#fff;text-decoration:none;'
+       . 'border-radius:9px;padding:.85rem 1.5rem;margin:.2rem 0 .6rem}'
+       . '.note{background:#10204a;border-left:4px solid #1d97e3;border-radius:0 8px 8px 0;padding:.8rem 1rem}</style></head><body>'
+       . '<h1>Rate 365 PC Manager</h1>'
+       . '<p>Thank you for taking a minute. Press the button and the Microsoft Store opens at the review form for 365 PC Manager.</p>'
+       . '<p><a class="btn" href="' . rv_h(msr_store_uri()) . '">Open the review form</a></p>'
+       . '<p>If your browser asks whether to open the Microsoft Store, choose <strong>Open</strong>. Then pick the stars, write a line if you like, '
+       . 'and press Submit. Good or bad, an honest review is what helps.</p>'
+       . '<p class="note"><strong>On a phone, iPad or Mac?</strong> This needs your Windows computer. Open the email again on the PC that has '
+       . '365 PC Manager, and press the button there.</p>'
+       . '<p class="note">The Store may ask you to sign in with your Microsoft account. If you&rsquo;re not sure of yours, don&rsquo;t worry: '
+       . 'just close it. There&rsquo;s nothing else you need to do.</p>'
+       . '<p>Button not working? Open the Microsoft Store from the Start menu, search for <strong>365 PC Manager</strong>, and scroll down to '
+       . 'Ratings and reviews. Or see it on the web: <a href="' . rv_h(msr_web_url()) . '">365 PC Manager on the Microsoft Store</a>.</p>'
+       . '<p style="margin-top:2rem"><a href="https://365techies.co.uk/">365techies.co.uk</a> &middot; 01202 775566</p>'
+       . '</body></html>';
+}
+
+/** Does this customer use PC Manager? One of their linked computers checked in within $MSR_SEEN_DAYS.
+    Stricter than sr_active_pcs(): a computer with no check-in date does not count here. */
+function msr_uses_pcm($cust) {
+    $since = time() - 86400 * (int)$GLOBALS['MSR_SEEN_DAYS'];
+    foreach ((is_array($cust) && isset($cust['machines']) && is_array($cust['machines']) ? $cust['machines'] : array()) as $m) {
+        if (!is_array($m) || empty($m['seen'])) continue;
+        $seen = strtotime((string)$m['seen'] . ' UTC');
+        if ($seen !== false && $seen > $since) return true;
+    }
+    return false;
+}
+
+/* Adds every customer who uses PC Manager to the Store review ledger, reading the customer
+   database READ-ONLY with la_seed()'s field reading. On a plan or not makes no difference:
+   the ask is about the app, so it goes to everyone who runs it. */
+function msr_seed($dbFile = null) {
+    global $MSR_EXCLUDE, $MSR_UNTIL;
+    $out = array('scanned' => 0, 'no_email' => 0, 'already' => 0, 'optout' => 0,
+                 'excluded' => 0, 'no_pcm' => 0, 'added' => 0);
+    if (time() >= (int)$MSR_UNTIL) return array('skip' => 'campaign_over') + $out;
+    $db_file = $dbFile !== null ? $dbFile : __DIR__ . '/pcm-data.json';
+    if (!is_readable($db_file)) return array('error' => 'no_db') + $out;
+    $raw = (string)@file_get_contents($db_file);
+    if ($raw === '') return array('error' => 'db_empty') + $out;
+    $db = json_decode($raw, true);
+    if (!is_array($db) || !isset($db['customers']) || !is_array($db['customers']))
+        return array('error' => 'db_unreadable') + $out;
+
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('error' => 'locked') + $out;
+    $excl = array();
+    foreach ((array)$MSR_EXCLUDE as $x) $excl[sha1(strtolower(trim($x)))] = true;
+    foreach ($db['customers'] as $ckey => $c) {
+        if (!is_array($c)) continue;
+        $out['scanned']++;
+        $em = '';
+        foreach (array('email', 'em', 'contact_email', 'sb_email') as $f)
+            if ($em === '' && !empty($c[$f]) && is_string($c[$f])) $em = strtolower(trim($c[$f]));
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) { $out['no_email']++; continue; }
+        $eh = sha1($em);
+        if (isset($excl[$eh]))           { $out['excluded']++; continue; }
+        if (isset($q['optout'][$eh]))    { $out['optout']++;   continue; }
+        if (isset($q['msr'][$ckey]))     { $out['already']++;  continue; }
+        if (!msr_uses_pcm($c))           { $out['no_pcm']++;   continue; }
+        $nm = '';
+        foreach (array('name', 'nm', 'customer', 'contact') as $f)
+            if ($nm === '' && !empty($c[$f]) && is_string($c[$f])) $nm = $c[$f];
+        $q['msr'][$ckey] = array('em' => $em, 'nm' => rv_clean_name($nm), 'st' => 'pending', 'ts' => time(), 'tries' => 0);
+        $out['added']++;
+    }
+    rvq_save($q);
+    rvq_close($lk);
+    return $out;
+}
+
+/* Sends the Store review ask with la_process()'s discipline (pick under the lock, release it
+   before SMTP, then transition; one email per ADDRESS, ever), plus its two rails: nothing
+   before $MSR_FROM, and never within $MSR_GAP of the LinkedIn email reaching the same inbox
+   (an inbox still waiting for its LinkedIn email waits for that first). A census while off. */
+function msr_process($cap = 0) {
+    global $MSR_LIVE, $MSR_DAY_CAP, $MSR_MAX, $MSR_FROM, $MSR_UNTIL, $MSR_GAP, $RV_LIVE, $LA_LIVE, $LA_UNTIL;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    if (time() >= (int)$MSR_UNTIL) return array('skip' => 'campaign_over');
+    $cap = $cap > 0 ? $cap : 3;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['msr_ts']) ? $q['msr_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
+    $q['msr_ts'] = time();
+
+    // la_process()'s plausibility rail: far more PC Manager users than we have means the field guess is wrong
+    if (count($q['msr']) > (int)$MSR_MAX) {
+        $warn = (isset($q['msr_warn_ts']) ? $q['msr_warn_ts'] : 0) < time() - 43200;
+        if ($warn) $q['msr_warn_ts'] = time();
+        rvq_save($q);
+        rvq_close($lk);
+        if ($warn) rv_slack('Store review email HELD: ' . count($q['msr']) . ' customers counted as using PC Manager, more than the '
+            . (int)$MSR_MAX . ' that is plausible. msr_uses_pcm() is probably reading the wrong field, so nothing has been sent.');
+        return array('skip' => 'segment_implausible', 'in_ledger' => count($q['msr']), 'max' => (int)$MSR_MAX);
+    }
+
+    // the LinkedIn email, per INBOX: when it went, or that it is still to come while that campaign runs
+    $laSent = array(); $laWaiting = array();
+    $laRunning = !empty($LA_LIVE) && time() < (int)$LA_UNTIL;
+    foreach ($q['la'] as $e0) {
+        if (!is_array($e0) || empty($e0['em'])) continue;
+        $eh0 = sha1($e0['em']);
+        $st0 = isset($e0['st']) ? $e0['st'] : '';
+        if ($st0 === 'sent') $laSent[$eh0] = max(isset($laSent[$eh0]) ? $laSent[$eh0] : 0, (int)(isset($e0['sent_ts']) ? $e0['sent_ts'] : 0));
+        elseif ($laRunning && ($st0 === 'pending' || $st0 === 'sending')) $laWaiting[$eh0] = true;
+    }
+    // a second record sharing an inbox that already had it stays 'pending' for ever (la_process skips it), so it never holds anyone
+    foreach ($laWaiting as $eh0 => $x) if (isset($laSent[$eh0])) unset($laWaiting[$eh0]);
+
+    $today = date('Y-m-d');
+    foreach ($q['msr_day'] as $d => $n) if ($d < date('Y-m-d', time() - 2592000)) unset($q['msr_day'][$d]);
+    $sentToday = isset($q['msr_day'][$today]) ? (int)$q['msr_day'][$today] : 0;
+    $room = max(0, (int)$MSR_DAY_CAP - $sentToday);
+    $started = time() >= (int)$MSR_FROM;
+    $sentEh = array();
+    foreach ($q['msr'] as $e0) if ((isset($e0['st']) ? $e0['st'] : '') === 'sent' && !empty($e0['em'])) $sentEh[sha1($e0['em'])] = true;
+
+    $picked = array(); $batchEm = array(); $due = 0; $held = 0;
+    foreach ($q['msr'] as $ckey => $e) {
+        $st = isset($e['st']) ? $e['st'] : '';
+        $retryable = ($st === 'sending' && (isset($e['snd_ts']) ? $e['snd_ts'] : 0) < time() - 600
+                      && (isset($e['tries']) ? $e['tries'] : 0) < 3);
+        if ($st !== 'pending' && !$retryable) continue;
+        if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
+        $em = isset($e['em']) ? $e['em'] : '';
+        if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) continue;
+        $eh = sha1($em);
+        if (isset($q['optout'][$eh]) || isset($sentEh[$eh]) || isset($batchEm[$eh])) continue;
+        $batchEm[$eh] = true;   // counted once per INBOX, picked or not, so the census matches what would really be sent
+        if (isset($laWaiting[$eh]) || (isset($laSent[$eh]) && $laSent[$eh] > time() - (int)$MSR_GAP)) { $held++; continue; }
+        $due++;
+        if ($MSR_LIVE && $RV_LIVE && $started && count($picked) < min($cap, $room)) {
+            $q['msr'][$ckey]['st'] = 'sending';
+            $q['msr'][$ckey]['snd_ts'] = time();
+            $q['msr'][$ckey]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
+            $picked[$ckey] = array('em' => $em, 'nm' => isset($e['nm']) ? $e['nm'] : '');
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);
+    if (!$MSR_LIVE || !$RV_LIVE || !$started)
+        return array('mode' => 'census', 'live' => (bool)($MSR_LIVE && $RV_LIVE), 'starts' => gmdate('Y-m-d', (int)$MSR_FROM),
+                     'eligible_now' => $due, 'held_for_linkedin' => $held, 'day_cap' => (int)$MSR_DAY_CAP, 'sent_today' => $sentToday);
+
+    $sent = 0; $failed = 0; $who = array();
+    foreach ($picked as $ckey => $p) {
+        $ok = msr_send($p['em'], $p['nm']);
+        if ($ok) $who[] = ($p['nm'] !== '' ? $p['nm'] : $p['em']);
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        if (isset($q2['msr'][$ckey]) && (isset($q2['msr'][$ckey]['st']) ? $q2['msr'][$ckey]['st'] : '') === 'sending') {
+            if ($ok) {
+                $q2['msr'][$ckey]['st'] = 'sent';
+                $q2['msr'][$ckey]['sent_ts'] = time();
+                $d2 = date('Y-m-d');
+                $q2['msr_day'][$d2] = (isset($q2['msr_day'][$d2]) ? (int)$q2['msr_day'][$d2] : 0) + 1;
+                $sent++;
+            } else {
+                $q2['msr'][$ckey]['st'] = ((isset($q2['msr'][$ckey]['tries']) ? $q2['msr'][$ckey]['tries'] : 1) >= 3) ? 'failed' : 'pending';
+                $failed++;
+            }
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    if ($sent > 0 || $failed > 0)
+        rv_slack('Store review email: ' . $sent . ' sent' . rv_name_list($who) . ', ' . $failed . ' failed, ' . max(0, $due - $sent) . ' still to go'
+            . ($held > 0 ? ' (and ' . $held . ' waiting a fortnight after their LinkedIn email)' : '') . '.');
+    return array('mode' => 'live', 'sent' => $sent, 'failed' => $failed, 'eligible_now' => $due, 'held_for_linkedin' => $held,
+                 'day_cap' => (int)$MSR_DAY_CAP);
 }
 
 // ---- transport: authenticated SMTP if api/pcm-smtp.php is configured, else mail().
@@ -3530,6 +3798,14 @@ if (!defined('RV_LIB')) {
         exit;
     }
 
+    /* The Store review email's button lands here (msr_landing_html). Public by design: fixed
+       words, a fixed Store link, and nothing is read from the request or written anywhere. */
+    if (isset($_GET['rate'])) {
+        header('Content-Type: text/html; charset=utf-8');
+        echo msr_landing_html();
+        exit;
+    }
+
     /* Public one-click unsubscribe. No admin pass by design - that is the point.
        Carries only sha1(email) plus an HMAC over it, so nothing identifiable is in
        the URL, and a wrong or truncated token simply does nothing. */
@@ -3671,7 +3947,7 @@ if (!defined('RV_LIB')) {
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
                       'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report',
-                      'series' => 'series', 'cancels' => 'cancels', 'linkedin' => 'linkedin');
+                      'series' => 'series', 'cancels' => 'cancels', 'linkedin' => 'linkedin', 'store' => 'store');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -3723,6 +3999,11 @@ if (!defined('RV_LIB')) {
             $lsl = rv_salt();
             $ok = rv_send_raw($tto, la_subject(), la_body('Steve', $tto, $lsl), '', '', la_body_html('Steve', $tto, $lsl));
         }
+        elseif ($tkind === 'store') {
+            // the Store review ask; ignores $MSR_LIVE on purpose, like the LinkedIn test
+            $msl = rv_salt();
+            $ok = rv_send_raw($tto, msr_subject(), msr_body('Steve', $tto, $msl), '', '', msr_body_html('Steve', $tto, $msl));
+        }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
             $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts), '', '', rm_body_html('Steve', 'Computer Health Check', $rts));
@@ -3752,6 +4033,9 @@ if (!defined('RV_LIB')) {
         // "We're now on LinkedIn": seeding is read-only and idempotent; sending is governed by $LA_LIVE (on since 1 Nov 2026)
         $r10 = la_seed();
         $r11 = la_process(3);
+        // "Would you rate 365 PC Manager?": seeding is read-only and idempotent; sending is governed by $MSR_LIVE (ships false)
+        $r12 = msr_seed();
+        $r13 = msr_process(3);
         $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after
         $r8 = sr_process(5);   // six-weekly service report emails, governed by $SR_LIVE
         // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
@@ -3767,7 +4051,8 @@ if (!defined('RV_LIB')) {
             'watchdog' => $r5,
             'report' => array('live' => (bool)$GLOBALS['SR_LIVE'], 'result' => $r8),
             'backfill' => array('live' => (bool)$GLOBALS['BF_LIVE'], 'seed' => $r6, 'result' => $r7),
-            'linkedin' => array('live' => (bool)$GLOBALS['LA_LIVE'], 'seed' => $r10, 'result' => $r11)));
+            'linkedin' => array('live' => (bool)$GLOBALS['LA_LIVE'], 'seed' => $r10, 'result' => $r11),
+            'storereview' => array('live' => (bool)$GLOBALS['MSR_LIVE'], 'seed' => $r12, 'result' => $r13)));
         else echo json_encode(array('ok' => true));
         exit;
     }
