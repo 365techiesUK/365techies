@@ -1,4 +1,4 @@
-# Fires the post-visit review-email queue processor once a day.
+# Fires the customer-email queue processor through the UK day.
 # The endpoint is idempotent and unauthenticated BY DESIGN (see api/pcm-review.php:
 # exclusive-lock state machine + per-run cap + 60s min interval + 9am-8pm window),
 # so this needs no secret. SiteGround's bot wall sometimes intercepts the first
@@ -10,8 +10,15 @@ name: Review email cron
 
 on:
   schedule:
-    - cron: "17 8-18/2 * * *"   # every 2h through the UK day (09:17-19:17 UK in summer) - keeps
-                                # job-done + review emails timely even without the SiteGround cron
+    - cron: "7,37 8-19 * * *"   # every 30 min, 08:07-19:37 UTC: covers 09:00-20:00 UK in winter and summer.
+                                # Was every 2h ("17 8-18/2"), but GitHub fired only ~2 of those 6 a day (~15:00 and
+                                # ~20:00 UTC, late Oct 2026), and the ~20:00 one lands after the 20:00 cut-off. That
+                                # left ONE sending run a day: 3 LinkedIn emails/day instead of the 10/day cap. Extra
+                                # runs are harmless (per-run caps, day caps, 60 s ran-recently, queue lock) and the repo
+                                # is public, so the minutes are free. Job-done, review, reminder, report and welcome
+                                # emails ride the 5-minute SiteGround cron (api/pcm-bkpoll.php); this run is their
+                                # fallback, the watchdog for that cron, and the ONLY engine for the backfill, LinkedIn
+                                # and Store review emails.
   workflow_dispatch: {}
 
 jobs:
