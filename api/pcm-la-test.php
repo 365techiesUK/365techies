@@ -45,8 +45,8 @@ $fail = 0;
 function ck($name, $cond, $extra = '') { global $fail; if (!$cond) { $fail++; echo "FAIL  $name  $extra\n"; } else echo "ok    $name\n"; }
 function qq() { global $RV_Q; return json_decode((string)file_get_contents($RV_Q), true); }
 
-echo "-- it ships off\n";
-ck('LA_LIVE ships false in the file', strpos(file_get_contents(__DIR__ . '/pcm-review.php'), "\$LA_LIVE = false;") !== false);
+echo "-- it is switched on (owner, 1 Nov 2026)\n";
+ck('LA_LIVE is on in the file', strpos(file_get_contents(__DIR__ . '/pcm-review.php'), "\$LA_LIVE = true;") !== false);
 
 echo "-- seeding\n";
 // K5 opted out of our emails before (one shared list with the review asks)

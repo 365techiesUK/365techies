@@ -141,10 +141,10 @@ $BF_EXCLUDE = array('info@365techies.co.uk');
    pattern exactly: plan customers only, a read-only seed, opt-outs honoured, a day cap,
    and a census (no sends) while off. It is MARKETING, not mail about the service they
    pay for, so every copy carries the one-click unsubscribe and overrides the shell's
-   legal line. Ships OFF until the owner says the page has posts worth visiting. It ends
+   legal line. Shipped OFF; switched ON 1 Nov 2026 once the page had posts. It ends
    by itself on $LA_UNTIL, so a customer who joins next spring is never told "we're now
    on LinkedIn". */
-$LA_LIVE = false;          // HOLD (owner, 25 Oct): switch on only on his word, after a test to info@
+$LA_LIVE = true;           // ON (owner, 1 Nov 2026: "switch it on", after the test to info@ looked right)
 $LA_DAY_CAP = 10;          // per day, the same pace as the backfill
 $LA_UNTIL = 1798675200;    // 31 Dec 2026 00:00 UTC: no seeding or sending after this
 $LA_PLAN_MAX = 150;        // the same plausibility rail as $BF_PLAN_MAX
@@ -3749,7 +3749,7 @@ if (!defined('RV_LIB')) {
         // whether anything is SENT is governed by $BF_LIVE, which ships false.
         $r6 = bf_seed();
         $r7 = bf_process(3);
-        // "We're now on LinkedIn": seeding is read-only and idempotent; sending is governed by $LA_LIVE (ships false)
+        // "We're now on LinkedIn": seeding is read-only and idempotent; sending is governed by $LA_LIVE (on since 1 Nov 2026)
         $r10 = la_seed();
         $r11 = la_process(3);
         $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after
