@@ -159,7 +159,7 @@ $LA_EXCLUDE = array('info@365techies.co.uk');
    per inbox ever, a day cap, and a census (no sends) while off. Two more rails so nobody
    gets two of our marketing emails close together: nothing before $MSR_FROM, and never
    within $MSR_GAP of the LinkedIn email reaching the same inbox. */
-$MSR_LIVE = false;         // HOLD (owner, 1 Nov 2026): switch on only on his word, after a test to info@
+$MSR_LIVE = true;          // ON (owner, 1 Nov 2026: "switch it on", after the info@ test); still nothing before $MSR_FROM
 $MSR_DAY_CAP = 10;         // per day, the LinkedIn email's pace
 $MSR_FROM = 1794355200;    // 11 Nov 2026 00:00 UTC: nothing is sent before this (the LinkedIn email runs until about then)
 $MSR_UNTIL = 1801353600;   // 31 Jan 2027 00:00 UTC: no seeding or sending after this
@@ -4033,7 +4033,7 @@ if (!defined('RV_LIB')) {
         // "We're now on LinkedIn": seeding is read-only and idempotent; sending is governed by $LA_LIVE (on since 1 Nov 2026)
         $r10 = la_seed();
         $r11 = la_process(3);
-        // "Would you rate 365 PC Manager?": seeding is read-only and idempotent; sending is governed by $MSR_LIVE (ships false)
+        // "Would you rate 365 PC Manager?": seeding is read-only and idempotent; sending is governed by $MSR_LIVE (on since 1 Nov 2026) and $MSR_FROM
         $r12 = msr_seed();
         $r13 = msr_process(3);
         $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after

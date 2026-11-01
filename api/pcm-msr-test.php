@@ -54,9 +54,9 @@ function ck($name, $cond, $extra = '') { global $fail; if (!$cond) { $fail++; ec
 function qq() { global $RV_Q; return json_decode((string)file_get_contents($RV_Q), true); }
 function unthrottle() { global $RV_Q; $q0 = qq(); $q0['msr_ts'] = 0; file_put_contents($RV_Q, json_encode($q0)); }
 
-echo "-- it ships off, and not before 11 Nov\n";
+echo "-- it is switched on (owner, 1 Nov 2026), and not before 11 Nov\n";
 $src = file_get_contents(__DIR__ . '/pcm-review.php');
-ck('MSR_LIVE ships false in the file', strpos($src, "\$MSR_LIVE = false;") !== false);
+ck('MSR_LIVE is on in the file', strpos($src, "\$MSR_LIVE = true;") !== false);
 ck('MSR_FROM is 11 Nov 2026', gmdate('Y-m-d H:i', $MSR_FROM) === '2026-11-11 00:00');
 ck('MSR_UNTIL is 31 Jan 2027', gmdate('Y-m-d H:i', $MSR_UNTIL) === '2027-01-31 00:00');
 ck('the gap is a fortnight', $MSR_GAP === 14 * 86400);
