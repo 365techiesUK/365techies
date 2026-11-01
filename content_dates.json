@@ -2304,7 +2304,7 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "a713e7448e6629b7",
+  "h": "d76c6a14154166ea",
   "last": "2026-10-19"
  },
  "microsoft-word-wont-open": {
@@ -2878,7 +2878,7 @@
  },
  "pc-benchmark": {
   "first": "2026-07-28",
-  "h": "e78369fcd0395264",
+  "h": "f7aa3e4dc94c3f36",
   "last": "2026-10-18"
  },
  "pc-manager-buy": {
@@ -3013,7 +3013,7 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "1fcf230e6145f366",
+  "h": "748a62a0deae90e4",
   "last": "2026-10-19"
  },
  "printer-offline": {
@@ -3058,7 +3058,7 @@
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "c7917416cc39519b",
+  "h": "da225e32904f384d",
   "last": "2026-10-21"
  },
  "printer-wont-connect-to-mesh-wifi": {
@@ -3369,7 +3369,7 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "17cd3fbcf076656b",
+  "h": "472eb8caab86e7ed",
   "last": "2026-10-19"
  },
  "sharepoint-not-syncing-file-explorer": {
@@ -3896,7 +3896,7 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "fac358e901733400",
+  "h": "a17ebd90372db91c",
   "last": "2026-10-18"
  },
  "wifi-support": {
