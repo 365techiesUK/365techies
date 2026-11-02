@@ -17,8 +17,9 @@ on:
                                 # runs are harmless (per-run caps, day caps, 60 s ran-recently, queue lock) and the repo
                                 # is public, so the minutes are free. Job-done, review, reminder, report and welcome
                                 # emails ride the 5-minute SiteGround cron (api/pcm-bkpoll.php); this run is their
-                                # fallback, the watchdog for that cron, and the ONLY engine for the backfill, LinkedIn
-                                # and Store review emails.
+                                # fallback and the watchdog for that cron. Since 2 Nov 2026 (when GitHub fired NONE of
+                                # these by 12:30) the backfill, LinkedIn and Store review emails ride that cron too,
+                                # every 30 min (camp_tick in api/pcm-review.php); this run is their fallback as well.
   workflow_dispatch: {}
 
 jobs:

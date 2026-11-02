@@ -108,6 +108,21 @@ ck('after the end date: no seeding', (la_seed($LA_DB)['skip'] ?? '') === 'campai
 ck('after the end date: no sending', (la_process(10)['skip'] ?? '') === 'campaign_over');
 $LA_UNTIL = $keep;
 
+echo "-- the 5-minute poll's campaign tick (2 Nov 2026)\n";
+$MSR_LIVE = false; $BF_LIVE = false;   // only the LinkedIn email can reach the stub here
+$LA_LIVE = true; $RV_LIVE = true; $SENT = array();
+list($lk, $q) = rvq_open(); unset($q['camp_ts']); $q['la_ts'] = 0; $q['la_day'] = array(); foreach ($q['la'] as $k => $v) { $q['la'][$k]['st'] = 'pending'; unset($q['la'][$k]['tries'], $q['la'][$k]['snd_ts'], $q['la'][$k]['sent_ts']); } rvq_save($q); rvq_close($lk);
+$t1 = camp_tick(1800, $LA_DB);
+ck('first tick runs the three campaigns', isset($t1['linkedin'], $t1['backfill'], $t1['storereview']), json_encode($t1));
+ck('the tick goes through la_process (it sent)', ($t1['linkedin']['result']['mode'] ?? '') === 'live', json_encode($t1['linkedin'] ?? null));
+$t2 = camp_tick(1800, $LA_DB);
+ck('a second tick inside 30 minutes does nothing', ($t2['skip'] ?? '') === 'not_yet', json_encode($t2));
+list($lk, $q) = rvq_open(); $q['camp_ts'] = time() - 1801; $q['la_ts'] = 0; rvq_save($q); rvq_close($lk);
+$t3 = camp_tick(1800, $LA_DB);
+ck('after 30 minutes it runs again', isset($t3['linkedin']), json_encode($t3));
+ck('no address is mailed twice across ticks', count($SENT) === count(array_unique(array_map('strtolower', $SENT))), json_encode($SENT));
+ck('the poll calls the tick', strpos(file_get_contents(__DIR__ . '/pcm-bkpoll.php'), 'camp_tick(1800)') !== false);
+
 echo "-- the words\n";
 $salt = 'testsalt';
 $t = la_body('Margaret', 'plan.one@example.com', $salt);

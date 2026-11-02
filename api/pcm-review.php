@@ -2449,6 +2449,27 @@ WLHTML;
     return strtr($tpl, array('{FIRST}' => htmlspecialchars($first, ENT_QUOTES, 'UTF-8')));
 }
 
+/* THE DRIP CAMPAIGNS ON THE 5-MINUTE POLL (2 Nov 2026). The backfill, LinkedIn and Store review emails rode ONLY the
+   GitHub cron (?run=1 below), and GitHub runs schedules when it can: about twice a day here, and not once on 2 Nov
+   (nine slots missed by 12:30). pcm-bkpoll.php now calls this every poll; it goes ahead at most once every $every
+   seconds, so a day's sends spread through 09:00-20:00. Each _process keeps its own guards (quiet hours, queue lock,
+   60 s ran-recently, day cap, its _LIVE switch), so the GitHub run landing in between can never double a day. */
+function camp_tick($every = 1800, $dbFile = null) {
+    $h = (int)date('G');
+    if (!defined('RV_ANY_HOUR') && ($h < 9 || $h >= 20)) return array('skip' => 'quiet_hours');   // RV_ANY_HOUR: defined by CLI tests only
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['camp_ts']) ? $q['camp_ts'] : 0) > time() - (int)$every) { rvq_close($lk); return array('skip' => 'not_yet'); }
+    $q['camp_ts'] = time();
+    rvq_save($q);
+    rvq_close($lk);
+    return array(
+        'backfill' => array('seed' => bf_seed(), 'result' => bf_process(3)),
+        'linkedin' => array('seed' => la_seed($dbFile), 'result' => la_process(3)),
+        'storereview' => array('seed' => msr_seed($dbFile), 'result' => msr_process(3)),
+    );
+}
+
 /* ---------------------------------------------------------------------------
    DEAD-MAN'S SWITCH FOR THE MAIL CRON
 
@@ -4038,6 +4059,7 @@ if (!defined('RV_LIB')) {
         $r13 = msr_process(3);
         $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after
         $r8 = sr_process(5);   // six-weekly service report emails, governed by $SR_LIVE
+        // (since 2 Nov 2026 the three drip campaigns above also ride the 5-minute poll, through camp_tick())
         // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
         // cannot take down - so it is the right place to notice SiteGround's cron has died
         $r5 = mail_watchdog();

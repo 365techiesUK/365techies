@@ -63,6 +63,13 @@ try {
 } catch (Throwable $e) { $mailA = array('error' => 'exception'); }
 $GLOBALS['mailA'] = $mailA;
 
+/* 2 Nov 2026: the drip campaigns (backfill, LinkedIn, Store review) - camp_tick() in pcm-review.php goes ahead at most
+   once every 30 minutes. They waited on the GitHub cron alone, which GitHub fired about twice a day and not at all on
+   2 Nov. Our own queue, nothing to do with SimplyBook, so it sits here before any early exit. Best-effort. */
+$mailK = array('skip' => 'not_run');
+try { if (function_exists('camp_tick')) $mailK = camp_tick(1800); } catch (Throwable $e) { $mailK = array('error' => 'exception'); }
+$GLOBALS['mailK'] = $mailK;
+
 if (!is_readable($SBF)) jout(array('ok' => false, 'error' => 'no_config', 'welcome' => $mailW));
 require $SBF;
 if (empty($SB_COMPANY) || empty($SB_API_USER) || empty($SB_API_USER_KEY)) jout(array('ok' => false, 'error' => 'no_admin_creds'));
@@ -337,4 +344,4 @@ $mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($D
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
            'review_asks_queued' => $rvQueued, 'reminder_seeded' => $rvSeeded, 'all_visits' => $rvDeep, 'series_check' => $serChk,
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'cancel' => $mailC, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW']), 'asset' => $GLOBALS['assetB']));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'cancel' => $mailC, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW'], 'campaigns' => $GLOBALS['mailK']), 'asset' => $GLOBALS['assetB']));
