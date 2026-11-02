@@ -746,9 +746,18 @@ function comms_name_for($n, $match, $names) {
    voicemail, newest first, each on its own with the caller's name and number. Bodies trimmed; no audio file names
    leave, only signed links. open_texts = numbers with a text to answer; open_vms = voicemails not done; open = numbers
    with anything to answer (the Today tile). */
-function comms_notes_out($notes) {   // the last 4, trimmed, for the card
+/* 2 Nov 2026: a note's key for Edit / Delete - its own id (every note made from today), else its Slack message, else
+   when it was written plus a short hash of the words (an older portal note that Slack never took). */
+function comms_note_key($nt) {
+    if (!empty($nt['nid'])) return preg_replace('/[^A-Za-z0-9.]/', '', (string)$nt['nid']);
+    if (!empty($nt['ts'])) return 's' . preg_replace('/[^0-9.]/', '', (string)$nt['ts']);
+    return 'a' . substr(md5((string)($nt['at'] ?? '') . '|' . (string)($nt['text'] ?? '')), 0, 12);
+}
+function comms_note_nid() { return 'n' . bin2hex(random_bytes(6)); }
+function comms_notes_out($notes, $iid = '') {   // the last 4 for the card; each with its item and key (2 Nov 2026: Edit / Delete)
     $o = array();
-    foreach (array_slice((array)$notes, -4) as $nt) $o[] = array('by' => (string)($nt['by'] ?? ''), 'src' => (string)($nt['src'] ?? ''), 'at' => (string)($nt['at'] ?? ''), 'text' => mb_substr((string)($nt['text'] ?? ''), 0, 500));
+    foreach (array_slice((array)$notes, -4) as $nt) $o[] = array('by' => (string)($nt['by'] ?? ''), 'src' => (string)($nt['src'] ?? ''), 'at' => (string)($nt['at'] ?? ''), 'text' => mb_substr((string)($nt['text'] ?? ''), 0, 1000),
+        'id' => (string)($nt['_iid'] ?? $iid), 'k' => comms_note_key($nt), 'edited' => !empty($nt['edited']));
     return $o;
 }
 function comms_board($items, $names, $key, $now = null, $limit = 30) {
@@ -783,7 +792,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
         foreach (array_slice($th, -4) as $it) $rows[] = array('id' => (string)($it['id'] ?? ''), 'type' => (string)$it['type'], 'at' => (string)($it['at'] ?? ''),
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 400), 'done' => !empty($it['handled']), 'review' => ($it['tag'] ?? '') === 'review');
         $notes = array(); $noteId = '';
-        foreach ($th as $it) { foreach ((array)($it['notes'] ?? array()) as $nt) $notes[] = $nt; if ($it['type'] === 'sms_in') $noteId = (string)($it['id'] ?? ''); }
+        foreach ($th as $it) { foreach ((array)($it['notes'] ?? array()) as $nt) { $nt['_iid'] = (string)($it['id'] ?? ''); $notes[] = $nt; } if ($it['type'] === 'sms_in') $noteId = (string)($it['id'] ?? ''); }
         usort($notes, function ($a, $b) { return strcmp((string)($a['at'] ?? ''), (string)($b['at'] ?? '')); });
         $texts[] = array('n' => (string)$n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'open' => $open, 'last' => (string)($th[count($th) - 1]['at'] ?? ''), 'items' => $rows,
             'notes' => comms_notes_out($notes), 'note_id' => $noteId);
@@ -800,7 +809,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
         $vout[] = array('id' => (string)($it['id'] ?? ''), 'n' => $n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'at' => (string)($it['at'] ?? ''),
             'dur' => (string)($it['duration'] ?? ''), 'audio' => $audio !== '' ? comms_audio_url($audio, $key, $now) : '',
             'why' => $audio === '' ? (string)($it['audio_why'] ?? '') : '', 'done' => !empty($it['handled']),
-            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
+            'notes' => comms_notes_out((array)($it['notes'] ?? array()), (string)($it['id'] ?? '')), 'note_id' => (string)($it['id'] ?? ''));
     }
     // 2 Oct 2026: website enquiries and call-back requests, newest first, each on its own. The name is the one THEY typed;
     // "cust" says when the number is also a customer we hold (or a job we wrote up).
@@ -821,7 +830,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'company' => (string)($L['company'] ?? ''), 'topic' => (string)($L['topic'] ?? ''), 'page' => (string)($L['page'] ?? ''),
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 1200), 'at' => (string)($it['at'] ?? ''), 'done' => !empty($it['handled']),
             'done_by' => (string)($it['handled_by'] ?? ''), 'block_dom' => comms_block_domain_ok((string)($L['email'] ?? '')),
-            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''),
+            'notes' => comms_notes_out((array)($it['notes'] ?? array()), (string)($it['id'] ?? '')), 'note_id' => (string)($it['id'] ?? ''),
             // 29 Oct 2026 (owner): what they want, in plain words, for the call back (comms-brief-lib.php)
             'brief' => comms_lead_brief(array('label' => (string)($L['label'] ?? ''), 'topic' => (string)($L['topic'] ?? ''),
                 'company' => (string)($L['company'] ?? ''), 'body' => (string)($it['body'] ?? ''))));
@@ -842,7 +851,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'cust' => $k ? (string)$k['name'] : '', 'cust_src' => $k ? (string)$k['src'] : '',
             'n' => $n, 'mobile' => $mob($n), 'body' => mb_substr((string)($it['body'] ?? ''), 0, 1500), 'at' => (string)($it['at'] ?? ''),
             'done' => !empty($it['handled']), 'done_by' => (string)($it['handled_by'] ?? ''), 'block_dom' => comms_block_domain_ok($addr),
-            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
+            'notes' => comms_notes_out((array)($it['notes'] ?? array()), (string)($it['id'] ?? '')), 'note_id' => (string)($it['id'] ?? ''));
     }
     return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'webs' => $wout, 'mails' => $mout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
         'open_webs' => $openWebs, 'open_mails' => $openMails,
@@ -1004,15 +1013,17 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
             if ($by) { $set[$it['id']]['handled'] = true; $set[$it['id']]['handled_by'] = 'Slack (' . comms_slack_name(reset($by), $users) . ')'; $set[$it['id']]['handled_at'] = gmdate('c', $now); break; }
         }
         $rc = (int)($p['reply_count'] ?? 0);
-        if ($rc > (int)($it['slack_rc'] ?? 0) && count($fetch) < $maxReplies) $fetch[$it['id']] = array($ts, $rc, $it['notes'] ?? array());
+        // 2 Nov 2026: whenever the count CHANGES - a note deleted from the portal takes its reply out of the thread too
+        if ($rc !== (int)($it['slack_rc'] ?? 0) && count($fetch) < $maxReplies) $fetch[$it['id']] = array($ts, $rc, $it['notes'] ?? array(), $it['notes_gone'] ?? array());
     }
     $added = 0;
     foreach ($fetch as $id => $f) {
-        list($ts, $rc, $have) = $f;
+        list($ts, $rc, $have, $gone) = $f;
         $r = slk_call_form('conversations.replies', array('channel' => COMMS_SLACK_CHANNEL, 'ts' => $ts, 'limit' => 50), 10);
         if (empty($r['ok'])) continue;
         $seen = array(); foreach ((array)$have as $nt) if (!empty($nt['ts'])) $seen[(string)$nt['ts']] = 1;
-        $notes = (array)$have;
+        foreach ((array)$gone as $g) $seen[(string)$g] = 1;   // 2 Nov 2026: deleted in the portal - never back
+        $notes = array();
         foreach ((array)($r['messages'] ?? array()) as $m) {
             $mts = (string)($m['ts'] ?? '');
             if ($mts === '' || $mts === $ts || isset($seen[$mts])) continue;
@@ -1020,14 +1031,22 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
             $txt = function_exists('slk_plain') ? slk_plain((string)($m['text'] ?? '')) : (string)($m['text'] ?? '');
             if ($txt === '' && !empty($m['files'])) $txt = '(a file)';
             if ($txt === '') continue;
-            $notes[] = array('by' => comms_slack_name((string)($m['user'] ?? ''), $users), 'src' => 'slack', 'at' => gmdate('c', (int)(float)$mts), 'text' => mb_substr($txt, 0, 1000), 'ts' => $mts);
+            $notes[] = array('by' => comms_slack_name((string)($m['user'] ?? ''), $users), 'src' => 'slack', 'at' => gmdate('c', (int)(float)$mts), 'text' => mb_substr($txt, 0, 1000), 'ts' => $mts, 'nid' => comms_note_nid());
             $added++;
         }
-        $set[$id]['notes'] = array_slice($notes, -30);
+        if ($notes) $set[$id]['notes_add'] = $notes;
         $set[$id]['slack_rc'] = $rc;
     }
     if ($set || $users !== ($snap['users'] ?? array())) comms_locked(function ($d) use ($set, $users) {
-        foreach ($d['items'] as $i => $x) if (isset($set[$x['id']])) foreach ($set[$x['id']] as $k => $v) $d['items'][$i][$k] = $v;
+        foreach ($d['items'] as $i => $x) if (isset($set[$x['id']])) foreach ($set[$x['id']] as $k => $v) {
+            if ($k !== 'notes_add') { $d['items'][$i][$k] = $v; continue; }
+            // merged under the lock: the item's notes as they are NOW, plus the new Slack replies not already on it or removed
+            $cur = isset($d['items'][$i]['notes']) && is_array($d['items'][$i]['notes']) ? $d['items'][$i]['notes'] : array();
+            $skip = array(); foreach ($cur as $nt) if (!empty($nt['ts'])) $skip[(string)$nt['ts']] = 1;
+            foreach ((array)($d['items'][$i]['notes_gone'] ?? array()) as $g) $skip[(string)$g] = 1;
+            foreach ($v as $nt) if (!isset($skip[(string)$nt['ts']])) $cur[] = $nt;
+            $d['items'][$i]['notes'] = array_slice($cur, -30);
+        }
         $d['checkpoints']['slack_users'] = $users;
         return array('__data' => $d, '__result' => true);
     });
@@ -1055,7 +1074,7 @@ function comms_add_note($id, $text, $by, $now = null) {
     else $args['thread_ts'] = (string)$it['slack_ts'];
     $r = slk_call('chat.postMessage', $args, 8);
     $ts = !empty($r['ok']) ? (string)($r['ts'] ?? '') : '';
-    $note = array('by' => (string)$by, 'src' => 'portal', 'at' => gmdate('c', $now), 'text' => $text, 'ts' => $ts);
+    $note = array('by' => (string)$by, 'src' => 'portal', 'at' => gmdate('c', $now), 'text' => $text, 'ts' => $ts, 'nid' => comms_note_nid());
     comms_locked(function ($d) use ($id, $note, $newPost, $ts) {
         foreach ($d['items'] as $i => $x) if ($x['id'] === $id) {
             $n = isset($x['notes']) && is_array($x['notes']) ? $x['notes'] : array();
@@ -1065,6 +1084,66 @@ function comms_add_note($id, $text, $by, $now = null) {
         return array('__data' => $d, '__result' => true);
     });
     return array('ok' => true, 'slack' => $ts !== '', 'error' => $ts !== '' ? '' : 'Saved here, but Slack did not take it (' . (string)($r['error'] ?? 'no answer') . ').');
+}
+/* 2 Nov 2026 (David, through the owner: "if he puts a note in, he wants to be able to delete it ... so it doesn't get
+   bogged up with loads of notes ... change them or edit them"): change ($text) or remove ($text === null) one note.
+   A note typed here is the app's own Slack message, so its thread reply follows (chat.update / chat.delete) - unless
+   that note STARTED the Slack post (the item had none), which is left as it is. A note typed in Slack is a person's
+   own message the app cannot touch: it changes here only, and a removed one is remembered (notes_gone) so the next
+   Slack sync cannot bring it back. Any staff member may change any note - there are two of us. */
+function comms_edit_note($id, $key, $text, $by, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $del = ($text === null);
+    if (!$del) {
+        $text = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', (string)$text));
+        if ($text === '') return array('ok' => false, 'error' => 'Type the note first - or use Delete.');
+        $text = mb_substr($text, 0, 1000);
+    }
+    list($ok, $res) = comms_locked(function ($d) use ($id, $key, $text, $del, $by, $now) {
+        foreach ($d['items'] as $i => $x) {
+            if ($x['id'] !== $id) continue;
+            $n = isset($x['notes']) && is_array($x['notes']) ? array_values($x['notes']) : array();
+            foreach ($n as $j => $nt) {
+                if (comms_note_key($nt) !== $key) continue;
+                if ($del) {
+                    array_splice($n, $j, 1);
+                    if (!empty($nt['ts'])) {
+                        $g = isset($x['notes_gone']) && is_array($x['notes_gone']) ? $x['notes_gone'] : array();
+                        $g[] = (string)$nt['ts']; $d['items'][$i]['notes_gone'] = array_slice($g, -60);
+                    }
+                } else {
+                    $e = $nt;
+                    if (empty($e['nid'])) $e['nid'] = $key;   // the key must not move when the words do
+                    $e['text'] = $text; $e['edited'] = gmdate('c', $now); $e['edited_by'] = (string)$by;
+                    $n[$j] = $e;
+                }
+                $d['items'][$i]['notes'] = $n;
+                return array('__data' => $d, '__result' => array('note' => $nt, 'slack_ts' => (string)($x['slack_ts'] ?? '')));
+            }
+            return array('__result' => array('error' => 'That note has gone - reload.'));
+        }
+        return array('__result' => array('error' => 'That message has gone - reload.'));
+    });
+    if (!$ok) return array('ok' => false, 'error' => 'The inbox is busy - try again.');
+    if (!is_array($res) || isset($res['error'])) return array('ok' => false, 'error' => is_array($res) ? $res['error'] : 'busy');
+    $nt = $res['note']; $ts = (string)($nt['ts'] ?? '');
+    $ours = ($nt['src'] ?? '') === 'portal' && $ts !== '' && $ts !== $res['slack_ts'];
+    $fromSlack = ($nt['src'] ?? '') === 'slack';
+    $say = $del ? 'Note deleted' : 'Note changed'; $warn = ''; $slack = '';
+    if ($ours && comms_slack_lib()) {
+        if ($del) $r = slk_call('chat.delete', array('channel' => COMMS_SLACK_CHANNEL, 'ts' => $ts), 8);
+        else {
+            $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
+            $r = slk_call('chat.update', array('channel' => COMMS_SLACK_CHANNEL, 'ts' => $ts,
+                'text' => "\xF0\x9F\x93\x9D *" . $esc($nt['by'] ?? 'Staff') . "* (portal): " . $esc($text) . ' _(changed by ' . $esc($by) . ')_'), 8);
+        }
+        $slack = !empty($r['ok']) ? 'ok' : (string)($r['error'] ?? 'no answer');
+        if ($slack === 'ok') $say .= $del ? ' - and from the Slack thread.' : ' - in the Slack thread too.';
+        elseif ($slack === 'message_not_found') $say .= '.';   // already gone from Slack
+        else $warn = ($del ? 'Deleted' : 'Changed') . ' here, but Slack did not take it (' . $slack . ').';
+    } elseif ($fromSlack) $say .= $del ? ' here - it stays in Slack, where it was typed.' : ' here - Slack keeps the original, where it was typed.';
+    else $say .= '.';
+    return array('ok' => true, 'deleted' => $del, 'slack' => $ours ? $slack : 'not-ours', 'say' => $say, 'warn' => $warn);
 }
 /* ---- 2 Oct 2026: website enquiries (and every other lead) in the same inbox ----
    Owner: "with inquiries that come in from the web page will they turn up in there as well? ... could it all be like a

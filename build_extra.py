@@ -26335,6 +26335,9 @@ def write_portal_page():
   @media (max-width:900px) { #p365app .nx-today--3 { grid-template-columns:1fr; } }
   #p365app .cm-card .cm-th:first-child { border-top:0; padding-top:.2rem; }
   #p365app .cm-notes { margin:.45rem 0 0; padding:.1rem 0 0 .7rem; border-left:3px solid rgba(240,198,90,.5); display:grid; gap:.35rem; }
+  #p365app .cm-nt { display:inline-flex; flex-wrap:wrap; gap:.3rem; align-items:center; margin-left:.45rem; font-size:.85rem; color:var(--psoft); }
+  #p365app .cm-nt button.sm { margin:0; }
+  #p365app button.cm-nl { margin:0; min-height:32px; padding:.15rem .35rem; background:none; border:0; box-shadow:none; color:var(--pcyan); font-size:.85rem; font-weight:600; text-decoration:underline; cursor:pointer; }
   #p365app .cm-filter { display:flex; flex-wrap:wrap; gap:.4rem; margin:-.1rem 0 .7rem; }
   #p365app .cm-filter button { margin:0; min-height:40px; padding:.4rem .75rem; font-size:.88rem; }
   #p365app .cm-filter button.on { background:var(--pcyan); border-color:var(--pcyan); color:#06101f; }
@@ -33639,7 +33642,7 @@ def write_portal_page():
     // 29 Oct 2026: a voicemail can also be playing in the pinned "Call these back" card
     var pb = document.getElementById('pinbox'), aus = Array.prototype.slice.call(box.querySelectorAll('audio')).concat(pb ? Array.prototype.slice.call(pb.querySelectorAll('audio')) : []);
     var playing = aus.some(function (a) { return !a.paused && !a.ended; });
-    var typing = document.activeElement && (document.activeElement.id === 'cmtxt' || document.activeElement.id === 'cmnotetxt');
+    var typing = document.activeElement && (document.activeElement.id === 'cmtxt' || document.activeElement.id === 'cmnotetxt' || document.activeElement.id === 'cmnedtxt');
     return playing || typing;
   }
   function loadComms(act, extra, quiet) {
@@ -33655,6 +33658,7 @@ def write_portal_page():
         CM.busy = false; CM.d = d;
         if (act === 'reply' && d && d.ok && !d.err) { CM.rep = ''; CM.draft = ''; }
         if (act === 'note' && d && d.ok && !d.err) { CM.note = ''; CM.ndraft = ''; }
+        if ((act === 'noteedit' || act === 'notedel') && d && d.ok && !d.err) { CM.ned = ''; CM.ndel = ''; CM.nedraft = ''; }
         if (act === 'done' && d && d.ok && !d.err && /^Marked done/.test(d.note || '')) cmUndoShow(extra);
         if (act === 'block' && d && d.ok && !d.err && d.block_key) { CM.blk = ''; cmUndoShow({ act: 'unblock', key: d.block_key, reopen: 1 }, 'Blocked'); }
         if (act === 'undone' || act === 'unblock') cmUndoHide();
@@ -33676,11 +33680,26 @@ def write_portal_page():
       + '<div><button type="button" class="sm" data-cms="' + esc(n) + '">Send text</button><button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
   }
   // 1 Oct 2026 (late): notes - typed here (they go into the message's Slack thread) or replied in that Slack thread
+  // 2 Nov 2026 (David): each note can be changed or deleted (Edit / Delete under it; Delete asks first)
   function cmNotes(list) {
     if (!list || !list.length) return '';
     return '<div class="cm-notes">' + list.map(function (n) {
-      return '<p class="cm-ni"><span class="cm-k">\\ud83d\\udcdd <b>' + esc(n.by || 'Staff') + '</b>' + (n.src === 'slack' ? ' in Slack' : '') + ' \\u00b7 ' + esc(cmWhen(n.at)) + '</span>' + esc(n.text) + '</p>';
+      var nk = n.id && n.k ? n.id + '|' + n.k : '';
+      var head = '<span class="cm-k">\\ud83d\\udcdd <b>' + esc(n.by || 'Staff') + '</b>' + (n.src === 'slack' ? ' in Slack' : '') + ' \\u00b7 ' + esc(cmWhen(n.at)) + (n.edited ? ' \\u00b7 changed' : '') + '</span>';
+      if (nk && CM.ned === nk) return '<div class="cm-ni cm-rep">' + head
+        + '<label for="cmnedtxt" class="cm-k">Change this note' + (n.src === 'slack' ? ' \\u2014 it was typed in Slack, so Slack keeps the original' : ' \\u2014 it changes in Slack too') + '</label>'
+        + '<textarea id="cmnedtxt" maxlength="1000">' + esc(CM.nedraft) + '</textarea>'
+        + '<div><button type="button" class="sm" data-cmnes="' + esc(nk) + '">Save</button><button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
+      var tools = !nk ? '' : CM.ndel === nk
+        ? '<span class="cm-nt">Delete this note' + (n.src === 'slack' ? ' here' : '') + '? <button type="button" class="sm" data-cmnds="' + esc(nk) + '">Yes, delete</button><button type="button" class="sm ghost" data-cmx="1">Keep it</button></span>'
+        : '<span class="cm-nt"><button type="button" class="cm-nl" data-cmne="' + esc(nk) + '">Edit</button><button type="button" class="cm-nl" data-cmnd="' + esc(nk) + '">Delete</button></span>';
+      return '<p class="cm-ni">' + head + esc(n.text) + tools + '</p>';
     }).join('') + '</div>';
+  }
+  function cmNoteText(nk) {   // the note's words, for Edit to start from
+    var d = CM.d || {}, found = '';
+    ['texts', 'vms', 'webs', 'mails'].forEach(function (g) { (d[g] || []).forEach(function (x) { (x.notes || []).forEach(function (n) { if (n.id + '|' + n.k === nk) found = n.text || ''; }); }); });
+    return found;
   }
   function cmNoteBox(key, id) {
     if (CM.note !== key) return '';
@@ -34507,7 +34526,19 @@ def write_portal_page():
       if (b.hasAttribute('data-cmc')) { var pre = cmPrefill(b.getAttribute('data-cmc')); pre.known = b.getAttribute('data-known') || ''; ncOpen(pre); return; }
       if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; CM.note = ''; CM.blk = ''; renderComms(); return; }
       if (b.hasAttribute('data-cmn')) { CM.note = b.getAttribute('data-cmn'); CM.ndraft = ''; CM.rep = ''; CM.blk = ''; renderComms(); return; }
-      if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; CM.note = ''; CM.ndraft = ''; CM.blk = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; CM.note = ''; CM.ndraft = ''; CM.blk = ''; CM.ned = ''; CM.ndel = ''; CM.nedraft = ''; renderComms(); return; }
+      // 2 Nov 2026 (David): change or delete a note
+      if (b.hasAttribute('data-cmne')) { CM.ned = b.getAttribute('data-cmne'); CM.nedraft = cmNoteText(CM.ned); CM.ndel = ''; CM.rep = ''; CM.note = ''; CM.blk = ''; renderComms(); var te = document.getElementById('cmnedtxt'); if (te) te.focus(); return; }
+      if (b.hasAttribute('data-cmnd')) { CM.ndel = b.getAttribute('data-cmnd'); CM.ned = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmnes')) {
+        var tq = document.getElementById('cmnedtxt'), etx = tq ? tq.value.trim() : '', en = document.getElementById('cmnote'), pe = b.getAttribute('data-cmnes').split('|');
+        if (!etx) { if (en) { en.className = 'cm-note cm-note--bad'; en.textContent = 'Type the note first \\u2014 or use Delete.'; } return; }
+        if (CM.busy) return;
+        CM.nedraft = etx; b.disabled = true; b.textContent = 'Saving\\u2026';
+        loadComms('noteedit', { id: pe[0], k: pe[1], text: etx });
+        return;
+      }
+      if (b.hasAttribute('data-cmnds')) { if (CM.busy) return; var pd = b.getAttribute('data-cmnds').split('|'); b.disabled = true; b.textContent = 'Deleting\\u2026'; loadComms('notedel', { id: pd[0], k: pd[1] }); return; }
       if (b.hasAttribute('data-cmb')) { CM.blk = b.getAttribute('data-cmb'); CM.rep = ''; CM.note = ''; renderComms(); return; }
       if (b.hasAttribute('data-cmbk')) { if (CM.busy) return; cmLeaving(b); loadComms('block', { id: b.getAttribute('data-cmbk'), scope: b.getAttribute('data-scope') }); return; }
       if (b.hasAttribute('data-cmbl')) { e.preventDefault(); CM.showBlk = !CM.showBlk; renderComms(); return; }

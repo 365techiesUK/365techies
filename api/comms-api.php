@@ -14,6 +14,8 @@
  *                answered), then the list
  *   do=note   {id, text} -> a note into that item's Slack thread (#365-job-tracker) and onto the item; replies typed in the
  *                thread come back as notes (comms_slack_sync, every sweep)
+ *   do=noteedit {id, k, text} / do=notedel {id, k} -> 2 Nov 2026 (David): change or remove one note (comms_edit_note);
+ *                a note typed here changes in its Slack thread too, one typed in Slack changes here only
  *   do=done   {id} one voicemail or enquiry | {n, kind:'text'} that number's texts | {n} everything from it -> marked handled
  *   do=newjob {v: {name, address, postcode, phone, mobile, email, website, jobtype, issue, assigned, priority, price}, from?}
  *             -> 2 Oct 2026, "New customer": the Slack "New job in" card posted to #sos-jobs-in-out and the job saved at
@@ -124,6 +126,18 @@ if ($do === 'check') {
     if (!empty($rn['ok']) && empty($rn['error'])) $note = 'Note added - it is in the Slack thread too.';
     elseif (!empty($rn['ok'])) $err = $rn['error'];
     else $err = $rn['error'];
+} elseif ($do === 'noteedit' || $do === 'notedel') {
+    // 2 Nov 2026 (David, through the owner): change or delete a note, so the cards don't fill up with old ones
+    $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
+    $k = preg_replace('/[^A-Za-z0-9.]/', '', (string)($in['k'] ?? ''));
+    $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
+    $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+    $by = comms_staff_name((string)($dbS['staff'][$tokS]['login'] ?? $dbS['staff'][$tokS]['email'] ?? ''));
+    $rn = ($id === '' || $k === '') ? array('ok' => false, 'error' => 'Which note? Reload and try again.')
+        : comms_edit_note($id, $k, $do === 'notedel' ? null : (string)($in['text'] ?? ''), $by);
+    if (empty($rn['ok'])) $err = $rn['error'];
+    elseif ($rn['warn'] !== '') $err = $rn['warn'];
+    else $note = $rn['say'];
 } elseif ($do === 'newjob') {
     // 2 Oct 2026 (owner): "shouldn't there be a new customer button, like we've done in Slack" - the same "New job in"
     // card, posted to #sos-jobs-in-out, and the job saved at once (pcm-newjob-lib.php). From a text, voicemail or
