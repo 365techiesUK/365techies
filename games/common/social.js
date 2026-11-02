@@ -10,7 +10,9 @@
  * Sharing uses plain links (WhatsApp, Facebook, email) and the device's own share menu on a phone or tablet - no
  * share buttons from Facebook or anyone else, nothing that tracks people, so the games stay cookie-free.
  * Feedback goes to /api/game-feedback.php (stored, then posted to the team's Slack). The sheets bring their own
- * styles (gs-*), so they look the same on a game and on the site's Games page. */
+ * styles (gs-*), so they look the same on a game and on the site's Games page.
+ * The feedback form carries data-hs-do-not-collect (2 Nov 2026): the HubSpot tracker on the site's pages was copying
+ * anyone who typed an email into HubSpot as a marketing lead, against the form's own promise ("never for adverts"). */
 (function () {
   'use strict';
   var API = '/api/game-feedback.php';
@@ -109,7 +111,7 @@
       + '<div class="gs-scrim" id="gsAny" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsAnyH"><h2 id="gsAnyH"></h2><div id="gsAnyB"></div>'
       + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
       + '<div class="gs-scrim" id="gsFeed" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsFeedH">'
-      + '<form id="gsForm" novalidate><h2 id="gsFeedH">Tell us what you think</h2><p class="gs-soft" id="gsFeedSub"></p>'
+      + '<form id="gsForm" novalidate data-hs-do-not-collect="true"><h2 id="gsFeedH">Tell us what you think</h2><p class="gs-soft" id="gsFeedSub"></p>'
       + '<fieldset class="gs-moods" id="gsMoods"><legend id="gsMoodQ"></legend>'
       + '<button type="button" class="gs-mood" data-mood="love" aria-pressed="false"><span aria-hidden="true">&#128512;</span>Love it</button>'
       + '<button type="button" class="gs-mood" data-mood="ok" aria-pressed="false"><span aria-hidden="true">&#128578;</span>It&rsquo;s OK</button>'
@@ -228,7 +230,7 @@
   function send() {
     var text = $('gsText').value.trim(), email = $('gsEmail').value.trim();
     if (mode === 'request' && !text) { fail('Please tell us which game you would like.'); $('gsText').focus(); return; }
-    if (mode !== 'request' && !text && !mood) { fail('Tap a face or write a few words first.'); return; }
+    if (mode !== 'request' && !text && !mood) { fail($('gsMoods').hidden ? 'Please write a few words first.' : 'Tap a face or write a few words first.'); return; }
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fail('That email address doesn’t look quite right – please check it, or leave it empty.'); $('gsEmail').focus(); return; }
     $('gsErr').hidden = true; $('gsSend').disabled = true; $('gsSend').textContent = 'Sending…';
     var body = { kind: mode, game: CFG.id, mood: mode === 'request' ? '' : mood, text: text, name: $('gsName').value.trim(), town: $('gsTown').value.trim(),
