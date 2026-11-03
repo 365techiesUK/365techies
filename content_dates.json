@@ -1644,7 +1644,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "9ba75c936341daf3",
+  "h": "82bbc29653978786",
   "last": "2026-11-03"
  },
  "it-health-check-tool": {
@@ -3120,6 +3120,10 @@
   "h": "01c5de02148fd2c7",
   "last": "2026-10-06"
  },
+ "reconnect-your-file-history-drive": {
+  "first": "2026-11-03",
+  "h": "4bc207528a0e684d"
+ },
  "recover-photos-deceased-relatives-laptop": {
   "first": "2026-07-28",
   "h": "11697c3a3da787af",
@@ -3970,8 +3974,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "91f30c292948561d",
-  "last": "2026-10-30"
+  "h": "b0a38aab4b74693f",
+  "last": "2026-11-03"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
@@ -4064,7 +4068,8 @@
  },
  "what-windows-backup-backs-up": {
   "first": "2026-10-28",
-  "h": "b7eee0df650f5662"
+  "h": "65fd6a92c497126d",
+  "last": "2026-11-03"
  },
  "do-i-need-ccleaner": {
   "first": "2026-10-29",

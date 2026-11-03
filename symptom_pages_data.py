@@ -1680,7 +1680,7 @@ WINBACKUP = {
                  '<li>Check it has found the drive and click <strong>Turn on</strong>. Under <strong>Exclude folders</strong> and <strong>Advanced settings</strong> you can choose how often it copies and how long it keeps old versions.</li>'
                  '<li>To get something back, open File History and click <strong>Restore personal files</strong>, or right-click a folder, Properties, <strong>Previous Versions</strong>.</li>'
                  '</ol>'
-                 '<p>File History copies your user folders, and keeps <strong>older versions</strong>, so a file deleted or spoiled last week is still there. Plug the drive in regularly, and keep it unplugged in between, so ransomware can&rsquo;t reach it. For photos in particular, see <a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>'},
+                 '<p>File History copies your user folders, and keeps <strong>older versions</strong>, so a file deleted or spoiled last week is still there. Plug the drive in regularly, and keep it unplugged in between, so ransomware can&rsquo;t reach it. If it ever says &ldquo;Reconnect your drive&rdquo;, see <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>. For photos in particular, see <a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>'},
         {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your backup', 'html': '__APP_BOX_BACKUP__'},
         {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
          'html': _CALL.format(extra=' We set up a backup that covers everything that matters to you, and test that a file reads back. For businesses, see <a href="/backup-support/">backup support</a>.')},
@@ -2532,6 +2532,112 @@ DUPES = {
 }
 
 
+# ============================================================ 32. File History says "Reconnect your drive"
+# 3 Nov 2026 (owner: "yes build the File History page"; seo-research/backup-programs-2026-11-03): Bing, 3 Aug-31 Oct 2026,
+# "reconnect your file history drive now windows" 202K (UK 12.3K), file history 14.3K (UK 976), file history backup 4.6K
+# (604), restore your files with file history 2.5K (194), file history recovery 2.2K (152), file history windows 11 837
+# (UK top, 196). No page of ours; Bing's top 10 = Microsoft support + blogs.
+# Facts, read 3 Nov 2026:
+#   - Microsoft Support "Reconnect your File History drive in Windows" (Windows 11 and 10): the drive "has been disconnected
+#     for too long"; external drive: make sure it's connected; network: Control Panel, File History, reselect the network;
+#     then wait for the next backup, or Control Panel, File History, Run now.
+#   - Microsoft Q&A (Dec 2024): Windows 10 route Settings, Update & security, Backup, More options, Back up now.
+#   - BleepingComputer 21 Sep 2026 (Microsoft alert WI1474330): the September 2026 security updates - KB5124012 (W11 26H1),
+#     KB5124008 (24H2/25H2), KB5122880 (23H2), KB5122878 (W10 21H2/22H2), KB5122876 / KB5123099 (LTSC 2019 / 2016) - left some
+#     PCs unable to create or update File History backups: incorrect "Reconnect your drive" messages with the drive working,
+#     "Last Backup" not updating, "No previous version available", FileHistory.exe crash events.
+#   - BleepingComputer 24 Sep 2026: fixed for Windows 11 in optional KB5124010 (24H2/25H2) and KB5124006 (26H1), and for
+#     everyone else on Windows 11 with the 13 October updates. No Windows 10 fix confirmed there: the page says so with care.
+# The app box is the existing Backup box: the app names File History when it is the backup that's on, and when it last
+# finished (what-windows-backup-backs-up uses the same box).
+FILEHIST = {
+    'slug': 'reconnect-your-file-history-drive',
+    'title': 'Reconnect Your File History Drive? How to Fix It (Windows)',
+    'metaDesc': 'File History keeps saying &ldquo;Reconnect your drive&rdquo;? Plug it in, choose the drive again, back up now, and get the update that fixed the September 2026 bug.',
+    'ogTitle': '&ldquo;Reconnect your drive&rdquo;: how to fix File History',
+    'crumbName': 'Reconnect Your File History Drive',
+    'eyebrow': '// &ldquo;RECONNECT YOUR DRIVE&rdquo;?',
+    'h1': 'File History says <em class="grad grad--cyan">reconnect your drive</em>? Fix it',
+    'lede': 'A message pops up: &ldquo;Reconnect your drive&rdquo;. It&rsquo;s File History, Windows&rsquo; own backup, saying it hasn&rsquo;t reached its backup drive for too long, so your files aren&rsquo;t being copied. Usually the drive just needs plugging in, or choosing again. Since September 2026 there&rsquo;s a second cause: a Windows update made the message appear even with the drive plugged in. Here&rsquo;s how to fix both, and check the backup really works.',
+    'chips': ['Quickest fix first', 'Windows 11 and 10', 'The September 2026 update bug'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the quick fix', '#s1'],
+    'ctaHead': 'Still saying reconnect?',
+    'ctaSub': 'With your permission we connect to your Windows PC, get File History backing up again and check that a file reads back. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What it means', 'File History hasn&rsquo;t reached its backup drive for too long, so new copies aren&rsquo;t being made.'),
+        ('First', 'Plug the backup drive in, then File History in Control Panel, <strong>Run now</strong>.'),
+        ('Plugged in already?', 'Install the latest Windows updates, then choose the drive again with <strong>Select drive</strong>.'),
+        ('A network drive', 'Switch on the computer or box it backs up to, then reselect it in File History.'),
+        ('September 2026', 'A Windows update caused false &ldquo;reconnect&rdquo; messages. The later updates fix it on Windows 11.'),
+        ('Check it worked', 'File History shows <strong>Files last copied on</strong> with today&rsquo;s date.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE QUICK FIX', 'h2': 'Plug the drive in and back up now',
+         'html': '<ol>'
+                 '<li><strong>Plug in the backup drive,</strong> usually a USB drive or an external hard drive, straight into the PC rather than through a hub.</li>'
+                 '<li>Click Start, type <strong>File History</strong> and open it. It&rsquo;s in Control Panel, under System and Security.</li>'
+                 '<li>Check it shows your drive, then click <strong>Run now</strong>.</li>'
+                 '<li>When it finishes, File History says <strong>Files last copied on</strong> with today&rsquo;s date. That&rsquo;s the proof it worked.</li>'
+                 '</ol>'
+                 '<p>On Windows 10 there&rsquo;s a second way in: Settings, Update &amp; Security, Backup, More options, <strong>Back up now</strong>. Backing up to a network drive or another computer? Switch that on first, then in File History reselect the network location, as Microsoft advises.</p>'},
+        {'eyebrow': '/02 &mdash; STILL SAYS RECONNECT', 'h2': 'The drive is plugged in, but it still says reconnect',
+         'html': '<ol>'
+                 '<li><strong>Install the latest Windows updates</strong> and restart: a 2026 update caused exactly this (see the next section).</li>'
+                 '<li><strong>Choose the drive again.</strong> In File History click <strong>Select drive</strong>, pick your backup drive, click OK, then <strong>Run now</strong>.</li>'
+                 '<li><strong>Can you see the drive in File Explorer?</strong> If not, the problem is the drive or its connection, not File History: try another socket and cable, and see <a href="/usb-device-not-recognised/">USB device not recognised</a>. It may only need a drive letter, in Disk Management.</li>'
+                 '<li><strong>Clicking, very slow, or errors when you open it?</strong> Backup drives wear out like any other. Copy what you need off it and replace it; don&rsquo;t keep relying on it.</li>'
+                 '</ol>'},
+        {'eyebrow': '/03 &mdash; THE SEPTEMBER 2026 UPDATE', 'h2': 'The 2026 update that broke File History',
+         'html': '<p>In September 2026 Microsoft confirmed that its monthly security updates for Windows 10 and Windows 11 stopped File History working on some PCs. The signs, from Microsoft&rsquo;s own list:</p>'
+                 '<ul>'
+                 '<li>&ldquo;Reconnect your drive&rdquo; messages even though the backup drive is connected and working;</li>'
+                 '<li>the date of the <strong>last backup</strong> not moving on;</li>'
+                 '<li><strong>&ldquo;No previous version available&rdquo;</strong> on files that were backed up before.</li>'
+                 '</ul>'
+                 '<p>The updates were KB5124008 (Windows 11 24H2 and 25H2), KB5122880 (Windows 11 23H2), KB5124012 (Windows 11 26H1) and KB5122878 (Windows 10). Microsoft fixed it for Windows 11 in the optional updates KB5124010 and KB5124006 at the end of September, and in the October updates for everyone else. <strong>So the fix is to install the latest updates:</strong> Settings, Windows Update, <strong>Check for updates</strong>, restart, then File History, <strong>Run now</strong>.</p>'
+                 '<p><strong>Don&rsquo;t format the backup drive or delete its FileHistory folder</strong> to make the message go away: that really would lose your old copies. If it still won&rsquo;t back up after updating, especially on Windows 10, ring us.</p>'},
+        {'eyebrow': '/04 &mdash; GETTING FILES BACK', 'h2': 'Restoring files from File History',
+         'html': '<ol>'
+                 '<li>Plug in the backup drive and open <strong>File History</strong>.</li>'
+                 '<li>Click <strong>Restore personal files</strong>, and use the arrows at the bottom to go back to the day you want.</li>'
+                 '<li>Select the files or folders and click the green <strong>Restore</strong> button. To put them somewhere else instead of over today&rsquo;s copies, right-click the button and choose <strong>Restore to</strong>.</li>'
+                 '</ol>'
+                 '<p>Or right-click a folder in File Explorer, <strong>Properties</strong>, <strong>Previous Versions</strong>. <strong>On a new PC</strong>, plug in the old backup drive, open File History, <strong>Select drive</strong>, tick <strong>I want to use a previous backup on this File History drive</strong>, choose it and turn File History on; then use Restore personal files.</p>'},
+        {'eyebrow': '/05 &mdash; STOP THE MESSAGES', 'h2': 'Stop it nagging, without losing your backup',
+         'html': '<ul>'
+                 '<li><strong>A new backup drive:</strong> plug it in, File History, <strong>Select drive</strong>, choose it, OK, then Run now.</li>'
+                 '<li><strong>A laptop that&rsquo;s often away from its drive:</strong> the message comes back whenever it&rsquo;s been away too long. Plug the drive in once a week and click Run now, and keep it unplugged in between, so ransomware can&rsquo;t reach it.</li>'
+                 '<li><strong>The drive is full:</strong> Advanced settings, <strong>Keep saved versions</strong>, choose <strong>Until space is needed</strong>, or use <strong>Clean up versions</strong>.</li>'
+                 '<li><strong>Switching it off</strong> (File History, <strong>Turn off</strong>) stops the messages, but it stops the backup too. Only do that once something else is backing up your files: see <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>.</li>'
+                 '</ul>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your backup', 'html': '__APP_BOX_BACKUP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' A backup drive that has stopped working altogether, with files you need on it, is a <a href="/data-recovery/">data recovery</a> job: stop using it and ring us first.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Sources: Microsoft Support, <a href="https://support.microsoft.com/windows/reconnect-your-file-history-drive-4eecf398-5c15-bbe7-13b2-9ed4b3db8bb7" rel="noopener" target="_blank">Reconnect your File History drive in Windows</a>; BleepingComputer, <a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-september-updates-break-file-history-backup-feature/" rel="noopener" target="_blank">September updates break File History</a> and <a href="https://www.bleepingcomputer.com/news/microsoft/microsoft-fixes-windows-backup-feature-broken-by-september-updates/" rel="noopener" target="_blank">Microsoft fixes it</a>. Read 3 November 2026.</p>'},
+    ],
+    'howToName': 'How to fix the File History &ldquo;Reconnect your drive&rdquo; message',
+    'howToSteps': [
+        {'name': 'Plug in the backup drive', 'text': 'Connect the File History drive straight to the PC, not through a hub.'},
+        {'name': 'Back up now', 'text': 'Open File History in Control Panel and click Run now.'},
+        {'name': 'Install the latest updates', 'text': 'Settings, Windows Update, Check for updates, then restart: the September 2026 updates caused false reconnect messages.'},
+        {'name': 'Choose the drive again', 'text': 'In File History click Select drive, pick the backup drive, click OK, then Run now.'},
+        {'name': 'Check the drive itself', 'text': 'If File Explorer can&rsquo;t see the drive, try another socket and cable; a failing drive needs replacing.'},
+    ],
+    'faqs': [
+        {'q': 'Why does my PC keep saying reconnect your drive?', 'a': '<p>File History, Windows&rsquo; backup to a USB or network drive, hasn&rsquo;t reached its backup drive for too long. Plug it in and click Run now. Since September 2026 a Windows update has also caused the message with the drive connected: install the latest updates.</p>'},
+        {'q': 'Will I lose my files?', 'a': '<p>No: the files on your PC are untouched. It&rsquo;s the backup that&rsquo;s out of date until the drive is reconnected. Don&rsquo;t format the backup drive or delete its FileHistory folder.</p>'},
+        {'q': 'Where is File History in Windows 11?', 'a': '<p>In Control Panel, under System and Security: or click Start and type File History. It isn&rsquo;t in Windows 11&rsquo;s Settings.</p>'},
+        {'q': 'The drive is plugged in but it still says reconnect. Why?', 'a': '<p>Most likely the September 2026 Windows update bug: install the latest updates and restart. If it carries on, choose the drive again with Select drive, then Run now.</p>'},
+        {'q': 'How do I stop the reconnect your drive message?', 'a': '<p>Reconnect the drive and run a backup, or choose a different drive. Turning File History off stops the message, but it stops the backup too.</p>'},
+        {'q': 'Can I restore File History backups on a new PC?', 'a': '<p>Yes. Plug in the old drive, open File History, Select drive, tick I want to use a previous backup on this File History drive, then use Restore personal files.</p>'},
+        {'q': 'Is File History the same as Windows Backup?', 'a': '<p>No. File History copies your folders to a drive you own and keeps older versions. The Windows Backup app copies some folders to OneDrive. See <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, get File History backing up again and check that a file reads back. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/usb-device-not-recognised/">USB device not recognised</a>, <a href="/how-to-recover-deleted-files/">how to recover deleted files</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -2605,7 +2711,7 @@ def symptom_pages(setup_url):
             '<strong>Nothing is deleted:</strong> &ldquo;Move the extra copies&rdquo; puts them in one folder for you to check, and <strong>Put them back</strong> undoes it. Photos only in OneDrive&rsquo;s cloud are skipped, and iTunes copies are only listed, to remove inside iTunes.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2725,6 +2831,9 @@ SYMPTOM_FLOWS = {
     USBNR['slug']: {'h2': 'Get it recognised, step by step', 'ask': 'Does Windows see it now?',
                     'tip': 'Unplug it and plug it back in once more to be sure it stays.',
                     'h3s': 'Still not recognised after every step? That is a remote job, or the device.'},
+    FILEHIST['slug']: {'h2': 'Get File History backing up, step by step', 'ask': 'Does it back up now?',
+                       'tip': 'Plug the drive in once a week, click Run now, and keep it unplugged in between.',
+                       'h3s': 'Still saying reconnect after every step? That is a remote job.'},
     DUPES['slug']: {'h2': 'Clear the copies, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
                     'last_yes': 'Done, all tidy', 'ask': 'Done that step?',
                     'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
