@@ -24,6 +24,7 @@ from build_local import make_customer
 from new_pages_data import NEW_PAGES
 import greenby_page_data   # /greenby-email-login/ (13 Oct 2026): appends to NEW_PAGES
 import ghost_backup_page_data   # /open-gho-file/ (3 Nov 2026): appends to NEW_PAGES
+import isp_email_pages_data   # TalkTalk/Everymail, Plusnet legacy brands/Greenby, leaving BT, closed ISP email (3 Nov 2026): appends to NEW_PAGES
 import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
@@ -203,6 +204,10 @@ SPECIALIST = [
      ("/cant-send-btinternet-email-new-outlook/", "BT Internet email will not send from the new Outlook"),
      ("/plusnet-email-wont-add-to-new-outlook/", "Plusnet email will not add to the new Outlook"),
      ("/sky-email-wont-add-to-new-outlook/", "Sky email will not add to the new Outlook"),
+     ("/talktalk-email-moving-to-everymail/", "Left TalkTalk? Your email is moving to Everymail"),   # 3 Nov 2026
+     ("/madasafish-freenetname-email-greenby/", "Madasafish, Freenetname or Globalnet email moving to Greenby"),   # 3 Nov 2026
+     ("/keep-bt-email-when-leaving-bt/", "Leaving BT? Keep your BTinternet email address"),   # 3 Nov 2026
+     ("/old-internet-provider-email-closed/", "Old internet provider email closed: what you can still do"),   # 3 Nov 2026
      ("/talktalk-email-not-working-android/", "TalkTalk email not working on Android"),
      ("/sage-50-wont-email-invoices-outlook/", "Sage 50 will not email invoices through Outlook"),
      ("/how-to-protect-your-business-email/", "Protecting a business mailbox"),

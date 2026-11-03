@@ -190,6 +190,7 @@ NEW_PAGES.append({
                    '<a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email and the new Outlook</a> &middot; '
                    '<a href="/how-to-make-a-google-app-password/">Making a Google app password</a> &middot; '
                    '<a href="/change-your-email-address-everywhere/">Change your email address everywhere</a> &middot; '
+                   '<a href="/madasafish-freenetname-email-greenby/">Madasafish, Freenetname and Globalnet email moving to Greenby</a> &middot; '
                    '<a href="/virgin-media-email-moving-to-junara/">Virgin Media email is moving too</a> &middot; '
                    '<a href="/email-support/">Email support</a></p>',
 })
