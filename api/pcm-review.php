@@ -456,6 +456,108 @@ function rv_body_html($first, $to = '', $salt = '') {
     ));
 }
 
+/* ---- the payment thank-you (owner, 3 Nov 2026: David's "Thank you for your payment" email, "and it asks them for a
+   review ... so we can get more reviews from our new customers"). Sent from the staff portal's "Send a thank-you"
+   (pcm-invq.php action=receipt), never automatically. It replaces QuickBooks' own payment receipt email, whose wording
+   QuickBooks does not let us change; QuickBooks' receipt PDF rides along as an attachment when QuickBooks gives one.
+   The thank-you itself always goes. The review part rides along only for someone the review emails may ask: not opted
+   out, not marked reviewed, not asked in $RV_ASK_COOLDOWN. It stamps the same $q['last'], so the post-visit ask and
+   this one never both reach the same person. Same wording rules as rv_body: unconditional, no incentive, no referral
+   offer in the same email, the "tell us if anything was not right" line AFTER the ask. */
+$TY_ASK = true;   // false = thank-yous without the review part
+function ty_subject($nums) {
+    return 'Thank you - payment received' . ($nums ? ' (invoice ' . implode(', ', $nums) . ')' : '');
+}
+function ty_money($amt) { return "\xC2\xA3" . number_format((float)$amt, 2); }
+function ty_facts($amt, $nums, $paidTs) {
+    $f = array('Amount received' => ty_money($amt));
+    if ($nums) $f[count($nums) > 1 ? 'Invoices' : 'Invoice'] = implode(', ', $nums);
+    if ($paidTs > 0) $f['Date'] = date('l j F Y', $paidTs);
+    return $f;
+}
+function ty_body($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '') {
+    global $RV_REVIEW_URL;
+    $t = 'Hi ' . $first . ",\r\n\r\n"
+       . "Thank you for your payment. This email confirms we have received it:\r\n\r\n";
+    foreach (ty_facts($amt, $nums, $paidTs) as $k => $v) $t .= '  ' . $k . ': ' . $v . "\r\n";
+    $t .= "\r\n" . ($attached ? "Your receipt is attached.\r\n\r\n" : '')
+       . "Thank you for choosing us - we really appreciate it.\r\n\r\n";
+    if ($ask) $t .= "One small favour: would you leave us a quick Google review? Honest feedback takes about\r\n"
+       . "30 seconds, every single one gets read by us, and it's how other local people find a\r\n"
+       . "firm they can trust:\r\n\r\n" . $RV_REVIEW_URL . "\r\n\r\n";
+    $t .= "If you have any questions, or anything wasn't right, just reply to this email or call\r\n"
+       . "01202 775566 (texts: 07520 615332) and we'll sort it.\r\n\r\n"
+       . "Thanks again,\r\n"
+       . "David & Steve\r\n"
+       . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+       . "01202 775566 - info@365techies.co.uk - https://365techies.co.uk\r\n"
+       . "What our customers say: https://365techies.co.uk/reviews/\r\n";
+    if ($ask) $t .= "\r\n(Prefer not to get the occasional follow-up like this? Just reply \"no thanks\" and we'll switch them off"
+       . (($to !== '' && $salt !== '') ? ", or click here:\r\n" . rv_unsub_url($to, $salt) . "\r\n" : ".\r\n") . ")\r\n";
+    return $t;
+}
+function ty_body_html($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '') {
+    global $RV_REVIEW_URL;
+    $tel = '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>';
+    $blocks = array(
+        rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p('Thank you for your payment. This email confirms we have received it.'),
+        rv_h_facts(ty_facts($amt, $nums, $paidTs)),
+    );
+    if ($attached) $blocks[] = rv_h_p('Your receipt is attached.');
+    $blocks[] = rv_h_p('Thank you for choosing us &ndash; we really appreciate it.');
+    if ($ask) {
+        $blocks[] = rv_h_p('One small favour: would you leave us a quick Google review? Honest feedback takes about 30 seconds, every single one gets read by us, and it is how other local people find a firm they can trust.');
+        $blocks[] = rv_h_cta('Leave a Google review', $RV_REVIEW_URL);
+    }
+    $blocks[] = rv_h_note('If you have any questions, or anything was not right, just reply to this email or call ' . $tel
+        . ' (texts: 07520&nbsp;615332) and we will sort it.');
+    $blocks[] = rv_h_p('<a href="https://365techies.co.uk/reviews/" style="color:#1266a8;font-weight:600;text-decoration:none;">See what our customers say</a>');
+    $unsub = '';
+    if ($ask) $unsub = 'Prefer not to get the occasional follow-up like this? Just reply &ldquo;no thanks&rdquo; and we will switch them off'
+        . (($to !== '' && $salt !== '')
+           ? ', or <a href="' . rv_h(rv_unsub_url($to, $salt)) . '" style="color:#7c8aa5;text-decoration:underline;">click here</a>.' : '.');
+    return rv_html_shell(array(
+        'title' => 'Thank you for your payment',
+        'eyebrow' => 'Payment received',
+        'heading' => 'Thank you for your payment',
+        'preview' => ty_money($amt) . ' received' . ($nums ? ' for invoice ' . implode(', ', $nums) : '') . ' - thank you.',
+        'blocks' => $blocks,
+        'footnote' => $unsub,
+    ));
+}
+/** Send one thank-you. $pdf = QuickBooks' receipt (raw bytes) or ''. -> array(ok, asked) */
+function ty_send($to, $name, $amt, $nums, $paidTs, $pdfName = '', $pdf = '') {
+    global $RV_ASK_COOLDOWN, $RV_LIVE, $TY_ASK;
+    $to = strtolower(trim((string)$to));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return array(false, false);
+    $eh = sha1($to); $ask = false; $prov = 0; $salt = ''; $before = null;
+    list($lk, $q) = rvq_open();
+    if ($lk) {   // no lock = no ask: the thank-you still goes, the review part never risks a double
+        $salt = isset($q['salt']) ? (string)$q['salt'] : '';
+        $ask = $TY_ASK && $RV_LIVE && !isset($q['optout'][$eh]) && !isset($q['reviewed'][$eh])
+            && (isset($q['last'][$eh]) ? (int)$q['last'][$eh] : 0) <= time() - $RV_ASK_COOLDOWN;
+        if ($ask) { $before = isset($q['last'][$eh]) ? $q['last'][$eh] : null; $prov = time(); $q['last'][$eh] = $prov; }   // provisional, under the lock (as rv_process)
+        rvq_save($q);
+        rvq_close($lk);
+    }
+    $att = ($pdf !== '' && $pdfName !== '');
+    $f = rv_first($name);
+    $ok = rv_send_raw($to, ty_subject($nums), ty_body($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt), $att ? $pdfName : '', $att ? $pdf : '',
+        ty_body_html($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt), $att ? 'application/pdf' : '');
+    if (!$ok && $prov) {   // release our provisional stamp so a later ask is not blocked for a year
+        list($lk2, $q2) = rvq_open();
+        if ($lk2) {
+            if ((isset($q2['last'][$eh]) ? (int)$q2['last'][$eh] : 0) === $prov) {
+                if ($before === null) unset($q2['last'][$eh]); else $q2['last'][$eh] = $before;
+                rvq_save($q2);
+            }
+            rvq_close($lk2);
+        }
+    }
+    return array((bool)$ok, $ok && $ask);
+}
+
 // ---- "job done" email: sent when the booking is marked Completed (portal staff
 // action or SimplyBook admin, mirrored into bkmeta by pcm-bkpoll.php), or 3h after
 // the visit ends as a fallback for jobs nobody marks. The customer's one-stop
@@ -1874,8 +1976,28 @@ function rv_send($to, $first, $kind = 'review', $meta = array()) {
 // a line at 998 chars (RFC 5321) and hand-written HTML blows straight through that.
 /** The message body and its Content-Type: the text, the HTML and a calendar file in the right nesting. Pure, so the
  *  structure is tested without sending anything. */
-function rv_mime($body, $icsName = '', $icsData = '', $html = '') {
-    if ($icsData !== '' && $html !== '') {
+function rv_mime($body, $icsName = '', $icsData = '', $html = '', $attType = '') {
+    if ($icsData !== '' && $attType !== '') {
+        /* 3 Nov 2026: any other file (the payment thank-you's PDF receipt), base64'd under its own type:
+           mixed { alternative { text, HTML } (or the text alone), file }. */
+        $bnd = 'b365' . bin2hex(random_bytes(8)); $alt = 'a365' . bin2hex(random_bytes(8));
+        $ctype = 'Content-Type: multipart/mixed; boundary="' . $bnd . '"';
+        $fn = preg_replace('/[^A-Za-z0-9._-]/', '', (string)$icsName);
+        $payload = '--' . $bnd . "\r\n"
+                 . ($html !== ''
+                    ? 'Content-Type: multipart/alternative; boundary="' . $alt . "\"\r\n\r\n"
+                      . '--' . $alt . "\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n" . $body
+                      . "\r\n--" . $alt . "\r\nContent-Type: text/html; charset=UTF-8\r\n"
+                      . "Content-Transfer-Encoding: base64\r\n\r\n"
+                      . chunk_split(base64_encode($html), 76, "\r\n")
+                      . '--' . $alt . "--\r\n"
+                    : "Content-Type: text/plain; charset=UTF-8\r\n\r\n" . $body . "\r\n")
+                 . '--' . $bnd . "\r\nContent-Type: " . $attType . '; name="' . $fn . '"' . "\r\n"
+                 . "Content-Transfer-Encoding: base64\r\n"
+                 . 'Content-Disposition: attachment; filename="' . $fn . '"' . "\r\n\r\n"
+                 . chunk_split(base64_encode($icsData), 76, "\r\n")
+                 . '--' . $bnd . "--\r\n";
+    } elseif ($icsData !== '' && $html !== '') {
         /* 27 Oct 2026: the booking emails carry a calendar file AND the house HTML, so: mixed { alternative
            { text, HTML }, calendar }. The branch below used to drop the HTML whenever a calendar was attached,
            which is why our confirmations were plain text while every other email was designed. */
@@ -1910,10 +2032,10 @@ function rv_mime($body, $icsName = '', $icsData = '', $html = '') {
     } else { $ctype = 'Content-Type: text/plain; charset=UTF-8'; $payload = $body; }
     return array($ctype, $payload);
 }
-function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html = '') {
+function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html = '', $attType = '') {
     $to = strtolower(trim((string)$to));
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
-    list($ctype, $payload) = rv_mime($body, $icsName, $icsData, $html);
+    list($ctype, $payload) = rv_mime($body, $icsName, $icsData, $html, $attType);
     $cfg = __DIR__ . '/pcm-smtp.php';
     if (is_readable($cfg)) {
         include $cfg;
@@ -3968,7 +4090,7 @@ if (!defined('RV_LIB')) {
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
                       'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report',
-                      'series' => 'series', 'cancels' => 'cancels', 'linkedin' => 'linkedin', 'store' => 'store');
+                      'series' => 'series', 'cancels' => 'cancels', 'linkedin' => 'linkedin', 'store' => 'store', 'thanks' => 'thanks');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -3993,6 +4115,12 @@ if (!defined('RV_LIB')) {
         }
         elseif ($tkind === 'launch') {
             $ok = rv_send_raw($tto, wl_subject(), wl_body('Steve'), '', '', wl_body_html('Steve'));
+        }
+        elseif ($tkind === 'thanks') {
+            // the payment thank-you (3 Nov 2026) with sample facts, the review ask shown and no attachment;
+            // the queue is not touched, so nobody's review stamp moves
+            $ts0 = time(); $n0 = array('4905/000');
+            $ok = rv_send_raw($tto, ty_subject($n0), ty_body('Steve', 60, $n0, $ts0, true, false), '', '', ty_body_html('Steve', 60, $n0, $ts0, true, false));
         }
         elseif ($tkind === 'report') {
             // the six-weekly service report, with fixed sample facts; the button goes to

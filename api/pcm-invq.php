@@ -316,13 +316,16 @@ if ($action === 'emailpreview') {
 }
 /* 23 Oct 2026: the money in for a month, week by week (read only; see invq_paid()). */
 /* A thank-you (owner, 23 Oct 2026: "when they pay, we normally send like a thank you sort of email ... from
-   QuickBooks"): QuickBooks emails its payment receipt for a payment (id) or for the newest payment on an invoice
-   (invoice). The address is QuickBooks' own; nothing in the request chooses it. */
+   QuickBooks"): for a payment (id) or for the newest payment on an invoice (invoice). Since 3 Nov 2026 our own email
+   with QuickBooks' receipt PDF attached and a review ask when allowed (see invq_receipt). The address is QuickBooks'
+   own; nothing in the request chooses it. */
 if ($action === 'receipt') {
+    if (!defined('RV_LIB')) define('RV_LIB', 1);
+    require_once __DIR__ . '/pcm-review.php';   // our sender (ty_send). Still global scope (an if block, not a function) - its globals need that; loaded only here so its timezone setting touches nothing else
     $invId = preg_replace('/[^0-9]/', '', (string)(isset($in['invoice']) ? $in['invoice'] : ''));
     $r = invq_receipt($c, $id, $invId, $who);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
-    out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers']));
+    out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers'], 'review' => !empty($r['review'])));
 }
 
 if ($action === 'paid') {

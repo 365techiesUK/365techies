@@ -32093,12 +32093,13 @@ def write_portal_page():
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
   }
   /* 23 Oct 2026 (owner: "when they pay, we normally send like a thank you sort of email, to confirm they've paid ... from
-     QuickBooks"): QuickBooks emails its own payment receipt. Asks first; the address is QuickBooks' own. Used by Money in
-     (a payment, by its id) and by a paid job row (its invoice: the newest payment on it). */
+     QuickBooks"). Asks first; the address is QuickBooks' own. Used by Money in (a payment, by its id) and by a paid job
+     row (its invoice: the newest payment on it). 3 Nov 2026: our own thank-you (David's words) with QuickBooks' receipt
+     attached and a Google review ask, unless they have been asked in the last year or said no thanks. */
   function invqThank(b, msg) {
     var no = b.getAttribute('data-no') || '', amt = parseFloat(b.getAttribute('data-amt')) || 0, to = b.getAttribute('data-to') || '';
-    if (!confirm('QuickBooks will email its payment receipt \\u2014 a thank-you confirming ' + (amt > 0 ? invqMoney(amt) + ' ' : '') + 'received'
-      + (no ? ' for invoice #' + no.split(', ').join(', #') : '') + ' \\u2014 to ' + (to || 'the email QuickBooks has for ' + (b.getAttribute('data-who') || 'them')) + '.\\n\\nSend it?')) return;
+    if (!confirm('Send our thank-you email \\u2014 confirming ' + (amt > 0 ? invqMoney(amt) + ' ' : '') + 'received'
+      + (no ? ' for invoice #' + no.split(', ').join(', #') : '') + ', with QuickBooks\\u2019 receipt attached and a Google review ask (left out if they were asked in the last year) \\u2014 to ' + (to || 'the email QuickBooks has for ' + (b.getAttribute('data-who') || 'them')) + '.\\n\\nSend it?')) return;
     b.disabled = true; if (msg) msg.textContent = 'Sending\\u2026';
     var body = { action: 'receipt', stoken: S.stoken, machine: mid() };
     if (b.getAttribute('data-id')) body.id = b.getAttribute('data-id'); else body.invoice = b.getAttribute('data-inv');
@@ -32110,7 +32111,7 @@ def write_portal_page():
         return;
       }
       b.style.display = 'none';
-      if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\\u2713 Thank-you sent to ' + esc(j.to) + '</span>';
+      if (msg) msg.innerHTML = '<span style="color:#7ee0a2">\\u2713 Thank-you sent to ' + esc(j.to) + (j.review ? ' (with a review ask)' : '') + '</span>';
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
   }
   function invqAgo(t) { return invqWhen(Math.max(0, Math.floor((Date.now() / 1000 - t) / 86400))); }
@@ -32341,7 +32342,7 @@ def write_portal_page():
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') {
         chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Paid' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>' + invqNew(inv && inv.paid_at, r.new_days) + (inv && inv.thanked ? ' <span class="quiet">\\u00b7 thank-you sent ' + esc(invqAgo(inv.thanked)) + '</span>' : '');
-        if (inv && inv.id && !inv.thanked) btns = '<button class="sm ghost invqthank" data-inv="' + esc(inv.id) + '" data-amt="' + esc(inv.total) + '" data-no="' + esc(inv.number || '') + '" data-to="' + esc(inv.email || '') + '" data-who="' + esc(j.customer || '') + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="QuickBooks emails its payment receipt, confirming they\\u2019ve paid">\\ud83d\\ude4f Send a thank-you</button>';
+        if (inv && inv.id && !inv.thanked) btns = '<button class="sm ghost invqthank" data-inv="' + esc(inv.id) + '" data-amt="' + esc(inv.total) + '" data-no="' + esc(inv.number || '') + '" data-to="' + esc(inv.email || '') + '" data-who="' + esc(j.customer || '') + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="Our thank-you email, confirming they\\u2019ve paid, with a Google review ask">\\ud83d\\ude4f Send a thank-you</button>';
       }
       else if (st === 'sent') {
         /* 23 Oct 2026 (owner: "Tom Wilson's invoice ... hasn't paid it ... we need it that we can basically resend invoices from here") */

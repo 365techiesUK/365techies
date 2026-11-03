@@ -904,12 +904,15 @@ function invq_resend($c, $id, $who) {
     return array('ok' => true, 'to' => $to, 'number' => $num, 'amount' => round($bal, 2));
 }
 
-/* ---- WRITE 2c: a thank-you - QuickBooks emails its payment receipt (23 Oct 2026) -----------------------------------
+/* ---- WRITE 2c: a thank-you for a payment (23 Oct 2026; our own email since 3 Nov 2026) --------------------------
    Owner: "when they pay, we normally send like a thank you sort of email, to confirm they've paid and everything, from
-   QuickBooks". The same email as David's Save and send on Receive payment: QuickBooks' own payment receipt, its own
-   wording. The payment is named by its id, or found as the newest payment against an invoice; the address is the
+   QuickBooks". The payment is named by its id, or found as the newest payment against an invoice; the address is the
    invoice's (else the customer's) as QuickBooks holds it - never from the request. Once a day per payment, inside the
-   hourly cap shared with sends. */
+   hourly cap shared with sends.
+   3 Nov 2026 (owner: David's thank-you "asking for a review as well ... so we can get more reviews from our new
+   customers"): QuickBooks' receipt email can't carry our words, so the website sends ours (ty_send in pcm-review.php,
+   which the caller has loaded at top level) with QuickBooks' receipt PDF attached, and a Google review ask when the
+   review rules allow one. invq_qbo_send_payment stays as the fallback when our sender is not loaded. */
 function invq_qbo_send_payment($c, $id, $to) {
     $url = $c['base'] . '/v3/company/' . rawurlencode($c['realm']) . '/payment/' . $id . '/send?sendTo=' . rawurlencode($to) . '&minorversion=' . INVQ_MINOR;
     $ch = curl_init($url);
@@ -967,20 +970,44 @@ function invq_receipt($c, $payId, $invId, $who) {
         }
     }
     if ($to === '') return array('ok' => false, 'error' => 'no_email');
-    $why = invq_qbo_send_payment($c, $pid, $to);
-    if ($why !== '') {
-        invq_log('thank-you FAILED payment ' . $pid . ' ' . $why . ' by ' . $who);
-        return array('ok' => false, 'error' => 'send_failed', 'why' => $why);
+    $name = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80);
+    $asked = false; $pdfOk = false;
+    if (function_exists('ty_send')) {
+        $first = $name;
+        $cid = (string)(isset($p['CustomerRef']['value']) ? $p['CustomerRef']['value'] : '');
+        if (preg_match('/^\d+$/', $cid)) {
+            $cr = invq_api($c, 'GET', '/customer/' . $cid);
+            if (qbo_lib_ok($cr)) $first = invq_first_name(isset($cr['json']['Customer']['GivenName']) ? $cr['json']['Customer']['GivenName'] : '',
+                                                          isset($cr['json']['Customer']['DisplayName']) ? $cr['json']['Customer']['DisplayName'] : '');
+        }
+        // QuickBooks' own receipt as the attachment; without it the email still says what was paid
+        $pdf = invq_api($c, 'GET', '/payment/' . $pid . '/pdf', null, 'application/pdf');
+        $raw = (qbo_lib_ok($pdf) && strlen($pdf['raw']) >= 100 && substr($pdf['raw'], 0, 4) === '%PDF') ? $pdf['raw'] : '';
+        $pdfOk = ($raw !== '');
+        $paidTs = strtotime((string)(isset($p['TxnDate']) ? $p['TxnDate'] : '') . ' 12:00');
+        list($ok, $asked) = ty_send($to, $first, $amt, $nums, $paidTs ? $paidTs : 0,
+            'receipt-' . ($nums ? preg_replace('/[^A-Za-z0-9-]/', '-', $nums[0]) : $pid) . '.pdf', $raw);
+        if (!$ok) {
+            invq_log('thank-you FAILED payment ' . $pid . ' (our email) by ' . $who);
+            return array('ok' => false, 'error' => 'send_failed', 'why' => 'email');
+        }
+    } else {
+        $why = invq_qbo_send_payment($c, $pid, $to);
+        if ($why !== '') {
+            invq_log('thank-you FAILED payment ' . $pid . ' ' . $why . ' by ' . $who);
+            return array('ok' => false, 'error' => 'send_failed', 'why' => $why);
+        }
     }
     $inv = array_map('strval', array_keys($tids));
-    invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt) {
-        $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt);
+    invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt, $asked) {
+        $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt, 'review' => $asked);
         return array('ok' => true, 'data' => $d);
     });
-    $name = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80);
-    invq_log('thank-you (payment receipt) for payment ' . $pid . ' ' . invq_money($amt) . ($nums ? ' #' . implode(', #', $nums) : '') . ' to ' . $to . ' by ' . $who);
-    invq_slack(':pray: *Thank-you sent* - ' . ($name !== '' ? $name : 'a customer') . ', ' . invq_money($amt) . ' received' . ($nums ? ' (#' . implode(', #', $nums) . ')' : '') . ', by ' . $who . '.');
-    return array('ok' => true, 'to' => $to, 'amount' => $amt, 'numbers' => $nums, 'payment' => $pid);
+    invq_log('thank-you for payment ' . $pid . ' ' . invq_money($amt) . ($nums ? ' #' . implode(', #', $nums) : '') . ' to ' . $to . ' by ' . $who
+        . ($asked ? ', with a review ask' : '') . ($pdfOk ? ', receipt attached' : ''));
+    invq_slack(':pray: *Thank-you sent* - ' . ($name !== '' ? $name : 'a customer') . ', ' . invq_money($amt) . ' received' . ($nums ? ' (#' . implode(', #', $nums) . ')' : '') . ', by ' . $who
+        . ($asked ? '. It asked for a Google review.' : '.'));
+    return array('ok' => true, 'to' => $to, 'amount' => $amt, 'numbers' => $nums, 'payment' => $pid, 'review' => $asked);
 }
 
 /* The email QuickBooks will send for an invoice, seen before it goes (read only): QuickBooks' own invoice wording from
