@@ -1644,7 +1644,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "82bbc29653978786",
+  "h": "39468ae1b60c8803",
   "last": "2026-11-03"
  },
  "it-health-check-tool": {
@@ -2558,7 +2558,8 @@
  },
  "open-gho-file": {
   "first": "2026-11-03",
-  "h": "643aac106b40fa8b"
+  "h": "4a8f98ea865727b3",
+  "last": "2026-11-03"
  },
  "order-microsoft-365": {
   "first": "2026-10-10",
@@ -3231,6 +3232,10 @@
   "first": "2026-07-28",
   "h": "f6886cabe7cb2675",
   "last": "2026-09-28"
+ },
+ "restore-windows-7-backup-on-windows-11": {
+  "first": "2026-11-03",
+  "h": "2af23f8945e1816e"
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
@@ -3974,7 +3979,7 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "b0a38aab4b74693f",
+  "h": "a4830e24337d23da",
   "last": "2026-11-03"
  },
  "windows-11-upgrade-service": {
@@ -4068,7 +4073,7 @@
  },
  "what-windows-backup-backs-up": {
   "first": "2026-10-28",
-  "h": "65fd6a92c497126d",
+  "h": "2fc95d492ffc302c",
   "last": "2026-11-03"
  },
  "do-i-need-ccleaner": {

@@ -170,5 +170,6 @@ NEW_PAGES.append({
     ],
     'crossLinksHtml': '<p>Related: <a href="/data-recovery/">data recovery</a>, <a href="/how-to-recover-deleted-files/">how to '
                       'recover deleted files</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs '
-                      'up</a> and <a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>',
+                      'up</a>, <a href="/restore-windows-7-backup-on-windows-11/">how to restore a Windows 7 backup</a> and '
+                      '<a href="/how-to-back-up-your-photos/">how to back up your photos</a>.</p>',
 })

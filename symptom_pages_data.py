@@ -1702,7 +1702,7 @@ WINBACKUP = {
         {'q': 'How do I restore from Windows Backup on a new PC?', 'a': '<p>During the new PC&rsquo;s set-up, sign in with the same Microsoft account and choose to restore from your old PC. Your folders, apps list and settings come across.</p>'},
         {'q': 'Can you set up my backup?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup that covers your important files, and test that it works. Remote help from &pound;20.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
 }
 
 # ============================================================ 20-22. Programs like ours (29 Oct 2026)
@@ -2638,6 +2638,108 @@ FILEHIST = {
 }
 
 
+# ============================================================ 33. Restore a Windows 7 backup on Windows 11 or 10
+# 3 Nov 2026 (owner: "build the Windows 7 backup restore page next"; seo-research/backup-programs-2026-11-03): Bing, 3 Aug-
+# 31 Oct 2026, "backup and restore windows 7" 2.8K (UK 251), "windows 7 backup and restore" 882 (52), "system image backup"
+# 2.4K (289), "windowsimagebackup" 1K (29), "restore backup windows 11" 247 (21). Fits the home + retired customer base.
+# Facts, read 3 Nov 2026:
+#   - Microsoft Support "Find lost files after upgrading Windows" (Windows 11 and 10): connect the drive, Control Panel,
+#     search "backup", Backup and restore (Windows 7), select another backup to restore files from, pick the drive in
+#     Restore Files (Advanced), follow the wizard.
+#   - How-To Geek "How to restore Windows 7 backups on Windows 8.1 or 10": same route; by hand, the PC-named folder, a dated
+#     Backup Set, Backup Files folders of "Backup files #.zip", extracted oldest to newest (7-Zip recommended).
+#   - Seven Forums "Backup - manually extract files from in Vista & Windows 7": Backup Files folders are incremental; large
+#     files span consecutive zips; MediaID.bin stays with the backup or Windows may not recognise it.
+#   - Windows Latest, 4 Dec 2024: Microsoft's "Backup and recovery tools in Windows" still recommends the Windows 7 tool.
+#   - Our own memory (customer-backup-standard): Windows 7 Backup and Restore has no encryption.
+# Attach VHD read-only is Disk Management's own option; never "System Image Recovery" a Windows 7 image onto a new PC.
+WIN7RESTORE = {
+    'slug': 'restore-windows-7-backup-on-windows-11',
+    'title': 'How to Restore a Windows 7 Backup on Windows 11 or 10',
+    'metaDesc': 'Old Windows 7 backup on a drive? Restore the files on Windows 11 or 10, open the backup&rsquo;s zip files by hand, or get files out of a system image.',
+    'ogTitle': 'How to restore a Windows 7 backup on Windows 11 or 10',
+    'crumbName': 'Restore a Windows 7 Backup',
+    'eyebrow': '// AN OLD WINDOWS 7 BACKUP?',
+    'h1': 'Restore a <em class="grad grad--cyan">Windows 7 backup</em> on Windows 11 or 10',
+    'lede': 'You&rsquo;ve got a drive with a backup made by Windows 7 (or Vista), and a newer PC. Windows 11 and 10 can still read it, with the same tool that made it, tucked away in Control Panel. If that won&rsquo;t play, the files are in ordinary zip files you can open yourself. Here&rsquo;s how, and how to get files out of a whole-PC &ldquo;system image&rdquo; too.',
+    'chips': ['Windows 11 and 10', 'Files, folders and photos', 'Nothing to buy'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Restore the files', '#s2'],
+    'ctaHead': 'Rather we got them back for you?',
+    'ctaSub': 'With your permission we connect to your Windows PC, restore the old backup into a folder of its own and set up a backup for the new PC. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Where', 'Control Panel, System and Security, <strong>Backup and Restore (Windows 7)</strong>.'),
+        ('The link to use', '<strong>Select another backup to restore files from</strong>, then pick the drive.'),
+        ('Where to put them', '<strong>In the following location</strong>: a new folder, so nothing is overwritten.'),
+        ('Won&rsquo;t find it?', 'The files are in numbered <strong>.zip</strong> files inside the backup folder: open them yourself.'),
+        ('A system image?', 'Attach its <strong>.vhd</strong> file read-only and copy files out. Never restore it onto your new PC.'),
+        ('Passwords?', 'None: Windows 7 backups aren&rsquo;t encrypted, so keep the drive somewhere safe.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT YOU&rsquo;VE GOT', 'h2': 'What a Windows 7 backup looks like',
+         'html': '<p>Plug the drive in and open it in File Explorer. A backup made by Windows 7 or Vista&rsquo;s <strong>Backup and Restore</strong> has one or both of these:</p>'
+                 '<ul>'
+                 '<li><strong>A folder named after the old computer</strong> (for example <code>JOHN-PC</code>) with dated <strong>Backup Set</strong> folders inside, and a small file called <code>MediaID.bin</code>. That&rsquo;s a backup of your <strong>files</strong>: documents, photos, music and so on.</li>'
+                 '<li><strong>A folder called WindowsImageBackup:</strong> a <strong>system image</strong>, a copy of the old computer&rsquo;s whole drive, Windows and programs included.</li>'
+                 '</ul>'
+                 '<p>Don&rsquo;t move, rename or tidy anything in them: Windows finds the backup by its folders and that MediaID.bin file. If you want a spare copy first, copy the whole drive&rsquo;s contents, exactly as they are, to another drive.</p>'},
+        {'eyebrow': '/02 &mdash; THE WINDOWS WAY', 'h2': 'Restore the files with Backup and Restore (Windows 7)',
+         'html': '<ol>'
+                 '<li>Plug in the backup drive.</li>'
+                 '<li>Open <strong>Control Panel</strong> (click Start and type Control Panel), search it for <strong>backup</strong>, and open <strong>Backup and Restore (Windows 7)</strong>. Despite the name, it&rsquo;s still in Windows 11 and 10.</li>'
+                 '<li>Click <strong>Select another backup to restore files from</strong>. Not &ldquo;Restore my files&rdquo;: that one is for backups this PC made itself.</li>'
+                 '<li>Pick the backup drive, and the backup by date if there&rsquo;s more than one, then click Next.</li>'
+                 '<li>Choose what to restore: <strong>Browse for folders</strong> (Users, then your old name, gets you everything of yours), <strong>Browse for files</strong> or <strong>Search</strong>. Tick <strong>Select all files from this backup</strong> to have the lot.</li>'
+                 '<li>Choose <strong>In the following location</strong> and pick a new folder, such as <code>Old PC files</code> on the Desktop, so nothing on the new PC is overwritten. Click <strong>Restore</strong>.</li>'
+                 '</ol>'
+                 '<p>Then look through that folder and move things into Documents, Pictures and so on. It&rsquo;s the route Microsoft gives for backups made before upgrading.</p>'},
+        {'eyebrow': '/03 &mdash; IF IT WON&rsquo;T FIND IT', 'h2': 'If Windows won&rsquo;t find the backup: open the zip files',
+         'html': '<p>The files in a Windows 7 backup are kept in ordinary <strong>zip files</strong>, so you can get them out without the restore tool. If you have room, copy the backup to the new PC first and work on the copy.</p>'
+                 '<ol>'
+                 '<li>Open the folder named after the old computer, then the <strong>Backup Set</strong> with the date you want.</li>'
+                 '<li>Inside are one or more <strong>Backup Files</strong> folders, full of numbered files: <code>Backup files 1.zip</code>, <code>Backup files 2.zip</code> and so on.</li>'
+                 '<li>Open them and copy out what you need. Windows opens a zip file by itself; for hundreds of them, a free program such as <strong>7-Zip</strong> extracts them all at once.</li>'
+                 '<li>Later Backup Files folders hold only what changed, so extract the oldest first and the newest last, letting the newer copies replace the older ones.</li>'
+                 '</ol>'
+                 '<p>A very large file can be split across neighbouring zip files. If one won&rsquo;t open, that&rsquo;s usually why: ring us rather than give up on it.</p>'},
+        {'eyebrow': '/04 &mdash; A SYSTEM IMAGE', 'h2': 'Getting files out of a system image',
+         'html': '<p>A system image is the old computer&rsquo;s whole drive in one large file ending <strong>.vhd</strong>, inside <code>WindowsImageBackup</code>, then the old computer&rsquo;s name, then a dated <strong>Backup</strong> folder. You can open it like a drive:</p>'
+                 '<ol>'
+                 '<li>Right-click Start and open <strong>Disk Management</strong>.</li>'
+                 '<li>Click <strong>Action</strong>, <strong>Attach VHD</strong>, <strong>Browse</strong> to the biggest .vhd file, tick <strong>Read-only</strong> and click OK.</li>'
+                 '<li>It appears in File Explorer as another drive. Copy what you need from Users, then your old name.</li>'
+                 '<li>When you&rsquo;ve finished, right-click it in Disk Management and choose <strong>Detach VHD</strong>.</li>'
+                 '</ol>'
+                 '<p>No drive letter? Right-click it in Disk Management, <strong>Change Drive Letter and Paths</strong>, Add. <strong>Never use &ldquo;System Image Recovery&rdquo; to put it on your new PC:</strong> it would replace everything on the new PC with the old computer&rsquo;s Windows 7.</p>'},
+        {'eyebrow': '/05 &mdash; AFTERWARDS', 'h2': 'Then give the new PC a backup of its own',
+         'html': '<p>Once your files are safe, set up a backup for the new PC: File History to a USB drive, plus OneDrive if you use it. See <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, and if File History ever says &ldquo;Reconnect your drive&rdquo;, <a href="/reconnect-your-file-history-drive/">here&rsquo;s the fix</a>.</p>'
+                 '<p>Windows 7 backups aren&rsquo;t encrypted: anyone with the drive can open them. Keep the old drive somewhere safe, or wipe it once you&rsquo;re sure you have everything.</p>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check the new backup', 'html': '__APP_BOX_BACKUP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' Still got the old computer? We can move everything straight across from it: see <a href="/how-to-transfer-files-to-a-new-computer/">moving files to a new computer</a>.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Sources: Microsoft Support, <a href="https://support.microsoft.com/en-US/Windows/Deployment/Install-Upgrade/find-lost-files-after-upgrading-windows" rel="noopener" target="_blank">Find lost files after upgrading Windows</a>; How-To Geek, <a href="https://www.howtogeek.com/212768/how-to-restore-windows-7-backups-on-windows-8.1-or-10" rel="noopener" target="_blank">restoring Windows 7 backups</a>; Seven Forums, <a href="https://www.sevenforums.com/threads/backup-manually-extract-files-from-in-vista-windows-7.174270/" rel="noopener" target="_blank">extracting a backup by hand</a>. Read 3 November 2026.</p>'},
+    ],
+    'howToName': 'How to restore a Windows 7 backup on Windows 11 or 10',
+    'howToSteps': [
+        {'name': 'Open Backup and Restore (Windows 7)', 'text': 'With the backup drive plugged in, open Control Panel, search for backup, and open Backup and Restore (Windows 7).'},
+        {'name': 'Select another backup', 'text': 'Click Select another backup to restore files from, and pick the backup drive and date.'},
+        {'name': 'Choose the files', 'text': 'Browse for folders or files, or tick Select all files from this backup.'},
+        {'name': 'Restore to a new folder', 'text': 'Choose In the following location, pick a new folder, then Restore.'},
+        {'name': 'If it is not found', 'text': 'Open the Backup Files folders and extract the numbered zip files, oldest first.'},
+    ],
+    'faqs': [
+        {'q': 'Can Windows 11 restore a Windows 7 backup?', 'a': '<p>Yes. Open Control Panel, Backup and Restore (Windows 7), and click Select another backup to restore files from. Windows 10 works the same way.</p>'},
+        {'q': 'Where is Backup and Restore (Windows 7) in Windows 11?', 'a': '<p>In Control Panel, under System and Security. The quickest way: open Control Panel and type backup in its search box.</p>'},
+        {'q': 'Windows can&rsquo;t find my old backup. What now?', 'a': '<p>Check the drive still has the folder named after the old computer and the MediaID.bin file, untouched. If it still won&rsquo;t show, open the numbered zip files in the Backup Files folders and copy the files out yourself.</p>'},
+        {'q': 'Can I restore a Windows 7 system image on a new computer?', 'a': '<p>Don&rsquo;t: it would replace the new computer&rsquo;s Windows with Windows 7. Attach the image&rsquo;s .vhd file read-only in Disk Management and copy your files out instead.</p>'},
+        {'q': 'Will my programs come back?', 'a': '<p>No. Restoring brings back files; programs need installing again on the new PC, from the maker&rsquo;s website or your account with them.</p>'},
+        {'q': 'Does this work for a Windows Vista backup?', 'a': '<p>Usually, yes: Vista&rsquo;s Backup and Restore made the same kind of backup, with the same zip files.</p>'},
+        {'q': 'Can you do it for me?', 'a': '<p>Yes. With the drive plugged into your PC, we can connect with your permission and restore it into a folder of its own. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-transfer-files-to-a-new-computer/">how to transfer files to a new computer</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -2711,7 +2813,7 @@ def symptom_pages(setup_url):
             '<strong>Nothing is deleted:</strong> &ldquo;Move the extra copies&rdquo; puts them in one folder for you to check, and <strong>Put them back</strong> undoes it. Photos only in OneDrive&rsquo;s cloud are skipped, and iTunes copies are only listed, to remove inside iTunes.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST, WIN7RESTORE):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2831,6 +2933,9 @@ SYMPTOM_FLOWS = {
     USBNR['slug']: {'h2': 'Get it recognised, step by step', 'ask': 'Does Windows see it now?',
                     'tip': 'Unplug it and plug it back in once more to be sure it stays.',
                     'h3s': 'Still not recognised after every step? That is a remote job, or the device.'},
+    WIN7RESTORE['slug']: {'h2': 'Get your old files back, step by step', 'ask': 'Have your files come back?',
+                          'tip': 'Look through the new folder, then move things into Documents and Pictures.',
+                          'h3s': 'Still can&rsquo;t get at them? That is a remote job.'},
     FILEHIST['slug']: {'h2': 'Get File History backing up, step by step', 'ask': 'Does it back up now?',
                        'tip': 'Plug the drive in once a week, click Run now, and keep it unplugged in between.',
                        'h3s': 'Still saying reconnect after every step? That is a remote job.'},

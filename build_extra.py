@@ -133,6 +133,7 @@ SPECIALIST = [
      ("/usb-device-not-recognised/", "A USB device is not recognised"),   # 30 Oct 2026
      ("/find-and-remove-duplicate-photos/", "Thousands of duplicate photos: clear them safely"),   # 30 Oct 2026
      ("/reconnect-your-file-history-drive/", "File History keeps saying &ldquo;Reconnect your drive&rdquo;"),   # 3 Nov 2026
+     ("/restore-windows-7-backup-on-windows-11/", "Restore an old Windows 7 backup on Windows 11 or 10"),   # 3 Nov 2026
      ("/what-windows-backup-backs-up/", "Is Windows Backup really backing up the PC?"),
      ("/we-couldnt-update-the-system-reserved-partition/", "The yearly update says it couldn&rsquo;t update the system reserved partition"),
      ("/why-does-my-pc-keep-crashing/", "The PC keeps crashing or restarting"),
