@@ -1702,7 +1702,7 @@ WINBACKUP = {
         {'q': 'How do I restore from Windows Backup on a new PC?', 'a': '<p>During the new PC&rsquo;s set-up, sign in with the same Microsoft account and choose to restore from your old PC. Your folders, apps list and settings come across.</p>'},
         {'q': 'Can you set up my backup?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup that covers your important files, and test that it works. Remote help from &pound;20.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a>, <a href="/macrium-reflect-free-ended/">Macrium Reflect Free has ended</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
 }
 
 # ============================================================ 20-22. Programs like ours (29 Oct 2026)
@@ -2736,7 +2736,105 @@ WIN7RESTORE = {
         {'q': 'Does this work for a Windows Vista backup?', 'a': '<p>Usually, yes: Vista&rsquo;s Backup and Restore made the same kind of backup, with the same zip files.</p>'},
         {'q': 'Can you do it for me?', 'a': '<p>Yes. With the drive plugged into your PC, we can connect with your permission and restore it into a folder of its own. Remote help from &pound;20, no fix, no fee.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/how-to-transfer-files-to-a-new-computer/">how to transfer files to a new computer</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/how-to-transfer-files-to-a-new-computer/">how to transfer files to a new computer</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a>, <a href="/macrium-reflect-free-ended/">Macrium Reflect Free has ended</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+}
+
+
+# ============================================================ 34. Macrium Reflect Free has ended
+# 3 Nov 2026 (owner: "build the Macrium Reflect page next"; seo-research/backup-programs-2026-11-03): Bing, 3 Aug-31 Oct 2026,
+# "macrium reflect" 44.5K (UK 2,582), "macrium reflect free" 16.3K (836), "macrium reflect free download" 6.2K (623), "macrium
+# free" 1.2K, "macrium reflect free edition" 1.2K. Those searching for the free download find nothing official: say so plainly.
+# Facts, read 3 Nov 2026 in the browser (macrium.com refuses plain fetches):
+#   - Macrium Product Support Policy, "Macrium Reflect Free Product - End Of Life (EOL)": v8.0 the last version with feature,
+#     compatibility or bug fix updates; security patches until 1 January 2024, no changes after; "you can continue to use the
+#     software in perpetuity, your license to use the software is unaffected. It is no longer available to download."; v8.0 Free
+#     supports Windows XP SP3 up to Windows 10 & 11 version 22H2, no support for later Windows updates.
+#   - macrium.com/products/home: Macrium Reflect Home (Reflect X) offers a "Free 30-Day Trial". No price stated on the page.
+#   - Free "data migration" tools from SSD makers (Samsung Data Migration, Acronis True Image for Crucial / for Western Digital).
+# A brand page: says clearly we are not Macrium (the Netcraft lesson). No claim that WE read .mrimg files (not proven), and no
+# promise to restore with a trial copy for paid work (trial licences are for evaluation).
+MACRIUM = {
+    'slug': 'macrium-reflect-free-ended',
+    'title': 'Macrium Reflect Free Has Ended: What to Do About Your Backups',
+    'metaDesc': 'Macrium Reflect Free is no longer updated or downloadable. Can you still use it, how to get files out of an old backup, and what to use instead.',
+    'ogTitle': 'Macrium Reflect Free has ended: what to do about your backups',
+    'crumbName': 'Macrium Reflect Free Has Ended',
+    'eyebrow': '// BACKING UP WITH MACRIUM REFLECT FREE?',
+    'h1': '<em class="grad grad--cyan">Macrium Reflect Free</em> has ended: what now?',
+    'lede': 'Macrium Reflect Free was the go-to free way to back up or copy a whole PC, and lots of people still rely on it. Macrium has stopped updating it and no longer offers it for download. Your copy hasn&rsquo;t stopped working, but it&rsquo;s getting riskier with every Windows update. Here&rsquo;s what changed, how to check your backups, and what to use instead. (365 Techies isn&rsquo;t connected with Macrium Software: this is our own independent advice.)',
+    'chips': ['What changed', 'Check your backups', 'What to use instead'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['What changed', '#s1'],
+    'ctaHead': 'Want a backup you can count on?',
+    'ctaSub': 'With your permission we connect to your Windows PC, set up a backup that covers everything that matters and test that a file reads back. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('What happened', 'Macrium stopped updating Reflect Free: security fixes ended on 1 January 2024.'),
+        ('Can I keep using it?', 'Yes: Macrium says your licence is unaffected. But nothing gets fixed if Windows breaks it.'),
+        ('Download it?', 'Macrium no longer offers it. Copies on other sites are unofficial: avoid them.'),
+        ('Newer Windows', 'Macrium says Free supports Windows 10 and 11 up to version 22H2, and nothing later.'),
+        ('Old backups', 'Open them with Reflect&rsquo;s own browse option and copy files out. Keep your rescue USB.'),
+        ('Instead', 'File History (free, built in) for your files; the SSD maker&rsquo;s free tool for moving to a new drive.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; WHAT CHANGED', 'h2': 'What happened to Macrium Reflect Free',
+         'html': '<p>Macrium&rsquo;s own support policy spells it out:</p>'
+                 '<ul>'
+                 '<li><strong>Version 8.0 was the last</strong> to get any feature, compatibility or bug-fix updates.</li>'
+                 '<li><strong>Security fixes stopped on 1 January 2024.</strong> Nothing in the free version has changed since.</li>'
+                 '<li><strong>You can keep using it:</strong> Macrium says your licence to use it is unaffected, for good.</li>'
+                 '<li><strong>It&rsquo;s no longer available to download</strong> from Macrium.</li>'
+                 '<li><strong>It supports Windows 10 and 11 up to version 22H2.</strong> Macrium says there will be no support for later Windows updates. Windows 10&rsquo;s last version is 22H2, but a Windows 11 PC kept up to date is now on a later one (23H2 or newer).</li>'
+                 '</ul>'
+                 '<p>Macrium&rsquo;s current product, Reflect Home, is paid for, with a free 30-day trial.</p>'},
+        {'eyebrow': '/02 &mdash; STILL USING IT?', 'h2': 'Still using Reflect Free? Check it&rsquo;s really working',
+         'html': '<p>It may carry on for years, or a Windows update may stop it working one night with no fix coming. Either way, don&rsquo;t take it on trust:</p>'
+                 '<ol>'
+                 '<li><strong>Open it and check the last backup</strong>: when it ran, and that it finished without errors.</li>'
+                 '<li><strong>Test it:</strong> open the newest backup with Reflect&rsquo;s browse option, which shows it as a drive, and open one of your files from it. Then detach it.</li>'
+                 '<li><strong>Find your rescue USB</strong>, the one Reflect made to start the PC and restore it if Windows won&rsquo;t start. No rescue USB means no easy way back from a dead drive.</li>'
+                 '<li><strong>Keep a second copy another way</strong>, such as File History to a USB drive (below), so you&rsquo;re not relying on software that no longer gets fixes.</li>'
+                 '</ol>'
+                 '<p>Don&rsquo;t uninstall it until the new backup is working: it&rsquo;s still the easiest way to open the backups it made.</p>'},
+        {'eyebrow': '/03 &mdash; OLD BACKUPS', 'h2': 'Getting files out of a Macrium backup',
+         'html': '<p>Macrium&rsquo;s backups are files ending <strong>.mrimg</strong>. Windows can&rsquo;t open them by itself, and neither can 7-Zip: you need Macrium Reflect.</p>'
+                 '<ul>'
+                 '<li><strong>Reflect Free still installed?</strong> Use its browse option on the backup: it appears as a drive in File Explorer, and you copy what you need from Users, then your name.</li>'
+                 '<li><strong>On a new PC without it?</strong> Macrium&rsquo;s current Reflect Home has a free 30-day trial, from Macrium&rsquo;s own website.</li>'
+                 '<li><strong>Whole PC won&rsquo;t start?</strong> That&rsquo;s what the rescue USB is for: start the PC from it and restore the backup.</li>'
+                 '</ul>'
+                 '<p>Keep the backup drive as it is while you work: don&rsquo;t move or rename the .mrimg files.</p>'},
+        {'eyebrow': '/04 &mdash; WHAT TO USE INSTEAD', 'h2': 'What to use instead',
+         'html': '<ul>'
+                 '<li><strong>For your files: File History.</strong> It&rsquo;s free and built into Windows 11 and 10: it copies your folders to a USB drive and keeps older versions. Click Start, type File History, plug in a drive and click Turn on. If it ever nags you, see <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>.</li>'
+                 '<li><strong>For a copy of the whole PC:</strong> Windows still has the older <strong>Backup and Restore (Windows 7)</strong> in Control Panel, which can make a system image. Or buy a current, supported program: Macrium&rsquo;s Reflect Home is one.</li>'
+                 '<li><strong>For copying the PC onto a new SSD (&ldquo;cloning&rdquo;):</strong> most SSD makers give you a free tool for their own drives, such as Samsung&rsquo;s Data Migration, or Acronis True Image for Crucial or for Western Digital. Or let us fit it: see <a href="/hard-drive-upgrade/">drive upgrades</a>.</li>'
+                 '<li><strong>Don&rsquo;t download &ldquo;Macrium Reflect Free&rdquo; from other sites.</strong> Macrium no longer offers it, so those copies are unofficial, and some are cracked versions of the paid one, which can carry malware. Backup software can read every file you own.</li>'
+                 '</ul>'
+                 '<p>Whatever you choose, <strong>test a restore</strong> once it&rsquo;s set up. See also <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your new backup', 'html': '__APP_BOX_BACKUP__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We set up a backup that covers everything that matters to you, test that a file reads back, and leave you knowing how to check it. For businesses, see <a href="/backup-support/">backup support</a>.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Macrium and Macrium Reflect are Macrium Software&rsquo;s; 365 Techies isn&rsquo;t connected with them. Sources: Macrium, <a href="https://www.macrium.com/product-support-policy" rel="noopener" target="_blank">product support policy</a> (&ldquo;Macrium Reflect Free Product - End Of Life&rdquo;) and <a href="https://www.macrium.com/products/home" rel="noopener" target="_blank">Reflect Home</a>. Read 3 November 2026.</p>'},
+    ],
+    'howToName': 'What to do now Macrium Reflect Free has ended',
+    'howToSteps': [
+        {'name': 'Check your last backup', 'text': 'Open Macrium Reflect and check when the last backup ran and that it finished without errors.'},
+        {'name': 'Test a restore', 'text': 'Open the newest backup with Reflect&rsquo;s browse option and open one of your files from it.'},
+        {'name': 'Find your rescue USB', 'text': 'Make sure you still have the USB stick Reflect made to restore the PC if Windows won&rsquo;t start.'},
+        {'name': 'Add a second backup', 'text': 'Turn on File History to a USB drive, so you are not relying on software that no longer gets fixes.'},
+        {'name': 'Plan the replacement', 'text': 'Choose a supported backup program before a Windows update stops Reflect Free, and avoid unofficial downloads.'},
+    ],
+    'faqs': [
+        {'q': 'Is Macrium Reflect Free still available?', 'a': '<p>No. Macrium no longer offers it for download. Version 8.0 was the last, and its security fixes ended on 1 January 2024.</p>'},
+        {'q': 'Can I still use Macrium Reflect Free?', 'a': '<p>Yes. Macrium says your licence to use it is unaffected. But it gets no more fixes, so a future Windows update could stop it working.</p>'},
+        {'q': 'Does Macrium Reflect Free work on Windows 11 24H2?', 'a': '<p>Macrium says the free version supports Windows 10 and 11 up to version 22H2, with no support for later updates. It may still run, but test a restore and keep a second backup.</p>'},
+        {'q': 'Where can I download Macrium Reflect Free?', 'a': '<p>Not from Macrium any more. Avoid copies on other sites: they&rsquo;re unofficial, and some are cracked versions that can carry malware. Macrium&rsquo;s paid Reflect Home has a free 30-day trial.</p>'},
+        {'q': 'How do I open a .mrimg file?', 'a': '<p>With Macrium Reflect: its browse option opens the backup as a drive, so you can copy files out. Windows and 7-Zip can&rsquo;t open it.</p>'},
+        {'q': 'What is a free alternative to Macrium Reflect?', 'a': '<p>For your files, Windows&rsquo; own File History to a USB drive. For moving to a new SSD, the SSD maker&rsquo;s free tool. Whatever you use, test a restore.</p>'},
+        {'q': 'Are you Macrium?', 'a': '<p>No. 365 Techies is an independent IT support company in Bournemouth; Macrium Reflect is Macrium Software&rsquo;s product. This page is our own advice.</p>'},
+        {'q': 'Can you set up a new backup for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup and test that a file reads back. Remote help from &pound;20, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a> and <a href="/hard-drive-upgrade/">drive upgrades</a>.</p>',
 }
 
 
@@ -2813,7 +2911,7 @@ def symptom_pages(setup_url):
             '<strong>Nothing is deleted:</strong> &ldquo;Move the extra copies&rdquo; puts them in one folder for you to check, and <strong>Put them back</strong> undoes it. Photos only in OneDrive&rsquo;s cloud are skipped, and iTunes copies are only listed, to remove inside iTunes.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST, WIN7RESTORE):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST, WIN7RESTORE, MACRIUM):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -2933,6 +3031,12 @@ SYMPTOM_FLOWS = {
     USBNR['slug']: {'h2': 'Get it recognised, step by step', 'ask': 'Does Windows see it now?',
                     'tip': 'Unplug it and plug it back in once more to be sure it stays.',
                     'h3s': 'Still not recognised after every step? That is a remote job, or the device.'},
+    MACRIUM['slug']: {'h2': 'Make your backups safe, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                      'last_yes': 'Done, all covered', 'ask': 'Done that step?',
+                      'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                      'h3f': 'All covered{mins}. Nice work.',
+                      'tip': 'Test a restore every few months: open one file from the newest backup.',
+                      'h3s': 'Stuck at a step? We can set up a new backup with you, remotely.'},
     WIN7RESTORE['slug']: {'h2': 'Get your old files back, step by step', 'ask': 'Have your files come back?',
                           'tip': 'Look through the new folder, then move things into Documents and Pictures.',
                           'h3s': 'Still can&rsquo;t get at them? That is a remote job.'},

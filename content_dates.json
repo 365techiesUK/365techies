@@ -1644,7 +1644,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "39468ae1b60c8803",
+  "h": "bfe1d7b4ad3fa0be",
   "last": "2026-11-03"
  },
  "it-health-check-tool": {
@@ -2227,6 +2227,10 @@
   "first": "2026-07-28",
   "h": "99bc0ee57f93ae93",
   "last": "2026-09-28"
+ },
+ "macrium-reflect-free-ended": {
+  "first": "2026-11-03",
+  "h": "3d9cef7a04612cb9"
  },
  "make-windows-11-look-like-windows-10": {
   "first": "2026-10-27",
@@ -3235,7 +3239,8 @@
  },
  "restore-windows-7-backup-on-windows-11": {
   "first": "2026-11-03",
-  "h": "2af23f8945e1816e"
+  "h": "1477b0713ad7f25e",
+  "last": "2026-11-03"
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
@@ -3979,7 +3984,7 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "a4830e24337d23da",
+  "h": "11360b866afb77e3",
   "last": "2026-11-03"
  },
  "windows-11-upgrade-service": {
@@ -4073,7 +4078,7 @@
  },
  "what-windows-backup-backs-up": {
   "first": "2026-10-28",
-  "h": "2fc95d492ffc302c",
+  "h": "346798886291319b",
   "last": "2026-11-03"
  },
  "do-i-need-ccleaner": {
