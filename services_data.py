@@ -93,6 +93,10 @@ SERVICE_PAGES = [
     "a": "We carry out logical and software-based recovery in-house &mdash; deleted files, corruption, formatted drives, RAW disks and most accidental-loss situations. Drives that have suffered physical or electronic failure (clicking heads, motor faults, fire or flood damage) need a certified clean-room, so we work with a trusted specialist lab and manage the whole process for you. We'll always be straight about which route your drive needs."
    },
    {
+    "q": "Can you get files out of an old Norton Ghost backup (.gho)?",
+    "a": "Yes. We read Ghost backups (.gho, with any .ghs parts) without needing Ghost itself, tell you what&rsquo;s inside and the price before we start, and copy out the files you want. See <a href=\"/open-gho-file/\">how to open a .gho file</a> for what to try first, and how to keep the backup safe."
+   },
+   {
     "q": "Can you recover data from a dead laptop or a phone?",
     "a": "Usually we can recover data from a Windows laptop or PC that won't switch on or won't boot, as long as the drive itself is healthy &mdash; a broken screen, dead motherboard or failed power doesn't mean your files are gone. For Android phones and tablets we can often help too. We support Windows and Android devices (not Apple Mac, iPhone or iPad)."
    }

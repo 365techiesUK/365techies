@@ -761,8 +761,8 @@
  },
  "data-recovery": {
   "first": "2026-07-28",
-  "h": "7c424416edd65017",
-  "last": "2026-10-06"
+  "h": "2542b82a0fafe340",
+  "last": "2026-11-03"
  },
  "dead-pixel-test": {
   "first": "2026-10-12",
@@ -1644,8 +1644,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "1c952390ef9cedbc",
-  "last": "2026-10-30"
+  "h": "9ba75c936341daf3",
+  "last": "2026-11-03"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2555,6 +2555,10 @@
   "first": "2026-07-28",
   "h": "cde9e60116429d1c",
   "last": "2026-09-28"
+ },
+ "open-gho-file": {
+  "first": "2026-11-03",
+  "h": "643aac106b40fa8b"
  },
  "order-microsoft-365": {
   "first": "2026-10-10",

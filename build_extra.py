@@ -23,6 +23,7 @@ from build_pages import (add, graph, crumb, webpage, service, faqpage,
 from build_local import make_customer
 from new_pages_data import NEW_PAGES
 import greenby_page_data   # /greenby-email-login/ (13 Oct 2026): appends to NEW_PAGES
+import ghost_backup_page_data   # /open-gho-file/ (3 Nov 2026): appends to NEW_PAGES
 import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
