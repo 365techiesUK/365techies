@@ -189,9 +189,9 @@ TOUCHPAD = {
 # ============================================================ 3. Screen upside down or sideways
 ROTATE = {
     'slug': 'screen-upside-down-or-sideways',
-    'title': 'Screen Upside Down or Sideways? How to Rotate It Back',
-    'metaDesc': 'Windows screen turned upside down or sideways? Put it back in seconds with Display orientation, or the shortcut some PCs have, and stop it happening again.',
-    'ogTitle': 'Screen upside down or sideways? How to rotate it back',
+    'title': 'How to Turn Your Screen Upside Down, and Back, in Windows',
+    'metaDesc': 'Turn a Windows screen upside down or sideways on purpose, or put it back the right way up: Display orientation, the Ctrl + Alt + arrow shortcut, and more.',
+    'ogTitle': 'How to turn your screen upside down, and back, in Windows',
     'crumbName': 'Screen Upside Down or Sideways',
     'eyebrow': '// SCREEN GONE THE WRONG WAY ROUND?',
     'h1': 'Screen <em class="grad grad--cyan">upside down</em> or sideways?',
@@ -218,16 +218,24 @@ ROTATE = {
                  '<li>Windows asks whether to keep the change: choose <strong>Keep changes</strong>. If you do nothing, it goes back after a few seconds, which is a handy safety net.</li>'
                  '</ol>'
                  '<p><strong>The mouse goes the wrong way</strong> while the screen is upside down, which makes clicking awkward. Move it slowly, or use the keyboard: press <em>Windows</em> + <em>I</em> for Settings, type <strong>orientation</strong> in the search box and press <em>Enter</em>.</p>'},
-        {'eyebrow': '/02 &mdash; MORE THAN ONE SCREEN', 'h2': 'Two screens? Pick the right one',
+        {'eyebrow': '/02 &mdash; ON PURPOSE', 'h2': 'Turn the screen upside down or sideways on purpose',
+         'html': '<p>The same setting turns it the other way, for a monitor mounted upside down or on its side, or a screen you want to read in portrait.</p>'
+                 '<ol>'
+                 '<li>Right-click an empty part of the desktop and choose <strong>Display settings</strong>.</li>'
+                 '<li>Under <strong>Scale &amp; layout</strong>, open <strong>Display orientation</strong> and choose <strong>Landscape (flipped)</strong> for upside down, or <strong>Portrait</strong> or <strong>Portrait (flipped)</strong> for sideways.</li>'
+                 '<li>Choose <strong>Keep changes</strong>. To put it back, choose <strong>Landscape</strong> the same way.</li>'
+                 '</ol>'
+                 '<p><strong>The shortcut:</strong> on PCs whose Intel graphics have it, <em>Ctrl</em> + <em>Alt</em> + the <em>Down arrow</em> turns the screen upside down, the <em>Left</em> or <em>Right arrow</em> turns it sideways, and the <em>Up arrow</em> puts it back.</p>'},
+        {'eyebrow': '/03 &mdash; MORE THAN ONE SCREEN', 'h2': 'Two screens? Pick the right one',
          'html': '<p>In Display settings, each screen is shown as a numbered box. Click <strong>Identify</strong> to see which number is which, click the screen that&rsquo;s the wrong way round, then change its Display orientation. If you turned a monitor on its side on purpose, choose <strong>Portrait</strong> for that one instead.</p>'},
-        {'eyebrow': '/03 &mdash; STOP IT HAPPENING AGAIN', 'h2': 'Stop it happening again',
+        {'eyebrow': '/04 &mdash; STOP IT HAPPENING AGAIN', 'h2': 'Stop it happening again',
          'html': '<ul>'
                  '<li><strong>Tablets and 2-in-1 laptops</strong> turn the screen when you turn the device. Press <em>Windows</em> + <em>O</em>, or open Quick Settings (<em>Windows</em> + <em>A</em>) and switch on <strong>Rotation lock</strong>, to stop that.</li>'
                  '<li><strong>The Ctrl + Alt + arrow shortcut</strong> is easy to press by accident on PCs that have it. You can switch it off in the graphics settings program from Intel (Intel Graphics Command Center), if your PC has one.</li>'
                  '<li><strong>Keeps happening by itself?</strong> Update the graphics driver: Settings, Windows Update, Check for updates, then Optional updates, or from the PC maker&rsquo;s support website.</li>'
                  '</ul>'
                  '<p>Other things that switch on by accident, from zoomed-in screens to Sticky Keys, are on <a href="/how-to-turn-off-sticky-keys/">how to turn off Sticky Keys</a> and in our <a href="/windows-accessibility-features-guide/">accessibility guide</a>.</p>'},
-        {'eyebrow': '/04 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra='')},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us', 'html': _CALL.format(extra='')},
     ],
     'howToName': 'How to rotate a Windows screen back the right way up',
     'howToSteps': [
@@ -240,6 +248,7 @@ ROTATE = {
     'faqs': [
         {'q': 'Why did my screen turn upside down?', 'a': '<p>Usually a keyboard shortcut pressed by accident (Ctrl, Alt and an arrow key on PCs that have it), a change in Display settings, or a tablet or 2-in-1 rotating itself.</p>'},
         {'q': 'How do I rotate my screen back to normal?', 'a': '<p>Open Display settings (right-click the desktop), and set Display orientation to Landscape. On some PCs, Ctrl, Alt and the Up arrow does it in one go.</p>'},
+        {'q': 'How do I turn my screen upside down on purpose?', 'a': '<p>Display settings, Display orientation, then Landscape (flipped). Portrait turns it sideways. On some PCs with Intel graphics, Ctrl, Alt and the Down arrow does it in one go.</p>'},
         {'q': 'Why doesn&rsquo;t Ctrl + Alt + arrow work on my PC?', 'a': '<p>It&rsquo;s a shortcut from Intel&rsquo;s graphics software, and many newer PCs have it switched off or don&rsquo;t have it. Use Display orientation in Display settings instead.</p>'},
         {'q': 'How do I stop my laptop screen rotating by itself?', 'a': '<p>On a tablet or 2-in-1, press Windows and O, or switch on Rotation lock in Quick Settings (Windows and A).</p>'},
         {'q': 'Has anything been damaged?', 'a': '<p>No. It&rsquo;s only a display setting. Your files, programs and screen are fine.</p>'},

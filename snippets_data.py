@@ -90,9 +90,9 @@ SNIPPETS = {
     "refurbished-laptops-dorset": {
         "desc": "Refurbished Dell Latitude laptops and OptiPlex PCs in Bournemouth, Poole and across Dorset. Tested, fitted with a new Samsung Pro SSD, and supported.",
     },
-    "how-to-set-an-alarm-on-your-computer": {   # 13 Oct 2026 CTR test (owner: "do the alarm page next"): 1,060 imps, 2 clicks, pos 4.8 in 3 months; the queries ask "can I set an alarm on my laptop" and "will it go off"; judge ~10 Nov
-        "title": "Can You Set an Alarm on a Laptop? Yes, and Make It Go Off",
-        "desc": "Yes: the Windows Clock app sets one in a minute, but it stays silent if the laptop goes to sleep. Here is how to make sure your alarm goes off.",
+    "how-to-set-an-alarm-on-your-computer": {   # 13 Oct 2026 CTR test (owner: "do the alarm page next"): 1,060 imps, 2 clicks, pos 4.8 in 3 months. 4 Nov 2026 read: the 13 Oct "Can You Set an Alarm..." title got 59 clicks from 13,459 imps (0.4%) at pos 4.1, so the test failed; the top queries are "how to set alarm on laptop" / "how to set an alarm on a laptop", so the title now leads with them
+        "title": "How to Set an Alarm on a Laptop or PC (and Make It Go Off)",
+        "desc": "Yes, you can: the Windows Clock app sets an alarm in a minute. But it stays silent if the laptop goes to sleep, so here is how to make sure it goes off.",
     },
     "dell-precision-vs-latitude": {   # 13 Oct 2026 CTR test (seo-research/dell-2026-10-13): 3,698 imps, 8 clicks, pos 7.2; judge ~10 Nov
         "title": "Dell Latitude vs Precision: Which Do You Actually Need?",
@@ -820,13 +820,17 @@ SNIPPETS = {
     "business-wifi-health-check-dorset": {
         "title": "Business Wi-Fi Health Check, Bournemouth &amp; Dorset",
     },
+    "screen-upside-down-or-sideways": {   # 4 Nov 2026: GSC 28 days 6,794 imps, 5 clicks at pos 7.9; nearly every query is "how to turn / flip screen upside down" (on purpose), which the old "Rotate It Back" title never offered; page gained the on-purpose section the same day
+        "title": "How to Turn Your Screen Upside Down, and Back, in Windows",
+        "desc": "Turn a Windows screen upside down or sideways on purpose, or put it back the right way up: Display orientation, the Ctrl + Alt + arrow shortcut, and more.",
+    },
     "onedrive-taking-up-space": {
         "title": "OneDrive Taking Up Space on Your PC? Free It Up Safely",
         "desc": "OneDrive filling your hard drive? Right-click, Free up space: files stay in OneDrive but leave the PC. Then set Files On-Demand and Storage Sense.",
     },
-    "download-classic-outlook": {
-        "title": "Classic Outlook Missing? Download It From Microsoft",
-        "desc": "New PC with only the new Outlook? Classic Outlook is a free Microsoft download if you have Microsoft 365. The UK steps, and the Store search to avoid.",
+    "download-classic-outlook": {   # 4 Nov 2026: Bing 30 days 43.8K imps, 46 clicks (0.1%) at pos 6.8, mostly "outlook classic" (29.4K) and "outlook classic download"; the old "Classic Outlook Missing?" title answered a question those searchers never asked
+        "title": "Outlook Classic Download: Microsoft's Own Link, Step by Step",
+        "desc": "Download Outlook (classic) from the official Microsoft page, free with Microsoft 365 or Office. Why new PCs lack it, and the Store trap to avoid.",
     },
     "onedrive-full-cant-send-email": {
         "title": "OneDrive Full and Can't Send Email? The Fix, Step by Step",
