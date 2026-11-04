@@ -1088,6 +1088,11 @@
   "h": "d13875e80a578584",
   "last": "2026-08-31"
  },
+ "driving-test": {
+  "first": "2026-11-04",
+  "h": "5322b513af7e0d48",
+  "last": "2026-11-04"
+ },
  "dyslexia-friendly-computer-settings": {
   "first": "2026-10-12",
   "h": "b4ba575264e60f53"
@@ -1248,8 +1253,8 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "f9df5c26bf66fff8",
-  "last": "2026-10-29"
+  "h": "13e3beff04aa9941",
+  "last": "2026-11-04"
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
@@ -2947,7 +2952,8 @@
  },
  "play-driving-game-online-free": {
   "first": "2026-10-09",
-  "h": "3bcb65f26eec3c9a"
+  "h": "2cd08b51d626f33d",
+  "last": "2026-11-04"
  },
  "play-freecell-online-free": {
   "first": "2026-10-09",

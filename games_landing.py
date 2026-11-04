@@ -1177,7 +1177,7 @@ CR = {
         {'q': 'Can I play on a phone or tablet?', 'a': '<p>Yes. Touch the left or right of the screen to steer, and both at once for nitro &mdash; or choose buttons in Settings. It&rsquo;s 3D, so a newer device looks best.</p>'},
         _ARCADE_HOF_FAQ,
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-jet-shooter-game-online-free/">365 Eclipse</a>, <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-jet-shooter-game-online-free/">365 Eclipse</a>, <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a> and <a href="/games/">all our games</a>. Learning to drive for real? <a href="/driving-test/">365 Driving Test</a>, theory test practice and a 3D mock driving test, is coming soon. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 
