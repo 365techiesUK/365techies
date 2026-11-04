@@ -189,12 +189,11 @@ FAQS = [
 
 
 def build():
-    lede = ("Practise for your UK car theory test and your practical test in one place, in your web browser: our own Highway Code questions, "
-            "hazard perception clips, and a 3D mock driving test with a voiced examiner round Poole test centre. "
-            "Coming soon, and free to try. Practice only: it&rsquo;s not the real test and not connected with DVSA.")
+    lede = ("Mock theory tests, hazard perception clips and a 3D mock driving test with a voiced examiner round Poole test centre, "
+            "in your web browser. Coming soon, free to try. Practice only: not the real test, not connected with DVSA.")
     content = "\n".join([
         hero(bc(NAME), "// 365 DRIVING TEST &middot; COMING SOON",
-             '365 Driving Test: <em class="grad grad--cyan">theory test practice</em>, hazard perception and a 3D mock driving test',
+             '365 Driving Test: <em class="grad grad--cyan">theory test practice</em> and a 3D mock test',
              lede, cta1=("Tell me when it&rsquo;s ready", "#coming-soon"), cta2=("How the tests work", "#s1"),
              chips=["Free to try", "Phone, PC or controller", "Practice routes round Poole"]),
         _SOON,
