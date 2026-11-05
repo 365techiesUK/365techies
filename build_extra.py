@@ -16960,6 +16960,15 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li>Your request comes to our team&rsquo;s message channel so we can ring you back. We use it only for that, and handle it like any other enquiry, as described below.</li>
           </ul>
 
+          <h2>Techies One: &ldquo;Ask 365 Techies&rdquo;</h2>
+          <p>Our Techies One program&rsquo;s <strong>Ask 365 Techies</strong> opens a form in the program. When you press <strong>Ring me back</strong>, it sends us your name, your phone number, which of its choices you picked and any note you type, with Techies One&rsquo;s version and a random number made for that computer, so we know which Techies One it is. It sends nothing until you press that button.</p>
+          <ul>
+            <li>Only if you tick them: which <strong>kinds</strong> of email address are set up (for example BT or Gmail, never the addresses themselves); <strong>&ldquo;Send what I was doing&rdquo;</strong> &mdash; the screen you were on, the help page you read and whether it helped, and the last problem message you saw, with names, email addresses and numbers taken out first; and <strong>what you searched the help for</strong>. The form shows you all of it before you send it, and you can change it.</li>
+            <li>Your request comes to our team&rsquo;s message channel so we can ring you back. We use it only for that, and handle it like any other enquiry, as described below.</li>
+            <li>Techies One&rsquo;s help keeps a few counts on your computer (which help was opened and read, and searches that found nothing, with numbers and addresses hidden, for 60 days). They are never sent to us; you can see and clear them in Settings, About.</li>
+            <li>The person you name in Settings, Help (&ldquo;If you get stuck, who helps you?&rdquo;) is kept on your computer and never sent to us.</li>
+          </ul>
+
           <h2>Our free games</h2>
           <p>Our <a href="/games/">free games</a> keep your scores and settings in your browser on your own computer &mdash; they are never sent to us unless you choose to put a score in the Hall of Fame or ask for <strong>My code</strong> (both below). Opening a game is counted like any other page (see the live count above), once a day for each game.</p>
           <ul>

@@ -19,7 +19,7 @@ app's own release notes (D:\\claude\\techies-one\\RELEASE-0.15.0.md to RELEASE-0
   - every claim about the app matches what it really does: scam checks, rules and new-email pop-ups run while Techies One
     is running (window minimised or closed too; not once it is closed completely), search is one folder at a time (or every
     inbox from All inboxes), no POP, a .pst is brought in (copied), never opened in place, Outlook Express files are
-    experimental, Windows only, Gmail = app password; Albums never recognises faces or edits photos, and can't show
+    experimental, Windows only, Gmail = app password; Albums never recognises faces; its photo fixes (0.23) are always saved as copies; it can't show
     Google Photos, Amazon Photos or Facebook; Dictate needs
     the internet (Microsoft turns speech into words); WhatsApp opens ready to send - the person presses Send; iCloud only
     through Apple's iCloud for Windows app; Space and Files removals go to the Recycle Bin; Dropbox sign-in is "coming"
@@ -454,11 +454,11 @@ MAIL_FEATS = [
      "The Clean up screen listing each sender with how many emails they sent, a mailing list tag, and Unsubscribe and Delete all buttons (a made-up sample)"),
     ("old-emails", "bring-in", NEW, "Years of emails stuck in an old program",
      "Bring in old emails from Outlook, Windows Live Mail and Thunderbird",
-     "<strong>Bring in old emails</strong> copies emails, contacts and calendars from an Outlook .pst or .ost file, Windows Live Mail, Windows Mail, Thunderbird, a Google Takeout download or a folder of saved emails, and from Outlook Express files too (that one is still experimental). <strong>Look for them on this PC</strong> searches the usual places for you. They go into a mailbox under <strong>On this PC</strong>, by your inboxes, kept on your computer rather than using your email company&rsquo;s space, and the files they came from are never changed.",
+     "<strong>Bring in old emails</strong> copies emails, contacts and calendars from an Outlook .pst or .ost file, Outlook .msg files (emails dragged out of Outlook into a folder), Windows Live Mail, Windows Mail, Thunderbird, a Google Takeout download or a folder of saved emails, and from Outlook Express files too (that one is still experimental). <strong>Look for them on this PC</strong> searches the usual places for you. They go into a mailbox under <strong>On this PC</strong>, by your inboxes, kept on your computer rather than using your email company&rsquo;s space, and the files they came from are never changed. If some of them are kept only online in OneDrive, it tells you before it downloads them.",
      "The Bring in old emails box: Look for them on this PC, an Outlook file, a folder of saved emails, a mailbox file, an Outlook Express file and a Techies One backup (a made-up sample)"),
     ("", "backup", NEW, "&ldquo;What if the PC dies?&rdquo;",
      "Back up your email to a USB stick or OneDrive",
-     "<strong>Backups</strong>, in Settings, copies the email from your addresses, your mailboxes on this PC, your contacts (with their postal addresses) and your calendar to a USB stick, another drive or OneDrive, as ordinary email files that other programs can open too. Later backups add only what&rsquo;s new, and <strong>Bring back</strong> puts a backup back without doubling anything up. Passwords are never put in a backup.",
+     "<strong>Backups</strong>, in Settings, copies the email from your addresses, your mailboxes on this PC, your contacts (with their postal addresses) and your calendar to a USB stick, another drive or OneDrive, as ordinary email files that other programs can open too. Later backups add only what&rsquo;s new, and <strong>Bring back</strong> puts a backup back without doubling anything up. Passwords are never put in a backup. Save a copy and Back up can also make an Outlook data file (.pst): that&rsquo;s new, so it&rsquo;s still being checked with Outlook, which can open it with File, Open &amp; Export, Open Outlook Data File.",
      "Back up your email: what to back up (an address, a mailbox on this PC, contacts and calendar), where to put it (a USB stick, OneDrive, iCloud Drive or this PC) and Back up now (a made-up sample)"),
     ("", "address-book", NEW, "An address book you never had time to make",
      "An address book that fills itself in",
@@ -554,6 +554,10 @@ ALBUM_MORE = [
     ("Words under a photo", "Add a caption, typed or dictated, and have it read aloud in a slideshow."),
     ("Search by words", "Find photos by date, folder and file names, your words, album names and the names you added. It can&rsquo;t look inside the pictures themselves."),
     ("Set the date", "Old scans can be &ldquo;about 1984&rdquo; or &ldquo;the 1970s&rdquo;, and a camera whose clock was never set can be put right. The photo file itself is never changed."),
+    ("Make it better", "One press brightens a dull photo. There are also Brighter, Darker, Straighten, a cut to 6 x 4, warm up faded colours, black and white, and red eyes. Albums saves your changes as a copy; the original stays exactly as it is."),
+    ("Print photos", "One photo on 6 x 4 inch photo paper, one or four on an A4 page, or a contact sheet with the date and name under each. You choose the printer and paper in Windows&rsquo; own Print box."),
+    ("Copies for a photo frame", "Copies the right way up and the right size for a digital photo frame, put onto its memory card or a USB stick."),
+    ("Share an album with a link", "Smaller copies go into a folder in your own OneDrive, and you get one view-only link to send to the family. Stop sharing whenever you like."),
     ("My albums", "Gather photos into albums without moving them, choose a cover, and find ready-made lists such as Old scanned photos and WhatsApp photos."),
     ("Save these photos", "Photos in an email go into Pictures, in a folder named after the sender, in one press (never from an email the scam check doubts)."),
     ("Photos kept only online", "OneDrive photos that aren&rsquo;t on the PC show in date order once you say yes, and <strong>Keep this month on this PC</strong> brings a month down."),
@@ -567,7 +571,7 @@ def albums():
       <div class="wrap t1p-wrap">
         <p class="eyebrow mono">// ALBUMS &middot; NEW</p>
         <h2 id="t1-albums">Albums: all your photos, in the order they were taken</h2>
-        <p class="t1p-lede">For everyone who misses Picasa: your photos and videos from this PC, USB sticks, camera cards and your cloud folders, together in date order, with slideshows, films and memories. Albums never changes, moves or uploads your photo files, and nothing about your photos is sent to 365 Techies.</p>
+        <p class="t1p-lede">For everyone who misses Picasa: your photos and videos from this PC, USB sticks, camera cards and your cloud folders, together in date order, with slideshows, films and memories. Albums never changes or moves your photo files (its fixes are always saved as copies), uploads nothing unless you share an album to your own OneDrive, and nothing about your photos is sent to 365 Techies.</p>
         <div class="t1p-feats">
 {feat_blocks(ALBUM_FEATS)}
         </div>
@@ -580,7 +584,7 @@ def albums():
 HELP_FEATS = [
     ("help", "help", NEW, "&ldquo;How do I make the writing bigger?&rdquo;",
      "Help on every screen, in plain English",
-     "Press <strong>Help</strong>, or F1, and Techies One shows the help for what you&rsquo;re doing. Or type a question in your own words into <strong>How do I...?</strong>: it finds the answer here on your PC, and for a few settings gives you a button that does it for you. Help pages can be printed in large print or read aloud, and resting the mouse on a button shows a short tip. Rather talk to a person? <strong>Ask 365 Techies</strong> asks one of us to ring you back: checking a problem is free, and any work is priced before we start.",
+     "Press <strong>Help</strong>, or F1, and Techies One shows the help for what you&rsquo;re doing. Or type a question in your own words into <strong>How do I...?</strong>: it finds the answer here on your PC, and for a few settings gives you a button that does it for you. Where a step names a button, <strong>Show me where</strong> puts a ring round it on your screen. Help pages can be printed in large print or read aloud, each part has a one-page guide to print, and resting the mouse on a button shows a short tip. Tell Techies One who helps you (a son, a daughter, a neighbour) in Settings, and Help can start an email to them. Rather talk to us? <strong>Ask 365 Techies</strong> asks one of us to ring you back: checking a problem is free, and any work is priced before we start. If you tick <strong>Send what I was doing</strong>, it tells us which screen you were on and the last problem message you saw, with names, addresses and numbers taken out, and you see all of it before it goes.",
      "Help beside a new email: How do I...? with make the writing bigger typed in, and the first answer offering Make it Large and Make it Extra large (a made-up sample)"),
 ]
 
@@ -727,7 +731,7 @@ def compare():
             <li><strong>You need a Mac, Android phone or Linux version:</strong> Thunderbird (Mac, Linux and Android), or eM Client or Mailbird (Mac).</li>
             <li><strong>You rely on Outlook&rsquo;s add-ins, shared mailboxes or Exchange features</strong> at work: classic Outlook. (Techies One brings in a .pst file&rsquo;s emails, contacts and calendar, but it isn&rsquo;t Outlook.)</li>
             <li><strong>Your mailbox only works with the old POP setting,</strong> or you want all your email readable with no internet connection: Thunderbird or Outlook.</li>
-            <li><strong>You want to edit photos or have faces recognised:</strong> Albums only turns photos and never looks for faces. Windows&rsquo; own Photos app can crop and adjust them.</li>
+            <li><strong>You want full photo editing or faces recognised:</strong> Albums makes simple fixes (always as a copy) and never looks for faces. Windows&rsquo; own Photos app and photo editors go further.</li>
           </ul></div>
           <div class="t1p-card"><h3>When Techies One is the better fit</h3><ul class="t1p-list">
             <li>You want something simple that warns you about scams and blocks a sender in one press, free.</li>
@@ -770,7 +774,7 @@ SAFETY = """    <section class="section t1p" aria-labelledby="t1-safe">
             <li>Only secure, encrypted connections to your provider are allowed.</li>
             <li>Files never deletes anything for good without asking: it goes to the Recycle Bin (a USB stick has none, so it asks first). Programs and scripts are never started from Files.</li>
             <li>A shared link points to the copy in your own OneDrive. 365 Techies never holds your files.</li>
-            <li>Albums never changes, moves or uploads your photo files, never looks for faces, and sends nothing about your photos to us.</li>
+            <li>Albums never changes or moves your photo files: fixes are saved as copies. It uploads copies only when you share an album, to your own OneDrive. It never looks for faces, and sends nothing about your photos to us.</li>
             <li>Old emails you bring in are copied: the files they came from are never changed. Backups never contain your passwords.</li>
           </ul></div>
           <div class="t1p-card"><h3>What it tells us, and updates</h3><ul class="t1p-list">
@@ -808,7 +812,7 @@ LIMITS = f"""    <section class="section section--alt t1p" aria-labelledby="t1-l
           <li><strong>iCloud needs Apple&rsquo;s iCloud for Windows app</strong> on the PC (Apple offers no other way in). Moving photos out of iCloud takes them off your iPhone and iPad too, and iCloud keeps them in Recently Deleted for 30 days.</li>
           <li><strong>Space makes room once the Recycle Bin is emptied.</strong> Removed copies go to the Recycle Bin, so they still take up room until you empty it; Space says so.</li>
           <li><strong>Albums shows photos that are on this PC</strong> (and, once you sign in and say yes, the ones in your OneDrive). Photos kept only in Google Photos, Amazon Photos or Facebook can&rsquo;t be shown; Albums explains how to bring them onto the PC.</li>
-          <li><strong>Albums doesn&rsquo;t edit photos or recognise faces.</strong> It can turn a photo; you type who&rsquo;s in it. Picasa&rsquo;s face names and places aren&rsquo;t brought across, on purpose.</li>
+          <li><strong>Albums makes simple fixes, not full photo editing, and doesn&rsquo;t recognise faces.</strong> Make it better, Brighter, Straighten, a cut to 6 x 4 and red eyes are saved as copies; there are no layers, retouching or filters. You type who&rsquo;s in a photo. Picasa&rsquo;s face names and places aren&rsquo;t brought across, on purpose.</li>
           <li><strong>Photos from iPhones and some other phones (HEIC) need Microsoft&rsquo;s add-on</strong> from the Microsoft Store before Windows can show them (79p in October 2026). Albums tells you if it&rsquo;s missing.</li>
         </ul>
       </div>
@@ -850,9 +854,9 @@ FAQS = [
     ("Do I need Word or Excel?",
      "No. Letters saves ordinary Word files and Sums saves ordinary Excel files, so they also open in Word and Excel on any computer, and Word and Excel files people send you open in Techies One. Letters and Sums are for everyday letters, CVs, budgets and accounts: if you need headers and footers, charts or macros, keep Word and Excel for those."),
     ("Is there a replacement for Picasa?",
-     "Yes: Albums, in Techies One, free for Windows 10 and 11. Google stopped making Picasa in 2016. Albums shows all your photos in the order they were taken, with slideshows, albums, captions and memories, and it brings across what you did in Picasa: stars become favourites, captions come with the photos and Picasa 3.9 albums become My albums. It doesn&rsquo;t edit photos or recognise faces: you type who&rsquo;s in a photo, and the names stay on your PC."),
+     "Yes: Albums, in Techies One, free for Windows 10 and 11. Google stopped making Picasa in 2016. Albums shows all your photos in the order they were taken, with slideshows, albums, captions and memories, and it brings across what you did in Picasa: stars become favourites, captions come with the photos and Picasa 3.9 albums become My albums. It can make simple fixes, always as a copy (Make it better, Straighten, red eyes), but it doesn&rsquo;t recognise faces: you type who&rsquo;s in a photo, and the names stay on your PC."),
     ("Can I open my old Outlook .pst file or Windows Live Mail emails?",
-     "Yes, by bringing them in. In Mail, select <strong>Bring in old emails</strong>: Techies One copies the emails, contacts and calendar from an Outlook .pst or .ost file, Windows Live Mail, Windows Mail or Thunderbird (and, still experimentally, Outlook Express) into a mailbox under <strong>On this PC</strong>. The files they came from aren&rsquo;t changed. If it can&rsquo;t read one, ask us."),
+     "Yes, by bringing them in. In Mail, select <strong>Bring in old emails</strong>: Techies One copies the emails, contacts and calendar from an Outlook .pst or .ost file, Outlook .msg files, Windows Live Mail, Windows Mail or Thunderbird (and, still experimentally, Outlook Express) into a mailbox under <strong>On this PC</strong>. The files they came from aren&rsquo;t changed. If it can&rsquo;t read one, ask us."),
     ("Can I make my own email folders?",
      "Yes. Select <strong>New folder</strong> under your email address, and use <strong>Move to</strong> to put emails into it. The folders are made at your email provider, so your phone sees them too."),
     ("Can it print envelopes and address labels?",
@@ -942,6 +946,11 @@ def build():
                             "Picasa's stars, captions and albums brought across; names and captions you type (no face recognition)",
                             "Keep safe: a second copy of every photo on a USB drive",
                             "Help on every screen, with a How do I...? search",
+                            "Show me where: a ring round the button a help step names; a one-page guide to print for each part",
+                            "Tell my helper: Help can start an email to the person who helps you",
+                            "Albums photo fixes saved as copies: Make it better, Straighten, cut to 6 x 4, red eyes",
+                            "Print photos (6 x 4, A4, four on a page, a contact sheet), copies for a photo frame, and an album shared by link from your own OneDrive",
+                            "Bring in Outlook .msg files",
                             "Letters: ready-made letters and CVs on an A4 page, saved as Word files, PDF and email in one click",
                             "Sums: budgets and accounts that add themselves up, saved as Excel files",
                             "Files: the PC, USB sticks and OneDrive, Dropbox, Google Drive and iCloud folders in one window",
