@@ -58,6 +58,8 @@
  * most. The OBSIDIAN PLUG: the drop bank raises it between the flippers for 20 s or one save (any touch kicks the ball
  * back up), and lights MODE at the crater (not under W.mod.noModes); the bust drops it; the kickback is lit again by
  * the drops only on Gentle (which also keeps it every ball). No ramp-to-ramp combo any more (goals.js scores combos).
+ * Multiball physics: a ball pushed apart from another never goes through a one-way gate or stays inside a wall, and a
+ * one-way gate puts back a ball knocked back through it while half way (a weak launch hit at the shooter gate).
  *
  * PLUGINS. E.plugin({ id, init(W), step(W), url }) registers one (a second with the same id replaces it):
  *   init(W) runs at the end of every E.newWorld, step(W) at the end of every E.step (after the physics, the events,
