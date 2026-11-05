@@ -9,7 +9,8 @@
  * old table's hangar, Ember Peak's crater, a lava lane (gates up), a crab, a bumper, a top lane, a sling, the drain -
  * or nothing (back down to the flippers). Then it prints each outcome's timing windows.
  *
- *   node tools/pinball/shots.cjs [speed=2] [--detail]          (speed 1 Gentle, 2 Classic, 3 Fast; --orbit: old table) */
+ *   node tools/pinball/shots.cjs [speed=2] [--detail] [--lit]  (speed 1 Gentle, 2 Classic, 3 Fast; --orbit: old table;
+ *                                                             --lit: something lit at the crater, its wider mouth) */
 'use strict';
 var S = require('./sim.cjs'), E = S.E;
 var SUBMS = 1000 / 600;
@@ -24,7 +25,7 @@ function inlaneSpot(T, fi) {
 // set up a ball for one shot; side may be a flipper index (0-3); opt: {down, lava}
 function setup(speed, fi, kind, dropsDown, inSpeed, opt) {
   opt = opt || {};
-  var W = S.world(speed, 11, { kickback: false, dropsDown: dropsDown, lava: opt.lava, noGeyser: true, noCrabs: opt.noCrabs });
+  var W = S.world(speed, 11, { kickback: false, dropsDown: dropsDown, lava: opt.lava, noGeyser: true, noCrabs: opt.noCrabs, lit: opt.lit, plug: opt.plug });
   var f = W.flippers[fi], key = f.side > 0 ? 'right' : 'left', inp = {}, T = S.T;
   if (kind === 'cradle') {
     // drop the ball on the raised flipper and let it settle into the cradle (the other flippers on that side go up too)
@@ -107,12 +108,12 @@ function windows(rows) {
 
 var MAJOR = { orbit: ['orbit L', 'orbit R', 'RAMP made', 'drop target', 'HANGAR'],
   ember: ['orbit L', 'orbit R', 'RAMP made', 'drop target', 'CRATER', 'lava L', 'lava R', 'crab'] };
-function map(speed, detail) {
+function map(speed, detail, lit) {   // lit: something lit at the crater (its wider mouth)
   var cases = [], T = S.T, NAMES = ['LEFT ', 'RIGHT', 'SUMMIT LEFT ', 'SUMMIT RIGHT'];
   T.flippers.forEach(function (f, fi) {
     [['cradle', 0], ['inlane', 60], ['inlane', 300]].forEach(function (k) {
       [false, true].forEach(function (down) {
-        var rows = sweep(speed, fi, k[0], down, k[1], k[0] === 'cradle' ? 700 : 1000, { lava: down });
+        var rows = sweep(speed, fi, k[0], down, k[1], k[0] === 'cradle' ? 700 : 1000, { lava: down, lit: !!lit });
         cases.push({ fi: fi, kind: k[0] + (k[0] === 'inlane' ? ' ' + k[1] : ''), down: down, rows: rows, win: windows(rows) });
       });
     });
@@ -141,7 +142,7 @@ function map(speed, detail) {
 
 if (require.main === module && process.argv[2] !== '--fan') {
   var a = process.argv.slice(2);
-  map(+(a[0] || 2), a.indexOf('--detail') >= 0);
+  map(+(a[0] || 2), a.indexOf('--detail') >= 0, a.indexOf('--lit') >= 0);
 }
 module.exports = { shot: shot, sweep: sweep, windows: windows, map: map, MAJOR: MAJOR, SUBMS: SUBMS, setup: setup };
 

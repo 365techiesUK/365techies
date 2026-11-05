@@ -19,6 +19,10 @@
  *    with the ball still held, it tries each candidate delay on a copy of the world (E.clone steps exactly as the
  *    game will), one try a step, and lets go the moment one makes the shot - so it really hits the crater and the
  *    loops, not just roughly. At most a dozen tries; none good, it takes the measured delay anyway.
+ * Wave 3 (5 Nov 2026): THE one goal (W.next.shot, from goals.js or descent.js) comes first from a cradle when this
+ * flipper has aim for it; anything lit at the crater (ERUPT, LOCK, MODE, DIVE, the super jackpot) and the multiball's
+ * jackpots come next; in a multiball (3 or 4 balls) it flips whichever ball comes down and cradles only while one ball
+ * is free; a table it has no AIM for brings its own (T.aim, the same shape).
  * Plain ES5. In node: require('./pilot.js') (it loads engine.js itself). */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(require('./engine.js'));
@@ -28,7 +32,8 @@
   if (!E) return null;
   // for each table and speed: steps of plunger hold for top lanes 0-2, and for each flipper (by index) the steps from
   // letting a cradled ball go to the flip that makes each shot. Ember Peak: tools/pinball/page-pilot-aim.cjs, 29 Oct
-  // 2026, the one-screen table (crabs off the table, lava measured up); the old table: tools/pinball/fx-aim.cjs, 15 Oct 2026.
+  // 2026, the one-screen table (crabs off the table, lava measured up), re-measured unchanged 5 Nov 2026 after the wave 3
+  // table changes; the old table: tools/pinball/fx-aim.cjs, 15 Oct 2026. A table not listed here brings its own (T.aim).
   var AIM = {
     ember: {
       1: { lane: [40, 34, 29], F: [{ drop: 35, crater: 16, ramp: 26, orbit: 40 }, { lava: 37, drop: 16, ramp: 23, geyser: 27, orbit: 40 }] },
@@ -41,6 +46,7 @@
       3: { lane: [38, 34, 30], F: [{ ramp: 22, orbit: 32, hangar: 13, drop: 13 }, { ramp: 24, orbit: 32, hangar: 27, drop: 28 }] }
     }
   };
+  var NOSH = { x0: 1e9, tip: -1e9 };   // (a level with no shooter lane)
   var LOOK = 0.042;   // seconds of look-ahead: the flipper is about 25 ms from rest to up, plus a little
   var PRESS = 15;     // steps a flip is held
   var TRIES = 46;     // at most this many tries on a copy of the world for one cradled shot (one a step)
@@ -51,7 +57,11 @@
     return (h >>> 0) / 4294967296;
   }
   function tableOf(W) { return E.table ? E.table(W.tableId).T : E.TABLE; }
-  function aimOf(W) { var A = AIM[W.tableId] || AIM.orbit; return A[W.speed] || A[1]; }
+  function aimOf(W) { var A = AIM[W.tableId] || tableOf(W).aim || AIM.orbit; return A[W.speed] || A[1] || A[2]; }   // (a new table brings its own: T.aim)
+  // W.next.shot (goals.js) -> the aim key that makes it
+  var NEXT = { crater: 'crater', ramp: 'ramp', orbitL: 'orbit', orbitR: 'orbit', loop: 'orbit', lavaL: 'lava', lavaR: 'lava', drops: 'drop', geyser: 'geyser', crabs: 'crab',
+    scoop: 'scoop', vents: 'vents', core: 'core', lane: 'lane' };
+  function freeBalls(W, SH) { var n = 0; for (var i = 0; i < W.balls.length; i++) { var b = W.balls[i]; if (b.m === 'free' && b.x < SH.x0) n++; } return n; }
 
   // the pilot's memory for each world (a WeakMap where there is one); a new game in the same world object starts afresh
   var MEM = typeof WeakMap === 'function' ? new WeakMap() : null, memAny = null;
@@ -74,7 +84,7 @@
     return { t: t, h: dx * nx + dy * ny - BR - r, vin: -(b.vx * nx + b.vy * ny), sp: Math.sqrt(b.vx * b.vx + b.vy * b.vy) };
   }
   function nearest(W, T, f) {   // the free ball over this flipper (the lowest, if more than one)
-    var best = null, br = null, BR = T.BALL, SH = T.shooter, reach = Math.max(70, f.len * 2.75);
+    var best = null, br = null, BR = T.BALL, SH = T.shooter || NOSH, reach = Math.max(70, f.len * 2.75);
     for (var i = 0; i < W.balls.length; i++) {
       var b = W.balls[i];
       if (b.m !== 'free' || b.x > SH.x0) continue;
@@ -110,9 +120,12 @@
       if (V && !V.busy) list.push('crater');
       if (G && G.st === 'ready' && k % 4 === 3) list.unshift('geyser');
       list.push('crater', 'lava', 'geyser');
-    } else {   // Ember Peak's one pair: the crater when it matters (the eruption), the open lava lanes, loops and combos,
-      // else a round of the ramp, orbits, targets, the crater and the geyser
-      if (V && !V.busy && (V.ready || V.pressure >= 1)) list.push('crater');
+    } else {   // Ember Peak's one pair: the crater when anything is lit there (ERUPT, LOCK, MODE, DIVE, the super jackpot),
+      // the multiball's jackpots, the open lava lanes, loops; else a round of the ramp, orbits, targets, the crater and the geyser
+      var Cr = W.crater, M = W.mb;
+      if (V && !V.busy && Cr && Cr.lit && Cr.lit.length && !Cr.sealed) list.push('crater');
+      else if (V && !V.busy && !Cr && V.ready) list.push('crater');
+      if (M && M.jp) { if (M.jp.lavaL || M.jp.lavaR) list.push('lava'); if (M.jp.ramp) list.push('ramp'); }
       if (L && L.open) list.push('lava');
       if (W.orbitFrom) list.push('orbit');
       if (W.comboT > 0) list.push('ramp');
@@ -121,6 +134,9 @@
       if (pick === 'geyser' && !(G && G.st === 'ready')) pick = 'crater';
       list.push(pick, 'orbit', 'ramp', 'drop', 'crater');
     }
+    // THE one goal (W.next, from goals.js on the surface or descent.js below): first, when this flipper has aim for it
+    var nx = W.next && W.next.shot ? NEXT[W.next.shot] || W.next.shot : null;
+    if (nx && A[nx] >= 1) list.unshift(nx);
     var out = [], seen = {};
     for (var i = 0; i < list.length; i++) {
       var t = list[i];
@@ -222,7 +238,9 @@
     var other = m.sides[1 - side].mode;
     // (a slow ball over the flipper, or one coming down the inlane on to its pivot end: held up, it rolls into the crook)
     var slow = r.h < 46 && r.sp < 330 && r.t > -0.2 && r.t < 1, inl = r.h < (opt.inH || 40) && r.t > -0.45 && r.t < (opt.inT || 0.3) && r.sp < (opt.inV || 900);
-    if ((slow || (opt.inlane !== false && inl)) && hash(W.ball * 131 + m.shots, w.n.b.id, side) < (opt.catchP || 0.85) && !/cradle|aim|release/.test(other) && W.balls.length === 1) {
+    // (in a multiball - 3 or 4 balls - it cradles only while this is the one free ball: the others held, on the ramp
+    // or a carry, or waiting in the shooter lane; otherwise it just keeps flipping whichever ball comes down)
+    if ((slow || (opt.inlane !== false && inl)) && hash(W.ball * 131 + m.shots, w.n.b.id, side) < (opt.catchP || 0.85) && !/cradle|aim|release/.test(other) && freeBalls(W, T.shooter || { x0: 1e9 }) === 1) {
       s.mode = 'cradle'; s.n = 0; s.settle = 0; s.away = 0; s.fi = w.fi;
       return true;
     }
@@ -236,7 +254,7 @@
   }
 
   function waiting(W, T) {   // a ball sitting on the plunger, ready to go
-    var SH = T.shooter, BR = T.BALL;
+    var SH = T.shooter || NOSH, BR = T.BALL;
     for (var i = 0; i < W.balls.length; i++) {
       var b = W.balls[i];
       if (b.m === 'free' && b.x > SH.x0 && b.y > SH.tip - BR - 8 && Math.abs(b.vx) + Math.abs(b.vy) < 40) return true;

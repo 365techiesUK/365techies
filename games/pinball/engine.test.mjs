@@ -268,7 +268,7 @@ test('contract v1: the engine exports, the API and the new world fields', () => 
   for (const k of ['plugin', 'unplug', 'pluginUrls', 'plugins', 'addTable']) assert.equal(typeof E[k], 'function', 'E.' + k);
   for (const k of ['award', 'multiball', 'addBall', 'gates', 'plug', 'save', 'craterLit', 'seal', 'release', 'quake', 'hitstop']) assert.equal(typeof E.api[k], 'function', 'E.api.' + k);
   const W = E.newWorld(2, 0, 1, 'ember');
-  assert.deepEqual(W.press, { level: 0.5, n: 0 });
+  assert.deepEqual(W.press, { level: S.T.pressure.ladder[0], n: 0 });
   assert.deepEqual(W.lock, { lit: false, n: 0 });
   assert.equal(W.mb, null);
   assert.deepEqual(W.crater, { lit: [], sealed: false, wide: false, took: null, mode: false, dive: false, boss: false });

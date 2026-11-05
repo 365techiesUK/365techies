@@ -45,7 +45,7 @@
  * dot-matrix display (world.dmd) and keeps light timers in world.lit for the pictures.
  *
  * ================================================================ CONTRACT v1 (wave 3, 5 Nov 2026; extend, never rename)
- * THE RULES. Pressure: the eruption ladder - the n-th eruption needs T.pressure.ladder[n] (Ember Peak 0.5, 0.75, 1, then
+ * * THE RULES. Pressure: the eruption ladder - the n-th eruption needs T.pressure.ladder[n] (Ember Peak 0.4, 0.75, 1, then
  * 1.25); LOCK lights at half of it, the volcano RUMBLES at 75%, ERUPT lights at it, the bust (overload: a quake, the
  * kickback off, the plug down) at +0.5. A crater shot below the rung keeps half the pressure; with LOCK lit it banks a
  * virtual lock. ERUPT: the 2.75 s show, then THE BIG ONE - a multiball of 2 balls (3 with the lock), ball save 15 s
@@ -53,8 +53,8 @@
  * each one collected), all three light the SUPER JACKPOT at the crater (3x, the ball back out in 0.5 s, the jackpots
  * lit again), and the geyser adds a ball once (4 at most). It ends at one ball: the pressure goes to 0 (the rung has
  * stepped up). No pressure builds while a multiball is on. The crater: a plain collect holds 0.6 s, a lit award
- * (LOCK, MODE, DIVE, boss) 1.2 s, ERUPT 2.75 s, then the sky carry (all but ERUPT's ride it 1.75x faster); anything lit
- * widens the mouth (25 degrees, a softer shot). The heat ramp lets the ball off at T.ramp.exitMax (450 u/s, Classic) at
+ * (LOCK, MODE, DIVE, boss) 1.2 s, ERUPT 2.75 s, then the sky carry (all but ERUPT's ride it 2.19x faster: a plain collect is out of play 1.93 s); anything lit
+ * widens the mouth (45 degrees, a softer shot). The heat ramp lets the ball off at T.ramp.exitMax (450 u/s, Classic) at
  * most. The OBSIDIAN PLUG: the drop bank raises it between the flippers for 20 s or one save (any touch kicks the ball
  * back up), and lights MODE at the crater (not under W.mod.noModes); the bust drops it; the kickback is lit again by
  * the drops only on Gentle (which also keeps it every ball). No ramp-to-ramp combo any more (goals.js scores combos).
@@ -636,7 +636,7 @@
       if (!b.launched && b.y < (GATES.length ? T.gates[0][1] - 4 : -1e9)) { b.launched = true; launched(W); }
     }
     // balls knock into each other (multiball)
-    for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) ballBall(W.balls[i], W.balls[j]);
+    for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) ballBall(W, W.balls[i], W.balls[j]);
     // drained balls leave the table
     for (i = W.balls.length - 1; i >= 0; i--) {
       if (W.balls[i].y > T.H + BR + 6) { W.balls.splice(i, 1); drained(W); }
@@ -750,8 +750,7 @@
     // one-way gates
     for (i = 0; i < GATES.length; i++) {
       s = GATES[i]; c = nearSeg(b, s); if (!c) continue;
-      if ((b.x - s.ax) * s.nx + (b.y - s.ay) * s.ny <= 0) continue;   // on the side it swings open from
-      if (b.vx * s.nx + b.vy * s.ny > 0) continue;                    // moving away
+      if (!gateBlocks(b, s, c)) continue;
       bounce(b, c.nx, c.ny, c.pen, s.e);
     }
     // drop targets that are up (only their fronts knock them down)
@@ -791,14 +790,22 @@
     for (i = 0; i < LAVA.length; i++) {
       if (!W.toys.lava.gates[i].solid) continue;
       s = LAVA[i]; c = nearSeg(b, s); if (!c) continue;
-      if ((b.x - s.ax) * s.nx + (b.y - s.ay) * s.ny <= 0) continue;
-      if (b.vx * s.nx + b.vy * s.ny > 0) continue;
+      if (!gateBlocks(b, s, c)) continue;
       bounce(b, c.nx, c.ny, c.pen, s.e);
     }
     // the plunger's tip (only in the shooter lane)
     if (b.x > SH.x0 && b.y > tipY - BR) { var pp = b.y - (tipY - BR); bounce(b, 0, -1, pp, 0.2); }
     // the flippers
     for (i = 0; i < W.flippers.length; i++) flipperHit(W, W.flippers[i], b);
+  }
+  // a one-way gate stops a ball on its blocked side moving in; and a ball whose centre has just crossed its line the
+  // wrong way this substep (knocked back while half through it, e.g. by another ball in a multiball) is put back
+  function gateBlocks(b, s, c) {
+    var side = (b.x - s.ax) * s.nx + (b.y - s.ay) * s.ny, vin = b.vx * s.nx + b.vy * s.ny;
+    if (vin > 0) return false;   // moving away
+    if (side > 0) return true;
+    if ((b.px - s.ax) * s.nx + (b.py - s.ay) * s.ny > 0 && c.t > 0 && c.t < 1) { c.nx = s.nx; c.ny = s.ny; c.pen = BR + s.r - side; return true; }
+    return false;   // on the side it swings open from
   }
   function flipperHit(W, f, b) {
     var cx = f.c, cy = f.s, dx = b.x - f.x, dy = b.y - f.y;
@@ -817,16 +824,36 @@
       b.vx += k * ny; b.vy -= k * nx;
     }
   }
-  function ballBall(a, c) {
+  function ballBall(W, a, c) {
     if (a.m !== 'free' || c.m !== 'free') return;
     var dx = c.x - a.x, dy = c.y - a.y, d2 = dx * dx + dy * dy, lim = 2 * BR;
     if (d2 >= lim * lim || d2 === 0) return;
     var d = Math.sqrt(d2), nx = dx / d, ny = dy / d, pen = (lim - d) / 2;
-    a.x -= nx * pen; a.y -= ny * pen; c.x += nx * pen; c.y += ny * pen;
+    pushBy(W, a, -nx * pen, -ny * pen); pushBy(W, c, nx * pen, ny * pen);
     var vn = (c.vx - a.vx) * nx + (c.vy - a.vy) * ny;
     if (vn >= 0) return;
     var j = -(1 + 0.9) * vn / 2;
     a.vx -= j * nx; a.vy -= j * ny; c.vx += j * nx; c.vy += j * ny;
+  }
+
+  // a ball pushed apart from another (multiball) never goes through a one-way gate (or a lava gate that is down) and is
+  // never left inside a wall or a post (it is moved back out; the next substep bounces it as usual)
+  function crossesSeg(x0, y0, x1, y1, s) {
+    var d0 = (x0 - s.ax) * s.dy - (y0 - s.ay) * s.dx, d1 = (x1 - s.ax) * s.dy - (y1 - s.ay) * s.dx;
+    if ((d0 < 0) === (d1 < 0)) return false;
+    var t = d0 / (d0 - d1), qx = x0 + (x1 - x0) * t, qy = y0 + (y1 - y0) * t, u = ((qx - s.ax) * s.dx + (qy - s.ay) * s.dy) / s.l2;
+    return u >= 0 && u <= 1;
+  }
+  function pushBy(W, b, dx, dy) {
+    var x1 = b.x + dx, y1 = b.y + dy, i, c, s;
+    for (i = 0; i < GATES.length; i++) if (crossesSeg(b.x, b.y, x1, y1, GATES[i])) return;
+    for (i = 0; i < LAVA.length; i++) if (W.toys.lava.gates[i].solid && crossesSeg(b.x, b.y, x1, y1, LAVA[i])) return;
+    b.x = x1; b.y = y1;
+    for (i = 0; i < WALLS.length; i++) { s = WALLS[i]; c = nearSeg(b, s); if (c) { b.x += c.nx * c.pen; b.y += c.ny * c.pen; } }
+    for (i = 0; i < POSTS.length; i++) {
+      var p = POSTS[i], px = b.x - p.x, py = b.y - p.y, pl = BR + p.r, pd2 = px * px + py * py;
+      if (pd2 < pl * pl && pd2 > 0) { var pd = Math.sqrt(pd2); b.x += px / pd * (pl - pd); b.y += py / pd * (pl - pd); }
+    }
   }
 
   // ------------------------------------------------------------ ramps, carries and holes

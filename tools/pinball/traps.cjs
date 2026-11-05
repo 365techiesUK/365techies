@@ -18,12 +18,13 @@ var S = require('./sim.cjs'), E = S.E;
 
 function oneBall(i, secs, trace) {
   var T = S.T, seed = 1000 + i * 7919, r = S.lcg(seed), speed = 1 + (i % 3);
-  var W = S.world(speed, seed, { kickback: r() < 0.5, dropsDown: i % 4 === 3, lava: i % 5 === 4 });
+  var W = S.world(speed, seed, { kickback: r() < 0.5, dropsDown: i % 4 === 3, lava: i % 5 === 4, plug: i % 6 === 2 });   // (wave 3: some with the plug up)
   var x, y, tries = 0;
   do { x = 15 + r() * 245; y = 10 + r() * (T.H - 16); tries++; } while (!S.freeSpot(W, x, y) && tries < 5000);
   var ang = r() * Math.PI * 2, v = r() * r() * 1500;
   var b = S.place(W, x, y, Math.cos(ang) * v, Math.sin(ang) * v);
   if (i % 7 === 6 && W.toys.quake) W.toys.quake.pending = true;   // some balls get a quake as soon as it may come
+  if (i % 6 === 5 && W.press) E.api.multiball(W, 3, { save: 0 });   // and some start a 3-ball multiball (two more fed from the shooter lane)
   var out = { i: i, speed: speed, start: [x, y, b.vx, b.vy], traps: [], searches: 0, drained: null, steps: 0, scored: 0, leads: [], touches: 0 };
   var seen = {};
   function log(type, ball, what) {
@@ -60,7 +61,7 @@ function oneBall(i, secs, trace) {
   };
   var drive = S.bot(seed + 1);
   var hist = [], lastScore = W.score, quiet = 0, last = [x, y], pts = trace ? [] : null;
-  var recent = [];   // [frame, event] for the scoring events that must never repeat in a tight loop
+  var recent = [], pos = {};   // [frame, event] for the scoring events that must never repeat in a tight loop; where each ball was
   out.steps = S.run(W, secs * 60, drive, function (W2) {
     var ev = W2.events;
     for (var k = 0; k < ev.length; k++) {
@@ -72,8 +73,13 @@ function oneBall(i, secs, trace) {
         if (same > (nm === 'bumper' ? 40 : 3)) { var b0 = W2.balls[0] || { x: last[0], y: last[1], px: 0, py: 0 }; log('rapid', b0, nm); }
       }
       if (ev[k] === 'search') { out.searches++; log('search', W2.balls[0] || { x: last[0], y: last[1], px: 0, py: 0 }, ''); seen['search'] = 0; }
-      if (ev[k] === 'drain') out.drained = { x: +last[0].toFixed(1), y: +last[1].toFixed(1) };
+      if (ev[k] === 'drain') {   // (in a multiball: the ball that has gone, where it was last seen)
+        var gone = last;
+        Object.keys(pos).forEach(function (id) { if (!W2.balls.some(function (o) { return o.id === +id; })) gone = pos[id]; });
+        out.drained = { x: +gone[0].toFixed(1), y: +gone[1].toFixed(1) };
+      }
     }
+    pos = {}; W2.balls.forEach(function (o) { pos[o.id] = [o.x, o.y]; });
     var bb = W2.balls[0];
     if (!bb) return;
     last = [bb.x, bb.y];
@@ -159,7 +165,8 @@ var CORNERS = {
     'left orbit wall foot': [30, 238], 'right orbit wall foot': [220, 238],
     'left orbit foot gate': [20, 283], 'right orbit foot gate': [230, 283], 'left outlane/inlane post': [27, 338], 'right outlane/inlane post': [223, 338],
     'left inlane floor -> flipper': [66, 416], 'right inlane floor -> flipper': [184, 416], 'left inlane guide top': [46, 304], 'right inlane guide top': [204, 304],
-    'left sling top': [49, 336], 'right sling top': [201, 336], 'left sling foot': [72, 396], 'right sling foot': [178, 396]
+    'left sling top': [49, 336], 'right sling top': [201, 336], 'left sling foot': [72, 396], 'right sling foot': [178, 396],
+    'the plug (up with the targets down)': [125, 440]
   }
 };
 function corners() {
@@ -169,7 +176,7 @@ function corners() {
     [false, true].forEach(function (held) {
       [false, true].forEach(function (down) {
         for (var dx = -24; dx <= 24; dx += 2) for (var dy = -24; dy <= 24; dy += 2) {
-          var W = S.world(2, 7, { kickback: false, dropsDown: down, lava: down, noGeyser: !down });
+          var W = S.world(2, 7, { kickback: false, dropsDown: down, lava: down, noGeyser: !down, plug: down });
           var x = c[0] + dx, y = c[1] + dy;
           if (!S.freeSpot(W, x, y)) { if (!(down && E.inPocket(x, y, W.tableId))) continue; if (S.overlap(W, x, y).pen > -0.5) continue; }
           S.place(W, x, y, 0, 0); n++;
@@ -181,7 +188,7 @@ function corners() {
             if (bb.m === 'free' && !onFlipper && Math.abs(bb.vx) + Math.abs(bb.vy) < 20) still++; else still = 0;
             if (still > 120) { stuck = [bb.x, bb.y]; return false; }
           });
-          if (stuck) bad.push(name + (held ? ' (flippers up)' : '') + (down ? ' (targets down, gates up)' : '') + ': from ' + x + ',' + y + ' rests at ' + stuck[0].toFixed(1) + ',' + stuck[1].toFixed(1));
+          if (stuck) bad.push(name + (held ? ' (flippers up)' : '') + (down ? ' (targets down, gates up, plug up)' : '') + ': from ' + x + ',' + y + ' rests at ' + stuck[0].toFixed(1) + ',' + stuck[1].toFixed(1));
         }
       });
     });
@@ -195,7 +202,7 @@ function corners() {
 
 // whole games, served and plunged by the bot, start to game over (or 10 minutes): how often does the ball search fire?
 function games(n, quiet) {
-  var Q = ['saves', 'tilts', 'ramps', 'orbits', 'loops', 'saucers', 'skill', 'kickbacks', 'craters', 'eruptions', 'geysers', 'crabs', 'lava', 'quakes', 'bumpers', 'drops'];
+  var Q = ['saves', 'tilts', 'ramps', 'orbits', 'loops', 'saucers', 'skill', 'kickbacks', 'craters', 'eruptions', 'geysers', 'crabs', 'lava', 'quakes', 'bumpers', 'drops', 'multiballs', 'jackpots', 'supers', 'locks', 'plugSaves'];
   var tot = { games: 0, secs: 0, searches: 0, scores: [], at: [], balls: 0 };
   Q.forEach(function (q) { tot[q] = 0; });
   for (var g = 0; g < n; g++) {
