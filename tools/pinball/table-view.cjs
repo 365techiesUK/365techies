@@ -78,7 +78,7 @@ function svg(tableId, scale) {
 async function png(svgText, out) {
   var pw = require('D:/claude/365-techies-website-launch-reel/node_modules/playwright-core');
   var m = svgText.match(/width="(\d+(?:\.\d+)?)" height="(\d+(?:\.\d+)?)"/);
-  var browser = await pw.chromium.launch({ channel: 'msedge', headless: true, args: ['--use-angle=d3d11'] });
+  var browser = await pw.chromium.launch({ channel: 'msedge', headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   var page = await browser.newPage({ viewport: { width: Math.ceil(+m[1]), height: Math.ceil(+m[2]) } });
   await page.setContent('<html><body style="margin:0;background:#0b1622">' + svgText + '</body></html>');
   await page.screenshot({ path: out });

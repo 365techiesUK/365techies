@@ -28,7 +28,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     for (let i = 0; i < 60; i++) { try { if ((await fetch('http://127.0.0.1:' + PORT + '/tools/pinball/stills3d.html')).ok) break; } catch (e) {} await sleep(150); }
     let browser = null;
     for (const exe of [process.env.BROWSER, 'C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].filter(Boolean)) {
-      try { browser = await chromium.launch({ headless: true, executablePath: exe, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] }); break; } catch (e) {}
+      try { browser = await chromium.launch({ headless: true, executablePath: exe, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] }); break; } catch (e) {}
     }
     if (!browser) throw new Error('no headless browser would start');
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });

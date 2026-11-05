@@ -17,7 +17,7 @@ const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 
 (async () => {
   fs.mkdirSync(out, { recursive: true });
-  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11'] });
+  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   const errors = [];
   async function open(q, dsf) {
     const page = await browser.newPage({ viewport: { width: 1500, height: 1000 }, deviceScaleFactor: dsf || 1 });

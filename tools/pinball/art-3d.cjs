@@ -12,7 +12,7 @@ const out = process.argv[2] || 'still.png', port = process.argv[3] || '8487';
 const q = process.argv[4] || 'tilt=30&seed=7&frame=900&w=540&h=960';
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11'] });
+  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   const w = +(/(?:^|&)w=(\d+)/.exec(q) || [0, 540])[1], h = +(/(?:^|&)h=(\d+)/.exec(q) || [0, 960])[1];
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   const errors = [];

@@ -24,7 +24,7 @@ function up(url) { return new Promise((res) => { http.get(url, (r) => { r.resume
   const base = 'http://127.0.0.1:' + port + '/tools/pinball/camera-preview.html';
   try {
     for (let i = 0; i < 50 && !(await up(base)); i++) await new Promise((r) => setTimeout(r, 200));
-    const browser = await pw.chromium.launch({ channel: 'msedge', headless: true, args: ['--use-angle=d3d11'] });
+    const browser = await pw.chromium.launch({ channel: 'msedge', headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
     const page = await browser.newPage({ viewport: { width: 1100, height: 790 } });
     const errs = [];
     page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.text()); });

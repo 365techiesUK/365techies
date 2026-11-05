@@ -57,7 +57,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
   fs.mkdirSync(OUT, { recursive: true });
   const srv = await serve();
   if (EMBER) { try { await ember(); } finally { stop(srv); } return; }
-  const browser = await launchB({ headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const browser = await launchB({ headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), tilts: {} };
   try {
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
@@ -160,7 +160,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 
 // ---------------------------------------------------------------- Ember Peak
 async function ember() {
-  const browser = await launchB({ headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const browser = await launchB({ headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), table: 'ember' };
   const t0 = Date.now(), log = (...a) => console.log('[' + Math.round((Date.now() - t0) / 1000) + 's]', ...a);
   try {

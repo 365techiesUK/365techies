@@ -53,7 +53,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
 
 (async function main() {
   require('fs').mkdirSync(OUT, { recursive: true });
-  var browser = await pw.chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11'] });
+  var browser = await pw.chromium.launch({ executablePath: EDGE, headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   try {
     // ------------------------------------------------------------ desktop: load, title card, the parts present
     console.log('desktop 1280 x 900');

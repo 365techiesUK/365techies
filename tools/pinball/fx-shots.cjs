@@ -8,7 +8,7 @@ const { chromium } = require(PW);
 const out = process.argv[2] || 'fx-sheet.png', port = process.argv[3] || '8474', q = process.argv[4] || '';
 const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 (async () => {
-  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ['--use-angle=d3d11'] });
+  const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   const page = await browser.newPage({ viewport: { width: 1400, height: 1300 } });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
