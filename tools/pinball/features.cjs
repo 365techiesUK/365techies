@@ -2,7 +2,9 @@
  * Plays out each table feature in the real engine and prints what happened. engine.test.mjs asserts the same things;
  * this prints the detail. Shared: the kickback, the ramp, the orbits (and a LOOP), the one-way gates, ball save, tilt,
  * extra balls, the bonus count-up and game over; the old table: its hangar; Ember Peak: the crater and its carry down
- * the wire rail, the geyser, the crabs, the lava gates, the quake, the pressure rule, the storeys and E.clone.
+ * the wire rail, the geyser, the crabs, the lava gates, the quake, the pressure rule, the storeys and E.clone; wave 3
+ * (5 Nov 2026): the eruption ladder and the lock, THE BIG ONE multiball (jackpots, the super jackpot, add-a-ball), the
+ * OBSIDIAN PLUG and the heat ramp's capped exit.
  *
  *   node tools/pinball/features.cjs [speed=2]        (Ember Peak; --orbit for the old table) */
 'use strict';
@@ -148,7 +150,7 @@ var checks = {
   },
 
   // ------------------------------------------------------------ Ember Peak's toys
-  crater: function (sp) {   // a firm shot into the mouth: held 2.5-3 s (release step known), skyward, down the wire rail, into the left inlane
+  crater: function (sp) {   // a firm shot into the mouth, nothing lit: held 0.6 s (release step known), skyward on the faster rail, out of play 2.5 s at most, into the left inlane
     var T = S.T, V0 = T.volcano, W = S.world(sp, 3, { noGeyser: true, noCrabs: true });
     S.place(W, V0.x, V0.y + 60, 0, -900);
     var caught = -1, rel = -1, rail = -1, out = -1, inlane = -1, flipper = -1, V = W.toys.volcano, release = -1, land = -1, maxZ = 0, maxY = 0, near = 0;
@@ -164,13 +166,18 @@ var checks = {
       if (inlane > 0 && flipper < 0 && b.y > T.flippers[0].y - 30 && b.x < T.MID) flipper = W2.frame;
       return flipper > 0;
     });
-    // a soft touch on the mouth bounces off; so does a ball while one is in the crater
-    var W2 = S.world(sp, 3, { noGeyser: true, noCrabs: true });
-    S.place(W2, V0.x, V0.y + 60, 0, -300);
-    var r2 = play(W2, 120, {}, function (W3, seen) { return has(seen, 'crater'); });
-    var held = (rel - caught) / 60;
-    return { ok: caught > 0 && held >= 2.5 && held <= 3.0 && rel === release && out === land && maxZ > 120 && near === 0 && inlane > out && flipper > 0 && !r2.stopped,
-      detail: 'caught; held ' + held.toFixed(2) + ' s (released on step ' + rel + ', W.toys.volcano.release said ' + release + '); up to height ' + maxZ.toFixed(0) + ', on the wire rail ' + ((rail - rel) / 60).toFixed(2) + ' s later, back in play on step ' + out + ' (W.toys.volcano.land said ' + land + '), ' + (near ? near + ' steps in an approach zone while riding, ' : 'never in an approach zone while riding (lowest point y ' + maxY.toFixed(0) + '), ') + (inlane > 0 ? 'through the left inlane' : 'MISSED the inlane') + (flipper > 0 ? ' to the left flipper' : ', NEVER reached the flipper') + '; a soft shot ' + (r2.stopped ? 'WAS TAKEN' : 'bounces off') };
+    // a soft touch on the mouth bounces off; lit (anything at the crater) the wider mouth takes it; sealed, nothing is taken
+    var k = Math.sqrt(E.SPEEDS[sp].g / 590);
+    function soft(opt, v) {
+      var W2 = S.world(sp, 3, opt);
+      if (opt.sealed) E.api.seal(W2, true);
+      S.place(W2, V0.x, V0.y + 60, 0, -v * k);
+      return play(W2, 120, {}, function (W3, seen) { return has(seen, 'crater'); }).stopped;
+    }
+    var softOff = soft({ noGeyser: true, noCrabs: true }, 300), softLit = soft({ noGeyser: true, noCrabs: true, lit: true }, 300), sealed = soft({ noGeyser: true, noCrabs: true, lit: true, sealed: true }, 900);
+    var held = (rel - caught) / 60, gone = (out - caught) / 60;
+    return { ok: caught > 0 && held >= 0.55 && held <= 0.65 && gone <= 2.5 && rel === release && out === land && maxZ > 120 && near === 0 && inlane > out && flipper > 0 && !softOff && softLit && !sealed,
+      detail: 'caught; held ' + held.toFixed(2) + ' s (released on step ' + rel + ', W.toys.volcano.release said ' + release + '); up to height ' + maxZ.toFixed(0) + ', on the wire rail ' + ((rail - rel) / 60).toFixed(2) + ' s later, back in play on step ' + out + ' (W.toys.volcano.land said ' + land + '; out of play ' + gone.toFixed(2) + ' s), ' + (near ? near + ' steps in an approach zone while riding, ' : 'never in an approach zone while riding (lowest point y ' + maxY.toFixed(0) + '), ') + (inlane > 0 ? 'through the left inlane' : 'MISSED the inlane') + (flipper > 0 ? ' to the left flipper' : ', NEVER reached the flipper') + '; a soft shot ' + (softOff ? 'WAS TAKEN' : 'bounces off') + ', lit ' + (softLit ? 'is taken (the wider mouth)' : 'STILL BOUNCES') + '; sealed, a firm shot ' + (sealed ? 'WAS TAKEN' : 'bounces off') };
   },
   geyser: function (sp) {   // a slow ball in the column: caught, a puff, flung on; it rests before it catches again
     var G0 = S.T.geyser, W = S.world(sp, 3, { noCrabs: true });
@@ -210,7 +217,7 @@ var checks = {
   },
   lava: function (sp) {   // the gates rise on a full eruption; a lane shot scores; they come down only once no ball is in the way
     var T = S.T, W = S.world(sp, 3, { noGeyser: true, noCrabs: true }), V0 = T.volcano;
-    W.toys.volcano.pressure = 1;
+    W.toys.volcano.pressure = W.press.level;
     S.place(W, V0.x, V0.y + 60, 0, -900);
     var r = play(W, 30, {}, function (W2, seen) { return has(seen, 'lavaopen'); });
     var open = W.toys.lava.open && W.toys.lava.gates.every(function (g) { return !g.solid; });
@@ -222,7 +229,7 @@ var checks = {
     var r2 = play(W2, 60, {}, function (W3, seen) { return has(seen, 'lava'); });
     // closing with a ball sitting in the gate's way: it waits
     var W3 = S.world(sp, 3, { lava: true, noGeyser: true, noCrabs: true }), g = T.lava.gates[0];
-    W3.toys.lava.t = 2;
+    W3.toys.lava.gates[0].t = 2;
     var gx = (g[0] + g[2]) / 2, gy = (g[1] + g[3]) / 2, b = S.place(W3, gx, gy, 0, 0), waited = true;
     for (var i = 0; i < 20; i++) { b.x = gx; b.y = gy; b.vx = b.vy = 0; E.step(W3, {}); if (W3.toys.lava.gates[0].solid) waited = false; }
     W3.balls.length = 0; E.step(W3, {});
@@ -248,21 +255,91 @@ var checks = {
     return { ok: waited && r.stopped && pulled > 10 && stopped && W.toys.quake.gx === 0,
       detail: 'pending with a ball below the approach line: ' + (waited ? 'waited' : 'DID NOT WAIT') + '; with none there it ' + (r.stopped ? 'started' : 'did NOT start') + ', pulled for ' + pulled + ' steps, then stopped' + (anyIn ? ' (a ball reached an approach zone)' : '') };
   },
-  pressure: function (sp) {   // shots add pressure; full = ERUPT NOW; overdo it and the quake comes, the kickback goes off
-    var W = S.world(sp, 3, { noGeyser: true, noCrabs: true }), V = W.toys.volcano, seen = [];
+  pressure: function (sp) {   // shots add pressure: LOCK lights at half the rung, a RUMBLE at 75%, ERUPT NOW at it; overdo it and the quake comes, the kickback goes off, the plug drops
+    var W = S.world(sp, 3, { noGeyser: true, noCrabs: true, plug: true }), V = W.toys.volcano, seen = [];
     W.kickback = true;
     S.place(W, 125, 380, 0, 0);
     // eight orbits' worth
     var steps = [];
-    for (var i = 0; i < 20 && V.pressure < 1.5 && !W.toys.quake.pending; i++) {
+    for (var i = 0; i < 20 && !W.toys.quake.pending; i++) {
       W.orbitFrom = ''; W.orbitT = 0;
       var b = W.balls[0]; b.x = 18; b.y = S.T.sensors.lines[0][2] + 1; b.vx = 0; b.vy = -900; b.m = 'free';
       E.step(W, {}); W.events.forEach(function (e) { seen.push(typeof e === 'string' ? e : e.sfx); }); W.events.length = 0;
       steps.push(V.pressure.toFixed(2));
     }
-    var full = seen.indexOf('pressure') >= 0, over = seen.indexOf('overload') >= 0;
-    return { ok: full && over && !W.kickback && W.toys.quake.pending && V.pressure === S.T.pressure.after,
-      detail: 'pressure ' + steps.join(' ') + ': ' + (full ? 'ERUPT NOW at full' : 'NO prompt') + ', ' + (over ? 'then a quake comes and the kickback is ' + (W.kickback ? 'STILL ON' : 'off') : 'NO quake') };
+    var full = seen.indexOf('pressure') >= 0, over = seen.indexOf('overload') >= 0, PR = S.T.pressure;
+    var order = ['locklit', 'rumble', 'eruptlit', 'overload'].map(function (n) { return seen.indexOf(n); }), inOrder = order.every(function (x, j) { return x >= 0 && (j === 0 || x >= order[j - 1]); });
+    return { ok: full && over && inOrder && !W.kickback && !W.plug.up && W.toys.quake.pending && Math.abs(V.pressure - W.press.level * PR.after) < 1e-9,
+      detail: 'pressure (rung ' + W.press.level + ') ' + steps.join(' ') + ': ' + (inOrder ? 'LOCK lit, a rumble, ' : 'lock/rumble/erupt OUT OF ORDER, ') + (full ? 'ERUPT NOW at the rung' : 'NO prompt') + ', ' + (over ? 'then a quake comes, the kickback is ' + (W.kickback ? 'STILL ON' : 'off') + ' and the plug ' + (W.plug.up ? 'STILL UP' : 'drops') : 'NO quake') };
+  },
+  ladder: function (sp) {   // a lit LOCK banks a virtual lock (held 1.2 s, half the pressure kept); ERUPT plays its 2.75 s show, then 3 balls (2 + the lock); the rung steps up
+    var V0 = S.T.volcano, W = S.world(sp, 3, { noGeyser: true, noCrabs: true }), V = W.toys.volcano, L0 = W.press.level;
+    V.pressure = L0 * 0.6; W.lock.lit = true;
+    S.place(W, V0.x, V0.y + 60, 0, -900);
+    var c1 = -1, r1 = -1;
+    play(W, 400, {}, function (W2, seen) { if (c1 < 0 && has(seen, 'crater')) c1 = W2.frame; if (r1 < 0 && has(seen, 'erupt')) r1 = W2.frame; return r1 > 0; });
+    var lockOk = W.lock.n === 1 && !W.lock.lit && Math.abs(V.pressure - L0 * 0.3) < 1e-9, lockHold = (r1 - c1) / 60;
+    W.balls.length = 0; V.busy = false; V.ball = 0;
+    V.pressure = L0;
+    S.place(W, V0.x, V0.y + 60, 0, -900);
+    var c2 = -1, m2 = -1, n2 = 0;
+    play(W, 400, {}, function (W2, seen) { if (c2 < 0 && has(seen, 'crater')) c2 = W2.frame; if (m2 < 0 && has(seen, 'mbstart')) { m2 = W2.frame; n2 = W2.balls.length + W2.feed; } return m2 > 0; });
+    var show = (m2 - c2) / 60;
+    return { ok: lockOk && lockHold >= 1.15 && lockHold <= 1.25 && show >= 2.7 && show <= 2.8 && n2 === 3 && W.press.n === 1 && W.press.level > L0 && W.lock.n === 0 && !!W.mb && W.saveT > 0,
+      detail: 'a lit LOCK ' + (lockOk ? 'banked (half the pressure kept)' : 'NOT BANKED') + ', held ' + lockHold.toFixed(2) + ' s; ERUPT: a ' + show.toFixed(2) + ' s show, then multiball with ' + n2 + ' balls, ball save ' + (W.saveT / 60).toFixed(1) + ' s; the rung ' + L0 + ' -> ' + W.press.level };
+  },
+  multiball: function (sp) {   // jackpots on both lava lanes and the ramp (5M, +1M each); three light the SUPER JACKPOT (3x, back out in 0.5 s); the geyser adds a ball once; it ends at one ball
+    var T = S.T, V0 = T.volcano, en = T.ramp.entry, W = S.world(sp, 3, { noCrabs: true }), got = [];
+    E.api.multiball(W, 4, { save: 0 }); W.autoT = 1e9;   // (nobody fires the fed balls: the shots below are placed one at a time)
+    function shoot(x, y, vx, vy, stop) {
+      W.balls.length = 0; var s0 = W.score; S.place(W, x, y, vx, vy);
+      var r = play(W, 400, {}, function (W2, seen) { return stop(W2, seen); });
+      return { pts: W.score - s0, r: r };
+    }
+    var G0 = T.lava.gates[0], LX = (G0[0] + G0[2]) / 2, LY = G0[1] - 30;
+    got.push(shoot(LX, LY, 0, -600, function (W2, seen) { return has(seen, 'jackpot'); }).pts);
+    got.push(shoot((en.x0 + en.x1) / 2, en.y + 35, 0, -1500, function (W2, seen) { return has(seen, 'jackpot'); }).pts);
+    got.push(shoot(2 * T.MID - LX, LY, 0, -600, function (W2, seen) { return has(seen, 'jackpot'); }).pts);
+    var superLit = W.mb && W.mb.superLit && W.crater.lit[0] === 'super', c = -1, rel = -1;
+    var sup = shoot(V0.x, V0.y + 60, 0, -900, function (W2, seen) { if (c < 0 && has(seen, 'crater')) c = W2.frame; if (rel < 0 && has(seen, 'erupt')) rel = W2.frame; return rel > 0; });
+    var P = T.points, jpOk = got[0] === P.lava + P.jackpot && got[1] === P.ramp + P.jackpot + P.jackpotUp && got[2] === P.lava + P.jackpot + 2 * P.jackpotUp;
+    var supOk = has(sup.r.seen, 'superjackpot') && sup.pts === 3 * (P.jackpot + 3 * P.jackpotUp) && !W.mb.superLit && W.mb.jp.lavaL && W.mb.jp.ramp, back = (rel - c) / 60;
+    W.balls.length = 0; W.toys.volcano.busy = false; W.toys.volcano.ball = 0;
+    W.feed = 2; var f0 = W.feed; W.toys.geyser.st = 'ready'; W.toys.geyser.t = 0;
+    shoot(T.geyser.x, T.geyser.y, 0, 0, function (W2, seen) { return has(seen, 'geyser'); });
+    var added = W.feed === f0 + 1 && W.mb.addUsed;
+    W.toys.geyser.st = 'ready'; W.toys.geyser.t = 0;
+    shoot(T.geyser.x, T.geyser.y, 0, 0, function (W2, seen) { return has(seen, 'geyser'); });
+    var once = W.feed === f0 + 1;
+    W.balls.length = 0; W.feed = 1; W.autoT = 0;
+    var end = play(W, 5, {}, function (W2, seen) { return has(seen, 'mbend'); });
+    return { ok: jpOk && superLit && supOk && back >= 0.45 && back <= 0.55 && added && once && end.stopped && W.mb === null,
+      detail: 'jackpots ' + got.map(function (x) { return E.fmt(x); }).join(', ') + (jpOk ? '' : ' (WRONG)') + '; ' + (superLit ? 'SUPER JACKPOT lit at the crater' : 'super NOT lit') + ', worth ' + E.fmt(sup.pts) + (supOk ? '' : ' (WRONG)') + ', back out in ' + back.toFixed(2) + ' s; the geyser ' + (added ? 'added a ball' : 'did NOT add a ball') + (once ? ' once' : ' MORE THAN ONCE') + '; at one ball ' + (end.stopped ? 'the multiball ends' : 'it did NOT end') };
+  },
+  plug: function (sp) {   // the drop bank raises the OBSIDIAN PLUG (and lights MODE; Gentle also the kickback); a ball down the middle is kicked back up; or it drops after its time
+    var T = S.T, d = T.drops, W = S.world(sp, 3, { noGeyser: true, noCrabs: true });
+    W.kickback = false; W.drops = [false, false, true]; W.dropsDown = 2;
+    var tx = d.a[0] + (d.b[0] - d.a[0]) * 0.83, ty = d.a[1] + (d.b[1] - d.a[1]) * 0.83, nx = -0.316, ny = 0.949;
+    S.place(W, tx + nx * 20, ty + ny * 20, -nx * 600, -ny * 600);
+    var r = play(W, 60, {}, function (W2, seen) { return has(seen, 'drops'); });
+    var up = W.plug.up && has(r.seen, 'plugup') && W.crater.mode && has(r.seen, 'modelit'), kick = W.kickback === !!E.SPEEDS[sp].kick;
+    W.balls.length = 0; S.place(W, T.plug.x - 3, T.plug.y - 30, 0, 300);
+    var hiY = 1e9, r2 = play(W, 90, {}, function (W2, seen) { var b = W2.balls[0]; if (b) hiY = Math.min(hiY, b.y); return !b; });
+    var saved = has(r2.seen, 'plugsave') && has(r2.seen, 'plugdown') && !W.plug.up && hiY < T.storeys[0].approach && !has(r2.seen, 'drain');
+    var W3 = S.world(sp, 3, { noGeyser: true, noCrabs: true }); S.place(W3, T.shooter.cx, T.shooter.tip - T.BALL, 0, 0);
+    E.api.plug(W3, 120); var r3 = play(W3, 130, {}, function (W4, seen) { return has(seen, 'plugdown'); });
+    return { ok: up && kick && saved && r3.stopped && r3.n === 120,
+      detail: 'the drop bank ' + (up ? 'raised the plug and lit MODE' : 'did NOT raise the plug / light MODE') + ', the kickback ' + (W.kickback ? 'lit' : 'not lit') + (kick ? '' : ' (WRONG for this speed)') + '; a ball down the middle ' + (saved ? 'is kicked back up (to y ' + hiY.toFixed(0) + ') and the plug drops' : 'was NOT saved') + '; unused, it drops after its time ' + (r3.stopped ? '(' + r3.n + ' steps)' : '(NEVER)') };
+  },
+  rampcap: function (sp) {   // however hard the ramp is shot, the ball comes off its far end no faster than exitMax (scaled)
+    var T = S.T, en = T.ramp.entry, k = Math.sqrt(E.SPEEDS[sp].g / 590), cap = T.ramp.exitMax * k, worst = 0, made = 0;
+    [1000, 1250, 1500, 1800, 2200].forEach(function (v) {
+      var W = S.world(sp, 3, { noGeyser: true, noCrabs: true }), wasRamp = false;
+      S.place(W, (en.x0 + en.x1) / 2, en.y + 35, 0, -v * k);
+      W.onSub = function (W2) { var b = W2.balls[0]; if (!b) return; if (wasRamp && b.m === 'free') { worst = Math.max(worst, Math.sqrt(b.vx * b.vx + b.vy * b.vy)); made++; wasRamp = false; W2.onSub = null; } else wasRamp = b.m === 'ramp' && !b.carry; };
+      play(W, 200, {});
+    });
+    return { ok: made >= 4 && worst <= cap * 1.02 + 2, detail: made + ' of 5 hard ramp shots made, the fastest off the far end ' + worst.toFixed(0) + ' u/s (cap ' + cap.toFixed(0) + ')' };
   },
   storeys: function () {   // each storey's flippers inside its own approach zone; the zones never overlap
     var T = S.T, W = S.world(2, 3, {}), bad = [];
@@ -287,7 +364,7 @@ var checks = {
 };
 var LISTS = {
   orbit: ['kickback', 'hangar', 'ramp', 'orbits', 'gates', 'save', 'tilt', 'extra', 'bonus', 'over', 'clone'],
-  ember: ['kickback', 'ramp', 'orbits', 'gates', 'save', 'tilt', 'extra', 'bonus', 'over', 'crater', 'geyser', 'crabs', 'lava', 'quake', 'pressure', 'storeys', 'clone']
+  ember: ['kickback', 'ramp', 'orbits', 'gates', 'save', 'tilt', 'extra', 'bonus', 'over', 'crater', 'geyser', 'crabs', 'lava', 'quake', 'pressure', 'ladder', 'multiball', 'plug', 'rampcap', 'storeys', 'clone']
 };
 
 function all(sp) {

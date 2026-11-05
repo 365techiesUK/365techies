@@ -18,7 +18,7 @@ const F = require('../../tools/pinball/features.cjs');
 
 // ============================================================ both tables
 test('the engine: tables as data, our own sin and cos, nothing a browser may round differently', () => {
-  assert.deepEqual(Object.keys(E.TABLES).sort(), ['ember', 'orbit']);
+  assert.ok(['ember', 'orbit'].every((k) => E.TABLES[k]), 'the registry holds the old table and Ember Peak (and any table file loaded with them)');
   assert.equal(E.DEFAULT, 'ember', 'the game plays Ember Peak when its file is loaded');
   assert.equal(E.newWorld(2, 0, 1).tableId, 'ember');
   assert.equal(E.newWorld(2, 0, 1, 'orbit').tableId, 'orbit');
@@ -248,4 +248,180 @@ test('ember: whole bot games: the ball search never fires', () => {
   const t = Traps.games(6, true);
   assert.equal(t.searches, 0, 'ball searches in ' + (t.secs / 60).toFixed(0) + ' minutes of play');
   assert.ok(t.craters > 0 && t.ramps > 0 && t.orbits > 0 && t.crabs > 0 && t.geysers > 0, 'the bot meets the toys: ' + ['craters', 'ramps', 'orbits', 'crabs', 'geysers'].map((k) => k + ' ' + t[k]).join(', '));
+});
+
+// ============================================================ wave 3 (5 Nov 2026): CONTRACT v1, the engine side
+const Pilot = require('./pilot.js');
+const tick = (W, n, inp) => { const seen = []; for (let i = 0; i < n; i++) { E.step(W, typeof inp === 'function' ? inp(W, i) : inp || {}); W.events.forEach((e) => seen.push(typeof e === 'string' ? e : e.sfx || (e.say ? 'say' : '?'))); W.events.length = 0; } return seen; };
+const DUMMY = {   // a plugin that uses the API every way it may: points, the crater's lamp, hitstop while the ball is held
+  id: 'dummy', url: 'dummy.js',
+  init(W) { W.dummy = { n: 0, craters: 0 }; },
+  step(W) {
+    const d = W.dummy; if (!d) return;
+    d.n++;
+    if (d.n % 600 === 0) E.api.award(W, 1000, 'dummy');
+    if (W.events.indexOf('crater') >= 0) { d.craters++; E.api.hitstop(W, 4); E.api.craterLit(W, 'mode', d.craters % 2 === 1); }
+  }
+};
+
+test('contract v1: the engine exports, the API and the new world fields', () => {
+  for (const k of ['plugin', 'unplug', 'pluginUrls', 'plugins', 'addTable']) assert.equal(typeof E[k], 'function', 'E.' + k);
+  for (const k of ['award', 'multiball', 'addBall', 'gates', 'plug', 'save', 'craterLit', 'seal', 'release', 'quake', 'hitstop']) assert.equal(typeof E.api[k], 'function', 'E.api.' + k);
+  const W = E.newWorld(2, 0, 1, 'ember');
+  assert.deepEqual(W.press, { level: 0.5, n: 0 });
+  assert.deepEqual(W.lock, { lit: false, n: 0 });
+  assert.equal(W.mb, null);
+  assert.deepEqual(W.crater, { lit: [], sealed: false, wide: false, took: null, mode: false, dive: false, boss: false });
+  assert.deepEqual(W.plug, { up: false, t: 0 });
+  assert.deepEqual(W.dive, { held: false });
+  assert.equal(W.hit, 0); assert.equal(W.feed, 0);
+  assert.equal(W.next, undefined, 'W.next and W.goals belong to goals.js: the engine never writes them');
+  for (const id of Object.keys(E.TABLES)) assert.ok(E.TABLES[id].walls, 'registry: ' + id + ' is a table');
+  const src = readFileSync(new URL('./engine.js', import.meta.url), 'utf8');
+  const head = src.slice(0, src.indexOf('(function (root'));
+  for (const name of ['E.plugin', 'E.pluginUrls', 'E.api', 'award', 'multiball', 'addBall', 'gates', 'plug', 'save', 'craterLit', 'seal', 'release', 'quake', 'hitstop',
+    'pressRate', 'mult0', 'lanes0', 'x.skill', 'noModes', 'tags', 'W.press', 'W.lock', 'W.mb', 'W.crater', 'W.plug', 'W.dive', 'W.hit', 'T.level', 'T.serve', 'T.aim', 'upTap']) assert.ok(head.includes(name), 'the header documents ' + name);
+});
+
+test('contract v1: a plugin runs at newWorld and after every step, its state in W[id]; E.clone and 3 minutes of pilot play stay deterministic with and without it', () => {
+  function run(withPlugin) {
+    if (withPlugin) E.plugin(DUMMY); else E.unplug('dummy');
+    const W = E.newWorld(2, 0, 4242, 'ember'), inputs = [];
+    W.total = 99;
+    let C = null;
+    for (let f = 0; f < 60 * 180; f++) {
+      if (f === 60 * 60) C = E.clone(W);
+      const inp = Pilot.input(W);
+      if (C) inputs.push(inp);
+      E.step(W, inp); W.events.length = 0;
+    }
+    for (const inp of inputs) { E.step(C, inp); C.events.length = 0; }
+    return { W, C };
+  }
+  try {
+    for (const withPlugin of [false, true]) {
+      const a = run(withPlugin), b = run(withPlugin);
+      assert.equal(a.W.frame, 60 * 180, 'still playing after 3 minutes');
+      assert.equal(a.W.score, b.W.score, (withPlugin ? 'with' : 'without') + ' the plugin: the same seed and presses give the same score');
+      assert.equal(a.W.frame, b.W.frame);
+      assert.equal(a.C.score, a.W.score, 'a clone given the same presses ends on the same score');
+      assert.equal(a.C.frame, a.W.frame);
+      assert.equal(JSON.stringify(a.C), JSON.stringify(a.W), 'and the same world, to the bit');
+      if (withPlugin) {
+        assert.ok(a.W.dummy && a.W.dummy.n === a.W.frame, 'the plugin stepped once a step: ' + (a.W.dummy && a.W.dummy.n));
+        assert.ok(a.W.stats.craters > 0 && a.W.dummy.craters === a.W.stats.craters, 'it saw every crater shot');
+      } else assert.equal(a.W.dummy, undefined);
+    }
+    E.plugin(DUMMY);
+    assert.deepEqual(E.pluginUrls(), ['dummy.js']);
+  } finally { E.unplug('dummy'); }
+  assert.deepEqual(E.pluginUrls(), []);
+});
+
+test('contract v1: a T.level table served by a carry: held, carried in, and a drain ends that world (no bonus count)', () => {
+  const T = { id: 'testlevel', name: 'TEST LEVEL', level: true, W: 200, H: 300, BALL: 7, MID: 100,
+    walls: [[0, 0, 0, 300, 2, 0.3, 'wall'], [200, 0, 200, 300, 2, 0.3, 'wall'], [0, 0, 200, 0, 2, 0.3, 'wall']],
+    flippers: [{ side: -1, x: 60, y: 270, len: 30, r0: 6, r1: 3.5, rest: 0.5, up: -0.4 }, { side: 1, x: 140, y: 270, len: 30, r0: 6, r1: 3.5, rest: 2.64, up: 3.54 }],
+    storeys: [{ id: 'test', name: 'TEST', flippers: [0, 1], x0: 0, x1: 200, y0: 0, y1: 300, approach: 200 }],
+    carries: { drop: { pts: [[100, 20, 40, 0], [100, 60, 0, 30]], out: [0, 200] } }, serve: { carry: 'drop', hold: 30 } };
+  E.addTable(T);
+  const W = E.newWorld(2, 0, 3, 'testlevel'), b = W.balls[0];
+  assert.equal(W.tableId, 'testlevel');
+  assert.equal(b.m, 'held', 'served: held at the start of the carry');
+  tick(W, 29); assert.equal(W.balls[0].m, 'held');
+  tick(W, 3); assert.equal(W.balls[0].m, 'ramp', 'then on the carry');
+  tick(W, 32); assert.equal(W.balls[0].m, 'free', 'then let go');
+  const seen = tick(W, 300);
+  assert.ok(seen.includes('drain'), 'it drains between the flippers');
+  assert.ok(W.over && W.state === 'over', 'the drain ends the level world');
+  assert.ok(!seen.includes('ballend') && !seen.includes('over'), 'no bonus count, no game-over');
+});
+
+test('contract v1: the dive hold: a lit DIVE keeps the ball at the crater until E.api.release (or diveCap steps)', () => {
+  S.use('ember');
+  const V0 = S.T.volcano;
+  for (const release of [true, false]) {
+    const W = S.world(2, 3, { noGeyser: true, noCrabs: true });
+    E.api.craterLit(W, 'dive', true);
+    assert.deepEqual(W.crater.lit, ['dive']); assert.ok(W.crater.wide);
+    S.place(W, V0.x, V0.y + 60, 0, -900);
+    const s1 = tick(W, 30);
+    assert.ok(s1.includes('crater') && s1.includes('dive') && W.dive.held && W.crater.took === 'dive' && !W.crater.dive, 'taken into the dive hold');
+    const s2 = tick(W, 200);
+    assert.ok(!s2.includes('erupt') && W.balls[0].m === 'held', 'still held after 200 steps');
+    if (release) {
+      assert.ok(E.api.release(W));
+      const s3 = tick(W, 2);
+      assert.ok(s3.includes('erupt') && W.balls[0].m === 'ramp' && !W.dive.held, 'released into the sky carry');
+    } else {
+      const s3 = tick(W, V0.diveCap);
+      assert.ok(s3.includes('erupt') && !W.dive.held, 'nobody released it: let go after diveCap steps');
+    }
+  }
+});
+
+test('contract v1: hitstop only while every ball is captured, and the crater release step moves with it', () => {
+  S.use('ember');
+  const V0 = S.T.volcano, W = S.world(2, 3, { noGeyser: true, noCrabs: true });
+  S.place(W, 125, 300, 0, 0);
+  assert.equal(E.api.hitstop(W, 10), false, 'a free ball: no hitstop');
+  assert.equal(W.hit, 0);
+  W.balls.length = 0; S.place(W, V0.x, V0.y + 60, 0, -900);
+  tick(W, 12);
+  const V = W.toys.volcano, rel = V.release;
+  assert.ok(W.balls[0].m === 'held');
+  assert.equal(E.api.hitstop(W, 10), true);
+  const x = W.balls[0].x, hold = W.balls[0].hold;
+  tick(W, 10);
+  assert.equal(W.hit, 0); assert.equal(W.balls[0].hold, hold, 'the hold did not count down while frozen'); assert.equal(W.balls[0].x, x);
+  assert.equal(V.release, rel + 10, 'the release step moved on by the hitstop');
+  let out = -1; for (let i = 0; i < 100 && out < 0; i++) { if (tick(W, 1).includes('erupt')) out = W.frame; }
+  assert.equal(out, V.release, 'released on the step W.toys.volcano.release says');
+});
+
+test('contract v1: W.mod: mult0 and lanes0 carry onto each new ball (BONUS FORGE, LUCKY LANES); noKick keeps the kickback lamp honest; x.skill', () => {
+  S.use('ember');
+  const W = E.newWorld(2, 0, 9, 'ember');
+  W.mod = { x: { skill: 0.3 }, mult0: 3, lanes0: [true, false, true], noKick: true };
+  W.total = 2; W.kickback = true;
+  tick(W, 1);
+  assert.equal(W.kickback, false, 'no kickback lamp under noKick');
+  W.balls.length = 0;
+  for (let i = 0; i < 2000 && W.ball === 1; i++) tick(W, 1);
+  assert.equal(W.ball, 2); assert.equal(W.mult, 3, 'ball 2 starts at bonus x3'); assert.deepEqual(W.lanes, [true, false, true]);
+  W.balls.length = 0; W.skillOpen = true; W.skill = 1; W.lanes = [false, false, false];
+  const ln = S.T.sensors.circles.find((c) => c[0] === 'lane1'), s0 = W.score;
+  E.addBall(W, ln[1], ln[2] - 12).vy = 120;
+  tick(W, 10);
+  assert.equal(W.stats.skill, 1);
+  assert.equal(W.score - s0, Math.round(S.T.points.skill * 0.3) + S.T.points.lane, 'the skill shot at x0.3');
+});
+
+test('contract v1: input.upTap nudges once per tap (3 short taps = 3 nudges); a held nudge button nudges once', () => {
+  let W = E.newWorld(2, 0, 9, 'ember');
+  assert.equal(tick(W, 3, { upTap: 1 }).filter((e) => e === 'nudge').length, 3);
+  W = E.newWorld(2, 0, 9, 'ember');
+  assert.equal(tick(W, 3, { up: true }).filter((e) => e === 'nudge').length, 1);
+  W = E.newWorld(2, 0, 9, 'ember');
+  assert.equal(tick(W, 1, { upTap: 3 }).filter((e) => e === 'nudge').length, 3, 'three taps inside one step');
+});
+
+test('contract v1: the rest of the API: award, addBall, gates, plug, save, seal, quake', () => {
+  S.use('ember');
+  const W = S.world(2, 3, { noGeyser: true, noCrabs: true });
+  S.place(W, 125, 300, 0, 0);
+  W.mod = { x: { boss: 2 } };
+  const s0 = W.score; E.api.award(W, 1000, 'boss'); assert.equal(W.score - s0, 2000, 'award scores through add() and W.mod.x');
+  E.api.gates(W, -1, 100); tick(W, 1);
+  assert.ok(W.toys.lava.gates[0].t > 0 && !W.toys.lava.gates[0].solid && W.toys.lava.gates[1].t === 0, 'gates(-1) opens the left gate only');
+  E.api.gates(W, 0, 0); tick(W, 40); assert.ok(!W.toys.lava.open, 'steps 0 lowers them');
+  E.api.plug(W, 60); assert.ok(W.plug.up && W.plug.t === 60);
+  E.api.save(W, 5); assert.ok(W.saveT >= 300);
+  E.api.seal(W, true); assert.ok(W.crater.sealed);
+  E.api.craterLit(W, 'boss', true); tick(W, 1); assert.deepEqual(W.crater.lit, ['boss']); assert.equal(W.crater.wide, false, 'sealed: lit but not wider (it does not catch)');
+  E.api.seal(W, false); E.api.craterLit(W, 'boss', false);
+  E.api.quake(W); assert.ok(W.toys.quake.pending);
+  E.api.addBall(W); assert.equal(W.feed, 1);
+  let fed = false; for (let i = 0; i < 10 && !fed; i++) { tick(W, 1); fed = W.balls.length === 2; }
+  assert.ok(fed, 'addBall feeds a ball into the shooter lane');
 });

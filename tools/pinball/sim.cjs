@@ -35,7 +35,11 @@ function world(speed, seed, opt) {
   W.balls.length = 0; W.saveArmed = false; W.saveT = 0; W.skillOpen = false;
   if (opt.kickback != null) W.kickback = !!opt.kickback;
   if (opt.dropsDown) { for (var i = 0; i < W.drops.length; i++) W.drops[i] = false; W.dropsDown = W.drops.length; W.saucerLit = true; W.dropsT = 99999; }
-  if (opt.lava && W.toys.lava) { W.toys.lava.open = true; W.toys.lava.t = 999999; W.toys.lava.gates.forEach(function (g) { g.solid = false; g.h = 1; }); }
+  if (opt.lava && W.toys.lava) { W.toys.lava.open = true; W.toys.lava.t = 999999; W.toys.lava.gates.forEach(function (g) { g.solid = false; g.h = 1; g.t = 999999; }); }
+  // wave 3: the OBSIDIAN PLUG up (for good), something lit at the crater (its wider mouth), or a multiball on
+  if (opt.plug && W.plug) { W.plug.up = true; W.plug.t = 1e9; }
+  if (opt.lit && W.crater) { W.crater.mode = true; W.crater.lit = ['mode']; W.crater.wide = true; }
+  if (opt.mb && W.press) E.api.multiball(W, opt.mb, { save: 0 });
   if (opt.noGeyser && W.toys.geyser) { W.toys.geyser.st = 'cool'; W.toys.geyser.t = 1e9; }
   if (opt.crabsStill && W.toys.crabs) W.toys.crabs.forEach(function (c) { c.stun = 1e9; });
   if (opt.noCrabs && W.toys.crabs) W.toys.crabs.forEach(function (c) { c.stun = 1e9; c.x = -500; c.y = -500; });

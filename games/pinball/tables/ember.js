@@ -112,14 +112,20 @@
       [141, 238, 0], [141, 212, 10], [143, 186, 22], [150, 164, 32], [164, 148, 40], [184, 140, 46], [204, 140, 48],
       [222, 146, 48], [232, 162, 46], [234, 190, 40], [234, 230, 30], [231, 262, 18], [223, 300, 6], [215, 324, 0]
     ],
-    width: 22
+    width: 22,
+    exitMax: 450   // the fastest it comes off the far end (Classic, scaled with the slope): a held-up flipper catches it
   };
 
   // ------------------------------------------------------------ the volcano and its crater
   // mouth: the crater takes a ball whose contact is within `half` degrees of the mouth's direction (down the table,
   // towards the flippers) and that comes in at least catchV (units a second, Classic); a softer touch bounces.
   // hold: steps (60 a second) in the crater before the carry. carry: which path the ball is fired along.
-  var volcano = { x: 84, y: 118, r: 22, e: 0.25, mouth: [0.2, 1], half: 15, catchV: 300, hold: 165, carry: 'sky' };
+  // Wave 3 (5 Nov 2026): the hold depends on what the shot takes - hold (ERUPT: the full show), holdLit (a lit award:
+  // LOCK, MODE, DIVE, the boss), holdSuper (the SUPER JACKPOT), holdPlain (nothing lit) - and every carry but the
+  // eruption's rides `rail` times faster. While anything is lit the mouth is wider (halfLit degrees) and takes a softer
+  // shot (catchLit). diveCap: steps a DIVE ball is held if nothing calls E.api.release.
+  var volcano = { x: 84, y: 118, r: 22, e: 0.25, mouth: [0.2, 1], half: 15, catchV: 300, hold: 165, carry: 'sky',
+    halfLit: 25, catchLit: 200, holdLit: 72, holdSuper: 30, holdPlain: 36, rail: 1.75, diveCap: 300 };
 
   // ------------------------------------------------------------ carries: timed paths the ball rides out of play
   // [x, y, height, step from the start]; out: the ball's speed when it is let go at the end (Classic); railAt: the
@@ -158,6 +164,10 @@
   // the approach line (it waits; and it stops at once if a ball gets there)
   var quake = { amp: 0.16, time: 48 };
 
+  // the OBSIDIAN PLUG: a post between the flippers' tips, raised by the obsidian drop bank for `time` steps or one
+  // save (any touch kicks the ball back up the middle at `kick`, Classic speed); the quake drops it
+  var plug = { x: 125, y: 451, r: 4.5, kick: 1050, time: 1200 };
+
   // ------------------------------------------------------------ sensors: circles [id, x, y, r]; lines [id, ax, ay, bx, by]
   var sensors = {
     circles: [
@@ -176,12 +186,15 @@
   var points = {
     bumper: 5000, sling: 1000, spin: 10000, drop: 25000, drops: 500000, ramp: 400000, orbit: 250000, loop: 750000,
     lane: 25000, inlane: 10000, outlane: 50000, skill: 1000000, saucer: 0, saucerLit: 0,
-    crater: 500000, pressure: 3000000, eruption: 5000000, crab: 150000, geyser: 250000, lava: 2000000, lanesDone: 500000, rail: 100000
+    crater: 500000, pressure: 3000000, eruption: 5000000, crab: 150000, geyser: 250000, lava: 2000000, lanesDone: 500000, rail: 100000,
+    jackpot: 5000000, jackpotUp: 1000000
   };
-  // pressure each shot adds (full = 1; up to 1.5, when the quake comes)
+  // pressure each shot adds. THE BIG ONE (wave 3, 5 Nov 2026): an eruption needs ladder[n] (the n-th eruption; the last
+  // rung for every one after); LOCK lights at lockAt of it, the volcano RUMBLES at rumble, the warning comes at +warn
+  // and the quake (the bust) at +bust, leaving after x the rung. full: the old fixed threshold (the ladder's fallback).
   var pressure = { orbit: 0.08, loop: 0.12, ramp: 0.12, drop: 0.03, drops: 0.15, crab: 0.06, geyser: 0.05, skill: 0.1,
-    lava: 0.05, bumper: 0.005, lane: 0.02, full: 1, warn: 1.25, max: 1.5, after: 0.6 };
-  var names = { ramp: 'HEAT RAMP', drops: 'OBSIDIAN', dropsSub: 'KICKBACK LIT', orbit: 'ORBIT', loop: 'LOOP' };
+    lava: 0.05, bumper: 0.02, lane: 0.02, full: 1, ladder: [0.5, 0.75, 1, 1.25], lockAt: 0.5, rumble: 0.75, warn: 0.25, bust: 0.5, after: 0.6 };
+  var names = { ramp: 'HEAT RAMP', drops: 'OBSIDIAN', dropsSub: 'KICKBACK LIT', dropsPlug: 'PLUG UP', orbit: 'ORBIT', loop: 'LOOP' };
   var extra = { 1: [10000000, 30000000, 80000000], 2: [20000000, 60000000, 150000000], 3: [25000000, 80000000, 200000000] };
 
   return {
@@ -189,7 +202,7 @@
     W: W, H: H, BALL: BALL, MID: MID,
     walls: walls, posts: posts, arch: arch, bumpers: bumpers, slings: slings, flippers: flippers, storeys: storeys,
     shooter: shooter, gates: gates, drops: drops, ramp: ramp, sensors: sensors,
-    volcano: volcano, carries: carries, geyser: geyser, crabs: crabs, lava: lava, quake: quake,
+    volcano: volcano, carries: carries, geyser: geyser, crabs: crabs, lava: lava, quake: quake, plug: plug,
     points: points, pressure: pressure, names: names, extra: extra, bonusScale: 50, dropsBack: 120,
     // the closed spaces no ball can reach (for the sim tools' "free spot" check): none on this table
     voids: []

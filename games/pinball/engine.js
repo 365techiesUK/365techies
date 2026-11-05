@@ -37,23 +37,102 @@
  * same table in slower or faster motion (the same shot makes the same target on all three).
  *
  * EMBER RUN (run.js, 30 Oct 2026, owner: "change how it plays") sets W.mod on its worlds: score multipliers by shot
- * (W.mod.x: bumper, ramp, crater, erupt, crab, drop, lava, geyser), pressure gain (press), crab speed (crab), lava gate
- * time (lava), geyser rest (gey), extra ball-save seconds (save), the kickback off (noKick) and pressure leak (decay).
- * A Classic world has no W.mod, and every hook reads it only when it is there, so Classic plays exactly as before.
+ * (W.mod.x: bumper, ramp, crater, erupt, crab, drop, lava, geyser, skill, jackpot - any key add() is given), pressure
+ * gain (press), crab speed (crab), lava gate time (lava), geyser rest (gey), extra ball-save seconds (save), the
+ * kickback off (noKick) and pressure leak (decay). A Classic world has no W.mod; every field is optional.
  *
  * The game reports what happened in world.events (sound names and {say} for screen readers), shows messages on the
- * dot-matrix display (world.dmd) and keeps light timers in world.lit for the pictures. */
+ * dot-matrix display (world.dmd) and keeps light timers in world.lit for the pictures.
+ *
+ * ================================================================ CONTRACT v1 (wave 3, 5 Nov 2026; extend, never rename)
+ * THE RULES. Pressure: the eruption ladder - the n-th eruption needs T.pressure.ladder[n] (Ember Peak 0.5, 0.75, 1, then
+ * 1.25); LOCK lights at half of it, the volcano RUMBLES at 75%, ERUPT lights at it, the bust (overload: a quake, the
+ * kickback off, the plug down) at +0.5. A crater shot below the rung keeps half the pressure; with LOCK lit it banks a
+ * virtual lock. ERUPT: the 2.75 s show, then THE BIG ONE - a multiball of 2 balls (3 with the lock), ball save 15 s
+ * (Gentle 20, Fast 10), the lava gates open throughout, JACKPOT lit on both lava lanes and the heat ramp (5M, +1M for
+ * each one collected), all three light the SUPER JACKPOT at the crater (3x, the ball back out in 0.5 s, the jackpots
+ * lit again), and the geyser adds a ball once (4 at most). It ends at one ball: the pressure goes to 0 (the rung has
+ * stepped up). No pressure builds while a multiball is on. The crater: a plain collect holds 0.6 s, a lit award
+ * (LOCK, MODE, DIVE, boss) 1.2 s, ERUPT 2.75 s, then the sky carry (all but ERUPT's ride it 1.75x faster); anything lit
+ * widens the mouth (25 degrees, a softer shot). The heat ramp lets the ball off at T.ramp.exitMax (450 u/s, Classic) at
+ * most. The OBSIDIAN PLUG: the drop bank raises it between the flippers for 20 s or one save (any touch kicks the ball
+ * back up), and lights MODE at the crater (not under W.mod.noModes); the bust drops it; the kickback is lit again by
+ * the drops only on Gentle (which also keeps it every ball). No ramp-to-ramp combo any more (goals.js scores combos).
+ *
+ * PLUGINS. E.plugin({ id, init(W), step(W), url }) registers one (a second with the same id replaces it):
+ *   init(W) runs at the end of every E.newWorld, step(W) at the end of every E.step (after the physics, the events,
+ *   the end of a ball and the crater lamps; not once W.over). Its state lives in W[id] as plain data, so E.clone copies
+ *   it. Plugins run on every world, the levels' too: a plugin checks W.tableId / T.level itself. A world made before a
+ *   plugin was registered has no W[id]: step must cope. E.pluginUrls() -> the registered plugins' urls (camera.js loads
+ *   them into its forecast worker). E.unplug(id) and E.plugins() exist for the tests.
+ *
+ * E.api (from a plugin inside a step, or from run.js / descent.js between steps); every call is safe on any table:
+ *   award(W, pts, key)          scores through add(), so W.mod.x[key] applies (no bonus)
+ *   multiball(W, balls, { save, victory })   balls in play in all (at least one more than now), fed one at a time from
+ *                               the shooter lane, auto-launched; save: seconds of ball save (default the speed's); 'mbstart'
+ *   addBall(W)                  one more ball fed from the shooter lane (auto-launch)
+ *   gates(W, side, steps)       raises the lava gates: side -1 left, 1 right, 0 both, for `steps` (0 lowers them, once
+ *                               no ball is in the way); a multiball keeps an open gate open
+ *   plug(W, steps)              raises the OBSIDIAN PLUG (steps default 20 s; 0 drops it); 'plugup' / 'plugdown'
+ *   save(W, secs)               ball save for at least secs
+ *   craterLit(W, what, on)      what: 'mode', 'dive' or 'boss'; turning 'mode' or 'dive' on pushes 'modelit' / 'divelit'
+ *   seal(W, on)                 a sealed crater catches nothing; pushes 'sealed' / 'unsealed'
+ *   release(W)                  sends a ball in the DIVE hold up the sky carry (true if there was one)
+ *   quake(W)                    queues a quake (the engine's guard still applies: never with a ball in an approach zone)
+ *   hitstop(W, steps)           freezes the physics (and the crater's clock) for steps; only while no ball is free
+ *                               (returns false and does nothing otherwise); a free ball cancels it
+ * Also: E.addTable(T) registers a table at run time; E.addBall(W, x, y) still places a ball anywhere.
+ *
+ * W.mod additions (all optional): pressRate (pressure added per second, automatically), mult0 and lanes0 (the bonus
+ * multiplier and the lit top lanes every NEW ball starts with - the run sets the first ball's itself), x.skill (the
+ * skill-shot multiplier: the skill shot scores with key 'skill'), noModes (the drop bank lights no MODE), tags (an array
+ * of visible mutation tags: the engine never reads it, the lamps do).
+ *
+ * World fields (plain data; the pictures and the HUD read them):
+ *   W.press  { level, n }       the eruption the pressure is building to, and eruptions so far (pressure itself stays in
+ *                               W.toys.volcano.pressure; V.ready = ERUPT lit, V.rise is 1 at the rung)
+ *   W.lock   { lit, n }         LOCK lit at the crater; locks banked (0 or 1)
+ *   W.mb     { on, balls, jp: { lavaL, lavaR, ramp }, jpValue, jpCount, superLit, addUsed, victory } or null
+ *   W.crater { lit: [...], sealed, wide, took, mode, dive, boss }   lit in priority order: 'super', 'boss', 'erupt',
+ *                               'lock', 'mode', 'dive'; took: what the last crater shot took (null = a plain collect) -
+ *                               a plugin sees the 'crater' event and reads it; the crater unlights what it takes, all but
+ *                               'boss' (its owner unlights that)
+ *   W.plug   { up, t }          the plug, and steps left
+ *   W.dive   { held }           a ball is in the DIVE hold (the engine pushes 'dive' when it takes it)
+ *   W.hit                       hitstop steps left
+ *   W.feed                      balls waiting to be fed into the shooter lane (multiball, saves, addBall)
+ *   W.next, W.goals             written by goals.js (and descent.js below), never by the engine: everything here is
+ *                               null-safe without them
+ * New W.stats: locks, multiballs, jackpots, supers, plugSaves. New W.lit timers: plug, jackpot.
+ * New events: 'rumble', 'locklit', 'lock', 'eruptlit' (with the old { sfx: 'pressure', level: 'full' }), 'mbstart',
+ * 'mbend', 'jackpot', 'superjackpot', 'addaball', 'plugup', 'plugdown', 'plugsave', 'modelit', 'divelit', 'dive',
+ * 'sealed', 'unsealed'. Existing events keep their names ('erupt' is still the crater letting a ball go skyward).
+ *
+ * Input: input.upTap = nudge taps since the last step (a tap shorter than a step still nudges; 3 taps = 3 nudges, at
+ * most 3 a step); without it a press of input.up nudges once.
+ *
+ * Tables: T.level (a level below the surface: no bonus count, and the last ball draining ends that world - W.over,
+ * W.state 'over', no 'over' event); T.serve = { carry, hold } (each ball is held at that carry's start for `hold` steps,
+ * then carried in: no plunger, no skill shot); T.aim (pilot.js's aim data for a table it has no AIM for, the same shape:
+ * { <speed>: { lane: [...], F: [{ shot: delay }, ...] } }); T.plug, T.ramp.exitMax, the volcano's holdLit / holdPlain /
+ * holdSuper / rail / halfLit / catchLit / diveCap and T.pressure.ladder / lockAt / rumble / warn / bust / after as above.
+ * A level may leave out the slings, posts, bumpers, gates, sensors, arch and shooter lane. The registry: in a page every
+ * PinTables.<id> loaded before engine.js; in node ember.js and tables/chamber.js when it exists. */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./table.js'), require('./tables/ember.js'));
-  else root.PinEngine = factory(root.PinTable, root.PinTables && root.PinTables.ember);
-})(typeof self !== 'undefined' ? self : this, function (ORBIT, EMBER) {
+  if (typeof module === 'object' && module.exports) {
+    var set = { ember: require('./tables/ember.js') };
+    try { set.chamber = require('./tables/chamber.js'); } catch (e) { if (!e || e.code !== 'MODULE_NOT_FOUND') throw e; }
+    module.exports = factory(require('./table.js'), set);
+  } else root.PinEngine = factory(root.PinTable, root.PinTables || {});
+})(typeof self !== 'undefined' ? self : this, function (ORBIT, SET) {
   'use strict';
   var SUB = 10, DT = 1 / 600;
-  // the speeds: the table's slope (gravity), balls a game, seconds of ball save, kickback lit again on every ball
+  // the speeds: the table's slope (gravity), balls a game, seconds of ball save, kickback lit again on every ball,
+  // seconds of ball save when a multiball starts
   var SPEEDS = {
-    1: { name: 'Gentle', g: 470, balls: 5, save: 15, kick: true, extra: [150000, 400000, 1000000] },
-    2: { name: 'Classic', g: 590, balls: 3, save: 10, kick: false, extra: [250000, 750000, 2000000] },
-    3: { name: 'Fast', g: 720, balls: 3, save: 6, kick: false, extra: [300000, 1000000, 3000000] }
+    1: { name: 'Gentle', g: 470, balls: 5, save: 15, kick: true, mbSave: 20, extra: [150000, 400000, 1000000] },
+    2: { name: 'Classic', g: 590, balls: 3, save: 10, kick: false, mbSave: 15, extra: [250000, 750000, 2000000] },
+    3: { name: 'Fast', g: 720, balls: 3, save: 6, kick: false, mbSave: 10, extra: [300000, 1000000, 3000000] }
   };
   // Everything below is set for Classic (g 590: a 6.5 degree slope, as on a real table). Gentle and Fast are the same
   // table in slower and faster motion: every speed, push and swing is scaled with the slope (tuning() below). 270 units
@@ -100,9 +179,12 @@
   function cos(x) { return sin(x + HPI); }
 
   // ------------------------------------------------------------ the tables, each built once into things the ball can hit
+  // the registry: the old table, then every table file loaded before this one (PinTables.<id> in a page; in node
+  // ember.js and, when it is there, chamber.js); E.addTable(T) registers one more
   var TABLES = { orbit: ORBIT }, BUILT = {};
-  if (EMBER) TABLES.ember = EMBER;
+  Object.keys(SET || {}).forEach(function (k) { var Tk = SET[k]; if (Tk && typeof Tk === 'object' && Tk.walls) TABLES[Tk.id || k] = Tk; });
   var DEFAULT = TABLES.ember ? 'ember' : 'orbit';
+  function addTable(Tn) { TABLES[Tn.id] = Tn; delete BUILT[Tn.id]; return Tn.id; }
   function seg(ax, ay, bx, by, r, e, kind) { var dx = bx - ax, dy = by - ay; return { ax: ax, ay: ay, bx: bx, by: by, dx: dx, dy: dy, l2: dx * dx + dy * dy || 1, r: r, e: e, kind: kind }; }
   function oneWay(g, e) {   // a gate [ax, ay, bx, by, r, px, py, e?] with the normal that points to the side it blocks
     var s = seg(g[0], g[1], g[2], g[3], g[4], g[7] == null ? e : g[7], 'gate'), l = Math.sqrt(s.l2), nx = -s.dy / l, ny = s.dx / l;
@@ -117,7 +199,11 @@
   function build(T) {
     var B = { T: T, id: T.id };
     var WALLS = T.walls.map(function (w) { return seg(w[0], w[1], w[2], w[3], w[4], w[5], w[6]); });
-    T.slings.forEach(function (s, i) {   // two rubber sides, and the kicking face
+    // (a level below the surface may leave out the slings, posts, bumpers, gates, sensors, arch and shooter lane)
+    B.SLINGS = T.slings || [];
+    B.SH = T.shooter || { x0: T.W + 100, x1: T.W + 120, cx: T.W + 110, tip: T.H, travel: 0, curve: [[0, 0], [1, 0]], auto: 0 };
+    B.SENS = T.sensors || { circles: [], lines: [] };
+    B.SLINGS.forEach(function (s, i) {   // two rubber sides, and the kicking face
       WALLS.push(seg(s.a[0], s.a[1], s.b[0], s.b[1], 2.5, 0.55, 'rubber'));
       WALLS.push(seg(s.b[0], s.b[1], s.c[0], s.c[1], 2.5, 0.55, 'rubber'));
       var k = seg(s.a[0], s.a[1], s.c[0], s.c[1], 2.5, 0.55, 'sling'); k.i = i;
@@ -126,9 +212,9 @@
       k.nx = nx; k.ny = ny; WALLS.push(k);
     });
     B.WALLS = WALLS;
-    B.POSTS = T.posts.map(function (p) { return { x: p[0], y: p[1], r: p[2], e: p[3] }; });
-    B.BUMPERS = T.bumpers.map(function (b, i) { return { x: b[0], y: b[1], r: b[2], i: i }; });
-    B.GATES = T.gates.map(function (g) { return oneWay(g, 0.3); });
+    B.POSTS = (T.posts || []).map(function (p) { return { x: p[0], y: p[1], r: p[2], e: p[3] }; });
+    B.BUMPERS = (T.bumpers || []).map(function (b, i) { return { x: b[0], y: b[1], r: b[2], i: i }; });
+    B.GATES = (T.gates || []).map(function (g) { return oneWay(g, 0.3); });
     B.DROPS = (function () {   // the targets along the line, with a little gap between each
       var d = T.drops, out = [];
       if (!d) return out;
@@ -151,8 +237,12 @@
     B.LAVA = T.lava ? T.lava.gates.map(function (g) { return oneWay(g, 0.3); }) : [];
     if (T.volcano) {
       var V = T.volcano, ml = Math.sqrt(V.mouth[0] * V.mouth[0] + V.mouth[1] * V.mouth[1]);
-      B.VOLC = { x: V.x, y: V.y, r: V.r, e: V.e, mx: V.mouth[0] / ml, my: V.mouth[1] / ml, cosHalf: cos(V.half * PI / 180), catchV: V.catchV, hold: V.hold, carry: V.carry };
+      B.VOLC = { x: V.x, y: V.y, r: V.r, e: V.e, mx: V.mouth[0] / ml, my: V.mouth[1] / ml, cosHalf: cos(V.half * PI / 180), catchV: V.catchV, hold: V.hold, carry: V.carry,
+        cosLit: cos((V.halfLit || V.half) * PI / 180), catchLit: V.catchLit || V.catchV, holdLit: V.holdLit || V.hold, holdPlain: V.holdPlain || V.hold,
+        holdSuper: V.holdSuper || V.holdLit || V.hold, rail: V.rail || 1, diveCap: V.diveCap || 300 };
     } else B.VOLC = null;
+    B.PLUG = T.plug || null;
+    B.RAMPMAX = T.ramp && T.ramp.exitMax ? T.ramp.exitMax : 0;
     B.GEY = T.geyser || null;
     B.CRABS = (T.crabs || []).map(function (c) { var dx = c.path[1][0] - c.path[0][0], dy = c.path[1][1] - c.path[0][1]; return { d: c, len: Math.sqrt(dx * dx + dy * dy) || 1 }; });
     B.QUAKE = T.quake || null;
@@ -198,7 +288,7 @@
   var B, T, WALLS, POSTS, BUMPERS, GATES, DROPS, ARCH, SH, SAU, RAMP, BR, P, VOLC, GEY, LAVA;
   function use(W) {
     B = table(W.tableId); T = B.T;
-    WALLS = B.WALLS; POSTS = B.POSTS; BUMPERS = B.BUMPERS; GATES = B.GATES; DROPS = B.DROPS; ARCH = T.arch; SH = T.shooter;
+    WALLS = B.WALLS; POSTS = B.POSTS; BUMPERS = B.BUMPERS; GATES = B.GATES; DROPS = B.DROPS; ARCH = T.arch || null; SH = B.SH;
     SAU = T.saucer || null; RAMP = B.RAMP; BR = T.BALL; P = B.PTS; VOLC = B.VOLC; GEY = B.GEY; LAVA = B.LAVA;
     K = tuning(W.g);
   }
@@ -215,7 +305,7 @@
       var u = c.u0 || 0, a = c.path[0], b = c.path[1];
       return { x: a[0] + (b[0] - a[0]) * u, y: a[1] + (b[1] - a[1]) * u, u: u, dir: 1, vx: 0, vy: 0, stun: 0, wait: 0, hits: 0 };
     });
-    if (Tt.lava) t.lava = { open: false, t: 0, gates: Tt.lava.gates.map(function () { return { h: 0, solid: true }; }) };
+    if (Tt.lava) t.lava = { open: false, t: 0, gates: Tt.lava.gates.map(function () { return { h: 0, solid: true, t: 0 }; }) };
     if (Tt.quake) t.quake = { pending: false, t: 0, gx: 0, dir: 1, n: 0 };
     return t;
   }
@@ -236,34 +326,61 @@
       saveT: 0, saveArmed: true, autoT: 0, tilt: 0, tilted: false,
       spin: { a: 0, v: 0, n: 0 }, comboT: 0, combo: 0, orbitT: 0, orbitFrom: '',
       stats: { ramps: 0, loops: 0, orbits: 0, drops: 0, saucers: 0, spins: 0, bumpers: 0, skill: 0, kickbacks: 0, saves: 0, tilts: 0,
-        craters: 0, eruptions: 0, geysers: 0, crabs: 0, lava: 0, quakes: 0 },
+        craters: 0, eruptions: 0, geysers: 0, crabs: 0, lava: 0, quakes: 0, locks: 0, multiballs: 0, jackpots: 0, supers: 0, plugSaves: 0 },
       bonusShow: 0, bonusT: 0, bonusAdd: 0,
-      lit: { bump: zeros(Bt.BUMPERS.length), sling: zeros(Tt.slings.length), drop: zeros(nd), lane: [0, 0, 0], kick: 0, saucer: 0, ramp: 0, orbitL: 0, orbitR: 0, save: 0,
-        crater: 0, geyser: 0, quake: 0, crab: zeros(Bt.CRABS.length), lava: zeros(Bt.LAVA.length) },
+      lit: { bump: zeros(Bt.BUMPERS.length), sling: zeros(Bt.SLINGS.length), drop: zeros(nd), lane: [0, 0, 0], kick: 0, saucer: 0, ramp: 0, orbitL: 0, orbitR: 0, save: 0,
+        crater: 0, geyser: 0, quake: 0, crab: zeros(Bt.CRABS.length), lava: zeros(Bt.LAVA.length), plug: 0, jackpot: 0 },
       toys: newToys(Bt), storeys: Tt.storeys,
+      // CONTRACT v1 (see the header): the eruption ladder, the lock, multiball, the crater's lamps, the plug, the dive
+      // hold, hitstop and the balls waiting to be fed into the shooter lane
+      press: { level: ladder(Bt, 0), n: 0 }, lock: { lit: false, n: 0 }, mb: null,
+      crater: { lit: [], sealed: false, wide: false, took: null, mode: false, dive: false, boss: false },
+      plug: { up: false, t: 0 }, dive: { held: false }, hit: 0, feed: 0,
       dmd: null, events: [], prevL: false, prevR: false, prevUp: false
     };
     use(W);
     serve(W);
+    for (var p = 0; p < PLUGINS.length; p++) { if (PLUGINS[p].init) { PLUGINS[p].init(W); use(W); } }
     return W;
   }
+  function ladder(Bt, n) {   // the pressure an eruption needs: the table's ladder, its last rung for every one after
+    var L = Bt.PRESS && Bt.PRESS.ladder;
+    if (!L || !L.length) return Bt.PRESS ? Bt.PRESS.full : 1;
+    return L[Math.min(n, L.length - 1)];
+  }
   function ballAt(W, x, y) {
-    var b = { id: W.nextId++, x: x, y: y, vx: 0, vy: 0, px: x, py: y, m: 'free', s: 0, vs: 0, z: 0, hold: 0, sauCd: 0, still: 0, inside: {}, bump: zeros(BUMPERS.length), slingCd: zeros(T.slings.length), launched: false };
+    var b = { id: W.nextId++, x: x, y: y, vx: 0, vy: 0, px: x, py: y, m: 'free', s: 0, vs: 0, z: 0, hold: 0, sauCd: 0, still: 0, inside: {}, bump: zeros(BUMPERS.length), slingCd: zeros(B.SLINGS.length), launched: false };
     W.balls.push(b);
     return b;
   }
   function addBall(W, x, y) { use(W); return ballAt(W, x, y); }
-  function serve(W) {   // a new ball sits on the plunger
+  function serve(W) {   // a new ball sits on the plunger (or, on a table with T.serve, rides in on its carry)
     W.balls.length = 0;
-    ballAt(W, SH.cx, SH.tip - BR);
     W.state = 'play'; W.plunger.pull = 0; W.saveArmed = true; W.saveT = 0;
+    if (T.serve) { serveCarry(W); W.saveArmed = false; W.skill = -1; W.skillOpen = false; return; }
+    ballAt(W, SH.cx, SH.tip - BR);
     W.skill = Math.floor(rng(W) * 3); W.skillOpen = true;
+  }
+  function serveCarry(W) {   // T.serve = { carry, hold }: held at the carry's start for `hold` steps, then carried in
+    var C = B.CARRY[T.serve.carry], p = C.P[0], b = ballAt(W, p[0], p[1]);
+    b.m = 'held'; b.at = 'serve'; b.hold = Math.max(1, T.serve.hold | 0) * SUB; b.launched = true;
+    return b;
+  }
+  function feedBall(W) {   // the next ball waiting for multiball or a save: into the shooter lane, auto-launched
+    W.feed--;
+    if (T.serve) { serveCarry(W); return; }
+    ballAt(W, SH.cx, SH.tip - BR).launched = true; W.autoT = 30;
+  }
+  function feedStep(W) {   // one ball at a time, once the lane is clear
+    if (W.feed <= 0 || W.state !== 'play' || W.autoT > 0) return;
+    for (var i = 0; i < W.balls.length; i++) { var b = W.balls[i]; if (b.m === 'free' && b.x > SH.x0 && b.y > SH.tip - 80) return; }
+    feedBall(W);
   }
   function msg(W, big, small, steps) { W.dmd = { big: big, small: small || '', t: steps || 120, n: 0 }; }
   function say(W, text) { W.events.push({ say: text }); }
   function add(W, pts, bonus, key) {   // key: the kind of shot, for EMBER RUN's multipliers (W.mod.x; Classic has no W.mod)
     if (W.tilted) return;
-    if (W.mod && key && W.mod.x[key]) pts = Math.round(pts * W.mod.x[key]);
+    if (W.mod && key && W.mod.x && W.mod.x[key]) pts = Math.round(pts * W.mod.x[key]);
     var before = W.score; W.score += pts; W.bonus += (bonus || 0) * B.BS;
     while (W.extraAt.length && before < W.extraAt[0] && W.score >= W.extraAt[0]) {
       W.extraAt.shift(); W.total++; W.events.push('extra'); msg(W, 'EXTRA BALL', 'REPLAY AT ' + fmt(W.score), 150); say(W, 'Extra ball!');
@@ -273,7 +390,7 @@
 
   // ------------------------------------------------------------ the storeys
   function inApproachB(Bt, b) {   // which storey's approach zone a ball is in (-1: none)
-    var S = Bt.storeys, SHt = Bt.T.shooter;
+    var S = Bt.storeys, SHt = Bt.SH;
     if (b.m !== 'free' || b.x > SHt.x0) return -1;
     for (var i = 0; i < S.length; i++) {
       var s = S[i];
@@ -312,7 +429,10 @@
     if (R && !W.prevR) { W.events.push({ sfx: 'flip', side: 1 }); rotateLanes(W, 1); }
     for (var i = 0; i < W.flippers.length; i++) W.flippers[i].on = W.flippers[i].side < 0 ? L : R;
     W.prevL = L; W.prevR = R;
-    if (nudge && !W.prevUp && W.state === 'play') doNudge(W);
+    // the nudge: input.upTap counts taps since the last step (a tap shorter than a step still nudges; 3 taps = 3
+    // nudges, at most 3 a step); without it, pressing input.up nudges once
+    var taps = input.upTap ? Math.min(3, input.upTap === true ? 1 : input.upTap | 0) : (nudge && !W.prevUp ? 1 : 0);
+    for (var tn = 0; tn < taps && W.state === 'play'; tn++) doNudge(W);
     W.prevUp = nudge;
     W.tilt = Math.max(0, W.tilt - 0.3 / 60);
 
@@ -324,14 +444,25 @@
       if (W.autoT > 0 && --W.autoT === 0) fire(W, -1);
     } else { Pl.held = false; Pl.pull = 0; }
 
-    toysFrame(W);
-    for (var k = 0; k < SUB; k++) sub(W);
+    // hitstop (E.api.hitstop): the physics freezes for W.hit steps, but only while no ball is free
+    var frozen = false;
+    if (W.hit > 0) {
+      frozen = W.balls.length > 0;
+      for (i = 0; i < W.balls.length && frozen; i++) if (W.balls[i].m === 'free') frozen = false;
+      if (frozen) { W.hit--; var Vf = W.toys.volcano; if (Vf && Vf.busy) { Vf.release++; Vf.land++; } } else W.hit = 0;
+    }
+    if (!frozen) {
+      feedStep(W);
+      toysFrame(W);
+      for (var k = 0; k < SUB; k++) sub(W);
+      mbCheck(W);
+    }
 
     // timers
     var lt = W.lit;
     for (i = 0; i < lt.bump.length; i++) { if (lt.bump[i] > 0) lt.bump[i]--; }
     for (i = 0; i < lt.sling.length; i++) if (lt.sling[i] > 0) lt.sling[i]--;
-    ['kick', 'saucer', 'ramp', 'orbitL', 'orbitR', 'crater', 'geyser', 'quake'].forEach(function (n) { if (lt[n] > 0) lt[n]--; });
+    ['kick', 'saucer', 'ramp', 'orbitL', 'orbitR', 'crater', 'geyser', 'quake', 'plug', 'jackpot'].forEach(function (n) { if (lt[n] > 0) lt[n]--; });
     for (i = 0; i < lt.drop.length; i++) if (lt.drop[i] > 0) lt.drop[i]--;
     for (i = 0; i < 3; i++) if (lt.lane[i] > 0) lt.lane[i]--;
     for (i = 0; i < lt.crab.length; i++) if (lt.crab[i] > 0) lt.crab[i]--;
@@ -360,8 +491,12 @@
     });
 
     // the end of a ball
-    if (W.state === 'play' && W.balls.length === 0) endOfBall(W);
+    if (W.state === 'play' && W.balls.length === 0 && W.feed <= 0) endOfBall(W);
     else if (W.state === 'bonus') bonusStep(W);
+    if (W.mod && W.mod.noKick) W.kickback = false;   // (an honest lamp: no kickback under EMBER RUN's dead kickback)
+    craterLamps(W);
+    // the plugins (E.plugin): after the physics and the events, in the order they were registered
+    for (i = 0; i < PLUGINS.length; i++) { if (PLUGINS[i].step) { PLUGINS[i].step(W); use(W); } }
   }
 
   function rotateLanes(W, dir) {
@@ -395,12 +530,15 @@
     var t = W.toys, i;
     var V = t.volcano;
     if (V) {
-      var want = V.pressure > 1 ? 1 : V.pressure;
-      V.rise += (want - V.rise) * 0.04;   // the cone rises (and settles) smoothly: the picture's height, 0-1
+      var lvl = W.press.level || 1, want = V.pressure >= lvl ? 1 : V.pressure / lvl;
+      V.rise += (want - V.rise) * 0.04;   // the cone rises (and settles) smoothly: the picture's height, 0-1 (1 = ERUPT lit)
       if (V.rise < 1e-4 && want === 0) V.rise = 0;
-      if (W.mod && W.mod.decay && !V.busy && V.pressure > 0 && W.state === 'play') { V.pressure = Math.max(0, V.pressure - W.mod.decay); V.ready = B.PRESS && V.pressure >= B.PRESS.full; }   // EMBER RUN's COOLING CRUST: the pressure leaks away (30 Oct 2026)
+      if (W.mod && W.mod.decay && !V.busy && V.pressure > 0 && W.state === 'play' && !W.mb) { V.pressure = Math.max(0, V.pressure - W.mod.decay); pressFlags(W); }   // EMBER RUN's COOLING CRUST: the pressure leaks away (30 Oct 2026)
+      if (W.mod && W.mod.pressRate > 0 && !V.busy && W.state === 'play') pressAdd(W, W.mod.pressRate / 60);   // the pressure fills itself (the boss's COUNTDOWN)
       V.hold = V.busy && V.release > W.frame ? V.release - W.frame : 0;
     }
+    var Pg = W.plug;
+    if (Pg.up && Pg.t > 0 && --Pg.t === 0) plugDown(W);
     var G = t.geyser;
     if (G) {
       if (G.st === 'cool' && --G.t <= 0) { G.st = 'ready'; G.t = 0; }
@@ -410,17 +548,19 @@
       for (i = 0; i < t.crabs.length; i++) crabStep(W, t.crabs[i], B.CRABS[i]);
     }
     var Lv = t.lava;
-    if (Lv) {
-      if (Lv.open && --Lv.t <= 0) { Lv.open = false; Lv.t = 0; W.events.push('lavaclose'); }
-      var anim = T.lava.anim || 30;
+    if (Lv) {   // each gate has its own time up (E.api.gates); while a multiball is on, an open gate stays open
+      var anim = T.lava.anim || 30, any = false, most = 0;
       for (i = 0; i < Lv.gates.length; i++) {
         var g = Lv.gates[i];
-        if (Lv.open) { g.solid = false; g.h = Math.min(1, g.h + 1 / anim); }
+        if (g.t > 0 && !(W.mb && g.t < 3)) g.t--;
+        if (g.t > 0) { g.solid = false; g.h = Math.min(1, g.h + 1 / anim); any = true; if (g.t > most) most = g.t; }
         else {
           if (!g.solid && !ballOnSeg(W, LAVA[i], 2)) g.solid = true;   // it only comes down once no ball is in the way
           if (g.solid) g.h = Math.max(0, g.h - 1 / anim);
         }
       }
+      if (Lv.open && !any) W.events.push('lavaclose');
+      Lv.open = any; Lv.t = most;
     }
     var Q = t.quake;
     if (Q) {
@@ -448,7 +588,7 @@
     var d = C.d;
     if (c.stun > 0) { c.stun--; c.vx = 0; c.vy = 0; return; }
     if (c.wait > 0) { c.wait--; c.vx = 0; c.vy = 0; return; }
-    var nu = c.u + c.dir * (W.mod ? d.speed * W.mod.crab : d.speed) * K.k / 60 / C.len;
+    var nu = c.u + c.dir * (W.mod && W.mod.crab > 0 ? d.speed * W.mod.crab : d.speed) * K.k / 60 / C.len;
     if (nu > 1) nu = 1; else if (nu < 0) nu = 0;
     var a = d.path[0], b = d.path[1], px = a[0] + (b[0] - a[0]) * nu, py = a[1] + (b[1] - a[1]) * nu, lim = BR + d.r + 1.5;
     for (var i = 0; i < W.balls.length; i++) {
@@ -493,7 +633,7 @@
       for (j = 0; j < b.bump.length; j++) if (b.bump[j] > 0) b.bump[j]--;
       for (j = 0; j < b.slingCd.length; j++) if (b.slingCd[j] > 0) b.slingCd[j]--;
       if (b.m === 'free') sensors(W, b);
-      if (!b.launched && b.y < T.gates[0][1] - 4) { b.launched = true; launched(W); }
+      if (!b.launched && b.y < (GATES.length ? T.gates[0][1] - 4 : -1e9)) { b.launched = true; launched(W); }
     }
     // balls knock into each other (multiball)
     for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) ballBall(W.balls[i], W.balls[j]);
@@ -515,13 +655,14 @@
     f.a = na;
   }
   function launched(W) {   // the ball has left the shooter lane: ball save starts now (once a ball)
-    if (W.saveArmed && !W.tilted) { W.saveArmed = false; W.saveT = W.mod ? Math.max(2, SPEEDS[W.speed].save + W.mod.save) * 60 : SPEEDS[W.speed].save * 60; }
+    if (W.saveArmed && !W.tilted) { W.saveArmed = false; W.saveT = Math.max(W.saveT, W.mod ? Math.max(2, SPEEDS[W.speed].save + (W.mod.save || 0)) * 60 : SPEEDS[W.speed].save * 60); }
   }
   function drained(W) {
     W.events.push('drain');
-    if (W.saveT > 0 && !W.tilted && W.balls.length === 0) {
-      W.stats.saves++; W.events.push('save'); msg(W, 'BALL SAVED', 'SHOOT AGAIN', 120); say(W, 'Ball saved - here it comes again');
-      ballAt(W, SH.cx, SH.tip - BR); W.autoT = 50; W.saveT = 0;
+    if (W.saveT > 0 && !W.tilted && (W.balls.length === 0 || W.mb)) {
+      W.stats.saves++; W.events.push('save'); msg(W, 'BALL SAVED', W.mb ? 'HERE IT COMES' : 'SHOOT AGAIN', 120); say(W, 'Ball saved - here it comes again');
+      if (W.mb || T.serve) W.feed++;   // (in multiball the save lasts its whole time, one ball fed at a time)
+      else { ballAt(W, SH.cx, SH.tip - BR); W.autoT = 50; W.saveT = 0; }
     }
   }
 
@@ -574,8 +715,21 @@
       tipOff(b, dx / d, dy / d);
       if (hit > 380) W.events.push({ sfx: 'rubber', v: hit });
     }
+    // the OBSIDIAN PLUG between the flippers, while it is up: any touch and the ball is kicked back up the middle (one
+    // save, and the plug drops)
+    var PL = B.PLUG;
+    if (PL && W.plug.up) {
+      var lx = b.x - PL.x, ly = b.y - PL.y, ll = BR + PL.r, ld2 = lx * lx + ly * ly;
+      if (ld2 < ll * ll) {
+        var ldd = Math.sqrt(ld2) || 1e-6, lnx = lx / ldd, kv = PL.kick * K.k;
+        b.x += lx / ldd * (ll - ldd); b.y += ly / ldd * (ll - ldd);
+        b.vx = (lnx > 0.5 ? 0.5 : lnx < -0.5 ? -0.5 : lnx) * kv * 0.35; b.vy = -kv;
+        W.stats.plugSaves++; W.lit.plug = 40; W.events.push('plugsave'); msg(W, 'PLUG SAVE', 'BACK INTO PLAY', 90); say(W, 'Saved by the obsidian plug');
+        plugDown(W);
+      }
+    }
     // the top arch (the ball inside the top half of a circle)
-    var ax = b.x - ARCH.x, ay = b.y - ARCH.y;
+    var ax = ARCH ? b.x - ARCH.x : 0, ay = ARCH ? b.y - ARCH.y : 0;
     if (ay < 0) {
       var ad = Math.sqrt(ax * ax + ay * ay), alim = ARCH.R - ARCH.r - BR;
       if (ad > alim) { hit = bounce(b, -ax / ad, -ay / ad, ad - alim, ARCH.e); if (hit > 380) W.events.push({ sfx: 'wall', v: hit }); }
@@ -614,7 +768,8 @@
       var vx0 = b.x - VOLC.x, vy0 = b.y - VOLC.y, vl = BR + VOLC.r, vd2 = vx0 * vx0 + vy0 * vy0;
       if (vd2 < vl * vl) {
         var vd = Math.sqrt(vd2) || 1e-6, vnx = vx0 / vd, vny = vy0 / vd, into = -(b.vx * vnx + b.vy * vny);
-        if (!W.toys.volcano.busy && !W.tilted && vnx * VOLC.mx + vny * VOLC.my >= VOLC.cosHalf && into >= VOLC.catchV * K.k) { craterCatch(W, b); return; }
+        var Cw = W.crater, wide = Cw.wide;   // (anything lit at the crater: a wider mouth that takes a softer shot)
+        if (!W.toys.volcano.busy && !W.tilted && !Cw.sealed && vnx * VOLC.mx + vny * VOLC.my >= (wide ? VOLC.cosLit : VOLC.cosHalf) && into >= (wide ? VOLC.catchLit : VOLC.catchV) * K.k) { craterCatch(W, b); return; }
         hit = bounce(b, vnx, vny, vl - vd, VOLC.e); tipOff(b, vnx, vny);
         if (hit > 380) W.events.push({ sfx: 'wall', v: hit });
       }
@@ -684,28 +839,29 @@
       b.vx = r.tx * b.vs; b.vy = r.ty * b.vs; W.events.push('rampfail');
       return;
     }
-    if (b.s >= RAMP.L) {   // made it: off the far end
+    if (b.s >= RAMP.L) {   // made it: off the far end (no faster than the table's exitMax, so a held flipper catches it)
       r = rampAtR(RAMP, RAMP.L); b.m = 'free'; b.x = r.x; b.y = r.y; b.z = 0;
-      b.vx = r.tx * b.vs; b.vy = r.ty * b.vs;
+      var ev = B.RAMPMAX ? Math.min(b.vs, B.RAMPMAX * K.k) : b.vs;
+      b.vx = r.tx * ev; b.vy = r.ty * ev;
       rampMade(W);
       return;
     }
     b.x = r.x; b.y = r.y; b.z = r.z; b.vx = r.tx * b.vs; b.vy = r.ty * b.vs;
   }
-  function rampMade(W) {
+  function rampMade(W) {   // (the old ramp-to-ramp combo is gone: goals.js scores combos of any major shots)
     W.stats.ramps++;
-    W.combo = W.comboT > 0 ? Math.min(5, W.combo + 1) : 1; W.comboT = 4 * 60;
-    var pts = P.ramp * W.combo;
+    var pts = P.ramp;
     add(W, pts, 1000, 'ramp'); W.lit.ramp = 60; addP(W, 'ramp');
-    if (W.combo > 1) { W.events.push({ sfx: 'combo', n: W.combo }); msg(W, 'COMBO X' + W.combo, fmt(pts), 110); say(W, 'Ramp combo times ' + W.combo); }
-    else { W.events.push('ramp'); msg(W, B.NAMES.ramp, fmt(pts), 90); }
+    W.events.push('ramp'); msg(W, B.NAMES.ramp, fmt(pts), 90);
+    if (W.mb && W.mb.jp.ramp) jackpot(W, 'ramp');
   }
-  // a carry: the ball rides a timed path out of play (b.ct counts substeps), then is let go with a set speed
-  function startCarry(W, b, name) {
-    b.m = 'ramp'; b.carry = name; b.ct = 0; b.s = 0; b.vs = 0; b.z = 0; b.railed = false;
+  // a carry: the ball rides a timed path out of play (b.ct counts substeps; b.rate > 1 rides it faster), then is let go
+  // with a set speed
+  function startCarry(W, b, name, rate) {
+    b.m = 'ramp'; b.carry = name; b.ct = 0; b.s = 0; b.vs = 0; b.z = 0; b.railed = false; b.rate = rate || 1;
   }
   function carryStep(W, b) {
-    var C = B.CARRY[b.carry], f = ++b.ct / SUB, V = W.toys.volcano;
+    var C = B.CARRY[b.carry], f = ++b.ct * (b.rate || 1) / SUB, V = W.toys.volcano;
     if (f >= C.end) {   // let go at the end of the path, back into play
       var e = C.P[C.P.length - 1];
       b.m = 'free'; b.carry = null; b.x = e[0]; b.y = e[1]; b.z = 0; b.vx = C.out[0] * K.k; b.vy = C.out[1] * K.k; b.vs = 0;
@@ -724,17 +880,32 @@
     if (b.at === 'crater') {
       b.x = VOLC.x; b.y = VOLC.y;
       if (--b.hold > 0) return;
-      startCarry(W, b, VOLC.carry); b.at = null;
+      // let go: up the sky carry (a held DIVE ball when E.api.release says, or after VOLC.diveCap steps if nobody does)
+      if (b.dive) { b.dive = false; W.dive.held = false; }
+      startCarry(W, b, VOLC.carry, b.rate); b.at = null;
       W.events.push('erupt');
+      var V = W.toys.volcano;
+      if (V.mbStart > 0) { var nb = V.mbStart; V.mbStart = 0; startMB(W, nb, {}); }   // THE BIG ONE: the show is over, the multiball starts
+      return;
+    }
+    if (b.at === 'serve') {
+      var Cs = B.CARRY[T.serve.carry].P[0];
+      b.x = Cs[0]; b.y = Cs[1];
+      if (--b.hold > 0) return;
+      startCarry(W, b, T.serve.carry); b.at = null;
       return;
     }
     if (b.at === 'geyser') {
       b.x = GEY.x; b.y = GEY.y;
       if (--b.hold > 0) return;
       b.m = 'free'; b.at = null; b.vx = GEY.fling[0] * K.k; b.vy = GEY.fling[1] * K.k;
-      var G = W.toys.geyser; G.st = 'cool'; G.t = W.mod ? Math.round(GEY.cool * W.mod.gey) : GEY.cool; G.ball = 0;
+      var G = W.toys.geyser; G.st = 'cool'; G.t = W.mod && W.mod.gey > 0 ? Math.round(GEY.cool * W.mod.gey) : GEY.cool; G.ball = 0;
       W.stats.geysers++; W.lit.geyser = 30; add(W, P.geyser, 1000, 'geyser'); addP(W, 'geyser');
       W.events.push('geyser'); msg(W, 'GEYSER', fmt(P.geyser), 80);
+      if (W.mb && !W.mb.addUsed && W.balls.length + W.feed < 4) {   // ADD A BALL: once a multiball
+        W.mb.addUsed = true; W.feed++; W.mb.balls = W.balls.length + W.feed;
+        W.events.push('addaball'); msg(W, 'ADD A BALL', 'FROM THE GEYSER', 110); say(W, 'Add a ball!');
+      }
       return;
     }
     b.x = SAU.x; b.y = SAU.y;
@@ -750,52 +921,163 @@
     add(W, P.drop, 200, 'drop'); W.events.push({ sfx: 'drop', i: i }); addP(W, 'drop');
     skillOver(W);
     if (W.dropsDown === DROPS.length) {
-      add(W, P.drops, 2000, 'drop'); W.kickback = true; W.lit.kick = 90; W.events.push('drops');
+      add(W, P.drops, 2000, 'drop'); W.events.push('drops');
       if (SAU) {
+        W.kickback = true; W.lit.kick = 90;
         W.saucerLit = true; msg(W, B.NAMES.drops, B.NAMES.dropsSub, 150); say(W, 'All five targets down - the hangar is open');
         W.dropsT = 20 * 60;   // left open for 20 seconds
       } else {
-        addP(W, 'drops'); msg(W, B.NAMES.drops, B.NAMES.dropsSub, 150); say(W, 'All the targets down - the kickback is lit');
+        addP(W, 'drops');
+        // the OBSIDIAN PLUG rises between the flippers and MODE lights at the crater; the kickback is lit again only on
+        // a speed that keeps it every ball (Gentle) or on a table with no plug
+        if (B.PLUG) plugUp(W, B.PLUG.time);
+        if ((!B.PLUG || SPEEDS[W.speed].kick) && !(W.mod && W.mod.noKick)) { W.kickback = true; W.lit.kick = 90; }
+        if (VOLC && !(W.mod && W.mod.noModes) && !W.crater.mode) { W.crater.mode = true; W.events.push('modelit'); }
+        msg(W, B.NAMES.drops, B.PLUG ? B.NAMES.dropsPlug || 'PLUG UP' : B.NAMES.dropsSub, 150);
+        say(W, B.PLUG ? 'All the targets down - the obsidian plug is up' : 'All the targets down - the kickback is lit');
         W.dropsT = T.dropsBack || 120;
       }
     }
   }
-  // the crater takes the ball: it collects the pressure (a full one is an eruption that raises the lava gates)
+  // the crater takes the ball and the first lit award (W.crater.lit, in priority order) - recorded in W.crater.took -
+  // and unlights it (all but 'boss', which its owner unlights). Plain, it collects the pressure (keeping half).
   function craterCatch(W, b) {
-    var V = W.toys.volcano, PR = B.PRESS;
-    b.m = 'held'; b.at = 'crater'; b.hold = VOLC.hold * SUB; b.x = VOLC.x; b.y = VOLC.y; b.vx = 0; b.vy = 0; b.z = 0;
-    V.busy = true; V.ball = b.id; V.hold = VOLC.hold; V.release = W.frame + VOLC.hold; V.land = V.release + B.CARRY[VOLC.carry].end; V.carry = 0;
-    W.stats.craters++; W.lit.crater = VOLC.hold;
-    var p = V.pressure, full = PR && p >= PR.full, pts = P.crater + Math.round(p * P.pressure / 10000) * 10000;
-    if (full) pts += P.eruption;
-    add(W, pts, 5000, full ? 'erupt' : 'crater');
+    var V = W.toys.volcano, C = W.crater;
+    craterLamps(W);
+    var aw = C.lit.length ? C.lit[0] : null, p = V.pressure, pts = P.crater + Math.round(p * P.pressure / 10000) * 10000;
+    var hold = aw === 'erupt' ? VOLC.hold : aw === 'super' ? VOLC.holdSuper : aw ? VOLC.holdLit : VOLC.holdPlain;
+    b.m = 'held'; b.at = 'crater'; b.x = VOLC.x; b.y = VOLC.y; b.vx = 0; b.vy = 0; b.z = 0;
+    b.rate = aw === 'erupt' ? 1 : VOLC.rail; b.dive = aw === 'dive';
+    if (b.dive) { hold = VOLC.diveCap; W.dive.held = true; }
+    b.hold = hold * SUB;
+    V.busy = true; V.ball = b.id; V.hold = hold; V.release = W.frame + hold; V.land = V.release + Math.ceil(B.CARRY[VOLC.carry].end / b.rate); V.carry = 0;
+    W.stats.craters++; W.lit.crater = hold; C.took = aw;
     W.events.push('crater');
-    if (full) {
-      W.stats.eruptions++;
-      var Lv = W.toys.lava;
-      if (Lv) { Lv.open = true; Lv.t = W.mod ? Math.round(T.lava.time * W.mod.lava) : T.lava.time; Lv.gates.forEach(function (g) { g.solid = false; }); W.events.push('lavaopen'); }   // (rising out of the way is always safe)
-      msg(W, 'FULL ERUPTION', fmt(pts), VOLC.hold); say(W, 'Full eruption! The lava lanes are open');
-    } else msg(W, 'CRATER', fmt(pts), VOLC.hold);
-    V.pressure = 0; V.ready = false; V.red = false;
+    if (aw === 'super') {   // SUPER JACKPOT: three times the jackpot, and the jackpots light again
+      var M = W.mb; pts = 3 * M.jpValue; add(W, pts, 5000, 'jackpot');
+      M.superLit = false; M.jp.lavaL = M.jp.lavaR = M.jp.ramp = true; W.stats.supers++; W.lit.jackpot = 90;
+      W.events.push('superjackpot'); msg(W, 'SUPER JACKPOT', fmt(pts), 150); say(W, 'Super jackpot!');
+    } else if (aw === 'erupt') {   // THE BIG ONE: the full show, then the eruption multiball (+1 ball for a banked lock)
+      pts += P.eruption; add(W, pts, 5000, 'erupt');
+      W.stats.eruptions++; W.press.n++; W.press.level = ladder(B, W.press.n);
+      V.mbStart = 2 + (W.lock.n > 0 ? 1 : 0); W.lock.n = 0; W.lock.lit = false;
+      V.pressure = 0;
+      gatesOpen(W, 0, W.mod && W.mod.lava ? Math.round(T.lava.time * W.mod.lava) : T.lava.time);
+      msg(W, 'FULL ERUPTION', fmt(pts), VOLC.hold); say(W, 'Full eruption! Multiball!');
+    } else {
+      add(W, pts, 5000, 'crater');
+      V.pressure = p / 2;   // a crater shot below the threshold keeps half the pressure
+      if (aw === 'lock') { W.lock.lit = false; W.lock.n = 1; W.stats.locks++; W.events.push('lock'); msg(W, 'LOCK BANKED', 'ERUPT FOR 3 BALLS', hold); say(W, 'Lock banked'); }
+      else if (aw === 'mode') { C.mode = false; msg(W, 'CRATER', fmt(pts), hold); }
+      else if (aw === 'dive') { C.dive = false; W.events.push('dive'); msg(W, 'DIVE', 'INTO THE VOLCANO', 150); }
+      else msg(W, 'CRATER', fmt(pts), hold);
+    }
+    pressFlags(W);
+    craterLamps(W);
     skillOver(W);
   }
-  // the pressure rule: shots add pressure; full, the crater erupts; overdo it and a quake comes (the kickback goes off)
+  // ------------------------------------------------------------ pressure and THE BIG ONE
+  // The eruption ladder (W.press.level: 0.5, 0.75, 1, then 1.25 on Ember Peak): LOCK lights at half of it, the volcano
+  // RUMBLES at 75%, ERUPT lights at it, the warning comes at +0.25 and the quake (the bust) at +0.5.
   function addP(W, key) {
+    var PR = B.PRESS;
+    if (!PR || !PR[key]) return;
+    pressAdd(W, W.mod && W.mod.press != null ? PR[key] * W.mod.press : PR[key]);
+  }
+  function pressAdd(W, amt) {
     var V = W.toys.volcano, PR = B.PRESS;
-    if (!V || !PR || W.tilted || !PR[key]) return;
-    var before = V.pressure;
-    V.pressure = Math.min(PR.max, before + (W.mod ? PR[key] * W.mod.press : PR[key]));
-    if (before < PR.full && V.pressure >= PR.full) {
-      V.ready = true; W.events.push({ sfx: 'pressure', level: 'full' }); msg(W, 'ERUPT NOW', 'SHOOT THE CRATER', 150); say(W, 'Full pressure - shoot the crater to erupt');
-    } else if (before < PR.warn && V.pressure >= PR.warn) {
+    if (!V || !PR || W.tilted || W.mb || !(amt > 0)) return;   // (no pressure while a multiball is on)
+    var L = W.press.level, before = V.pressure, p = Math.min(L + PR.bust, before + amt);
+    V.pressure = p;
+    if (!W.lock.lit && !W.lock.n && before < L * PR.lockAt && p >= L * PR.lockAt) {
+      W.lock.lit = true; W.events.push('locklit'); if (p < L) { msg(W, 'LOCK IS LIT', 'SHOOT THE CRATER', 120); say(W, 'Lock is lit'); }
+    }
+    if (before < L * PR.rumble && p >= L * PR.rumble && p < L) W.events.push('rumble');
+    if (before < L && p >= L) {
+      W.events.push({ sfx: 'pressure', level: 'full' }, 'eruptlit'); msg(W, 'ERUPT NOW', 'SHOOT THE CRATER', 150); say(W, 'Full pressure - shoot the crater to erupt');
+    } else if (before < L + PR.warn && p >= L + PR.warn) {
       W.events.push({ sfx: 'pressure', level: 'warn' }); msg(W, 'PRESSURE', 'ERUPT NOW!', 120);
     }
-    if (V.pressure >= PR.max) {
-      V.pressure = PR.after; W.kickback = false;
-      if (W.toys.quake) W.toys.quake.pending = true;
-      W.events.push('overload'); msg(W, 'QUAKE COMING', 'KICKBACK OFF', 150); say(W, 'Too much pressure! A quake is coming - the kickback is off.');
+    if (p >= L + PR.bust) bust(W);
+    pressFlags(W);
+  }
+  function pressFlags(W) {
+    var V = W.toys.volcano; if (!V) return;
+    V.ready = !W.mb && V.pressure >= W.press.level; V.red = V.pressure > W.press.level;
+  }
+  function bust(W) {   // overdone: a quake comes, the kickback goes off, the plug drops
+    var V = W.toys.volcano, PR = B.PRESS, kick = W.kickback, plug = W.plug.up;
+    V.pressure = W.press.level * PR.after; W.kickback = false;
+    if (plug) plugDown(W);
+    if (W.toys.quake) W.toys.quake.pending = true;
+    W.events.push('overload');
+    msg(W, 'QUAKE COMING', plug ? 'PLUG DOWN' : kick ? 'KICKBACK OFF' : 'HOLD ON', 150);
+    say(W, 'Too much pressure! A quake is coming' + (plug ? ' - the plug is down.' : kick ? ' - the kickback is off.' : '.'));
+  }
+  // the crater's lamps, in priority order (W.crater.lit); anything lit (and not sealed) widens the mouth (W.crater.wide)
+  function craterLamps(W) {
+    var C = W.crater, V = W.toys.volcano, lit = [];
+    if (V) {
+      if (W.mb && W.mb.superLit) lit.push('super');
+      if (C.boss) lit.push('boss');
+      if (!W.mb && V.pressure >= W.press.level) lit.push('erupt');
+      if (W.lock.lit) lit.push('lock');
+      if (C.mode) lit.push('mode');
+      if (C.dive) lit.push('dive');
     }
-    V.red = V.pressure > PR.full;
+    C.lit = lit; C.wide = lit.length > 0 && !C.sealed;
+  }
+  // multiball: `balls` in play in all (at least one more than now), fed one at a time from the shooter lane
+  function startMB(W, balls, opt) {
+    opt = opt || {};
+    var now = W.balls.length + W.feed, more = Math.max(1, (balls | 0) - now);
+    if (!W.mb) {
+      W.mb = { on: true, balls: 0, jp: { lavaL: true, lavaR: true, ramp: true }, jpValue: P.jackpot || 5000000, jpCount: 0, superLit: false, addUsed: false, victory: !!opt.victory };
+      W.stats.multiballs++;
+    } else if (opt.victory) W.mb.victory = true;
+    W.feed += more; W.mb.balls = now + more;
+    var secs = opt.save != null ? opt.save : SPEEDS[W.speed].mbSave;
+    W.saveT = Math.max(W.saveT, Math.round(secs * 60)); W.saveArmed = false; W.lit.save = W.saveT;
+    if (W.toys.lava) gatesOpen(W, 0, Math.max(T.lava.time, 600));
+    var V = W.toys.volcano; if (V) { V.pressure = 0; pressFlags(W); }
+    W.lock.lit = false;
+    W.events.push('mbstart'); msg(W, opt.victory ? 'VICTORY MULTIBALL' : 'MULTIBALL', 'SHOOT THE JACKPOTS', 150); say(W, 'Multiball!');
+  }
+  function mbCheck(W) {   // multiball ends at one ball: the pressure goes to 0 (and the ladder has stepped up)
+    var M = W.mb;
+    if (!M) return;
+    M.balls = W.balls.length + W.feed;
+    if (M.balls > 1) return;
+    W.mb = null;
+    var V = W.toys.volcano; if (V) { V.pressure = 0; pressFlags(W); }
+    W.events.push('mbend'); msg(W, 'MULTIBALL OVER', M.jpCount ? M.jpCount + ' JACKPOT' + (M.jpCount > 1 ? 'S' : '') : '', 120);
+  }
+  function jackpot(W, k) {   // 5M, +1M for every jackpot collected; three light the SUPER JACKPOT at the crater
+    var M = W.mb, pts = M.jpValue;
+    M.jp[k] = false; add(W, pts, 5000, 'jackpot'); M.jpCount++; M.jpValue += P.jackpotUp || 1000000; W.stats.jackpots++; W.lit.jackpot = 60;
+    W.events.push('jackpot'); msg(W, 'JACKPOT', fmt(pts), 120); say(W, 'Jackpot!');
+    if (!M.jp.lavaL && !M.jp.lavaR && !M.jp.ramp) { M.superLit = true; msg(W, 'JACKPOT', 'SUPER JACKPOT LIT', 150); }
+  }
+  function gatesOpen(W, side, steps) {   // side -1 the left lava gate, 1 the right, 0 both; steps 0 lowers it (once clear)
+    var Lv = W.toys.lava; if (!Lv) return;
+    var was = Lv.open;
+    for (var i = 0; i < Lv.gates.length; i++) {
+      var s = LAVA[i].ax + LAVA[i].bx < 2 * T.MID ? -1 : 1, g = Lv.gates[i];
+      if (side && side !== s) continue;
+      g.t = steps > 0 ? Math.max(g.t, steps | 0) : 0;
+      if (g.t > 0) { g.solid = false; Lv.open = true; Lv.t = Math.max(Lv.t, g.t); }   // (rising out of the way is always safe)
+    }
+    if (!was && Lv.open) W.events.push('lavaopen');
+  }
+  function plugUp(W, steps) {
+    if (!B.PLUG) return;
+    var was = W.plug.up;
+    W.plug.up = true; W.plug.t = Math.max(W.plug.t, steps > 0 ? steps | 0 : B.PLUG.time); W.lit.plug = 40;
+    if (!was) W.events.push('plugup');
+  }
+  function plugDown(W) {
+    if (!W.plug.up) return;
+    W.plug.up = false; W.plug.t = 0; W.events.push('plugdown');
   }
   function crabHit(W, i) {
     var c = W.toys.crabs[i];
@@ -807,14 +1089,14 @@
 
   // ------------------------------------------------------------ what the ball rolls over
   function sensors(W, b) {
-    var SC = T.sensors.circles, i, s;
+    var SC = B.SENS.circles || [], i, s;
     for (i = 0; i < SC.length; i++) {
       s = SC[i];
       var dx = b.x - s[1], dy = b.y - s[2], inside = dx * dx + dy * dy < s[3] * s[3];
       if (inside && !b.inside[s[0]]) rollover(W, b, s[0]);
       b.inside[s[0]] = inside;
     }
-    var SL = T.sensors.lines;
+    var SL = B.SENS.lines || [];
     for (i = 0; i < SL.length; i++) {
       s = SL[i];
       var ex = s[3] - s[1], ey = s[4] - s[2];
@@ -863,7 +1145,7 @@
     if (id.indexOf('lane') === 0) {
       var i = +id.charAt(4);
       if (W.skillOpen && i === W.skill) {
-        W.stats.skill++; add(W, P.skill, 2000); W.events.push('skill'); msg(W, 'SKILL SHOT', fmt(P.skill), 150); say(W, 'Skill shot! ' + fmt(P.skill));
+        W.stats.skill++; add(W, P.skill, 2000, 'skill'); W.events.push('skill'); msg(W, 'SKILL SHOT', fmt(P.skill), 150); say(W, 'Skill shot! ' + fmt(P.skill));
         addP(W, 'skill');
       }
       skillOver(W);
@@ -894,10 +1176,12 @@
       if (b.vy < 0) orbit(W, 'R');
     } else if (id === 'lavaL' || id === 'lavaR') {
       var Lv = W.toys.lava, li = id === 'lavaL' ? 0 : 1;
-      if (Lv && Lv.open && b.vy < 0) {
+      var lg = Lv && Lv.gates[li];
+      if (lg && (lg.t > 0 || !lg.solid) && b.vy < 0) {
         W.stats.lava++; W.lit.lava[li] = 40; add(W, P.lava, 5000, 'lava'); addP(W, 'lava');
         W.events.push('lava'); msg(W, 'LAVA LANE', fmt(P.lava), 100); say(W, 'Lava lane!');
         skillOver(W);
+        if (W.mb && W.mb.jp[id]) jackpot(W, id);
       }
     }
   }
@@ -913,7 +1197,8 @@
 
   // ------------------------------------------------------------ the end of a ball: the bonus counts up, then the next one
   function endOfBall(W) {
-    W.state = 'bonus'; W.bonusT = 0;
+    if (T.level) { W.state = 'over'; W.over = true; W.dmd = null; return; }   // a level below the surface: no bonus count, the drain ends that world
+    W.state = 'bonus'; W.bonusT = 0; W.mb = null; W.feed = 0; plugDown(W);
     W.bonusAdd = W.tilted ? 0 : W.bonus * W.mult; W.bonusShow = 0;
     W.events.push('ballend');
     msg(W, W.tilted ? 'TILT' : 'BONUS', W.tilted ? 'NO BONUS' : fmt(W.bonus) + (W.mult > 1 ? ' X ' + W.mult : ''), 9999);
@@ -929,8 +1214,12 @@
     }
     if (W.bonusT < 40 + 70 || (W.bonusShow < W.bonusAdd)) return;
     // next ball
-    W.tilted = false; W.tilt = 0; W.mult = 1; W.bonus = 0; W.lanes = [false, false, false]; W.combo = 0; W.comboT = 0;
-    if (SPEEDS[W.speed].kick) W.kickback = true;
+    // (EMBER RUN's BONUS FORGE and LUCKY LANES: W.mod.mult0 and W.mod.lanes0 carry onto every new ball)
+    var Md = W.mod || null;
+    W.tilted = false; W.tilt = 0; W.bonus = 0; W.combo = 0; W.comboT = 0;
+    W.mult = Md && Md.mult0 > 1 ? Math.min(5, Md.mult0 | 0) : 1;
+    W.lanes = Md && Md.lanes0 ? [!!Md.lanes0[0], !!Md.lanes0[1], !!Md.lanes0[2]] : [false, false, false];
+    if (SPEEDS[W.speed].kick && !(Md && Md.noKick)) W.kickback = true;
     W.ball++;
     if (W.ball > W.total) {
       W.ball = W.total; W.over = true; W.state = 'over'; W.dmd = null; W.events.push('over');
@@ -958,6 +1247,49 @@
   }
   function clone(W) { return copy(W); }
 
+  // ------------------------------------------------------------ plugins and the API they (and run.js, descent.js) call
+  var PLUGINS = [];
+  function plugin(p) {   // { id, init(W), step(W), url }: registered once by id (a second plugin with the same id replaces it)
+    if (!p || !p.id) throw new Error('E.plugin needs an id');
+    for (var i = 0; i < PLUGINS.length; i++) if (PLUGINS[i].id === p.id) { PLUGINS[i] = p; return p; }
+    PLUGINS.push(p); return p;
+  }
+  function unplug(id) { for (var i = 0; i < PLUGINS.length; i++) if (PLUGINS[i].id === id) { PLUGINS.splice(i, 1); return true; } return false; }
+  function pluginUrls() { var out = []; for (var i = 0; i < PLUGINS.length; i++) if (PLUGINS[i].url) out.push(PLUGINS[i].url); return out; }
+  var api = {
+    award: function (W, pts, key) { use(W); add(W, Math.round(pts) || 0, 0, key); },
+    multiball: function (W, balls, opt) { use(W); if (W.state === 'play' && !W.over) startMB(W, balls, opt); },
+    addBall: function (W) { use(W); W.feed++; if (W.mb) W.mb.balls = W.balls.length + W.feed; },
+    gates: function (W, side, steps) { use(W); gatesOpen(W, side | 0, steps); },
+    plug: function (W, steps) { use(W); if (steps > 0 || steps == null) plugUp(W, steps); else plugDown(W); },
+    save: function (W, secs) { use(W); W.saveT = Math.max(W.saveT, Math.round(secs * 60)); W.lit.save = W.saveT; },
+    craterLit: function (W, what, on) {
+      use(W);
+      if (what !== 'mode' && what !== 'dive' && what !== 'boss') return;
+      var C = W.crater, was = !!C[what];
+      C[what] = !!on;
+      if (on && !was && what !== 'boss') W.events.push(what + 'lit');   // 'modelit', 'divelit'
+      craterLamps(W);
+    },
+    seal: function (W, on) {
+      use(W);
+      var C = W.crater, was = C.sealed;
+      C.sealed = !!on;
+      if (C.sealed !== was) W.events.push(C.sealed ? 'sealed' : 'unsealed');
+      craterLamps(W);
+    },
+    release: function (W) {   // a ball in the DIVE hold goes up the sky carry at once (in the next substep)
+      use(W);
+      for (var i = 0; i < W.balls.length; i++) { var b = W.balls[i]; if (b.dive && b.at === 'crater') { b.hold = 1; var V = W.toys.volcano; V.release = W.frame; V.land = W.frame + Math.ceil(B.CARRY[VOLC.carry].end / (b.rate || 1)); return true; } }
+      return false;
+    },
+    quake: function (W) { if (W.toys.quake) W.toys.quake.pending = true; },
+    hitstop: function (W, steps) {   // honoured only while no ball is free
+      for (var i = 0; i < W.balls.length; i++) if (W.balls[i].m === 'free') return false;
+      W.hit = Math.max(W.hit, steps | 0); return W.balls.length > 0;
+    }
+  };
+
   var O = table('orbit');
   return {
     // the old table's, for the old pictures
@@ -966,6 +1298,8 @@
     newWorld: newWorld, step: step, hud: hud, fmt: fmt, addBall: addBall, clone: clone,
     rampAt: function (sv, id) { return rampAtR(table(id || 'orbit').RAMP, sv); },
     inPocket: function (x, y, id) { return inPocketR(table(id || 'orbit'), x, y); },
+    // CONTRACT v1
+    plugin: plugin, unplug: unplug, pluginUrls: pluginUrls, plugins: function () { return PLUGINS.slice(); }, api: api, addTable: addTable,
     // any table
     TABLES: TABLES, DEFAULT: DEFAULT, table: table, sin: sin, cos: cos, SUB: SUB, DT: DT,
     inApproach: function (W, b) { return inApproachB(table(W.tableId), b); },
