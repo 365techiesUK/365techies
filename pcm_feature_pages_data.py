@@ -1593,13 +1593,15 @@ _DCK_SCREENS = ('<div class="dks">'
 
 DC = {
     'slug': 'dementia-clock',
-    'title': 'Free Dementia Clock: Day and Date on Any Screen',
+    # 6 Nov 2026 keyword read (seo-research/dementia-clock-2026-11-06): the searches are shoppers; ours is the free, online
+    # one - Google UK suggests "free dementia clock app", "online dementia clock". Owner: "add the wording changes"
+    'title': 'Free Online Dementia Clock: Day, Date and Time on Any Screen',
     'metaDesc': 'A free dementia clock: the day, morning or afternoon, the date and the time in big, clear words. On a laptop, tablet, TV or care home screen. No sign-up.',
-    'ogTitle': 'A free dementia clock for any laptop, tablet or wall screen',
+    'ogTitle': 'A free online dementia clock for any laptop, tablet or wall screen',
     'crumbName': 'Dementia Clock',
     'eyebrow': '// A FREE DAY AND DATE CLOCK',
-    'h1': 'A free <em class="grad grad--cyan">dementia clock</em> for any screen',
-    'lede': 'The day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in big, clear words. Open it full screen on a spare laptop or tablet and it becomes a day clock for someone living with dementia. Free, no sign-up, and nothing is sent anywhere. Care home, hospice or reception screen? <a href="#screens">Here&rsquo;s how to set it up</a>.',
+    'h1': 'A free online <em class="grad grad--cyan">dementia clock</em> for any screen',
+    'lede': 'The day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in big, clear words. Open it full screen on a spare laptop or tablet and it becomes a day clock for someone living with dementia. Free, no sign-up, and nothing is sent anywhere. Care home, hospice or reception screen? <a href="#screens" style="color:var(--cyan-soft);text-decoration:underline;text-underline-offset:2px">Here&rsquo;s how to set it up</a>.',
     'chips': ['Free, no sign-up', 'Big, clear words', 'Laptop, tablet or wall screen'],
     'webApp': '365 Techies Dementia Clock',
     'primaryCta': ['Open the clock', '#clock'], 'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
@@ -1643,7 +1645,7 @@ DC = {
                  '<li>Under <strong>Turn the screen off after</strong>, choose <strong>Never</strong>, and set Windows&rsquo; sleep time to Never when plugged in (step 3 above).</li>'
                  '</ol>'},
         {'eyebrow': '/06 &mdash; SCREEN OR SHOP CLOCK?', 'h2': 'A screen, or a clock from a shop?',
-         'html': '<p>A plug-in day clock from a shop &mdash; Alzheimer&rsquo;s Society sells several &mdash; does one job, needs no setting up, and radio-controlled ones change for British Summer Time by themselves. '
+         'html': '<p>A plug-in day clock from a shop &mdash; also sold as a calendar clock, an orientation clock or a day and date clock for the elderly &mdash; does one job, needs no setting up, and radio-controlled ones change for British Summer Time by themselves. Alzheimer&rsquo;s Society sells several. '
                  'This clock is free if you have a spare screen, shows bigger words than most, and lets you choose exactly what it shows.</p>'
                  '<p>A laptop or tablet left on all day uses some electricity; our <a href="/how-much-does-it-cost-to-run-a-pc-uk/">running cost calculator</a> works out what.</p>'},
         {'eyebrow': '/07 &mdash; WANT A HAND?', 'h2': 'We can set it up for you',
@@ -1660,7 +1662,8 @@ DC = {
         {'name': 'Put it where it is seen', 'text': 'Face it towards their chair or bed, at eye level, out of bright sunlight.'},
     ],
     'faqs': [
-        {'q': 'What is a dementia clock?', 'a': '<p>A clock that spells out the day, the part of the day and often the date in words, for people who find an ordinary clock face hard to follow. Many show &ldquo;Tuesday morning&rdquo; as well as the time.</p>'},
+        {'q': 'What is a dementia clock?', 'a': '<p>A clock that spells out the day, the part of the day and often the date in words, for people who find an ordinary clock face hard to follow. Many show &ldquo;Tuesday morning&rdquo; as well as the time. You&rsquo;ll also see them called day clocks, calendar clocks, orientation clocks or day and date clocks.</p>'},
+        {'q': 'Is there a free dementia clock app?', 'a': '<p>You don&rsquo;t need an app. This clock runs in the web browser on any tablet, phone, laptop, computer or smart screen, and it&rsquo;s free. On an Android tablet or phone, open it in Chrome and choose <strong>Add to Home screen</strong> from the menu: it then opens with one tap, like an app.</p>'},
         {'q': 'Is this dementia clock really free?', 'a': '<p>Yes. No sign-up, no adverts, and nothing you choose is sent anywhere. It runs in your web browser.</p>'},
         {'q': 'Will it change when the clocks go forward or back?', 'a': '<p>Yes, as long as the device sets its own time automatically and is on UK time. The clock reads the device&rsquo;s own time.</p>'},
         {'q': 'Does it need the internet?', 'a': '<p>Only to open it. Once it&rsquo;s showing, it keeps going from the device&rsquo;s own clock if the internet drops. If the page is closed or the device restarts, it needs the internet to open again.</p>'},
