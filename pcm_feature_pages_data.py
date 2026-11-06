@@ -1399,7 +1399,8 @@ _DCLOCK = ('<div class="dck" id="clock">'
            '<button type="button" class="dck__say" id="dck-say1">&#128264; Say the time</button>'
            '<label><input type="checkbox" id="dck-say"> Say the time every hour</label></fieldset>'
            '<p class="dck__note">Works in any up-to-date web browser on a computer, laptop or tablet. To open the clock straight away next time, bookmark this link or add it to the home screen: '
-           '<a href="#clock">365techies.co.uk/dementia-clock/#clock</a>. Nothing is sent anywhere: your choices are remembered on this device only.</p>'
+           '<a href="#clock">365techies.co.uk/dementia-clock/#clock</a>. Nothing is sent anywhere: your choices are remembered on this device only. '
+           'For a screen in a care home, hospice or reception, see <a href="#screens">setting it up on a wall screen or signage display</a>.</p>'
            '</div>'
            '<div class="dck-full dck--dark" id="dck-full" role="dialog" aria-modal="true" aria-label="Day and date clock" tabindex="-1" hidden>' + _DCK_FACE +
            '<div class="dck-bar"><span id="dck-hint"></span><span id="dck-wl"></span><button type="button" id="dck-say2">Say the time</button><button type="button" id="dck-fs">Full screen</button><button type="button" id="dck-x">Close</button></div></div>'
@@ -1419,7 +1420,7 @@ _DCLOCK = ('<div class="dck" id="clock">'
            '.dck-full{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;overflow:hidden}.dck-full[hidden]{display:none!important}.dck-full:focus{outline:none}.dck-full.is-idle{cursor:none}'
            '.dck-bar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.6rem;width:max-content;max-width:calc(100% - 24px);padding:.6rem;border-radius:16px;background:rgba(128,128,128,.22);transition:opacity .4s}'
            '.dck--dark .dck-bar{background:rgba(28,30,34,.94)}.dck--light .dck-bar{background:rgba(228,223,210,.96)}'   # solid enough to read over the words for its 5 seconds
-           '.dck-full.is-idle .dck-bar{opacity:0;pointer-events:none}'
+           '.dck-full.is-idle .dck-bar{opacity:0;pointer-events:none}.dck-full.is-kiosk{cursor:none}.dck-full.is-kiosk .dck-bar{display:none}'
            '.dck-bar button{min-height:52px;padding:.5rem 1.2rem;border-radius:12px;border:1px solid rgba(128,128,128,.55);background:rgba(128,128,128,.18);color:inherit;font:600 1.05rem var(--font-body);cursor:pointer}'
            '.dck-bar span{font-size:.92rem;opacity:.85;text-align:center}.dck-bar span:empty{display:none}'
            '@media (prefers-reduced-motion:reduce){.dck__face,.dck-bar{transition:none}}'
@@ -1430,6 +1431,18 @@ _DCLOCK = ('<div class="dck" id="clock">'
            'var DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];'
            'var o={date:1,year:0,time:1,h24:0,col:"dark",say:0},k,hr=-1;'
            'try{var s=JSON.parse(localStorage.getItem("dck1")||"null");if(s)for(k in o)if(s.hasOwnProperty(k))o[k]=s[k];}catch(e){}'
+           # 6 Nov 2026 (care home and signage screens): settings in the address, for screens nobody can tick boxes on, and
+           # kiosk browsers that forget them (Edge kiosk runs InPrivate). ?clock opens the clock like #clock (some signage
+           # systems drop the #); &time=24|12|off &date=off &year=on &colours=cream|auto|dark &buttons=off. Used for this
+           # visit only: nothing is saved unless someone then changes a box on the page.
+           'var Q={};try{var qs=location.search.replace(/^\\?/,"").split("&");for(var qi=0;qi<qs.length;qi++){if(!qs[qi])continue;var kv=qs[qi].split("=");'
+           'Q[decodeURIComponent(kv[0]).toLowerCase()]=kv.length>1?decodeURIComponent(kv.slice(1).join("=")).toLowerCase():"";}}catch(e){}'
+           'function qOn(v){return v===""||v==="on"||v==="1"||v==="yes"||v==="true";}function qOff(v){return v==="off"||v==="0"||v==="no"||v==="false";}'
+           'if(Q.hasOwnProperty("time")){if(Q.time==="24")o.h24=1;else if(Q.time==="12")o.h24=0;else if(qOff(Q.time))o.time=0;}'
+           'if(Q.hasOwnProperty("date")){if(qOff(Q.date))o.date=0;else if(qOn(Q.date))o.date=1;}'
+           'if(Q.hasOwnProperty("year")){if(qOn(Q.year))o.year=1;else if(qOff(Q.year))o.year=0;}'
+           'var qc=Q.colours||Q.colors||Q.colour||Q.color;if(qc==="cream"||qc==="light")o.col="light";else if(qc==="auto")o.col="auto";else if(qc==="dark"||qc==="black")o.col="dark";'
+           'var kiosk=Q.hasOwnProperty("buttons")&&qOff(Q.buttons);'   # no bar, and a touch does nothing (residents can't close it)
            'function save(){try{localStorage.setItem("dck1",JSON.stringify(o));}catch(e){}}'
            'var cb={date:$("dck-date"),year:$("dck-year"),time:$("dck-time"),h24:$("dck-24"),say:$("dck-say")},cols=document.getElementsByName("dck-col");'
            'function sync(){for(var k in cb)cb[k].checked=!!o[k];cb.year.disabled=!o.date;for(var i=0;i<cols.length;i++)cols[i].checked=cols[i].value===o.col;}'
@@ -1475,7 +1488,8 @@ _DCLOCK = ('<div class="dck" id="clock">'
            'function fsc(){var on=!!fsEl();if(fsOn&&!on&&!F.hidden)hide();fsOn=on;hint();again();}'
            'document.addEventListener("fullscreenchange",fsc);document.addEventListener("webkitfullscreenchange",fsc);'
            'F.addEventListener("mousemove",bar);F.addEventListener("touchstart",bar,{passive:true});'
-           'F.addEventListener("click",function(e){if(e.target.tagName!=="BUTTON")goFs();bar();});'
+           'if(kiosk)F.classList.add("is-kiosk");'
+           'F.addEventListener("click",function(e){if(kiosk)return;if(e.target.tagName!=="BUTTON")goFs();bar();});'
            '$("dck-fs").addEventListener("click",function(e){e.stopPropagation();goFs();bar();});'
            '$("dck-x").addEventListener("click",function(e){e.stopPropagation();hide();});'
            '$("dck-open").addEventListener("click",function(){show(true);});'
@@ -1490,28 +1504,112 @@ _DCLOCK = ('<div class="dck" id="clock">'
            'for(var j=0;j<cols.length;j++)cols[j].addEventListener("change",function(){if(this.checked){o.col=this.value;save();again();}});'
            'window.addEventListener("resize",again);'
            'document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"){again();wake();}});'
-           'sync();if(location.hash==="#clock")show(false);else tick();})();</script>')
+           'sync();if(location.hash==="#clock"||Q.hasOwnProperty("clock"))show(false);else tick();})();</script>')
 
 _UHS = '<a href="https://www.uhs.nhs.uk/departments/medicine-for-older-people/services/dementia/enhanced-dementia-care-ward/why-is-it-important-to-have-clocks" rel="noopener" target="_blank">University Hospital Southampton</a>'
 _ALZ_CLOCK = '<a href="https://shop.alzheimers.org.uk/products/large-square-calendar-clock-white" rel="noopener" target="_blank">Alzheimer&rsquo;s Society</a>'
 
+# 6 Nov 2026 (owner: "build it ... the more people we can get using it, the better"): care homes, hospices and receptions.
+# Why: a hospice IT manager asked how to run /dementia-clock/#clock on an iiyama TF3239AS-B1AG through iiSignage2, and the page
+# only spoke to families with a laptop. Sources (read 6 Nov 2026): iiSignage2 User Manual v4.0 (27 May 2026) - Web Page
+# Widget, right-click "Fill up", device "Touch" on/off; Microsoft Learn "Configure Microsoft Edge kiosk mode" (Settings > search
+# kiosk > Set up a kiosk > Microsoft Edge > digital sign; msedge.exe --kiosk URL --edge-kiosk-type=fullscreen --no-first-run;
+# kiosk sessions run InPrivate, so the page's saved choices don't survive - hence settings in the address). .htaccess lets
+# /dementia-clock/ be framed (82d379ea). #screens is the address to send to whoever looks after the screen.
+_DCK_MAKER = ('<div class="dkb" id="dck-make">'
+              '<fieldset class="dck__opts"><legend>What the screen shows</legend>'
+              '<label><input type="checkbox" id="dkb-btn" checked> No buttons: touching it does nothing</label>'
+              '<label><input type="checkbox" id="dkb-24"> 24-hour clock</label>'
+              '<label><input type="checkbox" id="dkb-year"> The year</label>'
+              '<label><input type="checkbox" id="dkb-nodate"> Leave the date off</label></fieldset>'
+              '<fieldset class="dck__opts"><legend>Colours</legend>'
+              '<label><input type="radio" name="dkb-col" value="" checked> White on black</label>'
+              '<label><input type="radio" name="dkb-col" value="cream"> Black on cream</label>'
+              '<label><input type="radio" name="dkb-col" value="auto"> Cream by day, black at night</label></fieldset>'
+              '<p class="dkb__lbl">The address for the screen</p>'
+              '<p class="dkb__out"><code id="dkb-url">https://365techies.co.uk/dementia-clock/?clock&amp;buttons=off</code></p>'
+              '<p class="dkb__btns"><button type="button" class="dck__say" id="dkb-copy">Copy the address</button>'
+              '<a class="dck__say" id="dkb-try" href="/dementia-clock/?clock&amp;buttons=off" target="_blank" rel="noopener">Try it in a new tab</a>'
+              '<span id="dkb-msg" role="status"></span></p></div>'
+              '<style>.dkb{margin:1rem 0 1.3rem;padding:1.1rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}'
+              # p.-prefixed so they beat .prose p (its font size and bottom margin)
+              '.dkb .dck__opts:first-child{margin-top:0}.dkb p.dkb__lbl{margin:1.1rem 0 .4rem;font-size:.86rem;color:var(--muted)}'
+              '.dkb p.dkb__out{margin:0}.dkb__out code{display:block;padding:.75rem .9rem;border-radius:10px;background:rgba(0,0,0,.35);border:1px solid rgba(125,170,220,.25);color:#e8f0fa;font-size:.92rem;line-height:1.5;overflow-wrap:anywhere;word-break:break-word}'
+              '.dkb p.dkb__btns{margin:.8rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem}.dkb__btns a.dck__say{text-decoration:none}'
+              '#dkb-msg{font-size:.9rem;color:var(--muted)}.dks code{overflow-wrap:anywhere;word-break:break-word}'
+              '@media (max-width:520px){.dkb{padding:1rem .8rem}}</style>'
+              '<script>(function(){var b=document.getElementById("dck-make");if(!b)return;function $(i){return document.getElementById(i);}'
+              'var base="https://365techies.co.uk/dementia-clock/?clock",u=$("dkb-url"),t=$("dkb-try"),m=$("dkb-msg"),cs=document.getElementsByName("dkb-col");'
+              'function make(){var s=base;if($("dkb-btn").checked)s+="&buttons=off";if($("dkb-24").checked)s+="&time=24";'
+              '$("dkb-year").disabled=$("dkb-nodate").checked;if($("dkb-nodate").checked)s+="&date=off";else if($("dkb-year").checked)s+="&year=on";'
+              'for(var i=0;i<cs.length;i++)if(cs[i].checked&&cs[i].value)s+="&colours="+cs[i].value;'
+              'u.textContent=s;t.href=s.replace("https://365techies.co.uk","");return s;}'
+              'b.addEventListener("change",function(){make();m.textContent="";});'
+              '$("dkb-copy").addEventListener("click",function(){var s=make();function ok(){m.textContent="Copied.";}'
+              'function fb(){try{var r=document.createRange();r.selectNodeContents(u);var g=window.getSelection();g.removeAllRanges();g.addRange(r);'
+              'm.textContent=document.execCommand("copy")?"Copied.":"Select the address above and copy it.";}catch(e){m.textContent="Select the address above and copy it.";}}'
+              'if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s).then(ok,fb);else fb();});'
+              'make();})();</script>')
+
+_DCK_SCREENS = ('<div class="dks">'
+                '<p>The same clock works on a wall screen, a TV or a digital signage display, so everyone in a lounge, a ward or a reception can see the day. '
+                'It&rsquo;s free for care homes, hospices, hospitals and surgeries too: no sign-up, no licence and no adverts. '
+                'This part is for whoever looks after the screen, such as your IT team or the company that supplied it. '
+                'To send them straight here, use <strong>365techies.co.uk/dementia-clock/#screens</strong>.</p>'
+                '<h3>1. Make the screen&rsquo;s address</h3>'
+                '<p>The settings go in the address, so nobody has to touch the screen. Tick what you want and copy the address it makes.</p>'
+                + _DCK_MAKER +
+                '<p>Or write it by hand. Start with <code>https://365techies.co.uk/dementia-clock/?clock</code> and add any of these:</p>'
+                '<ul>'
+                '<li><code>&amp;buttons=off</code>: no buttons, and touching the screen does nothing. Best for touch screens where residents or visitors can reach.</li>'
+                '<li><code>&amp;time=24</code>: a 24-hour clock, so 14:30 rather than 2:30pm.</li>'
+                '<li><code>&amp;year=on</code>: adds the year to the date.</li>'
+                '<li><code>&amp;date=off</code>: leaves the date off.</li>'
+                '<li><code>&amp;colours=cream</code>: black on cream instead of white on black. <code>&amp;colours=auto</code> is cream by day and white on black from 9pm to 7am.</li>'
+                '</ul>'
+                '<p>The address opens straight to the clock, which fills whatever space it&rsquo;s given. <code>#clock</code> on the end does the same, but some signage systems drop everything after a <code>#</code>, so <code>?clock</code> is the safer choice for a screen.</p>'
+                '<h3>2. Put it on the screen</h3>'
+                '<ul>'
+                '<li><strong>Digital signage.</strong> Most signage systems have a web page or website widget: paste in the address, make it fill the whole screen and publish it. '
+                'On iiyama&rsquo;s iiSignage2 it&rsquo;s the <strong>Web Page</strong> widget; right-click it and choose <strong>Fill up</strong>. '
+                'This page is allowed to show inside a signage system&rsquo;s own window, so it appears in the system&rsquo;s preview as well as on the screen.</li>'
+                '<li><strong>A TV or monitor with a Windows PC.</strong> Windows can lock a PC to one web page: open Settings, search for <strong>kiosk</strong>, choose <strong>Set up a kiosk</strong>, '
+                'pick <strong>Microsoft Edge</strong> as a digital sign and enter the address (<a href="https://learn.microsoft.com/en-us/deployedge/microsoft-edge-configure-kiosk-mode" rel="noopener" target="_blank">Microsoft&rsquo;s steps</a>). '
+                'Or start Edge in kiosk mode from a shortcut: <code>msedge.exe --kiosk "https://365techies.co.uk/dementia-clock/?clock&amp;buttons=off" --edge-kiosk-type=fullscreen --no-first-run</code>. '
+                'Edge&rsquo;s kiosk mode forgets settings each time it starts, which is why they go in the address. Set the PC&rsquo;s screen and sleep times to Never.</li>'
+                '<li><strong>An Android tablet or screen.</strong> Open the address in Chrome and pin it with app pinning (Samsung calls it <strong>Pin windows</strong>), so it stays on the clock. '
+                'Set the screen timeout to the longest time, or use the device&rsquo;s own always-on or kiosk setting if it has one.</li>'
+                '<li><strong>A smart TV&rsquo;s own web browser</strong> is usually the hardest to keep on one page all day. A small PC or a signage player plugged into the TV is more reliable.</li>'
+                '</ul>'
+                '<h3>3. Check these before you leave it</h3>'
+                '<ul>'
+                '<li><strong>The time comes from the screen.</strong> Set it to get the time automatically, with the time zone on London, so it changes for British Summer Time by itself.</li>'
+                '<li><strong>Touch.</strong> Use <code>&amp;buttons=off</code>, and turn the screen&rsquo;s touch off as well if your signage system can.</li>'
+                '<li><strong>Internet.</strong> It needs the internet to open, then keeps going from the screen&rsquo;s own clock if the connection drops. If the screen restarts while the internet is down, the clock comes back once it&rsquo;s connected again. Only <strong>365techies.co.uk</strong> needs to be allowed through a firewall.</li>'
+                '<li><strong>No account.</strong> There&rsquo;s nothing to sign in to, and nothing you choose is sent anywhere. The page&rsquo;s cookie banner sits behind the clock, so it never appears on the screen.</li>'
+                '<li><strong>Overnight.</strong> If the screen stays on all night, <code>&amp;colours=auto</code> and a lower brightness make it gentler. The words drift slowly, so nothing stays in one place for long.</li>'
+                '<li><strong>The talking clock</strong> needs someone to press its button, because web browsers only let a page speak after a person has pressed something on it. Leave it for screens with someone nearby.</li>'
+                '</ul></div>')
+
 DC = {
     'slug': 'dementia-clock',
     'title': 'Free Dementia Clock: Day and Date on Any Screen',
-    'metaDesc': 'A free dementia clock: the day, morning or afternoon, the date and the time in big, clear words. Full screen on an old laptop or tablet. No sign-up.',
-    'ogTitle': 'A free dementia clock for any laptop or tablet',
+    'metaDesc': 'A free dementia clock: the day, morning or afternoon, the date and the time in big, clear words. On a laptop, tablet, TV or care home screen. No sign-up.',
+    'ogTitle': 'A free dementia clock for any laptop, tablet or wall screen',
     'crumbName': 'Dementia Clock',
     'eyebrow': '// A FREE DAY AND DATE CLOCK',
     'h1': 'A free <em class="grad grad--cyan">dementia clock</em> for any screen',
-    'lede': 'The day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in big, clear words. Open it full screen on a spare laptop or tablet and it becomes a day clock for someone living with dementia. Free, no sign-up, and nothing is sent anywhere.',
-    'chips': ['Free, no sign-up', 'Big, clear words', 'Any laptop or tablet'],
+    'lede': 'The day, whether it&rsquo;s morning, afternoon, evening or night, the date and the time, in big, clear words. Open it full screen on a spare laptop or tablet and it becomes a day clock for someone living with dementia. Free, no sign-up, and nothing is sent anywhere. Care home, hospice or reception screen? <a href="#screens">Here&rsquo;s how to set it up</a>.',
+    'chips': ['Free, no sign-up', 'Big, clear words', 'Laptop, tablet or wall screen'],
+    'webApp': '365 Techies Dementia Clock',
     'primaryCta': ['Open the clock', '#clock'], 'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
-    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We can turn an old Windows laptop into a day clock for a relative, or put the Day and date screensaver on their PC. Call 01202 775566 or text 07520 615332.',
+    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We can turn an old Windows laptop into a day clock for a relative, put the Day and date screensaver on their PC, or set the clock up on a care home&rsquo;s screens. Call 01202 775566 or text 07520 615332.',
     'schemaKind': 'howto',
     'atAGlance': [
         ('What it shows', 'The day, morning, afternoon, evening or night, the date and the time, in big, clear words.'),
         ('What it costs', 'Nothing. No sign-up, no adverts, and nothing you choose is sent anywhere.'),
-        ('What you need', 'Any computer, laptop or tablet with an up-to-date web browser, left plugged in.'),
+        ('What you need', 'Any computer, laptop, tablet or screen with an up-to-date web browser, left plugged in.'),
+        ('Care homes and receptions', 'Works on wall screens, TVs and digital signage. The settings go in the address, and the buttons can be turned off.'),
         ('Clocks going forward or back', 'Handled, as long as the device sets its own time and is on UK time.'),
         ('The year', 'Left off unless you tick it: Alzheimer&rsquo;s Society notes the year can confuse some people.'),
         ('Talking clock', 'Press Say the time, or tick Say the time every hour. It uses the voice built into the device.'),
@@ -1535,19 +1633,22 @@ DC = {
                  '<li><strong>Put it where it&rsquo;s seen.</strong> Facing their chair or bed, at eye level, out of bright sunlight. White on black is gentler at night; black on cream is easiest to read in a bright room.</li>'
                  '<li><strong>Check it when you visit.</strong> Windows sometimes restarts overnight to finish updates, and then the clock needs opening again.</li>'
                  '</ol>'},
-        {'eyebrow': '/04 &mdash; ON A WINDOWS PC', 'h2': 'On a Windows PC: a Day and date screensaver',
+        {'eyebrow': '/04 &mdash; CARE HOMES &amp; RECEPTIONS', 'h2': 'On a screen in a care home, hospice or reception', 'id': 'screens',
+         'html': _DCK_SCREENS},
+        {'eyebrow': '/05 &mdash; ON A WINDOWS PC', 'h2': 'On a Windows PC: a Day and date screensaver',
          'html': '<p>If they still use their Windows PC, a screensaver can be the clock: it appears by itself whenever the PC is left alone, and goes at a touch of the mouse, so the PC still works for everything else.</p>__APP_BOX_DAYDATE__'
                  '<ol style="margin-top:1.2rem">'
                  '<li>In the app, open <strong>Photos &amp; files</strong>, then <strong>Screensaver &amp; photos</strong>, and pick <strong>Day and date</strong>.</li>'
                  '<li>Choose <strong>Start after 5 min</strong>. If the PC is only theirs, leave <strong>Ask for my password</strong> unticked. Press <strong>Use this</strong>. <strong>Its settings</strong> adds their photos behind the words, or a 24-hour clock.</li>'
                  '<li>Under <strong>Turn the screen off after</strong>, choose <strong>Never</strong>, and set Windows&rsquo; sleep time to Never when plugged in (step 3 above).</li>'
                  '</ol>'},
-        {'eyebrow': '/05 &mdash; SCREEN OR SHOP CLOCK?', 'h2': 'A screen, or a clock from a shop?',
+        {'eyebrow': '/06 &mdash; SCREEN OR SHOP CLOCK?', 'h2': 'A screen, or a clock from a shop?',
          'html': '<p>A plug-in day clock from a shop &mdash; Alzheimer&rsquo;s Society sells several &mdash; does one job, needs no setting up, and radio-controlled ones change for British Summer Time by themselves. '
                  'This clock is free if you have a spare screen, shows bigger words than most, and lets you choose exactly what it shows.</p>'
                  '<p>A laptop or tablet left on all day uses some electricity; our <a href="/how-much-does-it-cost-to-run-a-pc-uk/">running cost calculator</a> works out what.</p>'},
-        {'eyebrow': '/06 &mdash; WANT A HAND?', 'h2': 'We can set it up for you',
-         'html': _call_us('We can set up an old Windows laptop as a day clock for a relative, or put the Day and date screensaver on their PC.')},
+        {'eyebrow': '/07 &mdash; WANT A HAND?', 'h2': 'We can set it up for you',
+         'html': _call_us('We can set up an old Windows laptop as a day clock for a relative, or put the Day and date screensaver on their PC.')
+                 + '<p>Care homes, hospices and surgeries: we can set the clock up on your screens, or talk your IT supplier through it. See our <a href="/it-support-for-care-homes/">IT support for care homes</a>.</p>'},
     ],
     'howToName': 'How to turn an old laptop or tablet into a dementia clock',
     'howToSteps': [
@@ -1567,8 +1668,11 @@ DC = {
         {'q': 'Will leaving it on mark the screen?', 'a': '<p>The words drift slowly round the screen, so no part of it shows the same thing for long. Turning the brightness down a little helps too.</p>'},
         {'q': 'Can it say the time out loud, like a talking clock?', 'a': '<p>Yes. Press <strong>Say the time</strong> and it says the day, the part of the day, the date and the time. Tick <strong>Say the time every hour</strong> and it says it on the hour while this page is open. It uses the voice built into the device&rsquo;s web browser, so the sound needs to be on.</p>'},
         {'q': 'Can a Windows PC show it as a screensaver?', 'a': '<p>Yes. Our free 365 PC Manager app adds a Day and date screensaver: Photos &amp; files, then Screensaver &amp; photos. It can show your own photos behind the words.</p>'},
+        {'q': 'Can a care home or hospice use this dementia clock?', 'a': '<p>Yes, and it&rsquo;s free for care homes, hospices, hospitals and surgeries too, with no sign-up or licence. It works on a wall screen, a TV or a digital signage display. <a href="#screens">Setting it up on a screen</a> has the steps for whoever looks after it.</p>'},
+        {'q': 'Will it work on digital signage?', 'a': '<p>Yes. Add a web page widget in your signage system, use the address <strong>https://365techies.co.uk/dementia-clock/?clock</strong> and make it fill the screen. Our website lets signage systems show this page inside their own window, so it appears in their preview too.</p>'},
+        {'q': 'Can we choose the settings without touching the screen?', 'a': '<p>Yes. They go in the address: add <strong>&amp;time=24</strong> for a 24-hour clock, <strong>&amp;year=on</strong> for the year, <strong>&amp;date=off</strong> to leave the date off, <strong>&amp;colours=cream</strong> or <strong>&amp;colours=auto</strong> for the colours, and <strong>&amp;buttons=off</strong> so that touching the screen does nothing. The address maker on this page builds it for you.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/setting-up-a-computer-for-an-older-relative/">setting up a computer for an older relative</a>, <a href="/laptop-set-up-for-elderly-parent/">a laptop set up for an elderly parent</a>, <a href="/how-to-set-an-alarm-on-your-computer/">set an alarm on your computer</a>, <a href="/how-to-listen-to-the-radio-on-your-computer/">the radio on your computer</a>, <a href="/worried-about-a-parent-being-scammed/">worried about a parent being scammed?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/setting-up-a-computer-for-an-older-relative/">setting up a computer for an older relative</a>, <a href="/laptop-set-up-for-elderly-parent/">a laptop set up for an elderly parent</a>, <a href="/assistive-technology-at-home/">assistive technology at home</a>, <a href="/it-support-for-care-homes/">IT support for care homes</a>, <a href="/how-to-set-an-alarm-on-your-computer/">set an alarm on your computer</a>, <a href="/how-to-listen-to-the-radio-on-your-computer/">the radio on your computer</a>, <a href="/worried-about-a-parent-being-scammed/">worried about a parent being scammed?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
 

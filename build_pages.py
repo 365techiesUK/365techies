@@ -3381,7 +3381,7 @@ TOOLS = {
   "rrtest":       ("Refresh Rate Test", "/refresh-rate-test/", "What Hz is your screen really running at? Check a 144 Hz monitor isn&rsquo;t stuck at 60."),
   "deadpixel":    ("Dead Pixel Test", "/dead-pixel-test/", "Fill your screen with one colour at a time to spot dead or stuck pixels, light bleed and banding."),
   "vtimer":       ("Visual Timer", "/visual-timer/", "A coloured circle that shrinks as time runs out &mdash; full screen, for homework, focus and cooking."),
-  "dclock":       ("Dementia Clock", "/dementia-clock/", "A free day and date clock in big, clear words &mdash; full screen on any spare laptop or tablet."),
+  "dclock":       ("Dementia Clock", "/dementia-clock/", "A free day and date clock in big, clear words &mdash; full screen on a spare laptop, a tablet or a care home&rsquo;s wall screen."),
   "vbuilder":     ("Victron System Builder", "/victron-system-builder/", "Four questions &#8594; a complete, honestly-sized Victron kit list with links to buy every part."),
   "pcbuild":      ("Custom PC Builder", "/custom-pc-builder/", "Your budget, split the way experienced builders do it &mdash; what to spend per part, and live links to buy."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),

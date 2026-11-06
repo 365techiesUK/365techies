@@ -22625,7 +22625,7 @@ pay_page()
 # ============================================================ EASY-KEYWORD PAGES (data-driven, from new_pages_data.py)
 def _sec_block(s, i=0):
     cls = "section" if i % 2 == 0 else "section section--alt"  # alternate bg for visual rhythm
-    sid = f"s{i + 1}"  # anchor target for the on-page TOC chips
+    sid = s.get('id') or f"s{i + 1}"  # anchor target for the on-page TOC chips (6 Nov 2026: a section may name its own, e.g. /dementia-clock/#screens)
     kind = s.get('kind', 'prose')
     head_c = f'''        <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>{s['eyebrow']}</p>
@@ -22695,7 +22695,7 @@ def _toc_chips(sections):
     chips = []
     for i, s in enumerate(sections):
         label = re.sub(r'^/+\s*', '', s['eyebrow']).strip()
-        chips.append(f'<a href="#s{i + 1}">{label}</a>')
+        chips.append(f'<a href="#{s.get("id") or "s%d" % (i + 1)}">{label}</a>')
     return ('    <nav class="toc mono" aria-label="On this page" data-reveal>'
             + ''.join(chips) + '</nav>')
 
