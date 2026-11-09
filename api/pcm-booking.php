@@ -169,6 +169,9 @@ function staff_first_of($raw) {
 }
 function staff_first() { return staff_first_of(staff_who()); }
 function bk_clean($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); }
+// 9 Nov 2026 (owner: a new customer's booking note stopped at 80 characters in Slack, mid-sentence): what a customer
+// wrote, whole (up to $max), for a Slack line - Slack's own escaping, so nothing they type can ping a channel or make a link
+function bk_said($s, $max) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, (int)$max))); }
 function bk_lbl($bid) { global $in; $who = bk_clean(isset($in['who']) ? $in['who'] : (isset($in['name']) ? $in['name'] : ''));
     $what = bk_clean(isset($in['what']) ? $in['what'] : ''); return ($who !== '' ? $who : ('Booking #' . (int)$bid)) . ($what !== '' ? ' - ' . $what : ''); }
 function bk_by() { $w = staff_first(); return ' _(by ' . ($w !== '' ? $w : 'the team') . ')_'; }
@@ -1875,7 +1878,7 @@ if ($action === 'book') {
     // could be thanked, and an unthanked referral does not repeat. One optional
     // question, a permanent ledger, and a Slack nudge naming both people.
     $refby = trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)(isset($in['refby']) ? $in['refby'] : '')));
-    $refby = substr($refby, 0, 80);
+    $refby = substr($refby, 0, 160);   // 9 Nov 2026: was 80 - "... my husband grew up in Poo" (Poole) lost its end
     if ($refby !== '') {
         list($lkR, $dbR) = db_open();
         if (!isset($dbR['referrals']) || !is_array($dbR['referrals'])) $dbR['referrals'] = array();
@@ -1891,9 +1894,9 @@ if ($action === 'book') {
         if (count($dbR['referrals']) > 2000) $dbR['referrals'] = array_slice($dbR['referrals'], -2000);
         db_save($dbR); db_close($lkR);
         pcm_slack_say(":handshake: *A referral!* " . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
-            . ' says they were recommended by *' . bk_clean($refby) . "*\n"
+            . ' says they were recommended by *' . bk_said($refby, 160) . "*\n"
             . "> :arrow_right: Give " . bk_clean($snap['name'] !== '' ? $snap['name'] : 'them') . " their first month on a support plan free (it includes this first Computer Service & Health Check)\n"
-            . "> :arrow_right: Give " . bk_clean($refby) . " a month free on their support plan\n"
+            . "> :arrow_right: Give " . bk_said($refby, 160) . " a month free on their support plan\n"
             . '> Booked for ' . $pretty);
     }
     // Count this booking ACTION for the 24h rate limit. Deliberately counts actions, not
@@ -1913,7 +1916,7 @@ if ($action === 'book') {
         . ' - ' . $pretty . (!$confirmed ? ' _(awaiting confirmation)_' : '')
         . ($repeats ? "\n> :repeat: *RECURRING service* - this created " . $repeats . ' visits, through to ' . $lastPretty
                     . '. If that was not intended, turn recurrence off for "' . bk_clean($svcNm !== '' ? $svcNm : 'this service') . '" in SimplyBook.' : '')
-        . ($note !== '' ? "\n> " . bk_clean(substr($note, 0, 200)) : '')
+        . ($note !== '' ? "\n> " . bk_said($note, 400) : '')
         . ($snap['phone'] !== '' ? "\n> tel: " . bk_clean($snap['phone']) : ''));
     out(array('ok' => true, 'id' => $bid, 'when' => $pretty, 'pending' => !$confirmed,
               'repeats' => $repeats, 'last' => $lastPretty));
@@ -2047,7 +2050,7 @@ if ($action === 'booknote') {
     db_save($dbB); db_close($lkB);
     // the team works from Slack + the diary, so an edit has to reach them too
     pcm_slack_say(':memo: *Booking note updated by the customer* - ' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
-        . ' (booking #' . $bid . ')' . ($note !== '' ? "\n> " . bk_clean(substr($note, 0, 200)) : ' _(cleared)_'));
+        . ' (booking #' . $bid . ')' . ($note !== '' ? "\n> " . bk_said($note, 400) : ' _(cleared)_'));
     out(array('ok' => true, 'note' => $note));
 }
 
@@ -3146,6 +3149,9 @@ if ($action === 'agenda') {
     $rows = isset($r['result']) && is_array($r['result']) ? $r['result'] : array();
     list($lkA, $dbA) = db_open(); db_close($lkA);
     $bm = isset($dbA['bkmeta']) && is_array($dbA['bkmeta']) ? $dbA['bkmeta'] : array();
+    // 9 Nov 2026: what the customer wrote when they booked ("Anything we should know?") - kept by us, never in SimplyBook,
+    // and until now only the customer could see it again
+    $bkn = isset($dbA['bknote']) && is_array($dbA['bknote']) ? $dbA['bknote'] : array();
     /* Numbers we already hold OURSELVES, keyed by email.
        getBookings does not always carry the client's phone - the key is simply
        absent on some rows - so the diary was printing "no number on file" for
@@ -3238,6 +3244,7 @@ if ($action === 'agenda') {
                         'st' => $st,
                         'conf' => $st === 'confirmed',
                         'note' => (string)(is_array($bmr) && isset($bmr['note']) ? $bmr['note'] : ''),   // 6 Oct 2026: what we did (Log a job we've done)
+                        'cnote' => (string)(isset($bkn[(string)$bid]['t']) ? $bkn[(string)$bid]['t'] : ''),   // 9 Nov 2026: what they wrote when booking
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['eventId']) ? $b['eventId'] : (isset($b['service_id']) ? $b['service_id'] : 0))));
         if (count($list) >= 120) break;

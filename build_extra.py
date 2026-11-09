@@ -33019,6 +33019,7 @@ def write_portal_page():
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\\u2709\\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\\ud83d\\udccd Details</button>' : '')
       + (b.note ? '<div class="quiet" style="margin-top:.25rem;font-size:.88rem;white-space:pre-line">\\ud83d\\udcdd ' + esc(b.note) + '</div>' : '')   // what we did (Log a job we've done)
+      + (b.cnote ? '<div style="margin-top:.25rem;font-size:.92rem;white-space:pre-line">\\ud83d\\udcac <strong>They wrote:</strong> \\u201c' + esc(b.cnote) + '\\u201d</div>' : '')   // 9 Nov 2026: what the customer wrote when booking
       /* No inline "Done" button. It was shown on every row that was not already
          completed - including jobs not yet started - so it sat one stray tap away
          from marking a job finished before anyone had been out to it, and that
