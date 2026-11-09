@@ -259,8 +259,12 @@ if ($action === 'checkin') {
         // while a key is good (Buy.Offered needs !IsPlus), so nothing on screen changes until the month is over.
         $offer = ($pr['ok'] && !$tri) ? array() : plus_offer_out($cc, plus_mhash($machine));
         if ($tri && !$pr['ok'] && !isset($offer['offer']) && $trOut['region'] === 'uk') $offer = array('offer'=>'plan');
+        // 9 Nov 2026: this key signed in to book on this PC - the customer record it signed in as and that record's plan
+        // (pcm-pluslink-lib.php), so the app (build 49 on) moves onto the record when staff make it Pro or the month ends
+        $plOut = array();
+        if (is_readable(__DIR__ . '/pcm-pluslink-lib.php')) { require_once __DIR__ . '/pcm-pluslink-lib.php'; $plOut = pl_cust_out($db, $key, $machine); }
         out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires']) + $offer
-                : array('plus_error'=>$pr['error']) + $offer) + $trOut
+                : array('plus_error'=>$pr['error']) + $offer) + $trOut + $plOut
             + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
     }
     // 17 Oct 2026: a PC that lost its link on the PC gets its key back (pcm_relink_key) - and no free month in its place

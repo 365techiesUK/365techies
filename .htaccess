@@ -75,6 +75,8 @@ RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 # address (/activate/365pcm://activate/KEY), or /activate/KEY - lands on the working page with the key after the #
 # instead of a 404 (one did, in front of a new customer). NE keeps the # a #. 302: never cached as permanent.
 RewriteRule ^activate/.*?([A-Za-z2-9]{4}-[A-Za-z2-9]{4}-[A-Za-z2-9]{4}) /activate/#$1 [R=302,NE,L]
+# 9 Nov 2026: and a key made by a booking sign-in ("SB" + 10 hex, no dashes)
+RewriteRule ^activate/(?:.*[^A-Za-z0-9])?([Ss][Bb][0-9A-Fa-f]{10})(?![0-9A-Za-z]) /activate/#$1 [R=302,NE,L]
 
 # The game moved 23 Sep 2026: /efoil-game/ -> /bournemouth/games/seafront/. It was unlisted and
 # nothing linked to it, so this redirect is belt and braces for a link already shared by hand.
@@ -418,6 +420,11 @@ ErrorDocument 404 /404.html
 # A PC whose key no longer opens a record finds its way home (8 Oct 2026): the re-home runs inside pcm.php,
 # pcm-booking.php and pcm-service.php; the library is include-only and its test suite CLI-only.
 <FilesMatch "^pcm-rehome-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
+# A free month's key that signed in to book (9 Nov 2026): runs inside pcm-booking.php and pcm.php; the library is
+# include-only and its test suite CLI-only.
+<FilesMatch "^pcm-pluslink-(lib|test)\.php$">
   Require all denied
 </FilesMatch>
 # The customer file's safe save (8 Oct 2026, after pcm-data.json was found emptied): the library is include-only, its

@@ -36198,13 +36198,15 @@ def write_activate_page():
   var where = location.hash + ' ' + location.search + ' ' + location.pathname;
   try { where = decodeURIComponent(where); } catch (e) {}
   var m = where.toUpperCase().match(/([A-Z2-9]{4})[ -]([A-Z2-9]{4})[ -]([A-Z2-9]{4})/);
+  // 9 Nov 2026: a key made by a booking sign-in is "SB" + 10 hex with no dashes - the portal's link for one said "incomplete"
+  var sb = m ? null : where.toUpperCase().match(/(?:^|[^A-Z0-9])(SB[0-9A-F]{10})(?![A-Z0-9])/);
   var W = 'style="color:var(--white)"';
   var how = '<ol class="steps"><li>Open 365 PC Manager. Not on this PC yet? Ring us on <strong ' + W + '>01202 775566</strong> (or use your remote session) and we\\u2019ll pop the free app on for you.</li>'
     + '<li>Click the button at the top of the app (<strong ' + W + '>Get the full service</strong> or <strong ' + W + '>Link this PC</strong>), then <strong ' + W + '>Already a customer? Link this PC</strong>.</li>'
     + '<li>Type the key and click <strong ' + W + '>Activate</strong>.</li></ol>';
-  if (!m) { b.innerHTML = '<p>This activation link looks incomplete. Got a key from us? You can type it into the app instead:</p>' + how
+  if (!m && !sb) { b.innerHTML = '<p>This activation link looks incomplete. Got a key from us? You can type it into the app instead:</p>' + how
     + '<p>Or ring us on <strong ' + W + '>01202 775566</strong> and we\\u2019ll sort it in a minute.</p>'; return; }
-  var key = m[1] + '-' + m[2] + '-' + m[3];
+  var key = m ? m[1] + '-' + m[2] + '-' + m[3] : sb[1];
   try { if (location.hash !== '#' + key) history.replaceState(null, '', '/activate/#' + key); } catch (e) {}
   b.innerHTML = '<p>On the computer you want looked after? Tap the button and the 365 PC Manager app will link itself. If your browser asks, choose <strong ' + W + '>Open</strong>.</p>'
     + '<p style="text-align:center"><button id="go">\\u26a1 Activate now</button></p>'

@@ -422,6 +422,13 @@ function db_close($lk) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } }
 function customer_snapshot() {
     global $key, $machine;
     list($lk, $db) = db_open();
+    // 9 Nov 2026: a free month's Unlock key that signed in to book on this PC books as the customer it signed in as
+    // (pcm-pluslink-lib.php) - the app keeps its Unlock key, so it sends that one, not the record's
+    if ($key !== '') {
+        require_once __DIR__ . '/pcm-pluslink-lib.php';
+        $plKey = pl_lookup($db, $key, $machine);
+        if ($plKey !== '') $key = $plKey;
+    }
     // 8 Oct 2026: a key that no longer opens a record re-homes where we hold proof (pcm-rehome-lib.php) - the PC's
     // check-in normally got there first; from here on $key is the record it leads to, for the rest of this request
     if ($key !== '') {
@@ -1596,6 +1603,12 @@ if ($action === 'signin') {
     // reached nobody (only the old console showed it), so it now posts a Slack card and shows on the portal's Today.
     require_once __DIR__ . '/pcm-pendsign-lib.php';
     $psFresh = ps_flag($db, $pendingKeys, $target, $cid, $cemail, $cname, $now);
+    // 9 Nov 2026: the app is on its free month (an Unlock key) - this sign-in ties that key, on this PC, to the record, so
+    // the app's booking calls (which keep sending the Unlock key) reach it, and its check-in learns the record's plan
+    if (empty($in['web']) && $key !== '' && !isset($db['customers'][$key])) {
+        require_once __DIR__ . '/pcm-pluslink-lib.php';
+        pl_remember($db, $key, $machine, $target);
+    }
     // web portal: never hand the permanent licence key to a browser. Mint an expiring
     // server-side session token instead (12h sliding, purged like staff tokens).
     $wtok = '';
