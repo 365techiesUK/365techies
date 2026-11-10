@@ -331,13 +331,13 @@ MENTIONS = {
     "how-to-stop-spam-emails":
         "On a Windows PC? Our free [Techies One Mail] can block senders, unsubscribe safely from genuine mailing lists and warn about likely scam emails while it&rsquo;s open on your screen, though it can&rsquo;t stop junk being sent to you.",
     "outlook-cannot-open-the-outlook-window":
-        "Outlook still won&rsquo;t open? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+        "Outlook still won&rsquo;t open? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider and bring in the emails from Outlook&rsquo;s .pst and .ost files, though it won&rsquo;t repair Outlook.",
     "outlook-opens-then-closes":
-        "Outlook keeps closing on you? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+        "Outlook keeps closing on you? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider and bring in the emails from Outlook&rsquo;s .pst and .ost files, though it won&rsquo;t repair Outlook.",
     "outlook-search-not-returning-all-results":
-        "Happy to leave Outlook on a home PC? Our free [Techies One Mail], a simpler email program for Windows, searches the email kept with your provider a folder at a time, old email included, though it won&rsquo;t fix Outlook&rsquo;s own search or search .pst archives.",
+        "Happy to leave Outlook on a home PC? Our free [Techies One Mail], a simpler email program for Windows, searches the email kept with your provider a folder at a time, old email included, and can bring in a .pst archive to search, though it won&rsquo;t fix Outlook&rsquo;s own search.",
     "outlook-stuck-on-loading-profile":
-        "Outlook still stuck on Loading Profile? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+        "Outlook still stuck on Loading Profile? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider and bring in the emails from Outlook&rsquo;s .pst and .ost files, though it won&rsquo;t repair Outlook.",
     "outlook-not-responding":
         "If you are fed up with Outlook freezing and don&rsquo;t need its add-ins, our free [Techies One Mail] is a simpler email program for Windows PCs that reads the email kept with your provider, though it won&rsquo;t repair Outlook.",
     "outlook-rules-not-working-new-outlook":
