@@ -38,6 +38,8 @@ it (with its v3 Short underneath). Transcripts are the films' own voice scripts.
 23 Oct 2026 (owner: "link them all to the page"): the classic Outlook film (2:02, 4K, filmed in the Hyper-V studio) on
 /download-classic-outlook/ after the guided steps and on /how-to-go-back-to-classic-outlook/ after "No toggle?", with its
 25-second Short as a button underneath. Both public before this went live.
+10 Nov 2026 (owner: "put them like public now"): the OST to PST film (1:26, the real Techies One 0.23.1 on a made-up .ost)
+on /ost-to-pst-converter/ after "Find the .ost and make a copy", with its 24-second Short as a button underneath.
 """
 import datetime
 import json
@@ -165,6 +167,27 @@ VIDEOS = {
         cap="2 min 3 s &middot; a spoken guide with captions &middot; real Windows 11 and OneDrive, our own demo files",
         says="OneDrive filling up your PC? You don&rsquo;t have to switch it off, and you won&rsquo;t lose a single file. Here&rsquo;s how to get the space back, safely. OneDrive keeps your files in the cloud. But every file you open is downloaded to your PC as well, and it stays there. Over time, that fills the drive. On this PC, OneDrive is using 1.3 GB. Open File Explorer, and right-click OneDrive. Choose Free up space. The green ticks turn into blue clouds. The files are still there, and still in OneDrive. They just stop taking room on your PC. Back in Settings, OneDrive has gone from the list, and the free space has gone up by the same amount. Double-click any file, and it downloads the moment you need it. OneDrive&rsquo;s own settings can do the same for every file at once. Open Sync and backup, then Advanced settings. Under Files On-Demand, choose Free up disk space. To keep it that way, open Windows Settings, then System, then Storage, and switch on Storage Sense. Under Locally available cloud content, 30 days is a good choice. When the drive gets low, files you haven&rsquo;t opened in a month go back to the cloud, all by themselves. On a work computer, it&rsquo;s the same for the company&rsquo;s shared folders. Just never delete files to make room: that deletes them for everyone. That&rsquo;s it. Your files are safe in OneDrive, and your PC has its room back. Want us to do it for you? We&rsquo;ll sort it remotely. The full guide is at 365techies.co.uk.",
         tools=[]),
+    "ost-to-pst": dict(
+        id="epjgREBJ2j8", secs=86, uploaded="2026-11-10", poster="/images/howto-ost-to-pst-poster-v1.jpg",
+        name="Convert OST to PST Free: Open an Old Outlook .ost File (No Limits)",
+        desc=("An 86-second guide from 365 Techies, filmed on the real Techies One 0.23.1 with a made-up Outlook .ost: what "
+              "an .ost file is, copying it first, bringing it into Techies One, saving a copy as an Outlook data file (.pst), "
+              "and opening the .pst in Outlook. Free, with no limit on how many emails."),
+        cap="1 min 26 s &middot; a spoken guide with captions &middot; the real program on a made-up .ost",
+        says=("Got an old Outlook OST file that won&rsquo;t open? Here&rsquo;s how to turn it into a PST for free. An OST is "
+              "Outlook&rsquo;s offline copy of an email account. Outlook won&rsquo;t open one by itself, and renaming it "
+              "doesn&rsquo;t work. First, close Outlook, and copy the OST file into a folder of its own. Then open Techies "
+              "One, our free program for Windows. In Mail, choose Bring in old emails, then An Outlook file, and pick your "
+              "copy. Techies One checks the file first, and shows you what&rsquo;s inside: the folders, how many emails, and "
+              "which years. Choose Bring them in. Your emails come into a mailbox on this PC, folders and all, and your "
+              "original file is never changed. Now open the menu next to the mailbox, and choose Save a copy for another "
+              "program. Pick An Outlook data file, choose where to save it, and select Save a copy. Techies One checks the "
+              "file it makes. Finally, in Outlook, choose File, Open and Export, Open Outlook Data File, and pick your new "
+              "PST. Your old emails are back. It&rsquo;s free, with no limit on how many emails. The steps, with pictures, "
+              "are on our website. Thanks for watching!"),
+        tools=[("techies-one-mail", "Techies One (free, for Windows)")],
+        extra=('        <p style="text-align:center;margin:.3rem 0 0"><style>.hvf a.ytw{color:inherit;text-decoration:none}</style>'
+               + yt_watch.button(yt_watch.OSTPST_SHORT, "Or watch it in 24 seconds", shape="tall") + '</p>\n')),
     "classic-outlook": dict(
         id="YeceTYrnp0s", secs=122, uploaded="2026-10-23", poster="/images/howto-classic-outlook-poster-v1.jpg",
         name="How to Download Classic Outlook on Windows 11 (Missing on a New PC?)",
@@ -319,6 +342,10 @@ PLACES = {
     # 27 Oct 2026: the clipboard film finally has its page (symptom_pages_data.py CLIPBOARD), after the guided steps
     'clipboard-history-windows': ('clipboard', 'after:id="fixflow"', 'Watch: clipboard history in 73 seconds',
         'Turning it on, pasting from the list, pinning and clearing, filmed on a clean copy of Windows 11.'),
+    # 10 Nov 2026: the OST to PST film (public that evening), after "Find the .ost and make a copy", before the steps
+    'ost-to-pst-converter': ('ost-to-pst', 'after:id="s2"', 'Watch: OST to PST, start to finish',
+        'Every step in under 90 seconds on the real program with a made-up .ost: bring it in, save it as a .pst, and open it '
+        'in Outlook.'),
 }
 
 STYLE = """    <style>

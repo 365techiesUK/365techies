@@ -96,7 +96,9 @@ NEW_PAGES.append({
                  '<li><strong>Find it.</strong> Outlook 2013 and later keep .ost files in '
                  '<code>C:\\Users\\<em>your name</em>\\AppData\\Local\\Microsoft\\Outlook</code> (type '
                  '<code>%localappdata%\\Microsoft\\Outlook</code> into File Explorer&rsquo;s address bar). Some are in '
-                 '<strong>Documents, Outlook Files</strong>. It&rsquo;s usually named after the email address.</li>'
+                 '<strong>Documents, Outlook Files</strong>. It&rsquo;s usually named after the email address. Or let '
+                 'Techies One look: in Mail, select <strong>Bring in old emails</strong>, then <strong>Look for them on this '
+                 'PC</strong>, and it lists the .ost and .pst files in both places.</li>'
                  '<li><strong>Close Outlook,</strong> so the file isn&rsquo;t in use.</li>'
                  '<li><strong>Copy it</strong> into a folder of its own and use the copy. Techies One never changes the file, '
                  'but a copy keeps the original safe from everything else.</li>'
@@ -119,6 +121,8 @@ NEW_PAGES.append({
                  '<p><strong>3. Wait while it brings them in.</strong> You can carry on using the PC. When it says the mailbox '
                  'is ready, it appears under <strong>On this PC</strong> with your folders. Open a few emails from different '
                  'years to check.</p>'
+                 '<p><strong>Only want to read them?</strong> You can stop here: Techies One is a free <strong>OST '
+                 'viewer</strong> too, and you can read, search, print and forward the emails without making a .pst.</p>'
                  + _fig('t1-ost-to-pst-4-mailbox', 1440, 900, 'The emails from the .ost in a mailbox under On this PC, with '
                         'an email open', 'Your old emails, back on screen.' + _MADE_UP) +
                  '<p><strong>4. Select the &hellip; next to the mailbox&rsquo;s name, then Save a copy for another '
@@ -127,7 +131,8 @@ NEW_PAGES.append({
                         'program', 'The mailbox&rsquo;s menu.' + _MADE_UP) +
                  '<p><strong>5. Choose An Outlook data file (.pst),</strong> choose where to put it (Documents is fine), then '
                  'select <strong>Save a copy</strong>. Techies One checks the file it has made before it says it&rsquo;s '
-                 'saved.</p>'
+                 'saved. (For another program, the same box makes <strong>.eml</strong> files, one for each email, or '
+                 '<strong>.mbox</strong> files, one for each folder, which Thunderbird opens.)</p>'
                  + _fig('t1-ost-to-pst-6-save-pst', 660, 804, 'Save a copy for another program, with An Outlook data file '
                         '(.pst) chosen', 'Save a copy: An Outlook data file (.pst).' + _MADE_UP, wide=False) +
                  '<p><strong>6. Open it in Outlook:</strong> <strong>File, Open &amp; Export, Open Outlook Data File</strong>, '
@@ -203,8 +208,15 @@ NEW_PAGES.append({
               '.ost is not an Outlook data file. It has to be converted.</p>'},
         {'q': 'Where is my .ost file?', 'a': '<p>For Outlook 2013 and later, in <code>%localappdata%\\Microsoft\\Outlook</code>. '
               'Some are in Documents, Outlook Files. It&rsquo;s usually named after the email address.</p>'},
-        {'q': 'Does it work if the email account no longer exists?', 'a': '<p>Yes. Techies One reads the file itself, so it '
-              'doesn&rsquo;t need the account, the password or the Outlook profile that made it.</p>'},
+        {'q': 'Does it open an orphaned .ost, when the email account no longer exists?', 'a': '<p>Yes. Techies One reads the '
+              'file itself, so it doesn&rsquo;t need the account, the password or the Outlook profile that made it.</p>'},
+        {'q': 'Can I view an .ost file without converting it?', 'a': '<p>Yes. After <strong>Bring them in</strong>, the emails '
+              'are in a mailbox under On this PC in Techies One, where you can read, search and print them. You only need the '
+              '.pst if you want them in Outlook.</p>'},
+        {'q': 'Can it convert OST to EML or MBOX?', 'a': '<p>Yes. <strong>Save a copy for another program</strong> also makes '
+              'one .eml file for each email, or one .mbox file for each folder, for Thunderbird and other email programs.</p>'},
+        {'q': 'Is there a size limit?', 'a': '<p>No limit on how many emails. The .pst it makes is the newer, large kind, and '
+              'Outlook opens .pst files up to 50 GB. We&rsquo;ve converted a 3.4 GB .ost with 17,443 emails.</p>'},
         {'q': 'Will it change or damage my .ost?', 'a': '<p>No. It only reads the file. We still suggest working on a copy.</p>'},
         {'q': 'Which versions of Outlook does it work with?', 'a': '<p>.ost files from Outlook 2013 and later, including 2016, '
               '2019, 2021 and Microsoft 365. The .pst it makes opens in those versions of Outlook.</p>'},

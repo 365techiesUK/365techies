@@ -118,6 +118,10 @@ SPOT_SHORT = ("3fCj7B-cjZ4", 26, "2026-11-02T19:00:00+00:00", "What Is 'Learn Ab
 W11LEFT_SHORT = ("4XXplvdtUHg", 29, "2026-11-03T19:00:00+00:00", "Move the Windows 11 Start Button Back to the Left")
 W11LIKE10_SHORT = ("wooj75h4rYs", 31, "2026-11-04T19:00:00+00:00", "Make Windows 11 Feel Like Windows 10 in 30 Seconds")
 
+# 10 Nov 2026: the OST to PST Short (24 s, reels/ost-to-pst-2026-11-10: the real Techies One 0.23.1 on a made-up .ost),
+# public that evening (owner: "put them like public now"), under the how-to film on /ost-to-pst-converter/.
+OSTPST_SHORT = ("P5F5x_YTm6s", 24, None, "Old Outlook OST File? Turn It Into a PST, Free")
+
 
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""
