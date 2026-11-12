@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -922,8 +923,8 @@
         .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
         .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
         .taskhead__lede a{color:var(--cyan-soft)}
-        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
-        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}/*LT*/:where(html[data-theme="light"]) .taskhead__trust{color:#355074}/*TL*/
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}/*LT*/:where(html[data-theme="light"]) .taskhead__trust a{color:#355074}/*TL*/
         .taskhead .page-hero__byline{margin-top:.55rem}
         .taskhead + .section{padding-top:2rem}
         .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
@@ -971,23 +972,23 @@
       #sg .sg-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:1.6rem;align-items:start}
       #sg .sg-form{display:flex;flex-direction:column;gap:.7rem}
       #sg .sg-f{display:flex;flex-direction:column;gap:.3rem;font-size:.85rem}
-      #sg .sg-f input,#sg .sg-f select{font:inherit;padding:.65rem .85rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit}
-      #sg .sg-f input:focus,#sg .sg-f select:focus{outline:none;border-color:var(--cyan,#37c2c2)}
+      #sg .sg-f input,#sg .sg-f select{font:inherit;padding:.65rem .85rem;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit}/*LT*/:where(html[data-theme="light"]) #sg .sg-f input,:where(html[data-theme="light"]) #sg .sg-f select{border:1px solid rgba(10,16,31,.16);background:rgba(10,16,31,.04)}/*TL*/
+      #sg .sg-f input:focus,#sg .sg-f select:focus{outline:none;border-color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #sg .sg-f input:focus,:where(html[data-theme="light"]) #sg .sg-f select:focus{border-color:var(--cyan,#217373)}/*TL*/
       #sg .sg-row{display:flex;gap:.8rem}
       #sg .sg-row .sg-f{flex:1}
-      #sg .sg-colour input[type=color]{width:100%;height:42px;padding:2px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer}
+      #sg .sg-colour input[type=color]{width:100%;height:42px;padding:2px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer}/*LT*/:where(html[data-theme="light"]) #sg .sg-colour input[type=color]{border:1px solid rgba(10,16,31,.2)}/*TL*/
       #sg .sg-out{position:sticky;top:90px}
-      #sg .sg-out-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted,#9aa6c2);margin:0 0 .5rem}
+      #sg .sg-out-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted,#9aa6c2);margin:0 0 .5rem}/*LT*/:where(html[data-theme="light"]) #sg .sg-out-label{color:var(--muted,#475676)}/*TL*/
       #sg .sg-card{background:#fff;border-radius:14px;padding:1.4rem;min-height:140px;overflow-x:auto}
       #sg .sg-btns{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
-      #sg .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #sg .button.done{border-color:#2ecc71;color:#2ecc71}
-      #sg .sg-hint{font-size:.76rem;color:var(--muted,#9aa6c2);margin:.9rem 0 0;line-height:1.5}
-      #sgtool .sg-fix{max-width:900px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #sg .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #sg .sg-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
+      #sg .button.done{border-color:#2ecc71;color:#2ecc71}/*LT*/:where(html[data-theme="light"]) #sg .button.done{border-color:#1b7943;color:#1b7943}/*TL*/
+      #sg .sg-hint{font-size:.76rem;color:var(--muted,#9aa6c2);margin:.9rem 0 0;line-height:1.5}/*LT*/:where(html[data-theme="light"]) #sg .sg-hint{color:var(--muted,#475676)}/*TL*/
+      #sgtool .sg-fix{max-width:900px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}/*LT*/:where(html[data-theme="light"]) #sgtool .sg-fix{border:1px solid rgba(33,115,115,.35);background:rgba(33,115,115,.07)}/*TL*/
       #sgtool .sg-fix h3{margin:0 0 .5rem;font-size:1.2rem}
-      #sgtool .sg-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #sgtool .sg-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) #sgtool .sg-fix p{color:var(--muted,#475676)}/*TL*/
       #sgtool .sg-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-      #sgtool .sg-fix .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
+      #sgtool .sg-fix .sg-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #sgtool .sg-fix .sg-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
       @media(max-width:700px){#sg .sg-grid{grid-template-columns:1fr}#sg .sg-out{position:static}}
       </style>
       <script>
@@ -1450,7 +1451,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

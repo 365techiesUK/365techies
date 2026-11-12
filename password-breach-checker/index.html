@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -914,8 +915,8 @@
         .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
         .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
         .taskhead__lede a{color:var(--cyan-soft)}
-        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
-        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}/*LT*/:where(html[data-theme="light"]) .taskhead__trust{color:#355074}/*TL*/
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}/*LT*/:where(html[data-theme="light"]) .taskhead__trust a{color:#355074}/*TL*/
         .taskhead .page-hero__byline{margin-top:.55rem}
         .taskhead + .section{padding-top:2rem}
         .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
@@ -954,30 +955,30 @@
       #pwn{max-width:680px;margin:0 auto}
       #pwn .pw-form{display:flex;gap:.6rem;flex-wrap:wrap;align-items:stretch}
       #pwn .pw-inwrap{position:relative;flex:1 1 260px;min-width:0;display:flex}
-      #pwn #pw-input{flex:1;min-width:0;padding:.95rem 3.4rem .95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}
-      #pwn #pw-input:focus{outline:none;border-color:var(--cyan,#37c2c2)}
-      #pwn .pw-eye{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted,#9aa6c2);font:inherit;font-size:.78rem;cursor:pointer;padding:.3rem .5rem}
+      #pwn #pw-input{flex:1;min-width:0;padding:.95rem 3.4rem .95rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);color:inherit;font:inherit}/*LT*/:where(html[data-theme="light"]) #pwn #pw-input{border:1px solid rgba(10,16,31,.16);background:rgba(10,16,31,.04)}/*TL*/
+      #pwn #pw-input:focus{outline:none;border-color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #pwn #pw-input:focus{border-color:var(--cyan,#217373)}/*TL*/
+      #pwn .pw-eye{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--muted,#9aa6c2);font:inherit;font-size:.78rem;cursor:pointer;padding:.3rem .5rem}/*LT*/:where(html[data-theme="light"]) #pwn .pw-eye{color:var(--muted,#475676)}/*TL*/
       #pwn .pw-go{white-space:nowrap}
-      #pwn .pw-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0;line-height:1.5}
+      #pwn .pw-hint{font-size:.78rem;color:var(--muted,#9aa6c2);margin:.6rem 0 0;line-height:1.5}/*LT*/:where(html[data-theme="light"]) #pwn .pw-hint{color:var(--muted,#475676)}/*TL*/
       #pwn .pw-loading{text-align:center;padding:2.2rem 1rem}
-      #pwn .pw-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:pw-spin 1s linear infinite}
+      #pwn .pw-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:pw-spin 1s linear infinite}/*LT*/:where(html[data-theme="light"]) #pwn .pw-spinner{border:3px solid rgba(10,16,31,.14);border-top-color:var(--cyan,#217373)}/*TL*/
       @keyframes pw-spin{to{transform:rotate(360deg)}}
-      #pwn .pw-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem}
+      #pwn .pw-error{margin-top:1.3rem;padding:1rem 1.2rem;border-radius:12px;border:1px solid rgba(231,76,60,.45);background:rgba(231,76,60,.1);font-size:.92rem}/*LT*/:where(html[data-theme="light"]) #pwn .pw-error{border:1px solid rgba(191,39,23,.45);background:rgba(191,39,23,.1)}/*TL*/
       #pwn .pw-results{margin-top:1.8rem}
-      #pwn .pw-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.4rem}
+      #pwn .pw-verdict-box{text-align:center;padding:1.6rem;border-radius:16px;border:1px solid rgba(255,255,255,.12);margin-bottom:1.4rem}/*LT*/:where(html[data-theme="light"]) #pwn .pw-verdict-box{border:1px solid rgba(10,16,31,.12)}/*TL*/
       #pwn .pw-verdict-grade{margin:0 0 .3rem;font-size:1.3rem;font-weight:800}
       #pwn .pw-verdict-big{margin:.2rem 0;font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
-      #pwn .pw-verdict-msg{margin:.4rem auto 0;max-width:48ch;font-size:.95rem;line-height:1.6;color:var(--muted,#9aa6c2)}
-      #pwn .pw-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}
-      #pwn .pw-good .pw-verdict-grade{color:#2ecc71}
-      #pwn .pw-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}
-      #pwn .pw-poor .pw-verdict-grade,#pwn .pw-poor .pw-verdict-big{color:#e74c3c}
-      #pwn .pw-fix{margin-top:.4rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #pwn .pw-verdict-msg{margin:.4rem auto 0;max-width:48ch;font-size:.95rem;line-height:1.6;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #pwn .pw-verdict-msg{color:var(--muted,#475676)}/*TL*/
+      #pwn .pw-good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.08)}/*LT*/:where(html[data-theme="light"]) #pwn .pw-good{border-color:rgba(27,121,67,.4);background:rgba(27,121,67,.08)}/*TL*/
+      #pwn .pw-good .pw-verdict-grade{color:#2ecc71}/*LT*/:where(html[data-theme="light"]) #pwn .pw-good .pw-verdict-grade{color:#1b7943}/*TL*/
+      #pwn .pw-poor{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.1)}/*LT*/:where(html[data-theme="light"]) #pwn .pw-poor{border-color:rgba(191,39,23,.4);background:rgba(191,39,23,.1)}/*TL*/
+      #pwn .pw-poor .pw-verdict-grade,#pwn .pw-poor .pw-verdict-big{color:#e74c3c}/*LT*/:where(html[data-theme="light"]) #pwn .pw-poor .pw-verdict-grade,:where(html[data-theme="light"]) #pwn .pw-poor .pw-verdict-big{color:#a42114}/*TL*/
+      #pwn .pw-fix{margin-top:.4rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}/*LT*/:where(html[data-theme="light"]) #pwn .pw-fix{border:1px solid rgba(33,115,115,.35);background:rgba(33,115,115,.07)}/*TL*/
       #pwn .pw-fix h3{margin:0 0 .5rem;font-size:1.2rem}
-      #pwn .pw-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #pwn .pw-fix p{margin:0 auto 1.1rem;max-width:48ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) #pwn .pw-fix p{color:var(--muted,#475676)}/*TL*/
       #pwn .pw-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-      #pwn .pw-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #pwn .pw-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      #pwn .pw-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #pwn .pw-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
+      #pwn .pw-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}/*LT*/:where(html[data-theme="light"]) #pwn .pw-powered{color:var(--muted,#475676)}/*TL*/
       @media(max-width:560px){#pwn .pw-go{flex:1 1 100%}}
       </style>
       <script>
@@ -1409,7 +1410,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -909,11 +910,11 @@
         <p class="rvid__fallback mono"><a href="https://www.youtube.com/watch?v=pXKy7KggrG8" target="_blank" rel="noopener">Watch on YouTube &#8594;</a></p>
       </div>
       <style>
-        .rvid--beach{position:relative;aspect-ratio:16/9;max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.4)}
-        .rvid--beach .rvid__btn{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;cursor:pointer;background:#000;display:block}
+        .rvid--beach{position:relative;aspect-ratio:16/9;max-width:940px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg-2);border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.4)}/*LT*/:where(html[data-theme="light"]) .rvid--beach{box-shadow:0 24px 60px rgba(0,0,0,0.12)}/*TL*/
+        .rvid--beach .rvid__btn{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;cursor:pointer;background:#000;display:block}/*LT*/:where(html[data-theme="light"]) .rvid--beach .rvid__btn{background:#000000}/*TL*/
         .rvid--beach .rvid__poster{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .3s ease}
         .rvid--beach .rvid__btn:hover .rvid__poster,.rvid--beach .rvid__btn:focus-visible .rvid__poster{transform:scale(1.03);filter:brightness(1.06)}
-        .rvid--beach .rvid__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 24px rgba(0,0,0,.55));transition:transform .2s ease,opacity .2s ease;opacity:.94}
+        .rvid--beach .rvid__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 24px rgba(0,0,0,.55));transition:transform .2s ease,opacity .2s ease;opacity:.94}/*LT*/:where(html[data-theme="light"]) .rvid--beach .rvid__play{filter:drop-shadow(0 8px 24px rgba(0,0,0,0.165))}/*TL*/
         .rvid--beach .rvid__btn:hover .rvid__play,.rvid--beach .rvid__btn:focus-visible .rvid__play{transform:translate(-50%,-50%) scale(1.08);opacity:1}
         .rvid--beach .rvid__play svg{width:84px;height:auto}
         .rvid--beach iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -1393,7 +1394,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

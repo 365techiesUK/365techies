@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -923,25 +924,25 @@
         <h2 class="section-title" data-title>Every system we can stand behind, compared<span class="title-underline"></span></h2>
 <p>Filter by budget, or by what actually matters &mdash; whether it has a 6&nbsp;GHz radio, and whether the ports can keep up with a fast line. Every model here survived a fact-check against the manufacturer&rsquo;s own UK pages in July 2026. Anything we could not verify was cut rather than guessed at, and we say so underneath.</p><style>
 .mfilter{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:0 0 1.6rem}
-.mfilter button{font:600 .78rem/1 var(--font-mono,inherit);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:999px;padding:.6rem 1rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
-.mfilter button:hover{color:#fff;border-color:var(--cyan)}
-.mfilter button[aria-pressed="true"]{color:#06121f;background:var(--cyan);border-color:var(--cyan)}
+.mfilter button{font:600 .78rem/1 var(--font-mono,inherit);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:999px;padding:.6rem 1rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s}/*LT*/:where(html[data-theme="light"]) .mfilter button{background:rgba(10,16,31,.03)}/*TL*/
+.mfilter button:hover{color:#fff;border-color:var(--cyan)}/*LT*/:where(html[data-theme="light"]) .mfilter button:hover{color:#152242}/*TL*/
+.mfilter button[aria-pressed="true"]{color:#06121f;background:var(--cyan);border-color:var(--cyan)}/*LT*/:where(html[data-theme="light"]) .mfilter button[aria-pressed="true"]{color:#e9eef3}/*TL*/
 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
-.mcard{border:1px solid var(--line);border-radius:16px;padding:1.15rem 1.25rem;background:rgba(255,255,255,.02);display:flex;flex-direction:column}
+.mcard{border:1px solid var(--line);border-radius:16px;padding:1.15rem 1.25rem;background:rgba(255,255,255,.02);display:flex;flex-direction:column}/*LT*/:where(html[data-theme="light"]) .mcard{background:rgba(10,16,31,.02)}/*TL*/
 .mcard[hidden]{display:none}
 .mcard__brand{font:600 .7rem/1 var(--font-mono,inherit);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin:0 0 .2rem}
-.mcard__model{font-size:1.12rem;margin:0 0 .55rem;color:#fff}
+.mcard__model{font-size:1.12rem;margin:0 0 .55rem;color:#fff}/*LT*/:where(html[data-theme="light"]) .mcard__model{color:#152242}/*TL*/
 .mcard__chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:0 0 .8rem}
-.mchip{font:600 .66rem/1 var(--font-mono,inherit);letter-spacing:.06em;text-transform:uppercase;padding:.35rem .55rem;border-radius:6px;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}
-.mchip--yes{color:var(--green);border-color:rgba(0,206,27,.35)}
+.mchip{font:600 .66rem/1 var(--font-mono,inherit);letter-spacing:.06em;text-transform:uppercase;padding:.35rem .55rem;border-radius:6px;background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--line)}/*LT*/:where(html[data-theme="light"]) .mchip{background:rgba(10,16,31,.05)}/*TL*/
+.mchip--yes{color:var(--green);border-color:rgba(0,206,27,.35)}/*LT*/:where(html[data-theme="light"]) .mchip--yes{border-color:rgba(0,148,19,.35)}/*TL*/
 .mchip--no{color:var(--faint)}
-.mcard__price{font-family:var(--font-display,inherit);font-weight:600;color:#fff;font-size:1.02rem;margin:0 0 .9rem;padding-bottom:.9rem;border-bottom:1px solid var(--line)}
+.mcard__price{font-family:var(--font-display,inherit);font-weight:600;color:#fff;font-size:1.02rem;margin:0 0 .9rem;padding-bottom:.9rem;border-bottom:1px solid var(--line)}/*LT*/:where(html[data-theme="light"]) .mcard__price{color:#152242}/*TL*/
 .mcard__dl{margin:0;font-size:.9rem}
 .mcard__dl dt{font:600 .66rem/1 var(--font-mono,inherit);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:.7rem 0 .25rem}
-.mcard__dl dd{margin:0;color:#dfe9f7}
-.mcard__claim{color:#e8c35a;text-transform:none;letter-spacing:0;font-weight:400}
+.mcard__dl dd{margin:0;color:#dfe9f7}/*LT*/:where(html[data-theme="light"]) .mcard__dl dd{color:#11233c}/*TL*/
+.mcard__claim{color:#e8c35a;text-transform:none;letter-spacing:0;font-weight:400}/*LT*/:where(html[data-theme="light"]) .mcard__claim{color:#755b10}/*TL*/
 .mcard__wd{color:var(--warn) !important}
-.mcard__wv{color:#c9d6e8}
+.mcard__wv{color:#c9d6e8}/*LT*/:where(html[data-theme="light"]) .mcard__wv{color:#21344e}/*TL*/
 .mcount{text-align:center;color:var(--faint);font-size:.8rem;margin:1.2rem 0 0}
 @media(max-width:600px){.mgrid{grid-template-columns:1fr}}
 </style>
@@ -1005,16 +1006,16 @@
         <p class="eyebrow mono">/05 &mdash; HOW MANY UNITS?</p>
         <h2 class="section-title" data-title>How many nodes does your house actually need?<span class="title-underline"></span></h2>
 <p>The honest answer depends far more on <em>what your walls are made of</em> than on floor area &mdash; which is exactly what the box never asks you. This works from the same measured attenuation data as the rest of the page.</p><style>
-.np{border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.5rem;background:rgba(255,255,255,.02);max-width:760px;margin:0 auto}
+.np{border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.5rem;background:rgba(255,255,255,.02);max-width:760px;margin:0 auto}/*LT*/:where(html[data-theme="light"]) .np{background:rgba(10,16,31,.02)}/*TL*/
 .np__row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .np label{display:block;font:600 .68rem/1 var(--font-mono,inherit);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem}
-.np select{width:100%;padding:.7rem .8rem;border-radius:10px;border:1px solid var(--line);background:#0d1526;color:#fff;font-size:.95rem}
+.np select{width:100%;padding:.7rem .8rem;border-radius:10px;border:1px solid var(--line);background:#0d1526;color:#fff;font-size:.95rem}/*LT*/:where(html[data-theme="light"]) .np select{background:#e2e6ed;color:#152242}/*TL*/
 .np__checks{display:flex;flex-wrap:wrap;gap:1rem;margin:.2rem 0 1.2rem}
-.np__checks label{display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;font-family:inherit;font-size:.9rem;font-weight:400;color:#dfe9f7;margin:0}
+.np__checks label{display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;font-family:inherit;font-size:.9rem;font-weight:400;color:#dfe9f7;margin:0}/*LT*/:where(html[data-theme="light"]) .np__checks label{color:#11233c}/*TL*/
 .np__out{border-top:1px solid var(--line);padding-top:1.2rem}
-.np__big{font-family:var(--font-display,inherit);font-size:1.6rem;color:#fff;margin:0 0 .5rem}
+.np__big{font-family:var(--font-display,inherit);font-size:1.6rem;color:#fff;margin:0 0 .5rem}/*LT*/:where(html[data-theme="light"]) .np__big{color:#152242}/*TL*/
 .np__big span{color:var(--green)}
-.np__note{color:#c9d6e8;font-size:.94rem;margin:.5rem 0 0}
+.np__note{color:#c9d6e8;font-size:.94rem;margin:.5rem 0 0}/*LT*/:where(html[data-theme="light"]) .np__note{color:#21344e}/*TL*/
 .np__foot{color:var(--faint);font-size:.78rem;margin:1rem 0 0}
 @media(max-width:600px){.np__row{grid-template-columns:1fr}}
 </style>
@@ -1505,7 +1506,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

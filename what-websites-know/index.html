@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -906,8 +907,8 @@
         .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
         .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
         .taskhead__lede a{color:var(--cyan-soft)}
-        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
-        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}/*LT*/:where(html[data-theme="light"]) .taskhead__trust{color:#355074}/*TL*/
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}/*LT*/:where(html[data-theme="light"]) .taskhead__trust a{color:#355074}/*TL*/
         .taskhead .page-hero__byline{margin-top:.55rem}
         .taskhead + .section{padding-top:2rem}
         .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
@@ -937,21 +938,21 @@
       <style>
       #priv{max-width:820px;margin:0 auto}
       #priv .priv-loading{padding:2.2rem 1rem}
-      #priv .priv-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:priv-spin 1s linear infinite}
+      #priv .priv-spinner{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:var(--cyan,#37c2c2);margin:0 auto 1rem;animation:priv-spin 1s linear infinite}/*LT*/:where(html[data-theme="light"]) #priv .priv-spinner{border:3px solid rgba(10,16,31,.14);border-top-color:var(--cyan,#217373)}/*TL*/
       @keyframes priv-spin{to{transform:rotate(360deg)}}
-      #priv .priv-loading p{color:var(--muted,#9aa6c2)}
+      #priv .priv-loading p{color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #priv .priv-loading p{color:var(--muted,#475676)}/*TL*/
       #priv .priv-results{margin-top:1.8rem;text-align:left}
       #priv .priv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.7rem}
-      #priv .priv-card{padding:.9rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
-      #priv .priv-k{margin:0;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#9aa6c2)}
+      #priv .priv-card{padding:.9rem 1.1rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}/*LT*/:where(html[data-theme="light"]) #priv .priv-card{border:1px solid rgba(10,16,31,.1);background:rgba(10,16,31,.03)}/*TL*/
+      #priv .priv-k{margin:0;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #priv .priv-k{color:var(--muted,#475676)}/*TL*/
       #priv .priv-v{margin:.2rem 0 0;font-size:1.02rem;font-weight:700;word-break:break-word}
-      #priv .priv-n{margin:.3rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.45}
-      #priv .priv-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #priv .priv-n{margin:.3rem 0 0;font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.45}/*LT*/:where(html[data-theme="light"]) #priv .priv-n{color:var(--muted,#475676)}/*TL*/
+      #priv .priv-fix{margin-top:2rem;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}/*LT*/:where(html[data-theme="light"]) #priv .priv-fix{border:1px solid rgba(33,115,115,.35);background:rgba(33,115,115,.07)}/*TL*/
       #priv .priv-fix h3{margin:0 0 .5rem;font-size:1.2rem}
-      #priv .priv-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #priv .priv-fix p{margin:0 auto 1.1rem;max-width:52ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) #priv .priv-fix p{color:var(--muted,#475676)}/*TL*/
       #priv .priv-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
-      #priv .priv-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #priv .priv-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}
+      #priv .priv-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #priv .priv-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
+      #priv .priv-powered{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.4rem 0 0;opacity:.8}/*LT*/:where(html[data-theme="light"]) #priv .priv-powered{color:var(--muted,#475676)}/*TL*/
       </style>
       <script>
       (function(){
@@ -1366,7 +1367,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -914,8 +915,8 @@
         .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
         .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
         .taskhead__lede a{color:var(--cyan-soft)}
-        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
-        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}/*LT*/:where(html[data-theme="light"]) .taskhead__trust{color:#355074}/*TL*/
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}/*LT*/:where(html[data-theme="light"]) .taskhead__trust a{color:#355074}/*TL*/
         .taskhead .page-hero__byline{margin-top:.55rem}
         .taskhead + .section{padding-top:2rem}
         .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
@@ -955,38 +956,38 @@
         </div>
       </div>
       <style>
-      #costcalc{max-width:980px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);overflow:hidden}
-      #costcalc .cc-tabs{display:flex;gap:.4rem;padding:.6rem;border-bottom:1px solid rgba(255,255,255,.1)}
-      #costcalc .cc-tabs button{flex:1;font:inherit;font-weight:600;padding:.7rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}
-      #costcalc .cc-tabs button.is-active{background:var(--cyan,#37c2c2);color:#04161a;border-color:var(--cyan,#37c2c2)}
+      #costcalc{max-width:980px;margin:0 auto;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);overflow:hidden}/*LT*/:where(html[data-theme="light"]) #costcalc{border:1px solid rgba(10,16,31,.12);background:rgba(10,16,31,.03)}/*TL*/
+      #costcalc .cc-tabs{display:flex;gap:.4rem;padding:.6rem;border-bottom:1px solid rgba(255,255,255,.1)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-tabs{border-bottom:1px solid rgba(10,16,31,.1)}/*TL*/
+      #costcalc .cc-tabs button{flex:1;font:inherit;font-weight:600;padding:.7rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-tabs button{border:1px solid rgba(10,16,31,.12)}/*TL*/
+      #costcalc .cc-tabs button.is-active{background:var(--cyan,#37c2c2);color:#04161a;border-color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-tabs button.is-active{background:var(--cyan,#217373);color:#edf4f6;border-color:var(--cyan,#217373)}/*TL*/
       #costcalc .cc-grid{display:grid;grid-template-columns:1.25fr 1fr}
       #costcalc .cc-controls{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem}
       #costcalc .cc-field label{display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:.5rem}
-      #costcalc .cc-field output{font-weight:700;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}
-      #costcalc input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #costcalc .cc-field output{font-weight:700;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-field output{color:var(--cyan,#217373)}/*TL*/
+      #costcalc input[type=range]{width:100%;accent-color:var(--cyan,#37c2c2);cursor:pointer}/*LT*/:where(html[data-theme="light"]) #costcalc input[type=range]{accent-color:var(--cyan,#217373)}/*TL*/
       #costcalc .cc-field{margin-bottom:1rem}
-      #costcalc .cc-label{font-size:.82rem;color:var(--muted,#9aa6c2);margin:.2rem 0 .5rem}
+      #costcalc .cc-label{font-size:.82rem;color:var(--muted,#9aa6c2);margin:.2rem 0 .5rem}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-label{color:var(--muted,#475676)}/*TL*/
       #costcalc .cc-label span{opacity:.7}
       #costcalc .cc-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
-      #costcalc .cc-plan{font:inherit;text-align:left;padding:.6rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}
-      #costcalc .cc-plan.is-on{border-color:var(--cyan,#37c2c2);background:rgba(55,194,194,.12)}
+      #costcalc .cc-plan{font:inherit;text-align:left;padding:.6rem .7rem;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:transparent;color:inherit;cursor:pointer;transition:.15s}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-plan{border:1px solid rgba(10,16,31,.12)}/*TL*/
+      #costcalc .cc-plan.is-on{border-color:var(--cyan,#37c2c2);background:rgba(55,194,194,.12)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-plan.is-on{border-color:var(--cyan,#217373);background:rgba(33,115,115,.12)}/*TL*/
       #costcalc .cc-plan b{display:block;font-size:.85rem;margin-bottom:.15rem}
-      #costcalc .cc-plan span{font-size:.74rem;color:var(--muted,#9aa6c2)}
-      #costcalc .cc-step{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.88rem}
+      #costcalc .cc-plan span{font-size:.74rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-plan span{color:var(--muted,#475676)}/*TL*/
+      #costcalc .cc-step{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.88rem}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-step{border-bottom:1px solid rgba(10,16,31,.07)}/*TL*/
       #costcalc .cc-step:last-child{border-bottom:none}
       #costcalc .cc-stepctr{display:flex;align-items:center;gap:.5rem}
-      #costcalc .cc-step button{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:transparent;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer}
-      #costcalc .cc-step button:hover{background:rgba(255,255,255,.08)}
+      #costcalc .cc-step button{width:30px;height:30px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:transparent;color:inherit;font-size:1.1rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-step button{border:1px solid rgba(10,16,31,.18)}/*TL*/
+      #costcalc .cc-step button:hover{background:rgba(255,255,255,.08)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-step button:hover{background:rgba(10,16,31,.08)}/*TL*/
       #costcalc .cc-step b{min-width:1.3rem;text-align:center;font-variant-numeric:tabular-nums}
-      #costcalc .cc-summary{background:rgba(0,0,0,.28);padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
-      #costcalc .cc-summary__cap{font-size:.78rem;color:var(--muted,#9aa6c2);margin:0 0 .2rem}
+      #costcalc .cc-summary{background:rgba(0,0,0,.28);padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-summary{background:rgba(0,0,0,0.084)}/*TL*/
+      #costcalc .cc-summary__cap{font-size:.78rem;color:var(--muted,#9aa6c2);margin:0 0 .2rem}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-summary__cap{color:var(--muted,#475676)}/*TL*/
       #costcalc .cc-big{margin:0;font-size:2.7rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
-      #costcalc .cc-big i{font-size:1rem;color:var(--muted,#9aa6c2);font-style:normal;font-weight:600;margin-left:.2rem}
+      #costcalc .cc-big i{font-size:1rem;color:var(--muted,#9aa6c2);font-style:normal;font-weight:600;margin-left:.2rem}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-big i{color:var(--muted,#475676)}/*TL*/
       #costcalc .cc-lines{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
-      #costcalc .cc-lines li{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;color:var(--muted,#9aa6c2)}
+      #costcalc .cc-lines li{display:flex;justify-content:space-between;gap:1rem;font-size:.88rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-lines li{color:var(--muted,#475676)}/*TL*/
       #costcalc .cc-lines li b{color:inherit;font-variant-numeric:tabular-nums;white-space:nowrap}
       #costcalc .cc-cta,#costcalc .button{align-self:flex-start}
-      #costcalc .cc-note{font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:.2rem 0 0}
+      #costcalc .cc-note{font-size:.74rem;color:var(--muted,#9aa6c2);line-height:1.5;margin:.2rem 0 0}/*LT*/:where(html[data-theme="light"]) #costcalc .cc-note{color:var(--muted,#475676)}/*TL*/
       @media(max-width:720px){#costcalc .cc-grid{grid-template-columns:1fr}#costcalc .cc-plans{grid-template-columns:1fr}}
       </style>
       <script>
@@ -1442,7 +1443,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

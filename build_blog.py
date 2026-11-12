@@ -1341,7 +1341,15 @@ if os.path.exists(_css_src):
         open(_css_src, "w", encoding="utf-8", newline="").write(_new)
         _raw = _new
         print("styles.css: shared first-screen CSS written from hub_ui (bump CSSV if it changed)")
-    _min = _minify_css(_raw)
+    # 12 Nov 2026: the light theme rides in the same file - the generated twins of every colour rule, then the hand
+    # overrides, both ahead of the sentinel (which must stay last).
+    import light_theme as _lt
+    _sent = _raw.rindex("/*", 0, _raw.rindex("SENTINEL"))
+    _extra = open(os.path.join(bp.BASE, "css", "light-extra.css"), encoding="utf-8").read()
+    # interior.js injects its own CSS (the share sheet): give those rules light twins too
+    _jscss = _lt.js_css(open(os.path.join(bp.BASE, "js", "interior.js"), encoding="utf-8").read())
+    _themed = _lt.themed_css(_raw[:_sent]) + _lt.light_css(_jscss) + chr(10) + _extra + chr(10) + _raw[_sent:]
+    _min = _minify_css(_themed)
     with open(os.path.join(bp.BASE, "css", "styles.min.css"), "w", encoding="utf-8") as f:
         f.write(_min)
     print("Minified styles.css -> styles.min.css (%dKB -> %dKB)" % (
@@ -1466,6 +1474,11 @@ if os.path.exists(_hp):
         _hout = _hout.replace("</body>", "  " + _bwant + "\n</body>", 1); _hchanged.append("visitor beacon (added)")
     elif _bhave and not _bwant:
         _hout = _hout.replace(_bhave, "", 1); _hchanged.append("visitor beacon (removed)")
+    # 12 Nov 2026: the hand-made homepage gets the light theme the same way every built page does (idempotent)
+    import light_theme as _lth
+    _hthemed = _lth.theme_page("", _hout.replace('<html lang="en-GB" data-theme="light">', '<html lang="en-GB">', 1))
+    if _hthemed != _hout:
+        _hout = _hthemed; _hchanged.append("light theme")
     if _hout != _hsrc:
         open(_hp, "w", encoding="utf-8").write(_hout)
         print("  homepage: synced from the template -> " + ", ".join(_hchanged))

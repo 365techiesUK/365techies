@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -920,24 +921,24 @@
           <p class="lede lede--center" data-reveal>Below is the <strong>365 Crafter</strong> &mdash; our own off-grid support van &mdash; streamed live over Victron&rsquo;s MQTT feed &mdash; the same per-second stream the official apps use &mdash; with history and totals from the official VRM API, exactly the architecture we&rsquo;d use for yours. Same van, two completely different dashboards: here it&rsquo;s a clean business view; on our <a href="/off-grid-victron-energy/">off-grid page</a> the identical data drives a car-style instrument cluster with a <strong>live grid-savings comparison</strong> &mdash; every solar watt valued against what the same power would cost on grid electricity. As far as we know, that&rsquo;s <strong>a first for a Victron off-grid system</strong>. That&rsquo;s the point &mdash; <strong>your dashboard, your way</strong>.</p>
         </div>
         <style>
-        .vdash{max-width:860px;margin:0 auto;border:1px solid rgba(125,170,220,.2);border-radius:18px;background:linear-gradient(180deg,rgba(13,22,44,.92),rgba(9,16,34,.94));overflow:hidden}
-        .vdash__bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.1rem;border-bottom:1px solid rgba(125,170,220,.14);font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3}
-        .vdash__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}
-        .vdash__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vdpulse 2s infinite}
+        .vdash{max-width:860px;margin:0 auto;border:1px solid rgba(125,170,220,.2);border-radius:18px;background:linear-gradient(180deg,rgba(13,22,44,.92),rgba(9,16,34,.94));overflow:hidden}/*LT*/:where(html[data-theme="light"]) .vdash{border:1px solid rgba(35,80,130,.2);background:linear-gradient(180deg,rgba(222,226,235,.92),rgba(230,233,240,.94))}/*TL*/
+        .vdash__bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.1rem;border-bottom:1px solid rgba(125,170,220,.14);font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3}/*LT*/:where(html[data-theme="light"]) .vdash__bar{border-bottom:1px solid rgba(35,80,130,.14);color:#475b71}/*TL*/
+        .vdash__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}/*LT*/:where(html[data-theme="light"]) .vdash__live{color:#1b792b}/*TL*/
+        .vdash__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vdpulse 2s infinite}/*LT*/:where(html[data-theme="light"]) .vdash__dot{background:#1b792b}/*TL*/
         @keyframes vdpulse{0%,100%{opacity:1}50%{opacity:.35}}
         .vdash__site{flex:1;min-width:140px}
-        .vdash__kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:rgba(125,170,220,.12)}
-        .vdash__k{background:rgba(10,18,38,.96);padding:1rem .8rem;text-align:center}
-        .vdash__kv{font:800 1.3rem/1.1 inherit;color:#fff;font-variant-numeric:tabular-nums}
-        .vdash__kv--gold{color:#e8c35a}.vdash__kv--green{color:#39d353}
-        .vdash__kl{font:600 .55rem/1.4 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:#8fa3bd;margin-top:.35rem}
-        .vdash__tanks{display:flex;gap:1.2rem;flex-wrap:wrap;padding:1rem 1.1rem;border-top:1px solid rgba(125,170,220,.12)}
+        .vdash__kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:rgba(125,170,220,.12)}/*LT*/:where(html[data-theme="light"]) .vdash__kpis{background:rgba(35,80,130,.12)}/*TL*/
+        .vdash__k{background:rgba(10,18,38,.96);padding:1rem .8rem;text-align:center}/*LT*/:where(html[data-theme="light"]) .vdash__k{background:rgba(227,230,239,.96)}/*TL*/
+        .vdash__kv{font:800 1.3rem/1.1 inherit;color:#fff;font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .vdash__kv{color:#152242}/*TL*/
+        .vdash__kv--gold{color:#e8c35a}/*LT*/:where(html[data-theme="light"]) .vdash__kv--gold{color:#755b10}/*TL*/.vdash__kv--green{color:#39d353}/*LT*/:where(html[data-theme="light"]) .vdash__kv--green{color:#1b792b}/*TL*/
+        .vdash__kl{font:600 .55rem/1.4 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:#8fa3bd;margin-top:.35rem}/*LT*/:where(html[data-theme="light"]) .vdash__kl{color:#445974}/*TL*/
+        .vdash__tanks{display:flex;gap:1.2rem;flex-wrap:wrap;padding:1rem 1.1rem;border-top:1px solid rgba(125,170,220,.12)}/*LT*/:where(html[data-theme="light"]) .vdash__tanks{border-top:1px solid rgba(35,80,130,.12)}/*TL*/
         .vdash__tank{flex:1;min-width:200px}
-        .vdash__tl{display:flex;justify-content:space-between;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#8fa3bd;margin-bottom:.4rem}
-        .vdash__tb{height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
-        .vdash__tf{height:100%;border-radius:999px;background:#1d97e3;transition:width 1s ease}
+        .vdash__tl{display:flex;justify-content:space-between;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#8fa3bd;margin-bottom:.4rem}/*LT*/:where(html[data-theme="light"]) .vdash__tl{color:#445974}/*TL*/
+        .vdash__tb{height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}/*LT*/:where(html[data-theme="light"]) .vdash__tb{background:rgba(10,16,31,.07)}/*TL*/
+        .vdash__tf{height:100%;border-radius:999px;background:#1d97e3;transition:width 1s ease}/*LT*/:where(html[data-theme="light"]) .vdash__tf{background:#177cbb}/*TL*/
         .vdash__tf--waste{background:var(--warn)}
-        .vdash__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#8fa3bd;text-align:center;padding:0 1rem 1rem}
+        .vdash__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#8fa3bd;text-align:center;padding:0 1rem 1rem}/*LT*/:where(html[data-theme="light"]) .vdash__note{color:#445974}/*TL*/
         .vdash--sample .vdash__live{color:var(--warn)}.vdash--sample .vdash__dot{background:var(--warn);animation:none}
         @media (max-width:860px){.vdash__kpis{grid-template-columns:repeat(3,1fr)}}
         @media (max-width:480px){.vdash__kpis{grid-template-columns:repeat(2,1fr)}}
@@ -1038,21 +1039,21 @@
         </div>
         <style>
         .vfleet{max-width:960px;margin:0 auto}
-        .vfleet__banner{text-align:center;font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.05em;color:var(--warn);border:1px dashed rgba(224,179,65,.45);border-radius:12px;padding:.6rem .9rem;margin-bottom:1.1rem}
+        .vfleet__banner{text-align:center;font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.05em;color:var(--warn);border:1px dashed rgba(224,179,65,.45);border-radius:12px;padding:.6rem .9rem;margin-bottom:1.1rem}/*LT*/:where(html[data-theme="light"]) .vfleet__banner{border:1px dashed rgba(158,120,26,.45)}/*TL*/
         .vfleet__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
         @media (max-width:880px){.vfleet__grid{grid-template-columns:repeat(2,1fr)}}
         @media (max-width:540px){.vfleet__grid{grid-template-columns:1fr}}
-        .vf{border:1px solid rgba(125,170,220,.18);border-radius:14px;background:rgba(11,19,40,.9);padding:.9rem .95rem}
+        .vf{border:1px solid rgba(125,170,220,.18);border-radius:14px;background:rgba(11,19,40,.9);padding:.9rem .95rem}/*LT*/:where(html[data-theme="light"]) .vf{border:1px solid rgba(35,80,130,.18);background:rgba(226,229,238,.9)}/*TL*/
         .vf__top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.55rem}
-        .vf__name{font:700 .8rem/1.25 inherit;color:#fff}
+        .vf__name{font:700 .8rem/1.25 inherit;color:#fff}/*LT*/:where(html[data-theme="light"]) .vf__name{color:#152242}/*TL*/
         .vf__badge{font:700 .52rem/1 ui-monospace,monospace;letter-spacing:.08em;padding:.28rem .5rem;border-radius:999px;flex:none}
-        .vf__badge--live{color:#39d353;border:1px solid rgba(57,211,83,.5)}
-        .vf__badge--demo{color:var(--warn);border:1px solid rgba(224,179,65,.5)}
+        .vf__badge--live{color:#39d353;border:1px solid rgba(57,211,83,.5)}/*LT*/:where(html[data-theme="light"]) .vf__badge--live{color:#1b792b;border:1px solid rgba(27,121,43,.5)}/*TL*/
+        .vf__badge--demo{color:var(--warn);border:1px solid rgba(224,179,65,.5)}/*LT*/:where(html[data-theme="light"]) .vf__badge--demo{border:1px solid rgba(158,120,26,.5)}/*TL*/
         .vf__rows{display:flex;flex-direction:column;gap:.4rem}
-        .vf__r{display:flex;justify-content:space-between;align-items:baseline;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#8fa3bd}
-        .vf__v{font:800 .95rem/1 inherit;color:#fff;font-variant-numeric:tabular-nums}
-        .vf__soc{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.55rem}
-        .vf__socf{height:100%;border-radius:999px;background:#39d353;transition:width 1.2s ease}
+        .vf__r{display:flex;justify-content:space-between;align-items:baseline;font:600 .6rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#8fa3bd}/*LT*/:where(html[data-theme="light"]) .vf__r{color:#445974}/*TL*/
+        .vf__v{font:800 .95rem/1 inherit;color:#fff;font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .vf__v{color:#152242}/*TL*/
+        .vf__soc{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.55rem}/*LT*/:where(html[data-theme="light"]) .vf__soc{background:rgba(10,16,31,.08)}/*TL*/
+        .vf__socf{height:100%;border-radius:999px;background:#39d353;transition:width 1.2s ease}/*LT*/:where(html[data-theme="light"]) .vf__socf{background:#1b792b}/*TL*/
         .vf--warn .vf__socf{background:var(--warn)}
         </style>
         <div class="vfleet" data-reveal>
@@ -1708,7 +1709,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

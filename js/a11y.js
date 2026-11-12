@@ -55,6 +55,31 @@
       });
     }
 
+    /* Light or dark (12 Nov 2026). Pages are light by default; a visitor who picks dark keeps it
+       (localStorage "theme", read before first paint by the inline switch in <head>). The button is
+       built here, not in the page, and only on pages that carry a theme at all. */
+    var root = document.documentElement;
+    if (panel && root.hasAttribute("data-theme")) {
+      var tb = document.createElement("button");
+      tb.type = "button"; tb.className = "a11y__opt"; tb.setAttribute("data-a11y-theme", "");
+      var paintTheme = function () {
+        var dark = root.getAttribute("data-theme") === "dark";
+        tb.setAttribute("aria-pressed", dark ? "true" : "false");
+        tb.textContent = dark ? "Light colours" : "Dark colours";
+        var mc = document.querySelector('meta[name="theme-color"]');
+        if (mc) mc.setAttribute("content", dark ? "#070d22" : "#f4f7fb");
+      };
+      tb.addEventListener("click", function () {
+        var dark = root.getAttribute("data-theme") !== "dark";
+        root.setAttribute("data-theme", dark ? "dark" : "light");
+        try { if (dark) localStorage.setItem("theme", "dark"); else localStorage.removeItem("theme"); } catch (e) {}
+        paintTheme();
+      });
+      var before = panel.querySelector('[data-a11y="contrast"]');
+      if (before) panel.insertBefore(tb, before); else panel.appendChild(tb);
+      paintTheme();
+    }
+
     var synth = window.speechSynthesis || null;
     var reading = false;
     function setRead(on) {

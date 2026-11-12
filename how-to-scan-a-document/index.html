@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -918,18 +919,18 @@
 <figure class="hvf hvf--in" id="howto-film">
     <style>
       .hvf{max-width:880px;margin:0 auto}
-      .hvf-film{position:relative;aspect-ratio:16/9;border:1px solid rgba(125,170,220,.3);border-radius:14px;overflow:hidden;background:#060c1c;box-shadow:0 18px 50px rgba(0,0,0,.35)}
-      .hvf-play{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;padding:0;background:#060c1c;cursor:pointer}
+      .hvf-film{position:relative;aspect-ratio:16/9;border:1px solid rgba(125,170,220,.3);border-radius:14px;overflow:hidden;background:#060c1c;box-shadow:0 18px 50px rgba(0,0,0,.35)}/*LT*/:where(html[data-theme="light"]) .hvf-film{border:1px solid rgba(35,80,130,.3);background:#ebedf4;box-shadow:0 18px 50px rgba(0,0,0,0.105)}/*TL*/
+      .hvf-play{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;padding:0;background:#060c1c;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .hvf-play{background:#ebedf4}/*TL*/
       .hvf-play img{display:block;width:100%;height:100%;object-fit:cover;transition:filter .3s ease}
       .hvf-play:hover img,.hvf-play:focus-visible img{filter:brightness(1.08)}
-      .hvf-play>span{position:absolute;right:4%;bottom:6%;display:flex;align-items:center;gap:.6rem;white-space:nowrap;background:rgba(6,12,28,.9);color:#fff;font-weight:700;font-size:1.05rem;padding:.8rem 1.4rem .8rem 1.05rem;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);box-shadow:0 12px 32px rgba(0,0,0,.45);transition:transform .2s ease}
+      .hvf-play>span{position:absolute;right:4%;bottom:6%;display:flex;align-items:center;gap:.6rem;white-space:nowrap;background:rgba(6,12,28,.9);color:#fff;font-weight:700;font-size:1.05rem;padding:.8rem 1.4rem .8rem 1.05rem;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);box-shadow:0 12px 32px rgba(0,0,0,.45);transition:transform .2s ease}/*LT*/:where(html[data-theme="light"]) .hvf-play>span{background:rgba(235,237,244,.9);color:#152242;border:1.5px solid rgba(10,16,31,.25);box-shadow:0 12px 32px rgba(0,0,0,0.135)}/*TL*/
       .hvf-play:hover>span,.hvf-play:focus-visible>span{transform:scale(1.05)}
       .hvf-play svg{width:2rem;height:2rem;flex:none}
       .hvf-play .s{display:none}
       @media (max-width:520px){.hvf-play .l{display:none}.hvf-play .s{display:inline}.hvf-play>span{right:3%;bottom:4%;gap:.45rem;font-size:.85rem;padding:.4rem .8rem .4rem .45rem}.hvf-play svg{width:1.4rem;height:1.4rem}}
       .hvf-film iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
       .hvf .hvf-cap{margin:.5rem 0 0;font-size:.85rem;color:var(--muted);text-align:center}
-      .hvf a{color:var(--cyan,#6cc4f5);text-decoration:underline;text-underline-offset:2px}
+      .hvf a{color:var(--cyan,#6cc4f5);text-decoration:underline;text-underline-offset:2px}/*LT*/:where(html[data-theme="light"]) .hvf a{color:var(--cyan,#0a6293)}/*TL*/
       .hvf .hvf-says{margin:.7rem 0 0;font-size:.92rem}
       .hvf-says summary{cursor:pointer;color:var(--muted)}
       .hvf .hvf-says p{margin:.5rem 0 0;font-size:.92rem;line-height:1.6}
@@ -1369,7 +1370,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

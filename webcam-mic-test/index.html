@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -955,19 +956,19 @@
       <style>
       #av{max-width:920px;margin:0 auto}
       #av .av-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
-      #av .av-card{padding:1.2rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:.8rem;align-items:center}
+      #av .av-card{padding:1.2rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);text-align:center;display:flex;flex-direction:column;gap:.8rem;align-items:center}/*LT*/:where(html[data-theme="light"]) #av .av-card{background:rgba(10,16,31,.03);border:1px solid rgba(10,16,31,.1)}/*TL*/
       #av .av-card h3{margin:0;font-size:1.05rem}
-      #av #av-video{width:100%;border-radius:10px;background:#000;aspect-ratio:4/3;object-fit:cover}
-      #av #av-meter{width:100%;max-width:280px;border-radius:8px;background:rgba(0,0,0,.3)}
-      #av .av-status{margin:0;font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5;min-height:2.4em}
-      #av .av-status.ok{color:#2ecc71}
-      #av .av-status.bad{color:#e74c3c}
+      #av #av-video{width:100%;border-radius:10px;background:#000;aspect-ratio:4/3;object-fit:cover}/*LT*/:where(html[data-theme="light"]) #av #av-video{background:#000000}/*TL*/
+      #av #av-meter{width:100%;max-width:280px;border-radius:8px;background:rgba(0,0,0,.3)}/*LT*/:where(html[data-theme="light"]) #av #av-meter{background:rgba(0,0,0,0.09)}/*TL*/
+      #av .av-status{margin:0;font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.5;min-height:2.4em}/*LT*/:where(html[data-theme="light"]) #av .av-status{color:var(--muted,#475676)}/*TL*/
+      #av .av-status.ok{color:#2ecc71}/*LT*/:where(html[data-theme="light"]) #av .av-status.ok{color:#1b7943}/*TL*/
+      #av .av-status.bad{color:#e74c3c}/*LT*/:where(html[data-theme="light"]) #av .av-status.bad{color:#a42114}/*TL*/
       #av .av-spk-btns{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
-      #av .av-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #av .av-note{margin:1.4rem auto 0;max-width:64ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
-      #avtool .av-fix{max-width:920px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #av .av-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #av .av-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
+      #av .av-note{margin:1.4rem auto 0;max-width:64ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}/*LT*/:where(html[data-theme="light"]) #av .av-note{color:var(--muted,#475676)}/*TL*/
+      #avtool .av-fix{max-width:920px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}/*LT*/:where(html[data-theme="light"]) #avtool .av-fix{border:1px solid rgba(33,115,115,.35);background:rgba(33,115,115,.07)}/*TL*/
       #avtool .av-fix h3{margin:0 0 .5rem;font-size:1.2rem}
-      #avtool .av-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #avtool .av-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) #avtool .av-fix p{color:var(--muted,#475676)}/*TL*/
       #avtool .av-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
       </style>
       <script>
@@ -1420,7 +1421,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

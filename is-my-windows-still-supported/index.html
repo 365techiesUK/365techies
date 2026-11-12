@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -852,21 +853,21 @@
     <section class="section" aria-label="Windows support checker" id="winchk">
       <div class="wrap" style="max-width:880px">
         <style>
-          .wsc{border:1px solid rgba(125,170,220,.28);border-radius:18px;background:rgba(125,170,220,.06);padding:clamp(1.1rem,3vw,1.8rem)}
+          .wsc{border:1px solid rgba(125,170,220,.28);border-radius:18px;background:rgba(125,170,220,.06);padding:clamp(1.1rem,3vw,1.8rem)}/*LT*/:where(html[data-theme="light"]) .wsc{border:1px solid rgba(35,80,130,.28);background:rgba(35,80,130,.06)}/*TL*/
           .wsc__det{font-size:1.1rem;margin:0 0 1rem}
-          .wsc__det strong{color:#fff}
+          .wsc__det strong{color:#fff}/*LT*/:where(html[data-theme="light"]) .wsc__det strong{color:#152242}/*TL*/
           .wsc__lbl{display:block;font:600 .74rem/1.4 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .45rem}
           .wsc__opts{display:flex;flex-wrap:wrap;gap:.45rem}
-          .wsc__opts button{font:600 .92rem/1.2 var(--font-body);padding:.6rem .85rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(10,22,44,.6);color:var(--ink-2);cursor:pointer;min-height:44px}
-          .wsc__opts button[aria-pressed="true"]{border-color:var(--cyan);background:rgba(29,151,227,.18);color:#fff}
-          .wsc__opts button.is-likely{border-color:rgba(29,151,227,.6)}
+          .wsc__opts button{font:600 .92rem/1.2 var(--font-body);padding:.6rem .85rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(10,22,44,.6);color:var(--ink-2);cursor:pointer;min-height:44px}/*LT*/:where(html[data-theme="light"]) .wsc__opts button{border:1px solid rgba(35,80,130,.35);background:rgba(223,228,237,.6)}/*TL*/
+          .wsc__opts button[aria-pressed="true"]{border-color:var(--cyan);background:rgba(29,151,227,.18);color:#fff}/*LT*/:where(html[data-theme="light"]) .wsc__opts button[aria-pressed="true"]{background:rgba(23,124,187,.18);color:#152242}/*TL*/
+          .wsc__opts button.is-likely{border-color:rgba(29,151,227,.6)}/*LT*/:where(html[data-theme="light"]) .wsc__opts button.is-likely{border-color:rgba(23,124,187,.6)}/*TL*/
           .wsc__build{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-          .wsc__build input{font:500 1rem/1.2 var(--font-mono);padding:.6rem .8rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.25);color:#fff;width:12rem;max-width:100%;min-height:44px}
-          .wsc__res{margin-top:1.3rem;padding:1.1rem 1.2rem;border-radius:14px;border:1px solid rgba(125,170,220,.3);background:rgba(10,22,44,.7)}
+          .wsc__build input{font:500 1rem/1.2 var(--font-mono);padding:.6rem .8rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.25);color:#fff;width:12rem;max-width:100%;min-height:44px}/*LT*/:where(html[data-theme="light"]) .wsc__build input{border:1px solid rgba(35,80,130,.35);background:rgba(0,0,0,0.075);color:#152242}/*TL*/
+          .wsc__res{margin-top:1.3rem;padding:1.1rem 1.2rem;border-radius:14px;border:1px solid rgba(125,170,220,.3);background:rgba(10,22,44,.7)}/*LT*/:where(html[data-theme="light"]) .wsc__res{border:1px solid rgba(35,80,130,.3);background:rgba(223,228,237,.7)}/*TL*/
           .wsc__res h3{margin:0 0 .4rem;font-size:1.3rem}
-          .wsc__res.good{border-color:rgba(0,206,27,.55)} .wsc__res.good h3{color:#5ee870}
-          .wsc__res.warn{border-color:rgba(255,193,7,.6)} .wsc__res.warn h3{color:#ffd24a}
-          .wsc__res.bad{border-color:rgba(255,99,99,.6)} .wsc__res.bad h3{color:#ff8a8a}
+          .wsc__res.good{border-color:rgba(0,206,27,.55)}/*LT*/:where(html[data-theme="light"]) .wsc__res.good{border-color:rgba(0,148,19,.55)}/*TL*/ .wsc__res.good h3{color:#5ee870}/*LT*/:where(html[data-theme="light"]) .wsc__res.good h3{color:#128121}/*TL*/
+          .wsc__res.warn{border-color:rgba(255,193,7,.6)}/*LT*/:where(html[data-theme="light"]) .wsc__res.warn{border-color:rgba(184,138,0,.6)}/*TL*/ .wsc__res.warn h3{color:#ffd24a}/*LT*/:where(html[data-theme="light"]) .wsc__res.warn h3{color:#856400}/*TL*/
+          .wsc__res.bad{border-color:rgba(255,99,99,.6)}/*LT*/:where(html[data-theme="light"]) .wsc__res.bad{border-color:rgba(156,0,0,.6)}/*TL*/ .wsc__res.bad h3{color:#ff8a8a}/*LT*/:where(html[data-theme="light"]) .wsc__res.bad h3{color:#8f0000}/*TL*/
           .wsc__res ul{margin:.6rem 0 0;padding-left:1.2rem} .wsc__res li{margin:.3rem 0;color:var(--ink-3)}
           .wsc__small{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
         </style>
@@ -1334,7 +1335,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

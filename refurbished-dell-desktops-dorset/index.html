@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -951,7 +952,7 @@
   </aside>
 
   <main id="main">
-    <style>.rl-groups{display:grid;gap:1.1rem;margin-top:1.2rem} .rl-group__h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-soft)} .rl-group__h a{color:var(--hp-soft);text-decoration:none;letter-spacing:.06em;text-transform:none;font-family:var(--font-body);font-size:.82rem;font-weight:600} .rl-group__h a:hover{color:#fff} .rl-group .dh-machines{margin:0} .rl-size{list-style:none;margin:.2rem 0 0;padding:0;display:grid;gap:.6rem} .rl-size li{display:grid;grid-template-columns:92px 1fr;grid-template-rows:auto auto;column-gap:.9rem;align-items:center;padding:.8rem .9rem;border-radius:16px;border:1px solid var(--hp-edge);background:var(--hp-card)} .rl-size__art{grid-row:1 / span 2} .rl-size__art svg{display:block;width:92px;height:auto} .rl-size b{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--hp-ink)} .rl-size li > span:last-child{font-size:.84rem;line-height:1.45;color:var(--hp-soft)} .rl-size__more{margin:.8rem 0 0;font-size:.86rem;color:var(--hp-soft)} .rl-size__more a{color:var(--cyan-soft);font-weight:600} .rl-sizes .dh-kicker{margin-bottom:.6rem} @media (max-width:767px){ .rl-clamp .prose{position:relative;max-height:24rem;overflow:hidden} .rl-clamp .prose::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6rem;background:linear-gradient(rgba(7,13,34,0),var(--bg))} .rl-clamp.is-open .prose{max-height:none;overflow:visible} .rl-clamp.is-open .prose::after{display:none} .rl-more-wrap{padding-top:0;padding-bottom:0} .rl-more{display:inline-flex;align-items:center;gap:.4rem;margin:.9rem 0 0;padding:.6rem 1rem;border-radius:999px;border:1px solid rgba(125,190,240,.42);background:rgba(9,18,40,.6);color:#dfe9f7;font:600 .9rem var(--font-body);cursor:pointer} }</style>
+    <style>.rl-groups{display:grid;gap:1.1rem;margin-top:1.2rem} .rl-group__h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-soft)} .rl-group__h a{color:var(--hp-soft);text-decoration:none;letter-spacing:.06em;text-transform:none;font-family:var(--font-body);font-size:.82rem;font-weight:600} .rl-group__h a:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .rl-group__h a:hover{color:#152242}/*TL*/ .rl-group .dh-machines{margin:0} .rl-size{list-style:none;margin:.2rem 0 0;padding:0;display:grid;gap:.6rem} .rl-size li{display:grid;grid-template-columns:92px 1fr;grid-template-rows:auto auto;column-gap:.9rem;align-items:center;padding:.8rem .9rem;border-radius:16px;border:1px solid var(--hp-edge);background:var(--hp-card)} .rl-size__art{grid-row:1 / span 2} .rl-size__art svg{display:block;width:92px;height:auto} .rl-size b{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--hp-ink)} .rl-size li > span:last-child{font-size:.84rem;line-height:1.45;color:var(--hp-soft)} .rl-size__more{margin:.8rem 0 0;font-size:.86rem;color:var(--hp-soft)} .rl-size__more a{color:var(--cyan-soft);font-weight:600} .rl-sizes .dh-kicker{margin-bottom:.6rem} @media (max-width:767px){ .rl-clamp .prose{position:relative;max-height:24rem;overflow:hidden} .rl-clamp .prose::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6rem;background:linear-gradient(rgba(7,13,34,0),var(--bg))}/*LT*/:where(html[data-theme="light"]) .rl-clamp .prose::after{background:linear-gradient(rgba(231,233,242,0),var(--bg))}/*TL*/ .rl-clamp.is-open .prose{max-height:none;overflow:visible} .rl-clamp.is-open .prose::after{display:none} .rl-more-wrap{padding-top:0;padding-bottom:0} .rl-more{display:inline-flex;align-items:center;gap:.4rem;margin:.9rem 0 0;padding:.6rem 1rem;border-radius:999px;border:1px solid rgba(125,190,240,.42);background:rgba(9,18,40,.6);color:#dfe9f7;font:600 .9rem var(--font-body);cursor:pointer}/*LT*/:where(html[data-theme="light"]) .rl-more{border:1px solid rgba(15,80,130,.42);background:rgba(226,230,239,.6);color:#11233c}/*TL*/ }</style>
     <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
         <div>
@@ -1463,7 +1464,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

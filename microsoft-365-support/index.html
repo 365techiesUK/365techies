@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1160,18 +1161,18 @@
       </div>
       <style>
       .swo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;max-width:1100px;margin:0 auto}
-      .swo-card{display:flex;flex-direction:column;gap:.6rem;padding:1.25rem 1.3rem;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.03)}
-      .swo-tag{align-self:flex-start;font:600 .7rem/1 var(--mono,monospace);letter-spacing:.06em;padding:.3rem .5rem;border-radius:6px;background:rgba(55,194,194,.14);color:var(--cyan,#37c2c2)}
+      .swo-card{display:flex;flex-direction:column;gap:.6rem;padding:1.25rem 1.3rem;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.03)}/*LT*/:where(html[data-theme="light"]) .swo-card{border:1px solid rgba(10,16,31,.12);background:rgba(10,16,31,.03)}/*TL*/
+      .swo-tag{align-self:flex-start;font:600 .7rem/1 var(--mono,monospace);letter-spacing:.06em;padding:.3rem .5rem;border-radius:6px;background:rgba(55,194,194,.14);color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) .swo-tag{background:rgba(33,115,115,.14);color:var(--cyan,#217373)}/*TL*/
       .swo-name{margin:0;font-size:1.08rem;line-height:1.3}
-      .swo-what{margin:0;font-size:.92rem;color:var(--muted,#9aa6c2);line-height:1.55;flex:1}
+      .swo-what{margin:0;font-size:.92rem;color:var(--muted,#9aa6c2);line-height:1.55;flex:1}/*LT*/:where(html[data-theme="light"]) .swo-what{color:var(--muted,#475676)}/*TL*/
       .swo-price{margin:.2rem 0 .3rem;display:flex;flex-direction:column}
-      .swo-price b{font-size:1.7rem;line-height:1.1;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}
+      .swo-price b{font-size:1.7rem;line-height:1.1;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .swo-price b{color:var(--cyan,#217373)}/*TL*/
       .swo-price--ask b{font-size:1.3rem}
-      .swo-price span{font-size:.82rem;color:var(--muted,#9aa6c2)}
-      .swo-in{margin:-.2rem 0 .2rem;font-size:.86rem;line-height:1.45;color:var(--green-soft,#5fe07a)}
+      .swo-price span{font-size:.82rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) .swo-price span{color:var(--muted,#475676)}/*TL*/
+      .swo-in{margin:-.2rem 0 .2rem;font-size:.86rem;line-height:1.45;color:var(--green-soft,#5fe07a)}/*LT*/:where(html[data-theme="light"]) .swo-in{color:var(--green-soft,#187c2d)}/*TL*/
       .swo-card .button{align-self:flex-start;white-space:nowrap}
       .swo-bundle{max-width:70ch;margin:1.4rem auto 0;text-align:center;line-height:1.6}
-      .swo-note{max-width:70ch;margin:1rem auto 0;text-align:center;font-size:.82rem;color:var(--muted,#9aa6c2)}
+      .swo-note{max-width:70ch;margin:1rem auto 0;text-align:center;font-size:.82rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) .swo-note{color:var(--muted,#475676)}/*TL*/
       </style>
     </section>
 <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
@@ -1554,7 +1555,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

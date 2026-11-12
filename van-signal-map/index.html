@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -806,25 +807,25 @@
     <style>
       .vlive{max-width:980px;margin:0 auto}
       .vlive-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 2px 16px;font-size:.82rem}
-      .vlive-live{display:inline-flex;align-items:center;gap:8px;color:#cfe0f5;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
-      .vlive-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:vlpulse 2.2s infinite}
+      .vlive-live{display:inline-flex;align-items:center;gap:8px;color:#cfe0f5;font-weight:600;letter-spacing:.03em;text-transform:uppercase}/*LT*/:where(html[data-theme="light"]) .vlive-live{color:#152c49}/*TL*/
+      .vlive-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:vlpulse 2.2s infinite}/*LT*/:where(html[data-theme="light"]) .vlive-dot{background:#266e30;box-shadow:0 0 0 0 rgba(38,110,48,.7)}/*TL*/
       @keyframes vlpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
-      .vlive-updated{color:#8b949e;font-variant-numeric:tabular-nums}
+      .vlive-updated{color:#8b949e;font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .vlive-updated{color:#545b64}/*TL*/
       .vlive-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:14px}
-      .vlive-tile{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:16px;padding:18px 18px 16px;box-shadow:0 18px 40px -28px rgba(0,0,0,.7)}
-      .vlive-k{margin:0;color:#8b949e;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+      .vlive-tile{background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:16px;padding:18px 18px 16px;box-shadow:0 18px 40px -28px rgba(0,0,0,.7)}/*LT*/:where(html[data-theme="light"]) .vlive-tile{background:rgba(219,222,230,.55);border:1px solid rgba(35,80,130,.18);box-shadow:0 18px 40px -28px rgba(0,0,0,0.21)}/*TL*/
+      .vlive-k{margin:0;color:#8b949e;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}/*LT*/:where(html[data-theme="light"]) .vlive-k{color:#545b64}/*TL*/
       /* overflow-wrap: the tiles are minmax(148px,1fr) but hold live TEXT as
          well as numbers - a town name like "Christchurch" or "Bournemouth" at
          1.35rem is wider than the tile and was spilling out of the card on
          tablet. Numbers are unaffected (they never need breaking). */
-      .vlive-v{margin:.3rem 0 0;font-size:2.1rem;font-weight:750;line-height:1;color:#e6edf3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+      .vlive-v{margin:.3rem 0 0;font-size:2.1rem;font-weight:750;line-height:1;color:#e6edf3;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}/*LT*/:where(html[data-theme="light"]) .vlive-v{color:#182633}/*TL*/
       .vlive-v--sm{font-size:1.35rem;line-height:1.15}
-      .vlive-u{font-size:.9rem;font-weight:600;color:#8b949e;margin-left:3px}
-      .vlive-sub{margin:.55rem 0 0;color:#9db3cf;font-size:.82rem}
-      .vlive-meter{margin:.65rem 0 .15rem;height:7px;border-radius:5px;background:rgba(125,170,220,.16);overflow:hidden}
-      .vlive-meter i{display:block;height:100%;width:0;border-radius:5px;background:#3fb950;transition:width .6s ease,background .6s ease}
+      .vlive-u{font-size:.9rem;font-weight:600;color:#8b949e;margin-left:3px}/*LT*/:where(html[data-theme="light"]) .vlive-u{color:#545b64}/*TL*/
+      .vlive-sub{margin:.55rem 0 0;color:#9db3cf;font-size:.82rem}/*LT*/:where(html[data-theme="light"]) .vlive-sub{color:#3a5476}/*TL*/
+      .vlive-meter{margin:.65rem 0 .15rem;height:7px;border-radius:5px;background:rgba(125,170,220,.16);overflow:hidden}/*LT*/:where(html[data-theme="light"]) .vlive-meter{background:rgba(35,80,130,.16)}/*TL*/
+      .vlive-meter i{display:block;height:100%;width:0;border-radius:5px;background:#3fb950;transition:width .6s ease,background .6s ease}/*LT*/:where(html[data-theme="light"]) .vlive-meter i{background:#266e30}/*TL*/
       .vlive[data-state=stale]{opacity:.5;filter:grayscale(.65)}
-      .vlive[data-state=stale] .vlive-dot{background:#6e7681;animation:none}
+      .vlive[data-state=stale] .vlive-dot{background:#6e7681;animation:none}/*LT*/:where(html[data-theme="light"]) .vlive[data-state=stale] .vlive-dot{background:#88909a}/*TL*/
       .vlive[data-state=loading] .vlive-updated{opacity:0}
     </style>
     <section class="section" aria-label="The van right now">
@@ -900,35 +901,35 @@
 
     <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
     <style>
-      .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}
-      #sigmap{height:min(66vh,600px);width:100%;background:#0b1020}
-      .leaflet-container{background:#0b1020;font:inherit}
+      .sigmap-wrap{position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,.7)}/*LT*/:where(html[data-theme="light"]) .sigmap-wrap{border:1px solid rgba(35,80,130,.18);box-shadow:0 24px 60px -30px rgba(0,0,0,0.21)}/*TL*/
+      #sigmap{height:min(66vh,600px);width:100%;background:#0b1020}/*LT*/:where(html[data-theme="light"]) #sigmap{background:#e7e9f0}/*TL*/
+      .leaflet-container{background:#0b1020;font:inherit}/*LT*/:where(html[data-theme="light"]) .leaflet-container{background:#e7e9f0}/*TL*/
       /* (the old .osm-tiles invert filter is gone — Protomaps renders dark natively) */
-      .sigmap-status{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
-      .sigmap-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}
+      .sigmap-status{position:absolute;top:12px;left:12px;z-index:500;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;padding:7px 12px;font-size:.8rem;color:#cfe0f5;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}/*LT*/:where(html[data-theme="light"]) .sigmap-status{background:rgba(231,234,240,.85);border:1px solid rgba(35,80,130,.22);color:#152c49}/*TL*/
+      .sigmap-dot{width:9px;height:9px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgba(63,185,80,.7);animation:sigpulse 2.2s infinite}/*LT*/:where(html[data-theme="light"]) .sigmap-dot{background:#266e30;box-shadow:0 0 0 0 rgba(38,110,48,.7)}/*TL*/
       @keyframes sigpulse{70%{box-shadow:0 0 0 8px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
-      .sigmap-legend{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5;max-width:220px}
+      .sigmap-legend{background:rgba(10,16,32,.9);color:#cfe0f5;padding:9px 11px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.74rem;line-height:1.5;max-width:220px}/*LT*/:where(html[data-theme="light"]) .sigmap-legend{background:rgba(231,234,240,.9);color:#152c49;border:1px solid rgba(35,80,130,.22)}/*TL*/
       @media (max-width:640px){.sigmap-legend{padding:5px 8px;font-size:.66rem;line-height:1.3;max-width:170px}.sigmap-legend .bar{width:70px;height:7px}}
-      .sigmap-legend .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}
-      .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}
-      .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.85rem 0 0;text-align:center}
-      .sigmap-mode{position:absolute;top:12px;right:12px;z-index:500;display:flex;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;overflow:hidden;backdrop-filter:blur(6px)}
-      .sigmap-mode button{appearance:none;border:0;background:transparent;color:#9db3cf;font:600 .74rem/1 inherit;font-family:inherit;padding:9px 13px;cursor:pointer;letter-spacing:.03em}
-      .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}
-      .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}
-      .sigmap-rank{background:#1d97e3;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+      .sigmap-legend .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#f85149,#d29922,#3fb950)}/*LT*/:where(html[data-theme="light"]) .sigmap-legend .bar{background:linear-gradient(90deg,#b60f07,#9e731a,#266e30)}/*TL*/
+      .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#141b2e;color:#e6edf3}/*LT*/:where(html[data-theme="light"]) .leaflet-popup-content-wrapper,:where(html[data-theme="light"]) .leaflet-popup-tip{background:#dbdee6;color:#182633}/*TL*/
+      .sigmap-empty{color:var(--muted,#8b949e);font-size:.85rem;margin:.85rem 0 0;text-align:center}/*LT*/:where(html[data-theme="light"]) .sigmap-empty{color:var(--muted,#6c7681)}/*TL*/
+      .sigmap-mode{position:absolute;top:12px;right:12px;z-index:500;display:flex;background:rgba(10,16,32,.85);border:1px solid rgba(125,170,220,.22);border-radius:10px;overflow:hidden;backdrop-filter:blur(6px)}/*LT*/:where(html[data-theme="light"]) .sigmap-mode{background:rgba(231,234,240,.85);border:1px solid rgba(35,80,130,.22)}/*TL*/
+      .sigmap-mode button{appearance:none;border:0;background:transparent;color:#9db3cf;font:600 .74rem/1 inherit;font-family:inherit;padding:9px 13px;cursor:pointer;letter-spacing:.03em}/*LT*/:where(html[data-theme="light"]) .sigmap-mode button{color:#3a5476}/*TL*/
+      .sigmap-mode button[aria-pressed=true]{background:rgba(29,151,227,.28);color:#fff}/*LT*/:where(html[data-theme="light"]) .sigmap-mode button[aria-pressed=true]{background:rgba(23,124,187,.28);color:#152242}/*TL*/
+      .sigmap-mode button:focus-visible{outline:2px solid #6cc4f5;outline-offset:-2px}/*LT*/:where(html[data-theme="light"]) .sigmap-mode button:focus-visible{outline:2px solid #0a6293}/*TL*/
+      .sigmap-rank{background:#1d97e3;color:#fff;border:2px solid #fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit;box-shadow:0 2px 8px rgba(0,0,0,.5)}/*LT*/:where(html[data-theme="light"]) .sigmap-rank{background:#177cbb;border:2px solid #0a101f;box-shadow:0 2px 8px rgba(0,0,0,0.15)}/*TL*/
       .sigmap-legend-cards{list-style:none;margin:0 0 1.15rem;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-      .sigmap-legend-cards li{background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:13px;padding:14px 16px}
-      .sigmap-legend-cards b{display:block;color:#e6edf3;font-size:.95rem;margin-bottom:.28rem}
-      .sigmap-legend-cards span{display:block;color:#9db3cf;font-size:.84rem;line-height:1.5}
+      .sigmap-legend-cards li{background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:13px;padding:14px 16px}/*LT*/:where(html[data-theme="light"]) .sigmap-legend-cards li{background:rgba(219,222,230,.5);border:1px solid rgba(35,80,130,.16)}/*TL*/
+      .sigmap-legend-cards b{display:block;color:#e6edf3;font-size:.95rem;margin-bottom:.28rem}/*LT*/:where(html[data-theme="light"]) .sigmap-legend-cards b{color:#182633}/*TL*/
+      .sigmap-legend-cards span{display:block;color:#9db3cf;font-size:.84rem;line-height:1.5}/*LT*/:where(html[data-theme="light"]) .sigmap-legend-cards span{color:#3a5476}/*TL*/
       .sigmap-best{max-width:680px;margin:1rem auto 0;padding:0;list-style:none;display:grid;gap:.5rem}
-      .sigmap-best li{display:flex;align-items:center;gap:.8rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.65rem .9rem;cursor:pointer;transition:border-color .2s}
-      .sigmap-best li:hover{border-color:rgba(108,196,245,.45)}
-      .sigmap-best .rk{flex:0 0 auto;background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit}
-      .sigmap-best .mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums;min-width:74px}
-      .sigmap-best .meta{color:#9db3cf;font-size:.82rem}
+      .sigmap-best li{display:flex;align-items:center;gap:.8rem;background:rgba(20,27,46,.55);border:1px solid rgba(125,170,220,.18);border-radius:12px;padding:.65rem .9rem;cursor:pointer;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .sigmap-best li{background:rgba(219,222,230,.55);border:1px solid rgba(35,80,130,.18)}/*TL*/
+      .sigmap-best li:hover{border-color:rgba(108,196,245,.45)}/*LT*/:where(html[data-theme="light"]) .sigmap-best li:hover{border-color:rgba(10,98,147,.45)}/*TL*/
+      .sigmap-best .rk{flex:0 0 auto;background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .8rem/1 inherit}/*LT*/:where(html[data-theme="light"]) .sigmap-best .rk{background:#177cbb}/*TL*/
+      .sigmap-best .mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums;min-width:74px}/*LT*/:where(html[data-theme="light"]) .sigmap-best .mb{color:#182633}/*TL*/
+      .sigmap-best .meta{color:#9db3cf;font-size:.82rem}/*LT*/:where(html[data-theme="light"]) .sigmap-best .meta{color:#3a5476}/*TL*/
       .sigmap-best .wr{margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-      .sigmap-best .wr--good{color:#3fb950}.sigmap-best .wr--ok{color:#d29922}.sigmap-best .wr--bad{color:#f85149}
+      .sigmap-best .wr--good{color:#3fb950}/*LT*/:where(html[data-theme="light"]) .sigmap-best .wr--good{color:#266e30}/*TL*/.sigmap-best .wr--ok{color:#d29922}/*LT*/:where(html[data-theme="light"]) .sigmap-best .wr--ok{color:#725313}/*TL*/.sigmap-best .wr--bad{color:#f85149}/*LT*/:where(html[data-theme="light"]) .sigmap-best .wr--bad{color:#b10f07}/*TL*/
     </style>
     <section class="section" aria-label="Live measured signal map">
       <div class="wrap">
@@ -1100,10 +1101,10 @@
 
     <style>
       .vmf-reuse{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:.2rem 0 0}
-      .vmf-credit-box{max-width:760px;margin:1.5rem auto 0;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:1rem 1.1rem}
-      .vmf-credit-lbl{margin:0 0 .45rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#8b949e}
-      .vmf-code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.6;color:#cfe0f5;white-space:pre-wrap;word-break:break-word}
-      .vmf-lede{max-width:70ch;margin:0 auto 1.4rem;text-align:center;color:var(--muted,#8b949e);font-size:.95rem;line-height:1.65}
+      .vmf-credit-box{max-width:760px;margin:1.5rem auto 0;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:1rem 1.1rem}/*LT*/:where(html[data-theme="light"]) .vmf-credit-box{background:rgba(219,222,230,.5);border:1px solid rgba(35,80,130,.16)}/*TL*/
+      .vmf-credit-lbl{margin:0 0 .45rem;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#8b949e}/*LT*/:where(html[data-theme="light"]) .vmf-credit-lbl{color:#545b64}/*TL*/
+      .vmf-code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.6;color:#cfe0f5;white-space:pre-wrap;word-break:break-word}/*LT*/:where(html[data-theme="light"]) .vmf-code{color:#152c49}/*TL*/
+      .vmf-lede{max-width:70ch;margin:0 auto 1.4rem;text-align:center;color:var(--muted,#8b949e);font-size:.95rem;line-height:1.65}/*LT*/:where(html[data-theme="light"]) .vmf-lede{color:var(--muted,#6c7681)}/*TL*/
       .vmf-list{max-width:720px;margin:0 auto;padding:0;list-style:none;display:grid;gap:.5rem;counter-reset:none}
       /* ⚠️ FIVE columns for FIVE spans (rank, Mbps, name, meta, verdict). It was
          four, so the verdict wrapped onto an implicit second row and landed in
@@ -1111,20 +1112,20 @@
          118px of "GREAT FOR WORK" straight out of the card. Broken at every
          width above the 560px mobile rule, i.e. tablet AND desktop. If a span
          is ever added here, add its column too. */
-      .vmf-list li{display:grid;grid-template-columns:26px 104px 1fr auto auto;align-items:center;gap:.75rem;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.7rem .95rem}
-      .vmf-rk{background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .78rem/1 inherit}
-      .vmf-mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums}
-      .vmf-nm{color:#e6edf3;font-weight:600}
-      .vmf-me{color:#9db3cf;font-size:.82rem}
-      .vmf-vd{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#3fb950;white-space:nowrap}
-      .vmf-none{max-width:60ch;margin:0 auto;text-align:center;color:var(--muted,#8b949e);font-size:.9rem}
-      .vmf-note{text-align:center;color:var(--muted,#8b949e);font-size:.78rem;margin:1.1rem 0 0;opacity:.8}
+      .vmf-list li{display:grid;grid-template-columns:26px 104px 1fr auto auto;align-items:center;gap:.75rem;background:rgba(20,27,46,.5);border:1px solid rgba(125,170,220,.16);border-radius:12px;padding:.7rem .95rem}/*LT*/:where(html[data-theme="light"]) .vmf-list li{background:rgba(219,222,230,.5);border:1px solid rgba(35,80,130,.16)}/*TL*/
+      .vmf-rk{background:#1d97e3;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font:700 .78rem/1 inherit}/*LT*/:where(html[data-theme="light"]) .vmf-rk{background:#177cbb}/*TL*/
+      .vmf-mb{font-weight:750;color:#e6edf3;font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .vmf-mb{color:#182633}/*TL*/
+      .vmf-nm{color:#e6edf3;font-weight:600}/*LT*/:where(html[data-theme="light"]) .vmf-nm{color:#182633}/*TL*/
+      .vmf-me{color:#9db3cf;font-size:.82rem}/*LT*/:where(html[data-theme="light"]) .vmf-me{color:#3a5476}/*TL*/
+      .vmf-vd{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#3fb950;white-space:nowrap}/*LT*/:where(html[data-theme="light"]) .vmf-vd{color:#266e30}/*TL*/
+      .vmf-none{max-width:60ch;margin:0 auto;text-align:center;color:var(--muted,#8b949e);font-size:.9rem}/*LT*/:where(html[data-theme="light"]) .vmf-none{color:var(--muted,#6c7681)}/*TL*/
+      .vmf-note{text-align:center;color:var(--muted,#8b949e);font-size:.78rem;margin:1.1rem 0 0;opacity:.8}/*LT*/:where(html[data-theme="light"]) .vmf-note{color:var(--muted,#6c7681)}/*TL*/
       .vmf-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.6rem;max-width:960px;margin:0 auto}
       .vmf-cols h3{font-size:1.05rem;margin:0 0 .6rem}
-      .vmf-ul{margin:0;padding-left:1.1rem;color:var(--muted,#8b949e);font-size:.9rem;line-height:1.7}
+      .vmf-ul{margin:0;padding-left:1.1rem;color:var(--muted,#8b949e);font-size:.9rem;line-height:1.7}/*LT*/:where(html[data-theme="light"]) .vmf-ul{color:var(--muted,#6c7681)}/*TL*/
       .vmf-ul li{margin-bottom:.5rem}
-      .vmf-ul strong{color:#cfe0f5}
-      .vmf-credit{max-width:70ch;margin:1.6rem auto 0;text-align:center;color:var(--muted,#8b949e);font-size:.86rem;line-height:1.6}
+      .vmf-ul strong{color:#cfe0f5}/*LT*/:where(html[data-theme="light"]) .vmf-ul strong{color:#152c49}/*TL*/
+      .vmf-credit{max-width:70ch;margin:1.6rem auto 0;text-align:center;color:var(--muted,#8b949e);font-size:.86rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) .vmf-credit{color:var(--muted,#6c7681)}/*TL*/
       /* ⚠️ .vmf-nm MUST be listed here too. This rule drops the row to two
          columns but only re-homed .vmf-me and .vmf-vd, so the PLACE NAME fell
          into column 1 - the 24px rank column - and spilled up to 84px out of
@@ -1180,11 +1181,11 @@
     <style>
       .vshare{max-width:720px;margin:0 auto;text-align:center}
       .vshare__row{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:1.1rem 0 0;padding:0;list-style:none}
-      .vshare__row a,.vshare__row button{display:inline-flex;align-items:center;gap:.5rem;padding:.62rem 1.05rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .9rem/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
-      .vshare__row a:hover,.vshare__row button:hover{border-color:rgba(108,196,245,.6);background:rgba(29,151,227,.16);transform:translateY(-1px)}
-      .vshare__row a:focus-visible,.vshare__row button:focus-visible{outline:2px solid #6cc4f5;outline-offset:2px}
+      .vshare__row a,.vshare__row button{display:inline-flex;align-items:center;gap:.5rem;padding:.62rem 1.05rem;border-radius:999px;border:1px solid rgba(125,170,220,.3);background:rgba(20,27,46,.55);color:#cfe0f5;font:600 .9rem/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}/*LT*/:where(html[data-theme="light"]) .vshare__row a,:where(html[data-theme="light"]) .vshare__row button{border:1px solid rgba(35,80,130,.3);background:rgba(219,222,230,.55);color:#152c49}/*TL*/
+      .vshare__row a:hover,.vshare__row button:hover{border-color:rgba(108,196,245,.6);background:rgba(29,151,227,.16);transform:translateY(-1px)}/*LT*/:where(html[data-theme="light"]) .vshare__row a:hover,:where(html[data-theme="light"]) .vshare__row button:hover{border-color:rgba(10,98,147,.6);background:rgba(23,124,187,.16)}/*TL*/
+      .vshare__row a:focus-visible,.vshare__row button:focus-visible{outline:2px solid #6cc4f5;outline-offset:2px}/*LT*/:where(html[data-theme="light"]) .vshare__row a:focus-visible,:where(html[data-theme="light"]) .vshare__row button:focus-visible{outline:2px solid #0a6293}/*TL*/
       .vshare__row svg{width:17px;height:17px;fill:currentColor;flex:0 0 auto}
-      .vshare__said{min-height:1.35em;margin:.8rem 0 0;font-size:.86rem;color:#3fb950;font-weight:600}
+      .vshare__said{min-height:1.35em;margin:.8rem 0 0;font-size:.86rem;color:#3fb950;font-weight:600}/*LT*/:where(html[data-theme="light"]) .vshare__said{color:#266e30}/*TL*/
     </style>
     <section class="section" aria-label="Share this map">
       <div class="wrap">
@@ -1292,10 +1293,10 @@
 
     <style>
       .vembed{max-width:760px;margin:0 auto}
-      .vembed__code{display:block;width:100%;min-height:132px;resize:vertical;background:#0b1020;color:#cfe0f5;border:1px solid rgba(125,170,220,.28);border-radius:12px;padding:.9rem 1rem;font:.8rem/1.65 'IBM Plex Mono',ui-monospace,monospace;white-space:pre;overflow:auto}
-      .vembed__code:focus{outline:2px solid #6cc4f5;outline-offset:2px}
+      .vembed__code{display:block;width:100%;min-height:132px;resize:vertical;background:#0b1020;color:#cfe0f5;border:1px solid rgba(125,170,220,.28);border-radius:12px;padding:.9rem 1rem;font:.8rem/1.65 'IBM Plex Mono',ui-monospace,monospace;white-space:pre;overflow:auto}/*LT*/:where(html[data-theme="light"]) .vembed__code{background:#e7e9f0;color:#152c49;border:1px solid rgba(35,80,130,.28)}/*TL*/
+      .vembed__code:focus{outline:2px solid #6cc4f5;outline-offset:2px}/*LT*/:where(html[data-theme="light"]) .vembed__code:focus{outline:2px solid #0a6293}/*TL*/
       .vembed__btns{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:1rem 0 0}
-      .vembed__why{max-width:62ch;margin:1.5rem auto 0;font-size:.87rem;color:var(--muted,#8b949e);line-height:1.65;text-align:center}
+      .vembed__why{max-width:62ch;margin:1.5rem auto 0;font-size:.87rem;color:var(--muted,#8b949e);line-height:1.65;text-align:center}/*LT*/:where(html[data-theme="light"]) .vembed__why{color:var(--muted,#6c7681)}/*TL*/
     </style>
     <section class="section" aria-label="Embed this map on your own site">
       <div class="wrap">
@@ -1326,12 +1327,12 @@
       .ai-cards{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
       .ai-cards li{position:relative;padding:1.25rem 1.3rem;border-radius:var(--r-lg);background:var(--glass-deep);border:1px solid var(--line);overflow:hidden;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
       .ai-cards li::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:translateX(-100%);transition:transform .5s ease}
-      .ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}
+      .ai-cards li:hover,.ai-cards li:focus-within{transform:translateY(-4px);border-color:rgba(108,196,245,.42);box-shadow:0 18px 40px rgba(3,10,26,.5)}/*LT*/:where(html[data-theme="light"]) .ai-cards li:hover,:where(html[data-theme="light"]) .ai-cards li:focus-within{border-color:rgba(10,98,147,.42);box-shadow:0 18px 40px rgba(237,240,246,.5)}/*TL*/
       .ai-cards li:hover::before,.ai-cards li:focus-within::before{transform:translateX(0)}
       .ai-cards .ai-cardico{width:30px;height:30px;color:var(--cyan-soft);margin-bottom:.7rem;display:block}
       .ai-cards li:hover .ai-cardico{animation:aiNudge .6s ease}
       @keyframes aiNudge{40%{transform:translateY(-3px) rotate(-4deg)}100%{transform:none}}
-      .ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}
+      .ai-cards h3{font-size:1.06rem;color:#fff;margin:0 0 .45rem;line-height:1.3}/*LT*/:where(html[data-theme="light"]) .ai-cards h3{color:#152242}/*TL*/
       .ai-cards p{font-size:.95rem;color:var(--muted);margin:0;line-height:1.6}
       .ai-cards a{color:var(--cyan-soft)}
       @media (prefers-reduced-motion:reduce){.ai-cards li{transition:none}.ai-cards li:hover .ai-cardico{animation:none}}
@@ -1661,7 +1662,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

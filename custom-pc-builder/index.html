@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -914,8 +915,8 @@
         .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
         .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
         .taskhead__lede a{color:var(--cyan-soft)}
-        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
-        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}/*LT*/:where(html[data-theme="light"]) .taskhead__trust{color:#355074}/*TL*/
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}/*LT*/:where(html[data-theme="light"]) .taskhead__trust a{color:#355074}/*TL*/
         .taskhead .page-hero__byline{margin-top:.55rem}
         .taskhead + .section{padding-top:2rem}
         .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
@@ -1000,43 +1001,43 @@
       <style>
       #pcb{max-width:860px;margin:0 auto}
       #pcb .pb-q{margin-bottom:1.3rem}
-      #pcb .pb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}
+      #pcb .pb-q-t{font-size:.95rem;font-weight:700;margin:0 0 .6rem;color:#fff}/*LT*/:where(html[data-theme="light"]) #pcb .pb-q-t{color:#152242}/*TL*/
       #pcb .pb-chips{display:flex;gap:.5rem;flex-wrap:wrap}
-      #pcb .pb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:999px;padding:.5rem 1rem;transition:all .15s}
-      #pcb .pb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}
-      #pcb .pb-check{display:flex;align-items:center;gap:.5rem;font-size:.85rem;padding:.4rem .2rem;color:var(--muted,#9aa6c2)}
-      #pcb .pb-check input{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}
-      #pcb .pb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}
-      #pcb .pb-slider output{color:var(--cyan,#37c2c2);font-weight:700}
-      #pcb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}
+      #pcb .pb-chip{font:inherit;font-size:.85rem;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);color:inherit;border-radius:999px;padding:.5rem 1rem;transition:all .15s}/*LT*/:where(html[data-theme="light"]) #pcb .pb-chip{background:rgba(10,16,31,.04);border:1px solid rgba(10,16,31,.16)}/*TL*/
+      #pcb .pb-chip.is-on{background:rgba(55,194,194,.15);border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2);font-weight:600}/*LT*/:where(html[data-theme="light"]) #pcb .pb-chip.is-on{background:rgba(33,115,115,.15);border-color:var(--cyan,#217373);color:var(--cyan,#217373)}/*TL*/
+      #pcb .pb-check{display:flex;align-items:center;gap:.5rem;font-size:.85rem;padding:.4rem .2rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-check{color:var(--muted,#475676)}/*TL*/
+      #pcb .pb-check input{accent-color:var(--cyan,#37c2c2);width:1.05rem;height:1.05rem}/*LT*/:where(html[data-theme="light"]) #pcb .pb-check input{accent-color:var(--cyan,#217373)}/*TL*/
+      #pcb .pb-slider{display:block;margin-top:.7rem;font-size:.8rem;color:var(--muted,#9aa6c2)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-slider{color:var(--muted,#475676)}/*TL*/
+      #pcb .pb-slider output{color:var(--cyan,#37c2c2);font-weight:700}/*LT*/:where(html[data-theme="light"]) #pcb .pb-slider output{color:var(--cyan,#217373)}/*TL*/
+      #pcb input[type=range]{width:100%;margin-top:.4rem;accent-color:var(--cyan,#37c2c2);cursor:pointer}/*LT*/:where(html[data-theme="light"]) #pcb input[type=range]{accent-color:var(--cyan,#217373)}/*TL*/
       #pcb .pb-summary{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.6rem 0 .6rem}
-      #pcb .pb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}
-      #pcb .pb-sum-chip b{color:#39d353}
-      #pcb .pb-warn{margin:.6rem 0 0;padding:.8rem 1rem;border-radius:11px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.08);font-size:.84rem;color:#f5d97e;line-height:1.5;text-align:center}
-      #pcb .pb-sec-t{font-size:1.05rem;margin:1.8rem 0 .6rem;color:#fff}
+      #pcb .pb-sum-chip{font-size:.78rem;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(57,211,83,.35);background:rgba(57,211,83,.08);color:#9fe8b0}/*LT*/:where(html[data-theme="light"]) #pcb .pb-sum-chip{border:1px solid rgba(27,121,43,.35);background:rgba(27,121,43,.08);color:#1c7330}/*TL*/
+      #pcb .pb-sum-chip b{color:#39d353}/*LT*/:where(html[data-theme="light"]) #pcb .pb-sum-chip b{color:#1b792b}/*TL*/
+      #pcb .pb-warn{margin:.6rem 0 0;padding:.8rem 1rem;border-radius:11px;border:1px solid rgba(241,196,15,.4);background:rgba(241,196,15,.08);font-size:.84rem;color:#f5d97e;line-height:1.5;text-align:center}/*LT*/:where(html[data-theme="light"]) #pcb .pb-warn{border:1px solid rgba(173,141,10,.4);background:rgba(173,141,10,.08);color:#7b6009}/*TL*/
+      #pcb .pb-sec-t{font-size:1.05rem;margin:1.8rem 0 .6rem;color:#fff}/*LT*/:where(html[data-theme="light"]) #pcb .pb-sec-t{color:#152242}/*TL*/
       #pcb .pb-spec{display:flex;flex-direction:column;gap:.7rem}
-      #pcb .pb-item{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}
+      #pcb .pb-item{padding:1rem 1.1rem;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-item{background:rgba(10,16,31,.03);border:1px solid rgba(10,16,31,.1)}/*TL*/
       #pcb .pb-item-top{display:flex;justify-content:space-between;gap:.8rem;align-items:baseline;flex-wrap:wrap}
-      #pcb .pb-item-cat{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}
-      #pcb .pb-item-name{font-size:1rem;font-weight:700;color:#fff;margin:.15rem 0}
-      #pcb .pb-item-spend{font-size:.95rem;font-weight:800;color:#39d353;white-space:nowrap}
-      #pcb .pb-item-why{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:.2rem 0 .6rem}
+      #pcb .pb-item-cat{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-item-cat{color:var(--cyan,#217373)}/*TL*/
+      #pcb .pb-item-name{font-size:1rem;font-weight:700;color:#fff;margin:.15rem 0}/*LT*/:where(html[data-theme="light"]) #pcb .pb-item-name{color:#152242}/*TL*/
+      #pcb .pb-item-spend{font-size:.95rem;font-weight:800;color:#39d353;white-space:nowrap}/*LT*/:where(html[data-theme="light"]) #pcb .pb-item-spend{color:#1b792b}/*TL*/
+      #pcb .pb-item-why{font-size:.82rem;color:var(--muted,#9aa6c2);line-height:1.55;margin:.2rem 0 .6rem}/*LT*/:where(html[data-theme="light"]) #pcb .pb-item-why{color:var(--muted,#475676)}/*TL*/
       #pcb .pb-buy{display:flex;gap:.5rem;flex-wrap:wrap}
-      #pcb .pb-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit;transition:all .15s}
-      #pcb .pb-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}
+      #pcb .pb-buy a{font-size:.78rem;font-weight:600;text-decoration:none;padding:.4rem .85rem;border-radius:9px;border:1px solid rgba(255,255,255,.22);color:inherit;transition:all .15s}/*LT*/:where(html[data-theme="light"]) #pcb .pb-buy a{border:1px solid rgba(10,16,31,.22)}/*TL*/
+      #pcb .pb-buy a:hover{border-color:var(--cyan,#37c2c2);color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-buy a:hover{border-color:var(--cyan,#217373);color:var(--cyan,#217373)}/*TL*/
       #pcb .pb-rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
-      #pcb .pb-rules li{padding:.7rem 1rem .7rem 2.2rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.85rem;color:var(--muted,#9aa6c2);line-height:1.55;position:relative}
-      #pcb .pb-rules li::before{content:"\2713";position:absolute;left:.85rem;color:#39d353;font-weight:800}
-      #pcb .pb-rules b{color:#fff}
-      #pcb .pb-rules a{color:var(--cyan,#37c2c2)}
-      #pcb .pb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}
+      #pcb .pb-rules li{padding:.7rem 1rem .7rem 2.2rem;border-radius:11px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:.85rem;color:var(--muted,#9aa6c2);line-height:1.55;position:relative}/*LT*/:where(html[data-theme="light"]) #pcb .pb-rules li{background:rgba(10,16,31,.03);border:1px solid rgba(10,16,31,.08);color:var(--muted,#475676)}/*TL*/
+      #pcb .pb-rules li::before{content:"\2713";position:absolute;left:.85rem;color:#39d353;font-weight:800}/*LT*/:where(html[data-theme="light"]) #pcb .pb-rules li::before{color:#1b792b}/*TL*/
+      #pcb .pb-rules b{color:#fff}/*LT*/:where(html[data-theme="light"]) #pcb .pb-rules b{color:#152242}/*TL*/
+      #pcb .pb-rules a{color:var(--cyan,#37c2c2)}/*LT*/:where(html[data-theme="light"]) #pcb .pb-rules a{color:var(--cyan,#217373)}/*TL*/
+      #pcb .pb-links-note{text-align:center;font-size:.72rem;color:var(--muted,#9aa6c2);margin:1.2rem 0 0;opacity:.85}/*LT*/:where(html[data-theme="light"]) #pcb .pb-links-note{color:var(--muted,#475676)}/*TL*/
       #pcb .pb-actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
-      #pcb .pb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
-      #pcb .pb-ghost.done{border-color:#2ecc71;color:#2ecc71}
-      #pcb .pb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}
-      #pcbtool .pb-fix{max-width:860px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}
+      #pcb .pb-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}/*LT*/:where(html[data-theme="light"]) #pcb .pb-ghost{border:1px solid rgba(10,16,31,.25)}/*TL*/
+      #pcb .pb-ghost.done{border-color:#2ecc71;color:#2ecc71}/*LT*/:where(html[data-theme="light"]) #pcb .pb-ghost.done{border-color:#1b7943;color:#1b7943}/*TL*/
+      #pcb .pb-note{margin:1.4rem auto 0;max-width:72ch;text-align:center;font-size:.76rem;color:var(--muted,#9aa6c2);line-height:1.6}/*LT*/:where(html[data-theme="light"]) #pcb .pb-note{color:var(--muted,#475676)}/*TL*/
+      #pcbtool .pb-fix{max-width:860px;margin:2rem auto 0;padding:1.6rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.07);text-align:center}/*LT*/:where(html[data-theme="light"]) #pcbtool .pb-fix{border:1px solid rgba(33,115,115,.35);background:rgba(33,115,115,.07)}/*TL*/
       #pcbtool .pb-fix h3{margin:0 0 .5rem;font-size:1.2rem}
-      #pcbtool .pb-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}
+      #pcbtool .pb-fix p{margin:0 auto 1.1rem;max-width:56ch;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.6}/*LT*/:where(html[data-theme="light"]) #pcbtool .pb-fix p{color:var(--muted,#475676)}/*TL*/
       #pcbtool .pb-fix-cta{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
       </style>
       <script>
@@ -1573,7 +1574,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

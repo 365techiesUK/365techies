@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1169,9 +1170,9 @@
 
   <main id="main">
     <style>
-      .tpp{--tpedge:rgba(125,170,220,.24);--tpfill:rgba(125,170,220,.06)}
+      .tpp{--tpedge:rgba(125,170,220,.24);--tpfill:rgba(125,170,220,.06)}/*LT*/:where(html[data-theme="light"]) .tpp{--tpedge:rgba(35,80,130,.24);--tpfill:rgba(35,80,130,.06)}/*TL*/
       .tpp [id]{scroll-margin-top:96px}
-      .tpp-shot{margin:0;border:1px solid var(--tpedge);border-radius:14px;overflow:hidden;background:#f4f3f3;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+      .tpp-shot{margin:0;border:1px solid var(--tpedge);border-radius:14px;overflow:hidden;background:#f4f3f3;box-shadow:0 18px 50px rgba(0,0,0,.35)}/*LT*/:where(html[data-theme="light"]) .tpp-shot{box-shadow:0 18px 50px rgba(0,0,0,0.105)}/*TL*/
       .tpp-shot img{display:block;width:100%;height:auto}
       .tpp-cap{margin:.5rem 0 0;font-size:.82rem;color:var(--muted);text-align:center}
       .tpp-dl{max-width:880px;margin:0 auto;border:1px solid var(--tpedge);border-radius:16px;background:var(--tpfill);padding:clamp(1.1rem,3vw,1.8rem);display:flex;flex-direction:column;gap:.8rem}
@@ -1183,10 +1184,10 @@
       .tpp-btns .ms-store-badge img{display:block;height:4.25rem;width:auto}
       @media (min-width:700px){.tpp-btns .button.primary{white-space:nowrap}}
       @media (max-width:699px){.tpp-btns .ms-store-badge{margin:0 auto}}
-      .tpp-new{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 .85rem;padding:.3rem .85rem .3rem .32rem;border-radius:999px;border:1px solid rgba(0,206,27,.38);background:rgba(0,206,27,.07);color:var(--ink);font-size:.86rem;font-weight:600;line-height:1.3;text-decoration:none;max-width:100%;transition:border-color .2s,background .2s}
-      .tpp-new b{flex:0 0 auto;padding:.16rem .55rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem var(--font-mono);letter-spacing:.08em}
-      .tpp-new span{min-width:0} .tpp-new__s{display:none} .tpp-new i{font-style:normal;color:#00ce1b;transition:transform .2s}
-      .tpp-new:hover{border-color:rgba(0,206,27,.7);background:rgba(0,206,27,.12)} .tpp-new:hover i{transform:translateX(3px)} .tpp-new:focus-visible{outline:2px solid #00ce1b;outline-offset:3px}
+      .tpp-new{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 .85rem;padding:.3rem .85rem .3rem .32rem;border-radius:999px;border:1px solid rgba(0,206,27,.38);background:rgba(0,206,27,.07);color:var(--ink);font-size:.86rem;font-weight:600;line-height:1.3;text-decoration:none;max-width:100%;transition:border-color .2s,background .2s}/*LT*/:where(html[data-theme="light"]) .tpp-new{border:1px solid rgba(0,148,19,.38);background:rgba(0,148,19,.07)}/*TL*/
+      .tpp-new b{flex:0 0 auto;padding:.16rem .55rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem var(--font-mono);letter-spacing:.08em}/*LT*/:where(html[data-theme="light"]) .tpp-new b{background:#009413;color:#f1f8f4}/*TL*/
+      .tpp-new span{min-width:0} .tpp-new__s{display:none} .tpp-new i{font-style:normal;color:#00ce1b;transition:transform .2s}/*LT*/:where(html[data-theme="light"]) .tpp-new i{color:#009413}/*TL*/
+      .tpp-new:hover{border-color:rgba(0,206,27,.7);background:rgba(0,206,27,.12)}/*LT*/:where(html[data-theme="light"]) .tpp-new:hover{border-color:rgba(0,148,19,.7);background:rgba(0,148,19,.12)}/*TL*/ .tpp-new:hover i{transform:translateX(3px)} .tpp-new:focus-visible{outline:2px solid #00ce1b;outline-offset:3px}/*LT*/:where(html[data-theme="light"]) .tpp-new:focus-visible{outline:2px solid #009413}/*TL*/
       @media (max-width:600px){.tpp-new__l{display:none}.tpp-new__s{display:inline}}
       @media (prefers-reduced-motion:reduce){.tpp-new i{transition:none}}
       .tpp-hero-store{display:inline-flex;align-items:center;flex:none;max-width:100%}
@@ -1200,13 +1201,13 @@
       .tpp-wrap{max-width:1100px;margin:0 auto}
       .tpp-lede{max-width:46rem;color:var(--muted);font-size:1.05rem;line-height:1.6;margin:.4rem 0 1.4rem}
       .tpp p a:not([class]),.tpp li a:not([class]),.tpp td a:not([class]){color:var(--cyan);text-decoration:underline;text-underline-offset:2px}
-      .tpp p a:not([class]):hover,.tpp li a:not([class]):hover,.tpp td a:not([class]):hover{color:#fff}
+      .tpp p a:not([class]):hover,.tpp li a:not([class]):hover,.tpp td a:not([class]):hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .tpp p a:not([class]):hover,:where(html[data-theme="light"]) .tpp li a:not([class]):hover,:where(html[data-theme="light"]) .tpp td a:not([class]):hover{color:#152242}/*TL*/
       .tpp-parts{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}
       @media (max-width:860px){.tpp-parts{grid-template-columns:repeat(2,minmax(0,1fr))}}
       @media (max-width:300px){.tpp-parts{grid-template-columns:1fr}}
       .tpp-parts a{display:flex;flex-direction:column;gap:.35rem;height:100%;box-sizing:border-box;border:1px solid var(--tpedge);border-radius:12px;padding:.85rem .9rem;background:var(--tpfill);color:inherit;text-decoration:none;transition:border-color .2s ease,background .2s ease}
-      .tpp-parts a:hover,.tpp-parts a:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}
-      .tpp-parts svg{width:1.9rem;height:1.9rem;color:var(--cyan-soft,#6cc4f5)}
+      .tpp-parts a:hover,.tpp-parts a:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}/*LT*/:where(html[data-theme="light"]) .tpp-parts a:hover,:where(html[data-theme="light"]) .tpp-parts a:focus-visible{background:rgba(23,124,187,.12)}/*TL*/
+      .tpp-parts svg{width:1.9rem;height:1.9rem;color:var(--cyan-soft,#6cc4f5)}/*LT*/:where(html[data-theme="light"]) .tpp-parts svg{color:var(--cyan-soft,#0a6293)}/*TL*/
       .tpp-parts b{font-size:1.05rem}
       .tpp-parts span{color:var(--muted);font-size:.9rem;line-height:1.4}
       .tpp-feats{display:grid;gap:clamp(1.6rem,4vw,2.8rem)}
@@ -1214,7 +1215,7 @@
       .tpp-feat:nth-child(even) .tpp-feat__txt{order:2}
       .tpp-feat h3{margin:0 0 .4rem;font-size:clamp(1.2rem,2.4vw,1.5rem)}
       .tpp-feat p{margin:0 0 .5rem;line-height:1.6}
-      .tpp-feat .tpp-prob{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-soft,#6cc4f5);margin:0 0 .35rem}
+      .tpp-feat .tpp-prob{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--cyan-soft,#6cc4f5);margin:0 0 .35rem}/*LT*/:where(html[data-theme="light"]) .tpp-feat .tpp-prob{color:var(--cyan-soft,#0a6293)}/*TL*/
       .tpp-list{margin:0;padding-left:1.2rem;display:grid;gap:.4rem;max-width:52rem}
       .tpp-list li{line-height:1.55}
       .tpp-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:1.2rem}
@@ -1223,19 +1224,19 @@
       .tpp-tm{font-size:.78rem;color:var(--muted);max-width:60rem;margin:1.6rem auto 0;text-align:center;line-height:1.5}
       @media (max-width:860px){.tpp-feat{grid-template-columns:1fr}.tpp-feat:nth-child(even) .tpp-feat__txt{order:0}}
       .tpp-clip{display:inline-flex;align-items:center;gap:.8rem;max-width:100%;box-sizing:border-box;margin:.35rem 0 0;padding:.45rem 1rem .45rem .45rem;border:1px solid var(--tpedge);border-radius:12px;background:var(--tpfill);color:inherit;text-decoration:none;transition:border-color .2s ease,background .2s ease;cursor:pointer}
-      .tpp-clip:hover,.tpp-clip:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}
+      .tpp-clip:hover,.tpp-clip:focus-visible{border-color:var(--cyan);background:rgba(29,151,227,.12)}/*LT*/:where(html[data-theme="light"]) .tpp-clip:hover,:where(html[data-theme="light"]) .tpp-clip:focus-visible{background:rgba(23,124,187,.12)}/*TL*/
       .tpp-clip--soon{cursor:default;opacity:.85}.tpp-clip--soon:hover{border-color:var(--tpedge);background:var(--tpfill)}
-      .tpp-clip__pic{position:relative;flex:none;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#0b1430}
+      .tpp-clip__pic{position:relative;flex:none;width:72px;height:72px;border-radius:8px;overflow:hidden;background:#0b1430}/*LT*/:where(html[data-theme="light"]) .tpp-clip__pic{background:#dce0ec}/*TL*/
       .tpp-clip__pic img{display:block;width:100%;height:100%;object-fit:cover}
-      .tpp-clip__pic svg{position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+      .tpp-clip__pic svg{position:absolute;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}/*LT*/:where(html[data-theme="light"]) .tpp-clip__pic svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,0.165))}/*TL*/
       .tpp-clip b{display:block;font-size:1rem}
       .tpp-clip small{display:block;color:var(--muted);font-size:.85rem;line-height:1.35}
-      .tpp-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}
-      .tpp-dlg::backdrop{background:rgba(2,6,16,.84)}
-      .tpp-dlg__v{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:#060c1c}
+      .tpp-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}/*LT*/:where(html[data-theme="light"]) .tpp-dlg{background:#ebedf4}/*TL*/
+      .tpp-dlg::backdrop{background:rgba(2,6,16,.84)}/*LT*/:where(html[data-theme="light"]) .tpp-dlg::backdrop{background:rgba(244,245,250,.84)}/*TL*/
+      .tpp-dlg__v{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:#060c1c}/*LT*/:where(html[data-theme="light"]) .tpp-dlg__v{background:#ebedf4}/*TL*/
       .tpp-dlg__v iframe{display:block;width:100%;height:100%;border:0}
-      .tpp-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}
-      .tpp-dlg__x:hover,.tpp-dlg__x:focus-visible{background:#1d97e3}
+      .tpp-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .tpp-dlg__x{border:1.5px solid rgba(10,16,31,.4);background:#dce0ec;color:#152242}/*TL*/
+      .tpp-dlg__x:hover,.tpp-dlg__x:focus-visible{background:#1d97e3}/*LT*/:where(html[data-theme="light"]) .tpp-dlg__x:hover,:where(html[data-theme="light"]) .tpp-dlg__x:focus-visible{background:#177cbb}/*TL*/
       .tpp-dlg__says{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     </style>
     <section class="page-hero dh dh-hero tpp" aria-label="Introduction">
@@ -1251,7 +1252,7 @@
             <a class="ms-store-badge tpp-hero-store" href="https://apps.microsoft.com/detail/XPDLXSHHH42Q88?mode=direct" aria-label="Download Techies PDF from the Microsoft Store"><img src="/images/ms-store-badge-en-gb-dark.svg" alt="Download from the Microsoft Store" width="161" height="44"></a>
             <a href="tel:+441202775566" class="button secondary button--lg">Rather we set it up? 01202 775566</a>
           </div>
-          <p style="margin:0 0 .9rem"><a class="ytw" href="https://www.youtube.com/watch?v=Jd0PrHSWJQc" target="_blank" rel="noopener" data-ytw="Jd0PrHSWJQc" data-ytw-shape="wide" data-ytw-title="Free PDF Editor for Windows 11: Sign, Merge, Split &amp; Compress PDFs (YouTube)"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><span>Watch the 3-minute how-to: every job, start to finish</span></a><style>.ytw{display:inline-flex;align-items:center;gap:.55rem;max-width:100%;box-sizing:border-box;margin:.65rem 0 0;padding:.45rem 1rem .45rem .5rem;border-radius:999px;border:1px solid rgba(29,151,227,.55);background:rgba(29,151,227,.12);color:inherit;font-weight:700;font-size:.9rem;line-height:1.3;text-decoration:none;transition:background .2s ease,border-color .2s ease}.ytw[hidden]{display:none!important}.ytw svg{width:1.6rem;height:1.6rem;flex:none}.ytw:hover,.ytw:focus-visible{background:rgba(29,151,227,.26);border-color:#1d97e3}.ytw-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}.ytw-dlg::backdrop{background:rgba(2,6,16,.84)}.ytw-dlg__v{border-radius:16px;overflow:hidden;background:#060c1c}.ytw-dlg__v--tall{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16}.ytw-dlg__v--wide{width:min(94vw,calc(84vh * 16 / 9),1100px);aspect-ratio:16/9}.ytw-dlg__v iframe{display:block;width:100%;height:100%;border:0}.ytw-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}.ytw-dlg__x:hover,.ytw-dlg__x:focus-visible{background:#1d97e3}</style><script>(function(){if(window.__ytw)return;window.__ytw=1;function go(){var now=Date.now();document.querySelectorAll("a[data-ytw]").forEach(function(a){var l=a.getAttribute("data-ytw-live");if(l&&now<Date.parse(l))return;a.hidden=false;a.addEventListener("click",function(e){var d=dlg();if(!d.showModal)return;e.preventDefault();play(d,a);});});}function dlg(){var d=document.getElementById("ytwdlg");if(d)return d;d=document.createElement("dialog");d.id="ytwdlg";d.className="ytw-dlg";d.setAttribute("aria-label","Video");d.innerHTML='<button type="button" class="ytw-dlg__x" aria-label="Close the video">&times;</button><div class="ytw-dlg__v"></div>';document.body.appendChild(d);if(!d.showModal)return d;d.querySelector(".ytw-dlg__x").addEventListener("click",function(){d.close();});d.addEventListener("click",function(e){if(e.target===d)d.close();});d.addEventListener("close",function(){d.querySelector(".ytw-dlg__v").innerHTML="";});return d;}function play(d,a){var v=d.querySelector(".ytw-dlg__v"),id=a.getAttribute("data-ytw"),i=document.createElement("iframe");v.className="ytw-dlg__v ytw-dlg__v--"+(a.getAttribute("data-ytw-shape")||"wide");i.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";i.title=a.getAttribute("data-ytw-title");i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");i.setAttribute("allowfullscreen","");v.innerHTML="";v.appendChild(i);d.showModal();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script></p>
+          <p style="margin:0 0 .9rem"><a class="ytw" href="https://www.youtube.com/watch?v=Jd0PrHSWJQc" target="_blank" rel="noopener" data-ytw="Jd0PrHSWJQc" data-ytw-shape="wide" data-ytw-title="Free PDF Editor for Windows 11: Sign, Merge, Split &amp; Compress PDFs (YouTube)"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><span>Watch the 3-minute how-to: every job, start to finish</span></a><style>.ytw{display:inline-flex;align-items:center;gap:.55rem;max-width:100%;box-sizing:border-box;margin:.65rem 0 0;padding:.45rem 1rem .45rem .5rem;border-radius:999px;border:1px solid rgba(29,151,227,.55);background:rgba(29,151,227,.12);color:inherit;font-weight:700;font-size:.9rem;line-height:1.3;text-decoration:none;transition:background .2s ease,border-color .2s ease}/*LT*/:where(html[data-theme="light"]) .ytw{border:1px solid rgba(23,124,187,.55);background:rgba(23,124,187,.12)}/*TL*/.ytw[hidden]{display:none!important}.ytw svg{width:1.6rem;height:1.6rem;flex:none}.ytw:hover,.ytw:focus-visible{background:rgba(29,151,227,.26);border-color:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw:hover,:where(html[data-theme="light"]) .ytw:focus-visible{background:rgba(23,124,187,.26);border-color:#177cbb}/*TL*/.ytw-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}/*LT*/:where(html[data-theme="light"]) .ytw-dlg{background:#ebedf4}/*TL*/.ytw-dlg::backdrop{background:rgba(2,6,16,.84)}/*LT*/:where(html[data-theme="light"]) .ytw-dlg::backdrop{background:rgba(244,245,250,.84)}/*TL*/.ytw-dlg__v{border-radius:16px;overflow:hidden;background:#060c1c}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__v{background:#ebedf4}/*TL*/.ytw-dlg__v--tall{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16}.ytw-dlg__v--wide{width:min(94vw,calc(84vh * 16 / 9),1100px);aspect-ratio:16/9}.ytw-dlg__v iframe{display:block;width:100%;height:100%;border:0}.ytw-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x{border:1.5px solid rgba(10,16,31,.4);background:#dce0ec;color:#152242}/*TL*/.ytw-dlg__x:hover,.ytw-dlg__x:focus-visible{background:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x:hover,:where(html[data-theme="light"]) .ytw-dlg__x:focus-visible{background:#177cbb}/*TL*/</style><script>(function(){if(window.__ytw)return;window.__ytw=1;function go(){var now=Date.now();document.querySelectorAll("a[data-ytw]").forEach(function(a){var l=a.getAttribute("data-ytw-live");if(l&&now<Date.parse(l))return;a.hidden=false;a.addEventListener("click",function(e){var d=dlg();if(!d.showModal)return;e.preventDefault();play(d,a);});});}function dlg(){var d=document.getElementById("ytwdlg");if(d)return d;d=document.createElement("dialog");d.id="ytwdlg";d.className="ytw-dlg";d.setAttribute("aria-label","Video");d.innerHTML='<button type="button" class="ytw-dlg__x" aria-label="Close the video">&times;</button><div class="ytw-dlg__v"></div>';document.body.appendChild(d);if(!d.showModal)return d;d.querySelector(".ytw-dlg__x").addEventListener("click",function(){d.close();});d.addEventListener("click",function(e){if(e.target===d)d.close();});d.addEventListener("close",function(){d.querySelector(".ytw-dlg__v").innerHTML="";});return d;}function play(d,a){var v=d.querySelector(".ytw-dlg__v"),id=a.getAttribute("data-ytw"),i=document.createElement("iframe");v.className="ytw-dlg__v ytw-dlg__v--"+(a.getAttribute("data-ytw-shape")||"wide");i.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";i.title=a.getAttribute("data-ytw-title");i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");i.setAttribute("allowfullscreen","");v.innerHTML="";v.appendChild(i);d.showModal();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script></p>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Our firm is rated 4.9 on Google</strong></span><span>365 Techies &middot; family-run since 1995</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 12 November 2026</p>
         </div>
@@ -1882,7 +1883,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

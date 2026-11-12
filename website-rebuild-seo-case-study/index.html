@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1076,25 +1077,25 @@
     </section>
 
 <style>
-.rc{max-width:900px;margin:0 auto;background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:14px;padding:1.15rem 1.2rem}
+.rc{max-width:900px;margin:0 auto;background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:14px;padding:1.15rem 1.2rem}/*LT*/:where(html[data-theme="light"]) .rc{background:var(--panel,#dcdfea);border:1px solid var(--line,#a4b4d8)}/*TL*/
 .rc__lane{margin-bottom:1.3rem}
 .rc__head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.4rem;gap:.6rem}
 .rc__tag{font-size:.8rem;font-weight:600}
-.rc__tag--old{color:var(--mut,#9fb5d3)}
-.rc__tag--new{color:#6fc2f5}
-.rc__ms{font-family:var(--mono,monospace);font-size:.78rem;color:var(--soft,#86b6e8);font-variant-numeric:tabular-nums}
-.rc__track{position:relative;height:26px;border-radius:7px;background:rgba(159,181,211,.10)}
+.rc__tag--old{color:var(--mut,#9fb5d3)}/*LT*/:where(html[data-theme="light"]) .rc__tag--old{color:var(--mut,#355074)}/*TL*/
+.rc__tag--new{color:#6fc2f5}/*LT*/:where(html[data-theme="light"]) .rc__tag--new{color:#0a5d90}/*TL*/
+.rc__ms{font-family:var(--mono,monospace);font-size:.78rem;color:var(--soft,#86b6e8);font-variant-numeric:tabular-nums}/*LT*/:where(html[data-theme="light"]) .rc__ms{color:var(--soft,#174779)}/*TL*/
+.rc__track{position:relative;height:26px;border-radius:7px;background:rgba(159,181,211,.10)}/*LT*/:where(html[data-theme="light"]) .rc__track{background:rgba(53,80,116,.10)}/*TL*/
 .rc__fill{height:100%;width:0;border-radius:7px}
-.rc__fill--old{background:linear-gradient(90deg,rgba(159,181,211,.45),rgba(159,181,211,.72))}
-.rc__fill--new{background:linear-gradient(90deg,rgba(29,151,227,.55),#1d97e3)}
+.rc__fill--old{background:linear-gradient(90deg,rgba(159,181,211,.45),rgba(159,181,211,.72))}/*LT*/:where(html[data-theme="light"]) .rc__fill--old{background:linear-gradient(90deg,rgba(53,80,116,.45),rgba(53,80,116,.72))}/*TL*/
+.rc__fill--new{background:linear-gradient(90deg,rgba(29,151,227,.55),#1d97e3)}/*LT*/:where(html[data-theme="light"]) .rc__fill--new{background:linear-gradient(90deg,rgba(23,124,187,.55),#177cbb)}/*TL*/
 .rc__pip{position:absolute;top:0;height:100%;pointer-events:none}
-.rc__pip i{position:absolute;top:0;left:0;width:2px;height:100%;background:rgba(240,245,252,.5)}
-.rc__pip b{position:absolute;top:calc(100% + 5px);left:0;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono,monospace);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut,#9fb5d3);font-weight:400}
-.rc__done{margin:1.6rem 0 0;min-height:1.25em;font-size:.82rem;color:var(--soft,#86b6e8)}
-.rc__done strong{color:var(--white,#f0f5fc)}
-.rc__scale{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut,#9fb5d3);text-align:center;margin:.1rem 0 .9rem}
+.rc__pip i{position:absolute;top:0;left:0;width:2px;height:100%;background:rgba(240,245,252,.5)}/*LT*/:where(html[data-theme="light"]) .rc__pip i{background:rgba(13,26,44,.5)}/*TL*/
+.rc__pip b{position:absolute;top:calc(100% + 5px);left:0;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono,monospace);font-size:.56rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut,#9fb5d3);font-weight:400}/*LT*/:where(html[data-theme="light"]) .rc__pip b{color:var(--mut,#355074)}/*TL*/
+.rc__done{margin:1.6rem 0 0;min-height:1.25em;font-size:.82rem;color:var(--soft,#86b6e8)}/*LT*/:where(html[data-theme="light"]) .rc__done{color:var(--soft,#174779)}/*TL*/
+.rc__done strong{color:var(--white,#f0f5fc)}/*LT*/:where(html[data-theme="light"]) .rc__done strong{color:var(--white,#0d1a2c)}/*TL*/
+.rc__scale{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut,#9fb5d3);text-align:center;margin:.1rem 0 .9rem}/*LT*/:where(html[data-theme="light"]) .rc__scale{color:var(--mut,#355074)}/*TL*/
 .rc__ctrl{display:flex;align-items:center;gap:.7rem;justify-content:center;flex-wrap:wrap}
-.rc__live{font-size:.7rem;color:var(--mut,#9fb5d3)}
+.rc__live{font-size:.7rem;color:var(--mut,#9fb5d3)}/*LT*/:where(html[data-theme="light"]) .rc__live{color:var(--mut,#355074)}/*TL*/
 @media (prefers-reduced-motion:reduce){.rc__fill{transition:none}}
 </style>
 <script>
@@ -1475,19 +1476,19 @@
     </section>
 
 <style>
-.rb__cap{caption-side:top;text-align:left;font-size:.78rem;color:var(--mut,#9fb5d3);padding:0 0 .5rem;font-family:var(--mono,monospace)}
-.rb__old{color:var(--mut,#9fb5d3)}
-.rb__new{color:var(--cyan,#1d97e3);font-weight:600}
-.rb__note{max-width:900px;margin:1.4rem auto 0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan,#1d97e3);background:var(--panel,#0d1530);border-radius:0 10px 10px 0;font-size:.88rem;line-height:1.7;color:var(--soft,#86b6e8)}
-.rb__note strong{color:var(--white,#f0f5fc)}
+.rb__cap{caption-side:top;text-align:left;font-size:.78rem;color:var(--mut,#9fb5d3);padding:0 0 .5rem;font-family:var(--mono,monospace)}/*LT*/:where(html[data-theme="light"]) .rb__cap{color:var(--mut,#355074)}/*TL*/
+.rb__old{color:var(--mut,#9fb5d3)}/*LT*/:where(html[data-theme="light"]) .rb__old{color:var(--mut,#355074)}/*TL*/
+.rb__new{color:var(--cyan,#1d97e3);font-weight:600}/*LT*/:where(html[data-theme="light"]) .rb__new{color:var(--cyan,#177cbb)}/*TL*/
+.rb__note{max-width:900px;margin:1.4rem auto 0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan,#1d97e3);background:var(--panel,#0d1530);border-radius:0 10px 10px 0;font-size:.88rem;line-height:1.7;color:var(--soft,#86b6e8)}/*LT*/:where(html[data-theme="light"]) .rb__note{border-left:3px solid var(--cyan,#177cbb);background:var(--panel,#dcdfea);color:var(--soft,#174779)}/*TL*/
+.rb__note strong{color:var(--white,#f0f5fc)}/*LT*/:where(html[data-theme="light"]) .rb__note strong{color:var(--white,#0d1a2c)}/*TL*/
 .rb__grid{display:grid;grid-template-columns:1fr;gap:.7rem;max-width:1100px;margin:0 auto}
 @media (min-width:760px){.rb__grid{grid-template-columns:repeat(3,1fr)}}
-.rb__card{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:1.05rem}
+.rb__card{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:1.05rem}/*LT*/:where(html[data-theme="light"]) .rb__card{background:var(--panel,#dcdfea);border:1px solid var(--line,#a4b4d8)}/*TL*/
 .rb__ico{font-size:1.5rem;line-height:1;display:inline-block;margin-bottom:.45rem}
-.rb__card h3{margin:0 0 .4rem;font-size:.95rem;color:var(--white,#f0f5fc)}
-.rb__card p{margin:0;font-size:.84rem;line-height:1.6;color:var(--soft,#86b6e8)}
-.rb__honest{max-width:880px;margin:0 auto .9rem;font-size:.94rem;line-height:1.75;color:var(--soft,#86b6e8)}
-.rb__honest strong{color:var(--white,#f0f5fc)}
+.rb__card h3{margin:0 0 .4rem;font-size:.95rem;color:var(--white,#f0f5fc)}/*LT*/:where(html[data-theme="light"]) .rb__card h3{color:var(--white,#0d1a2c)}/*TL*/
+.rb__card p{margin:0;font-size:.84rem;line-height:1.6;color:var(--soft,#86b6e8)}/*LT*/:where(html[data-theme="light"]) .rb__card p{color:var(--soft,#174779)}/*TL*/
+.rb__honest{max-width:880px;margin:0 auto .9rem;font-size:.94rem;line-height:1.75;color:var(--soft,#86b6e8)}/*LT*/:where(html[data-theme="light"]) .rb__honest{color:var(--soft,#174779)}/*TL*/
+.rb__honest strong{color:var(--white,#f0f5fc)}/*LT*/:where(html[data-theme="light"]) .rb__honest strong{color:var(--white,#0d1a2c)}/*TL*/
 </style>
   </main>
   <footer class="site-footer">
@@ -1787,7 +1788,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->

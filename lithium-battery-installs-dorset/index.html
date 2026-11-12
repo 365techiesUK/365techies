@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -48,7 +49,7 @@
   <meta name="geo.placename" content="Bournemouth, Dorset" />
   <meta name="geo.position" content="50.7192;-1.8808" />
   <meta name="ICBM" content="50.7192, -1.8808" />
-  <meta name="theme-color" content="#070d22" />
+  <meta name="theme-color" content="#f4f7fb" />
   <meta name="color-scheme" content="dark" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="365 Techies" />
@@ -74,13 +75,13 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=122" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
-  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
   html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
-  html.css-sos a{color:#6cc4f5}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
   html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
   html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
   html.css-sos h1{font-size:1.55rem;line-height:1.25}
@@ -112,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=122&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -908,25 +909,25 @@
         </div>
         <style>
         @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
-        .vmini{max-width:680px;margin:1.4rem auto 0;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:1.3rem;box-shadow:0 12px 44px rgba(0,0,0,.26)}
-        .vmini__bar{display:flex;gap:.6rem;align-items:center;font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:1rem;flex-wrap:wrap}
-        .vmini__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}
-        .vmini__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}
+        .vmini{max-width:680px;margin:1.4rem auto 0;background:radial-gradient(120% 150% at 50% -25%,rgba(57,211,83,.07),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.09);border-radius:20px;padding:1.3rem;box-shadow:0 12px 44px rgba(0,0,0,.26)}/*LT*/:where(html[data-theme="light"]) .vmini{background:radial-gradient(120% 150% at 50% -25%,rgba(27,121,43,.07),rgba(10,16,31,.02) 55%);border:1px solid rgba(10,16,31,.09);box-shadow:0 12px 44px rgba(0,0,0,0.078)}/*TL*/
+        .vmini__bar{display:flex;gap:.6rem;align-items:center;font:600 .68rem/1 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#9fb0c3;margin-bottom:1rem;flex-wrap:wrap}/*LT*/:where(html[data-theme="light"]) .vmini__bar{color:#475b71}/*TL*/
+        .vmini__live{display:inline-flex;align-items:center;gap:.4rem;color:#39d353}/*LT*/:where(html[data-theme="light"]) .vmini__live{color:#1b792b}/*TL*/
+        .vmini__dot{width:8px;height:8px;border-radius:50%;background:#39d353;animation:vpulse 2s infinite}/*LT*/:where(html[data-theme="light"]) .vmini__dot{background:#1b792b}/*TL*/
         .vmini__site{flex:1}
         .vmini__body{display:flex;align-items:center;gap:1.6rem;flex-wrap:wrap;justify-content:center}
         .vmini__ring{position:relative;width:140px;height:140px;flex:none}
         .vmini__ring svg{width:140px;height:140px;transform:rotate(-90deg)}
-        .vmini__rbg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
-        .vmini__rfg{fill:none;stroke:#39d353;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .6s}
+        .vmini__rbg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}/*LT*/:where(html[data-theme="light"]) .vmini__rbg{stroke:rgba(10,16,31,.08)}/*TL*/
+        .vmini__rfg{fill:none;stroke:#39d353;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .6s}/*LT*/:where(html[data-theme="light"]) .vmini__rfg{stroke:#1b792b}/*TL*/
         .vmini__rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-        .vmini__soc{font:800 2rem/1 inherit;color:#fff}
-        .vmini__state{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}
+        .vmini__soc{font:800 2rem/1 inherit;color:#fff}/*LT*/:where(html[data-theme="light"]) .vmini__soc{color:#152242}/*TL*/
+        .vmini__state{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#9fb0c3;margin-top:.4rem}/*LT*/:where(html[data-theme="light"]) .vmini__state{color:#475b71}/*TL*/
         .vmini__stats{display:flex;flex-direction:column;gap:.55rem;min-width:190px}
-        .vmini__s{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:.5rem}
-        .vmini__sv{font:800 1.15rem/1 inherit;color:#fff}
-        .vmini__sv--save{color:#39d353}
-        .vmini__sl{font:600 .56rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}
-        .vmini__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}
+        .vmini__s{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:.5rem}/*LT*/:where(html[data-theme="light"]) .vmini__s{border-bottom:1px solid rgba(10,16,31,.07)}/*TL*/
+        .vmini__sv{font:800 1.15rem/1 inherit;color:#fff}/*LT*/:where(html[data-theme="light"]) .vmini__sv{color:#152242}/*TL*/
+        .vmini__sv--save{color:#39d353}/*LT*/:where(html[data-theme="light"]) .vmini__sv--save{color:#1b792b}/*TL*/
+        .vmini__sl{font:600 .56rem/1 ui-monospace,monospace;letter-spacing:.05em;text-transform:uppercase;color:#9fb0c3}/*LT*/:where(html[data-theme="light"]) .vmini__sl{color:#475b71}/*TL*/
+        .vmini__note{font:600 .66rem/1.5 ui-monospace,monospace;color:#9fb0c3;text-align:center;margin:1.1rem 0 0}/*LT*/:where(html[data-theme="light"]) .vmini__note{color:#475b71}/*TL*/
         .vmini__cta{text-align:center;margin:.55rem 0 0;font-size:.82rem}
         .vmini--sample .vmini__live{color:var(--warn)}.vmini--sample .vmini__dot{background:var(--warn);animation:none}
         </style>
@@ -1385,7 +1386,7 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=28"></script>
-  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
   <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
