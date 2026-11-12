@@ -49,7 +49,7 @@ AI_SLUGS = [
 # checks run (they legitimately say 'free' elsewhere), and only on lines that
 # are actually about the AI offering - the same files carry every legitimate
 # non-AI price on the site (support plans from £18.25/£24.38, web design from
-# £510, Dell stock, remote fixes from £20...).
+# £510, Dell stock, remote fixes, usually £60...).
 PRICE_ONLY_FILES = ["llms.txt", os.path.join("services", "index.html")]
 AI_LINE = re.compile(r"\bAI\b|\bagentic\b|ai-voice-agents|365-ai-os|ai-training|ai-roi-calculator|agentic-ai-systems|/ai/", re.I)
 

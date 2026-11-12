@@ -299,7 +299,7 @@ OTHER_HERO_TILES = {
   ('hp-c-fix', 'mail', 'Move my email safely', 'Every message, contact and calendar moved', 'NOTHING LOST', '#faq'),
   ('hp-c-care', 'mail', 'Virgin email closing?', 'Moved to Gmail for you, per address', '&pound;60 AN ADDRESS', '/virgin-media-email-moving-to-junara/'),
   ('hp-c-biz', 'briefcase', 'Microsoft 365 looked after', 'Set up, secured and supported', 'PRICED PER PLAN', '/microsoft-365-support/'),
-  ('hp-c-buy', 'wrench', 'Email playing up?', 'Outlook, Gmail and more, sorted remotely', 'FROM &pound;20', '/email-support/'),
+  ('hp-c-buy', 'wrench', 'Email playing up?', 'Outlook, Gmail and more, sorted remotely', 'USUALLY &pound;60', '/email-support/'),
  ],
  'emergency-it-help': [
   ('hp-c-fix', 'alert', 'I&rsquo;ve been scammed', 'Call 159 to reach your bank, then follow the steps', 'ACT NOW', '/ive-been-scammed-what-to-do/'),
@@ -425,7 +425,7 @@ OTHER_HERO_TILES = {
   ('hp-c-fix', 'mail', 'Is it safe to unsubscribe?', 'When to click, and when to just delete', 'PLAIN ENGLISH', '#faq'),
   ('hp-c-care', 'shield', 'Spam or a scam?', 'Test yourself on real-looking messages', 'FREE QUIZ', '/spot-the-scam/'),
   ('hp-c-biz', 'alert', 'Clicked something?', 'What to do right now, in order', 'ACT FAST', '/ive-been-scammed-what-to-do/'),
-  ('hp-c-buy', 'wrench', 'Email playing up?', 'Outlook, Gmail and more, sorted remotely', 'FROM &pound;20', '/email-support/'),
+  ('hp-c-buy', 'wrench', 'Email playing up?', 'Outlook, Gmail and more, sorted remotely', 'USUALLY &pound;60', '/email-support/'),
  ],
  'how-to-take-a-screenshot': [
   ('hp-c-fix', 'monitor', 'Screenshot one window', 'Where screenshots go, and how to send one', 'QUICK ANSWERS', '#faq'),
@@ -502,7 +502,7 @@ OTHER_HERO_TILES = {
  'it-jargon-buster/driver': [
   ('hp-c-fix', 'book', 'More plain-English terms', 'The whole jargon buster, A to Z', 'NO JARGON', '/it-jargon-buster/'),
   ('hp-c-care', 'monitor', 'Operating system?', 'What sits between you and the hardware', 'PLAIN ENGLISH', '/it-jargon-buster/operating-system/'),
-  ('hp-c-biz', 'wrench', 'Printer playing up?', 'Often a driver: we can sort it remotely', 'FROM &pound;20', '/printer-support/'),
+  ('hp-c-biz', 'wrench', 'Printer playing up?', 'Often a driver: we can sort it remotely', 'USUALLY &pound;60', '/printer-support/'),
   ('hp-c-buy', 'wrench', 'Rather we sorted it?', 'We connect and look while you watch', 'CHECKING IS FREE', '/remote-support/'),
  ],
  'it-jargon-buster/ethernet': [
@@ -760,17 +760,17 @@ OTHER_HERO_TILES = {
   ('hp-c-fix', 'laptop', 'Reach my PC from anywhere', 'One secure login to your own computer', 'SET UP FOR YOU', '#faq'),
   ('hp-c-care', 'book', 'How do I use it?', 'The Splashtop Business guide, by device', 'STEP BY STEP', '/splashtop-business-guide/'),
   ('hp-c-biz', 'briefcase', 'For the whole team', 'Remote working, set up on a business plan', 'BUSINESS PLANS', '/business-it-support-plans/'),
-  ('hp-c-buy', 'wrench', 'Need a fix instead?', 'We connect to your PC and sort it', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Need a fix instead?', 'We connect to your PC and sort it', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'remote-it-support': [
   ('hp-c-fix', 'monitor', 'Get help on my screen now', 'We phone first, then connect securely over Splashtop', 'WE CALL FIRST', '/sos/'),
-  ('hp-c-care', 'star', 'How much is a remote fix?', 'Checked first, then priced from &pound;20', 'PRICE AGREED FIRST', '#faq'),
+  ('hp-c-care', 'star', 'How much is a remote fix?', 'Checked first, then, usually &pound;60', 'PRICE AGREED FIRST', '#faq'),
   ('hp-c-biz', 'laptop', 'Reach my PC from anywhere', 'Your own desktop on any device, set up by us', 'REMOTE ACCESS', '/remote-access/'),
   ('hp-c-buy', 'calendar', 'Help whenever I need it', 'Remote help included on a plan, and you jump the queue', 'PRIORITY SUPPORT', '/monthly-it-support/'),
  ],
  'remote-support': [
   ('hp-c-fix', 'monitor', 'Get help on my screen now', 'Download the SOS tool, then read us the code', '3 SIMPLE STEPS', '/sos/'),
-  ('hp-c-care', 'star', 'How much will a fix cost?', 'Checked free, then priced from &pound;20 before we start', 'PRICE AGREED FIRST', '#faq'),
+  ('hp-c-care', 'star', 'How much will a fix cost?', 'Checked free, then, usually &pound;60 before we start', 'PRICE AGREED FIRST', '#faq'),
   ('hp-c-biz', 'laptop', 'Can&rsquo;t be fixed remotely?', 'We collect it or come to you, with a quote first', 'COLLECTION OR VISIT', '/book-a-collection/'),
   ('hp-c-buy', 'calendar', 'Stop it happening again', 'A plan from &pound;18.25 a month, serviced every 6 weeks', 'PRIORITY SUPPORT', '/monthly-it-support/'),
  ],
@@ -976,7 +976,7 @@ OTHER_HERO_TILES = {
   ('hp-c-fix', 'calendar', 'Home plans', 'A full service every six weeks', '&pound;18.25 A MONTH', '/home-it-support-plans/'),
   ('hp-c-care', 'briefcase', 'Business plans', 'Priority support for your team', 'FROM &pound;24.38', '/business-it-support-plans/'),
   ('hp-c-biz', 'gauge', 'Which plan suits us?', 'A few questions, a clear answer', 'QUICK QUESTIONS', '/plan-finder/'),
-  ('hp-c-buy', 'wrench', 'Just need one fix?', 'Pay as you go, price agreed first', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Just need one fix?', 'Pay as you go, price agreed first', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'wifi-controller-end-of-life': [
   ('hp-c-fix', 'clock', 'When do our RUCKUS APs end?', 'R310 to R770, checked against the vendor&rsquo;s own table', 'VENDOR DATES', '/ruckus-access-point-end-of-life/'),

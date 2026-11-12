@@ -18,7 +18,7 @@ and Ctrl + Alt + arrow (an Intel graphics shortcut, switched off on many newer P
 """
 
 _CALL = ('<p>Still not right? Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your '
-         'permission we connect to your Windows PC and sort it while you watch: usually the same day, remote help from &pound;20, '
+         'permission we connect to your Windows PC and sort it while you watch: usually the same day, remote help, usually &pound;60, '
          'and no fix, no fee.{extra}</p>')
 
 # ============================================================ 1. Printer offline
@@ -707,7 +707,7 @@ WIFI = {
         {'q': 'Where is the Wi-Fi password on my router?', 'a': '<p>On most UK broadband hubs it&rsquo;s on a sticker on the back or underneath, or a card that pulls out, often labelled Wireless key, Wi-Fi password or Network key. That&rsquo;s the original one: if it has been changed since, the PC that has joined since knows the new one.</p>'},
         {'q': 'Is it safe to show my Wi-Fi password?', 'a': '<p>On your own screen, yes. Just don&rsquo;t post it online or leave the QR code where strangers can scan it: anyone with the password can use your broadband.</p>'},
         {'q': 'Why can&rsquo;t I see a Show button?', 'a': '<p>Older versions of Windows 11 don&rsquo;t have it in Settings. Use the Network and Sharing Center route instead: it works on Windows 11 too, from Control Panel.</p>'},
-        {'q': 'Can you help remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find the password with you and connect whatever needs it. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you help remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find the password with you and connect whatever needs it. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/wifi-qr-code-generator/">Wi-Fi QR code maker</a>, <a href="/printer-says-wifi-password-incorrect/">printer says the Wi-Fi password is incorrect</a>, <a href="/printer-stopped-working-after-changing-wifi-password/">printer stopped after changing the Wi-Fi password</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a> and <a href="/wifi-troubleshooting/">Wi-Fi troubleshooting</a>.</p>',
 }
@@ -988,7 +988,7 @@ PHONELINK = {
         {'q': 'Can I move videos with Phone Link?', 'a': '<p>No, Phone Link doesn&rsquo;t bring videos across. Plug the phone in with a USB cable, choose File transfer on the phone, and import them with the Photos app.</p>'},
         {'q': 'Does the phone need to be on the same Wi-Fi?', 'a': '<p>Yes, Microsoft asks for the phone and the PC to be on the same Wi-Fi network. Most connection problems are a phone that has slipped onto mobile data or a different network.</p>'},
         {'q': 'Does Phone Link work with an iPhone?', 'a': '<p>Microsoft makes an iPhone version with fewer features, but this guide covers Android phones, and our help is for Windows PCs, not iPhones or Macs.</p>'},
-        {'q': 'Can you set it up for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and do that side, and talk you through the phone: you scan the code and allow the permissions. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you set it up for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and do that side, and talk you through the phone: you scan the code and allow the permissions. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">back up your photos</a>, <a href="/android-phone-course-for-beginners/">Android phone course for beginners</a>, <a href="/how-to-sign-a-pdf/">sign a PDF without printing it</a>, <a href="/emails-on-computer-but-not-phone/">emails on the computer but not the phone</a> and <a href="/webcam-mic-test/">webcam and microphone test</a>.</p>',
 }
@@ -1182,7 +1182,7 @@ SPOTLIGHT = {
         {'q': 'Can I delete the Learn about this picture icon?', 'a': '<p>Not on its own: there&rsquo;s no delete option, and Windows has no setting to keep Spotlight without it. Switching Spotlight off removes it.</p>'},
         {'q': 'Why does my desktop picture change every day?', 'a': '<p>That&rsquo;s Windows Spotlight. Choose Picture instead of Windows spotlight in Settings, Personalisation, Background, and the picture stays put.</p>'},
         {'q': 'Why can&rsquo;t I change my desktop background?', 'a': '<p>If the Background page is greyed out with a message about activating Windows, Windows won&rsquo;t change it until it&rsquo;s activated, but right-clicking a photo and choosing Set as desktop background still works. On a work PC, the IT department may have locked it.</p>'},
-        {'q': 'Can you sort it out for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and put your own photo back on the desktop and the lock screen. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you sort it out for me remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and put your own photo back on the desktop and the lock screen. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/make-windows-11-look-like-windows-10/">make Windows 11 feel like Windows 10</a>, <a href="/how-to-back-up-your-photos/">back up your photos</a>, <a href="/phone-link-android/">get your phone&rsquo;s photos onto your PC</a>, <a href="/windows-accessibility-features-guide/">bigger text and pointer</a> and <a href="/windows-11-course-for-beginners/">Windows 11 for beginners</a>.</p>',
 }
@@ -1281,7 +1281,7 @@ W11LIKE10 = {
         {'q': 'How do I turn off dark mode in Windows 11?', 'a': '<p>Settings, Personalisation, Colours, then set Choose your mode to Light. Word, Excel and Outlook have their own Office Theme under File, Account.</p>'},
         {'q': 'Can I go back to Windows 10?', 'a': '<p>Only in the first 10 days after upgrading, from Settings, System, Recovery, Go back. After that, going back means wiping the PC and starting again, so changing Windows 11&rsquo;s settings is usually the better answer.</p>'},
         {'q': 'Why are the Personalisation settings greyed out?', 'a': '<p>Usually because Windows isn&rsquo;t activated: it won&rsquo;t change the background or colours until it is. On a work PC, the IT department may have locked them.</p>'},
-        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC and make these changes while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC and make these changes while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/learn-about-this-picture/">Learn about this picture on the desktop</a>, <a href="/windows-11-course-for-beginners/">Windows 11 for beginners</a>, <a href="/windows-accessibility-features-guide/">Windows accessibility guide</a>, <a href="/will-i-lose-files-upgrading-to-windows-11/">will I lose my files upgrading?</a> and <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a>.</p>',
 }
@@ -1388,7 +1388,7 @@ RESTORE = {
         {'q': 'Can I undo System Restore?', 'a': '<p>Yes, if it was run from Windows: open System Restore again and choose Undo System Restore. A restore run from the recovery screen can&rsquo;t be undone.</p>'},
         {'q': 'Should I choose Cloud download or Local reinstall?', 'a': '<p>Cloud download fetches a fresh copy of Windows and is better when Windows itself is damaged. Local reinstall is quicker on a slow connection. Both end in the same place.</p>'},
         {'q': 'How long does Reset this PC take?', 'a': '<p>Usually an hour or two, sometimes longer on an older PC with a hard drive. Keep a laptop plugged in and don&rsquo;t switch it off part-way.</p>'},
-        {'q': 'Can you do it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, back up your files first, and use the lightest fix that works. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you do it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, back up your files first, and use the lightest fix that works. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/windows-update-stuck/">Windows Update stuck</a>, <a href="/blue-screen-stop-codes/">blue screen stop codes</a>, <a href="/what-windows-backup-backs-up/">what the Windows Backup app backs up</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a> and <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>.</p>',
 }
@@ -1629,7 +1629,7 @@ SAC = {
         {'q': 'Is it safe to turn Smart App Control off?', 'a': '<p>Microsoft Defender and SmartScreen still protect the PC, as on almost every Windows 10 PC. It&rsquo;s one layer less, so only do it for a program you trust.</p>'},
         {'q': 'Why is Smart App Control off and greyed out?', 'a': '<p>It&rsquo;s only available on PCs that started with a fresh copy of Windows 11. PCs upgraded from Windows 10, or where it was switched off, show it off.</p>'},
         {'q': 'What is the difference between Smart App Control and SmartScreen?', 'a': '<p>SmartScreen checks downloads and websites, and its &ldquo;Windows protected your PC&rdquo; box has Run anyway. Smart App Control checks every program as it runs and has no way round it.</p>'},
-        {'q': 'Can you help?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC, check the program and install it the safe way. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you help?', 'a': '<p>Yes. With your permission we connect to your Windows 11 PC, check the program and install it the safe way. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/old-program-wont-open-on-windows-11/">an old program won&rsquo;t open on Windows 11</a>, <a href="/virus-threat-protection-managed-by-your-organization/">virus &amp; threat protection is managed by your organisation</a>, <a href="/how-to-choose-antivirus/">choosing antivirus</a>, <a href="/antimalware-service-executable-high-cpu/">Antimalware Service Executable slowing the PC</a> and <a href="/link-safety-checker/">is this link safe?</a></p>',
 }
@@ -1709,7 +1709,7 @@ WINBACKUP = {
         {'q': 'Is OneDrive a backup?', 'a': '<p>Partly. It keeps a copy online, but it stays in step with the PC: delete or damage a file and the change reaches OneDrive too. Its recycle bin and version history help for a while. A second copy on a USB drive covers what it can&rsquo;t.</p>'},
         {'q': 'Why does Windows Backup say my OneDrive is full?', 'a': '<p>The free OneDrive plan is 5 GB, and your folders are bigger. Either buy more space (Microsoft 365 includes 1 TB), back up fewer folders, or use File History to a USB drive instead.</p>'},
         {'q': 'How do I restore from Windows Backup on a new PC?', 'a': '<p>During the new PC&rsquo;s set-up, sign in with the same Microsoft account and choose to restore from your old PC. Your folders, apps list and settings come across.</p>'},
-        {'q': 'Can you set up my backup?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup that covers your important files, and test that it works. Remote help from &pound;20.</p>'},
+        {'q': 'Can you set up my backup?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup that covers your important files, and test that it works. Remote help, usually &pound;60.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/onedrive-moved-my-desktop-and-documents/">OneDrive moved my Desktop and Documents</a>, <a href="/stop-using-onedrive-without-losing-files/">stop using OneDrive without losing files</a>, <a href="/onedrive-taking-up-space/">OneDrive taking up space</a>, <a href="/system-restore-vs-reset-this-pc/">System Restore or Reset this PC?</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a>, <a href="/macrium-reflect-free-ended/">Macrium Reflect Free has ended</a> and <a href="/cloud-backup/">cloud backup</a>.</p>',
 }
@@ -1800,7 +1800,7 @@ CCLEANER = {
         {'q': 'Was CCleaner hacked?', 'a': '<p>In 2017 attackers hid malware in the official CCleaner 5.33. It was found and fixed in 5.34 within weeks. Current versions aren&rsquo;t affected; it&rsquo;s a reminder to download only from the maker and keep programs updated.</p>'},
         {'q': 'Will CCleaner make my PC faster?', 'a': '<p>Rarely by much. Fewer startup programs, enough free space and an SSD in place of an old hard drive make far more difference.</p>'},
         {'q': 'How do I uninstall CCleaner?', 'a': '<p>Settings, Apps, Installed apps, CCleaner, Uninstall, then restart. Cancel any paid subscription with CCleaner too.</p>'},
-        {'q': 'Can you tidy my PC for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed and set up Windows&rsquo; own clean-up. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you tidy my PC for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed and set up Windows&rsquo; own clean-up. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-free-up-storage-space/">freeing up storage space</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a>, <a href="/antimalware-service-executable-high-cpu/">Antimalware Service Executable slowing the PC</a>, <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a> and <a href="/lenovo-vantage-keeps-popping-up/">Lenovo Vantage pop-ups</a>.</p>',
 }
@@ -1867,7 +1867,7 @@ HPSA = {
         {'q': 'Do I need HP Support Assistant?', 'a': '<p>No, Windows works without it. It&rsquo;s the easiest way to get HP&rsquo;s BIOS updates and battery checks, so keep it if you value those.</p>'},
         {'q': 'Is HP Support Assistant a virus?', 'a': '<p>No, it&rsquo;s HP&rsquo;s own program, installed with the PC. A browser pop-up telling you to ring HP is a scam, though.</p>'},
         {'q': 'What is HP Support Solutions Framework?', 'a': '<p>The background part of HP Support Assistant. If you uninstall the app, uninstall this too.</p>'},
-        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/lenovo-vantage-keeps-popping-up/">Lenovo Vantage pop-ups</a>, <a href="/dell-supportassist-keeps-popping-up/">Dell SupportAssist pop-ups</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/how-to-check-laptop-battery-health/">laptop battery health</a> and <a href="/computer-asking-for-bitlocker-recovery-key/">BitLocker recovery key</a>.</p>',
 }
@@ -1936,7 +1936,7 @@ VANTAGE = {
         {'q': 'Do I need Lenovo Vantage?', 'a': '<p>No, Windows works without it. Keep it if you use its battery charging mode or want Lenovo&rsquo;s BIOS updates offered to you.</p>'},
         {'q': 'What happens to the battery setting if I remove Vantage?', 'a': '<p>Set it the way you want first: Vantage is where you change it, so you&rsquo;d need Vantage back to change it again.</p>'},
         {'q': 'Is Lenovo Vantage safe?', 'a': '<p>Yes, it&rsquo;s Lenovo&rsquo;s own app. Keep it updated, as you would any program.</p>'},
-        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you sort it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and sort it while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/hp-support-assistant-keeps-popping-up/">HP Support Assistant pop-ups</a>, <a href="/dell-supportassist-keeps-popping-up/">Dell SupportAssist pop-ups</a>, <a href="/do-i-need-ccleaner/">do I need CCleaner?</a>, <a href="/how-to-check-laptop-battery-health/">laptop battery health</a> and <a href="/how-to-make-your-laptop-battery-last-longer/">making your laptop battery last longer</a>.</p>',
 }
@@ -2641,7 +2641,7 @@ FILEHIST = {
         {'q': 'How do I stop the reconnect your drive message?', 'a': '<p>Reconnect the drive and run a backup, or choose a different drive. Turning File History off stops the message, but it stops the backup too.</p>'},
         {'q': 'Can I restore File History backups on a new PC?', 'a': '<p>Yes. Plug in the old drive, open File History, Select drive, tick I want to use a previous backup on this File History drive, then use Restore personal files.</p>'},
         {'q': 'Is File History the same as Windows Backup?', 'a': '<p>No. File History copies your folders to a drive you own and keeps older versions. The Windows Backup app copies some folders to OneDrive. See <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>.</p>'},
-        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, get File History backing up again and check that a file reads back. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, get File History backing up again and check that a file reads back. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/how-to-back-up-your-photos/">how to back up your photos</a>, <a href="/usb-device-not-recognised/">USB device not recognised</a>, <a href="/how-to-recover-deleted-files/">how to recover deleted files</a> and <a href="/data-recovery/">data recovery</a>.</p>',
 }
@@ -2743,7 +2743,7 @@ WIN7RESTORE = {
         {'q': 'Can I restore a Windows 7 system image on a new computer?', 'a': '<p>Don&rsquo;t: it would replace the new computer&rsquo;s Windows with Windows 7. Attach the image&rsquo;s .vhd file read-only in Disk Management and copy your files out instead.</p>'},
         {'q': 'Will my programs come back?', 'a': '<p>No. Restoring brings back files; programs need installing again on the new PC, from the maker&rsquo;s website or your account with them.</p>'},
         {'q': 'Does this work for a Windows Vista backup?', 'a': '<p>Usually, yes: Vista&rsquo;s Backup and Restore made the same kind of backup, with the same zip files.</p>'},
-        {'q': 'Can you do it for me?', 'a': '<p>Yes. With the drive plugged into your PC, we can connect with your permission and restore it into a folder of its own. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you do it for me?', 'a': '<p>Yes. With the drive plugged into your PC, we can connect with your permission and restore it into a folder of its own. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-transfer-files-to-a-new-computer/">how to transfer files to a new computer</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a>, <a href="/macrium-reflect-free-ended/">Macrium Reflect Free has ended</a> and <a href="/data-recovery/">data recovery</a>.</p>',
 }
@@ -2841,7 +2841,7 @@ MACRIUM = {
         {'q': 'How do I open a .mrimg file?', 'a': '<p>With Macrium Reflect: its browse option opens the backup as a drive, so you can copy files out. Windows and 7-Zip can&rsquo;t open it.</p>'},
         {'q': 'What is a free alternative to Macrium Reflect?', 'a': '<p>For your files, Windows&rsquo; own File History to a USB drive. For moving to a new SSD, the SSD maker&rsquo;s free tool. Whatever you use, test a restore.</p>'},
         {'q': 'Are you Macrium?', 'a': '<p>No. 365 Techies is an independent IT support company in Bournemouth; Macrium Reflect is Macrium Software&rsquo;s product. This page is our own advice.</p>'},
-        {'q': 'Can you set up a new backup for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup and test that a file reads back. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you set up a new backup for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set up a backup and test that a file reads back. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/reconnect-your-file-history-drive/">File History says reconnect your drive</a>, <a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a>, <a href="/restore-windows-7-backup-on-windows-11/">restore an old Windows 7 backup</a>, <a href="/open-gho-file/">open an old Norton Ghost backup</a> and <a href="/hard-drive-upgrade/">drive upgrades</a>.</p>',
 }

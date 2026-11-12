@@ -20,7 +20,7 @@ Windows + Ctrl + Enter (Narrator) and Windows + Ctrl + O (On-Screen Keyboard) ar
 """
 
 _CALL = ('<p>Still not right? Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your '
-         'permission we connect to your Windows PC and sort it while you watch: usually the same day, remote help from &pound;20, '
+         'permission we connect to your Windows PC and sort it while you watch: usually the same day, remote help, usually &pound;60, '
          'and no fix, no fee. If the keyboard itself is faulty, we collect it free across Bournemouth, Christchurch, Poole and '
          'Dorset, repair it and bring it back.</p>')
 

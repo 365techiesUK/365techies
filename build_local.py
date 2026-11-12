@@ -240,7 +240,7 @@ def signal_block(slug, town):
 # Jobs pass, 13 Sep 2026: the first screen of every town page now carries the job,
 # the real prices, the number and the rating (the trust bar). People buy a fix
 # first and a plan second (GSC + GA4, Sep 2026), so the primary button rings us.
-_LOCAL_HERO_PRICES = (" Remote fixes from &pound;20, monthly plans from &pound;18.25 per computer, "
+_LOCAL_HERO_PRICES = (" Remote fixes, usually &pound;60, monthly plans from &pound;18.25 per computer, "
                       "and no call-out fee when we come to you.")
 
 DORSET_RELATED = '''    <section class="section" aria-label="Plans, business and industry">

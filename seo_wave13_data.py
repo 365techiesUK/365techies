@@ -42,7 +42,7 @@ SEO_WAVE13_PAGES = [
   'h1': 'Office 2021 support ends on 13 October 2026. Will Word, Excel and Outlook still work?',
   'lede': 'Yes &mdash; your Office 2021 apps keep opening after the date. What stops is Microsoft fixing them: no more security updates, bug fixes or help. Here is how to check which Office you have, what actually changes, and the sensible ways forward, with real UK prices.',
   'ctaHead': 'Want the change done for you?',
-  'ctaSub': 'We can set up Microsoft 365 or Office 2024 remotely while you watch, keep your Outlook email and files exactly as they were, and check everything works &mdash; one-off remote help from &pound;20, agreed before we start. Call 01202 775566.',
+  'ctaSub': 'We can set up Microsoft 365 or Office 2024 remotely while you watch, keep your Outlook email and files exactly as they were, and check everything works &mdash; one-off remote help, usually &pound;60, agreed before we start. Call 01202 775566.',
   'sections': [
    {'eyebrow': '// THE SHORT ANSWER',
     'h2': 'What happens on 13 October 2026',
@@ -112,7 +112,7 @@ SEO_WAVE13_PAGES = [
   'h1': 'Gmail stops collecting your other email in January 2027. Will your BT, Sky or Virgin address still work?',
   'lede': 'If Gmail shows you the emails sent to another address &mdash; a BT, Sky, Virgin, TalkTalk, Yahoo, AOL or Comcast one &mdash; or lets you send from it, that stops in January 2027. Your old address keeps working; Gmail just stops fetching it. Here is a two-minute check, and what to do instead.',
   'ctaHead': 'Rather we sorted it for you?',
-  'ctaSub': 'We set up forwarding, your phone or Outlook remotely while you watch &mdash; one-off remote help from &pound;20. We move Virgin Media and Plusnet mailboxes into Gmail for &pound;60 per address; for other providers we quote before we start. Call 01202 775566.',
+  'ctaSub': 'We set up forwarding, your phone or Outlook remotely while you watch &mdash; one-off remote help, usually &pound;60. We move Virgin Media and Plusnet mailboxes into Gmail for &pound;60 per address; for other providers we quote before we start. Call 01202 775566.',
   'sections': [
    {'eyebrow': '// THE SHORT ANSWER',
     'h2': 'What Google is switching off',

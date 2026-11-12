@@ -126,6 +126,11 @@
   "h": "fa5a8747c4fb787e",
   "last": "2026-09-28"
  },
+ "antimalware-service-executable-high-cpu": {
+  "first": "2026-10-28",
+  "h": "d5f6e72305df7b2b",
+  "last": "2026-11-12"
+ },
  "are-dell-latitude-laptops-good": {
   "first": "2026-07-28",
   "h": "1ac3c7bedb7978dd",
@@ -160,10 +165,15 @@
   "h": "368f9c0e4d913ada",
   "last": "2026-10-06"
  },
+ "blue-screen-stop-codes": {
+  "first": "2026-10-28",
+  "h": "50e7529ad5347fb1",
+  "last": "2026-11-12"
+ },
  "bluetooth-headphones-sound-muffled-on-pc": {
   "first": "2026-10-08",
-  "h": "78be3f621eefed93",
-  "last": "2026-10-08"
+  "h": "6eb7bd54717f886f",
+  "last": "2026-11-12"
  },
  "book-a-collection": {
   "first": "2026-07-28",
@@ -262,8 +272,8 @@
  },
  "btinternet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "fb0dd3871d745798",
-  "last": "2026-10-25"
+  "h": "27b7bcde1f4ab435",
+  "last": "2026-11-12"
  },
  "business-access-point-end-of-life": {
   "first": "2026-07-28",
@@ -287,8 +297,8 @@
  },
  "business-email-down-domain-expired": {
   "first": "2026-07-28",
-  "h": "9b2f03e09205a64d",
-  "last": "2026-10-06"
+  "h": "d493702201d4371a",
+  "last": "2026-11-12"
  },
  "business-email-when-closing-your-company": {
   "first": "2026-08-01",
@@ -297,8 +307,8 @@
  },
  "business-hacked-emergency-help": {
   "first": "2026-07-28",
-  "h": "0e4fafea3a298e72",
-  "last": "2026-10-06"
+  "h": "f3e9ce6270677757",
+  "last": "2026-11-12"
  },
  "business-it-consultancy": {
   "first": "2026-07-28",
@@ -340,20 +350,25 @@
   "h": "3ab2be207b56a6ef",
   "last": "2026-10-06"
  },
+ "camera-or-microphone-not-working": {
+  "first": "2026-10-30",
+  "h": "c7ff16e0296e7b9a",
+  "last": "2026-11-12"
+ },
  "campervan-wifi-keeps-dropping": {
   "first": "2026-07-31",
-  "h": "bd2d9762aaa67220",
-  "last": "2026-10-06"
+  "h": "09e7480f0e936ffe",
+  "last": "2026-11-12"
  },
  "cant-open-attachments-in-outlook": {
   "first": "2026-07-28",
-  "h": "ec384b1bcddc2631",
-  "last": "2026-10-22"
+  "h": "cd600fb4e6a44d2c",
+  "last": "2026-11-12"
  },
  "cant-send-btinternet-email-new-outlook": {
   "first": "2026-07-28",
-  "h": "740d674e287580ff",
-  "last": "2026-10-22"
+  "h": "28f2f33690ff20d9",
+  "last": "2026-11-12"
  },
  "case-studies": {
   "first": "2026-07-28",
@@ -412,8 +427,8 @@
  },
  "chrome-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "d7c6ac49dace27da",
-  "last": "2026-10-11"
+  "h": "ebbf61e057cbe1d1",
+  "last": "2026-11-12"
  },
  "cisco-access-point-wont-join-controller": {
   "first": "2026-07-28",
@@ -427,7 +442,8 @@
  },
  "clipboard-history-windows": {
   "first": "2026-10-26",
-  "h": "b393fead4bfdd4d1"
+  "h": "b63a69793d6a07c5",
+  "last": "2026-11-12"
  },
  "cloud-backup": {
   "first": "2026-07-28",
@@ -466,8 +482,8 @@
  },
  "computer-asking-for-bitlocker-recovery-key": {
   "first": "2026-10-11",
-  "h": "97ba466baa768e63",
-  "last": "2026-10-13"
+  "h": "046a41e5a24d44b7",
+  "last": "2026-11-12"
  },
  "computer-basics-course": {
   "first": "2026-07-28",
@@ -501,58 +517,58 @@
  },
  "computer-repair-beaminster": {
   "first": "2026-07-28",
-  "h": "6a6f22c31e8e6c3b",
-  "last": "2026-10-06"
+  "h": "bba36a176153b942",
+  "last": "2026-11-12"
  },
  "computer-repair-blandford-forum": {
   "first": "2026-07-28",
-  "h": "cd73ac24884d4d7e",
-  "last": "2026-10-06"
+  "h": "867c2ec4735073e3",
+  "last": "2026-11-12"
  },
  "computer-repair-boscombe": {
   "first": "2026-07-28",
-  "h": "15e3622f55dd8cde",
-  "last": "2026-10-06"
+  "h": "74515ad0f9e310bf",
+  "last": "2026-11-12"
  },
  "computer-repair-bournemouth": {
   "first": "2026-07-28",
-  "h": "52ccd2cc1564ff7e",
-  "last": "2026-10-06"
+  "h": "59c35d7d577410b7",
+  "last": "2026-11-12"
  },
  "computer-repair-bridport": {
   "first": "2026-07-28",
-  "h": "9a95db05c1d732db",
-  "last": "2026-10-06"
+  "h": "d992071bfd4d76e6",
+  "last": "2026-11-12"
  },
  "computer-repair-canford-heath": {
   "first": "2026-07-28",
-  "h": "2df684ec6043dc81",
-  "last": "2026-10-06"
+  "h": "1d9e0ca09990395e",
+  "last": "2026-11-12"
  },
  "computer-repair-christchurch": {
   "first": "2026-07-28",
-  "h": "8231e903c5a89c39",
-  "last": "2026-10-06"
+  "h": "762084ba4b188676",
+  "last": "2026-11-12"
  },
  "computer-repair-corfe-mullen": {
   "first": "2026-07-28",
-  "h": "e3044e3be387ec0c",
-  "last": "2026-10-06"
+  "h": "e8bc24769424e67e",
+  "last": "2026-11-12"
  },
  "computer-repair-dorchester": {
   "first": "2026-07-28",
-  "h": "00bb6fec22de4a50",
-  "last": "2026-10-06"
+  "h": "10bc978e2ff15b45",
+  "last": "2026-11-12"
  },
  "computer-repair-ferndown": {
   "first": "2026-07-28",
-  "h": "6ec16d3524d77b6e",
-  "last": "2026-10-06"
+  "h": "bec5bb0521a18687",
+  "last": "2026-11-12"
  },
  "computer-repair-gillingham": {
   "first": "2026-07-28",
-  "h": "f663acb926670b87",
-  "last": "2026-10-06"
+  "h": "e4d60ff196d0cbb6",
+  "last": "2026-11-12"
  },
  "computer-repair-kinson": {
   "first": "2026-07-28",
@@ -561,68 +577,68 @@
  },
  "computer-repair-lyme-regis": {
   "first": "2026-07-28",
-  "h": "3ab0c2df6c0fc048",
-  "last": "2026-10-06"
+  "h": "a7298b6dc4db106b",
+  "last": "2026-11-12"
  },
  "computer-repair-poole": {
   "first": "2026-07-28",
-  "h": "a3bce1ae6e4401ae",
-  "last": "2026-10-06"
+  "h": "ea22a67da4ac5538",
+  "last": "2026-11-12"
  },
  "computer-repair-portland": {
   "first": "2026-07-28",
-  "h": "965ea1aeb89666ad",
-  "last": "2026-10-06"
+  "h": "61cc555dbe08db43",
+  "last": "2026-11-12"
  },
  "computer-repair-shaftesbury": {
   "first": "2026-07-28",
-  "h": "203e750813975ce0",
-  "last": "2026-10-06"
+  "h": "a247d661c65f840e",
+  "last": "2026-11-12"
  },
  "computer-repair-sherborne": {
   "first": "2026-07-28",
-  "h": "f91ac1c1b8e61c9f",
-  "last": "2026-10-06"
+  "h": "0f23a9d16b3ad957",
+  "last": "2026-11-12"
  },
  "computer-repair-st-ives": {
   "first": "2026-07-28",
-  "h": "d8af46329a40e0b2",
-  "last": "2026-10-06"
+  "h": "b98a4d3a73bbb1c5",
+  "last": "2026-11-12"
  },
  "computer-repair-sturminster-newton": {
   "first": "2026-07-28",
-  "h": "efc4323362764ac5",
-  "last": "2026-10-06"
+  "h": "aeb916c6a3bf9fc4",
+  "last": "2026-11-12"
  },
  "computer-repair-swanage": {
   "first": "2026-07-28",
-  "h": "d44f3fb4aa985d09",
-  "last": "2026-10-06"
+  "h": "27d867072721585e",
+  "last": "2026-11-12"
  },
  "computer-repair-upton": {
   "first": "2026-07-28",
-  "h": "b7f2d8b6c1717113",
-  "last": "2026-10-06"
+  "h": "5f538a2d86d33367",
+  "last": "2026-11-12"
  },
  "computer-repair-verwood": {
   "first": "2026-07-28",
-  "h": "03cee1796ef5df09",
-  "last": "2026-10-06"
+  "h": "61161e9e4aaa959b",
+  "last": "2026-11-12"
  },
  "computer-repair-wareham": {
   "first": "2026-07-28",
-  "h": "80380b36a266fc69",
-  "last": "2026-10-06"
+  "h": "500b47b98858113b",
+  "last": "2026-11-12"
  },
  "computer-repair-west-moors": {
   "first": "2026-07-28",
-  "h": "9338d5ef7f8e8a19",
-  "last": "2026-10-06"
+  "h": "73a7dbd76dfa7761",
+  "last": "2026-11-12"
  },
  "computer-repair-west-parley": {
   "first": "2026-07-28",
-  "h": "32ea2b15fdaf41e0",
-  "last": "2026-10-06"
+  "h": "e12c40843afadd9a",
+  "last": "2026-11-12"
  },
  "computer-repair-westbourne": {
   "first": "2026-07-28",
@@ -631,28 +647,28 @@
  },
  "computer-repair-weymouth": {
   "first": "2026-07-28",
-  "h": "e5adff4c1bcc168c",
-  "last": "2026-10-06"
+  "h": "ba353711e6cd2df1",
+  "last": "2026-11-12"
  },
  "computer-repair-wimborne": {
   "first": "2026-07-28",
-  "h": "a40cdabeef5b4156",
-  "last": "2026-10-06"
+  "h": "8b79a02ff883a0aa",
+  "last": "2026-11-12"
  },
  "computer-repair-wool": {
   "first": "2026-07-28",
-  "h": "f41aa4ab9bdfe40a",
-  "last": "2026-10-06"
+  "h": "4ef07cfb2c2b0cfa",
+  "last": "2026-11-12"
  },
  "computer-repair-wyke-regis": {
   "first": "2026-07-28",
-  "h": "16adaab3702fc0d5",
-  "last": "2026-10-06"
+  "h": "2b26d0d11f6efe0f",
+  "last": "2026-11-12"
  },
  "computer-repairs": {
   "first": "2026-07-28",
-  "h": "e1bed4fd804ceb63",
-  "last": "2026-10-06"
+  "h": "8c419e50b6c347bc",
+  "last": "2026-11-12"
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
@@ -761,12 +777,13 @@
  },
  "data-recovery": {
   "first": "2026-07-28",
-  "h": "2542b82a0fafe340",
-  "last": "2026-11-03"
+  "h": "b9364e328dcdf70d",
+  "last": "2026-11-12"
  },
  "dead-pixel-test": {
   "first": "2026-10-12",
-  "h": "05ff00700532af3d"
+  "h": "6faa952d66b5bce5",
+  "last": "2026-11-12"
  },
  "dell-business-support-dorset": {
   "first": "2026-07-28",
@@ -775,18 +792,18 @@
  },
  "dell-caps-lock-light-blinking-wont-turn-on": {
   "first": "2026-07-28",
-  "h": "72fe07b9fb5bfd19",
-  "last": "2026-10-06"
+  "h": "757cac1dc2370c89",
+  "last": "2026-11-12"
  },
  "dell-docking-station-not-working": {
   "first": "2026-07-28",
-  "h": "ce142e10df034443",
-  "last": "2026-10-06"
+  "h": "769f15f3af70562a",
+  "last": "2026-11-12"
  },
  "dell-g15-overheating": {
   "first": "2026-07-28",
-  "h": "2143065a5808f602",
-  "last": "2026-10-17"
+  "h": "12bb26edce5b8689",
+  "last": "2026-11-12"
  },
  "dell-hardware": {
   "first": "2026-07-28",
@@ -795,18 +812,18 @@
  },
  "dell-inspiron-15-3000-windows-11": {
   "first": "2026-07-28",
-  "h": "588dd9330aa36680",
-  "last": "2026-10-06"
+  "h": "d58d4b9cc36b47ea",
+  "last": "2026-11-12"
  },
  "dell-inspiron-15-5000-windows-11": {
   "first": "2026-07-28",
-  "h": "4982ba3777a41a3f",
-  "last": "2026-10-06"
+  "h": "00c243d58ccaf27e",
+  "last": "2026-11-12"
  },
  "dell-inspiron-desktop-windows-11": {
   "first": "2026-07-28",
-  "h": "55589d856fa6a680",
-  "last": "2026-10-06"
+  "h": "b5435f1a6eb398cb",
+  "last": "2026-11-12"
  },
  "dell-inspiron-repair-bournemouth": {
   "first": "2026-07-28",
@@ -825,8 +842,8 @@
  },
  "dell-killer-wifi-problems": {
   "first": "2026-07-28",
-  "h": "420e8c411d21769d",
-  "last": "2026-10-06"
+  "h": "ebc664160b979a0a",
+  "last": "2026-11-12"
  },
  "dell-laptop-battery-replacement-dorset": {
   "first": "2026-07-28",
@@ -950,8 +967,8 @@
  },
  "dell-optiplex-fan-error-f1-fix": {
   "first": "2026-07-28",
-  "h": "bd893486ecdc2a67",
-  "last": "2026-10-06"
+  "h": "2fc3587531fce5c6",
+  "last": "2026-11-12"
  },
  "dell-optiplex-guide": {
   "first": "2026-07-28",
@@ -990,8 +1007,8 @@
  },
  "dell-remote-support": {
   "first": "2026-07-28",
-  "h": "3c7d7a5918478a42",
-  "last": "2026-10-30"
+  "h": "8da22cd3d789c618",
+  "last": "2026-11-12"
  },
  "dell-same-day-support-dorset": {
   "first": "2026-07-28",
@@ -1015,13 +1032,13 @@
  },
  "dell-supportassist-keeps-popping-up": {
   "first": "2026-10-13",
-  "h": "da57e8ed044b62c2",
-  "last": "2026-10-30"
+  "h": "334bb2ae6f3b2228",
+  "last": "2026-11-12"
  },
  "dell-this-pc-cant-run-windows-11": {
   "first": "2026-07-28",
-  "h": "ab26b934d799b913",
-  "last": "2026-10-26"
+  "h": "39aa566343e765bb",
+  "last": "2026-11-12"
  },
  "dell-vostro-repair-support-dorset": {
   "first": "2026-07-28",
@@ -1035,13 +1052,13 @@
  },
  "dell-xps-swollen-battery": {
   "first": "2026-07-28",
-  "h": "106ffee64413c5a5",
-  "last": "2026-10-06"
+  "h": "0fe65de99150e632",
+  "last": "2026-11-12"
  },
  "dementia-clock": {
   "first": "2026-10-12",
-  "h": "d1c0a739c921b3fe",
-  "last": "2026-11-06"
+  "h": "74058fe9f9325e75",
+  "last": "2026-11-12"
  },
  "desktop-pc-used-as-office-server": {
   "first": "2026-07-28",
@@ -1068,10 +1085,15 @@
   "h": "6ed9c90d0e1506d7",
   "last": "2026-09-28"
  },
+ "do-i-need-ccleaner": {
+  "first": "2026-10-29",
+  "h": "6cee601b7cc5918d",
+  "last": "2026-11-12"
+ },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "550b7604dc10bbd1",
-  "last": "2026-10-19"
+  "h": "e7985bd43070592f",
+  "last": "2026-11-12"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1080,8 +1102,8 @@
  },
  "download-classic-outlook": {
   "first": "2026-10-23",
-  "h": "643b87eb6f01a1c9",
-  "last": "2026-11-04"
+  "h": "a2b7841fb91948e3",
+  "last": "2026-11-12"
  },
  "downtime-cost-calculator": {
   "first": "2026-07-28",
@@ -1109,8 +1131,8 @@
  },
  "email-migration": {
   "first": "2026-07-28",
-  "h": "48e68d8062669090",
-  "last": "2026-10-03"
+  "h": "1cbcea3673a70d0c",
+  "last": "2026-11-12"
  },
  "email-security-checker": {
   "first": "2026-07-28",
@@ -1129,8 +1151,8 @@
  },
  "emails-on-computer-but-not-phone": {
   "first": "2026-07-28",
-  "h": "aad03a544084662b",
-  "last": "2026-10-11"
+  "h": "1d8977de32a3732f",
+  "last": "2026-11-12"
  },
  "embed-victron-vrm-on-website": {
   "first": "2026-07-28",
@@ -1154,8 +1176,8 @@
  },
  "employee-left-dont-know-computer-password": {
   "first": "2026-07-28",
-  "h": "b9bc9af04b209adc",
-  "last": "2026-10-13"
+  "h": "d19b259503854146",
+  "last": "2026-11-12"
  },
  "event-wifi-dorset": {
   "first": "2026-07-28",
@@ -1164,13 +1186,13 @@
  },
  "excel-onedrive-sync-conflicts": {
   "first": "2026-07-28",
-  "h": "2896b8c09d91cd63",
-  "last": "2026-10-06"
+  "h": "58580068fc81bc2b",
+  "last": "2026-11-12"
  },
  "excel-spreadsheet-rescue": {
   "first": "2026-07-28",
-  "h": "073a434cda2fb02e",
-  "last": "2026-10-03"
+  "h": "d7f6b16096f9e2a3",
+  "last": "2026-11-12"
  },
  "fake-im-not-a-robot-scam": {
   "first": "2026-10-02",
@@ -1199,8 +1221,13 @@
  },
  "files-missing-from-onedrive": {
   "first": "2026-07-28",
-  "h": "5de55e62285b39fa",
-  "last": "2026-10-06"
+  "h": "aec2cecebf4c21b2",
+  "last": "2026-11-12"
+ },
+ "find-and-remove-duplicate-photos": {
+  "first": "2026-10-30",
+  "h": "118b7324c2a9892a",
+  "last": "2026-11-12"
  },
  "firewall-licence-expired-what-happens": {
   "first": "2026-07-28",
@@ -1209,22 +1236,23 @@
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
-  "h": "31dd4a0eb741e297",
-  "last": "2026-10-19"
+  "h": "2f9bba9a49895932",
+  "last": "2026-11-12"
  },
  "forgot-windows-password-or-pin": {
   "first": "2026-10-12",
-  "h": "d2af3c34e55b32ee",
-  "last": "2026-10-26"
+  "h": "0a66b003b767adc2",
+  "last": "2026-11-12"
  },
  "former-it-provider-controls-microsoft-365": {
   "first": "2026-07-28",
-  "h": "36c3620c76bffe2b",
-  "last": "2026-10-19"
+  "h": "826ce92a35fbfd77",
+  "last": "2026-11-12"
  },
  "free-audiobooks": {
   "first": "2026-10-18",
-  "h": "7de3dc7e981e4347"
+  "h": "d167fb92364005f4",
+  "last": "2026-11-12"
  },
  "free-courses": {
   "first": "2026-07-28",
@@ -1258,8 +1286,8 @@
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
-  "h": "2218fb5b1565a11f",
-  "last": "2026-10-19"
+  "h": "b12cc04bd9876880",
+  "last": "2026-11-12"
  },
  "gaming-pc-tune-up": {
   "first": "2026-09-05",
@@ -1273,8 +1301,8 @@
  },
  "gave-a-scammer-remote-access": {
   "first": "2026-07-28",
-  "h": "bd35bdf99a5338d2",
-  "last": "2026-10-28"
+  "h": "54967781b2c99f74",
+  "last": "2026-11-12"
  },
  "gdpr-it-compliance": {
   "first": "2026-07-28",
@@ -1288,8 +1316,8 @@
  },
  "gmail-check-mail-from-other-accounts-ending": {
   "first": "2026-10-10",
-  "h": "8acbf05a9f3d50f9",
-  "last": "2026-10-11"
+  "h": "097f18f8b1499e61",
+  "last": "2026-11-12"
  },
  "google-workspace-support": {
   "first": "2026-07-28",
@@ -1303,8 +1331,8 @@
  },
  "greenby-email-login": {
   "first": "2026-10-13",
-  "h": "e1bcf6b0d299a935",
-  "last": "2026-11-03"
+  "h": "108ca097d000753e",
+  "last": "2026-11-12"
  },
  "hard-drive-upgrade": {
   "first": "2026-07-28",
@@ -1318,8 +1346,8 @@
  },
  "heic-photos-wont-open-on-windows": {
   "first": "2026-10-11",
-  "h": "fcc1d2bfc6867d0b",
-  "last": "2026-10-19"
+  "h": "b681ebc9f6a3298a",
+  "last": "2026-11-12"
  },
  "help-in-dorset": {
   "first": "2026-07-28",
@@ -1378,8 +1406,8 @@
  },
  "how-to-add-gmail-to-outlook": {
   "first": "2026-07-28",
-  "h": "7fa377de3449a948",
-  "last": "2026-10-06"
+  "h": "68eb8ef2d05a01db",
+  "last": "2026-11-12"
  },
  "how-to-back-up-your-photos": {
   "first": "2026-06-16",
@@ -1393,12 +1421,13 @@
  },
  "how-to-check-laptop-battery-health": {
   "first": "2026-10-13",
-  "h": "1615130117e7817a",
-  "last": "2026-10-22"
+  "h": "d7ecf5d5787881de",
+  "last": "2026-11-12"
  },
  "how-to-check-ssd-health": {
   "first": "2026-10-17",
-  "h": "87ef5d6b17b108f0"
+  "h": "33a93a052dc2ed47",
+  "last": "2026-11-12"
  },
  "how-to-choose-a-laptop": {
   "first": "2026-07-28",
@@ -1417,12 +1446,13 @@
  },
  "how-to-find-dell-service-tag-and-check-warranty": {
   "first": "2026-10-13",
-  "h": "20be4f715d5dfa01",
-  "last": "2026-10-30"
+  "h": "fefc69911c4faecf",
+  "last": "2026-11-12"
  },
  "how-to-find-your-wifi-password": {
   "first": "2026-10-26",
-  "h": "78b511b0a224005a"
+  "h": "03ead2ae1b1b4518",
+  "last": "2026-11-12"
  },
  "how-to-free-up-storage-space": {
   "first": "2026-06-16",
@@ -1431,8 +1461,8 @@
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
-  "h": "292f3aa511849503",
-  "last": "2026-10-23"
+  "h": "fce406e7b506ebc8",
+  "last": "2026-11-12"
  },
  "how-to-keep-children-safe-online": {
   "first": "2026-06-16",
@@ -1450,8 +1480,8 @@
  },
  "how-to-listen-to-the-radio-on-your-computer": {
   "first": "2026-10-08",
-  "h": "3004528e8ee52401",
-  "last": "2026-10-18"
+  "h": "bc82246ea2460b31",
+  "last": "2026-11-12"
  },
  "how-to-make-a-google-app-password": {
   "first": "2026-09-29",
@@ -1460,8 +1490,8 @@
  },
  "how-to-make-a-pdf-smaller": {
   "first": "2026-10-27",
-  "h": "ef44e70fec53188c",
-  "last": "2026-10-27"
+  "h": "9dd7b25a6f4852ce",
+  "last": "2026-11-12"
  },
  "how-to-make-your-laptop-battery-last-longer": {
   "first": "2026-06-16",
@@ -1470,13 +1500,13 @@
  },
  "how-to-merge-pdf-files": {
   "first": "2026-10-27",
-  "h": "ccfd4aca548bbd75",
-  "last": "2026-10-27"
+  "h": "42eca8e1ffaefa4e",
+  "last": "2026-11-12"
  },
  "how-to-play-a-cd-on-windows-11": {
   "first": "2026-10-08",
-  "h": "a739286ac04b88a8",
-  "last": "2026-10-17"
+  "h": "8077d81a0d6e3cb4",
+  "last": "2026-11-12"
  },
  "how-to-prepare-business-for-windows-11": {
   "first": "2026-06-16",
@@ -1505,8 +1535,8 @@
  },
  "how-to-set-an-alarm-on-your-computer": {
   "first": "2026-10-08",
-  "h": "9e5cc9270ca5c7be",
-  "last": "2026-11-04"
+  "h": "41141f17037db97b",
+  "last": "2026-11-12"
  },
  "how-to-set-up-a-new-windows-computer": {
   "first": "2026-06-16",
@@ -1515,8 +1545,8 @@
  },
  "how-to-set-up-a-printer": {
   "first": "2026-06-16",
-  "h": "b892f29633674ff5",
-  "last": "2026-10-06"
+  "h": "cf58e01163476c74",
+  "last": "2026-11-12"
  },
  "how-to-set-up-a-second-monitor": {
   "first": "2026-06-16",
@@ -1535,7 +1565,8 @@
  },
  "how-to-sign-a-pdf": {
   "first": "2026-10-27",
-  "h": "dcda081106fc7619"
+  "h": "6b1287e93f93f0c3",
+  "last": "2026-11-12"
  },
  "how-to-speed-up-a-slow-computer": {
   "first": "2026-06-16",
@@ -1554,8 +1585,8 @@
  },
  "how-to-stop-spam-emails": {
   "first": "2026-06-16",
-  "h": "b79eff4df29c8d91",
-  "last": "2026-10-10"
+  "h": "e0097525f6e99312",
+  "last": "2026-11-12"
  },
  "how-to-take-a-screenshot": {
   "first": "2026-06-16",
@@ -1569,13 +1600,13 @@
  },
  "how-to-turn-off-sticky-keys": {
   "first": "2026-10-12",
-  "h": "945deced0f25343d",
-  "last": "2026-10-12"
+  "h": "fc29a42776c8e229",
+  "last": "2026-11-12"
  },
  "how-to-update-dell-bios": {
   "first": "2026-10-13",
-  "h": "0886df018af81085",
-  "last": "2026-10-30"
+  "h": "1348e402cb47a0b7",
+  "last": "2026-11-12"
  },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
@@ -1606,6 +1637,11 @@
   "first": "2026-07-28",
   "h": "098dbff67e63bddd",
   "last": "2026-09-26"
+ },
+ "hp-support-assistant-keeps-popping-up": {
+  "first": "2026-10-29",
+  "h": "32fbb057abbf524e",
+  "last": "2026-11-12"
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
@@ -1639,13 +1675,13 @@
  },
  "is-my-windows-still-supported": {
   "first": "2026-10-11",
-  "h": "152e3c130901a21d",
-  "last": "2026-10-11"
+  "h": "f504465ea232d89f",
+  "last": "2026-11-12"
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
-  "h": "196cf09d3ebea4cf",
-  "last": "2026-10-26"
+  "h": "60f4a73b5ceebdf5",
+  "last": "2026-11-12"
  },
  "it-advice": {
   "first": "2026-07-28",
@@ -1694,8 +1730,8 @@
  },
  "it-jargon-buster/driver": {
   "first": "2026-07-28",
-  "h": "12e0a41cec3bd413",
-  "last": "2026-09-26"
+  "h": "3c3a5f0f0958d6c2",
+  "last": "2026-11-12"
  },
  "it-jargon-buster/ethernet": {
   "first": "2026-07-28",
@@ -1769,28 +1805,28 @@
  },
  "it-support-blandford-forum": {
   "first": "2026-07-28",
-  "h": "6e0c5fcdf7ceccd0",
-  "last": "2026-10-06"
+  "h": "1c43ffd1af6b700e",
+  "last": "2026-11-12"
  },
  "it-support-bournemouth": {
   "first": "2026-07-28",
-  "h": "7d6dcef4d6aa62f6",
-  "last": "2026-10-06"
+  "h": "c93a3020eb8b0fdf",
+  "last": "2026-11-12"
  },
  "it-support-bridport": {
   "first": "2026-07-28",
-  "h": "6795ffdfc0965286",
-  "last": "2026-10-06"
+  "h": "180cf82c1c378046",
+  "last": "2026-11-12"
  },
  "it-support-broadstone": {
   "first": "2026-07-28",
-  "h": "54c168c18e13fbd4",
-  "last": "2026-10-06"
+  "h": "8e4039c4d99ef9f4",
+  "last": "2026-11-12"
  },
  "it-support-brockenhurst": {
   "first": "2026-07-28",
-  "h": "06a9eec1370516fc",
-  "last": "2026-10-06"
+  "h": "e5f5db12631ae82e",
+  "last": "2026-11-12"
  },
  "it-support-by-industry": {
   "first": "2026-07-28",
@@ -1799,33 +1835,33 @@
  },
  "it-support-christchurch": {
   "first": "2026-07-28",
-  "h": "efdd2f11ae0e85c9",
-  "last": "2026-10-06"
+  "h": "0a24e43ae02741f0",
+  "last": "2026-11-12"
  },
  "it-support-corfe-mullen": {
   "first": "2026-07-28",
-  "h": "b3299cbbb0b177a4",
-  "last": "2026-10-06"
+  "h": "1d6d694c13a6c202",
+  "last": "2026-11-12"
  },
  "it-support-cost-guide": {
   "first": "2026-07-28",
-  "h": "12c3aee0a020a979",
-  "last": "2026-10-29"
+  "h": "3cfd4345a25d7d02",
+  "last": "2026-11-12"
  },
  "it-support-dorchester": {
   "first": "2026-07-28",
-  "h": "9daef4f541b3cf70",
-  "last": "2026-10-06"
+  "h": "01254691636ac941",
+  "last": "2026-11-12"
  },
  "it-support-dorset": {
   "first": "2026-07-28",
-  "h": "1d28352ff43b0cd3",
-  "last": "2026-10-06"
+  "h": "78f74e33b6cb5ab7",
+  "last": "2026-11-12"
  },
  "it-support-ferndown": {
   "first": "2026-07-28",
-  "h": "d7481de61b57e22c",
-  "last": "2026-10-06"
+  "h": "66ca3ccbf30d91da",
+  "last": "2026-11-12"
  },
  "it-support-for-accountants-dorset": {
   "first": "2026-07-28",
@@ -1834,8 +1870,8 @@
  },
  "it-support-for-architects": {
   "first": "2026-07-28",
-  "h": "675d46a603490b88",
-  "last": "2026-10-06"
+  "h": "69aaa98af3032acf",
+  "last": "2026-11-12"
  },
  "it-support-for-care-homes": {
   "first": "2026-07-28",
@@ -1859,8 +1895,8 @@
  },
  "it-support-for-creative-agencies": {
   "first": "2026-07-28",
-  "h": "a87fba2b8bfdc132",
-  "last": "2026-10-06"
+  "h": "c9361da30c5f7e06",
+  "last": "2026-11-12"
  },
  "it-support-for-dental-medical": {
   "first": "2026-07-28",
@@ -1929,8 +1965,8 @@
  },
  "it-support-for-opticians": {
   "first": "2026-07-28",
-  "h": "818b94207883526e",
-  "last": "2026-10-06"
+  "h": "a930cb0a66fda1ea",
+  "last": "2026-11-12"
  },
  "it-support-for-property-management": {
   "first": "2026-07-28",
@@ -1979,128 +2015,128 @@
  },
  "it-support-fordingbridge": {
   "first": "2026-07-28",
-  "h": "1da7079352e9c67f",
-  "last": "2026-10-06"
+  "h": "02d35789266e7e58",
+  "last": "2026-11-12"
  },
  "it-support-gillingham": {
   "first": "2026-07-28",
-  "h": "1a802b53534c1d9b",
-  "last": "2026-10-06"
+  "h": "b5c334f84dcbdb1c",
+  "last": "2026-11-12"
  },
  "it-support-highcliffe": {
   "first": "2026-07-28",
-  "h": "45bfd1d0c0ac5b1b",
-  "last": "2026-10-06"
+  "h": "79b1df1e4753f113",
+  "last": "2026-11-12"
  },
  "it-support-hythe": {
   "first": "2026-07-28",
-  "h": "a9aa8731276f16b0",
-  "last": "2026-10-06"
+  "h": "ed6e2add2c0ab797",
+  "last": "2026-11-12"
  },
  "it-support-lyme-regis": {
   "first": "2026-07-28",
-  "h": "3284e4043e398875",
-  "last": "2026-10-06"
+  "h": "c52d8d91cba1f23b",
+  "last": "2026-11-12"
  },
  "it-support-lymington": {
   "first": "2026-07-28",
-  "h": "5da30a24ee963b48",
-  "last": "2026-10-06"
+  "h": "79621ba191310f04",
+  "last": "2026-11-12"
  },
  "it-support-lyndhurst": {
   "first": "2026-07-28",
-  "h": "fe9b21de7877c719",
-  "last": "2026-10-06"
+  "h": "506edc685c92f3fa",
+  "last": "2026-11-12"
  },
  "it-support-new-forest": {
   "first": "2026-07-28",
-  "h": "33e806a2ebe332b6",
-  "last": "2026-10-06"
+  "h": "01f2c662c9312e45",
+  "last": "2026-11-12"
  },
  "it-support-new-milton": {
   "first": "2026-07-28",
-  "h": "2f23caf210dbd725",
-  "last": "2026-10-06"
+  "h": "1547e9a31fffcaa1",
+  "last": "2026-11-12"
  },
  "it-support-poole": {
   "first": "2026-07-28",
-  "h": "636be4bcc2bb4f7d",
-  "last": "2026-10-06"
+  "h": "72055f4f59fef694",
+  "last": "2026-11-12"
  },
  "it-support-portland": {
   "first": "2026-07-28",
-  "h": "08058c64332aae2e",
-  "last": "2026-10-06"
+  "h": "fffe23116f565b30",
+  "last": "2026-11-12"
  },
  "it-support-ringwood": {
   "first": "2026-07-28",
-  "h": "fae951bd4b27dbc5",
-  "last": "2026-10-06"
+  "h": "0b05cffdff612e22",
+  "last": "2026-11-12"
  },
  "it-support-shaftesbury": {
   "first": "2026-07-28",
-  "h": "d1145ca59b2cf286",
-  "last": "2026-10-06"
+  "h": "7ec3e75611f343ac",
+  "last": "2026-11-12"
  },
  "it-support-sherborne": {
   "first": "2026-07-28",
-  "h": "12c3b743427b3b8d",
-  "last": "2026-10-06"
+  "h": "fc08e4f63f84ee02",
+  "last": "2026-11-12"
  },
  "it-support-southampton": {
   "first": "2026-07-28",
-  "h": "ad6f5d4de4772aba",
-  "last": "2026-10-06"
+  "h": "5fc1052de5c043e6",
+  "last": "2026-11-12"
  },
  "it-support-sturminster-newton": {
   "first": "2026-07-28",
-  "h": "54cf55b8945c48fd",
-  "last": "2026-10-06"
+  "h": "088c3182ae19f113",
+  "last": "2026-11-12"
  },
  "it-support-swanage": {
   "first": "2026-07-28",
-  "h": "b7771aacb6beec82",
-  "last": "2026-10-06"
+  "h": "61d4af1b8414ed05",
+  "last": "2026-11-12"
  },
  "it-support-totton": {
   "first": "2026-07-28",
-  "h": "fcc090f79e04fc10",
-  "last": "2026-10-06"
+  "h": "95589fec09b2aa46",
+  "last": "2026-11-12"
  },
  "it-support-uk-europe": {
   "first": "2026-07-28",
-  "h": "6f2a3904e5c7174b",
-  "last": "2026-09-26"
+  "h": "2e211606de199f30",
+  "last": "2026-11-12"
  },
  "it-support-upton": {
   "first": "2026-07-28",
-  "h": "e4987978c62eda1f",
-  "last": "2026-10-06"
+  "h": "42745ef5ae7b5866",
+  "last": "2026-11-12"
  },
  "it-support-verwood": {
   "first": "2026-07-28",
-  "h": "61d51574d556f7fb",
-  "last": "2026-10-06"
+  "h": "510b3fd19ea7507d",
+  "last": "2026-11-12"
  },
  "it-support-wareham": {
   "first": "2026-07-28",
-  "h": "8d292dc6f7fc896d",
-  "last": "2026-10-06"
+  "h": "c509bfc1ffb6b809",
+  "last": "2026-11-12"
  },
  "it-support-west-moors": {
   "first": "2026-07-28",
-  "h": "9e22d5c34985019f",
-  "last": "2026-10-06"
+  "h": "9be5191834098462",
+  "last": "2026-11-12"
  },
  "it-support-weymouth": {
   "first": "2026-07-28",
-  "h": "6ce4f11ee956a74b",
-  "last": "2026-10-06"
+  "h": "fc5c786d878c00c1",
+  "last": "2026-11-12"
  },
  "it-support-wimborne": {
   "first": "2026-07-28",
-  "h": "f4d9853d5bc60bb4",
-  "last": "2026-10-06"
+  "h": "0c98a4072c1a9136",
+  "last": "2026-11-12"
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
@@ -2114,12 +2150,13 @@
  },
  "keep-bt-email-when-leaving-bt": {
   "first": "2026-11-03",
-  "h": "9511328686c799d2"
+  "h": "4df13e2e83ac61ff",
+  "last": "2026-11-12"
  },
  "keyboard-test": {
   "first": "2026-10-12",
-  "h": "14e0d3b946d7897d",
-  "last": "2026-10-12"
+  "h": "9b0186f7221a232d",
+  "last": "2026-11-12"
  },
  "landline-switch-off-help": {
   "first": "2026-07-28",
@@ -2133,16 +2170,18 @@
  },
  "laptop-overheating": {
   "first": "2026-10-17",
-  "h": "462a07121b7ec4b4"
+  "h": "faeedfa404fc4294",
+  "last": "2026-11-12"
  },
  "laptop-plugged-in-not-charging": {
   "first": "2026-10-12",
-  "h": "56a7717aca46fe73"
+  "h": "f3eeb4a236256e31",
+  "last": "2026-11-12"
  },
  "laptop-repair": {
   "first": "2026-07-28",
-  "h": "74a01ac135707643",
-  "last": "2026-10-06"
+  "h": "35f0288bb9a1e7fd",
+  "last": "2026-11-12"
  },
  "laptop-screen-flickers-then-goes-black": {
   "first": "2026-08-01",
@@ -2186,7 +2225,8 @@
  },
  "laptop-touchpad-not-working": {
   "first": "2026-10-12",
-  "h": "b98d7fa5ea52b3d0"
+  "h": "000c8f7cdd769098",
+  "last": "2026-11-12"
  },
  "laptop-turns-off-when-unplugged": {
   "first": "2026-07-28",
@@ -2200,13 +2240,18 @@
  },
  "learn-about-this-picture": {
   "first": "2026-10-27",
-  "h": "774495b00546289e",
-  "last": "2026-10-27"
+  "h": "9c37154f5fe83644",
+  "last": "2026-11-12"
  },
  "leave-a-review": {
   "first": "2026-07-28",
   "h": "ffa658ea2d39c8f1",
   "last": "2026-10-19"
+ },
+ "lenovo-vantage-keeps-popping-up": {
+  "first": "2026-10-29",
+  "h": "36eb1f7194eb56d0",
+  "last": "2026-11-12"
  },
  "link-safety-checker": {
   "first": "2026-07-28",
@@ -2220,7 +2265,8 @@
  },
  "live-webcams": {
   "first": "2026-10-18",
-  "h": "5cd08aebaa51213b"
+  "h": "da69f91cb8a00206",
+  "last": "2026-11-12"
  },
  "locked-out-microsoft-365-admin-account": {
   "first": "2026-07-28",
@@ -2239,21 +2285,23 @@
  },
  "macrium-reflect-free-ended": {
   "first": "2026-11-03",
-  "h": "3d9cef7a04612cb9"
+  "h": "8bc5b9f0bd907884",
+  "last": "2026-11-12"
  },
  "madasafish-freenetname-email-greenby": {
   "first": "2026-11-03",
-  "h": "b064cef6d833b45e"
+  "h": "b6d35013eebc05d8",
+  "last": "2026-11-12"
  },
  "make-windows-11-look-like-windows-10": {
   "first": "2026-10-27",
-  "h": "1bf5174817c82e82",
-  "last": "2026-10-27"
+  "h": "cf0cea56147c823d",
+  "last": "2026-11-12"
  },
  "make-your-house-look-lived-in-while-away": {
   "first": "2026-10-08",
-  "h": "05eebdc55f509f96",
-  "last": "2026-10-08"
+  "h": "e81e89ff8856e509",
+  "last": "2026-11-12"
  },
  "malware-and-viruses": {
   "first": "2026-07-28",
@@ -2272,17 +2320,23 @@
  },
  "mapped-network-drive-keeps-disconnecting": {
   "first": "2026-07-28",
-  "h": "a2e392493b135423",
-  "last": "2026-10-06"
+  "h": "5362e3c7c2b1c6dd",
+  "last": "2026-11-12"
  },
  "mcafee-or-norton-expired-do-i-need-to-renew": {
   "first": "2026-10-11",
-  "h": "f4e9c40e54c8ee86"
+  "h": "c2731634d36597fd",
+  "last": "2026-11-12"
  },
  "meet-the-team": {
   "first": "2026-07-28",
   "h": "56358b922a47d9f2",
   "last": "2026-10-31"
+ },
+ "memory-integrity-is-off": {
+  "first": "2026-10-30",
+  "h": "0e3e6316191584d5",
+  "last": "2026-11-12"
  },
  "meraki-licence-expiry-what-happens": {
   "first": "2026-07-28",
@@ -2291,8 +2345,8 @@
  },
  "mesh-wifi-setup-guide": {
   "first": "2026-07-28",
-  "h": "b4f1390f440fed21",
-  "last": "2026-10-06"
+  "h": "143da9872cdfad8b",
+  "last": "2026-11-12"
  },
  "mesh-wifi-systems-uk": {
   "first": "2026-07-28",
@@ -2311,8 +2365,8 @@
  },
  "microsoft-365-support": {
   "first": "2026-07-28",
-  "h": "34198ffd9c2afc13",
-  "last": "2026-10-23"
+  "h": "aee0839014437011",
+  "last": "2026-11-12"
  },
  "microsoft-365-vs-google-workspace": {
   "first": "2026-07-28",
@@ -2321,13 +2375,13 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "d76c6a14154166ea",
-  "last": "2026-10-19"
+  "h": "ab32cf66f88c8e84",
+  "last": "2026-11-12"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
-  "h": "a5fa7e90447d54ee",
-  "last": "2026-10-03"
+  "h": "8d5c4e3057903349",
+  "last": "2026-11-12"
  },
  "minecraft-parental-controls": {
   "first": "2026-08-18",
@@ -2346,8 +2400,8 @@
  },
  "monitor-stuck-at-60hz": {
   "first": "2026-10-08",
-  "h": "e02a776066c0f85f",
-  "last": "2026-10-12"
+  "h": "43d1c972cdeaf116",
+  "last": "2026-11-12"
  },
  "monthly-it-support": {
   "first": "2026-07-28",
@@ -2376,13 +2430,13 @@
  },
  "music-visualiser-for-windows": {
   "first": "2026-10-17",
-  "h": "7ea07f13c22bdb23",
-  "last": "2026-10-17"
+  "h": "0658bed56bc22a1c",
+  "last": "2026-11-12"
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "da891f1d3db93255",
-  "last": "2026-10-19"
+  "h": "e89a6edbca0360e1",
+  "last": "2026-11-12"
  },
  "new-computer-setup": {
   "first": "2026-07-28",
@@ -2401,43 +2455,43 @@
  },
  "new-outlook-blank-screen": {
   "first": "2026-07-28",
-  "h": "fa39503bb7627d87",
-  "last": "2026-10-12"
+  "h": "8daa16669fe744be",
+  "last": "2026-11-12"
  },
  "new-outlook-emails-stuck-in-drafts": {
   "first": "2026-07-28",
-  "h": "ac03d85638fbe0e6",
-  "last": "2026-10-22"
+  "h": "dab4b17daf2447f6",
+  "last": "2026-11-12"
  },
  "new-outlook-missing-features": {
   "first": "2026-07-28",
-  "h": "43b842f227fdfac4",
-  "last": "2026-10-23"
+  "h": "fa32cf6d1bfdfa9b",
+  "last": "2026-11-12"
  },
  "new-outlook-no-send-receive-button": {
   "first": "2026-07-28",
-  "h": "e4b7a1dea36caaef",
-  "last": "2026-10-22"
+  "h": "4ea1de3f3e442b59",
+  "last": "2026-11-12"
  },
  "new-outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "64e99d0ad0e897b2",
-  "last": "2026-10-22"
+  "h": "a8d5ec7f3a126081",
+  "last": "2026-11-12"
  },
  "new-outlook-only-showing-recent-emails": {
   "first": "2026-07-28",
-  "h": "c15e659ec8d5a507",
-  "last": "2026-10-22"
+  "h": "908f921b9f78df18",
+  "last": "2026-11-12"
  },
  "new-outlook-search-not-working": {
   "first": "2026-07-28",
-  "h": "79f07f9deb39e577",
-  "last": "2026-10-10"
+  "h": "5086deab0e80960d",
+  "last": "2026-11-12"
  },
  "new-outlook-wont-open": {
   "first": "2026-07-28",
-  "h": "a40740f3d54bb8b5",
-  "last": "2026-10-10"
+  "h": "56e11792e1835275",
+  "last": "2026-11-12"
  },
  "next-gen-home-dashboards": {
   "first": "2026-07-29",
@@ -2459,10 +2513,15 @@
   "h": "fa3d127eaf22acf1",
   "last": "2026-10-06"
  },
+ "no-sound-on-computer": {
+  "first": "2026-10-30",
+  "h": "aef656cc01cba888",
+  "last": "2026-11-12"
+ },
  "ntlworld-blueyonder-email-not-working": {
   "first": "2026-10-27",
-  "h": "068792e1dd875741",
-  "last": "2026-10-27"
+  "h": "3a4910deb3400180",
+  "last": "2026-11-12"
  },
  "off-grid-holiday-let-monitoring": {
   "first": "2026-07-28",
@@ -2481,7 +2540,8 @@
  },
  "office-2021-end-of-support": {
   "first": "2026-10-10",
-  "h": "8128f58721c77092"
+  "h": "fd4fd87c6f9332b5",
+  "last": "2026-11-12"
  },
  "office-moves-it-relocation": {
   "first": "2026-07-28",
@@ -2490,57 +2550,58 @@
  },
  "office-wifi-keeps-dropping-out": {
   "first": "2026-07-28",
-  "h": "4c1d9f1345db774a",
-  "last": "2026-10-06"
+  "h": "cc15785d23754560",
+  "last": "2026-11-12"
  },
  "old-internet-provider-email-closed": {
   "first": "2026-11-03",
-  "h": "aed9cec064e022e6"
+  "h": "3d47811f9bce44c1",
+  "last": "2026-11-12"
  },
  "old-program-wont-open-on-windows-11": {
   "first": "2026-09-05",
-  "h": "c2caf246184c4e46",
-  "last": "2026-10-06"
+  "h": "a96eb03261ddb6c0",
+  "last": "2026-11-12"
  },
  "onedrive-couldnt-merge-changes": {
   "first": "2026-09-05",
-  "h": "736277f7337f5eb6",
-  "last": "2026-10-06"
+  "h": "e0e198552262106c",
+  "last": "2026-11-12"
  },
  "onedrive-file-locked-by-another-user": {
   "first": "2026-09-05",
-  "h": "5ee93c20d8b64ed4",
-  "last": "2026-10-06"
+  "h": "eb4c8a46ca03543d",
+  "last": "2026-11-12"
  },
  "onedrive-files-disappeared": {
   "first": "2026-07-28",
-  "h": "a571bad0c71d0723",
-  "last": "2026-10-06"
+  "h": "3d8bbb8f91a050d7",
+  "last": "2026-11-12"
  },
  "onedrive-full-cant-send-email": {
   "first": "2026-07-28",
-  "h": "e5ffe4a3afd031de",
-  "last": "2026-10-21"
+  "h": "ff007784bdd41beb",
+  "last": "2026-11-12"
  },
  "onedrive-keeps-asking-to-sign-in": {
   "first": "2026-07-28",
-  "h": "c1b5ec5510fa0e4a",
-  "last": "2026-10-06"
+  "h": "7a04a9aa6c17c865",
+  "last": "2026-11-12"
  },
  "onedrive-moved-my-desktop-and-documents": {
   "first": "2026-07-28",
-  "h": "d0b45036b2acadc8",
-  "last": "2026-10-06"
+  "h": "d5fff4787f9fa691",
+  "last": "2026-11-12"
  },
  "onedrive-not-syncing-between-two-computers": {
   "first": "2026-09-05",
-  "h": "0fae1bc2ac8476d3",
-  "last": "2026-10-06"
+  "h": "4ab6bc40365353bb",
+  "last": "2026-11-12"
  },
  "onedrive-problems": {
   "first": "2026-07-28",
-  "h": "2222f1a4aac6c99c",
-  "last": "2026-10-23"
+  "h": "0e4c8e222c98aecc",
+  "last": "2026-11-12"
  },
  "onedrive-sharepoint-teams-explained": {
   "first": "2026-06-16",
@@ -2549,8 +2610,8 @@
  },
  "onedrive-taking-up-space": {
   "first": "2026-10-21",
-  "h": "b6b7ff5706b03304",
-  "last": "2026-10-21"
+  "h": "22cd26ebc17427ec",
+  "last": "2026-11-12"
  },
  "online-banking-safely-course": {
   "first": "2026-07-28",
@@ -2609,268 +2670,268 @@
  },
  "outlook-add-in-not-loading": {
   "first": "2026-07-28",
-  "h": "f6777fdfc110f5f6",
-  "last": "2026-10-06"
+  "h": "40f2691e5b257962",
+  "last": "2026-11-12"
  },
  "outlook-app-asking-to-sign-in-android": {
   "first": "2026-07-28",
-  "h": "a3a312813342c2a9",
-  "last": "2026-09-29"
+  "h": "988c20639622b0d8",
+  "last": "2026-11-12"
  },
  "outlook-app-crashing-android": {
   "first": "2026-07-28",
-  "h": "efafb235aa23e6b4",
-  "last": "2026-09-29"
+  "h": "7c3e008870866fcd",
+  "last": "2026-11-12"
  },
  "outlook-autocomplete-not-working": {
   "first": "2026-07-28",
-  "h": "c75d30d50d9db390",
-  "last": "2026-10-06"
+  "h": "40ccaa8f92315130",
+  "last": "2026-11-12"
  },
  "outlook-calendar-appointments-disappearing": {
   "first": "2026-07-28",
-  "h": "895564eaa05b1cb4",
-  "last": "2026-10-06"
+  "h": "1002ae3c855d36dd",
+  "last": "2026-11-12"
  },
  "outlook-calendar-not-syncing": {
   "first": "2026-07-28",
-  "h": "61c822a8a7bb5d3a",
-  "last": "2026-10-06"
+  "h": "38aac7ce871107f2",
+  "last": "2026-11-12"
  },
  "outlook-can-send-but-not-receive": {
   "first": "2026-07-28",
-  "h": "1f50c2ad2f3c72a6",
-  "last": "2026-10-06"
+  "h": "a82e14a29a51b379",
+  "last": "2026-11-12"
  },
  "outlook-cannot-open-the-outlook-window": {
   "first": "2026-07-28",
-  "h": "631d8ff352b2de27",
-  "last": "2026-11-10"
+  "h": "2b54b8baf9117adb",
+  "last": "2026-11-12"
  },
  "outlook-cant-add-account-new-outlook": {
   "first": "2026-07-28",
-  "h": "a57a48a56a67f91f",
-  "last": "2026-10-23"
+  "h": "bbc49561d7197ff8",
+  "last": "2026-11-12"
  },
  "outlook-cant-sign-in": {
   "first": "2026-07-28",
-  "h": "890f325d76423cd8",
-  "last": "2026-10-06"
+  "h": "8adf35e4a344de0c",
+  "last": "2026-11-12"
  },
  "outlook-com-not-syncing": {
   "first": "2026-07-28",
-  "h": "9dea55d2466f7603",
-  "last": "2026-10-10"
+  "h": "dee662889feb6922",
+  "last": "2026-11-12"
  },
  "outlook-contacts-missing": {
   "first": "2026-07-28",
-  "h": "258fbc159d00cb9d",
-  "last": "2026-10-06"
+  "h": "2ef3767b1550c837",
+  "last": "2026-11-12"
  },
  "outlook-data-file-cannot-be-accessed": {
   "first": "2026-07-28",
-  "h": "4376fb7fd00f4e70",
-  "last": "2026-11-10"
+  "h": "da5626ea5d338ce5",
+  "last": "2026-11-12"
  },
  "outlook-error-0x8004010b": {
   "first": "2026-07-28",
-  "h": "1f177769e6110006",
-  "last": "2026-10-06"
+  "h": "028b077b29727c65",
+  "last": "2026-11-12"
  },
  "outlook-error-0x8004060c": {
   "first": "2026-07-28",
-  "h": "a67f43d990895c97",
-  "last": "2026-10-06"
+  "h": "9d246d1e438dbac9",
+  "last": "2026-11-12"
  },
  "outlook-error-0x80040610": {
   "first": "2026-07-28",
-  "h": "3a996c78cdd31b6d",
-  "last": "2026-10-06"
+  "h": "5f2e1e2e0ebf7f63",
+  "last": "2026-11-12"
  },
  "outlook-error-0x80042108": {
   "first": "2026-07-28",
-  "h": "d7a454271845f31a",
-  "last": "2026-10-06"
+  "h": "490137e1383a7c22",
+  "last": "2026-11-12"
  },
  "outlook-error-0x80042109": {
   "first": "2026-07-28",
-  "h": "988f9c73bac6909f",
-  "last": "2026-10-27"
+  "h": "1291daffa450099a",
+  "last": "2026-11-12"
  },
  "outlook-error-0x800ccc0e": {
   "first": "2026-07-28",
-  "h": "7f453e795944032d",
-  "last": "2026-10-06"
+  "h": "ec5fe3c7f5d5f0d1",
+  "last": "2026-11-12"
  },
  "outlook-error-0x800ccc1a": {
   "first": "2026-07-28",
-  "h": "fc2eb0aa756712f2",
-  "last": "2026-10-10"
+  "h": "88a0c9747a83f2cd",
+  "last": "2026-11-12"
  },
  "outlook-error-0x800ccc78": {
   "first": "2026-07-28",
-  "h": "f51f7359f7680d4c",
-  "last": "2026-10-06"
+  "h": "48456a5006891dda",
+  "last": "2026-11-12"
  },
  "outlook-error-0x800ccc90": {
   "first": "2026-07-28",
-  "h": "b2a8e0d2f18b5d41",
-  "last": "2026-10-06"
+  "h": "1c8beb3216cb52a5",
+  "last": "2026-11-12"
  },
  "outlook-indexing-stuck": {
   "first": "2026-07-28",
-  "h": "854cb960546eded4",
-  "last": "2026-10-06"
+  "h": "420f694913443587",
+  "last": "2026-11-12"
  },
  "outlook-keeps-asking-for-password": {
   "first": "2026-07-28",
-  "h": "17ab49ef11227a73",
-  "last": "2026-10-06"
+  "h": "ff6d7c36f84f239b",
+  "last": "2026-11-12"
  },
  "outlook-modern-authentication-not-working": {
   "first": "2026-07-28",
-  "h": "9b6974fb2c26c961",
-  "last": "2026-10-10"
+  "h": "8836aa36133e648d",
+  "last": "2026-11-12"
  },
  "outlook-needs-to-repair-your-profile": {
   "first": "2026-07-28",
-  "h": "882d38be46ff7cf8",
-  "last": "2026-10-06"
+  "h": "fd30bfc18998db69",
+  "last": "2026-11-12"
  },
  "outlook-not-responding": {
   "first": "2026-07-28",
-  "h": "b2a16b6ef4a86de4",
-  "last": "2026-10-22"
+  "h": "67cd06a1a702557d",
+  "last": "2026-11-12"
  },
  "outlook-not-sending-emails": {
   "first": "2026-07-28",
-  "h": "9b94b6b42d0a3eb0",
-  "last": "2026-10-27"
+  "h": "d06856cc0e4bf8fa",
+  "last": "2026-11-12"
  },
  "outlook-not-showing-new-emails": {
   "first": "2026-07-28",
-  "h": "d31b551d413007a0",
-  "last": "2026-10-22"
+  "h": "83961b6991650002",
+  "last": "2026-11-12"
  },
  "outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "9bb6723d7ba81375",
-  "last": "2026-10-10"
+  "h": "79abeb9f88bfe922",
+  "last": "2026-11-12"
  },
  "outlook-not-syncing-android": {
   "first": "2026-07-28",
-  "h": "cfb61c6ad769c946",
-  "last": "2026-09-29"
+  "h": "295f226dbcdaa7bb",
+  "last": "2026-11-12"
  },
  "outlook-opens-then-closes": {
   "first": "2026-07-28",
-  "h": "ce4a316dd0c090d7",
-  "last": "2026-11-10"
+  "h": "7c1829155605e1e6",
+  "last": "2026-11-12"
  },
  "outlook-ost-file-corrupt": {
   "first": "2026-07-28",
-  "h": "72cd42602dd2855c",
-  "last": "2026-11-10"
+  "h": "fd8dfd6942a3f36f",
+  "last": "2026-11-12"
  },
  "outlook-out-of-office-not-working": {
   "first": "2026-07-28",
-  "h": "7962473ba9c6d2f4",
-  "last": "2026-10-06"
+  "h": "39b5bc98da51c575",
+  "last": "2026-11-12"
  },
  "outlook-password-not-working": {
   "first": "2026-07-28",
-  "h": "a3ad75d5feb5f9fc",
-  "last": "2026-10-10"
+  "h": "38db9342cd50c1e2",
+  "last": "2026-11-12"
  },
  "outlook-problems": {
   "first": "2026-07-28",
-  "h": "c7276e5e14ed2172",
-  "last": "2026-10-23"
+  "h": "cabf51ca7a765fa6",
+  "last": "2026-11-12"
  },
  "outlook-pst-cannot-be-accessed": {
   "first": "2026-07-28",
-  "h": "a7aa89c80a27635e",
-  "last": "2026-11-10"
+  "h": "dbed5969cfb3a983",
+  "last": "2026-11-12"
  },
  "outlook-rules-not-working": {
   "first": "2026-07-28",
-  "h": "9e22758cf87d3fb4",
-  "last": "2026-10-06"
+  "h": "9c398ba35ba0da5a",
+  "last": "2026-11-12"
  },
  "outlook-rules-not-working-new-outlook": {
   "first": "2026-07-28",
-  "h": "1e0270eb6da32042",
-  "last": "2026-10-10"
+  "h": "da88770c4aa6003b",
+  "last": "2026-11-12"
  },
  "outlook-running-slow": {
   "first": "2026-07-28",
-  "h": "a34790d1a8882aea",
-  "last": "2026-10-06"
+  "h": "23f2004b38ac5501",
+  "last": "2026-11-12"
  },
  "outlook-scanpst-not-working": {
   "first": "2026-07-28",
-  "h": "13eeba9e3bbacd7a",
-  "last": "2026-10-06"
+  "h": "2c6e149b00c19a8d",
+  "last": "2026-11-12"
  },
  "outlook-search-greyed-out": {
   "first": "2026-07-28",
-  "h": "0e574777b827b166",
-  "last": "2026-10-10"
+  "h": "09d9779efe35f569",
+  "last": "2026-11-12"
  },
  "outlook-search-not-finding-old-emails": {
   "first": "2026-07-28",
-  "h": "bdc757f6a20d7330",
-  "last": "2026-10-22"
+  "h": "ad6094314aeb9e1f",
+  "last": "2026-11-12"
  },
  "outlook-search-not-returning-all-results": {
   "first": "2026-07-28",
-  "h": "ad69bfacc061895a",
-  "last": "2026-11-10"
+  "h": "cc0e1427fbf03de0",
+  "last": "2026-11-12"
  },
  "outlook-shared-mailbox-not-showing": {
   "first": "2026-07-28",
-  "h": "c715c212508dc0e1",
-  "last": "2026-10-06"
+  "h": "1b5701c3bab0adeb",
+  "last": "2026-11-12"
  },
  "outlook-shared-mailbox-sent-items": {
   "first": "2026-07-28",
-  "h": "c36a6849bf3d6d9b",
-  "last": "2026-10-06"
+  "h": "5dd2651b8cee4766",
+  "last": "2026-11-12"
  },
  "outlook-signature-not-showing": {
   "first": "2026-07-28",
-  "h": "6a8cb42029137306",
-  "last": "2026-10-06"
+  "h": "7877fc0b397e3258",
+  "last": "2026-11-12"
  },
  "outlook-stuck-in-outbox": {
   "first": "2026-07-28",
-  "h": "8f9bafd4addba254",
-  "last": "2026-10-19"
+  "h": "730dc5a36306faa1",
+  "last": "2026-11-12"
  },
  "outlook-stuck-in-sign-in-loop": {
   "first": "2026-07-28",
-  "h": "70d63d1870f154f7",
-  "last": "2026-10-10"
+  "h": "f3ed61f77b9d6486",
+  "last": "2026-11-12"
  },
  "outlook-stuck-on-loading-profile": {
   "first": "2026-07-28",
-  "h": "c5649e9612b0b545",
-  "last": "2026-11-10"
+  "h": "73034fc9cbaa9d28",
+  "last": "2026-11-12"
  },
  "outlook-wont-open-after-update": {
   "first": "2026-07-28",
-  "h": "00574205dd75c614",
-  "last": "2026-10-10"
+  "h": "979e99f363af1c16",
+  "last": "2026-11-12"
  },
  "outlook-wont-open-in-safe-mode": {
   "first": "2026-07-28",
-  "h": "603136aeb8523488",
-  "last": "2026-10-10"
+  "h": "5cd8af7fb3352c55",
+  "last": "2026-11-12"
  },
  "outlook-working-offline-wont-turn-off": {
   "first": "2026-07-28",
-  "h": "1eff2e6d9938f139",
-  "last": "2026-10-10"
+  "h": "dba36354df5c5f93",
+  "last": "2026-11-12"
  },
  "outsourced-it-department": {
   "first": "2026-07-28",
@@ -2919,13 +2980,13 @@
  },
  "pc-manager-licence": {
   "first": "2026-10-11",
-  "h": "22f4bb2d9de9aaa6",
-  "last": "2026-10-29"
+  "h": "fd676766a5df3a69",
+  "last": "2026-11-12"
  },
  "pdf-to-word-without-uploading": {
   "first": "2026-10-25",
-  "h": "51c8ed621791141f",
-  "last": "2026-10-27"
+  "h": "7dbe492831747afa",
+  "last": "2026-11-12"
  },
  "phishing": {
   "first": "2026-07-28",
@@ -2934,7 +2995,8 @@
  },
  "phone-link-android": {
   "first": "2026-10-27",
-  "h": "893e5ea0036fbeba"
+  "h": "a7ed7f8a60a743d7",
+  "last": "2026-11-12"
  },
  "plain-english": {
   "first": "2026-07-28",
@@ -3015,8 +3077,8 @@
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "b1efdb2d5b4f0c7a",
-  "last": "2026-10-23"
+  "h": "bcd71e4a2edd369d",
+  "last": "2026-11-12"
  },
  "portal": {
   "first": "2026-09-05",
@@ -3040,33 +3102,33 @@
  },
  "printer-asking-for-admin-password": {
   "first": "2026-08-01",
-  "h": "de08ff2f7954cc96",
-  "last": "2026-10-06"
+  "h": "9a61f56da61ff28d",
+  "last": "2026-11-12"
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "748a62a0deae90e4",
-  "last": "2026-10-19"
+  "h": "c9e761e96482b68c",
+  "last": "2026-11-12"
  },
  "printer-offline": {
   "first": "2026-10-12",
-  "h": "0b0f4fb150c012df",
-  "last": "2026-10-26"
+  "h": "109c7713d3ba2d8b",
+  "last": "2026-11-12"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
-  "h": "4a72223ff67594e6",
-  "last": "2026-10-06"
+  "h": "b107675cca40079c",
+  "last": "2026-11-12"
  },
  "printer-says-wifi-password-incorrect": {
   "first": "2026-07-28",
-  "h": "6a530a88541936aa",
-  "last": "2026-10-19"
+  "h": "e463baace721ba23",
+  "last": "2026-11-12"
  },
  "printer-stopped-working-after-changing-wifi-password": {
   "first": "2026-07-28",
-  "h": "d1d5018772454d3b",
-  "last": "2026-10-19"
+  "h": "1329a78337056089",
+  "last": "2026-11-12"
  },
  "printer-support": {
   "first": "2026-07-28",
@@ -3075,38 +3137,38 @@
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "b2bde61c71794efa",
-  "last": "2026-10-19"
+  "h": "0c01ae34bad7da38",
+  "last": "2026-11-12"
  },
  "printer-wont-connect-after-moving-house": {
   "first": "2026-07-28",
-  "h": "9b3f3b16d7025608",
-  "last": "2026-10-20"
+  "h": "51c2eda242332779",
+  "last": "2026-11-12"
  },
  "printer-wont-connect-to-bt-smart-hub": {
   "first": "2026-07-28",
-  "h": "df032c70470d00c3",
-  "last": "2026-10-20"
+  "h": "72bafa976c67d946",
+  "last": "2026-11-12"
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "da225e32904f384d",
-  "last": "2026-10-21"
+  "h": "3602e9eaa5257daa",
+  "last": "2026-11-12"
  },
  "printer-wont-connect-to-mesh-wifi": {
   "first": "2026-07-28",
-  "h": "fe37fcfa296bdf1c",
-  "last": "2026-10-06"
+  "h": "3d86c53ef288286b",
+  "last": "2026-11-12"
  },
  "printer-wont-connect-to-sky-router": {
   "first": "2026-07-28",
-  "h": "a667c2f5f3610520",
-  "last": "2026-10-20"
+  "h": "07392ea255719ab1",
+  "last": "2026-11-12"
  },
  "printer-wont-scan-to-computer-windows-11": {
   "first": "2026-08-01",
-  "h": "ed1889588c9343aa",
-  "last": "2026-10-06"
+  "h": "9cc82ebc2096989b",
+  "last": "2026-11-12"
  },
  "privacy-policy": {
   "first": "2026-07-28",
@@ -3135,8 +3197,8 @@
  },
  "quickbooks-sage-running-slow": {
   "first": "2026-07-28",
-  "h": "986429b93d503f25",
-  "last": "2026-10-06"
+  "h": "2ff684ee055475a5",
+  "last": "2026-11-12"
  },
  "ransomware": {
   "first": "2026-07-28",
@@ -3150,7 +3212,8 @@
  },
  "reconnect-your-file-history-drive": {
   "first": "2026-11-03",
-  "h": "4bc207528a0e684d"
+  "h": "2d4c8ab4b0e10920",
+  "last": "2026-11-12"
  },
  "recover-photos-deceased-relatives-laptop": {
   "first": "2026-07-28",
@@ -3159,8 +3222,8 @@
  },
  "recreate-outlook-profile-without-losing-emails": {
   "first": "2026-07-28",
-  "h": "8ee4de01ad8d64c7",
-  "last": "2026-11-10"
+  "h": "5a5250a822a91265",
+  "last": "2026-11-12"
  },
  "refer-a-friend": {
   "first": "2026-07-28",
@@ -3169,7 +3232,8 @@
  },
  "refresh-rate-test": {
   "first": "2026-10-12",
-  "h": "62e38a3e69754b1f"
+  "h": "682e835a862c5e7e",
+  "last": "2026-11-12"
  },
  "refurbished-dell-desktops-dorset": {
   "first": "2026-07-28",
@@ -3193,33 +3257,33 @@
  },
  "refurbished-dell-latitude-3000": {
   "first": "2026-07-28",
-  "h": "313c4a49575d3938",
-  "last": "2026-10-30"
+  "h": "4c27ee69ae45a3a3",
+  "last": "2026-11-12"
  },
  "refurbished-dell-latitude-5000": {
   "first": "2026-07-28",
-  "h": "81b105f83ed54857",
-  "last": "2026-10-30"
+  "h": "98ceb5471718e7d9",
+  "last": "2026-11-12"
  },
  "refurbished-dell-latitude-7000": {
   "first": "2026-07-28",
-  "h": "68c70d9060e92d08",
-  "last": "2026-10-30"
+  "h": "5924f56055811ff0",
+  "last": "2026-11-12"
  },
  "refurbished-dell-optiplex-3000": {
   "first": "2026-07-28",
-  "h": "c8ba93c21583d26a",
-  "last": "2026-10-30"
+  "h": "258d26c9a14f368d",
+  "last": "2026-11-12"
  },
  "refurbished-dell-optiplex-5000": {
   "first": "2026-07-28",
-  "h": "3dd3545e0015d02a",
-  "last": "2026-10-30"
+  "h": "c04396eac15a3b1a",
+  "last": "2026-11-12"
  },
  "refurbished-dell-optiplex-7000": {
   "first": "2026-07-28",
-  "h": "804ccdd49419ede1",
-  "last": "2026-10-30"
+  "h": "f319aeeb7900ab2c",
+  "last": "2026-11-12"
  },
  "refurbished-laptops-dorset": {
   "first": "2026-07-28",
@@ -3233,22 +3297,23 @@
  },
  "reliability-monitor": {
   "first": "2026-10-17",
-  "h": "c352adedc54e2aea"
+  "h": "78246c8aeecbc936",
+  "last": "2026-11-12"
  },
  "remote-access": {
   "first": "2026-07-28",
-  "h": "94ca3530fe792ebd",
-  "last": "2026-09-26"
+  "h": "832c2d7612f74a8e",
+  "last": "2026-11-12"
  },
  "remote-it-support": {
   "first": "2026-07-28",
-  "h": "df9c405ff8746461",
-  "last": "2026-10-06"
+  "h": "443c35cc250e7858",
+  "last": "2026-11-12"
  },
  "remote-support": {
   "first": "2026-07-28",
-  "h": "d0e766596b423e6c",
-  "last": "2026-10-29"
+  "h": "f49aa0abf1549af8",
+  "last": "2026-11-12"
  },
  "repair-or-replace-advisor": {
   "first": "2026-07-28",
@@ -3262,13 +3327,13 @@
  },
  "restore-windows-7-backup-on-windows-11": {
   "first": "2026-11-03",
-  "h": "1477b0713ad7f25e",
-  "last": "2026-11-03"
+  "h": "a296922d5e79e035",
+  "last": "2026-11-12"
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
-  "h": "870e52a11b5a92e7",
-  "last": "2026-10-06"
+  "h": "6f030541a2b14734",
+  "last": "2026-11-12"
  },
  "reviews": {
   "first": "2026-07-28",
@@ -3302,18 +3367,18 @@
  },
  "sage-50-multi-user-cannot-connect": {
   "first": "2026-07-28",
-  "h": "626e5a634d0fff9c",
-  "last": "2026-10-06"
+  "h": "83ab75354f3e8130",
+  "last": "2026-11-12"
  },
  "sage-50-wont-email-invoices-outlook": {
   "first": "2026-07-28",
-  "h": "a4b43fe8635df79b",
-  "last": "2026-10-06"
+  "h": "f49418efa6f32ba0",
+  "last": "2026-11-12"
  },
  "sage-50-wont-print-to-pdf-windows-11": {
   "first": "2026-07-28",
-  "h": "6de3b8ba1a71ea6f",
-  "last": "2026-10-06"
+  "h": "d6d4fcc57f857c91",
+  "last": "2026-11-12"
  },
  "sage-instant-accounts-windows-11": {
   "first": "2026-08-01",
@@ -3332,8 +3397,8 @@
  },
  "scan-to-folder-stopped-working-after-windows-update": {
   "first": "2026-08-01",
-  "h": "e2b01eae3d68a965",
-  "last": "2026-10-06"
+  "h": "0d246ac6c55cf165",
+  "last": "2026-11-12"
  },
  "screen-time-and-family-link-parental-controls": {
   "first": "2026-08-18",
@@ -3342,8 +3407,8 @@
  },
  "screen-upside-down-or-sideways": {
   "first": "2026-10-12",
-  "h": "b71a27336a2f5b01",
-  "last": "2026-11-04"
+  "h": "ded394b13bcc9047",
+  "last": "2026-11-12"
  },
  "second-hand-office-computers-poole": {
   "first": "2026-07-28",
@@ -3352,7 +3417,8 @@
  },
  "secure-boot-certificates-expired": {
   "first": "2026-10-26",
-  "h": "bc3241113bdab3aa"
+  "h": "0cbadf2b8ac253b4",
+  "last": "2026-11-12"
  },
  "secure-it-disposal": {
   "first": "2026-07-28",
@@ -3406,18 +3472,18 @@
  },
  "shared-folder-read-only-cant-save-windows-11": {
   "first": "2026-08-01",
-  "h": "1a3aa48fcbefd191",
-  "last": "2026-10-06"
+  "h": "d23b177a2dba5b2f",
+  "last": "2026-11-12"
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "472eb8caab86e7ed",
-  "last": "2026-10-19"
+  "h": "b939e6d84ca27b72",
+  "last": "2026-11-12"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
-  "h": "4d0bccd7d7e0a37c",
-  "last": "2026-09-26"
+  "h": "2ed54c1f153d59e0",
+  "last": "2026-11-12"
  },
  "should-you-upgrade-to-windows-11": {
   "first": "2026-06-16",
@@ -3456,8 +3522,8 @@
  },
  "sky-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "f67bb256d9b5a7a6",
-  "last": "2026-10-23"
+  "h": "c36d9c04d040893a",
+  "last": "2026-11-12"
  },
  "slow-computer-repair": {
   "first": "2026-07-28",
@@ -3473,6 +3539,11 @@
   "first": "2026-07-28",
   "h": "960bd927e71afcc2",
   "last": "2026-10-29"
+ },
+ "smart-app-control-blocked-an-app": {
+  "first": "2026-10-28",
+  "h": "21558bd6793a2b31",
+  "last": "2026-11-12"
  },
  "smart-tv-streaming-setup-help": {
   "first": "2026-07-28",
@@ -3501,8 +3572,8 @@
  },
  "speaker-and-headphone-test": {
   "first": "2026-10-12",
-  "h": "fa186708caa02a26",
-  "last": "2026-10-30"
+  "h": "b05da502dba94500",
+  "last": "2026-11-12"
  },
  "splashtop-business-guide": {
   "first": "2026-07-28",
@@ -3531,18 +3602,18 @@
  },
  "stop-programs-starting-with-windows": {
   "first": "2026-10-13",
-  "h": "b2c624a80dec4d7e",
-  "last": "2026-10-26"
+  "h": "6042b74c29e1b28c",
+  "last": "2026-11-12"
  },
  "stop-using-onedrive-without-losing-files": {
   "first": "2026-07-28",
-  "h": "865eb200901a2680",
-  "last": "2026-10-06"
+  "h": "10f86189611f1eca",
+  "last": "2026-11-12"
  },
  "stop-word-saving-to-onedrive": {
   "first": "2026-07-28",
-  "h": "f06ab886079e7c85",
-  "last": "2026-10-06"
+  "h": "4296346e64283f21",
+  "last": "2026-11-12"
  },
  "support-portal": {
   "first": "2026-07-28",
@@ -3558,6 +3629,11 @@
   "first": "2026-07-28",
   "h": "d2f9deb3a84730ac",
   "last": "2026-09-28"
+ },
+ "system-restore-vs-reset-this-pc": {
+  "first": "2026-10-28",
+  "h": "796681705c0d0139",
+  "last": "2026-11-12"
  },
  "system-status": {
   "first": "2026-07-28",
@@ -3575,8 +3651,8 @@
  },
  "talktalk-email-not-working-android": {
   "first": "2026-09-05",
-  "h": "46c7811e60ac2cd9",
-  "last": "2026-09-29"
+  "h": "a79f79be1a9c086c",
+  "last": "2026-11-12"
  },
  "teams-chat-files-disappeared": {
   "first": "2026-09-05",
@@ -3585,8 +3661,8 @@
  },
  "teams-keeps-opening-wrong-account": {
   "first": "2026-07-28",
-  "h": "f47c52a453535605",
-  "last": "2026-10-03"
+  "h": "8aa2ff2298b9ee2d",
+  "last": "2026-11-12"
  },
  "techies-move": {
   "first": "2026-10-22",
@@ -3595,8 +3671,8 @@
  },
  "techies-one-mail": {
   "first": "2026-10-10",
-  "h": "41e155d58ca55ce5",
-  "last": "2026-11-10"
+  "h": "c73aa2dc1819cd07",
+  "last": "2026-11-12"
  },
  "techies-one-mail-film": {
   "first": "2026-10-13",
@@ -3605,8 +3681,8 @@
  },
  "techies-pdf": {
   "first": "2026-10-18",
-  "h": "909eccc14c278d6f",
-  "last": "2026-10-27"
+  "h": "644758cbe93de5a0",
+  "last": "2026-11-12"
  },
  "terms": {
   "first": "2026-07-28",
@@ -3617,6 +3693,11 @@
   "first": "2026-07-28",
   "h": "8dade7696868bd77",
   "last": "2026-09-26"
+ },
+ "this-pc-cant-run-windows-11": {
+  "first": "2026-10-30",
+  "h": "ea73f45bdb446811",
+  "last": "2026-11-12"
  },
  "threadripper-workstations": {
   "first": "2026-07-28",
@@ -3639,8 +3720,8 @@
  },
  "two-onedrive-accounts-personal-and-work": {
   "first": "2026-09-05",
-  "h": "1c0ee518df234e4e",
-  "last": "2026-10-06"
+  "h": "dc6a6bdbfbade5c0",
+  "last": "2026-11-12"
  },
  "unitree-robots": {
   "first": "2026-07-28",
@@ -3651,6 +3732,16 @@
   "first": "2026-07-28",
   "h": "3d92c359127444bc",
   "last": "2026-09-26"
+ },
+ "update-all-your-programs": {
+  "first": "2026-10-30",
+  "h": "51be89908f2dda45",
+  "last": "2026-11-12"
+ },
+ "usb-device-not-recognised": {
+  "first": "2026-10-30",
+  "h": "1a9bd401f475d260",
+  "last": "2026-11-12"
  },
  "using-ai-safely": {
   "first": "2026-07-28",
@@ -3724,8 +3815,8 @@
  },
  "virgin-media-email-wont-add-to-new-outlook": {
   "first": "2026-09-05",
-  "h": "ed85dc045550c6b0",
-  "last": "2026-10-27"
+  "h": "7d65c0f4a9545ea2",
+  "last": "2026-11-12"
  },
  "virus-removal": {
   "first": "2026-07-28",
@@ -3734,13 +3825,13 @@
  },
  "virus-removal-christchurch": {
   "first": "2026-07-28",
-  "h": "e4e93771e7fc4681",
-  "last": "2026-09-26"
+  "h": "82b0ae015552aa1d",
+  "last": "2026-11-12"
  },
  "virus-threat-protection-managed-by-your-organization": {
   "first": "2026-10-11",
-  "h": "20baf24ff90e11cb",
-  "last": "2026-10-13"
+  "h": "fe157dcec8a32fba",
+  "last": "2026-11-12"
  },
  "visual-timer": {
   "first": "2026-10-12",
@@ -3753,8 +3844,8 @@
  },
  "we-couldnt-update-the-system-reserved-partition": {
   "first": "2026-10-15",
-  "h": "3b8fc39f20dccd7a",
-  "last": "2026-10-26"
+  "h": "976eea8cbcda6a1f",
+  "last": "2026-11-12"
  },
  "web-care": {
   "first": "2026-07-28",
@@ -3836,6 +3927,11 @@
   "h": "0a2dd4fe4de31eb0",
   "last": "2026-09-28"
  },
+ "what-windows-backup-backs-up": {
+  "first": "2026-10-28",
+  "h": "152adfaeebdf8caa",
+  "last": "2026-11-12"
+ },
  "what-would-you-lose": {
   "first": "2026-07-28",
   "h": "37d1f132fbcfe260",
@@ -3858,8 +3954,8 @@
  },
  "who-has-a-file-open-on-shared-drive": {
   "first": "2026-07-28",
-  "h": "dbfc68fee9038483",
-  "last": "2026-09-26"
+  "h": "1cffefb77ce39eed",
+  "last": "2026-11-12"
  },
  "why-choose-365-techies": {
   "first": "2026-07-28",
@@ -3873,13 +3969,13 @@
  },
  "why-does-my-pc-keep-crashing": {
   "first": "2026-10-11",
-  "h": "edfbfb3848eda0b0",
-  "last": "2026-10-22"
+  "h": "a4bf0875067cd539",
+  "last": "2026-11-12"
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
-  "h": "784ec349874d1377",
-  "last": "2026-10-06"
+  "h": "46a43f896eeb003a",
+  "last": "2026-11-12"
  },
  "why-is-my-computer-slow": {
   "first": "2026-06-16",
@@ -3888,8 +3984,8 @@
  },
  "why-monthly-it-support-beats-per-repair": {
   "first": "2026-06-16",
-  "h": "86b765e6e84da1a3",
-  "last": "2026-09-26"
+  "h": "87a58d8cdd672b15",
+  "last": "2026-11-12"
  },
  "why-windows-updates-break-things": {
   "first": "2026-06-16",
@@ -3898,7 +3994,8 @@
  },
  "wifi-analyzer-for-windows": {
   "first": "2026-10-18",
-  "h": "07ee337404cedfb9"
+  "h": "88ebe0618150799d",
+  "last": "2026-11-12"
  },
  "wifi-controller-end-of-life": {
   "first": "2026-07-28",
@@ -3907,13 +4004,13 @@
  },
  "wifi-drops-moving-between-access-points": {
   "first": "2026-07-31",
-  "h": "b6a0f4cfd369e34d",
-  "last": "2026-10-06"
+  "h": "ce06f6c7dd49a34f",
+  "last": "2026-11-12"
  },
  "wifi-for-a-shepherds-hut": {
   "first": "2026-07-28",
-  "h": "220bc2a6f2977197",
-  "last": "2026-10-06"
+  "h": "6fe9507a4412dced",
+  "last": "2026-11-12"
  },
  "wifi-heatmap-online": {
   "first": "2026-07-28",
@@ -3932,8 +4029,8 @@
  },
  "wifi-keeps-dropping": {
   "first": "2026-07-31",
-  "h": "d654d5f412e17635",
-  "last": "2026-10-13"
+  "h": "13ecb474ce2632eb",
+  "last": "2026-11-12"
  },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
@@ -3952,8 +4049,8 @@
  },
  "wifi-troubleshooting": {
   "first": "2026-07-28",
-  "h": "803578f09ba00093",
-  "last": "2026-10-06"
+  "h": "56bb4993850560b8",
+  "last": "2026-11-12"
  },
  "wifi-uk-buildings-heat": {
   "first": "2026-07-28",
@@ -3982,8 +4079,8 @@
  },
  "windows-10-esu-free-enrolment-help": {
   "first": "2026-07-28",
-  "h": "2f03d803991b14b3",
-  "last": "2026-10-06"
+  "h": "fc765036f416a035",
+  "last": "2026-11-12"
  },
  "windows-10-esu-or-upgrade-your-dell": {
   "first": "2026-07-28",
@@ -3992,13 +4089,13 @@
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
-  "h": "c6cfddc827242069",
-  "last": "2026-10-19"
+  "h": "28cc75509136086d",
+  "last": "2026-11-12"
  },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
-  "h": "66345b7fab678d32",
-  "last": "2026-10-06"
+  "h": "adaaca93be3f1272",
+  "last": "2026-11-12"
  },
  "windows-11-course-for-beginners": {
   "first": "2026-09-05",
@@ -4007,8 +4104,8 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "e0f8df00135f92c5",
-  "last": "2026-10-19"
+  "h": "298319398728b202",
+  "last": "2026-11-12"
  },
  "windows-11-support": {
   "first": "2026-07-28",
@@ -4027,8 +4124,8 @@
  },
  "windows-live-mail-not-working": {
   "first": "2026-10-12",
-  "h": "bcb2bc66068fed96",
-  "last": "2026-10-22"
+  "h": "236451218f9bd58c",
+  "last": "2026-11-12"
  },
  "windows-reinstall": {
   "first": "2026-07-28",
@@ -4037,8 +4134,8 @@
  },
  "windows-update-stuck": {
   "first": "2026-10-12",
-  "h": "74775378b8dc7a74",
-  "last": "2026-10-26"
+  "h": "df4d1ee53b2dfdb1",
+  "last": "2026-11-12"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",
@@ -4082,72 +4179,7 @@
  },
  "youve-been-hacked-email-bitcoin-scam": {
   "first": "2026-09-05",
-  "h": "5bd75e4c5d968752",
-  "last": "2026-10-11"
- },
- "system-restore-vs-reset-this-pc": {
-  "first": "2026-10-28",
-  "h": "2a16231b7ce2f6fb",
-  "last": "2026-10-28"
- },
- "blue-screen-stop-codes": {
-  "first": "2026-10-28",
-  "h": "7c988827b7c4748d"
- },
- "antimalware-service-executable-high-cpu": {
-  "first": "2026-10-28",
-  "h": "b7a45d50d3f52e93",
-  "last": "2026-10-28"
- },
- "smart-app-control-blocked-an-app": {
-  "first": "2026-10-28",
-  "h": "5b8863ab19800953",
-  "last": "2026-10-28"
- },
- "what-windows-backup-backs-up": {
-  "first": "2026-10-28",
-  "h": "346798886291319b",
-  "last": "2026-11-03"
- },
- "do-i-need-ccleaner": {
-  "first": "2026-10-29",
-  "h": "ee89dabf04a37e9d"
- },
- "hp-support-assistant-keeps-popping-up": {
-  "first": "2026-10-29",
-  "h": "bc732e8ee0b82687"
- },
- "lenovo-vantage-keeps-popping-up": {
-  "first": "2026-10-29",
-  "h": "b50cb7691e3586d0"
- },
- "this-pc-cant-run-windows-11": {
-  "first": "2026-10-30",
-  "h": "d5bd883c29e736d0",
-  "last": "2026-10-30"
- },
- "no-sound-on-computer": {
-  "first": "2026-10-30",
-  "h": "cceadf3a134b21d3"
- },
- "camera-or-microphone-not-working": {
-  "first": "2026-10-30",
-  "h": "158c177786134de2"
- },
- "memory-integrity-is-off": {
-  "first": "2026-10-30",
-  "h": "cd96a7c164eed39f"
- },
- "update-all-your-programs": {
-  "first": "2026-10-30",
-  "h": "c199640bda563630"
- },
- "usb-device-not-recognised": {
-  "first": "2026-10-30",
-  "h": "bd7c52b23dfaea34"
- },
- "find-and-remove-duplicate-photos": {
-  "first": "2026-10-30",
-  "h": "f21477cbeeb9eae7"
+  "h": "237dd46ff28cd866",
+  "last": "2026-11-12"
  }
 }

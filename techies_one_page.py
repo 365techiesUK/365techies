@@ -848,7 +848,7 @@ WHO = """    <section class="section section--alt t1p" aria-labelledby="t1-who">
 
 FAQS = [
     ("Is Techies One really free?",
-     "Yes. The program costs nothing, Mail, Albums, Letters, Sums and Files included: no charge, no trial, no adverts and no account to make with us, and you can add as many email addresses as you like. Two optional things can cost money. The AI writing helper is charged by Anthropic for each use, if you switch it on with your own key. And if you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs from &pound;20), and we agree the price with you before we start."),
+     "Yes. The program costs nothing, Mail, Albums, Letters, Sums and Files included: no charge, no trial, no adverts and no account to make with us, and you can add as many email addresses as you like. Two optional things can cost money. The AI writing helper is charged by Anthropic for each use, if you switch it on with your own key. And if you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs, usually &pound;60), and we agree the price with you before we start."),
     ("Is Techies One the same as Techies One Mail?",
      "Yes. Techies One Mail grew Letters, Sums, Files and Albums, so the whole program is now called Techies One, and Mail is one part of it. An update keeps your email, your saved passwords and your settings."),
     ("Do I need Word or Excel?",
@@ -910,7 +910,7 @@ def build():
         hero(), PROOF, download(), overview(), mail(), albums(), suite(), help_section(), HISTORY, providers(), compare(),
         MICROSOFT365, SAFETY, LIMITS,
         growing(), WHO, bp.faq_html(FAQS),
-        bp.cta("Rather we set it up for you?", "We can install Techies One, add your email addresses and show you round, over the phone or on a visit. It&rsquo;s a paid job, from &pound;20 remotely, and we agree the price before we start.",
+        bp.cta("Rather we set it up for you?", "We can install Techies One, add your email addresses and show you round, over the phone or on a visit. It&rsquo;s a paid job, usually &pound;60 remotely, and we agree the price before we start.",
                primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Send us a message", "/contact/")),
         TRADEMARK, CLIP_DIALOG,
     ])

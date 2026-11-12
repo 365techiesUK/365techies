@@ -3,7 +3,7 @@ OFFICE_PAGES = [
  {
   "slug": "onedrive-problems",
   "title": "OneDrive Problems &amp; Fixes &mdash; Files Moved, Missing, Full or Stuck | 365 Techies",
-  "metaDesc": "OneDrive moved your files, hid them or stopped syncing? Start here. Plain-English triage from a family-run Dorset firm supporting Microsoft software since 1995. Remote fixes from &pound;20.",
+  "metaDesc": "OneDrive moved your files, hid them or stopped syncing? Start here. Plain-English triage from a family-run Dorset firm supporting Microsoft software since 1995. Remote fixes, usually &pound;60.",
   "ogTitle": "OneDrive Problems: Files Moved, Missing, Full or Stuck &mdash; Start Here",
   "eyebrow": "OneDrive Help &mdash; Plain English, No Panic",
   "h1": "OneDrive problems, sorted &mdash; files moved, missing, full or stuck",
@@ -11,10 +11,10 @@ OFFICE_PAGES = [
   "chips": [
    "Files moved or missing",
    "Won&rsquo;t sync or account full",
-   "Remote fixes from &pound;20"
+   "Remote fixes, usually &pound;60"
   ],
   "ctaHead": "OneDrive done something odd? Let&rsquo;s untangle it together.",
-  "ctaSub": "Remote help from &pound;20 &mdash; we always call before we connect, and you watch everything we do. Family-run in Bournemouth, 4.9 on Google, Monday to Friday 9am&ndash;5pm. Call 01202 775566 or text 07520 615332.",
+  "ctaSub": "Remote help, usually &pound;60 &mdash; we always call before we connect, and you watch everything we do. Family-run in Bournemouth, 4.9 on Google, Monday to Friday 9am&ndash;5pm. Call 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "Start here",
@@ -29,7 +29,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Quick checklist",
     "h2": "OneDrive won&rsquo;t sync? Run these six checks first",
-    "html": "<p>&ldquo;Not syncing&rdquo; has a handful of boring causes that account for most of the cases we see. Work down this list in order &mdash; none of these steps deletes anything.</p><ol><li><strong>Right account?</strong> Click the cloud icon in the taskbar tray, open Settings and check which email address is signed in. Then sign in at <strong>onedrive.com</strong> with the same address. Lots of people have both a personal and a work account &mdash; files &ldquo;missing&rdquo; are often just sitting in the other one.</li><li><strong>Is sync paused?</strong> The tray icon shows a pause symbol when it is. Click it and choose <strong>Resume syncing</strong>. Windows sometimes pauses OneDrive on battery-saver or metered connections without telling you.</li><li><strong>Is your storage full?</strong> A full account stops syncing altogether &mdash; and on a free 5GB Microsoft account it can bounce your email too. Check the storage bar in OneDrive&rsquo;s settings; if it&rsquo;s at the top, see <a href=\"/onedrive-full-cant-send-email/\">OneDrive full &mdash; can&rsquo;t send email</a>.</li><li><strong>Awkward file names or very deep folders?</strong> Files with characters like <code>&quot; * : &lt; &gt; ? / \\ |</code> in the name, or buried in extremely long folder paths, can refuse to sync while everything else carries on. Rename or shallow them and the queue usually clears.</li><li><strong>Restart OneDrive.</strong> Tray icon &gt; Settings gear &gt; <strong>Quit OneDrive</strong>, then relaunch it from the Start menu. Unglamorous, genuinely effective.</li><li><strong>Unlink and relink.</strong> OneDrive Settings &gt; Account &gt; <strong>Unlink this PC</strong>, then sign back in. This resets the sync relationship without deleting your local files or your cloud copies.</li></ol><p>Still stuck after all six? Microsoft&rsquo;s own <a href=\"https://support.microsoft.com/en-gb/onedrive\" rel=\"noopener\">OneDrive support pages</a> cover the deeper diagnostics &mdash; or skip the rabbit hole and <a href=\"/contact/\">have us look remotely from &pound;20</a>.</p>"
+    "html": "<p>&ldquo;Not syncing&rdquo; has a handful of boring causes that account for most of the cases we see. Work down this list in order &mdash; none of these steps deletes anything.</p><ol><li><strong>Right account?</strong> Click the cloud icon in the taskbar tray, open Settings and check which email address is signed in. Then sign in at <strong>onedrive.com</strong> with the same address. Lots of people have both a personal and a work account &mdash; files &ldquo;missing&rdquo; are often just sitting in the other one.</li><li><strong>Is sync paused?</strong> The tray icon shows a pause symbol when it is. Click it and choose <strong>Resume syncing</strong>. Windows sometimes pauses OneDrive on battery-saver or metered connections without telling you.</li><li><strong>Is your storage full?</strong> A full account stops syncing altogether &mdash; and on a free 5GB Microsoft account it can bounce your email too. Check the storage bar in OneDrive&rsquo;s settings; if it&rsquo;s at the top, see <a href=\"/onedrive-full-cant-send-email/\">OneDrive full &mdash; can&rsquo;t send email</a>.</li><li><strong>Awkward file names or very deep folders?</strong> Files with characters like <code>&quot; * : &lt; &gt; ? / \\ |</code> in the name, or buried in extremely long folder paths, can refuse to sync while everything else carries on. Rename or shallow them and the queue usually clears.</li><li><strong>Restart OneDrive.</strong> Tray icon &gt; Settings gear &gt; <strong>Quit OneDrive</strong>, then relaunch it from the Start menu. Unglamorous, genuinely effective.</li><li><strong>Unlink and relink.</strong> OneDrive Settings &gt; Account &gt; <strong>Unlink this PC</strong>, then sign back in. This resets the sync relationship without deleting your local files or your cloud copies.</li></ol><p>Still stuck after all six? Microsoft&rsquo;s own <a href=\"https://support.microsoft.com/en-gb/onedrive\" rel=\"noopener\">OneDrive support pages</a> cover the deeper diagnostics &mdash; or skip the rabbit hole and <a href=\"/contact/\">have us look remotely, usually &pound;60</a>.</p>"
    },
    {
     "eyebrow": "Outage check",
@@ -44,7 +44,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Fix it for me",
     "h2": "Rather have someone sort it while you watch?",
-    "html": "<p>Every page in this section gives you the real fix steps for free &mdash; that&rsquo;s the deal. But some of these jobs are one-shot: pick the wrong option in the Folder Backup dialog and your Desktop looks empty; leave OneDrive in the wrong order and cloud-only files get stranded. If you&rsquo;d rather not gamble, we&rsquo;ll do it with you.</p><p>We&rsquo;ve supported Microsoft software since 1995 &mdash; and taught it for over ten years at our own Dorset Microsoft Education Resource Centre &mdash; so explaining this stuff without jargon is literally what we trained for. <a href=\"/remote-support/\">Remote support is from &pound;20</a>: we call you first, you approve the connection, and you watch every click on your own screen. For businesses, <a href=\"/microsoft-365-support/\">managed Microsoft 365</a>, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, means storage quotas, accounts and sync settings are watched for you before they become a Tuesday-morning crisis.</p><p>Want it handled all year round? Our <a href=\"/monthly-it-support/\">home plan is &pound;18.25 per computer per month</a> and <a href=\"/business-it-support-plans/\">business plans start at &pound;24.38 per computer</a> &mdash; both include a written Service Report after every visit so you can see exactly what was checked and changed. We&rsquo;re remote-first with free local collection when a machine needs hands-on work, and we meet by appointment at Kinson Community Centre &mdash; there&rsquo;s no walk-in shop, so please do call first: 01202 775566, or text 07520 615332.</p>"
+    "html": "<p>Every page in this section gives you the real fix steps for free &mdash; that&rsquo;s the deal. But some of these jobs are one-shot: pick the wrong option in the Folder Backup dialog and your Desktop looks empty; leave OneDrive in the wrong order and cloud-only files get stranded. If you&rsquo;d rather not gamble, we&rsquo;ll do it with you.</p><p>We&rsquo;ve supported Microsoft software since 1995 &mdash; and taught it for over ten years at our own Dorset Microsoft Education Resource Centre &mdash; so explaining this stuff without jargon is literally what we trained for. <a href=\"/remote-support/\">Remote support is usually &pound;60</a>: we call you first, you approve the connection, and you watch every click on your own screen. For businesses, <a href=\"/microsoft-365-support/\">managed Microsoft 365</a>, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, means storage quotas, accounts and sync settings are watched for you before they become a Tuesday-morning crisis.</p><p>Want it handled all year round? Our <a href=\"/monthly-it-support/\">home plan is &pound;18.25 per computer per month</a> and <a href=\"/business-it-support-plans/\">business plans start at &pound;24.38 per computer</a> &mdash; both include a written Service Report after every visit so you can see exactly what was checked and changed. We&rsquo;re remote-first with free local collection when a machine needs hands-on work, and we meet by appointment at Kinson Community Centre &mdash; there&rsquo;s no walk-in shop, so please do call first: 01202 775566, or text 07520 615332.</p>"
    }
   ],
   "faqs": [
@@ -82,7 +82,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you just fix my OneDrive problem for me?",
-    "a": "Yes. Remote support is from &pound;20 &mdash; we call before we connect, and you watch everything on your own screen. If the machine needs hands-on work we collect it free locally. We&rsquo;re family-run, have supported Microsoft software since 1995, and we&rsquo;re on 01202 775566 (or text 07520 615332), Monday to Friday 9am&ndash;5pm."
+    "a": "Yes. Remote support is usually &pound;60 &mdash; we call before we connect, and you watch everything on your own screen. If the machine needs hands-on work we collect it free locally. We&rsquo;re family-run, have supported Microsoft software since 1995, and we&rsquo;re on 01202 775566 (or text 07520 615332), Monday to Friday 9am&ndash;5pm."
    },
    {
     "q": "We&rsquo;re a business &mdash; can you stop OneDrive problems happening at all?",
@@ -132,10 +132,10 @@ OFFICE_PAGES = [
   "chips": [
    "Your files are NOT lost",
    "Safe step-by-step reversal",
-   "Remote fix from &pound;20"
+   "Remote fix, usually &pound;60"
   ],
   "ctaHead": "Nervous about clicking the wrong option? Let us do it while you watch.",
-  "ctaSub": "This is a one-shot job &mdash; the wrong choice in one dialog box leaves your Desktop looking empty. We&rsquo;ll undo Folder Backup and move your files back remotely from &pound;20, on the phone with you the whole time. Family-run in Bournemouth, 4.9 on Google, Mon&ndash;Fri 9&ndash;5.",
+  "ctaSub": "This is a one-shot job &mdash; the wrong choice in one dialog box leaves your Desktop looking empty. We&rsquo;ll undo Folder Backup and move your files back remotely, usually &pound;60, on the phone with you the whole time. Family-run in Bournemouth, 4.9 on Google, Mon&ndash;Fri 9&ndash;5.",
   "sections": [
    {
     "eyebrow": "Don&rsquo;t panic",
@@ -165,7 +165,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "When to call us",
     "h2": "This is a one-shot job &mdash; we&rsquo;ll happily do it while you watch",
-    "html": '<p>Everything above is the genuine fix &mdash; no software to buy, no tricks. But we&rsquo;ll be straight with you: the Manage backup dialog is a one-shot decision, and if several computers, a full OneDrive, or years of family photos are involved, it&rsquo;s completely reasonable not to want to be the one clicking.</p><p>We&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre &mdash; and undoing this exact change is a job we do often. Here&rsquo;s how it works:</p><ul><li><strong><a href="/remote-support/">Remote support from &pound;20</a></strong> &mdash; we call you first, connect securely to your PC (any make, not just Dell), and put everything back while you watch on screen. Most Folder Backup reversals are done in one short session.</li><li><strong>Free local collection</strong> if the machine needs more hands-on work &mdash; we&rsquo;re remote-first with no walk-in shop, but we&rsquo;ll collect from homes across Bournemouth, Christchurch and Poole.</li><li><strong>Business PCs?</strong> On our <a href="/microsoft-365-support/">managed Microsoft 365</a> service (<a href="/which-microsoft-365-plan/">priced per plan</a>) we set OneDrive up properly across every machine &mdash; deliberately, with the right storage &mdash; so this never ambushes your staff again. Ongoing cover with a written Service Report after every visit is on our <a href="/monthly-it-support/">monthly support plans</a> from &pound;18.25 per computer at home, or <a href="/business-it-support-plans/">business plans</a> from &pound;24.38.</li></ul><p>Call <strong>01202 775566</strong> (Mon&ndash;Fri 9&ndash;5), or text <strong>07520 615332</strong> and we&rsquo;ll ring you back. Family-run since 1995, 4.9 on Google.</p>'
+    "html": '<p>Everything above is the genuine fix &mdash; no software to buy, no tricks. But we&rsquo;ll be straight with you: the Manage backup dialog is a one-shot decision, and if several computers, a full OneDrive, or years of family photos are involved, it&rsquo;s completely reasonable not to want to be the one clicking.</p><p>We&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre &mdash; and undoing this exact change is a job we do often. Here&rsquo;s how it works:</p><ul><li><strong><a href="/remote-support/">Remote support, usually &pound;60</a></strong> &mdash; we call you first, connect securely to your PC (any make, not just Dell), and put everything back while you watch on screen. Most Folder Backup reversals are done in one short session.</li><li><strong>Free local collection</strong> if the machine needs more hands-on work &mdash; we&rsquo;re remote-first with no walk-in shop, but we&rsquo;ll collect from homes across Bournemouth, Christchurch and Poole.</li><li><strong>Business PCs?</strong> On our <a href="/microsoft-365-support/">managed Microsoft 365</a> service (<a href="/which-microsoft-365-plan/">priced per plan</a>) we set OneDrive up properly across every machine &mdash; deliberately, with the right storage &mdash; so this never ambushes your staff again. Ongoing cover with a written Service Report after every visit is on our <a href="/monthly-it-support/">monthly support plans</a> from &pound;18.25 per computer at home, or <a href="/business-it-support-plans/">business plans</a> from &pound;24.38.</li></ul><p>Call <strong>01202 775566</strong> (Mon&ndash;Fri 9&ndash;5), or text <strong>07520 615332</strong> and we&rsquo;ll ring you back. Family-run since 1995, 4.9 on Google.</p>'
    }
   ],
   "faqs": [
@@ -203,7 +203,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you just do all this for me?",
-    "a": 'Happily &mdash; it&rsquo;s routine work for us. We connect remotely from &pound;20, always calling you first, and put everything back while you watch on screen. Most reversals take one short session. Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332. We&rsquo;re remote-first with free local collection if hands-on work is needed &mdash; no walk-in shop.'
+    "a": 'Happily &mdash; it&rsquo;s routine work for us. We connect remotely, usually &pound;60, always calling you first, and put everything back while you watch on screen. Most reversals take one short session. Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332. We&rsquo;re remote-first with free local collection if hands-on work is needed &mdash; no walk-in shop.'
    },
    {
     "q": "Does this affect work computers too?",
@@ -231,7 +231,7 @@ OFFICE_PAGES = [
     "text": "Files already moved stay in the OneDrive folder after backup is turned off. In File Explorer, cut everything from OneDrive &rarr; Desktop and paste it into This PC &rarr; Desktop, then repeat for Documents and Pictures."
    }
   ],
-  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes &mdash; start here for any symptom</a></li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive &mdash; the 10-minute checklist</a></li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a></li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and email bouncing?</a></li><li><a href=\"/stop-word-saving-to-onedrive/\">Stop Word saving new documents to OneDrive</a></li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you actually need a Microsoft 365 backup?</a></li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support for Dorset businesses</a></li><li><a href=\"/remote-support/\">Remote support from &pound;20</a></li><li><a href=\"/two-onedrive-accounts-personal-and-work/\">Two OneDrive accounts on one PC</a></li></ul>",
+  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes &mdash; start here for any symptom</a></li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive &mdash; the 10-minute checklist</a></li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a></li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and email bouncing?</a></li><li><a href=\"/stop-word-saving-to-onedrive/\">Stop Word saving new documents to OneDrive</a></li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you actually need a Microsoft 365 backup?</a></li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support for Dorset businesses</a></li><li><a href=\"/remote-support/\">Remote support, usually &pound;60</a></li><li><a href=\"/two-onedrive-accounts-personal-and-work/\">Two OneDrive accounts on one PC</a></li></ul>",
   "crumbName": "OneDrive Moved My Files",
   "primaryCta": [
    "Get It Fixed Remotely",
@@ -252,11 +252,11 @@ OFFICE_PAGES = [
   "lede": "Your files are almost certainly NOT lost. In most of the &ldquo;my OneDrive files have disappeared&rdquo; calls we take, the files are hiding &mdash; wrong account, cloud-only placeholders, or a folder that quietly moved &mdash; not deleted. This is the 10-minute checklist we walk Dorset customers through, ordered by what it actually turns out to be, written by a family firm that&rsquo;s supported Microsoft software since 1995.",
   "chips": [
    "Most &lsquo;missing&rsquo; files are just hiding",
-   "Remote diagnosis from &pound;20",
+   "Remote diagnosis, usually &pound;60",
    "Family-run since 1995 &middot; 4.9 on Google"
   ],
   "ctaHead": "Can&rsquo;t find them? Let us look before you pay for recovery software",
-  "ctaSub": "A remote session from &pound;20 usually finds &ldquo;missing&rdquo; OneDrive files in minutes &mdash; and if they really are gone, we&rsquo;ll tell you straight rather than sell you false hope. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
+  "ctaSub": "A remote session, usually &pound;60, tends to find &ldquo;missing&rdquo; OneDrive files in minutes &mdash; and if they really are gone, we&rsquo;ll tell you straight rather than sell you false hope. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "Start here",
@@ -290,8 +290,8 @@ OFFICE_PAGES = [
    },
    {
     "eyebrow": "When to call us",
-    "h2": "If the checklist hasn&rsquo;t found them, let us look &mdash; from &pound;20",
-    "html": "<p>Ten minutes of an experienced pair of eyes usually beats an evening of forum threads &mdash; and definitely beats paying for recovery software you may not need. We&rsquo;ll connect to your PC remotely (with you watching the whole time), run through the account, sync and recycle-bin checks properly, and tell you honestly where things stand. <a href=\"/remote-support/\">Remote support starts from &pound;20</a>, Monday to Friday 9&ndash;5 &mdash; call <strong>01202 775566</strong> or text <strong>07520 615332</strong>. We can&rsquo;t promise recovery &mdash; nobody honestly can &mdash; but we can promise you a straight answer before you spend anything more.</p><p>If it turns out the files only ever lived on a failing local disk, remote won&rsquo;t cut it &mdash; we offer <strong>free local collection</strong> across the Bournemouth, Poole and wider Dorset area, diagnose first, and quote before any work. We&rsquo;re remote-first with no walk-in shop; if you&rsquo;d rather talk face to face, we meet by appointment at Kinson Community Centre.</p><p><strong>For businesses:</strong> missing files across a team is usually a retention-policy and admin-restore job, not a panic. On our <a href=\"/microsoft-365-support/\">managed Microsoft 365 service</a> (<a href=\"/which-microsoft-365-plan/\">priced per plan</a>) we set sensible retention, know the admin-side restore routes, and help you <a href=\"/how-to-secure-your-microsoft-365-account/\">lock the account down</a> so it doesn&rsquo;t happen again. And if this scare has made you think about ongoing cover, our <a href=\"/monthly-it-support/\">home plan is &pound;18.25 a month per computer</a> and <a href=\"/business-it-support-plans/\">business plans start from &pound;24.38</a> &mdash; every session ends with a written Service Report so you can see exactly what we checked and changed.</p>"
+    "h2": "If the checklist hasn&rsquo;t found them, let us look &mdash; usually &pound;60",
+    "html": "<p>Ten minutes of an experienced pair of eyes usually beats an evening of forum threads &mdash; and definitely beats paying for recovery software you may not need. We&rsquo;ll connect to your PC remotely (with you watching the whole time), run through the account, sync and recycle-bin checks properly, and tell you honestly where things stand. <a href=\"/remote-support/\">Remote support is usually &pound;60</a>, Monday to Friday 9&ndash;5 &mdash; call <strong>01202 775566</strong> or text <strong>07520 615332</strong>. We can&rsquo;t promise recovery &mdash; nobody honestly can &mdash; but we can promise you a straight answer before you spend anything more.</p><p>If it turns out the files only ever lived on a failing local disk, remote won&rsquo;t cut it &mdash; we offer <strong>free local collection</strong> across the Bournemouth, Poole and wider Dorset area, diagnose first, and quote before any work. We&rsquo;re remote-first with no walk-in shop; if you&rsquo;d rather talk face to face, we meet by appointment at Kinson Community Centre.</p><p><strong>For businesses:</strong> missing files across a team is usually a retention-policy and admin-restore job, not a panic. On our <a href=\"/microsoft-365-support/\">managed Microsoft 365 service</a> (<a href=\"/which-microsoft-365-plan/\">priced per plan</a>) we set sensible retention, know the admin-side restore routes, and help you <a href=\"/how-to-secure-your-microsoft-365-account/\">lock the account down</a> so it doesn&rsquo;t happen again. And if this scare has made you think about ongoing cover, our <a href=\"/monthly-it-support/\">home plan is &pound;18.25 a month per computer</a> and <a href=\"/business-it-support-plans/\">business plans start from &pound;24.38</a> &mdash; every session ends with a written Service Report so you can see exactly what we checked and changed.</p>"
    }
   ],
   "faqs": [
@@ -317,7 +317,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Will data-recovery software get my OneDrive files back?",
-    "a": 'Only possibly &mdash; and only if a full copy of the file was ever downloaded to that computer. Cloud-only files (the ones with the cloud outline icon) never stored their contents on your disk, so no scanning tool can recover them, whatever its marketing says. Before you pay for recovery software, a remote check with us will tell you whether the file ever existed locally at all &mdash; checking is free, and any fix is from &pound;20, agreed first.'
+    "a": 'Only possibly &mdash; and only if a full copy of the file was ever downloaded to that computer. Cloud-only files (the ones with the cloud outline icon) never stored their contents on your disk, so no scanning tool can recover them, whatever its marketing says. Before you pay for recovery software, a remote check with us will tell you whether the file ever existed locally at all &mdash; checking is free, and any fix is usually &pound;60, agreed first.'
    },
    {
     "q": "I can&rsquo;t find my Personal Vault files anywhere &mdash; are they gone?",
@@ -333,7 +333,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "What does it cost to have you look at it?",
-    "a": "Remote support starts from &pound;20 &mdash; we connect while you watch, run the checks properly, and give you a straight answer. If the problem turns out to be a failing local disk, collection is free across the Bournemouth and Poole area and we always diagnose and quote before any paid work. Mon&ndash;Fri 9&ndash;5, on 01202 775566, or text 07520 615332."
+    "a": "Remote support is usually &pound;60 &mdash; we connect while you watch, run the checks properly, and give you a straight answer. If the problem turns out to be a failing local disk, collection is free across the Bournemouth and Poole area and we always diagnose and quote before any paid work. Mon&ndash;Fri 9&ndash;5, on 01202 775566, or text 07520 615332."
    }
   ],
   "schemaKind": "service",
@@ -354,7 +354,7 @@ OFFICE_PAGES = [
    },
    {
     "name": "Use the full rewind or get honest help",
-    "text": "Microsoft 365 subscribers can use Settings &gt; Restore your OneDrive to rewind the whole drive up to 30 days. If nothing has worked, a remote session from &pound;20 gets an experienced check before you pay for recovery software &mdash; call 01202 775566."
+    "text": "Microsoft 365 subscribers can use Settings &gt; Restore your OneDrive to rewind the whole drive up to 30 days. If nothing has worked, a remote session, usually &pound;60, gets an experienced check before you pay for recovery software &mdash; call 01202 775566."
    }
   ],
   "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &mdash; the full triage hub</a></li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a></li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive is full (and now email won&rsquo;t send)</a></li><li><a href=\"/stop-using-onedrive-without-losing-files/\">Stop using OneDrive without losing files</a></li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you need Microsoft 365 backup?</a></li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support &amp; management</a></li><li><a href=\"/is-it-down/\">Is it down? Free outage checker</a></li></ul>",
@@ -371,14 +371,14 @@ OFFICE_PAGES = [
  {
   "slug": "onedrive-full-cant-send-email",
   "title": "OneDrive Full &amp; Can&rsquo;t Send Email? The Fix, Step by Step | 365 Techies",
-  "metaDesc": "OneDrive full, email bouncing, account frozen? Your files are not deleted. Plain-English fix from Dorset&rsquo;s family-run Microsoft specialists &mdash; remote help from &pound;20.",
+  "metaDesc": "OneDrive full, email bouncing, account frozen? Your files are not deleted. Plain-English fix from Dorset&rsquo;s family-run Microsoft specialists &mdash; remote help, usually &pound;60.",
   "ogTitle": "OneDrive Is Full &mdash; and Now Your Email Is Bouncing. Here&rsquo;s the Fix",
   "eyebrow": "OneDrive &amp; Microsoft storage",
   "h1": "OneDrive is full &mdash; and now your email is bouncing",
-  "lede": "Take a breath: your files are NOT deleted, and your email account is not gone. A full OneDrive and broken Outlook.com email are the same problem wearing two hats &mdash; Microsoft just never explains the connection on one page. Below is the plain-English version: why it happens, the real deadlines, and the fastest way back under the limit. If you&rsquo;d rather not touch it, we&rsquo;ll sort it remotely from &pound;20 while you watch.",
+  "lede": "Take a breath: your files are NOT deleted, and your email account is not gone. A full OneDrive and broken Outlook.com email are the same problem wearing two hats &mdash; Microsoft just never explains the connection on one page. Below is the plain-English version: why it happens, the real deadlines, and the fastest way back under the limit. If you&rsquo;d rather not touch it, we&rsquo;ll sort it remotely, usually &pound;60 while you watch.",
   "chips": [
    "Your files are NOT deleted",
-   "Remote fix from &pound;20",
+   "Remote fix, usually &pound;60",
    "Family-run since 1995"
   ],
   "ctaHead": "Never want to see this error again?",
@@ -407,7 +407,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Unfreezing",
     "h2": "Account already frozen? How to unfreeze it",
-    "html": '<p>If you&rsquo;ve had the freeze notice, go to onedrive.com in a browser and sign in &mdash; you&rsquo;ll be walked through your two options: get back under the limit by deleting files, or buy more storage. Either path unfreezes the account.</p><p>Before you delete anything, remember that read-only still means <strong>you can download everything</strong>. If there are irreplaceable files in there &mdash; family photos, business records &mdash; take a copy onto your own PC or an external drive first, belt and braces. (Frozen accounts are also a sharp reminder that OneDrive sync is not the same thing as a real backup &mdash; here&rsquo;s <a href="/microsoft-365-backup-do-you-need-it/">why that distinction matters</a>.)</p><p>Once you&rsquo;re under quota or you&rsquo;ve added storage, allow up to a couple of hours for the account to thaw and email to start flowing again. If your freeze email mentioned a deadline date, please don&rsquo;t leave this to the last day &mdash; the six-month deletion clock is the one part of this with no undo button.</p><p>Stuck at any step &mdash; wrong account, can&rsquo;t sign in, meter won&rsquo;t budge? That&rsquo;s a ten-minute job for us by <a href="/remote-support/">secure remote session from &pound;20</a>. We call before we connect, and you watch everything we do.</p>'
+    "html": '<p>If you&rsquo;ve had the freeze notice, go to onedrive.com in a browser and sign in &mdash; you&rsquo;ll be walked through your two options: get back under the limit by deleting files, or buy more storage. Either path unfreezes the account.</p><p>Before you delete anything, remember that read-only still means <strong>you can download everything</strong>. If there are irreplaceable files in there &mdash; family photos, business records &mdash; take a copy onto your own PC or an external drive first, belt and braces. (Frozen accounts are also a sharp reminder that OneDrive sync is not the same thing as a real backup &mdash; here&rsquo;s <a href="/microsoft-365-backup-do-you-need-it/">why that distinction matters</a>.)</p><p>Once you&rsquo;re under quota or you&rsquo;ve added storage, allow up to a couple of hours for the account to thaw and email to start flowing again. If your freeze email mentioned a deadline date, please don&rsquo;t leave this to the last day &mdash; the six-month deletion clock is the one part of this with no undo button.</p><p>Stuck at any step &mdash; wrong account, can&rsquo;t sign in, meter won&rsquo;t budge? That&rsquo;s a ten-minute job for us by <a href="/remote-support/">secure remote session, usually &pound;60</a>. We call before we connect, and you watch everything we do.</p>'
    },
    {
     "eyebrow": "The decision",
@@ -446,7 +446,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you just fix this for me?",
-    "a": "Yes. We fix full and frozen OneDrive accounts by secure remote session from &pound;20 &mdash; we call before we connect, you watch everything, Mon&ndash;Fri 9&ndash;5. Businesses that never want this again can move to our managed Microsoft 365, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, where storage and licences are watched for you."
+    "a": "Yes. We fix full and frozen OneDrive accounts by secure remote session, usually &pound;60 &mdash; we call before we connect, you watch everything, Mon&ndash;Fri 9&ndash;5. Businesses that never want this again can move to our managed Microsoft 365, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, where storage and licences are watched for you."
    },
    {
     "q": "Should I just stop using OneDrive instead?",
@@ -488,18 +488,18 @@ OFFICE_PAGES = [
  {
   "slug": "stop-using-onedrive-without-losing-files",
   "title": "How to Stop Using OneDrive Without Losing Files &mdash; the Safe Order | 365 Techies",
-  "metaDesc": "Leaving OneDrive is safe if you do four steps in the right order: real local copies first, Folder Backup off, unlink, then uninstall. Plain-English guide from a family-run Bournemouth firm &mdash; nothing gets deleted, and we&rsquo;ll do it remotely from &pound;20 if you&rsquo;d rather watch.",
+  "metaDesc": "Leaving OneDrive is safe if you do four steps in the right order: real local copies first, Folder Backup off, unlink, then uninstall. Plain-English guide from a family-run Bournemouth firm &mdash; nothing gets deleted, and we&rsquo;ll do it remotely, usually &pound;60, if you&rsquo;d rather watch.",
   "ogTitle": "Leaving OneDrive safely: the four steps in the right order",
   "eyebrow": "OneDrive problems",
   "h1": "How to stop using OneDrive &mdash; without losing a single file",
   "lede": "You can leave OneDrive safely. None of the four steps below deletes your files &mdash; not turning off Folder Backup, not unlinking, not even uninstalling the app &mdash; <em>provided you do them in the right order</em>. The order is the part Microsoft never puts on one page, and it&rsquo;s the part people rightly worry about, because one step done too early can leave you staring at empty folders. This guide is for leaving OneDrive entirely. If you just want your Desktop and Documents back where they were after Windows moved them, that&rsquo;s a different (and smaller) job &mdash; see <a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> instead. We&rsquo;ve been setting up &mdash; and un-setting-up &mdash; Microsoft software since 1995, so here&rsquo;s the sequence we actually use on customer machines.",
   "chips": [
    "Nothing here deletes your files &mdash; each step explained",
-   "One-shot remote fix from &pound;20 &mdash; watch us do it",
+   "One-shot remote fix, usually &pound;60 &mdash; watch us do it",
    "Family-run since 1995 &mdash; 4.9 on Google"
   ],
   "ctaHead": "Nervous about doing this yourself? Fair enough &mdash; it&rsquo;s a one-shot job.",
-  "ctaSub": "We&rsquo;ll do the whole sequence in one careful remote session from &pound;20, while you watch every click &mdash; and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset, with free local collection if a machine ever needs hands-on work &mdash; no walk-in shop, and no need for one.",
+  "ctaSub": "We&rsquo;ll do the whole sequence in one careful remote session, usually &pound;60, while you watch every click &mdash; and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset, with free local collection if a machine ever needs hands-on work &mdash; no walk-in shop, and no need for one.",
   "sections": [
    {
     "eyebrow": "Read this first",
@@ -534,7 +534,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "The honest bit",
     "h2": "What you give up by leaving &mdash; and the middle ground",
-    "html": '<p>We&rsquo;re not anti-OneDrive, and it wouldn&rsquo;t be honest to send you off without saying what you&rsquo;re losing. A working OneDrive gives you an off-site copy of your documents if the PC is stolen or the drive dies, version history to rewind a mangled file, and a degree of ransomware rollback. Walk away and those go with it &mdash; so please put something in their place, whether that&rsquo;s an external drive you actually plug in, or a proper backup arrangement. And remember the flip side of the same truth: OneDrive sync was never a real backup anyway &mdash; our guide to <a href="/microsoft-365-backup-do-you-need-it/">whether you need Microsoft 365 backup</a> explains why, and what genuine backup looks like.</p><p>There&rsquo;s also a middle ground most people are never shown: OneDrive configured <em>properly</em> &mdash; syncing what you choose, leaving your Desktop alone, signed into the right account. Many people who ask us to remove OneDrive really just want it to stop doing things uninvited. We taught Microsoft software for over 10 years at our own Dorset Microsoft Education Resource Centre, and &ldquo;set it up the way I actually want&rdquo; is a remote session from &pound;20, not a lifestyle change.</p><p>Either way, here&rsquo;s how we can help: a one-off <a href="/remote-support/">remote session from &pound;20</a> to do the whole sequence &mdash; or the proper configuration &mdash; while you watch every click (we always call before we connect). For business machines, our <a href="/business-it-support-plans/">business support plans from &pound;24.38 per computer</a> and managed Microsoft 365, <a href="/which-microsoft-365-plan/">priced per plan</a>, mean decisions like this get made deliberately across every machine, not by whatever Windows defaulted to. Home users can have the same watchful eye from &pound;18.25 per computer per month on a <a href="/monthly-it-support/">monthly support plan</a> &mdash; including a written Service Report after each visit so you can see exactly what was checked and changed.</p>'
+    "html": '<p>We&rsquo;re not anti-OneDrive, and it wouldn&rsquo;t be honest to send you off without saying what you&rsquo;re losing. A working OneDrive gives you an off-site copy of your documents if the PC is stolen or the drive dies, version history to rewind a mangled file, and a degree of ransomware rollback. Walk away and those go with it &mdash; so please put something in their place, whether that&rsquo;s an external drive you actually plug in, or a proper backup arrangement. And remember the flip side of the same truth: OneDrive sync was never a real backup anyway &mdash; our guide to <a href="/microsoft-365-backup-do-you-need-it/">whether you need Microsoft 365 backup</a> explains why, and what genuine backup looks like.</p><p>There&rsquo;s also a middle ground most people are never shown: OneDrive configured <em>properly</em> &mdash; syncing what you choose, leaving your Desktop alone, signed into the right account. Many people who ask us to remove OneDrive really just want it to stop doing things uninvited. We taught Microsoft software for over 10 years at our own Dorset Microsoft Education Resource Centre, and &ldquo;set it up the way I actually want&rdquo; is a remote session, usually &pound;60, not a lifestyle change.</p><p>Either way, here&rsquo;s how we can help: a one-off <a href="/remote-support/">remote session, usually &pound;60</a>, to do the whole sequence &mdash; or the proper configuration &mdash; while you watch every click (we always call before we connect). For business machines, our <a href="/business-it-support-plans/">business support plans from &pound;24.38 per computer</a> and managed Microsoft 365, <a href="/which-microsoft-365-plan/">priced per plan</a>, mean decisions like this get made deliberately across every machine, not by whatever Windows defaulted to. Home users can have the same watchful eye from &pound;18.25 per computer per month on a <a href="/monthly-it-support/">monthly support plan</a> &mdash; including a written Service Report after each visit so you can see exactly what was checked and changed.</p>'
    }
   ],
   "faqs": [
@@ -568,11 +568,11 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can I stop OneDrive taking over without removing it completely?",
-    "a": 'Yes, and it&rsquo;s often the better answer. OneDrive can be configured to sync only the folders you choose, leave your Desktop and Documents alone, and sign into the right account. Many people who ask us to remove it really just want it tamed. That&rsquo;s a single remote session for us, from &pound;20 &mdash; we&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre.'
+    "a": 'Yes, and it&rsquo;s often the better answer. OneDrive can be configured to sync only the folders you choose, leave your Desktop and Documents alone, and sign into the right account. Many people who ask us to remove it really just want it tamed. That&rsquo;s a single remote session for us, usually &pound;60 &mdash; we&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre.'
    },
    {
     "q": "Can you just do all this for me?",
-    "a": "Gladly &mdash; it&rsquo;s a one-shot job and exactly what our remote support is for. From &pound;20 we&rsquo;ll run the whole sequence in one careful session while you watch every click, and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. If a machine ever needs hands-on work, collection is free locally &mdash; we&rsquo;re remote-first with no walk-in shop, and can meet at the Kinson Community Centre by appointment."
+    "a": "Gladly &mdash; it&rsquo;s a one-shot job and exactly what our remote support is for. Usually &pound;60 we&rsquo;ll run the whole sequence in one careful session while you watch every click, and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. If a machine ever needs hands-on work, collection is free locally &mdash; we&rsquo;re remote-first with no walk-in shop, and can meet at the Kinson Community Centre by appointment."
    },
    {
     "q": "Should my business turn OneDrive off?",
@@ -600,7 +600,7 @@ OFFICE_PAGES = [
     "text": "Settings &gt; Apps &gt; Installed apps &gt; Microsoft OneDrive &gt; Uninstall. Microsoft confirms you won&rsquo;t lose files or data by uninstalling. Leave the cloud copies at onedrive.com as a safety net for a few weeks, then keep or delete them &mdash; and put a real backup in OneDrive&rsquo;s place."
    }
   ],
-  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &mdash; the full symptom-by-symptom triage hub.</li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &mdash; undo Folder Backup without leaving OneDrive entirely.</li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive</a> &mdash; the 10-minute checklist to run before anything else if files already look gone.</li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and email bouncing</a> &mdash; when a full account freezes storage and blocks your email.</li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you need Microsoft 365 backup?</a> &mdash; why sync was never backup, and what to use instead.</li><li><a href=\"/remote-support/\">Remote support from &pound;20</a> &mdash; we do the whole sequence while you watch.</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; accounts, licences and setup, handled properly.</li></ul>",
+  "crossLinksHtml": "<ul><li><a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &mdash; the full symptom-by-symptom triage hub.</li><li><a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &mdash; undo Folder Backup without leaving OneDrive entirely.</li><li><a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive</a> &mdash; the 10-minute checklist to run before anything else if files already look gone.</li><li><a href=\"/onedrive-full-cant-send-email/\">OneDrive full and email bouncing</a> &mdash; when a full account freezes storage and blocks your email.</li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Do you need Microsoft 365 backup?</a> &mdash; why sync was never backup, and what to use instead.</li><li><a href=\"/remote-support/\">Remote support, usually &pound;60</a> &mdash; we do the whole sequence while you watch.</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; accounts, licences and setup, handled properly.</li></ul>",
   "crumbName": "Stop Using OneDrive Safely",
   "primaryCta": [
    "Get It Fixed Remotely",
@@ -622,10 +622,10 @@ OFFICE_PAGES = [
   "chips": [
    "Nothing here deletes a file &mdash; each step explained",
    "Works for a work OneDrive and shared folders too",
-   "One-shot remote fix from &pound;20 &mdash; watch us do it"
+   "One-shot remote fix, usually &pound;60 &mdash; watch us do it"
   ],
   "ctaHead": "Rather we freed the space for you? It&rsquo;s a quick remote job.",
-  "ctaSub": "We&rsquo;ll set OneDrive and Storage Sense up properly in one careful remote session from &pound;20, while you watch every click &mdash; and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset, with free local collection if a machine ever needs hands-on work &mdash; no walk-in shop, and no need for one.",
+  "ctaSub": "We&rsquo;ll set OneDrive and Storage Sense up properly in one careful remote session, usually &pound;60, while you watch every click &mdash; and we always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset, with free local collection if a machine ever needs hands-on work &mdash; no walk-in shop, and no need for one.",
   "sections": [
    {
     "eyebrow": "Read this first",
@@ -707,7 +707,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you just do this for me?",
-    "a": "Gladly &mdash; it&rsquo;s a quick remote job. From &pound;20 we&rsquo;ll free the space, set Files On-Demand and Storage Sense properly, and check your own folders aren&rsquo;t backing up into the wrong account, while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
+    "a": "Gladly &mdash; it&rsquo;s a quick remote job. Usually &pound;60 we&rsquo;ll free the space, set Files On-Demand and Storage Sense properly, and check your own folders aren&rsquo;t backing up into the wrong account, while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
    }
   ],
   "schemaKind": "service",
@@ -759,10 +759,10 @@ OFFICE_PAGES = [
   "chips": [
    "Microsoft&rsquo;s own download, never a lookalike",
    "Checked on Windows 11, 23 Oct 2026",
-   "Rather we did it? Remote, from &pound;20"
+   "Rather we did it? Remote, usually &pound;60"
   ],
   "ctaHead": "Rather we put classic Outlook back for you?",
-  "ctaSub": "We&rsquo;ll install classic Outlook, sign it in and set up your email in one remote session, from &pound;20, quoted before we start &mdash; and you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset.",
+  "ctaSub": "We&rsquo;ll install classic Outlook, sign it in and set up your email in one remote session, usually &pound;60, quoted before we start &mdash; and you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Remote-first across Bournemouth, Christchurch, Poole &amp; Dorset.",
   "sections": [
    {
     "eyebrow": "Answer first",
@@ -843,7 +843,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you install classic Outlook for me?",
-    "a": "Yes, it&rsquo;s a quick remote job. From &pound;20, quoted before we start, we&rsquo;ll install classic Outlook, sign it in and set up your email while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
+    "a": "Yes, it&rsquo;s a quick remote job. Usually &pound;60, quoted before we start, we&rsquo;ll install classic Outlook, sign it in and set up your email while you watch every click. We always call before we connect. Call 01202 775566 or text 07520 615332."
    }
   ],
   "schemaKind": "service",
@@ -891,14 +891,14 @@ OFFICE_PAGES = [
   "ogTitle": "Excel Couldn&rsquo;t Merge Your Changes? Your Edits Are Probably Safe",
   "eyebrow": "Excel &amp; OneDrive Help",
   "h1": "Excel Sync Conflicts on OneDrive &mdash; Recover Your Edits and Stop &ldquo;We Couldn&rsquo;t Merge the Changes&rdquo;",
-  "lede": "First things first: when Excel says <em>&ldquo;we couldn&rsquo;t merge the changes&rdquo;</em> or <em>&ldquo;your file wasn&rsquo;t saved because we couldn&rsquo;t merge your changes&rdquo;</em>, your work is almost never gone. OneDrive keeps <strong>both</strong> versions of the file when it can&rsquo;t reconcile them &mdash; the trick is knowing where the second copy went. This page shows you how to find it, how to rescue edits with Version History, and how to stop the conflict happening again. If you&rsquo;d rather someone did it with you, we&rsquo;re a family-run Dorset IT firm that&rsquo;s supported Microsoft software since 1995 &mdash; remote help from &pound;20.",
+  "lede": "First things first: when Excel says <em>&ldquo;we couldn&rsquo;t merge the changes&rdquo;</em> or <em>&ldquo;your file wasn&rsquo;t saved because we couldn&rsquo;t merge your changes&rdquo;</em>, your work is almost never gone. OneDrive keeps <strong>both</strong> versions of the file when it can&rsquo;t reconcile them &mdash; the trick is knowing where the second copy went. This page shows you how to find it, how to rescue edits with Version History, and how to stop the conflict happening again. If you&rsquo;d rather someone did it with you, we&rsquo;re a family-run Dorset IT firm that&rsquo;s supported Microsoft software since 1995 &mdash; remote help, usually &pound;60.",
   "chips": [
    "Family-run since 1995",
    "4.9 on Google",
-   "Remote fixes from &pound;20"
+   "Remote fixes, usually &pound;60"
   ],
   "ctaHead": "An afternoon of edits at stake?",
-  "ctaSub": "One of our techies can remote in, find the surviving copy and merge your work back together &mdash; usually from &pound;20. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
+  "ctaSub": "One of our techies can remote in, find the surviving copy and merge your work back together &mdash; usually, usually &pound;60. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "What&rsquo;s Actually Happening",
@@ -928,7 +928,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "When to Call Us",
     "h2": "If your team hits this weekly, the files live in the wrong place",
-    "html": '<p>The steps above will rescue today&rsquo;s workbook. But if merge conflicts, duplicate copies and &ldquo;who&rsquo;s got the latest version?&rdquo; emails are a weekly event in your business, the real problem is usually structural: spreadsheets bouncing round as email attachments, living in Dropbox, or sitting on an old mapped drive &mdash; none of which can co-author. We taught Excel for over 10 years at our own Dorset Microsoft Education Resource Centre, and proper co-authoring is something small teams are rarely shown.</p><p>Here&rsquo;s how we help, honestly priced:</p><ul><li><strong>Remote rescue of a conflicted workbook</strong> &mdash; from &pound;20. We connect (with you watching), find the surviving copies, merge the edits back and leave the file tidy. See <a href="/remote-support/">how our remote support works</a> &mdash; it&rsquo;s the same friendly service whatever make of PC you own.</li><li><strong>Managed Microsoft 365</strong> &mdash; <a href="/which-microsoft-365-plan/">priced per plan</a>. We set up OneDrive and SharePoint properly, move your shared files somewhere they can actually co-author, and show the team how to use it. More on our <a href="/microsoft-365-support/">Microsoft 365 support</a> page.</li><li><strong>Ongoing cover</strong> &mdash; <a href="/business-it-support-plans/">business support plans</a> from &pound;24.38 a month per computer (home plans &pound;18.25), and every session ends with a written Service Report so you can see exactly what was done and why.</li></ul><p>We&rsquo;re remote-first &mdash; most Excel and OneDrive problems never need a visit &mdash; but we&rsquo;re local too: on-site around Bournemouth, Poole and Dorset when it helps (priced before we come), free local collection if hardware&rsquo;s involved, and meetings by appointment at Kinson Community Centre. No call centre; you&rsquo;ll get the same familiar faces each time. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.</p>'
+    "html": '<p>The steps above will rescue today&rsquo;s workbook. But if merge conflicts, duplicate copies and &ldquo;who&rsquo;s got the latest version?&rdquo; emails are a weekly event in your business, the real problem is usually structural: spreadsheets bouncing round as email attachments, living in Dropbox, or sitting on an old mapped drive &mdash; none of which can co-author. We taught Excel for over 10 years at our own Dorset Microsoft Education Resource Centre, and proper co-authoring is something small teams are rarely shown.</p><p>Here&rsquo;s how we help, honestly priced:</p><ul><li><strong>Remote rescue of a conflicted workbook</strong> &mdash; usually &pound;60. We connect (with you watching), find the surviving copies, merge the edits back and leave the file tidy. See <a href="/remote-support/">how our remote support works</a> &mdash; it&rsquo;s the same friendly service whatever make of PC you own.</li><li><strong>Managed Microsoft 365</strong> &mdash; <a href="/which-microsoft-365-plan/">priced per plan</a>. We set up OneDrive and SharePoint properly, move your shared files somewhere they can actually co-author, and show the team how to use it. More on our <a href="/microsoft-365-support/">Microsoft 365 support</a> page.</li><li><strong>Ongoing cover</strong> &mdash; <a href="/business-it-support-plans/">business support plans</a> from &pound;24.38 a month per computer (home plans &pound;18.25), and every session ends with a written Service Report so you can see exactly what was done and why.</li></ul><p>We&rsquo;re remote-first &mdash; most Excel and OneDrive problems never need a visit &mdash; but we&rsquo;re local too: on-site around Bournemouth, Poole and Dorset when it helps (priced before we come), free local collection if hardware&rsquo;s involved, and meetings by appointment at Kinson Community Centre. No call centre; you&rsquo;ll get the same familiar faces each time. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.</p>'
    }
   ],
   "faqs": [
@@ -970,7 +970,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "What does it cost to have 365 Techies sort this out?",
-    "a": "Remote help starts from &pound;20 &mdash; enough for us to connect, recover the conflict copies and merge your edits back while you watch. Managed Microsoft 365 is <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, and ongoing business support plans start from &pound;24.38 a month per computer with a written Service Report after every session. Diagnosis first, honest quote before any bigger job. Mon&ndash;Fri 9&ndash;5 on 01202 775566."
+    "a": "Remote help is usually &pound;60 &mdash; enough for us to connect, recover the conflict copies and merge your edits back while you watch. Managed Microsoft 365 is <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, and ongoing business support plans start from &pound;24.38 a month per computer with a written Service Report after every session. Diagnosis first, honest quote before any bigger job. Mon&ndash;Fri 9&ndash;5 on 01202 775566."
    }
   ],
   "schemaKind": "service",
@@ -1008,18 +1008,18 @@ OFFICE_PAGES = [
  {
   "slug": "excel-spreadsheet-rescue",
   "title": "Excel Spreadsheet Rescue &amp; Repair | 365 Techies Bournemouth",
-  "metaDesc": "Broken, corrupt or crawling Excel workbook? Honest spreadsheet rescue from a family-run Dorset firm supporting Microsoft Office since 1995. Remote fixes from &pound;20.",
+  "metaDesc": "Broken, corrupt or crawling Excel workbook? Honest spreadsheet rescue from a family-run Dorset firm supporting Microsoft Office since 1995. Remote fixes, usually &pound;60.",
   "ogTitle": "Excel Spreadsheet Rescue &mdash; honest repair for the workbook your business runs on",
   "eyebrow": "Excel help for homes &amp; small businesses",
   "h1": "Excel spreadsheet rescue &mdash; when the workbook your business runs on breaks",
-  "lede": "Plenty of Dorset businesses run on one giant spreadsheet built years ago by someone who has since left. When it won&rsquo;t open, throws #REF! errors everywhere or takes five minutes to load, work stops. We&rsquo;ve supported Microsoft Office since 1995 &mdash; and taught Excel for more than ten years at our own Dorset Microsoft Education Resource Centre &mdash; so we rescue spreadsheets calmly, honestly and usually remotely, from &pound;20.",
+  "lede": "Plenty of Dorset businesses run on one giant spreadsheet built years ago by someone who has since left. When it won&rsquo;t open, throws #REF! errors everywhere or takes five minutes to load, work stops. We&rsquo;ve supported Microsoft Office since 1995 &mdash; and taught Excel for more than ten years at our own Dorset Microsoft Education Resource Centre &mdash; so we rescue spreadsheets calmly, honestly and usually remotely, usually &pound;60.",
   "chips": [
-   "Remote rescue from &pound;20",
+   "Remote rescue, usually &pound;60",
    "Family-run since 1995",
    "4.9 on Google"
   ],
   "ctaHead": "Spreadsheet down and work stopped?",
-  "ctaSub": "Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332. We&rsquo;ll tell you quickly whether it&rsquo;s a &pound;20 remote fix, a bigger rescue job worth a quote &mdash; or, honestly, gone.",
+  "ctaSub": "Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332. We&rsquo;ll tell you quickly whether it&rsquo;s a &pound;60 remote fix, a bigger rescue job worth a quote &mdash; or, honestly, gone.",
   "sections": [
    {
     "eyebrow": "The problem",
@@ -1034,12 +1034,12 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Free fixes first",
     "h2": "Try this before you pay anyone &mdash; including us",
-    "html": "<p>Fair&rsquo;s fair: some rescues are free and take two minutes. Try these first.</p><ul><li><strong>Make a copy of the broken file now.</strong> Before anything else. Every repair attempt should happen on a copy, never the only original.</li><li><strong>Open and Repair.</strong> In Excel choose File, then Open, then Browse to the file &mdash; but instead of double-clicking it, click it once, then click the small arrow next to the Open button and choose <strong>Open and Repair</strong>. Excel will offer to repair the workbook, or to extract just the data if repair fails. This is Microsoft&rsquo;s own built-in tool and it genuinely works on mild corruption.</li><li><strong>Check version history.</strong> If the file is stored on OneDrive or SharePoint, right-click it and choose Version history &mdash; you can open and restore an earlier copy from before the damage.</li><li><strong>Look for the recovered copy.</strong> If Excel crashed mid-edit, reopen Excel and check the Document Recovery pane on the left for an autosaved version.</li></ul><p><strong>When to stop:</strong> if Open and Repair fails, if the extracted data is missing sheets or formulas, or if the workbook is behaving strangely rather than refusing to open &mdash; stop saving, stop &ldquo;having a go&rdquo;, and call us. Repeated failed repair attempts on the original file can make things worse, and a &pound;20 remote look is cheaper than a rebuilt spreadsheet.</p>"
+    "html": "<p>Fair&rsquo;s fair: some rescues are free and take two minutes. Try these first.</p><ul><li><strong>Make a copy of the broken file now.</strong> Before anything else. Every repair attempt should happen on a copy, never the only original.</li><li><strong>Open and Repair.</strong> In Excel choose File, then Open, then Browse to the file &mdash; but instead of double-clicking it, click it once, then click the small arrow next to the Open button and choose <strong>Open and Repair</strong>. Excel will offer to repair the workbook, or to extract just the data if repair fails. This is Microsoft&rsquo;s own built-in tool and it genuinely works on mild corruption.</li><li><strong>Check version history.</strong> If the file is stored on OneDrive or SharePoint, right-click it and choose Version history &mdash; you can open and restore an earlier copy from before the damage.</li><li><strong>Look for the recovered copy.</strong> If Excel crashed mid-edit, reopen Excel and check the Document Recovery pane on the left for an autosaved version.</li></ul><p><strong>When to stop:</strong> if Open and Repair fails, if the extracted data is missing sheets or formulas, or if the workbook is behaving strangely rather than refusing to open &mdash; stop saving, stop &ldquo;having a go&rdquo;, and call us. Repeated failed repair attempts on the original file can make things worse, and a &pound;60 remote look is cheaper than a rebuilt spreadsheet.</p>"
    },
    {
     "eyebrow": "How it works",
     "h2": "Remote-first, with free collection when hands-on is needed",
-    "html": "<p>Almost every spreadsheet rescue happens over a secure remote session while you watch, from <strong>&pound;20</strong>. We always phone you before we connect &mdash; you&rsquo;ll never see your mouse moving without knowing exactly who&rsquo;s on the other end &mdash; and you see everything we do to your file as we do it.</p><p>If the problem turns out to be the computer rather than the spreadsheet &mdash; a failing drive, for instance &mdash; we collect the machine from you free of charge locally, sort it, and bring it back. We&rsquo;re not a walk-in shop, so there&rsquo;s no counter to queue at; if you&rsquo;d rather talk something through face to face, we meet by appointment at Kinson Community Centre.</p><p>Bigger jobs &mdash; a full workbook rebuild, untangling years of accumulated formulas, or moving a team onto proper co-authoring &mdash; get a diagnosis first and a plain quote before any work starts. No hourly meter quietly running.</p><p>Not in Dorset? Remote rescue works anywhere in the UK &mdash; the session looks exactly the same from Bournemouth or Berwick. See <a href=\"/remote-support/\">how our remote support sessions work</a>.</p>"
+    "html": "<p>Almost every spreadsheet rescue happens over a secure remote session while you watch, usually <strong>&pound;60</strong>. We always phone you before we connect &mdash; you&rsquo;ll never see your mouse moving without knowing exactly who&rsquo;s on the other end &mdash; and you see everything we do to your file as we do it.</p><p>If the problem turns out to be the computer rather than the spreadsheet &mdash; a failing drive, for instance &mdash; we collect the machine from you free of charge locally, sort it, and bring it back. We&rsquo;re not a walk-in shop, so there&rsquo;s no counter to queue at; if you&rsquo;d rather talk something through face to face, we meet by appointment at Kinson Community Centre.</p><p>Bigger jobs &mdash; a full workbook rebuild, untangling years of accumulated formulas, or moving a team onto proper co-authoring &mdash; get a diagnosis first and a plain quote before any work starts. No hourly meter quietly running.</p><p>Not in Dorset? Remote rescue works anywhere in the UK &mdash; the session looks exactly the same from Bournemouth or Berwick. See <a href=\"/remote-support/\">how our remote support sessions work</a>.</p>"
    },
    {
     "eyebrow": "Why us",
@@ -1049,7 +1049,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Pricing &amp; honesty",
     "h2": "What it costs &mdash; and what we won&rsquo;t promise",
-    "html": "<p>Straight numbers, because vague pricing helps nobody:</p><ul><li><strong>Remote spreadsheet rescue from &pound;20</strong> &mdash; most single-file problems land here.</li><li><strong>Bigger rescue and rebuild jobs are quoted first</strong>, after a proper diagnosis. You approve the price before work starts.</li><li><strong>Ongoing cover:</strong> home plans at <strong>&pound;18.25 per computer per month</strong>, <a href=\"/business-it-support-plans/\">business support from &pound;24.38 per computer per month</a>, and <a href=\"/microsoft-365-support/\">managed Microsoft 365, priced per plan</a> &mdash; every plan visit ends with a written Service Report so you always know what was done and why. See our <a href=\"/monthly-it-support/\">monthly IT support plans</a> for how the cover works.</li><li>We&rsquo;re not VAT registered, so prices are what they say.</li></ul><p><strong>The honest-scope bit:</strong> no one can guarantee 100% recovery from a corrupt workbook &mdash; anyone who promises that is selling software, not a service. What we promise instead is speed and honesty: we&rsquo;ll tell you quickly what&rsquo;s recoverable, what it will cost, and &mdash; on the rare occasion the data really is gone &mdash; we&rsquo;ll say so plainly rather than charge you to find out slowly. Then we&rsquo;ll help you set things up so it can&rsquo;t happen twice.</p>"
+    "html": "<p>Straight numbers, because vague pricing helps nobody:</p><ul><li><strong>Remote spreadsheet rescue, usually &pound;60</strong> &mdash; most single-file problems land here.</li><li><strong>Bigger rescue and rebuild jobs are quoted first</strong>, after a proper diagnosis. You approve the price before work starts.</li><li><strong>Ongoing cover:</strong> home plans at <strong>&pound;18.25 per computer per month</strong>, <a href=\"/business-it-support-plans/\">business support from &pound;24.38 per computer per month</a>, and <a href=\"/microsoft-365-support/\">managed Microsoft 365, priced per plan</a> &mdash; every plan visit ends with a written Service Report so you always know what was done and why. See our <a href=\"/monthly-it-support/\">monthly IT support plans</a> for how the cover works.</li><li>We&rsquo;re not VAT registered, so prices are what they say.</li></ul><p><strong>The honest-scope bit:</strong> no one can guarantee 100% recovery from a corrupt workbook &mdash; anyone who promises that is selling software, not a service. What we promise instead is speed and honesty: we&rsquo;ll tell you quickly what&rsquo;s recoverable, what it will cost, and &mdash; on the rare occasion the data really is gone &mdash; we&rsquo;ll say so plainly rather than charge you to find out slowly. Then we&rsquo;ll help you set things up so it can&rsquo;t happen twice.</p>"
    }
   ],
   "faqs": [
@@ -1059,7 +1059,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "How much does a spreadsheet rescue cost?",
-    "a": "Remote rescue starts from &pound;20, and most single-file problems are dealt with in one remote session. Bigger jobs &mdash; full rebuilds, de-bloating a huge workbook, setting up team co-authoring &mdash; are diagnosed first and quoted plainly before any work starts. We&rsquo;re not VAT registered, so the price you&rsquo;re quoted is the price."
+    "a": "Remote rescue is usually &pound;60, and most single-file problems are dealt with in one remote session. Bigger jobs &mdash; full rebuilds, de-bloating a huge workbook, setting up team co-authoring &mdash; are diagnosed first and quoted plainly before any work starts. We&rsquo;re not VAT registered, so the price you&rsquo;re quoted is the price."
    },
    {
     "q": "Do I have to bring my computer to you?",
@@ -1087,7 +1087,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "We&rsquo;re not in Bournemouth &mdash; can you still help?",
-    "a": "Yes. Spreadsheet rescue is remote-first, so it works anywhere in the UK from &pound;20 &mdash; the session is identical whether you&rsquo;re in Poole or Preston. Free collection for hands-on hardware work applies locally in the Bournemouth and wider Dorset area."
+    "a": "Yes. Spreadsheet rescue is remote-first, so it works anywhere in the UK, usually &pound;60 &mdash; the session is identical whether you&rsquo;re in Poole or Preston. Free collection for hands-on hardware work applies locally in the Bournemouth and wider Dorset area."
    }
   ],
   "schemaKind": "service",
@@ -1104,7 +1104,7 @@ OFFICE_PAGES = [
    },
    {
     "name": "Call or text us",
-    "text": "Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332 with the symptoms &mdash; the exact error message and where the file is stored. We&rsquo;ll say straight away whether it sounds like a &pound;20 remote fix or a quoted rescue job."
+    "text": "Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332 with the symptoms &mdash; the exact error message and where the file is stored. We&rsquo;ll say straight away whether it sounds like a &pound;60 remote fix or a quoted rescue job."
    },
    {
     "name": "Watch the rescue happen",
@@ -1125,23 +1125,23 @@ OFFICE_PAGES = [
  {
   "slug": "microsoft-word-wont-open",
   "title": "Microsoft Word Won&rsquo;t Open? The 5-Step Fix Ladder | 365 Techies",
-  "metaDesc": "Word won&rsquo;t open, keeps crashing or only starts in safe mode? Work down our 5-step fix ladder &mdash; including the June 2026 bug that breaks Word opened from Sage. Remote help from &pound;20.",
+  "metaDesc": "Word won&rsquo;t open, keeps crashing or only starts in safe mode? Work down our 5-step fix ladder &mdash; including the June 2026 bug that breaks Word opened from Sage. Remote help, usually &pound;60.",
   "ogTitle": "Microsoft Word won&rsquo;t open? Work down the 5-step fix ladder",
   "eyebrow": "Microsoft Word fix guide",
   "h1": "Microsoft Word won&rsquo;t open? Work down this ladder",
   "lede": 'First, breathe: Word failing to start does not touch your documents &mdash; they are still safely on the disk. What follows is the five-rung triage ladder we actually run on customer machines, starting with the June 2026 Windows update bug that broke Word when it was opened from Sage and other programs (Microsoft fixed it in July). We&rsquo;ve supported Word since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre &mdash; so every rung tells you plainly when to keep going and when to stop and call us.',
   "chips": [
-   "Remote fix from &pound;20",
+   "Remote fix, usually &pound;60",
    "Supporting Word since 1995",
    "4.9 on Google &mdash; family-run"
   ],
   "ctaHead": "Stuck on a rung? We&rsquo;ll run the ladder for you",
-  "ctaSub": "Secure remote session from &pound;20 &mdash; we always call before we connect, and you watch everything we do on your own screen. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
+  "ctaSub": "Secure remote session, usually &pound;60 &mdash; we always call before we connect, and you watch everything we do on your own screen. Mon&ndash;Fri 9&ndash;5. Call 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "Rung 1 &mdash; the June 2026 bug",
     "h2": "Word crashes when opened from Sage or another program? Check this first",
-    "html": '<p>If Word opens fine when you start it yourself, but crashes or never appears when <em>another program</em> tries to open it &mdash; Sage producing an invoice or letter, a case-management or document-management system generating a file &mdash; stop right here. It is almost certainly not your fault, and nothing on your PC is broken.</p><p>The June 2026 Windows update (KB5094126 &mdash; Windows 11 builds 26100.8655 and 26200.8655, with Windows 10 and Server affected too) broke the behind-the-scenes plumbing, called OLE automation, that third-party programs use to launch Office. Microsoft has confirmed the problem: Word, Excel, PowerPoint and Access can all crash when opened <em>via</em> other software while behaving perfectly on their own.</p><p><strong>The workaround:</strong> open Word first, <em>then</em> open or generate the document from the other program. It feels daft, but it sidesteps the crash. Microsoft has since fixed it in the Windows updates released on and after 14 July 2026 (KB5101650 and later), so the real cure is to install the latest Windows update rather than uninstall anything &mdash; removing the update also removes its security fixes.</p><p>Run Sage? This sits alongside another known clash we cover in <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a>. If invoices are stuck and the workaround isn&rsquo;t enough, we can <a href="/remote-support/">connect remotely from &pound;20</a> and get you invoicing again.</p>'
+    "html": '<p>If Word opens fine when you start it yourself, but crashes or never appears when <em>another program</em> tries to open it &mdash; Sage producing an invoice or letter, a case-management or document-management system generating a file &mdash; stop right here. It is almost certainly not your fault, and nothing on your PC is broken.</p><p>The June 2026 Windows update (KB5094126 &mdash; Windows 11 builds 26100.8655 and 26200.8655, with Windows 10 and Server affected too) broke the behind-the-scenes plumbing, called OLE automation, that third-party programs use to launch Office. Microsoft has confirmed the problem: Word, Excel, PowerPoint and Access can all crash when opened <em>via</em> other software while behaving perfectly on their own.</p><p><strong>The workaround:</strong> open Word first, <em>then</em> open or generate the document from the other program. It feels daft, but it sidesteps the crash. Microsoft has since fixed it in the Windows updates released on and after 14 July 2026 (KB5101650 and later), so the real cure is to install the latest Windows update rather than uninstall anything &mdash; removing the update also removes its security fixes.</p><p>Run Sage? This sits alongside another known clash we cover in <a href="/sage-50-wont-email-invoices-outlook/">Sage 50 won&rsquo;t email invoices through Outlook</a>. If invoices are stuck and the workaround isn&rsquo;t enough, we can <a href="/remote-support/">connect remotely, usually &pound;60</a> and get you invoicing again.</p>'
    },
    {
     "eyebrow": "Rung 2 &mdash; safe mode",
@@ -1151,12 +1151,12 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Rung 3 &mdash; the template",
     "h2": "Rename Normal.dotm &mdash; safe, quick and surprisingly effective",
-    "html": "<p>Normal.dotm is the hidden template every blank document is based on. When it gets corrupted, Word can hang or crash the moment it starts. Renaming it is completely safe: Word simply builds a fresh copy next time it opens. You lose any custom default fonts or macros you&rsquo;d saved into the template &mdash; never your documents.</p><ol><li>Close Word fully (check the Task Manager if in doubt).</li><li>Open File Explorer and paste <strong>%appdata%\\Microsoft\\Templates</strong> into the address bar &mdash; that&rsquo;s <strong>C:\\Users\\&lt;name&gt;\\AppData\\Roaming\\Microsoft\\Templates</strong> in full.</li><li>Right-click <strong>Normal.dotm</strong> and rename it to <strong>Normal.old</strong>.</li><li>Start Word. If it opens, the old template was the problem and you&rsquo;re done.</li></ol><p><em>When to stop:</em> if Word opens but your carefully built letterheads or macros lived in that template, keep the Normal.old file and give us a ring &mdash; the useful parts can often be rescued from it in a short <a href=\"/remote-support/\">remote session from &pound;20</a>.</p>"
+    "html": "<p>Normal.dotm is the hidden template every blank document is based on. When it gets corrupted, Word can hang or crash the moment it starts. Renaming it is completely safe: Word simply builds a fresh copy next time it opens. You lose any custom default fonts or macros you&rsquo;d saved into the template &mdash; never your documents.</p><ol><li>Close Word fully (check the Task Manager if in doubt).</li><li>Open File Explorer and paste <strong>%appdata%\\Microsoft\\Templates</strong> into the address bar &mdash; that&rsquo;s <strong>C:\\Users\\&lt;name&gt;\\AppData\\Roaming\\Microsoft\\Templates</strong> in full.</li><li>Right-click <strong>Normal.dotm</strong> and rename it to <strong>Normal.old</strong>.</li><li>Start Word. If it opens, the old template was the problem and you&rsquo;re done.</li></ol><p><em>When to stop:</em> if Word opens but your carefully built letterheads or macros lived in that template, keep the Normal.old file and give us a ring &mdash; the useful parts can often be rescued from it in a short <a href=\"/remote-support/\">remote session, usually &pound;60</a>.</p>"
    },
    {
     "eyebrow": "Rung 4 &mdash; advanced",
     "h2": "Reset Word&rsquo;s registry Data key (with a proper backup first)",
-    "html": "<p>This is the deep fix from Microsoft&rsquo;s own Word start-up troubleshooting guide &mdash; a guide Microsoft has now archived to its &ldquo;previous versions&rdquo; site, which is partly why so few pages mention it. It&rsquo;s labelled <strong>advanced</strong> for a reason: the registry controls the whole of Windows, so back up before you touch it, and if you&rsquo;re not comfortable, this is exactly the kind of one-shot job we do remotely from &pound;20 while you watch.</p><ol><li>Close Word. Press <strong>Windows key + R</strong>, type <strong>regedit</strong> and press Enter.</li><li>Navigate to <strong>HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Word\\Data</strong>.</li><li>Right-click the <strong>Data</strong> key and choose <strong>Export</strong> &mdash; save the .reg file somewhere safe. That&rsquo;s your undo button: double-clicking it puts everything back.</li><li>Now right-click <strong>Data</strong> again and choose <strong>Delete</strong>, then restart Word.</li></ol><p>Word rebuilds the key with factory defaults. You&rsquo;ll lose your recent-files list and a few preferences &mdash; not documents, not templates. If Word still won&rsquo;t start, the neighbouring <strong>Options</strong> key is the next candidate: same export-then-delete routine.</p><p><em>When to stop:</em> if you&rsquo;ve never opened the Registry Editor before, don&rsquo;t make this your first solo flight &mdash; <a href=\"/contact/\">we&rsquo;ll do it with you on the line</a>.</p>"
+    "html": "<p>This is the deep fix from Microsoft&rsquo;s own Word start-up troubleshooting guide &mdash; a guide Microsoft has now archived to its &ldquo;previous versions&rdquo; site, which is partly why so few pages mention it. It&rsquo;s labelled <strong>advanced</strong> for a reason: the registry controls the whole of Windows, so back up before you touch it, and if you&rsquo;re not comfortable, this is exactly the kind of one-shot job we do remotely, usually &pound;60 while you watch.</p><ol><li>Close Word. Press <strong>Windows key + R</strong>, type <strong>regedit</strong> and press Enter.</li><li>Navigate to <strong>HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Word\\Data</strong>.</li><li>Right-click the <strong>Data</strong> key and choose <strong>Export</strong> &mdash; save the .reg file somewhere safe. That&rsquo;s your undo button: double-clicking it puts everything back.</li><li>Now right-click <strong>Data</strong> again and choose <strong>Delete</strong>, then restart Word.</li></ol><p>Word rebuilds the key with factory defaults. You&rsquo;ll lose your recent-files list and a few preferences &mdash; not documents, not templates. If Word still won&rsquo;t start, the neighbouring <strong>Options</strong> key is the next candidate: same export-then-delete routine.</p><p><em>When to stop:</em> if you&rsquo;ve never opened the Registry Editor before, don&rsquo;t make this your first solo flight &mdash; <a href=\"/contact/\">we&rsquo;ll do it with you on the line</a>.</p>"
    },
    {
     "eyebrow": "Rung 5 &mdash; repair Office",
@@ -1171,7 +1171,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "When to call us",
     "h2": "Honest advice: when it&rsquo;s worth handing this over",
-    "html": "<p>Most Word start-up problems fall to one of the five rungs above &mdash; that&rsquo;s why we published them in full rather than hiding the answer behind a phone number. Call us when the ladder runs out, when the registry rung is a step too far, or when it&rsquo;s a work machine and every hour of downtime costs you money.</p><p>We&rsquo;re a family-run Dorset firm, supporting Microsoft software since 1995 &mdash; and we taught it for over 10 years at our own Dorset Microsoft Education Resource Centre. We&rsquo;re remote-first: a secure session <a href=\"/remote-support/\">from &pound;20</a>, we call before we connect, and you watch everything on your own screen. If the machine itself needs hands-on work we collect it free locally &mdash; there&rsquo;s no walk-in shop, and honestly you don&rsquo;t need one for this.</p><p>If Word broke because of the Sage collision above, that&rsquo;s usually a sign nobody is watching your Microsoft estate. Our <a href=\"/microsoft-365-support/\">managed Microsoft 365</a> service is <a href=\"/which-microsoft-365-plan/\">priced per plan</a> &mdash; licences, updates and known-issue workarounds handled before they stop your invoicing. For whole machines, our <a href=\"/monthly-it-support/\">home plans are &pound;18.25 per computer per month</a> and <a href=\"/business-it-support-plans/\">business plans from &pound;24.38 per computer</a>, and every session ends with a written Service Report so you can see exactly what was done. We&rsquo;re not VAT registered, so those are the prices you pay.</p>"
+    "html": "<p>Most Word start-up problems fall to one of the five rungs above &mdash; that&rsquo;s why we published them in full rather than hiding the answer behind a phone number. Call us when the ladder runs out, when the registry rung is a step too far, or when it&rsquo;s a work machine and every hour of downtime costs you money.</p><p>We&rsquo;re a family-run Dorset firm, supporting Microsoft software since 1995 &mdash; and we taught it for over 10 years at our own Dorset Microsoft Education Resource Centre. We&rsquo;re remote-first: a secure session <a href=\"/remote-support/\">usually &pound;60</a>, we call before we connect, and you watch everything on your own screen. If the machine itself needs hands-on work we collect it free locally &mdash; there&rsquo;s no walk-in shop, and honestly you don&rsquo;t need one for this.</p><p>If Word broke because of the Sage collision above, that&rsquo;s usually a sign nobody is watching your Microsoft estate. Our <a href=\"/microsoft-365-support/\">managed Microsoft 365</a> service is <a href=\"/which-microsoft-365-plan/\">priced per plan</a> &mdash; licences, updates and known-issue workarounds handled before they stop your invoicing. For whole machines, our <a href=\"/monthly-it-support/\">home plans are &pound;18.25 per computer per month</a> and <a href=\"/business-it-support-plans/\">business plans from &pound;24.38 per computer</a>, and every session ends with a written Service Report so you can see exactly what was done. We&rsquo;re not VAT registered, so those are the prices you pay.</p>"
    }
   ],
   "faqs": [
@@ -1189,7 +1189,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Is deleting the Word Data registry key safe?",
-    "a": "It&rsquo;s a Microsoft-documented fix, but treat it with respect: export the key first so you have a one-click undo, and only delete the Word Data key itself. Word rebuilds it with defaults &mdash; you lose the recent-files list and a few preferences, never documents. If you&rsquo;ve never used the Registry Editor, we&rsquo;d rather do it with you remotely from &pound;20 than have you guess."
+    "a": "It&rsquo;s a Microsoft-documented fix, but treat it with respect: export the key first so you have a one-click undo, and only delete the Word Data key itself. Word rebuilds it with defaults &mdash; you lose the recent-files list and a few preferences, never documents. If you&rsquo;ve never used the Registry Editor, we&rsquo;d rather do it with you remotely, usually &pound;60, than have you guess."
    },
    {
     "q": "Word crashed while I was typing &mdash; is my document gone?",
@@ -1205,7 +1205,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "How much does it cost for you to fix this?",
-    "a": "Remote support is from &pound;20 &mdash; most Word start-up problems are a single short session. We always call before we connect, and you watch the whole session on your own screen. We&rsquo;re open Monday to Friday, 9am&ndash;5pm: call 01202 775566 or text 07520 615332. Anything beyond remote reach is diagnosed first and quoted before work starts."
+    "a": "Remote support is usually &pound;60 &mdash; most Word start-up problems are a single short session. We always call before we connect, and you watch the whole session on your own screen. We&rsquo;re open Monday to Friday, 9am&ndash;5pm: call 01202 775566 or text 07520 615332. Anything beyond remote reach is diagnosed first and quoted before work starts."
    },
    {
     "q": "Do you have a shop I can bring the computer to?",
@@ -1234,7 +1234,7 @@ OFFICE_PAGES = [
    },
    {
     "name": "Run an Office repair",
-    "text": "Go to Settings &gt; Apps &gt; Installed apps &gt; Microsoft 365 &gt; Modify. Try Quick Repair first, then Online Repair if Word still fails. Neither touches your documents. Still stuck? Remote help from &pound;20 on 01202 775566."
+    "text": "Go to Settings &gt; Apps &gt; Installed apps &gt; Microsoft 365 &gt; Modify. Try Quick Repair first, then Online Repair if Word still fails. Neither touches your documents. Still stuck? Remote help, usually &pound;60, on 01202 775566."
    }
   ],
   "crossLinksHtml": "<p>Related guides: <a href=\"/stop-word-saving-to-onedrive/\">Stop Word saving to OneDrive</a> &middot; <a href=\"/sage-50-wont-email-invoices-outlook/\">Sage 50 won&rsquo;t email invoices through Outlook</a> &middot; <a href=\"/microsoft-office-unlicensed-product-error/\">Office &ldquo;Unlicensed Product&rdquo; error</a> &middot; <a href=\"/onedrive-problems/\">OneDrive problems</a> &middot; <a href=\"/outlook-problems/\">Outlook problems</a> &middot; <a href=\"/microsoft-365-support/\">Microsoft 365 support</a></p>",
@@ -1259,10 +1259,10 @@ OFFICE_PAGES = [
   "chips": [
    "Your documents are NOT lost",
    "2-minute fix &mdash; one tick box",
-   "Remote help from &pound;20"
+   "Remote help, usually &pound;60"
   ],
   "ctaHead": "Want every machine set up the right way in one go?",
-  "ctaSub": "We&rsquo;ll connect remotely, find any documents Word has quietly saved to the cloud, and set the save behaviour you actually want &mdash; from &pound;20, while you watch. Family-run since 1995, rated 4.9 on Google. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.",
+  "ctaSub": "We&rsquo;ll connect remotely, find any documents Word has quietly saved to the cloud, and set the save behaviour you actually want &mdash; usually &pound;60, while you watch. Family-run since 1995, rated 4.9 on Google. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "What changed",
@@ -1292,7 +1292,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "When to call us",
     "h2": "When it&rsquo;s worth handing this to a techie",
-    "html": "<p>If the steps above have sorted you out &mdash; brilliant, that&rsquo;s the point of this page. But it&rsquo;s worth a call if:</p><ul><li>Documents have gone missing and checking both accounts&rsquo; OneDrives hasn&rsquo;t found them &mdash; before you assume the worst, see <a href=\"/files-missing-from-onedrive/\">files missing from OneDrive</a> or let us look. Your files are almost never actually gone.</li><li>The PC is signed into a tangle of personal and work accounts and you&rsquo;re no longer sure what is saving where.</li><li>You&rsquo;ve got several machines and want the save behaviour, OneDrive setup and backups done properly in one session.</li><li>Word itself is misbehaving beyond saving &mdash; crashing or refusing to start is a different problem with its own fix ladder: <a href=\"/microsoft-word-wont-open/\">Microsoft Word won&rsquo;t open</a>.</li></ul><p>We fix this sort of thing by <a href=\"/remote-support/\">secure remote session from &pound;20</a> &mdash; we call before we connect, you watch everything we do, and most save-settings jobs are done well inside the first half hour. If a machine needs hands-on work we collect it free locally; we&rsquo;re remote-first with no walk-in shop, and meetings at Kinson Community Centre are by appointment. We&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre &mdash; we were teaching Word back when it saved to floppy disks, so a change of save location doesn&rsquo;t faze us.</p>"
+    "html": "<p>If the steps above have sorted you out &mdash; brilliant, that&rsquo;s the point of this page. But it&rsquo;s worth a call if:</p><ul><li>Documents have gone missing and checking both accounts&rsquo; OneDrives hasn&rsquo;t found them &mdash; before you assume the worst, see <a href=\"/files-missing-from-onedrive/\">files missing from OneDrive</a> or let us look. Your files are almost never actually gone.</li><li>The PC is signed into a tangle of personal and work accounts and you&rsquo;re no longer sure what is saving where.</li><li>You&rsquo;ve got several machines and want the save behaviour, OneDrive setup and backups done properly in one session.</li><li>Word itself is misbehaving beyond saving &mdash; crashing or refusing to start is a different problem with its own fix ladder: <a href=\"/microsoft-word-wont-open/\">Microsoft Word won&rsquo;t open</a>.</li></ul><p>We fix this sort of thing by <a href=\"/remote-support/\">secure remote session, usually &pound;60</a> &mdash; we call before we connect, you watch everything we do, and most save-settings jobs are done well inside the first half hour. If a machine needs hands-on work we collect it free locally; we&rsquo;re remote-first with no walk-in shop, and meetings at Kinson Community Centre are by appointment. We&rsquo;ve supported Microsoft software since 1995 and taught it for over 10 years at our own Dorset Microsoft Education Resource Centre &mdash; we were teaching Word back when it saved to floppy disks, so a change of save location doesn&rsquo;t faze us.</p>"
    }
   ],
   "faqs": [
@@ -1326,7 +1326,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "My document saved to the wrong OneDrive &mdash; a personal one instead of my work one. Why?",
-    "a": "Many PCs are signed into both a personal Microsoft account and a work account, and Word saves new cloud documents to whichever account it is currently using. Check File &gt; Account in Word to see the active account, and look in the other account&rsquo;s OneDrive for the missing file. If your machine is a tangle of accounts, we can untangle it remotely from &pound;20."
+    "a": "Many PCs are signed into both a personal Microsoft account and a work account, and Word saves new cloud documents to whichever account it is currently using. Check File &gt; Account in Word to see the active account, and look in the other account&rsquo;s OneDrive for the missing file. If your machine is a tangle of accounts, we can untangle it remotely, usually &pound;60."
    },
    {
     "q": "Can I turn this off for every computer in my business at once?",
@@ -1358,7 +1358,7 @@ OFFICE_PAGES = [
     "text": "Check File &gt; Account to see which account Word uses, sign into that account at onedrive.com, and look for date-named documents in the top level. Open each one and use File &gt; Save a Copy &gt; This PC to bring it home."
    }
   ],
-  "crossLinksHtml": "<p>Related help: <a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &middot; <a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &middot; <a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive</a> &middot; <a href=\"/microsoft-word-wont-open/\">Microsoft Word won&rsquo;t open</a> &middot; <a href=\"/microsoft-365-backup-do-you-need-it/\">Is OneDrive a backup?</a> &middot; <a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &middot; <a href=\"/remote-support/\">Remote support from &pound;20</a></p>",
+  "crossLinksHtml": "<p>Related help: <a href=\"/onedrive-problems/\">OneDrive problems &amp; fixes</a> &middot; <a href=\"/onedrive-moved-my-desktop-and-documents/\">OneDrive moved my Desktop and Documents</a> &middot; <a href=\"/files-missing-from-onedrive/\">Files missing from OneDrive</a> &middot; <a href=\"/microsoft-word-wont-open/\">Microsoft Word won&rsquo;t open</a> &middot; <a href=\"/microsoft-365-backup-do-you-need-it/\">Is OneDrive a backup?</a> &middot; <a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &middot; <a href=\"/remote-support/\">Remote support, usually &pound;60</a></p>",
   "crumbName": "Stop Word Saving to OneDrive",
   "primaryCta": [
    "Get It Fixed Remotely",
@@ -1372,7 +1372,7 @@ OFFICE_PAGES = [
  {
   "slug": "teams-keeps-opening-wrong-account",
   "title": "Teams Keeps Opening the Wrong Account? Here&rsquo;s the Real Fix | 365 Techies",
-  "metaDesc": "Teams keeps signing into the wrong Microsoft account? One email can hold two identities. Plain-English fixes, plus the permanent cure &mdash; remote help from &pound;20.",
+  "metaDesc": "Teams keeps signing into the wrong Microsoft account? One email can hold two identities. Plain-English fixes, plus the permanent cure &mdash; remote help, usually &pound;60.",
   "ogTitle": "Teams Keeps Opening the Wrong Account &mdash; the Fix Microsoft Never Wrote",
   "eyebrow": "Microsoft Teams &middot; Fix Guide",
   "h1": "Teams Keeps Opening the Wrong Account",
@@ -1380,10 +1380,10 @@ OFFICE_PAGES = [
   "chips": [
    "Family-run since 1995",
    "4.9 on Google",
-   "Remote fix from &pound;20"
+   "Remote fix, usually &pound;60"
   ],
   "ctaHead": "Fed up fighting Teams for your own name?",
-  "ctaSub": "We untangle mixed-up Microsoft accounts remotely from &pound;20 &mdash; we phone before we connect, and you watch every step. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.",
+  "ctaSub": "We untangle mixed-up Microsoft accounts remotely, usually &pound;60 &mdash; we phone before we connect, and you watch every step. Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "What&rsquo;s actually wrong",
@@ -1398,7 +1398,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "The permanent cure",
     "h2": "Stop the two accounts sharing one email address",
-    "html": '<p>The quick fixes manage the symptom. The permanent fix is to make sure your business email address belongs to <strong>only one</strong> Microsoft account &mdash; the work one. You do that by changing the sign-in address (the <em>alias</em>) on the personal account:</p><ol><li><strong>Sign in at account.microsoft.com with the personal account</strong> &mdash; pick <em>Personal</em> if it asks which one you mean.</li><li><strong>Take stock before you change anything.</strong> Check what lives in that personal account: OneDrive files, app or game purchases, subscriptions, personal Teams (Teams Free) chats. Nothing in this process deletes them, but you want to know what&rsquo;s attached.</li><li><strong>Add a new alias.</strong> At the time of writing this lives under <em>Your info</em> &gt; <em>Manage how you sign in to Microsoft</em> (Microsoft moves furniture regularly). A free outlook.com address works fine.</li><li><strong>Make the new alias primary, then remove your business address</strong> from the personal account&rsquo;s alias list.</li></ol><p>From then on, your business email exists only as the work account. The &ldquo;which account?&rdquo; prompt disappears, Teams stops guessing, and meeting links open where they should. Your personal files and purchases stay put &mdash; you&rsquo;ve renamed the account&rsquo;s front door, not emptied the house. One honest caveat: because there&rsquo;s no merge tool, anything you want moved between the two accounts (OneDrive files, say) has to be copied across by hand. If that sounds like an afternoon you&rsquo;d rather not spend, it&rsquo;s a tidy remote job for us from &pound;20.</p>'
+    "html": '<p>The quick fixes manage the symptom. The permanent fix is to make sure your business email address belongs to <strong>only one</strong> Microsoft account &mdash; the work one. You do that by changing the sign-in address (the <em>alias</em>) on the personal account:</p><ol><li><strong>Sign in at account.microsoft.com with the personal account</strong> &mdash; pick <em>Personal</em> if it asks which one you mean.</li><li><strong>Take stock before you change anything.</strong> Check what lives in that personal account: OneDrive files, app or game purchases, subscriptions, personal Teams (Teams Free) chats. Nothing in this process deletes them, but you want to know what&rsquo;s attached.</li><li><strong>Add a new alias.</strong> At the time of writing this lives under <em>Your info</em> &gt; <em>Manage how you sign in to Microsoft</em> (Microsoft moves furniture regularly). A free outlook.com address works fine.</li><li><strong>Make the new alias primary, then remove your business address</strong> from the personal account&rsquo;s alias list.</li></ol><p>From then on, your business email exists only as the work account. The &ldquo;which account?&rdquo; prompt disappears, Teams stops guessing, and meeting links open where they should. Your personal files and purchases stay put &mdash; you&rsquo;ve renamed the account&rsquo;s front door, not emptied the house. One honest caveat: because there&rsquo;s no merge tool, anything you want moved between the two accounts (OneDrive files, say) has to be copied across by hand. If that sounds like an afternoon you&rsquo;d rather not spend, it&rsquo;s a tidy remote job for us, usually &pound;60.</p>'
    },
    {
     "eyebrow": "Two odd variants",
@@ -1408,7 +1408,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "When to call us",
     "h2": "Twenty minutes of ours beats another missed meeting",
-    "html": "<p>Everything above is genuinely doable yourself, and if it works, brilliant &mdash; that&rsquo;s why we wrote it down. But mixed-up Microsoft accounts have a talent for one more twist: the alias change that won&rsquo;t take, the company laptop that keeps resurrecting the old sign-in, the moment you&rsquo;re suddenly unsure which account your OneDrive files actually live in. That last one is exactly when to stop clicking and pick up the phone &mdash; guessing wrong with account changes is how people make a confusing problem into a painful one.</p><p><strong>We untangle mixed-up Microsoft accounts remotely from &pound;20.</strong> We&rsquo;re a family-run Bournemouth firm, supporting Microsoft software since 1995 &mdash; and we always phone before we connect, so you know it&rsquo;s us, and you watch everything we do on your screen. Most account untangles are a single session. No walk-in shop to queue at and no 24/7 call centre &mdash; just real people, Mon&ndash;Fri 9&ndash;5, on <a href=\"tel:+441202775566\">01202 775566</a> (or text 07520 615332 and we&rsquo;ll ring you back). If remote can&rsquo;t reach the problem, we collect locally for free.</p><p>While the account&rsquo;s open, it&rsquo;s also the perfect moment to <a href=\"/how-to-secure-your-microsoft-365-account/\">secure your Microsoft 365 account properly</a> &mdash; two accounts sharing one address usually means two sets of security settings nobody has looked at in years.</p>"
+    "html": "<p>Everything above is genuinely doable yourself, and if it works, brilliant &mdash; that&rsquo;s why we wrote it down. But mixed-up Microsoft accounts have a talent for one more twist: the alias change that won&rsquo;t take, the company laptop that keeps resurrecting the old sign-in, the moment you&rsquo;re suddenly unsure which account your OneDrive files actually live in. That last one is exactly when to stop clicking and pick up the phone &mdash; guessing wrong with account changes is how people make a confusing problem into a painful one.</p><p><strong>We untangle mixed-up Microsoft accounts remotely, usually &pound;60.</strong> We&rsquo;re a family-run Bournemouth firm, supporting Microsoft software since 1995 &mdash; and we always phone before we connect, so you know it&rsquo;s us, and you watch everything we do on your screen. Most account untangles are a single session. No walk-in shop to queue at and no 24/7 call centre &mdash; just real people, Mon&ndash;Fri 9&ndash;5, on <a href=\"tel:+441202775566\">01202 775566</a> (or text 07520 615332 and we&rsquo;ll ring you back). If remote can&rsquo;t reach the problem, we collect locally for free.</p><p>While the account&rsquo;s open, it&rsquo;s also the perfect moment to <a href=\"/how-to-secure-your-microsoft-365-account/\">secure your Microsoft 365 account properly</a> &mdash; two accounts sharing one address usually means two sets of security settings nobody has looked at in years.</p>"
    },
    {
     "eyebrow": "For businesses",
@@ -1451,7 +1451,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Can you fix this remotely, and what does it cost?",
-    "a": "Yes &mdash; remote support starts from &pound;20, and most account untangles are a single session. We always phone before we connect so you know it&rsquo;s us, and you watch everything on your own screen. Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332."
+    "a": "Yes &mdash; remote support is usually &pound;60, and most account untangles are a single session. We always phone before we connect so you know it&rsquo;s us, and you watch everything on your own screen. Call 01202 775566 (Mon&ndash;Fri 9&ndash;5) or text 07520 615332."
    },
    {
     "q": "Should I just create a brand-new email address instead?",
@@ -1479,7 +1479,7 @@ OFFICE_PAGES = [
     "text": "Sign in to account.microsoft.com with the personal account, add a new alias such as a free outlook.com address, make it primary, and remove your business email from the personal account. Your business address then belongs only to the work account and the prompts stop."
    }
   ],
-  "crossLinksHtml": "<ul><li><a href=\"/microsoft-office-unlicensed-product-error/\">Office says &ldquo;unlicensed product&rdquo;</a> &mdash; the same wrong-account mix-up, wearing a different error message</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; our hub for plans, problems and managed Microsoft 365 for businesses</li><li><a href=\"/how-to-secure-your-microsoft-365-account/\">Secure your Microsoft 365 account</a> &mdash; worth doing while you have the account settings open</li><li><a href=\"/microsoft-365-migration/\">Microsoft 365 migration</a> &mdash; moving tenants or providers with identities sorted properly first</li><li><a href=\"/how-to-use-microsoft-teams/\">How to use Microsoft Teams</a> &mdash; the basics, once the right account is opening</li><li><a href=\"/remote-support/\">Remote support from &pound;20</a> &mdash; how our call-before-connect remote sessions work</li><li><a href=\"/teams-chat-files-disappeared/\">Files shared in Teams chat disappeared</a></li></ul>",
+  "crossLinksHtml": "<ul><li><a href=\"/microsoft-office-unlicensed-product-error/\">Office says &ldquo;unlicensed product&rdquo;</a> &mdash; the same wrong-account mix-up, wearing a different error message</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; our hub for plans, problems and managed Microsoft 365 for businesses</li><li><a href=\"/how-to-secure-your-microsoft-365-account/\">Secure your Microsoft 365 account</a> &mdash; worth doing while you have the account settings open</li><li><a href=\"/microsoft-365-migration/\">Microsoft 365 migration</a> &mdash; moving tenants or providers with identities sorted properly first</li><li><a href=\"/how-to-use-microsoft-teams/\">How to use Microsoft Teams</a> &mdash; the basics, once the right account is opening</li><li><a href=\"/remote-support/\">Remote support, usually &pound;60</a> &mdash; how our call-before-connect remote sessions work</li><li><a href=\"/teams-chat-files-disappeared/\">Files shared in Teams chat disappeared</a></li></ul>",
   "crumbName": "Teams Wrong Account",
   "primaryCta": [
    "Get It Fixed Remotely",
@@ -1493,18 +1493,18 @@ OFFICE_PAGES = [
  {
   "slug": "microsoft-office-unlicensed-product-error",
   "title": "Fix the Office &ldquo;Unlicensed Product&rdquo; Error &mdash; Word &amp; Excel | 365 Techies",
-  "metaDesc": "Word or Excel says &ldquo;Unlicensed Product&rdquo; but you pay for Microsoft 365? Plain-English fixes from a Dorset family firm supporting Office since 1995. Remote help from &pound;20.",
+  "metaDesc": "Word or Excel says &ldquo;Unlicensed Product&rdquo; but you pay for Microsoft 365? Plain-English fixes from a Dorset family firm supporting Office since 1995. Remote help, usually &pound;60.",
   "ogTitle": "Office Says &ldquo;Unlicensed Product&rdquo;? The Real Fixes, In Order",
   "eyebrow": "Microsoft Office &amp; 365 Problems",
   "h1": "Microsoft Office &ldquo;Unlicensed Product&rdquo; Error &mdash; the Real Fixes, in the Right Order",
   "lede": "Word&rsquo;s title bar suddenly shouts UNLICENSED PRODUCT, Excel says &ldquo;most features are turned off&rdquo;, and the invoice you were halfway through won&rsquo;t save. First, the good news: your documents are fine, and in most cases you already own a perfectly valid licence &mdash; Office has simply lost track of it. This page walks through the causes we actually find on Dorset customers&rsquo; machines, from the thirty-second checks to the deep fixes Microsoft quietly moved into its documentation archive.",
   "chips": [
-   "Remote fix from &pound;20",
+   "Remote fix, usually &pound;60",
    "Supporting Office since 1995",
    "Rated 4.9 on Google"
   ],
   "ctaHead": "Work stopped dead by a licensing error?",
-  "ctaSub": "We untangle Office activation problems remotely from &pound;20 &mdash; we call before we connect, and you watch everything we do. Family-run, Mon&ndash;Fri 9&ndash;5, on 01202 775566 or text 07520 615332.",
+  "ctaSub": "We untangle Office activation problems remotely, usually &pound;60 &mdash; we call before we connect, and you watch everything we do. Family-run, Mon&ndash;Fri 9&ndash;5, on 01202 775566 or text 07520 615332.",
   "sections": [
    {
     "eyebrow": "First, breathe",
@@ -1524,7 +1524,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Branch three &mdash; the archived fixes",
     "h2": "The deeper fixes Microsoft moved to its archive",
-    "html": "<p>When the quick checks don&rsquo;t clear it, the problem is usually a stale identity cached somewhere on the PC. These fixes come from Microsoft&rsquo;s own IT-professional guidance &mdash; the document that was retired to the documentation archive in February 2025, which is why almost nobody finds them any more. They work, but they are <strong>advanced</strong>: go carefully, and if any of this feels uncomfortable, a <a href=\"/remote-support/\">remote session from &pound;20</a> is the sensible shortcut &mdash; we do these exact steps while you watch.</p><h3>Clear cached Office credentials</h3><p>Open <strong>Credential Manager</strong> (search for it in the Start menu), choose <strong>Windows Credentials</strong>, and remove every entry that starts with <strong>MicrosoftOffice16</strong>. Restart Office and sign in with the correct account &mdash; it now has no stale identity to fall back on.</p><h3>Disconnect old work or school accounts</h3><p>Go to <strong>Settings &gt; Accounts &gt; Access work or school</strong> and disconnect any account that shouldn&rsquo;t be there &mdash; old employers, previous IT setups, accounts nobody recognises. Office inherits these connections and will happily check the wrong one.</p><h3>Reset Office&rsquo;s identity cache (registry &mdash; advanced)</h3><p>Office keeps its known identities in the registry under <strong>HKCU\\Software\\Microsoft\\Office\\16.0\\Common\\Identity\\Identities</strong>. Deleting that key forces Office to rebuild it cleanly at the next sign-in. <strong>Before touching the registry, back it up</strong> (File &gt; Export in Registry Editor) &mdash; a wrong deletion elsewhere can cause real damage. If you&rsquo;re not confident here, stop and call us; this is a two-minute job for us and a nervy one for most people.</p><h3>The full activation reset</h3><p>For the genuinely stubborn cases, Microsoft provides a procedure to reset the activation state of Microsoft&nbsp;365 Apps completely &mdash; wiping every cached licence and identity so the machine starts from scratch. It&rsquo;s the licensing equivalent of a factory reset and it&rsquo;s the last resort we reach for in remote sessions when everything above has failed.</p>"
+    "html": "<p>When the quick checks don&rsquo;t clear it, the problem is usually a stale identity cached somewhere on the PC. These fixes come from Microsoft&rsquo;s own IT-professional guidance &mdash; the document that was retired to the documentation archive in February 2025, which is why almost nobody finds them any more. They work, but they are <strong>advanced</strong>: go carefully, and if any of this feels uncomfortable, a <a href=\"/remote-support/\">remote session, usually &pound;60</a>, is the sensible shortcut &mdash; we do these exact steps while you watch.</p><h3>Clear cached Office credentials</h3><p>Open <strong>Credential Manager</strong> (search for it in the Start menu), choose <strong>Windows Credentials</strong>, and remove every entry that starts with <strong>MicrosoftOffice16</strong>. Restart Office and sign in with the correct account &mdash; it now has no stale identity to fall back on.</p><h3>Disconnect old work or school accounts</h3><p>Go to <strong>Settings &gt; Accounts &gt; Access work or school</strong> and disconnect any account that shouldn&rsquo;t be there &mdash; old employers, previous IT setups, accounts nobody recognises. Office inherits these connections and will happily check the wrong one.</p><h3>Reset Office&rsquo;s identity cache (registry &mdash; advanced)</h3><p>Office keeps its known identities in the registry under <strong>HKCU\\Software\\Microsoft\\Office\\16.0\\Common\\Identity\\Identities</strong>. Deleting that key forces Office to rebuild it cleanly at the next sign-in. <strong>Before touching the registry, back it up</strong> (File &gt; Export in Registry Editor) &mdash; a wrong deletion elsewhere can cause real damage. If you&rsquo;re not confident here, stop and call us; this is a two-minute job for us and a nervy one for most people.</p><h3>The full activation reset</h3><p>For the genuinely stubborn cases, Microsoft provides a procedure to reset the activation state of Microsoft&nbsp;365 Apps completely &mdash; wiping every cached licence and identity so the machine starts from scratch. It&rsquo;s the licensing equivalent of a factory reset and it&rsquo;s the last resort we reach for in remote sessions when everything above has failed.</p>"
    },
    {
     "eyebrow": "Branch four &mdash; the environment",
@@ -1534,7 +1534,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Never again",
     "h2": "How our customers stopped seeing this error altogether",
-    "html": "<p>We&rsquo;ve handled Office licensing since Office&nbsp;95 &mdash; literally &mdash; and taught Microsoft Office for more than ten years at our own Dorset Microsoft Education Resource Centre. In all that time, the pattern hasn&rsquo;t changed: this error almost never strikes machines where somebody is actually watching the licences.</p><p>That&rsquo;s the honest pitch for <a href=\"/microsoft-365-support/\">managed Microsoft&nbsp;365</a>, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>: we assign the licences properly, watch the renewals so a dead card never silently kills your subscription, keep sign-ins tidy, and when we do any work you get a written Service Report explaining what was done and why. Nobody on the plan sits staring at &ldquo;Unlicensed Product&rdquo; on invoice day wondering who to ring &mdash; they already know.</p><p>For everything else, we&rsquo;re remote-first: a secure session <strong>from &pound;20</strong>, arranged with a call before we connect so you know it&rsquo;s really us, Mon&ndash;Fri 9&ndash;5. If a machine needs hands-on work we collect it free locally &mdash; we don&rsquo;t run a walk-in shop, but we do come to you. Not sure which Microsoft&nbsp;365 subscription you should even be paying for? Our plain-English guide to <a href=\"/which-microsoft-365-plan/\">choosing the right Microsoft&nbsp;365 plan</a> is the place to start, and if your business leans hard on spreadsheets, our <a href=\"/excel-spreadsheet-rescue/\">Excel spreadsheet rescue service</a> covers the workbooks the licence error was keeping you away from.</p>"
+    "html": "<p>We&rsquo;ve handled Office licensing since Office&nbsp;95 &mdash; literally &mdash; and taught Microsoft Office for more than ten years at our own Dorset Microsoft Education Resource Centre. In all that time, the pattern hasn&rsquo;t changed: this error almost never strikes machines where somebody is actually watching the licences.</p><p>That&rsquo;s the honest pitch for <a href=\"/microsoft-365-support/\">managed Microsoft&nbsp;365</a>, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>: we assign the licences properly, watch the renewals so a dead card never silently kills your subscription, keep sign-ins tidy, and when we do any work you get a written Service Report explaining what was done and why. Nobody on the plan sits staring at &ldquo;Unlicensed Product&rdquo; on invoice day wondering who to ring &mdash; they already know.</p><p>For everything else, we&rsquo;re remote-first: a secure session <strong>usually &pound;60</strong>, arranged with a call before we connect so you know it&rsquo;s really us, Mon&ndash;Fri 9&ndash;5. If a machine needs hands-on work we collect it free locally &mdash; we don&rsquo;t run a walk-in shop, but we do come to you. Not sure which Microsoft&nbsp;365 subscription you should even be paying for? Our plain-English guide to <a href=\"/which-microsoft-365-plan/\">choosing the right Microsoft&nbsp;365 plan</a> is the place to start, and if your business leans hard on spreadsheets, our <a href=\"/excel-spreadsheet-rescue/\">Excel spreadsheet rescue service</a> covers the workbooks the licence error was keeping you away from.</p>"
    }
   ],
   "faqs": [
@@ -1568,11 +1568,11 @@ OFFICE_PAGES = [
    },
    {
     "q": "Should I just buy a cheap Office key online to make the error go away?",
-    "a": "Please don&rsquo;t. Grey-market keys are frequently revoked by Microsoft, which lands you straight back at Unlicensed Product, and &ldquo;activator&rdquo; downloads are a well-known malware source. In almost every case we see, the customer already owns a valid licence &mdash; the fix is getting Office to recognise it, which costs from &pound;20 remotely, not another licence."
+    "a": "Please don&rsquo;t. Grey-market keys are frequently revoked by Microsoft, which lands you straight back at Unlicensed Product, and &ldquo;activator&rdquo; downloads are a well-known malware source. In almost every case we see, the customer already owns a valid licence &mdash; the fix is getting Office to recognise it, which usually costs &pound;60 remotely, not another licence."
    },
    {
     "q": "How quickly can you fix this remotely?",
-    "a": "Most unlicensed-product cases are resolved in a single remote session from &pound;20 &mdash; we call first, connect securely while you watch, and work through the same checks on this page plus the deeper resets where needed. We&rsquo;re open Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332. We won&rsquo;t promise a guaranteed same-day fix, but licensing jobs are usually quick ones."
+    "a": "Most unlicensed-product cases are resolved in a single remote session, usually &pound;60 &mdash; we call first, connect securely while you watch, and work through the same checks on this page plus the deeper resets where needed. We&rsquo;re open Mon&ndash;Fri 9&ndash;5 on 01202 775566, or text 07520 615332. We won&rsquo;t promise a guaranteed same-day fix, but licensing jobs are usually quick ones."
    },
    {
     "q": "Can this error be prevented permanently?",
@@ -1597,7 +1597,7 @@ OFFICE_PAGES = [
    },
    {
     "name": "Get remote help if it persists",
-    "text": "If the error survives, deeper fixes such as resetting Office's identity cache or full activation state are best done with help. 365 Techies fixes these remotely from &pound;20 &mdash; call 01202 775566, Mon&ndash;Fri 9&ndash;5."
+    "text": "If the error survives, deeper fixes such as resetting Office's identity cache or full activation state are best done with help. 365 Techies fixes these remotely, usually &pound;60 &mdash; call 01202 775566, Mon&ndash;Fri 9&ndash;5."
    }
   ],
   "crossLinksHtml": "<ul><li><a href=\"/office-2021-end-of-support/\">Office 2021 support ends 13 October 2026</a> &mdash; it keeps working, and what to move to when you are ready</li><li><a href=\"/teams-keeps-opening-wrong-account/\">Teams keeps opening the wrong account</a> &mdash; the same personal-vs-work account tangle, on the Teams side</li><li><a href=\"/employee-left-dont-know-computer-password/\">An employee left and you don&rsquo;t know the passwords</a> &mdash; when the licences were set up in a leaver&rsquo;s name</li><li><a href=\"/which-microsoft-365-plan/\">Which Microsoft 365 plan do you actually need?</a> &mdash; plain-English guide before you renew anything</li><li><a href=\"/excel-spreadsheet-rescue/\">Excel spreadsheet rescue</a> &mdash; for the workbook the licence error was keeping you away from</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; the hub for every Office and 365 problem we cover</li><li><a href=\"/outlook-problems/\">Common Outlook problems</a> &mdash; if email is what&rsquo;s broken, start there instead</li></ul>",
@@ -1635,7 +1635,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "Route 1 &mdash; the straightforward one",
     "h2": "You still have some admin access: lock the door from the inside",
-    "html": "<p>If anyone in your business can sign in to the Microsoft 365 admin centre &mdash; even an account you&rsquo;d forgotten about &mdash; you can do this properly, today, in this order:</p><ol><li><strong>Create your own emergency admin first.</strong> Before removing anything, set up a Global Administrator account on your own domain, with a strong password and MFA on a phone <em>you</em> control. That way no later step can lock you out.</li><li><strong>Audit who holds the keys.</strong> In the admin centre, go to Users &gt; Active users and filter by admin role. Note every account with Global Administrator &mdash; especially any belonging to the old provider or named after their company.</li><li><strong>Remove or demote their accounts.</strong> Strip the admin roles, then block sign-in. Pause before deleting outright &mdash; occasionally an old admin account has services or licences hanging off it, so demote first and tidy later.</li><li><strong>Revoke the partner relationship.</strong> This is the step most people miss. An IT provider can administer your tenant <em>without any account in it</em>, through a reseller or delegated-admin (GDAP) relationship. At the time of writing this lives in the admin centre under Settings &gt; Partner relationships &mdash; Microsoft does move these menus around &mdash; and you can remove the delegated roles from there.</li><li><strong>Re-point the billing.</strong> If licences are billed through the old provider, they can lapse &mdash; or be cancelled &mdash; mid-divorce. Move the subscription onto your own payment details, or onto a new provider you actually trust.</li><li><strong>Sweep for leftovers.</strong> Old admin accounts sometimes leave forwarding rules or app permissions behind. Our guide to <a href=\"/how-to-secure-your-microsoft-365-account/\">securing your Microsoft 365 account</a> walks the full checklist.</li></ol><p>It&rsquo;s a one-shot job with a couple of traps in it, so if you&rsquo;d rather not click alone: we do exactly this remotely, from &pound;20, while you watch &mdash; and we always call before we connect.</p>"
+    "html": "<p>If anyone in your business can sign in to the Microsoft 365 admin centre &mdash; even an account you&rsquo;d forgotten about &mdash; you can do this properly, today, in this order:</p><ol><li><strong>Create your own emergency admin first.</strong> Before removing anything, set up a Global Administrator account on your own domain, with a strong password and MFA on a phone <em>you</em> control. That way no later step can lock you out.</li><li><strong>Audit who holds the keys.</strong> In the admin centre, go to Users &gt; Active users and filter by admin role. Note every account with Global Administrator &mdash; especially any belonging to the old provider or named after their company.</li><li><strong>Remove or demote their accounts.</strong> Strip the admin roles, then block sign-in. Pause before deleting outright &mdash; occasionally an old admin account has services or licences hanging off it, so demote first and tidy later.</li><li><strong>Revoke the partner relationship.</strong> This is the step most people miss. An IT provider can administer your tenant <em>without any account in it</em>, through a reseller or delegated-admin (GDAP) relationship. At the time of writing this lives in the admin centre under Settings &gt; Partner relationships &mdash; Microsoft does move these menus around &mdash; and you can remove the delegated roles from there.</li><li><strong>Re-point the billing.</strong> If licences are billed through the old provider, they can lapse &mdash; or be cancelled &mdash; mid-divorce. Move the subscription onto your own payment details, or onto a new provider you actually trust.</li><li><strong>Sweep for leftovers.</strong> Old admin accounts sometimes leave forwarding rules or app permissions behind. Our guide to <a href=\"/how-to-secure-your-microsoft-365-account/\">securing your Microsoft 365 account</a> walks the full checklist.</li></ol><p>It&rsquo;s a one-shot job with a couple of traps in it, so if you&rsquo;d rather not click alone: we do exactly this remotely, usually &pound;60, while you watch &mdash; and we always call before we connect.</p>"
    },
    {
     "eyebrow": "Route 2 &mdash; no admin at all",
@@ -1660,7 +1660,7 @@ OFFICE_PAGES = [
    {
     "eyebrow": "How we work",
     "h2": "What happens when 365 Techies takes over",
-    "html": '<p>We&rsquo;ve supported Dorset businesses since 1995, and taking over Microsoft 365 from an outgoing provider is routine work for us &mdash; here&rsquo;s exactly what happens, with no drama:</p><ul><li><strong>An honest triage call first.</strong> We work out which route you&rsquo;re in and what you already hold. If it turns out you can fix it yourself in ten minutes, we&rsquo;ll say so.</li><li><strong>Simple jobs, remotely, from &pound;20</strong> &mdash; removing old admin accounts and partner relationships while you watch. We always call before we connect, so you know it&rsquo;s us on your screen. Bigger untangles &mdash; domain disputes, Microsoft ownership cases &mdash; are quoted honestly after we&rsquo;ve seen what&rsquo;s involved, because guessing a fixed price for Route 3 would be a fiction.</li><li><strong>Then, if you want us as your new admin:</strong> <a href="/microsoft-365-support/">managed Microsoft 365</a>, <a href="/which-microsoft-365-plan/">priced per plan</a> &mdash; licences assigned, renewals watched, admin access held properly in your name with us as delegated support, never the other way round. Broader cover via our <a href="/business-it-support-plans/">business support plans</a> from &pound;24.38 per computer per month, with a written Service Report after each visit so you always know what was done and why. We&rsquo;re not VAT registered, so those are the prices you actually pay.</li><li><strong>Same faces every time.</strong> You&rsquo;ll deal with the same family team on every call &mdash; the opposite of the experience that usually brings people to this page.</li></ul><p>Remote-first, with on-site visits across Bournemouth, Christchurch, Poole and the rest of Dorset when hands-on is needed (priced before we come), and by-appointment meetings at the Kinson Community Centre &mdash; no walk-in shop. Mon&ndash;Fri 9&ndash;5, on 01202 775566, or text 07520 615332. And when you eventually leave us? You get the checklist above, completed, in writing. That&rsquo;s the whole point.</p>'
+    "html": '<p>We&rsquo;ve supported Dorset businesses since 1995, and taking over Microsoft 365 from an outgoing provider is routine work for us &mdash; here&rsquo;s exactly what happens, with no drama:</p><ul><li><strong>An honest triage call first.</strong> We work out which route you&rsquo;re in and what you already hold. If it turns out you can fix it yourself in ten minutes, we&rsquo;ll say so.</li><li><strong>Simple jobs, remotely, usually &pound;60</strong> &mdash; removing old admin accounts and partner relationships while you watch. We always call before we connect, so you know it&rsquo;s us on your screen. Bigger untangles &mdash; domain disputes, Microsoft ownership cases &mdash; are quoted honestly after we&rsquo;ve seen what&rsquo;s involved, because guessing a fixed price for Route 3 would be a fiction.</li><li><strong>Then, if you want us as your new admin:</strong> <a href="/microsoft-365-support/">managed Microsoft 365</a>, <a href="/which-microsoft-365-plan/">priced per plan</a> &mdash; licences assigned, renewals watched, admin access held properly in your name with us as delegated support, never the other way round. Broader cover via our <a href="/business-it-support-plans/">business support plans</a> from &pound;24.38 per computer per month, with a written Service Report after each visit so you always know what was done and why. We&rsquo;re not VAT registered, so those are the prices you actually pay.</li><li><strong>Same faces every time.</strong> You&rsquo;ll deal with the same family team on every call &mdash; the opposite of the experience that usually brings people to this page.</li></ul><p>Remote-first, with on-site visits across Bournemouth, Christchurch, Poole and the rest of Dorset when hands-on is needed (priced before we come), and by-appointment meetings at the Kinson Community Centre &mdash; no walk-in shop. Mon&ndash;Fri 9&ndash;5, on 01202 775566, or text 07520 615332. And when you eventually leave us? You get the checklist above, completed, in writing. That&rsquo;s the whole point.</p>'
    }
   ],
   "faqs": [
@@ -1694,7 +1694,7 @@ OFFICE_PAGES = [
    },
    {
     "q": "Do we have to sign up with you to get help taking control back?",
-    "a": "No. Plenty of businesses just want the keys back in their own hands, and we&rsquo;ll do that as a one-off &mdash; simple remote jobs from &pound;20, bigger untangles quoted honestly once we&rsquo;ve seen them. If you&rsquo;d then like us to run Microsoft 365 for you, we&rsquo;ll price the right plan with you, but there&rsquo;s no obligation and no hard sell."
+    "a": "No. Plenty of businesses just want the keys back in their own hands, and we&rsquo;ll do that as a one-off &mdash; simple remote jobs, usually &pound;60, bigger untangles quoted honestly once we&rsquo;ve seen them. If you&rsquo;d then like us to run Microsoft 365 for you, we&rsquo;ll price the right plan with you, but there&rsquo;s no obligation and no hard sell."
    },
    {
     "q": "Our old IT person was an employee who left, not a company &mdash; same process?",
@@ -1723,7 +1723,7 @@ OFFICE_PAGES = [
    },
    {
     "name": "If they won&rsquo;t cooperate, escalate with evidence &mdash; or hand it to us",
-    "text": "Request access in writing, settle any genuine billing dispute, then raise a Microsoft support case for ownership verification with proof of domain control and your company registration documents. Or call 01202 775566 and we&rsquo;ll run the whole takeover for you &mdash; simple remote jobs from &pound;20, then managed Microsoft 365, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, if you&rsquo;d like us to be your new admin."
+    "text": "Request access in writing, settle any genuine billing dispute, then raise a Microsoft support case for ownership verification with proof of domain control and your company registration documents. Or call 01202 775566 and we&rsquo;ll run the whole takeover for you &mdash; simple remote jobs, usually &pound;60, then managed Microsoft 365, <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, if you&rsquo;d like us to be your new admin."
    }
   ],
   "crossLinksHtml": "<ul><li><a href=\"/locked-out-microsoft-365-admin-account/\">Locked out of your Microsoft 365 admin account</a> &mdash; when it&rsquo;s your own password or MFA that&rsquo;s the problem, not a third party.</li><li><a href=\"/microsoft-365-migration/\">Microsoft 365 migration</a> &mdash; moving to a different tenant or provider properly, once the keys are yours.</li><li><a href=\"/how-to-secure-your-microsoft-365-account/\">How to secure your Microsoft 365 account</a> &mdash; the post-takeover sweep: MFA, forwarding rules and leftover access.</li><li><a href=\"/microsoft-365-backup-do-you-need-it/\">Does Microsoft 365 need a backup?</a> &mdash; the honest answer to &ldquo;Microsoft keeps it all, right?&rdquo; before you accept it from an outgoing provider.</li><li><a href=\"/employee-left-dont-know-computer-password/\">An employee left and you don&rsquo;t know the passwords</a> &mdash; the in-house cousin of this problem.</li><li><a href=\"/microsoft-365-support/\">Microsoft 365 support</a> &mdash; everything we do around Microsoft 365, set up, secured and managed.</li><li><a href=\"/business-it-support-plans/\">Business IT support plans</a> &mdash; ongoing cover from &pound;24.38 per computer per month, with a written Service Report after each visit.</li></ul>",

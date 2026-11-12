@@ -16,7 +16,7 @@ one button registers two presses under 70 ms apart (a worn switch's double-click
 
 _CALL = ('<p>Still not right? Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your '
          'permission we connect to your Windows PC and sort software problems while you watch: usually the same day, remote help '
-         'from &pound;20, and no fix, no fee. If it&rsquo;s the keyboard itself, we collect the laptop free across Bournemouth, '
+         'usually &pound;60, and no fix, no fee. If it&rsquo;s the keyboard itself, we collect the laptop free across Bournemouth, '
          'Christchurch, Poole and Dorset, tell you the price before any work, repair it and bring it back.</p>')
 
 # ---------------------------------------------------------------- the tool

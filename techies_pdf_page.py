@@ -550,7 +550,7 @@ WHO = """    <section class="section section--alt tpp" aria-labelledby="tpp-who"
 
 FAQS = [
     ("Is Techies PDF really free?",
-     "Yes. The program costs nothing: no trial, no adverts, no watermark on what you save, no daily limit and no account to make with us. If you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs from &pound;20), and we agree the price with you before we start."),
+     "Yes. The program costs nothing: no trial, no adverts, no watermark on what you save, no daily limit and no account to make with us. If you&rsquo;d like us to set it up or sort out a problem, that&rsquo;s a paid job (remote jobs, usually &pound;60), and we agree the price with you before we start."),
     ("Is there a free PDF editor for Windows 11?",
      "Yes: Techies PDF, free for Windows 11 and Windows 10. It fills in and signs forms, adds text, highlights and drawings, joins (merges) PDFs, splits off the pages you need, turns, moves and takes out pages, shrinks (compresses) PDFs for email, turns photos into a PDF, copies the words out (scans included, read by Windows on your PC), turns a PDF into a Word document, changes words by covering them and typing new ones, and puts on or takes off a password."),
     ("Can I change the words in a PDF for free?",
@@ -599,7 +599,7 @@ DESC = ("Free offline PDF editor for Windows 11 and 10: fill in and sign forms, 
 def build():
     content = "\n".join([
         hero(), PROOF, download(), overview(), jobs(), PRIVATE, SAFETY, LIMITS, growing(), WHO, bp.faq_html(FAQS),
-        bp.cta("Rather we set it up for you?", "We can install Techies PDF and show you round, over the phone or on a visit. It&rsquo;s a paid job, from &pound;20 remotely, and we agree the price before we start.",
+        bp.cta("Rather we set it up for you?", "We can install Techies PDF and show you round, over the phone or on a visit. It&rsquo;s a paid job, usually &pound;60 remotely, and we agree the price before we start.",
                primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Send us a message", "/contact/")),
         TRADEMARK, short_waiting() + CLIP_DIALOG,
     ])

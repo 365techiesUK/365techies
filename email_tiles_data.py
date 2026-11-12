@@ -212,7 +212,7 @@ EMAIL_HERO_TILES = {
   ('hp-c-fix', 'book', 'Find your problem', 'Every Outlook fix, grouped by what you&rsquo;re seeing', 'START HERE', '#s1'),
   ('hp-c-care', 'clock', 'New Outlook not syncing?', 'Force a sync and stop it stalling again', 'NEW OUTLOOK', '/new-outlook-not-syncing/'),
   ('hp-c-biz', 'user', 'Keeps asking for password?', 'Why Outlook loops on your password, and the fix', 'PASSWORD LOOP', '/outlook-keeps-asking-for-password/'),
-  ('hp-c-buy', 'phone', 'Rather we just fix it?', 'Free remote check, then a price agreed first', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'phone', 'Rather we just fix it?', 'Free remote check, then a price agreed first', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'outlook-pst-cannot-be-accessed': [
   ('hp-c-biz', 'wrench', 'Find, unlock and repair it', 'Check the path, move it out of OneDrive, run scanpst', '5 STEPS IN ORDER', '#s2'),

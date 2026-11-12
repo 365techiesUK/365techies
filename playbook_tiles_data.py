@@ -10,13 +10,13 @@ PLAYBOOK_HERO_TILES = {
   ('hp-c-fix', 'wrench', 'Fix it with me', 'Free step-by-step help, one step at a time', 'FREE', '#fixflow'),
   ('hp-c-care', 'wifi', 'Wi-Fi password rejected?', 'When it won&rsquo;t take a password you know is right', 'JOINING WI-FI', '/printer-says-wifi-password-incorrect/'),
   ('hp-c-biz', 'monitor', 'Prints but won&rsquo;t scan?', 'Often the basic driver Windows put on', 'WINDOWS 11', '/printer-wont-scan-to-computer-windows-11/'),
-  ('hp-c-buy', 'phone', 'Have us set it up', 'Remote help on your Windows PC, agreed first', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'phone', 'Have us set it up', 'Remote help on your Windows PC, agreed first', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'why-does-my-printer-keep-disconnecting': [
   ('hp-c-fix', 'wrench', 'Fix it with me', 'Free step-by-step checks for an offline printer', 'FREE', '#fixflow'),
   ('hp-c-care', 'wifi', 'Printer on mesh Wi-Fi?', 'Band steering and changing addresses, explained', 'MESH WI-FI', '/printer-wont-connect-to-mesh-wifi/'),
   ('hp-c-biz', 'monitor', 'Gone after an update?', 'The calm fix order, starting with the spooler', 'WINDOWS 11', '/printer-disappeared-after-windows-update/'),
-  ('hp-c-buy', 'phone', 'Sort it for me', 'Remote help on your Windows PC, agreed first', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'phone', 'Sort it for me', 'Remote help on your Windows PC, agreed first', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'wifi-drops-moving-between-access-points': [
   ('hp-c-fix', 'wrench', 'Fix it with me', 'Free step-by-step roaming checks, in order', 'FREE', '#fixflow'),

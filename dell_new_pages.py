@@ -28,7 +28,7 @@ guarantee as standard, five years on a support plan).
 from new_pages_data import NEW_PAGES
 
 _CALL = ('<p>Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your permission we connect to your '
-         'Windows PC and sort it while you watch: remote help from &pound;20, and no fix, no fee. We&rsquo;re an independent Dell '
+         'Windows PC and sort it while you watch: remote help, usually &pound;60, and no fix, no fee. We&rsquo;re an independent Dell '
          'specialist and a Dell reseller since 2001, not Dell itself.</p>')
 _REFURB = ('<p>Prefer one that&rsquo;s already been checked? Our refurbished Latitudes are ex-business machines we test, securely wipe and fit '
            'with a brand-new Samsung Pro SSD, then set up for you, with a 12-month guarantee as standard or five years while you&rsquo;re on '
@@ -146,7 +146,7 @@ NEW_PAGES.append({
  'lede': 'A BIOS update fixes bugs and security holes in the firmware that starts your Dell. It&rsquo;s routine, but it&rsquo;s the one update you mustn&rsquo;t interrupt, and on a PC with BitLocker it can ask for the recovery key unless you suspend BitLocker first. Here&rsquo;s the safe way, from Dell&rsquo;s own guidance.',
  'chips': ['Dell&rsquo;s own steps', 'The BitLocker trap', 'Independent Dell specialists'],
  'primaryCta': CTA, 'secondaryCta': ['Before you start', '#s1'],
- 'ctaHead': 'Rather we did it?', 'ctaSub': 'We can update the BIOS for you remotely, with BitLocker handled properly. Remote help from &pound;20.',
+ 'ctaHead': 'Rather we did it?', 'ctaSub': 'We can update the BIOS for you remotely, with BitLocker handled properly. Remote help, usually &pound;60.',
  'schemaKind': 'howto',
  'sections': [
   {'eyebrow': '/01 &mdash; BEFORE YOU START', 'h2': 'Three things to do first',

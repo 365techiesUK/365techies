@@ -50,12 +50,12 @@ NEW_PAGES.append({
  'lede': 'Plusnet has handed its email to a company called Greenby. Once your mailbox has moved, you log in at '
          '<strong>greenby.com</strong> with your Plusnet email address and password. Your address and your old emails stay '
          'the same.',
- 'chips': ['Family-run since 1995', 'Rated 4.9 on Google', 'Email sorted remotely, from &pound;20'],
+ 'chips': ['Family-run since 1995', 'Rated 4.9 on Google', 'Email sorted remotely, usually &pound;60'],
  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
  'secondaryCta': ['Login not working? What to check', '#s3'],
  'ctaHead': 'Still can&rsquo;t get into your Greenby email?',
  'ctaSub': 'Ring us and we&rsquo;ll sort it with you, remotely on your Windows PC while you watch: the Greenby login, Outlook '
-           'or Thunderbird. From &pound;20, agreed before we start. Family-run in Bournemouth since 1995.',
+           'or Thunderbird. Usually &pound;60, agreed before we start. Family-run in Bournemouth since 1995.',
  'sections': [
   {'eyebrow': '/01 &mdash; HOW TO LOG IN', 'h2': 'How to log in to Greenby email',
    'html': '<p>Your Greenby login only starts working <strong>after your mailbox has been moved</strong>, and Greenby emails '
@@ -184,7 +184,7 @@ NEW_PAGES.append({
   {'q': 'Is Plusnet webmail still working?', 'a': 'Until your mailbox moves, yes, at webmail.plus.net. After the move, your webmail is in your Greenby account at greenby.com.'},
   {'q': 'What are the Greenby email settings?', 'a': 'Most people don&rsquo;t need to change anything. For a new device: incoming imap.plus.net, port 993, SSL/TLS (or POP on mail.plus.net, port 995); outgoing relay.plus.net, port 587, STARTTLS; username your full email address and your usual password. <a href="#s4">All the settings</a>.'},
   {'q': 'How much is Greenby email?', 'a': 'Free for two years after the move if you still have Plusnet broadband, then &pound;15 a year. Without Plusnet broadband it is free for 30 days after the move, then &pound;15 a year. Greenby says that price covers all the mailboxes on your account.'},
-  {'q': 'Can you sort out my Greenby email for me?', 'a': 'Yes, remotely on a Windows PC while you watch: the Greenby login, Outlook or Thunderbird, from &pound;20, agreed before we start. Or we can move your email to Gmail for &pound;60 per address. We work on Windows PCs only, not Macs, iPads or iPhones. Ring 01202 775566.'},
+  {'q': 'Can you sort out my Greenby email for me?', 'a': 'Yes, remotely on a Windows PC while you watch: the Greenby login, Outlook or Thunderbird, usually &pound;60, agreed before we start. Or we can move your email to Gmail for &pound;60 per address. We work on Windows PCs only, not Macs, iPads or iPhones. Ring 01202 775566.'},
  ],
  'crossLinksHtml': '<p><strong>Related guides:</strong> <a href="/move-plusnet-email-to-gmail/">Moving Plusnet email to Gmail</a> &middot; '
                    '<a href="/plusnet-email-wont-add-to-new-outlook/">Plusnet email and the new Outlook</a> &middot; '

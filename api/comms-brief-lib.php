@@ -11,7 +11,7 @@
 
    Prices quoted here are only the ones the owner has set (memory pricing-truth): Virgin Media / Plusnet email moved
    £60 per address (Virgin includes a full PC service), Windows 11 on an older PC £60, gaming tune-up from £65,
-   Cyber Essentials help £99 (+ IASME's own fee), remote fixes from £20 quoted first. Never a refund promise. */
+   Cyber Essentials help £99 (+ IASME's own fee), remote fixes, usually £60 quoted first. Never a refund promise. */
 
 function brief_lc($s) { return function_exists('mb_strtolower') ? mb_strtolower((string)$s, 'UTF-8') : strtolower((string)$s); }
 function brief_cut($s, $n) {
@@ -57,7 +57,7 @@ function brief_rules() {
               'Move their email address to a new provider', 'No set price for this provider — quote it first (£60 is Virgin Media and Plusnet).', ''),
         array('scam', '/(scam|scammer|fraud|hacked|hacker|remote access|anydesk|teamviewer|ultraviewer|cold.?call|pretend|bank (called|rang|phoned)|gave (them|him|her) (access|my)|took control)/u',
               'Possible scam or hacked account', '', 'Scam: never promise they’ll get money back.'),
-        array('virus', '/(virus|malware|pop-?ups?|adware|ransom|infected)/u', 'Virus or pop-ups', 'Remote fix: from £20, quoted before we start.', ''),
+        array('virus', '/(virus|malware|pop-?ups?|adware|ransom|infected)/u', 'Virus or pop-ups', 'Remote fix: usually £60, quoted before we start.', ''),
         array('win11', '/(windows ?11|win ?11|windows ?10[^.\n]{0,40}(support|end|stop|finish))/u',
               'Windows 11 upgrade', 'Windows 11 on an older-processor PC: £60, agreed first.', ''),
         array('data', '/(lost (all )?(of )?(my |our |the )?(files|photos|pictures|documents|data|work)|data recovery|recover (my|our|the|some)|deleted (files|photos|pictures)|hard ?drive[^.\n]{0,30}(died|dead|failed|click|not (work|recogn))|clicking)/u',
@@ -65,12 +65,12 @@ function brief_rules() {
         array('net', '/((wi-?fi|internet|broadband|router|connection)[^.\n]{0,60}(slow|drop|down|not work|keeps|stopp|won\'?t|problem|issue|cut)|(no|lost|losing|poor|weak) (internet|wi-?fi|signal|connection))/u',
               'Internet or Wi-Fi problem', '', ''),
         array('slow', '/(slow|freez|crash|blue screen|bsod|won\'?t (start|boot|turn on|load)|not (starting|booting|turning on)|keeps restart|restarting)/u',
-              'PC slow, crashing or not starting', 'Remote fix: from £20, quoted before we start.', ''),
+              'PC slow, crashing or not starting', 'Remote fix: usually £60, quoted before we start.', ''),
         array('locked', '/(locked out|forgot(ten)? (my |the )?password|can\'?t (log|sign) ?in|cannot (log|sign) ?in|password reset|two.?(factor|step)|verification code|authenticator)/u',
               'Locked out of an account', '', ''),
         array('email', '/(e-?mail|outlook)[^.\n]{0,50}(not work|stopp|won\'?t|can\'?t|cannot|problem|issue|missing|disappear|not (send|receiv|com))/u',
-              'Email not working', 'Remote fix: from £20, quoted before we start.', ''),
-        array('printer', '/(printer|scanner|\bprint(ing)?\b)/u', 'Printer or scanner problem', 'Remote fix: from £20, quoted before we start.', ''),
+              'Email not working', 'Remote fix: usually £60, quoted before we start.', ''),
+        array('printer', '/(printer|scanner|\bprint(ing)?\b)/u', 'Printer or scanner problem', 'Remote fix: usually £60, quoted before we start.', ''),
         array('newpc', '/((buy|get|need|want|looking for|recommend|choos|replac|set ?up|setting up)\w*[^.\n]{0,25}\bnew (laptop|computer|pc|desktop|machine)|replac\w* (my |the |our |this )?(laptop|computer|pc|desktop|machine)|buy(ing)? a (laptop|computer|pc)|recommend a (laptop|computer|pc))/u',
               'A new computer — choosing or setting one up', '', ''),
         array('gaming', '/(gaming|graphics card|\bfps\b|steam)/u', 'Gaming PC tune-up', 'Gaming PC tune-up: from £65, confirmed before we start.', ''),

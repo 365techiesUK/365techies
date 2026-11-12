@@ -51,7 +51,7 @@ SNIPPETS = {
         # page one. The page now carries a real job (WPA3-Personal-Transition refused a 2013 HP; Compatible WiFi fixed it), so the
         # snippet leads with the symptom people type ("password is wrong") and the remote price. Judge ~17 Nov.
         "title": "Printer Won't Connect to EE Smart Hub? The Fix That Works",
-        "desc": "Printer says your EE Wi-Fi password is wrong? It usually isn't. Turn on EE's Compatible WiFi (2.4GHz, WPA2) and it joins. Steps, or we fix it for £20.",
+        "desc": "Printer says your EE Wi-Fi password is wrong? It usually isn't. Turn on EE's Compatible WiFi (2.4GHz, WPA2) and it joins. Steps, or we fix it, usually £60.",
     },
     "wifi-support": {
         # 5 Sep 2026: this page had ZERO search impressions in 28 days despite ~709 inbound

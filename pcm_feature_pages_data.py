@@ -193,7 +193,7 @@ def _app_box(key, head, what_html, setup_url, note='', clip=''):
 
 def _call_us(what):
     return ('<p>' + what + ' Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your permission we '
-            'connect to your Windows PC and sort it while you watch: usually the same day, remote help from &pound;20, and no fix, no fee.</p>')
+            'connect to your Windows PC and sort it while you watch: usually the same day, remote help, usually &pound;60, and no fix, no fee.</p>')
 
 
 # ============================================================ 1. Bluetooth headphones sound muffled
@@ -265,7 +265,7 @@ BT = {
         {'q': 'Does it happen with AirPods?', 'a': '<p>Yes. On a Windows PC, AirPods use the same two modes as any Bluetooth headphones, so they go muffled whenever a program uses their microphone.</p>'},
         {'q': 'Can I have good sound and the headset microphone at the same time?', 'a': '<p>With ordinary Bluetooth headphones, no &mdash; that is a limit of how they connect. A headset with its own USB dongle can, and so can a PC and headset that both support Bluetooth LE Audio on Windows 11 24H2.</p>'},
         {'q': 'Does this work on Windows 10?', 'a': '<p>Yes. The cause and the fixes are the same; only the Settings screens look a little different.</p>'},
-        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the right sound devices and test them with you, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the right sound devices and test them with you, usually the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/webcam-mic-test/">test your webcam and microphone</a>, <a href="/how-to-use-microsoft-teams/">using Microsoft Teams</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
@@ -336,7 +336,7 @@ HZ = {
         {'q': 'Why does my laptop screen only show 60Hz?', 'a': '<p>Many laptops lower the rate on battery to save power. Plug the charger in and check again; a Dynamic option means the laptop changes it as it goes.</p>'},
         {'q': 'Is 60Hz bad for ordinary use?', 'a': '<p>No. For email, browsing and films, 60Hz is fine. A higher rate makes the pointer, scrolling and games feel smoother, which is why it matters most for gaming.</p>'},
         {'q': 'Does a higher refresh rate use more electricity?', 'a': '<p>A little, mostly through the graphics card working harder in games. See <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> for the bigger picture.</p>'},
-        {'q': 'Can you set it up for me?', 'a': '<p>Yes. We connect to your Windows PC remotely and set the screen, driver and settings up while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. We connect to your Windows PC remotely and set the screen, driver and settings up while you watch, usually the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/refresh-rate-test/">free refresh rate test</a>, <a href="/how-to-set-up-a-second-monitor/">setting up a second monitor</a>, <a href="/gaming-pc-tune-up/">gaming PC tune-up</a>, <a href="/gaming-pc-slow-wont-load-games/">games running slow</a>, <a href="/pc-benchmark/">free PC benchmark</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
@@ -407,7 +407,7 @@ PQ = {
         {'q': 'Why does it keep happening?', 'a': '<p>Usually a printer that drops off the Wi-Fi mid-job, or a driver that struggles with some files. Giving the printer a fixed connection and reinstalling its driver from the maker&rsquo;s website normally stops it.</p>'},
         {'q': 'What if the Print Spooler keeps stopping?', 'a': '<p>That points to a faulty printer driver. Removing the printer, deleting its driver and installing the maker&rsquo;s current one fixes most cases. We can do that remotely.</p>'},
         {'q': 'Does this work on Windows 10?', 'a': '<p>Yes. The Print Spooler and the spool folder are the same; on Windows 10 the printers are under Settings &gt; Devices &gt; Printers &amp; scanners.</p>'},
-        {'q': 'Can you clear it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and get it printing while you watch, often the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you clear it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC and get it printing while you watch, often the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/printer-support/">printer support</a>, <a href="/printer-offline/">printer says offline</a>, <a href="/printer-disappeared-after-windows-update/">printer disappeared after a Windows update</a>, <a href="/why-does-my-printer-keep-disconnecting/">printer keeps disconnecting</a>, <a href="/how-to-set-up-a-printer/">how to set up a printer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
@@ -598,7 +598,7 @@ RD = {
         {'q': 'Can I wake up to the radio on my computer?', 'a': '<p>Yes, with our free 365 PC Manager app: its wake-up alarm starts the radio or your music almost silent and lets it rise gently. BBC and Global stations play only in their own apps, so they can&rsquo;t be used as alarms; other stations can.</p>'},
         {'q': 'Can I listen to UK radio when I&rsquo;m abroad?', 'a': '<p>Some stations, not all. Many can only be played in the UK, because their music licences only cover UK listeners.</p>'},
         {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
-        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/music-visualiser-for-windows/">a music visualiser that moves to the radio</a>, <a href="/free-audiobooks/">free audiobooks</a>, <a href="/live-webcams/">live webcams</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
@@ -669,7 +669,7 @@ CD = {
         {'q': 'Why does one CD play and another not?', 'a': '<p>Usually a scratched or dirty disc. A few CDs from the early 2000s were also copy-protected in ways that stop them playing on computers.</p>'},
         {'q': 'Is it legal to copy my own CDs in the UK?', 'a': '<p>Strictly, UK law has had no exception for copying your own CDs since 2015, when the High Court overturned the one brought in the year before. In practice, copying music you own for your own listening is widely done; never share or sell the copies.</p>'},
         {'q': 'Will my copied songs have their names?', 'a': '<p>Media Player and Windows Media Player Legacy look the names up online when they can. Our free app looks the album, artist and song names up on MusicBrainz, the free online music encyclopaedia, and lets you correct them.</p>'},
-        {'q': 'Can you copy all my CDs for me?', 'a': '<p>Yes. We can set it up remotely so copying each CD is one click, or do the whole shelf for you. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you copy all my CDs for me?', 'a': '<p>Yes. We can set it up remotely so copying each CD is one click, or do the whole shelf for you. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/music-visualiser-for-windows/">a free music visualiser</a>, <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving to a new computer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
@@ -743,7 +743,7 @@ LV = {
         {'q': 'What if the internet goes off while I&rsquo;m away?', 'a': '<p>Then the radio can&rsquo;t play, because it comes over the internet. If your broadband is unreliable, set the timer to play your own songs instead: they&rsquo;re on the computer, so they play either way.</p>'},
         {'q': 'Can I use BBC Radio 4 or LBC?', 'a': '<p>Not in our app: the BBC and Global (which runs LBC, Heart and Classic FM) only let their stations play in their own apps. Use another station or your own music, or put a real radio tuned to Radio 4 on a timer plug.</p>'},
         {'q': 'Is it safe to leave the computer on while I&rsquo;m away?', 'a': '<p>Yes, much like leaving the broadband router on. It sleeps between plays. Leave it on a hard surface with its air vents clear, not on a bed or in a cupboard.</p>'},
-        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the timer, test it with you and check the PC will wake for it, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the timer, test it with you and check the PC will wake for it, usually the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-set-an-alarm-on-your-computer/">a wake-up alarm on your computer</a>, <a href="/cctv-smart-home/">CCTV and smart home setup</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>. The checklist follows the advice of <a href="https://www.securedbydesign.com/" rel="noopener" target="_blank">Secured by Design</a>, the police&rsquo;s crime-prevention initiative.</p>',
 }
@@ -807,7 +807,7 @@ AL = {
         {'q': 'What if the internet is down in the morning?', 'a': '<p>Our app won&rsquo;t fail silently: if the station won&rsquo;t play, your songs play instead, and if there are none, Windows&rsquo; own alarm sound. It also turns Windows&rsquo; sound up to at least 30% if it was muted or very low.</p>'},
         {'q': 'Can I wake up to BBC Radio 2 or Heart?', 'a': '<p>Not in our app: the BBC and Global (Heart, Capital, Classic FM, Smooth) only let their stations play in their own apps, so they can&rsquo;t be alarms. Choose another station, or your own music.</p>'},
         {'q': 'What happens if I sleep through it?', 'a': '<p>The Clock app snoozes for the time you chose. Our app shows a Good morning window with Stop and Snooze (10 minutes), and switches itself off after an hour.</p>'},
-        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the alarm, test it with you and check the computer wakes for it, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the alarm, test it with you and check the computer wakes for it, usually the same day. Remote help is usually &pound;60 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
     'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
@@ -886,7 +886,7 @@ RA = {
         {'q': 'Is it safe to uninstall AnyDesk or TeamViewer?', 'a': '<p>Yes, unless you use it with someone you trust, such as a family member or your own IT company. If you don&rsquo;t remember installing it, remove it.</p>'},
         {'q': 'How do I tell a scammer from my real IT company?', 'a': '<p>A genuine support company tells you before it connects, and you contacted them first. Microsoft, banks and broadband providers do not ring out of the blue asking to connect to your PC. If in doubt, hang up and ring the company on a number you already have.</p>'},
         {'q': 'Does a running AnyDesk mean someone is connected?', 'a': '<p>No. These programs stay running all day so a helper can reach them when needed. Running only means the door exists; whether anyone used it is in the program&rsquo;s own list of connections.</p>'},
-        {'q': 'Can you check my computer remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC using our own support program, check it properly and remove anything left behind, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you check my computer remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC using our own support program, check it properly and remove anything left behind, while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/scam-recovery/">scam recovery</a>, <a href="/fake-im-not-a-robot-scam/">the fake &ldquo;I&rsquo;m not a robot&rdquo; check</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/virus-threat-protection-managed-by-your-organization/">virus protection says it is managed by your organisation</a>.</p>',
 }
@@ -1136,7 +1136,7 @@ VT = {
         {'q': 'Is my PC protected while it says this?', 'a': '<p>Open Windows Security, then Virus &amp; threat protection. If it names an antivirus that&rsquo;s on, you&rsquo;re protected. If real-time protection is off and no other antivirus is named, you aren&rsquo;t &mdash; put that right first.</p>'},
         {'q': 'I removed Norton or McAfee and now it says managed. Why?', 'a': '<p>The program has gone but some of its settings may not have. Run the maker&rsquo;s own removal tool, restart, and Defender should take over again by itself.</p>'},
         {'q': 'It&rsquo;s a work laptop. Should I remove it?', 'a': '<p>No. On a work or school computer, management is normal and expected. Leave it to your IT department.</p>'},
-        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find what set the policy, remove it safely and check you&rsquo;re properly protected, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you fix it remotely?', 'a': '<p>Yes. With your permission we connect to your Windows PC, find what set the policy, remove it safely and check you&rsquo;re properly protected, while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/chrome-managed-by-your-organization/">Chrome says it&rsquo;s managed by your organization</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a>, <a href="/virus-removal/">virus removal</a>, <a href="/is-someone-remotely-accessing-my-computer/">is someone remotely accessing my computer?</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/mcafee-or-norton-expired-do-i-need-to-renew/">McAfee or Norton expired: do I need to renew?</a>.</p>',
 }
@@ -1289,7 +1289,7 @@ AV = {
         {'q': 'Is it bad to have two antivirus programs?', 'a': '<p>Yes. Two protecting at once slow the PC and can clash, without adding real protection. Keep one and remove the other.</p>'},
         {'q': 'Is my McAfee or Norton renewal email real?', 'a': '<p>Maybe not &mdash; fake renewal invoices are one of the commonest scams. Never ring the number in the email; check your bank statement or log in to your account by typing the address yourself.</p>'},
         {'q': 'Does uninstalling cancel my subscription?', 'a': '<p>No. Turn off auto-renewal in your McAfee or Norton account online as well, or the next payment can still be taken.</p>'},
-        {'q': 'Can you remove it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed properly and check the PC is protected, while you watch. Remote help from &pound;20, no fix, no fee.</p>'},
+        {'q': 'Can you remove it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, remove what isn&rsquo;t needed properly and check the PC is protected, while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/how-to-choose-antivirus/">how to choose antivirus</a>, <a href="/virus-threat-protection-managed-by-your-organization/">Windows Security says it&rsquo;s managed</a>, <a href="/gave-a-scammer-remote-access/">gave a scammer remote access</a>, <a href="/how-to-know-if-computer-has-virus/">how to know if your computer has a virus</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
@@ -1850,7 +1850,7 @@ SU = {
         {'q': 'What does Startup impact mean?', 'a': '<p>Windows&rsquo; rating of how much a program slows the start. Microsoft counts Low as under 300 milliseconds of processor time and under 292 KB read from the drive; High ones are worth switching off first.</p>'},
         {'q': 'Will disabling startup programs speed up my PC?', 'a': '<p>It makes the PC quicker to be ready and frees memory. It won&rsquo;t fix slowness caused by an old hard drive, a full drive or too little memory.</p>'},
         {'q': 'A program keeps starting even though I switched it off. Why?', 'a': '<p>Some programs turn their own &ldquo;start with Windows&rdquo; option back on after an update. Untick it in the program&rsquo;s own settings, or check the Startup folder (Windows + R, then shell:startup).</p>'},
-        {'q': 'Can you sort it out for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through what starts with it and why it&rsquo;s slow, and sort it while you watch: remote help from &pound;20, and no fix, no fee.</p>'},
+        {'q': 'Can you sort it out for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through what starts with it and why it&rsquo;s slow, and sort it while you watch: remote help, usually &pound;60, and no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/why-is-my-computer-slow/">why is my computer slow?</a>, <a href="/how-to-speed-up-a-slow-computer/">speeding up a slow computer</a>, <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
 }
@@ -1953,7 +1953,7 @@ RM = {
         {'q': 'What is a good stability index?', 'a': '<p>10 is the most stable. There&rsquo;s no official pass mark, and a busy PC often sits below 10. What matters is the trend and what&rsquo;s behind the dips: a falling line with the same program crashing again and again is worth fixing.</p>'},
         {'q': 'How do I clear Reliability Monitor?', 'a': '<p>There&rsquo;s no clear button. Fix the cause and the index climbs back by itself, because recent problems count the most. Deleting Windows&rsquo; record files only throws away history you may need later.</p>'},
         {'q': 'What does BCCode mean in Reliability Monitor?', 'a': '<p>It&rsquo;s the stop code of a blue (or black) screen, shown in the technical details. It points to the kind of fault, and searching for it with your PC&rsquo;s make often points to the driver involved.</p>'},
-        {'q': 'Can you read it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through the record with you and fix what&rsquo;s behind it: remote help from &pound;20, and no fix, no fee.</p>'},
+        {'q': 'Can you read it for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, go through the record with you and fix what&rsquo;s behind it: remote help, usually &pound;60, and no fix, no fee.</p>'},
     ],
     'crossLinksHtml': '<p>Related help: <a href="/why-does-my-pc-keep-crashing/">why does my PC keep crashing?</a>, <a href="/windows-update-stuck/">Windows Update stuck or failing</a>, <a href="/laptop-overheating/">laptop overheating</a>, <a href="/how-to-check-ssd-health/">how to check SSD health</a>, <a href="/stop-programs-starting-with-windows/">stop programs starting with Windows</a> and our <a href="/free-pc-health-check/">free PC health check app</a>.</p>',
 }

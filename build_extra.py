@@ -16218,7 +16218,7 @@ def repair_pages():
         return [(t, s) for _d, t, s in scored[:n]]
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
-        desc = f"Broken or slow computer in {town}? Remote fixes from £20, free collection and a 12-month warranty. If we can't fix it, you pay nothing. Family-run since 1995."
+        desc = f"Broken or slow computer in {town}? Remote fixes, usually £60, free collection and a 12-month warranty. If we can't fix it, you pay nothing. Family-run since 1995."
         loc = bp.LOCAL_CONTENT.get(town, {})
         local_section = (f'''    <section class="section" aria-label="Local computer repair in {town}">
       <div class="wrap">
@@ -16229,7 +16229,7 @@ def repair_pages():
     </section>''') if loc.get("intro") else ""
         faqs = [
           (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
-          ("How much does a computer repair cost?", "Diagnosis is free, and we give you a clear price before any work, with no call-out fee and no surprise bills. Remote fixes start from &pound;20; a full Windows reinstall with your files backed up and put back is &pound;149; screens, drives and other parts are quoted for your exact model. If we can&rsquo;t fix it, you pay nothing. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),
+          ("How much does a computer repair cost?", "Diagnosis is free, and we give you a clear price before any work, with no call-out fee and no surprise bills. Remote fixes are usually &pound;60; a full Windows reinstall with your files backed up and put back is &pound;149; screens, drives and other parts are quoted for your exact model. If we can&rsquo;t fix it, you pay nothing. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),
           ("Is it worth repairing or replacing my computer?", "We&rsquo;ll tell you honestly &mdash; sometimes a small upgrade like an SSD gives an old machine years more life; sometimes a replacement is better value. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>."),
           ("Why is my computer so slow?", "Usually clutter, too many start-up programs, low disk space, missed updates or a failing drive. We&rsquo;ll find the cause and speed it up &mdash; and a <a href=\"/monthly-it-support/\">monthly plan</a> keeps it fast with a full service every six weeks."),
           (f"Can you come to my home in {town}?", f"Yes &mdash; we offer home visits across {town}, and for any visit we phone ahead with an estimated arrival time so you know exactly when to expect us. We can also fix many things remotely."),
@@ -16275,7 +16275,7 @@ def repair_pages():
         </div>
         <ul class="security-grid" data-stagger>
 {grid_cards([("Diagnosis: free","We find out what&rsquo;s wrong first and give you a clear price. If we can&rsquo;t fix it, you pay nothing."),
-             ("Remote fixes: from &pound;20","Many problems are fixed over a secure remote session, priced on the job and agreed before we start."),
+             ("Remote fixes: usually &pound;60","Many problems are fixed over a secure remote session, priced on the job and agreed before we start."),
              ("Windows reinstall: &pound;149","A full clean install with your files backed up and put back &mdash; about four hours of work."),
              ("Collection: free",f"We collect your computer or laptop in {town} and bring it back when it&rsquo;s fixed. <a href=\"/book-a-collection/\">Book a collection</a>."),
              ("Screens, drives &amp; parts: quoted first","Priced for your exact model before any work starts, so there are no surprises."),
@@ -17261,7 +17261,7 @@ if UK_KEY_SOLD:
          ("<li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key: <strong>" + UK_KEY_PRICE + "</strong> in the UK, for a PC that isn&rsquo;t on one of our support plans, and <strong>US$19.99</strong> outside the UK. Paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>" if UK_KEY_ON_SITE else
           "<li><strong>&ldquo;Unlock everything&rdquo;</strong> is an optional key, bought in 365 PC Manager itself: in the UK for a PC that isn&rsquo;t on one of our support plans, and outside the UK. The app shows the price before you pay. Paid once, for <strong>12 months</strong> on <strong>up to 3 PCs</strong>.</li>")),
         ("<li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team: those are for our customers in the UK.</li>",
-         "<li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team. In the UK, unlimited remote help and a real person to call come with our <a href=\"/home-it-support-plans/\">support plans</a>. Without a plan our help is still there when you need it, charged per job (<a href=\"/remote-support/\">remote fixes from &pound;20</a>).</li>"),
+         "<li><strong>It is software only.</strong> It doesn&rsquo;t include phone calls, visits or remote help from our team. In the UK, unlimited remote help and a real person to call come with our <a href=\"/home-it-support-plans/\">support plans</a>. Without a plan our help is still there when you need it, charged per job (<a href=\"/remote-support/\">remote fixes, usually &pound;60</a>).</li>"),
         ("<h2>Price, tax and how you pay</h2>\n          <p>",
          "<h2>Price, tax and how you pay</h2>\n          <p><strong>In the UK</strong> the price is " + ("<strong>" + UK_KEY_PRICE + "</strong>" if UK_KEY_ON_SITE else "the one the app shows before you pay") + ", charged once in pounds, with nothing added. We are the seller: you buy the key from us, 365 Techies Ltd, and <strong>PayPal</strong> takes the payment, by PayPal or card, so we never see your card or bank details. It is for a PC that isn&rsquo;t on one of our support plans: a PC on a plan already has the full service, run for it by us.</p>\n          <p><strong>Outside the UK.</strong> "),
         ("<li>Nothing here takes away any right you have under the law where you live.</li>",
@@ -17695,7 +17695,7 @@ info_page(
             <li><strong>Home support: &pound;18.25 a month per person, per computer.</strong> A full service every 6 weeks, remote help, and a loyalty discount on any fault work. Microsoft 365 for home users is &pound;4.85 a month per person. <a href="/home-it-support-plans/">Home plans</a></li>
             <li><strong>Business support: from &pound;24.38 a month per person, per computer, with remote fixes included.</strong> On-site visits, parts and new set-ups are quoted before we start. <a href="/business-it-support-plans/">Business plans</a></li>
             <li><strong>Business Care: &pound;""" + _swo_order.bundle_price("business-care") + """ per person a month</strong> for support plus a Microsoft 365 Business Standard licence, or <strong>Business Care Plus at &pound;""" + _swo_order.bundle_price("business-care-plus") + """</strong> with Business Premium, Microsoft 365 backup and staff security training. Microsoft 365 comes with our support, not on its own. <a href="/business-it-support-plans/#bundles">The bundles</a></li>
-            <li><strong>One-off remote fixes: from &pound;20</strong>, priced on the job and agreed before any chargeable work. A full Windows reinstall with your files backed up and put back takes about four hours and is &pound;149. <a href="/remote-support/">Remote support</a></li>
+            <li><strong>One-off remote fixes: usually &pound;60</strong>, priced on the job and agreed before any chargeable work. A full Windows reinstall with your files backed up and put back takes about four hours and is &pound;149. <a href="/remote-support/">Remote support</a></li>
             <li><strong>Security and backup software</strong>, per month: Malwarebytes &pound;2.50 for a home computer, ThreatDown business antivirus &pound;4.50 per computer, the Keeper password manager &pound;3.50 per person, computer backup &pound;12.00. <a href="/cybersecurity-support/#software">Security prices</a></li>
           </ul>
           <h2>Per computer or per person?</h2>
@@ -18515,10 +18515,10 @@ info_page(
 # ---- Start Remote Support
 info_page(
   slug="remote-support", crumb_name="Start Remote Support", eyebrow="// REMOTE SUPPORT",
-  h1='Start <em class="grad grad--green">remote support</em>',
-  lede="Need help right now? A senior techie connects securely to your computer and fixes the problem while you watch — usually in minutes. New to us? Checking the problem is free — we&rsquo;ll then give you a realistic quote and agree it with you before any fix, so you always know what&rsquo;s happening and what it costs.",
-  desc="Start secure remote support with 365 Techies — a senior techie connects to your Windows PC or Android device and fixes it while you watch. Cost confirmed before any work; remote fixes from £20.",
-  chips=["Senior techie &middot; fully secure","Price agreed before any fix","Usually within minutes"],
+  h1='Remote fixes, <em class="grad grad--green">usually &pound;60</em>',
+  lede="Email not working? Printer won&rsquo;t connect? Locked out of an account? A senior techie connects to your Windows computer and fixes it while you watch. Checking the problem is free. Most fixes are &pound;60, which covers up to an hour. If yours needs longer, we tell you the price before we carry on. Every fix includes 30 days of support.",
+  desc="Start secure remote support with 365 Techies — a senior techie connects to your Windows PC or Android device and fixes it while you watch. Cost confirmed before any work; remote fixes, usually £60.",
+  chips=["Checking the problem is free","Price agreed before any fix","30 days of support included"],
   hero_cta1=("Download Splashtop SOS", "/sos/"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   pre='''    <section class="section section--alt" aria-label="How remote support works">
       <div class="wrap">
@@ -18541,7 +18541,7 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// NEW TO US? &middot; HOW PRICING WORKS</p>
         <h2 class="section-title section-title--center" data-title>You&rsquo;ll know the cost before we fix anything<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>No surprises, ever. <strong>Checking the problem is free</strong>; the fix is priced on how tricky it is and how long it takes, <strong>from &pound;20</strong> &mdash; and nothing chargeable happens until you&rsquo;ve agreed the price.</p>
+        <p class="lede lede--center" data-reveal>No surprises, ever. <strong>Checking the problem is free</strong>; most fixes are <strong>&pound;60</strong>, which covers up to an hour. If yours needs longer we tell you the price first &mdash; and nothing chargeable happens until you&rsquo;ve agreed it.</p>
         <ol class="how__steps">
 ''' + steps([
         ("We check the problem &mdash; free","A senior techie connects securely first, at no charge, simply to see exactly what needs doing &mdash; you watch on screen the whole time."),
@@ -18563,9 +18563,9 @@ info_page(
             <p class="plan-card__tag mono">ONE-OFF REMOTE FIX</p>
             <h3>Pay as you go</h3>
             <p class="plan-card__desc">No plan needed. A senior techie connects and checks the problem <strong>free</strong>, gives you a realistic quote, and agrees it with you before any chargeable work.</p>
-            <p class="plan-card__price"><span class="from mono">FROM</span> &pound;20<span class="per">per remote job</span></p>
+            <p class="plan-card__price"><span class="from mono">USUALLY</span> &pound;60<span class="per">per remote job</span></p>
             <ul class="plan-card__features">
-              <li>Priced on difficulty &amp; time &mdash; agreed with you before we start</li>
+              <li>Covers up to an hour &mdash; a longer job is quoted before we carry on</li>
               <li>You watch every step; access ends the moment we&rsquo;re done</li>
               <li><strong>30 days&rsquo; follow-up remote support</strong> on the same issue, included</li>
               <li>A <strong>free system health check at 30 days</strong> to make sure all is well</li>
@@ -18626,7 +18626,7 @@ info_page(
           <h2>It once helped recover a stolen laptop</h2>
           <p>Remote support has even done something we never expected. Back in 2011, when a customer&rsquo;s laptop was stolen, the remote-support software we&rsquo;d set up meant we could see it was being used &mdash; and the internet address it was connecting from. We passed the details to Dorset Police, who recovered it, and the <em>Bournemouth Echo</em> <a href="https://www.bournemouthecho.co.uk/news/9427325.laptop-retrieved-thanks-to-software/" target="_blank" rel="noopener">ran the story</a>. (If the worst ever happens to you, here&rsquo;s <a href="/lost-or-stolen-laptop-what-to-do/">what to do if your laptop is lost or stolen</a>.)</p>""",
   faqs=[
-    ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. We connect first to confirm exactly what&rsquo;s needed, then agree the cost with you before any chargeable work &mdash; so you always know the price before we fix anything. On a monthly plan? Remote support is included &mdash; just call."),
+    ("How much does a remote fix cost?", "Most remote fixes are <strong>&pound;60</strong>, which covers up to an hour. We connect first to confirm exactly what&rsquo;s needed, then agree the cost with you before any chargeable work &mdash; so you always know the price before we fix anything. On a monthly plan? Remote support is included &mdash; just call."),
     ("Do I have to commit before you know what&rsquo;s wrong?", "No. A senior techie connects securely first simply to confirm what needs doing, then confirms the quote with you. Nothing chargeable happens until you&rsquo;ve agreed the price."),
     ("What if I&rsquo;m already on your monthly support?", "Just call us to arrange help &mdash; and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back. Plan members get priority support, and your regular computer servicing appointments are fully managed &mdash; you can check or change dates and times whenever you need."),
     ("Who actually connects to my computer?", "A senior 365 techie &mdash; the same small, local, family-run team every time, never an outsourced call centre. Sessions are encrypted, you watch everything on screen, and access ends the moment the session does."),
@@ -22977,7 +22977,7 @@ def dell_panel(slug):
 
 # ============================================ FIX PANEL (26 Sep 2026)
 # The closing block of the fix pages: the page's own question and words on one side with how a
-# remote fix works (the claims are /remote-support/'s: checking is free, fixes from £20, nothing
+# remote fix works (the claims are /remote-support/'s: checking is free, fixes, usually £60, nothing
 # chargeable until agreed, we phone first), and "stop it happening again" on the other (the keep
 # band's allowed claims: a full service every six weeks with a written report, every program kept
 # up to date, unlimited remote support; plans from £18.25). Same component as the Dell panel.
@@ -22986,11 +22986,11 @@ def dell_panel(slug):
 # fix pages on the owner's go-ahead (26 Sep 2026). FIX_PANEL_ON adds pages by hand if ever needed.
 FIX_PANEL_ON = {'new-outlook-not-syncing'}
 # keep their own closing band: not a computer fix (websites, lessons) or an on-site job (surveys, installs,
-# a CCTV visit), where "fixes from £20, watch every step" would be wrong
+# a CCTV visit), where "fixes, usually £60, watch every step" would be wrong
 FIX_PANEL_OFF = {'slow-wordpress-site-fix-or-rebuild', 'website-hacked-what-to-do', 'smartphone-lessons-for-seniors',
                  'wifi-for-a-shepherds-hut', 'mesh-wifi-setup-guide', 'office-wifi-keeps-dropping-out',
                  'cctv-not-working-after-changing-broadband'}
-# hardware faults: the fix side is the collection repair, never "remote help from £20"
+# hardware faults: the fix side is the collection repair, never "remote help, usually £60"
 FIX_PANEL_HARDWARE = {'dell-xps-swollen-battery', 'dell-g15-overheating', 'laptop-stuck-on-logo-wont-boot'}
 
 
@@ -23023,7 +23023,7 @@ def fix_panel(d):
                      '              <li>A clear price before we start</li>\n              <li>12-month warranty on the repair</li>')
     else:
         fix_tag = "We&rsquo;ll fix it with you"
-        fix_ticks = ('<li>Checking the problem is free</li>\n              <li>Fixes from &pound;20, agreed before we start</li>\n'
+        fix_ticks = ('<li>Checking the problem is free</li>\n              <li>Fixes usually &pound;60, agreed before we start</li>\n'
                      '              <li>We phone first, and you watch every step</li>')
     return ('    <style>' + " ".join(l.strip() for l in DELL_PANEL_CSS.strip().splitlines()) + ' .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}</style>\n'
             f'''    <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
@@ -23209,7 +23209,7 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
           <tr><th>Cost</th><td>Included in the price</td><td>One-off &pound;49</td><td>Home &pound;18.25/month per computer &middot; business from &pound;24.38</td></tr>
           <tr><th>Guarantee</th><td>12-month return-to-base</td><td>12-month return-to-base</td><td class="hi"><strong>5 years</strong> &mdash; for as long as you&rsquo;re on the plan</td></tr>
           <tr><th>Setup</th><td>Windows 11 Home or Pro, data moved across</td><td>Tailored home <em>or</em> business setup &mdash; email, printers, accounts, the lot</td><td>Tailored setup, then kept right</td></tr>
-          <tr><th>Support</th><td>Pay-as-you-go remote help from &pound;20</td><td><strong>30 days of remote support included</strong></td><td class="hi">Help as often as you need it &mdash; we always phone first</td></tr>
+          <tr><th>Support</th><td>Pay-as-you-go remote help, usually &pound;60</td><td><strong>30 days of remote support included</strong></td><td class="hi">Help as often as you need it &mdash; we always phone first</td></tr>
           <tr><th>Servicing</th><td>&mdash;</td><td><strong>A full service after your first 30 days</strong></td><td class="hi">A full service <strong>every 6 weeks</strong>, with a <strong>written Service Report</strong> emailed to you each time</td></tr>
           <tr><th>Best for</th><td>Confident users</td><td>A properly settled-in start</td><td class="hi">Never worrying about your computer again</td></tr>
         </tbody></table></div>
@@ -23466,7 +23466,7 @@ FIX_FLOW_PAGES = {
         'h3s': 'Still dropping after every step? That is a remote job.',
         'sections': [(1, 'Check whether one consumer router is doing a whole business&rsquo;s job'), (2, 'Check the channels, and Dorset&rsquo;s radar quirk'), (3, 'Rule out a failing switch and a line drop blamed on Wi-Fi')]},
     'dell-killer-wifi-problems': {'h2': 'Fix the Killer card, step by step', 'ask': 'Is the Wi-Fi behaving now?', 'tip': 'Give it a day of normal use before you trust it.',
-        'h3s': 'Still dropping after every step? That is a remote job, from &pound;20.', 'max_steps': 3},
+        'h3s': 'Still dropping after every step? That is a remote job, usually &pound;60.', 'max_steps': 3},
     'mesh-wifi-setup-guide': {'h2': 'Set the mesh up with me, one step at a time', 'ask': 'Done that step?', 'tip': 'Run the free room-by-room test again and compare it with the baseline you took at step 1.',
         'h3s': 'Stuck at a step? We set mesh systems up remotely and on site.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
         'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'lede': 'The nine steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
@@ -23718,7 +23718,7 @@ def _fix_flow_for(d):
         'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?'),
                                        '/business-it-support-plans/' if _FIX_FLOW_BIZ_RE.search(slug) else '/monthly-it-support/'),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
-                                       cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help from &pound;20, and no fix, no fee.'),
+                                       cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help, usually &pound;60, and no fix, no fee.'),
                                        cfg.get('stuck_link', ('/remote-support/', 'How remote help works'))),
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
     })
@@ -23970,7 +23970,7 @@ FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2].update({
     'lede': ('The by-hand way from this guide, one step at a time. It needs a Virgin app password: if you can&rsquo;t get one, '
              'the <a href="#do-it-free">free app</a> doesn&rsquo;t need it. Tick each step off and it shows the next. Nothing here leaves your device.'),
     'stuck_tail': ' We do the whole move for &pound;60 per email address, agreed before we start.',
-    # the towns line keeps its links, with this job's own price instead of "remote help from £20"
+    # the towns line keeps its links, with this job's own price instead of "remote help, usually £60"
     'areas': ('Rather we did it for you? We move it for &pound;60 per email address, done remotely, for people across '
               '<a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, '
               '<a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-ringwood/">Ringwood</a> '
@@ -24172,7 +24172,7 @@ def bt_outlook_v2(d, crumbs):
           <p class="vmc__note"><b>Got classic Outlook too?</b> It often adds BT email first time: <a href="#s5">one toggle</a>.</p>
         </div>'''
     return head + "\n" + _paid_first_pair(
-        "Two ways to get your BT email into the new Outlook", "Let us fix it: from <b>&pound;20</b>, agreed first",
+        "Two ways to get your BT email into the new Outlook", "Let us fix it: usually <b>&pound;60</b>, agreed first",
         "We connect and add it while you watch.",
         ("Checking the problem is free", "We phone first, and you watch every step", "Usually same-day remote help"),
         "Agreed before we start &middot; no fix, no fee &middot; Mon&ndash;Fri 9&ndash;5", diy, card_id="fix-for-me"), ""
@@ -24196,13 +24196,13 @@ bp._APPLE_NOTICE_SKIP.add(_VL.ADDR_SLUG)
 # panel carries four tiles of its own there.
 from email_tiles_data import EMAIL_HERO_TILES
 _FIX_TILES = [("hp-c-fix", "book", "Fix it with me", "The steps on this page, one at a time", "FREE", "#fixflow"),
-              ("hp-c-care", "wrench", "Fix it for me", "We connect and sort it while you watch", "FROM &pound;20, AGREED FIRST", "#fix-help")]
+              ("hp-c-care", "wrench", "Fix it for me", "We connect and sort it while you watch", "USUALLY &pound;60, AGREED FIRST", "#fix-help")]
 
 
 # 26 Sep 2026 (owner: "check the website... work through the ones that get the traffic... all look the same"):
 # the same first screen for the fix pages and guides, tiles from page_tiles_data.py (180-page review).
 from page_tiles_data import PAGE_HERO_TILES
-# hands-on repairs are collection jobs: never "remote from £20" (see fix_panel / FIX_PANEL_HARDWARE)
+# hands-on repairs are collection jobs: never "remote, usually £60" (see fix_panel / FIX_PANEL_HARDWARE)
 _FIX_TILE_HW = ("hp-c-care", "wrench", "Fix it for me", "We collect it and find the fault first", "FREE COLLECTION, NO FIX NO FEE", "#fix-help")
 
 

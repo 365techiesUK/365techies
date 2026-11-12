@@ -204,7 +204,7 @@ def page():
         app,
         bp.faq_html(faqs),
         bp.cta("Updates stuck, or not sure what to do?",
-               "If Windows Update keeps failing, a newer version is never offered, or you&rsquo;re weighing up ESU against a new PC, we check it remotely while you watch. Remote help from &pound;20, no fix, no fee.",
+               "If Windows Update keeps failing, a newer version is never offered, or you&rsquo;re weighing up ESU against a new PC, we check it remotely while you watch. Remote help, usually &pound;60, no fix, no fee.",
                primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Windows 11 support", "/windows-11-support/")),
     ])
     desc = "Free checker: is your Windows still getting security updates? See whether this PC runs Windows 10 or 11, the date its updates end, and what to do next."

@@ -1444,7 +1444,7 @@ def webpage(slug, title, desc, wtype="WebPage", about=None, image=None):
 # ⚠️ PRICES IN SCHEMA MUST MATCH THE PAGE BODY, AND ONLY THESE PAGES CARRY ONE.
 # Every figure below is the price the page itself prints (checked 2026-09-05 against the
 # built HTML) - the same real prices as pricing-truth: home 18.25 / 23.10 per computer per
-# month, business from 24.38, Microsoft 365 4.85 per user per month (home only - no Offer since 3 Oct 2026), remote fixes from 20.
+# month, business from 24.38, Microsoft 365 4.85 per user per month (home only - no Offer since 3 Oct 2026), remote fixes usually 60 (owner, 12 Nov 2026).
 # An Offer in the schema is how AI answers and rich results read a price; without it the
 # plan pages had Service + FAQ nodes and no machine-readable price at all. If a page's
 # price changes, change it HERE THE SAME DAY or the schema lies. No web-care entry on
@@ -1468,7 +1468,7 @@ SERVICE_OFFERS = {
     "business-it-support-subscriptions": lambda u: _from("24.38", "per person per computer per month", u),
     "monthly-it-support":               lambda u: _from("18.25", "per person per computer per month", u),
     "small-business-it-support":        lambda u: _from("24.38", "per person per computer per month", u),
-    "remote-it-support":                lambda u: _from("20", "per remote fix", u),
+    "remote-it-support":                lambda u: _offer("60", "per remote fix", u),
     # "microsoft-365-support": no Offer - 4.85 is home Microsoft 365 only and that page serves businesses too; business plans are priced per plan (owner, 3 Oct 2026)
 }
 def service(slug, name, desc, stype=None, area=None):
@@ -3569,7 +3569,7 @@ FIX_FLOW_SCRIPT = r"""      <script>
 # positions 2-13 for "it support <town>" with no clicks and almost no internal links, and
 # the flow pages are where the traffic is. Rendered in the DOM, not in the hidden ending,
 # so the links count. Phone flows opt out with cfg['areas'] = False (no on-site promise).
-FIX_FLOW_AREAS = ('Rather have it done for you? Remote help from &pound;20, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.')
+FIX_FLOW_AREAS = ('Rather have it done for you? Remote help, usually &pound;60, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.')
 
 def _fix_flow_section(cfg):
     """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
@@ -3609,7 +3609,7 @@ def _ff_fixed_ending(h3, tip, plan_lead, plans_href='/monthly-it-support/'):
     plans = ('<a class="button primary" href="' + plans_href + '">' + ('See Business Plans' if 'business' in plans_href else 'See Plans') + ' &amp; Prices &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
     return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead, plans_href == '/business-it-support-plans/') if plan_lead else '') +
             '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
-def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.', link=('/remote-support/', 'How remote help works')):
+def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help, usually &pound;60, and no fix, no fee.', link=('/remote-support/', 'How remote help works')):
     """link: the third button. Remote help by default; phone pages point at the service that actually covers a phone
     (email support, the lessons) because screen-share remote support is Windows only."""
     return ('<h3>' + h3 + '</h3><p>' + what + tail + '</p>'
@@ -6166,7 +6166,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
-     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, starting from £20 — and the price is agreed with you before any chargeable work. Every pay-as-you-go job also includes 30 days of follow-up remote support plus a health check at 30 days. As an example, a full Windows clean install with all your data backed up and restored takes about 4 hours and is £149. On a monthly plan your computer is kept maintained and running, with priority support included and any fault work discounted (our customer loyalty promise); on a business plan, remote fixes are included."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, usually £60 — and the price is agreed with you before any chargeable work. Every pay-as-you-go job also includes 30 days of follow-up remote support plus a health check at 30 days. As an example, a full Windows clean install with all your data backed up and restored takes about 4 hours and is £149. On a monthly plan your computer is kept maintained and running, with priority support included and any fault work discounted (our customer loyalty promise); on a business plan, remote fixes are included."),
      ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you open our support tool and read us its one-time code, which begins an encrypted Splashtop SOS session."),
    ]),
  ]),
@@ -6183,7 +6183,7 @@ add(
           <h2 class="section-title" data-title>Secure help, on your screen<span class="title-underline"></span></h2>
           <p>When you need help, you download our small support tool, open it and read us the 9-digit code it shows. That connects us to your screen so we can see exactly what you see and fix it there and then.</p>
           <p><strong>You watch the whole session and stay in control</strong> — and the moment we finish, access ends automatically. It&rsquo;s a fast, safe way to solve many IT problems.</p>
-          <p>New to us? A senior techie connects first to confirm what&rsquo;s needed, then <strong>agrees the cost with you before any chargeable work</strong> &mdash; remote fixes start from &pound;20. Already on a <a href="/monthly-it-support/">monthly plan</a>? Remote support is included, with priority &mdash; just call, and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back.</p>
+          <p>New to us? A senior techie connects first to confirm what&rsquo;s needed, then <strong>agrees the cost with you before any chargeable work</strong> &mdash; remote fixes are usually &pound;60. Already on a <a href="/monthly-it-support/">monthly plan</a>? Remote support is included, with priority &mdash; just call, and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Secure remote access","Email troubleshooting","Software problems","Microsoft 365 help","Slow computer fixes","Printer setup","Windows support","Business user support"])}
@@ -6207,7 +6207,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
-     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise. On a business plan, remote fixes are included."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>usually &pound;60</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise. On a business plan, remote fixes are included."),
      ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you open our support tool and read us its code."),
      ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it. A genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
      ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Christchurch, Poole and across Dorset."),
@@ -6258,7 +6258,7 @@ add(
         # Jobs pass, 13 Sep 2026: position 1.7 for "microsoft 365 support dorset" with zero clicks.
         # The first screen now says the jobs, the real prices and the number; the heritage paragraph
         # that used to be the lede sits in the overview below, word for word.
-        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Home Microsoft 365 with us is &pound;4.85 per user a month, business plans are <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, remote fixes start at &pound;20, and there is no call-out fee on site."),
+        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Home Microsoft 365 with us is &pound;4.85 per user a month, business plans are <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, remote fixes are usually &pound;60, and there is no call-out fee on site."),
         cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get Microsoft 365 Support", "/contact/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">
@@ -6568,10 +6568,10 @@ def repair_town_links():
 # "What's wrong?" tiles beside it, call first, a proof strip, how a repair works, then the page's own
 # sections, repair customers' reviews and the same FAQ. Claims are this page's own (no fix no fee on the
 # diagnosis, quote before chargeable work, 12-month warranty, free collection and return, many repairs
-# done remotely the same day) plus the remote-fix price on /remote-support/ (from £20).
+# done remotely the same day) plus the remote-fix price on /remote-support/ (usually £60).
 def _repairs_v2():
     tiles = [
-        ("hp-c-fix", "gauge", "Slow or playing up", "Slow, freezing, pop-ups or Windows errors", "REMOTE FIXES FROM &pound;20", "/slow-computer-repair/"),
+        ("hp-c-fix", "gauge", "Slow or playing up", "Slow, freezing, pop-ups or Windows errors", "REMOTE FIXES USUALLY &pound;60", "/slow-computer-repair/"),
         ("hp-c-teal", "power", "Won&rsquo;t turn on", "Dead, stuck on the logo or blinking lights", "FREE COLLECTION", "/book-a-collection/"),
         ("hp-c-buy", "laptop", "Screen, battery or keys", "Cracked screen, worn battery, broken keyboard", "12-MONTH WARRANTY", "/laptop-repair/"),
         ("hp-c-biz", "bug", "Virus or scam worry", "Pop-ups, a scammer got in, or it just feels wrong", "CLEANED &amp; PROTECTED", "/virus-removal/"),

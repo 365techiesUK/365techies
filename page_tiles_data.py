@@ -150,7 +150,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'power', 'Dock completely dead?', 'Prove the socket and adapter, then watch the light', 'CHECK THIS FIRST', '#s2'),
   ('hp-c-care', 'gauge', 'Laptop won&rsquo;t charge?', 'Often the adapter wattage, not a fault', '130W OR 180W?', '#s3'),
   ('hp-c-biz', 'monitor', 'Monitors not detected?', 'Cables, firmware or a bandwidth ceiling', 'THREE SUSPECTS', '#s4'),
-  ('hp-c-buy', 'wrench', 'Have us sort it remotely', 'Firmware, BIOS dock settings and drivers, safely', 'FROM &pound;20', '/dell-remote-support/'),
+  ('hp-c-buy', 'wrench', 'Have us sort it remotely', 'Firmware, BIOS dock settings and drivers, safely', 'USUALLY &pound;60', '/dell-remote-support/'),
  ],
  'dell-g15-overheating': [
   ('hp-c-biz', 'wrench', 'Five free fixes first', 'Surface, vents, Game Shift, BIOS, thermal profile', 'COSTS NOTHING', '#s1'),
@@ -338,7 +338,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'shield', 'How a session works', 'We phone first, and you watch every click', 'SAFE AND SIMPLE', '#s1'),
   ('hp-c-care', 'laptop', 'What we fix remotely', 'Windows, email, drivers, slowness and setup', 'SOFTWARE FAULTS', '#s2'),
   ('hp-c-biz', 'wrench', 'Screen, battery or hinge?', 'Hands-on repairs by collection, diagnosis first', 'COLLECTION REPAIR', '/book-a-collection/'),
-  ('hp-c-buy', 'phone', 'Start a remote fix', 'One-off help, price agreed before we start', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'phone', 'Start a remote fix', 'One-off help, price agreed before we start', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'dell-support-bournemouth': [
   ('hp-c-fix', 'monitor', 'Fix it remotely', 'If your Dell still reaches Windows, no trip needed', 'WE PHONE FIRST', '/dell-remote-support/'),
@@ -422,7 +422,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'wrench', 'Try Open and Repair first', 'Excel&rsquo;s own free tool, on a copy of the file', 'FREE FIX FIRST', '#s3'),
   ('hp-c-care', 'alert', '#REF! errors everywhere?', 'The five spreadsheet disasters we rescue', 'COMMON FAULTS', '#s2'),
   ('hp-c-biz', 'monitor', 'Rescued while you watch', 'Remote session, and we phone before we connect', 'REMOTE FIRST', '#s4'),
-  ('hp-c-buy', 'star', 'What it costs', 'Remote rescue from &pound;20, bigger jobs quoted', 'FROM &pound;20', '#s6'),
+  ('hp-c-buy', 'star', 'What it costs', 'Remote rescue, usually &pound;60, bigger jobs quoted', 'USUALLY &pound;60', '#s6'),
  ],
  'files-missing-from-onedrive': [
   ('hp-c-biz', 'user', 'Wrong Microsoft account?', 'Each Microsoft account has its own OneDrive', 'CHECK THIS FIRST', '#s2'),
@@ -564,7 +564,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'user', 'Save the drive&rsquo;s login', 'Credential Manager, then reconnect at sign-in', 'CHECK THIS FIRST', '#s2'),
   ('hp-c-care', 'clock', 'Drops after a coffee break?', 'Idle SMB timeouts and reconnecting at logon', 'IDLE TIMEOUTS', '#s3'),
   ('hp-c-biz', 'wifi', 'Only the Wi-Fi PCs?', 'Why a network cable often settles it', 'WIRED BEATS WI-FI', '#s4'),
-  ('hp-c-buy', 'wrench', 'Fix it for the office', 'Remote fix, price agreed first, no fix no fee', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Fix it for the office', 'Remote fix, price agreed first, no fix no fee', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'mesh-wifi-setup-guide': [
   ('hp-c-fix', 'phone', 'Landline on the hub?', 'Bridge mode can stop 999 calls on Digital Voice', 'READ THIS FIRST', '#s1'),
@@ -582,13 +582,13 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'user', 'Right account signed in?', 'Check File, then Account: the classic cause', 'CHECK THIS FIRST', '#s2'),
   ('hp-c-care', 'briefcase', 'Licence from your work?', 'Make sure a licence is assigned to your name', 'WORK ACCOUNT?', '#s3'),
   ('hp-c-biz', 'wrench', 'Still says unlicensed?', 'Clear cached sign-ins and reset Office&rsquo;s identity', 'ADVANCED', '#s4'),
-  ('hp-c-buy', 'phone', 'Have us sort it remotely', 'You watch while we fix it, price agreed first', 'FROM &pound;20', '#fix-help'),
+  ('hp-c-buy', 'phone', 'Have us sort it remotely', 'You watch while we fix it, price agreed first', 'USUALLY &pound;60', '#fix-help'),
  ],
  'microsoft-word-wont-open': [
   ('hp-c-fix', 'alert', 'Crashes when Sage opens it?', 'The June 2026 update bug and how to clear it', 'CHECK THIS FIRST', '#s1'),
   ('hp-c-care', 'wrench', 'Try Word in safe mode', 'Two minutes tells you if an add-in is to blame', '2 MINUTES', '#s2'),
   ('hp-c-biz', 'book', 'Crashed while typing?', 'Your document is probably recoverable', 'BEFORE YOU RETYPE', '#s6'),
-  ('hp-c-buy', 'phone', 'Have us fix it remotely', 'You watch while we work, price agreed first', 'FROM &pound;20', '#fix-help'),
+  ('hp-c-buy', 'phone', 'Have us fix it remotely', 'You watch while we work, price agreed first', 'USUALLY &pound;60', '#fix-help'),
  ],
  'motorhome-hire-fleet-monitoring': [
   ('hp-c-fix', 'monitor', 'One screen, every van', 'Charge, solar and alerts for the whole fleet', 'THE ONE-SCREEN ANSWER', '#s1'),
@@ -842,7 +842,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'clock', 'Meeting starting now?', 'Quick fixes that get you into today&rsquo;s call', 'TRY THIS FIRST', '#s2'),
   ('hp-c-care', 'user', 'The permanent cure', 'Give your business email to one account only', 'STOPS THE PROMPT', '#s3'),
   ('hp-c-biz', 'briefcase', 'A guest in a client&rsquo;s Teams?', 'Why the fix sits with their admin, not you', 'GUEST ACCESS', '#s4'),
-  ('hp-c-buy', 'wrench', 'Untangle it for me', 'Remote help; we phone before we connect', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Untangle it for me', 'Remote help; we phone before we connect', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'the-set-of-folders-cannot-be-opened': [
   ('hp-c-fix', 'wrench', 'Reset the navigation pane', 'One command rebuilds it; your mail is untouched', 'TRY THIS FIRST', '#s2'),
@@ -938,7 +938,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'user', 'See who has it open', 'Open Files on the host PC, in about 30 seconds', 'QUICK ANSWER', '#s1'),
   ('hp-c-care', 'alert', 'Nobody has it open?', 'Find and clear the hidden ~$ lock file', 'PHANTOM LOCKS', '#s4'),
   ('hp-c-biz', 'clock', 'Happens every few days?', 'Why it keeps happening, and the real fix', 'THE BIGGER PICTURE', '#s6'),
-  ('hp-c-buy', 'wrench', 'Clear it for me', 'We find the holder and clear locks safely', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Clear it for me', 'We find the holder and clear locks safely', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'why-computer-prices-have-gone-up': [
   ('hp-c-fix', 'gauge', 'Why prices really rose', 'The AI memory squeeze in plain English', 'THE SHORT ANSWER', '#s1'),
@@ -988,7 +988,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'monitor', 'See it but can&rsquo;t open it?', 'A quick test tells you which of two faults it is', 'CHECK THIS FIRST', '#s3'),
   ('hp-c-care', 'user', 'Give it a real login', 'The fix that lasts, set up on the Windows 10 PC', 'THE PROPER FIX', '#s4'),
   ('hp-c-biz', 'shield', 'Told to switch SMB1 on?', 'Why that quick fix costs you security', 'READ BEFORE YOU DO', '#s2'),
-  ('hp-c-buy', 'wrench', 'Sort it for me', 'Real accounts and permissions, done remotely', 'FROM &pound;20', '/remote-support/'),
+  ('hp-c-buy', 'wrench', 'Sort it for me', 'Real accounts and permissions, done remotely', 'USUALLY &pound;60', '/remote-support/'),
  ],
  'windows-11-network-credentials-shared-folder': [
   ('hp-c-biz', 'user', 'Type the right username', 'Why a bare name gets refused, and what works', 'CHECK THIS FIRST', '#s2'),
