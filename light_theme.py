@@ -325,3 +325,76 @@ _NUMBER = re.compile(r'(<(?:p|span|div|h[1-6])\b[^>]*\bclass="[^"]*(?:eyebrow|mo
 
 def plain_labels(html):
     return _NUMBER.sub(r'\1', _SLASH.sub(r'\1', html))
+
+# ---- colours written inside style="" attributes (13 Nov 2026: the portal) ---------------------------
+# The portal draws most of its screens from script, with colours typed into style="" strings. A stylesheet
+# twin cannot reach those. So each literal colour is wrapped in a variable that ONLY the light theme
+# defines:  color:#fff  ->  color:var(--k3fa2c1,#fff)   and   html[data-theme="light"]{--k3fa2c1:#152242}
+# Dark never defines the variable, so the fallback (the colour as written) is what it shows.
+import hashlib as _hashlib
+_STYLE_ATTR = re.compile(r'(style=\\?")([^"\\<>]*)(\\?")')
+
+
+def _inline_light(body, table):
+    decls = _split(body, ';')
+    pairs = []
+    for d in decls:
+        if ':' not in d: continue
+        p, v = d.split(':', 1)
+        if p.strip() and v.strip(): pairs.append(p.strip() + ':' + v.strip())
+    light = {}
+    for d in _split(_light_decls(';'.join(pairs)), ';'):
+        if ':' in d:
+            p, v = d.split(':', 1); light[p.strip()] = v.strip()
+    if not light: return body
+    out = []
+    for d in decls:
+        if ':' in d:
+            p, v = d.split(':', 1)
+            if p.strip() in light and _HAS_COLOUR.search(v) and 'var(--k' not in v:
+                old = v.strip(); imp = ''
+                if '!important' in old: old = old.replace('!important', '').strip(); imp = ' !important'
+                new = light[p.strip()].replace('!important', '').strip()
+                key = 'k' + _hashlib.sha1((old + '>' + new).encode('utf-8')).hexdigest()[:6]
+                table[key] = new
+                d = p + ':var(--' + key + ',' + old + ')' + imp
+        out.append(d)
+    return ';'.join(out)
+
+
+def theme_inline(html):
+    """Wrap the literal colours of every plain style="" attribute (markup and script strings alike)."""
+    table = {}
+    def fix(m):
+        body = m.group(2)
+        if not _HAS_COLOUR.search(body) or "'" in body or '+' in body or '$' in body or '{' in body:
+            return m.group(0)                      # built from pieces at run time: left alone
+        return m.group(1) + _inline_light(body, table) + m.group(3)
+    html = _STYLE_ATTR.sub(fix, html)
+    if table:
+        css = SCOPE + '{' + ''.join('--%s:%s;' % kv for kv in sorted(table.items())) + '}'
+        html = html.replace('</head>', '<style data-no-theme>' + css + '</style>\n</head>', 1)
+    return html, len(table)
+
+
+# The portal's switch. PORTAL_DEFAULT_LIGHT False = dark unless this browser has asked to try light
+# (localStorage portalLight=1, or ?light=1 once, which remembers it); True = light unless they chose dark.
+PORTAL_DEFAULT_LIGHT = False
+_PSWITCH_TRY = ('<script>try{var d=document.documentElement,L=localStorage;if(/[?&]light=1/.test(location.search))L.setItem("portalLight","1");'
+                'if(/[?&]light=0/.test(location.search))L.removeItem("portalLight");'
+                'if(L.getItem("theme")==="dark")d.setAttribute("data-theme","dark");'
+                'else if(L.getItem("portalLight")==="1")d.setAttribute("data-theme","light")}catch(e){}</script>')
+
+
+def theme_portal(html):
+    """The portal: light twins for its own CSS, variables for the colours in its script, and its switch."""
+    if '<html lang="en-GB">' not in html:
+        return html
+    html, n = theme_inline(html)
+    html = _STYLE.sub(_style_twin, html)
+    if PORTAL_DEFAULT_LIGHT:
+        html = html.replace('<html lang="en-GB">', '<html lang="en-GB" data-theme="light">', 1)
+        html = html.replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n  ' + SWITCH, 1)
+    else:
+        html = html.replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n  ' + _PSWITCH_TRY, 1)
+    return html

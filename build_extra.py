@@ -36141,6 +36141,9 @@ def write_portal_page():
     # 15 Oct 2026: the Shop tab's grade picker uses the website's own grades and wording (shop_stock.GRADES)
     import shop_stock as _shop_stock
     html = html.replace("__SHOPGRADES__", _json_pcm.dumps(_shop_stock.GRADES).replace("</", "<\\/"))
+    # 13 Nov 2026: the light theme (light_theme.theme_portal). Before the id, so a theme change rolls it and open tabs reload.
+    import light_theme as _lt_portal
+    html = _lt_portal.theme_portal(html)
     bid = _hl.sha1(_re.sub(r'"dateModified":\s*"[^"]*"', '"dateModified":"X"', html).encode("utf-8")).hexdigest()[:10]
     date_label = _dt.date.today().strftime("%d %b %Y")
     old_path = _os.path.join(d, "index.html")
