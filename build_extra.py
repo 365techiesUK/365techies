@@ -1332,6 +1332,8 @@ def pcm_landing():
     if UK_KEY_OFFERED and UK_KEY_ON_SITE:
         content = _uk_swap(content, [("But the free app stands on its own, and we&rsquo;re happy either way.</p>",
             "Rather service it yourself, without a plan? An optional key (" + UK_KEY_PRICE + " for 12 months on up to 3 PCs, no renewal) unlocks the full service for you to run whenever you like. But the free app stands on its own, and we&rsquo;re happy either way.</p>")], "app page")
+    import pcm_page_compact   # 13 Nov 2026: one order, fold-out rows for the long sections, older updates behind one row
+    content = pcm_page_compact.compact(content)
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
