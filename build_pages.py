@@ -8264,6 +8264,8 @@ PAGE_FILTERS = []
 # 12 Nov 2026: light by default, dark for visitors who choose it (light_theme.py). Last filter in spirit: it reads the
 # finished page. Its marks are in _VOLATILE so switching the theme on re-dates nothing.
 import light_theme as _light
+# 13 Nov 2026: the Microsoft Store badge beside every app download button (store_badges.py)
+import store_badges as _badges
 _VOLATILE.extend(_light.VOLATILE)
 
 
@@ -8275,6 +8277,7 @@ def write_all():
         html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"), robots=p.get("robots"))
         for _flt in PAGE_FILTERS:
             html = _flt(slug, html)
+        html = _badges.add_badges(slug, html)   # after every other filter: some of them add the download boxes
         html = _light.theme_page(slug, html)
         # Decide whether the page changed BEFORE stamping the date, then stamp the date
         # it genuinely last changed. The hash ignores the dateModified value, so this
