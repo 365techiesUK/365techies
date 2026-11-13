@@ -802,6 +802,56 @@ function invq_change_for_job($c, $jobId, $who, $lines, $memo, $discount) {
     return array('ok' => true, 'invoice' => $invId, 'total' => $total);
 }
 
+/* ---- WRITE 1c: the invoice's email address, changed before it is sent (13 Nov 2026) --------------------------------
+   Owner, after correcting a customer's email: "it's still got her old one on here ... make the portal update the
+   invoice email". "Approve & send" goes to the address ON the invoice (BillEmail, see invq_send_address),
+   copied from the customer when it was raised, so a corrected address never reached it. This writes the new address onto
+   the invoice - an update of BillEmail alone: lines, note and due date untouched - and onto the job, only while the
+   invoice is unsent and nothing has been paid against it. The QuickBooks customer record is not changed. The send still
+   reads the address from QuickBooks at the moment of sending, and the preview's "To:" shows it first. */
+function invq_email_for_job($c, $jobId, $email, $who) {
+    $email = invq_email_ok($email);
+    if ($email === '') return array('ok' => false, 'error' => 'bad_email');
+    $job = null;
+    foreach (invq_jobs_read() as $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === (string)$jobId) { $job = $j; break; }
+    if (!$job) return array('ok' => false, 'error' => 'no_such_job');
+    $invId = (string)(isset($job['invoice_no']) ? $job['invoice_no'] : '');
+    if (!preg_match('/^\d+$/', $invId)) return array('ok' => false, 'error' => 'no_invoice');
+    if (empty($c['live'])) return array('ok' => false, 'error' => 'not_live');
+    if ($c['only'] !== '') return array('ok' => false, 'error' => 'only_key');
+    $one = invq_api($c, 'GET', '/invoice/' . $invId);
+    if (!qbo_lib_ok($one) || empty($one['json']['Invoice']['Id'])) return array('ok' => false, 'error' => 'not_found');
+    $inv = $one['json']['Invoice'];
+    $why = invq_email_change_blocked($inv);
+    if ($why !== '') return array('ok' => false, 'error' => $why);
+    $was = invq_bill_email($inv);
+    $same = (strcasecmp($was, $email) === 0);
+    if (!$same) {
+        $upd = array('Id' => $invId, 'SyncToken' => (string)(isset($inv['SyncToken']) ? $inv['SyncToken'] : '0'), 'sparse' => true, 'BillEmail' => array('Address' => $email));
+        $res = invq_api($c, 'POST', '/invoice', $upd);
+        if (!qbo_lib_ok($res) || empty($res['json']['Invoice']['Id']) || strcasecmp(invq_bill_email($res['json']['Invoice']), $email) !== 0) {
+            invq_log('invoice email change FAILED for job ' . $jobId . ' ' . invq_why($res));
+            return array('ok' => false, 'error' => 'qbo_invoice', 'why' => invq_why($res));
+        }
+    }
+    invq_jobs_locked(function ($d) use ($jobId, $email, $who) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            $by = (isset($j['contact_by']) && is_array($j['contact_by'])) ? $j['contact_by'] : array();
+            $by['email'] = (string)$who !== '' ? (string)$who : 'staff';
+            $d['jobs'][$i]['email'] = $email;
+            $d['jobs'][$i]['email_by'] = 'staff';   // the next read of the Slack post keeps it (sj_merge)
+            $d['jobs'][$i]['contact_by'] = $by;
+            $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
+    invq_log('invoice ' . $invId . ' email ' . ($same ? 'already ' . $email : $was . ' -> ' . $email) . ' for job ' . $jobId . ' by ' . $who);
+    return array('ok' => true, 'invoice' => $invId, 'to' => $email, 'was' => $was, 'same' => $same);
+}
+
 /* ---- WRITE 2: QuickBooks emails an invoice -------------------------------- */
 /* The address an invoice goes to: the one on the invoice, else its QuickBooks customer's. Never from a request. */
 function invq_send_address($c, $inv) {

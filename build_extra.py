@@ -32325,6 +32325,17 @@ def write_portal_page():
         + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap"><button class="sm invqcsave" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udcbe Save their details</button>'
         + '<button class="sm ghost invqccancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqcmsg" style="font-size:.82rem"></span></div></div>';
     }
+    /* 13 Nov 2026 (owner, after correcting a customer's email: "it's still got her old one on here ... make the portal
+       update the invoice email"): a raised invoice that hasn't gone yet carries the address it was raised with;
+       this writes a new one onto the invoice in QuickBooks (and the job), so "Approve & send" goes there. */
+    function emailForm(j) {
+      var now = (j.invoice && j.invoice.email) || j.email || '';
+      return '<div class="invqemform" style="display:none;margin:.4rem 0 0;padding:.5rem .6rem;border:1px dashed rgba(125,170,220,.45);border-radius:10px">'
+        + '<div class="quiet" style="font-size:.82rem;margin:0 0 .3rem">This invoice goes to <strong>' + (now ? esc(now) : 'no address yet') + '</strong>. Type the right address: it is changed on the invoice in QuickBooks (and on this job), nothing is sent, and the preview then shows it. Their QuickBooks customer record isn\\u2019t changed.</div>'
+        + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input class="invqemin" type="email" maxlength="120" value="' + esc(now) + '" data-orig="' + esc(now) + '" placeholder="name@example.com" aria-label="The email address the invoice goes to" style="width:260px;margin:0">'
+        + '<button class="sm invqemsave" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udcbe Save the email</button>'
+        + '<button class="sm ghost invqemcancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqemmsg" style="font-size:.82rem"></span></div></div>';
+    }
     function linesEditor(j, change) {
       var lines = (j.lines && j.lines.length) ? j.lines : [{ item: j.item || '', desc: j.desc || '', qty: 1, rate: j.amount > 0 ? j.amount : 0 }];
       var disc = j.discount || {}, dk = disc.kind || '', dv = disc.value || 0;
@@ -32364,8 +32375,9 @@ def write_portal_page():
       else if (st === 'unsent') {
         /* 23 Oct 2026 (owner: "can we close down the preview and then go back and edit it some more?") */
         chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \\u2014 now check it, then send it</span>' + (j.can_change ? ' <span class="quiet">\\u00b7 not right? Change it, then preview it again</span>' : ' <span class="quiet">\\u00b7 changes to this one go on in QuickBooks</span>');
-        body = warnHtml(inv) + (j.can_change ? '<div class="invqchg" style="display:none">' + linesEditor(j, true) + '</div>' : '');
-        btns = (j.can_change ? '<button class="sm ghost invqedit" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="Change the lines, the discount or the note on this invoice before it goes">\\u270f\\ufe0f Change it</button>' : '') + invButtons(inv);
+        body = warnHtml(inv) + (j.can_change ? '<div class="invqchg" style="display:none">' + linesEditor(j, true) + '</div>' : '') + (j.can_email ? emailForm(j) : '');
+        btns = (j.can_change ? '<button class="sm ghost invqedit" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="Change the lines, the discount or the note on this invoice before it goes">\\u270f\\ufe0f Change it</button>' : '')
+          + (j.can_email ? '<button class="sm ghost invqemedit" style="margin:0;padding:.3rem .65rem;font-size:.82rem" title="The email address this invoice goes to, changed on the invoice in QuickBooks before it is sent">\\u2709\\ufe0f Change email</button>' : '') + invButtons(inv);
       }
       else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
@@ -32568,6 +32580,40 @@ def write_portal_page():
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
           msg.textContent = j.changed && j.changed.length ? 'Saved.' : 'Nothing had changed.';
           if (j.changed && j.changed.length) loadInvq(true); else b.disabled = false;
+        }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
+    /* "Change email" (13 Nov 2026): while the box is open the send button waits, so nothing goes to the old address by
+       mistake, and an open preview (which shows the old "To:") is closed. */
+    function emToggle(row, open) {
+      var f = row.querySelector('.invqemform'), b = row.querySelector('.invqemedit'), snd = row.querySelector('.invqsend');
+      if (!f || !b) return;
+      f.style.display = open ? '' : 'none';
+      b.textContent = open ? '\\u2715 Close without changing' : '\\u2709\\ufe0f Change email';
+      if (snd) {
+        if (open && !snd.disabled) { snd.disabled = true; snd.setAttribute('data-em', '1'); }
+        else if (!open && snd.getAttribute('data-em')) { snd.disabled = false; snd.removeAttribute('data-em'); }
+      }
+      var nx = row.nextElementSibling; if (open && nx && nx.classList.contains('invqprevbox')) nx.parentNode.removeChild(nx);
+      if (open) { var i = f.querySelector('.invqemin'); if (i) { i.focus(); i.select(); } }
+    }
+    Array.prototype.forEach.call(box.querySelectorAll('.invqemedit'), function (b) {
+      b.onclick = function () { var row = b.closest('.invqrow'), f = row && row.querySelector('.invqemform'); if (f) emToggle(row, f.style.display === 'none'); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqemcancel'), function (b) {
+      b.onclick = function () { var row = b.closest('.invqrow'); if (row) emToggle(row, false); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqemsave'), function (b) {
+      b.onclick = function () {
+        var f = b.closest('.invqemform'), msg = f.querySelector('.invqemmsg'), inp = f.querySelector('.invqemin');
+        var v = (inp.value || '').trim().toLowerCase();
+        if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v)) { msg.textContent = 'That email address doesn\\u2019t look right.'; return; }
+        if (v === (inp.getAttribute('data-orig') || '').trim().toLowerCase()) { msg.textContent = 'That\\u2019s the address it already goes to.'; return; }
+        b.disabled = true; msg.textContent = 'Changing it in QuickBooks\\u2026';
+        post(INVQ, { action: 'invemail', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), email: v }).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
+          msg.textContent = 'Saved \\u2014 the invoice now goes to ' + j.to + '.';
+          loadInvq(true);
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });

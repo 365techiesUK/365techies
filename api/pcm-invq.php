@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change', 'contact', 'receipt'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote', 'unpaid', 'resend', 'paid', 'emailpreview', 'change', 'invemail', 'contact', 'receipt'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -270,6 +270,18 @@ if ($action === 'change') {
     $r = invq_change_for_job($c, $job, $who, $lines, $memo, $discount);
     if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1)));
     out(array('ok' => true, 'invoice' => $r['invoice'], 'total' => $r['total']));
+}
+
+/* The invoice's email address, corrected before it goes (owner, 13 Nov 2026: "make the portal update the invoice
+   email"): staff-typed, behind the staff gate, validated, written onto the job's own unsent invoice (BillEmail only) and
+   the job. The request names the job, never the invoice; the send still reads the address from QuickBooks. */
+if ($action === 'invemail') {
+    if ($job === '') fail('bad_job');
+    $em = invq_email_ok((isset($in['email']) && is_string($in['email'])) ? $in['email'] : '');
+    if ($em === '') fail('bad_email');
+    $r = invq_email_for_job($c, $job, $em, $who);
+    if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1)));
+    out(array('ok' => true, 'invoice' => $r['invoice'], 'to' => $r['to'], 'was' => $r['was'], 'same' => !empty($r['same'])));
 }
 
 if ($action === 'pdf') {

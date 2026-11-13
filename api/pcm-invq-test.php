@@ -168,20 +168,31 @@ ok($setjobBlock !== '' && substr_count($EP, "\$in['amount']") === substr_count($
    'a typed price or description reaches only the job record (setjob), never a send or a create');
 /* The customer's email MAY be typed too (22 Sep: a Slack post with none) - into the job
    only, validated, and the send still takes its address from QuickBooks, never from here. */
-ok(substr_count($EP, "\$in['email']") === substr_count($setjobBlock, "\$in['email']") && substr_count($setjobBlock, "\$in['email']") > 0 && strpos($setjobBlock, "invq_email_ok(\$in['email'])") !== false && strpos($setjobBlock, "fail('bad_email')") !== false,
-   'a typed customer email reaches only the job record, and only if it is a valid address');
+/* 13 Nov 2026: and "Change email" - typed onto the job's own UNSENT invoice (BillEmail) and the job; the send still reads
+   the address from QuickBooks at the moment of sending (invq_send_address), never from a request. */
+$em0 = strpos($EP, "if (\$action === 'invemail')"); $em1 = $em0 !== false ? strpos($EP, "if (\$action === 'pdf')", $em0) : false;
+$emBlock = ($em0 !== false && $em1 > $em0) ? substr($EP, $em0, $em1 - $em0) : '';
+ok(substr_count($EP, "\$in['email']") === substr_count($setjobBlock, "\$in['email']") + substr_count($emBlock, "\$in['email']") && substr_count($setjobBlock, "\$in['email']") > 0 && strpos($setjobBlock, "invq_email_ok(\$in['email'])") !== false && strpos($setjobBlock, "fail('bad_email')") !== false
+   && $emBlock !== '' && strpos($emBlock, "invq_email_ok((isset(\$in['email']) && is_string(\$in['email'])) ? \$in['email'] : '')") !== false && strpos($emBlock, "fail('bad_email')") !== false,
+   'a typed customer email reaches only the job record (setjob) or the job\'s own unsent invoice (invemail), and only if it is a valid address');
 ok(strpos($SW, "\$d['jobs'][\$i]['email_by'] = 'staff'") !== false, 'the job remembers the email was typed by staff, so a re-poll keeps it');
 ok(strpos($SW, "invq_email_status(\$inv) === 'EmailSent') return array('ok' => false, 'error' => 'already_sent')") !== false, 'an already-sent invoice is refused at send time');
 ok(strpos($SW, "'Content-Type: application/octet-stream'") !== false && strpos($SW, "/send?sendTo=") !== false && strpos($SW, "\$status !== 'EmailSent'") !== false, 'the send call is the one Intuit documents, counted only on EmailSent');
 ok(strpos($SW, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live')") !== false && strpos($SW, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key')") !== false, 'creating honours QBO_LIVE_ENABLED and QBO_ONLY_KEY');
 ok(strpos($SW, "if (!empty(\$job['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced'") !== false, 'a job with an invoice is never invoiced again');
 ok(strpos($SW, 'qbo_lib_custkey($email, $c[\'realm\'])') !== false && substr_count($SW, 'LOCK_EX | LOCK_NB') >= 3, 'the customer map is keyed like the other writers and read/written under their lock');
-$chgFn0 = strpos($SW, 'function invq_change_for_job('); $chgFn1 = $chgFn0 !== false ? strpos($SW, '/* ---- WRITE 2:', $chgFn0) : false;
+$chgFn0 = strpos($SW, 'function invq_change_for_job('); $chgFn1 = $chgFn0 !== false ? strpos($SW, '/* ---- WRITE 1c:', $chgFn0) : false;
 $chgFn = ($chgFn0 !== false && $chgFn1 > $chgFn0) ? substr($SW, $chgFn0, $chgFn1 - $chgFn0) : '';
-ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 3 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $chgFn, $mm2) === 1
-   && substr_count($SW, 'sparse') === substr_count($chgFn, 'sparse') && strpos($chgFn, "'sparse' => true") !== false && !preg_match('/\/void|operation=void|operation=delete|\/customer\/\d/', $SW)
-   && strpos($chgFn, 'invq_change_blocked(') !== false && strpos($chgFn, 'invq_change_blocked(') < strpos($chgFn, "invq_api(\$c, 'POST'"),
-   'creates: a customer and an invoice; the ONE edit is "Change it" (a sparse update, only after its unsent / unpaid / untouched check); nothing voids or deletes');
+/* 13 Nov 2026: the second edit, "Change email" - its own section, from WRITE 1c to WRITE 2 */
+$emFn0 = strpos($SW, 'function invq_email_for_job('); $emFn1 = $emFn0 !== false ? strpos($SW, '/* ---- WRITE 2:', $emFn0) : false;
+$emFn = ($emFn0 !== false && $emFn1 > $emFn0) ? substr($SW, $emFn0, $emFn1 - $emFn0) : '';
+ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 4 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $chgFn, $mm2) === 1
+   && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $emFn, $mm3) === 1
+   && substr_count($SW, 'sparse') === substr_count($chgFn, 'sparse') + substr_count($emFn, 'sparse') && strpos($chgFn, "'sparse' => true") !== false && strpos($emFn, "'sparse' => true") !== false
+   && !preg_match('/\/void|operation=void|operation=delete|\/customer\/\d/', $SW)
+   && strpos($chgFn, 'invq_change_blocked(') !== false && strpos($chgFn, 'invq_change_blocked(') < strpos($chgFn, "invq_api(\$c, 'POST'")
+   && strpos($emFn, 'invq_email_change_blocked(') !== false && strpos($emFn, 'invq_email_change_blocked(') < strpos($emFn, "invq_api(\$c, 'POST'"),
+   'creates: a customer and an invoice; the only edits are "Change it" and "Change email" (each a sparse update, only after its unsent / unpaid check); nothing voids or deletes');
 ok(strpos($SW, 'INVQ_MAX_SENDS_HOUR') !== false && strpos($SW, 'INVQ_MAX_CREATES_RUN') !== false, 'tripwires on sends and creates');
 ok(strpos($SW, "'BillEmail' => array('Address' => \$email)") !== false, 'a created invoice carries the customer email, so it can be sent');
 $gi = (string)file_get_contents(__DIR__ . '/../.gitignore');
@@ -401,6 +412,33 @@ ok(strpos($chgFn, "if (\$total > INVQ_MAX_AMOUNT) return array('ok' => false, 'e
    'a change is held to the same limits as raising (live only, the test-customer lock, £2,000)');
 ok(strpos($chgBlock, "invq_discount_clean(\$in['discount'], invq_lines_total(\$lines))") !== false && strpos($chgBlock, 'invq_change_for_job($c, $job, $who, $lines, $memo, $discount)') !== false && strpos($chgBlock, "\$in['id']") === false,
    'the change request names the job (never an invoice id), its lines and discount checked as for Raise');
+
+echo "-- 13 Nov 2026: Change email - the address on a raised invoice, corrected before it goes\n";
+$ei = $mk(907, array('SyncToken' => '2'));
+ok(invq_email_change_blocked($ei) === '', 'unsent and unpaid -> its email can be changed');
+ok(invq_email_change_blocked(array_merge($ei, array('EmailStatus' => 'EmailSent'))) === 'already_sent', 'sent -> no (it has gone to the old address)');
+ok(invq_email_change_blocked(array_merge($ei, array('Balance' => 20))) === 'part_paid', 'money paid against it -> no');
+ok(invq_email_change_blocked(null) === 'not_found', 'no invoice -> no');
+$eiQ = $ei; $eiQ['Line'][0]['Description'] = 'Changed in QuickBooks';
+ok(invq_email_change_blocked($eiQ) === '', 'lines changed in QuickBooks don\'t stop it: only BillEmail is written, so they are never touched');
+ok(invq_job_row(array('id' => 'E1'), array('id' => '907', 'state' => 'unsent'))['can_email'] === true
+   && invq_job_row(array('id' => 'E2'), array('id' => '907', 'state' => 'sent'))['can_email'] === false
+   && invq_job_row(array('id' => 'E3'), array('id' => '907', 'state' => 'paid'))['can_email'] === false
+   && invq_job_row(array('id' => 'E4', 'name' => 'A', 'email' => 'a@example.com'), null)['can_email'] === false, 'the row offers "Change email" only while its invoice is unsent');
+ok($emFn !== '' && strpos($emFn, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live');") !== false && strpos($emFn, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key');") !== false
+   && strpos($emFn, "\$email = invq_email_ok(\$email);") !== false && strpos($emFn, "return array('ok' => false, 'error' => 'bad_email')") !== false,
+   'held to the same gates as the other writes (live only, the test-customer lock), and the address is checked again');
+ok(strpos($emFn, "\$upd = array('Id' => \$invId, 'SyncToken' => (string)(isset(\$inv['SyncToken']) ? \$inv['SyncToken'] : '0'), 'sparse' => true, 'BillEmail' => array('Address' => \$email));") !== false
+   && strpos($emFn, "\$upd['") === false && strpos($emFn, "'Line'") === false && strpos($emFn, 'DueDate') === false && strpos($emFn, 'CustomerMemo') === false,
+   'the update is BillEmail alone: the lines, the note and the due date are never written');
+ok(strpos($emFn, "strcasecmp(invq_bill_email(\$res['json']['Invoice']), \$email) !== 0") !== false && strpos($emFn, "invq_log('invoice email change FAILED") !== false,
+   'it only counts if QuickBooks answers with the new address on the invoice');
+ok(strpos($emFn, "\$d['jobs'][\$i]['email'] = \$email;") !== false && strpos($emFn, "\$d['jobs'][\$i]['email_by'] = 'staff';") !== false && strpos($emFn, "\$by['email'] =") !== false
+   && strpos($emFn, "\$d['cache'] = null;") !== false,
+   'the job takes the new address too (staff-set, so the next read of the Slack post keeps it), and the list is re-read');
+ok(strpos($EP, "'change', 'invemail', 'contact'") !== false && strpos($emBlock, 'invq_email_for_job($c, $job, $em, $who)') !== false && strpos($emBlock, "\$in['id']") === false
+   && strpos($emBlock, "if (\$job === '') fail('bad_job');") !== false,
+   'the request names the job (never an invoice id) and an address; the server finds the invoice');
 
 echo "-- 23 Oct 2026 (later still): due in 3 days, not whatever QuickBooks' terms make it\n";
 ok(INVQ_DUE_DAYS === 3 && invq_due_date(strtotime('2026-10-23 19:57:00 UTC')) === '2026-10-26' && invq_due_date(strtotime('2026-12-30 09:00:00 UTC')) === '2027-01-02', 'raised on 23 Oct -> due 26 Oct (3 days), across the year end too');

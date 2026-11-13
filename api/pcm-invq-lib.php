@@ -374,6 +374,7 @@ function invq_job_row($job, $invRow, $now = null) {
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
         'can_change' => ($state === 'unsent' && !empty($job['inv_fp'])),   // raised by the portal, not sent: "Change it" (the server checks again)
+        'can_email' => ($state === 'unsent'),   // not sent yet: "Change email" on the invoice itself (13 Nov 2026; the server checks again)
         'why_not'  => ($state === 'none' ? $why : ''),
         'invoice'  => $invRow,
         /* a quote (QuickBooks estimate) started from the row, if any: id, number, link */
@@ -761,6 +762,15 @@ function invq_change_blocked($inv, $fp) {
     if (invq_email_status($inv) === 'EmailSent') return 'already_sent';
     if (round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2) < round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2)) return 'part_paid';
     if ((string)$fp === '' || invq_lines_fp($inv) !== (string)$fp) return 'changed_in_qbo';
+    return '';
+}
+/* Why a raised invoice's email address can't be changed from the portal (13 Nov 2026; '' = it can): sent, or money paid
+   against it. Unlike invq_change_blocked() it doesn't need the portal's fingerprint: only BillEmail is written, so lines
+   somebody changed in QuickBooks are never touched. */
+function invq_email_change_blocked($inv) {
+    if (!is_array($inv)) return 'not_found';
+    if (invq_email_status($inv) === 'EmailSent') return 'already_sent';
+    if (round(invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0), 2) < round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2)) return 'part_paid';
     return '';
 }
 
