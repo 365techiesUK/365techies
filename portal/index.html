@@ -786,9 +786,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; 6d1d5aabfa</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; ed12f58343</p><script>
 (function () {
-  var P365BUILD = '6d1d5aabfa';
+  var P365BUILD = 'ed12f58343';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7607,22 +7607,61 @@
      QuickBooks"). Asks first; the address is QuickBooks' own. Used by Money in (a payment, by its id) and by a paid job
      row (its invoice: the newest payment on it). 3 Nov 2026: our own thank-you (David's words) with QuickBooks' receipt
      attached and a Google review ask, unless they have been asked in the last year or said no thanks. */
+  /* 13 Nov 2026 (owner): the thank-you also gives the job's 30 days' aftercare, offers help with anything else and links
+     LinkedIn; and for a NEW customer whose job wasn't a service, a check-up for their Windows computer with 365 PC Manager,
+     included with the job. The button now opens a panel (it asks the server first, read only): who it goes to, and that
+     offer ticked or not with the reason - the person sending decides. An email with the offer never asks for a review. */
+  function invqTyErr(j) {
+    var e = j && j.error;
+    return '<span style="color:var(--kd26c6f,#ffb4a2)">' + (e === 'recently_thanked' ? 'A thank-you already went for this payment today.' : e === 'no_payment' ? 'QuickBooks has no payment recorded against it yet.' : e === 'no_email' ? 'QuickBooks has no email address for them.' : e === 'rate_limited' ? 'A lot have gone this hour \u2014 try again shortly.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
+  }
   function invqThank(b, msg) {
-    var no = b.getAttribute('data-no') || '', amt = parseFloat(b.getAttribute('data-amt')) || 0, to = b.getAttribute('data-to') || '';
-    if (!confirm('Send our thank-you email \u2014 confirming ' + (amt > 0 ? invqMoney(amt) + ' ' : '') + 'received'
-      + (no ? ' for invoice #' + no.split(', ').join(', #') : '') + ', with QuickBooks\u2019 receipt attached and a Google review ask (left out if they were asked in the last year) \u2014 to ' + (to || 'the email QuickBooks has for ' + (b.getAttribute('data-who') || 'them')) + '.\n\nSend it?')) return;
-    b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
-    var body = { action: 'receipt', stoken: S.stoken, machine: mid() };
-    if (b.getAttribute('data-id')) body.id = b.getAttribute('data-id'); else body.invoice = b.getAttribute('data-inv');
-    post(INVQ, body).then(function (j) {
-      if (!j || !j.ok) {
-        b.disabled = false;
-        var e = j && j.error;
-        if (msg) msg.innerHTML = '<span style="color:var(--kd26c6f,#ffb4a2)">' + (e === 'recently_thanked' ? 'A thank-you already went for this payment today.' : e === 'no_payment' ? 'QuickBooks has no payment recorded against it yet.' : e === 'no_email' ? 'QuickBooks has no email address for them.' : e === 'rate_limited' ? 'A lot have gone this hour \u2014 try again shortly.' : e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again.' : 'Didn\u2019t send' + (e ? ' (' + esc(e) + (j.why ? ': ' + esc(j.why) : '') + ')' : '') + '.') + '</span>';
-        return;
+    var row = b.closest('.invqrow'), tr = row ? null : b.closest('tr');
+    var open = row ? row.querySelector('.invqtypanel') : (tr && tr.nextElementSibling && tr.nextElementSibling.classList.contains('invqtypanel') ? tr.nextElementSibling : null);
+    if (open) { open.parentNode.removeChild(open); b.disabled = false; if (msg) msg.textContent = ''; return; }   // a second press closes it
+    function body(extra) {
+      var o = { action: 'receipt', stoken: S.stoken, machine: mid() };
+      if (b.getAttribute('data-id')) o.id = b.getAttribute('data-id'); else o.invoice = b.getAttribute('data-inv');
+      for (var k in extra) o[k] = extra[k];
+      return o;
+    }
+    b.disabled = true; if (msg) msg.textContent = 'Checking\u2026';
+    post(INVQ, body({ check: 1 })).then(function (c) {
+      if (!c || !c.ok) { b.disabled = false; if (msg) msg.innerHTML = invqTyErr(c); return; }
+      if (msg) msg.textContent = '';
+      var nums = (c.numbers || []).length ? ' for invoice #' + c.numbers.join(', #') : '';
+      var why = (c.new ? 'a new customer (since ' + invqDate(c.since) + ')' : c.since ? 'a customer since ' + invqDate(c.since) : 'not sure how long they\u2019ve been with us')
+        + (c.service ? ' \u00b7 the job was a service' : ' \u00b7 no service on the invoice');
+      var html = '<div style="margin:.45rem 0 0;padding:.5rem .6rem;border:var(--k266257,1px dashed rgba(125,170,220,.45));border-radius:10px;font-size:.86rem;text-align:left">'
+        + '<div>Our thank-you email to <strong>' + esc(c.to) + '</strong>: confirming ' + invqMoney(c.amount) + ' received' + esc(nums) + ', with QuickBooks\u2019 receipt attached, the job\u2019s 30 days\u2019 aftercare, help with anything else, and our LinkedIn.</div>'
+        + (c.can_offer ? '<label style="display:flex;gap:.4rem;align-items:flex-start;margin:.45rem 0 0;cursor:pointer"><input class="invqtyoffer" type="checkbox"' + (c.offer ? ' checked' : '') + ' style="margin:.2rem 0 0;width:auto">'
+          + '<span>Offer a check-up for their Windows computer with 365 PC Manager, included with the job <span class="quiet">\u00b7 ' + why + '</span></span></label>' : '')
+        + '<div class="quiet invqtynote" style="font-size:.8rem;margin:.25rem 0 0"></div>'
+        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><button class="sm invqtysend" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83d\udce8 Send the thank-you</button>'
+        + '<button class="sm ghost invqtycancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqtymsg" style="font-size:.82rem"></span></div></div>';
+      var p;
+      if (row) { p = document.createElement('div'); p.className = 'invqtypanel'; p.innerHTML = html; row.appendChild(p); }
+      else if (tr) { p = document.createElement('tr'); p.className = 'invqtypanel'; p.innerHTML = '<td colspan="12">' + html + '</td>'; tr.parentNode.insertBefore(p, tr.nextSibling); }
+      else return;
+      var cb = p.querySelector('.invqtyoffer'), note = p.querySelector('.invqtynote');
+      function setNote() {
+        note.textContent = (cb && cb.checked)
+          ? 'With the offer, this email won\u2019t ask for a Google review \u2014 they\u2019ll be asked later, after their check-up.'
+          : 'It asks for a Google review too, unless they were asked in the last year or said no thanks.';
       }
-      b.style.display = 'none';
-      if (msg) msg.innerHTML = '<span style="color:var(--k54e085,#7ee0a2)">\u2713 Thank-you sent to ' + esc(j.to) + (j.review ? ' (with a review ask)' : '') + '</span>';
+      if (cb) cb.onchange = setNote;
+      setNote();
+      p.querySelector('.invqtycancel').onclick = function () { p.parentNode.removeChild(p); b.disabled = false; };
+      var sb = p.querySelector('.invqtysend'), pm = p.querySelector('.invqtymsg');
+      sb.onclick = function () {
+        sb.disabled = true; pm.textContent = 'Sending\u2026';
+        post(INVQ, body({ offer: !!(cb && cb.checked) })).then(function (j) {
+          if (!j || !j.ok) { sb.disabled = false; pm.innerHTML = invqTyErr(j); return; }
+          p.parentNode.removeChild(p);
+          b.style.display = 'none';
+          if (msg) msg.innerHTML = '<span style="color:var(--k54e085,#7ee0a2)">\u2713 Thank-you sent to ' + esc(j.to) + (j.offer ? ' (with the 365 PC Manager check-up offer)' : j.review ? ' (with a review ask)' : '') + '</span>';
+        }).catch(function () { sb.disabled = false; pm.textContent = 'Couldn\u2019t reach the server.'; });
+      };
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
   }
   function invqAgo(t) { return invqWhen(Math.max(0, Math.floor((Date.now() / 1000 - t) / 86400))); }

@@ -504,8 +504,35 @@ ok($rcFn !== '' && strpos($rcFn, "if (\$n >= INVQ_MAX_SENDS_HOUR) return array('
 ok(strpos($SW, "'/payment/' . \$id . '/send?sendTo=' . rawurlencode(\$to)") !== false && strpos($SW, "empty(\$j['Payment']['Id'])") !== false, 'it is Intuit\'s payment send (POST .../payment/{id}/send), counted only when QuickBooks answers with the payment');
 $rcB0 = strpos($EP, "if (\$action === 'receipt')"); $rcB1 = $rcB0 !== false ? strpos($EP, "if (\$action === 'paid')", $rcB0) : false;
 $rcBlock = ($rcB0 !== false && $rcB1 > $rcB0) ? substr($EP, $rcB0, $rcB1 - $rcB0) : '';
-ok($rcBlock !== '' && strpos($rcBlock, "invq_receipt(\$c, \$id, \$invId, \$who)") !== false && strpos($rcBlock, "\$in['email']") === false && strpos($rcBlock, "\$in['to']") === false,
-   'the request names a payment or an invoice - nothing else');
+preg_match_all("/\\\$in\['([a-z_]+)'\]/", $rcBlock, $rcKeys);
+ok($rcBlock !== '' && strpos($rcBlock, "invq_receipt(\$c, \$id, \$invId, \$who, \$check, \$offer)") !== false && strpos($rcBlock, "\$in['email']") === false && strpos($rcBlock, "\$in['to']") === false
+   && array_values(array_unique($rcKeys[1])) === array('invoice', 'check', 'offer'),
+   'the request names a payment or an invoice, and two yes/nos (check = read only, offer) - nothing else', json_encode(array_values(array_unique($rcKeys[1]))));
+ok(strpos($rcBlock, "\$offer = array_key_exists('offer', \$in) ? !empty(\$in['offer']) : null;") !== false && strpos($rcBlock, "\$check = !empty(\$in['check']);") !== false,
+   'offer and check are only ever true/false (or the default)');
+echo "-- 13 Nov 2026: the thank-you's 365 PC Manager check-up offer - new customers, no service on the job\n";
+$cuNew = array('Id' => '50', 'MetaData' => array('CreateTime' => '2026-10-20T10:00:00-07:00'));
+$cuOld = array('Id' => '51', 'MetaData' => array('CreateTime' => '2023-03-01T10:00:00-08:00'));
+$nowT = strtotime('2026-11-13 12:00:00 UTC');
+$invRemote = $mk(940, array('Line' => array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 60, 'Description' => 'MS365 emails.', 'SalesItemLineDetail' => array('ItemRef' => array('value' => '1174', 'name' => '365 Computer Support:Online Remote Support Services'))))));
+$invSvc = $mk(941, array('Line' => array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 60, 'Description' => 'Laptop service and new SSD'))));
+$invSvc2 = $mk(942, array('Line' => array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 75, 'Description' => '', 'SalesItemLineDetail' => array('ItemRef' => array('value' => '9', 'name' => '365 Techies Full Computer Service'))))));
+ok(invq_customer_since($cuNew) === '2026-10-20' && invq_customer_since($cuOld) === '2023-03-01' && invq_customer_since(null) === '' && invq_customer_since(array()) === '', 'customer since: the day QuickBooks made them (or unknown)');
+ok(invq_had_service(array($invRemote)) === false, '"Online Remote Support Services" is not a full service');
+ok(invq_had_service(array($invSvc)) === true && invq_had_service(array($invSvc2)) === true && invq_had_service(array($invRemote, $invSvc2)) === true, 'a laptop / full computer service (wording or the service picked) counts');
+$od1 = invq_offer_default($cuNew, array($invRemote), $nowT);
+ok($od1['offer'] === true && $od1['new'] === true && $od1['service'] === false && $od1['since'] === '2026-10-20', 'new customer, no service -> the offer, ticked');
+ok(invq_offer_default($cuOld, array($invRemote), $nowT)['offer'] === false && invq_offer_default($cuOld, array($invRemote), $nowT)['new'] === false, 'a customer since 2023 -> not ticked');
+ok(invq_offer_default($cuNew, array($invSvc), $nowT)['offer'] === false, 'new, but the job was a service -> not ticked');
+ok(invq_offer_default(null, array($invRemote), $nowT)['offer'] === false, 'customer unknown -> not ticked (never assume new)');
+ok(invq_offer_default(array('MetaData' => array('CreateTime' => '2026-08-15T10:00:00Z')), array(), $nowT)['offer'] === true
+   && invq_offer_default(array('MetaData' => array('CreateTime' => '2026-08-14T10:00:00Z')), array(), $nowT)['offer'] === false, 'new = made in the last 90 days');
+$rcFn0 = strpos($SW, 'function invq_receipt('); $rcFn1 = $rcFn0 !== false ? strpos($SW, 'function invq_email_preview(', $rcFn0) : false;
+$rcFn = ($rcFn0 !== false && $rcFn1 > $rcFn0) ? substr($SW, $rcFn0, $rcFn1 - $rcFn0) : '';
+ok($rcFn !== '' && strpos($rcFn, 'if ($check) return array(') !== false && strpos($rcFn, 'if ($check) return array(') < strpos($rcFn, 'ty_send(') && strpos($rcFn, 'if ($check) return array(') < strpos($rcFn, "'/payment/' . \$pid . '/pdf'"),
+   'check returns before anything is fetched for sending or sent');
+ok(strpos($rcFn, "\$useOffer = \$canOffer && (\$offer === null ? \$od['offer'] : (bool)\$offer);") !== false && strpos($rcFn, "\$raw, \$useOffer);") !== false
+   && strpos($rcFn, "'offer' => \$useOffer") !== false, 'the choice (or the default) goes to the email and into the record');
 ok(strpos($EP, "\$o['jobs'][\$ji]['invoice']['thanked'] = \$thankedInv[") !== false, 'a paid job row says whether its thank-you went (from the store, so a cached list is right too)');
 
 echo "-- 23 Oct 2026 (later still): told when anyone pays - a Slack line and a NEW mark\n";

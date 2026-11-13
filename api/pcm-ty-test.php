@@ -44,6 +44,27 @@ foreach (array('html' => $noAsk, 'text' => $txtNo) as $k => $b) {
     t(strpos($b, '60.00') !== false, "$k: still the thank-you");
 }
 t(substr_count($withAsk, 'bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px') === 1, 'one button at most');
+
+// 13 Nov 2026 (owner): 30 days' aftercare, "anything else", LinkedIn - in every thank-you
+foreach (array('html ask' => $withAsk, 'html' => $noAsk, 'text ask' => $txtAsk, 'text' => $txtNo) as $k => $b) {
+    t(strpos($b, 'in the next 30 days') !== false && (strpos($b, "that's included") !== false || strpos($b, 'that is included') !== false), "$k: the job's 30 days' aftercare, included");
+    t(strpos($b, 'anything else we can help with') !== false, "$k: anything else, just let us know");
+    t(strpos($b, 'https://www.linkedin.com/company/365techies/') !== false, "$k: LinkedIn");
+    t(stripos($b, 'PC Manager') === false && strpos($b, 'XP99J1CFV8W876') === false, "$k: no check-up offer unless asked for");
+}
+// the check-up offer (a new customer, no service on the job): the app on the Store, for Windows, and no review ask beside it
+$offH = ty_body_html('Margaret', 60, $nums, $ts, false, true, 'm@example.com', 'salt', true);
+$offT = ty_body('Margaret', 60, $nums, $ts, false, true, 'm@example.com', 'salt', true);
+foreach (array('html' => $offH, 'text' => $offT) as $k => $b) {
+    $flat = preg_replace('/\s+/', ' ', $b);   // the text version wraps its lines
+    t(strpos($b, 'https://apps.microsoft.com/detail/XP99J1CFV8W876') !== false && strpos($flat, 'Windows computer') !== false && strpos($flat, 'full service') !== false && strpos($flat, 'backups') !== false,
+      "$k offer: 365 PC Manager on the Microsoft Store, a full service for their Windows computer, backups checked");
+    t(strpos($b, 'writereview') === false && stripos($b, 'Google review') === false && strpos($b, 'pcm-review.php?u=') === false, "$k offer: no review ask, no unsubscribe line");
+    t(strpos($b, '60.00') !== false && strpos($b, 'in the next 30 days') !== false, "$k offer: still the thank-you, with the aftercare");
+}
+t(strpos($offH, 'Get 365 PC Manager') !== false && substr_count($offH, 'bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px') === 1, 'html offer: its one button');
+$both = ty_body_html('Margaret', 60, $nums, $ts, true, true, 'm@example.com', 'salt', true);
+t(strpos($both, 'Leave a Google review') !== false && stripos($both, 'PC Manager') === false, 'asked for an offer AND a review: the review rules win, the offer is left out');
 // escaping
 $x = ty_body_html('<script>', 60, array('<b>1</b>'), $ts, false, false);
 t(strpos($x, '<script>') === false && strpos($x, '<b>1</b>') === false, 'name and invoice number escaped');
@@ -85,6 +106,10 @@ if (!$sent['new@example.com']) {
 }
 list($ok) = ty_send('not-an-email', 'x', 1, array(), 0);
 t($ok === false, 'bad address refused');
+// 13 Nov 2026: the check-up offer never comes with a review ask, and never touches (stamps) the queue
+list($ok, $asked) = ty_send('offer.new@example.com', 'Test', 10, array('1'), $ts, '', '', true);
+list($lk, $q) = rvq_open(); rvq_close($lk);
+t($asked === false && !isset($q['last'][sha1('offer.new@example.com')]), 'with the check-up offer: no review ask, no stamp in the queue (they can still be asked later)');
 $TY_ASK = false;
 @unlink($RV_Q); @unlink($RV_Q . '.lock');
 

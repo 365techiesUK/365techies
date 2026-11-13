@@ -336,9 +336,15 @@ if ($action === 'receipt') {
     if (!defined('RV_LIB')) define('RV_LIB', 1);
     require_once __DIR__ . '/pcm-review.php';   // our sender (ty_send). Still global scope (an if block, not a function) - its globals need that; loaded only here so its timezone setting touches nothing else
     $invId = preg_replace('/[^0-9]/', '', (string)(isset($in['invoice']) ? $in['invoice'] : ''));
-    $r = invq_receipt($c, $id, $invId, $who);
+    /* 13 Nov 2026: check = read only (the panel's facts, nothing sent); offer = yes/no for the 365 PC Manager check-up,
+       absent = the default. Neither can name a person or an address: those stay QuickBooks' own. */
+    $check = !empty($in['check']);
+    $offer = array_key_exists('offer', $in) ? !empty($in['offer']) : null;
+    $r = invq_receipt($c, $id, $invId, $who, $check, $offer);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
-    out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers'], 'review' => !empty($r['review'])));
+    if ($check) out(array('ok' => true, 'check' => true, 'to' => $r['to'], 'name' => $r['name'], 'amount' => $r['amount'], 'numbers' => $r['numbers'],
+                          'offer' => !empty($r['offer']), 'new' => !empty($r['new']), 'since' => $r['since'], 'service' => !empty($r['service']), 'can_offer' => !empty($r['can_offer'])));
+    out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers'], 'review' => !empty($r['review']), 'offer' => !empty($r['offer'])));
 }
 
 if ($action === 'paid') {

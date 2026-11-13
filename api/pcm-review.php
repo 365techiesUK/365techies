@@ -475,28 +475,39 @@ function ty_facts($amt, $nums, $paidTs) {
     if ($paidTs > 0) $f['Date'] = date('l j F Y', $paidTs);
     return $f;
 }
-function ty_body($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '') {
+/* 13 Nov 2026 (owner): every thank-you also says the job has 30 days' aftercare, that we can help with anything else, and
+   where we are on LinkedIn. $offer (a NEW customer whose job had no service, see invq_offer_default): their Windows computer's
+   check-up with 365 PC Manager, included with the job. An email with that offer never carries the review ask (ty_send drops
+   it): no offer of any kind next to a review ask - their review is asked for later, by the usual follow-ups. */
+function ty_offer_lines() {
+    return array('As you\'re new to 365 Techies, your job also includes a check-up for your Windows computer. Download our 365 PC Manager from the Microsoft Store, then let us know, and we\'ll give the computer a full service: updating out-of-date programs (a common way in for hackers), checking your backups are working, and making sure everything is secure.',
+                 msr_web_url());
+}
+function ty_body($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '', $offer = false) {
     global $RV_REVIEW_URL;
     $t = 'Hi ' . $first . ",\r\n\r\n"
        . "Thank you for your payment. This email confirms we have received it:\r\n\r\n";
     foreach (ty_facts($amt, $nums, $paidTs) as $k => $v) $t .= '  ' . $k . ': ' . $v . "\r\n";
     $t .= "\r\n" . ($attached ? "Your receipt is attached.\r\n\r\n" : '')
        . "Thank you for choosing us - we really appreciate it.\r\n\r\n";
+    if ($offer && !$ask) { list($ol, $ou) = ty_offer_lines(); $t .= wordwrap($ol, 100, "\r\n") . "\r\n\r\n" . $ou . "\r\n\r\n"; }
     if ($ask) $t .= "One small favour: would you leave us a quick Google review? Honest feedback takes about\r\n"
        . "30 seconds, every single one gets read by us, and it's how other local people find a\r\n"
        . "firm they can trust:\r\n\r\n" . $RV_REVIEW_URL . "\r\n\r\n";
-    $t .= "If you have any questions, or anything wasn't right, just reply to this email or call\r\n"
-       . "01202 775566 (texts: 07520 615332) and we'll sort it.\r\n\r\n"
+    $t .= "If you have any questions, or anything wasn't right with this job, just reply to this email or call\r\n"
+       . "01202 775566 (texts: 07520 615332) in the next 30 days and we'll sort it out - that's included.\r\n"
+       . "And if there's anything else we can help with, just let us know.\r\n\r\n"
        . "Thanks again,\r\n"
        . "David & Steve\r\n"
        . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
        . "01202 775566 - info@365techies.co.uk - https://365techies.co.uk\r\n"
-       . "What our customers say: https://365techies.co.uk/reviews/\r\n";
+       . "What our customers say: https://365techies.co.uk/reviews/\r\n"
+       . "Tips and news on LinkedIn: " . rv_linkedin_url() . "\r\n";
     if ($ask) $t .= "\r\n(Prefer not to get the occasional follow-up like this? Just reply \"no thanks\" and we'll switch them off"
        . (($to !== '' && $salt !== '') ? ", or click here:\r\n" . rv_unsub_url($to, $salt) . "\r\n" : ".\r\n") . ")\r\n";
     return $t;
 }
-function ty_body_html($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '') {
+function ty_body_html($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $salt = '', $offer = false) {
     global $RV_REVIEW_URL;
     $tel = '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>';
     $blocks = array(
@@ -506,13 +517,19 @@ function ty_body_html($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $
     );
     if ($attached) $blocks[] = rv_h_p('Your receipt is attached.');
     $blocks[] = rv_h_p('Thank you for choosing us &ndash; we really appreciate it.');
+    if ($offer && !$ask) {
+        list($ol, $ou) = ty_offer_lines();
+        $blocks[] = rv_h_p(rv_h($ol));
+        $blocks[] = rv_h_cta('Get 365 PC Manager', $ou);
+    }
     if ($ask) {
         $blocks[] = rv_h_p('One small favour: would you leave us a quick Google review? Honest feedback takes about 30 seconds, every single one gets read by us, and it is how other local people find a firm they can trust.');
         $blocks[] = rv_h_cta('Leave a Google review', $RV_REVIEW_URL);
     }
-    $blocks[] = rv_h_note('If you have any questions, or anything was not right, just reply to this email or call ' . $tel
-        . ' (texts: 07520&nbsp;615332) and we will sort it.');
-    $blocks[] = rv_h_p('<a href="https://365techies.co.uk/reviews/" style="color:#1266a8;font-weight:600;text-decoration:none;">See what our customers say</a>');
+    $blocks[] = rv_h_note('If you have any questions, or anything was not right with this job, just reply to this email or call ' . $tel
+        . ' (texts: 07520&nbsp;615332) in the next 30 days and we will sort it out &ndash; that is included. And if there is anything else we can help with, just let us know.');
+    $blocks[] = rv_h_p('<a href="https://365techies.co.uk/reviews/" style="color:#1266a8;font-weight:600;text-decoration:none;">See what our customers say</a>'
+        . ' &middot; <a href="' . rv_h(rv_linkedin_url()) . '" style="color:#1266a8;font-weight:600;text-decoration:none;">Tips and news on LinkedIn</a>');
     $unsub = '';
     if ($ask) $unsub = 'Prefer not to get the occasional follow-up like this? Just reply &ldquo;no thanks&rdquo; and we will switch them off'
         . (($to !== '' && $salt !== '')
@@ -527,12 +544,13 @@ function ty_body_html($first, $amt, $nums, $paidTs, $ask, $attached, $to = '', $
     ));
 }
 /** Send one thank-you. $pdf = QuickBooks' receipt (raw bytes) or ''. -> array(ok, asked) */
-function ty_send($to, $name, $amt, $nums, $paidTs, $pdfName = '', $pdf = '') {
+function ty_send($to, $name, $amt, $nums, $paidTs, $pdfName = '', $pdf = '', $offer = false) {
     global $RV_ASK_COOLDOWN, $RV_LIVE, $TY_ASK;
     $to = strtolower(trim((string)$to));
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return array(false, false);
     $eh = sha1($to); $ask = false; $prov = 0; $salt = ''; $before = null;
-    list($lk, $q) = rvq_open();
+    $offer = (bool)$offer;
+    list($lk, $q) = $offer ? array(null, null) : rvq_open();   // the check-up offer: no review ask, so the queue isn't touched (or stamped)
     if ($lk) {   // no lock = no ask: the thank-you still goes, the review part never risks a double
         $salt = isset($q['salt']) ? (string)$q['salt'] : '';
         $ask = $TY_ASK && $RV_LIVE && !isset($q['optout'][$eh]) && !isset($q['reviewed'][$eh])
@@ -543,8 +561,8 @@ function ty_send($to, $name, $amt, $nums, $paidTs, $pdfName = '', $pdf = '') {
     }
     $att = ($pdf !== '' && $pdfName !== '');
     $f = rv_first($name);
-    $ok = rv_send_raw($to, ty_subject($nums), ty_body($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt), $att ? $pdfName : '', $att ? $pdf : '',
-        ty_body_html($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt), $att ? 'application/pdf' : '');
+    $ok = rv_send_raw($to, ty_subject($nums), ty_body($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt, $offer), $att ? $pdfName : '', $att ? $pdf : '',
+        ty_body_html($f, $amt, $nums, $paidTs, $ask, $att, $to, $salt, $offer), $att ? 'application/pdf' : '');
     if (!$ok && $prov) {   // release our provisional stamp so a later ask is not blocked for a year
         list($lk2, $q2) = rvq_open();
         if ($lk2) {

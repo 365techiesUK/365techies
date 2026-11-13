@@ -777,6 +777,33 @@ function invq_email_change_blocked($inv) {
 /* The invoice email as QuickBooks will send it: its own wording (Settings > Sales > Messages, read through the API) with
    [Invoice No.] and [Company Name] filled in, the "Dear <first name>," greeting, and the invoice's lines, total and due
    date as its short summary. $tpl = array(Subject, Message) | null (QuickBooks did not say). */
+/* The thank-you's check-up offer (13 Nov 2026; owner: "only for new customers ... if we haven't done a full service on the
+   computer ... download our 365 PC Manager from the Microsoft Store ... that's included in the job"): ticked by default when
+   the QuickBooks customer was made in the last INVQ_OFFER_NEW_DAYS days and none of the paid invoices' lines is a service. The
+   person sending the thank-you sees why and can change it. */
+define('INVQ_OFFER_NEW_DAYS', 90);
+function invq_had_service($invoices) {
+    foreach ((array)$invoices as $inv) {
+        foreach ((array)(is_array($inv) && isset($inv['Line']) ? $inv['Line'] : array()) as $l) {
+            if (!is_array($l)) continue;
+            $t = (string)(isset($l['Description']) ? $l['Description'] : '') . ' ' . (string)(isset($l['SalesItemLineDetail']['ItemRef']['name']) ? $l['SalesItemLineDetail']['ItemRef']['name'] : '');
+            if (preg_match('/\b(full|computer|pc|laptop|desktop)\s+service\b|\bservice\s+pass\b|\bhealth[\s-]?check\b|\btune[\s-]?up\b/i', $t)) return true;
+        }
+    }
+    return false;
+}
+function invq_customer_since($cust) {   // the day QuickBooks made the customer, 'Y-m-d' ('' = unknown)
+    $t = is_array($cust) && isset($cust['MetaData']['CreateTime']) ? strtotime((string)$cust['MetaData']['CreateTime']) : false;
+    return $t ? gmdate('Y-m-d', $t) : '';
+}
+function invq_offer_default($cust, $invoices, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $since = invq_customer_since($cust);
+    $new = ($since !== '' && strtotime($since . ' 12:00:00 UTC') >= $now - INVQ_OFFER_NEW_DAYS * 86400);
+    $svc = invq_had_service($invoices);
+    return array('offer' => ($new && !$svc), 'new' => $new, 'since' => $since, 'service' => $svc);
+}
+
 function invq_first_name($givenName, $displayName) {
     $g = trim((string)$givenName);
     if ($g !== '') return invq_str($g, 40);

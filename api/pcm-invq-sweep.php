@@ -998,7 +998,9 @@ function invq_qbo_send_payment($c, $id, $to) {
         return isset($j['Fault']['Error'][0]['Message']) ? invq_str($j['Fault']['Error'][0]['Message'], 120) : ('http ' . $code);
     return '';
 }
-function invq_receipt($c, $payId, $invId, $who) {
+/* 13 Nov 2026: $check = read only, nothing sent - who it goes to, and whether the 365 PC Manager check-up offer would be
+   ticked and why (invq_offer_default), for the portal's thank-you panel. $offer = the person's choice (null = the default). */
+function invq_receipt($c, $payId, $invId, $who, $check = false, $offer = null) {
     if ($payId === '' && $invId === '') return array('ok' => false, 'error' => 'bad_id');
     $store = invq_store_read();
     $hourAgo = time() - 3600; $n = 0;
@@ -1024,42 +1026,43 @@ function invq_receipt($c, $payId, $invId, $who) {
         if ((string)(isset($s['id']) ? $s['id'] : '') === $pid && (int)(isset($s['at']) ? $s['at'] : 0) > time() - INVQ_RESEND_GAP)
             return array('ok' => false, 'error' => 'recently_thanked');
     // the invoices it paid, and the address: the first invoice's (else the customer's), as QuickBooks holds it
-    $tids = array(); $nums = array(); $to = '';
+    $tids = array(); $nums = array(); $to = ''; $paidInvs = array();
     foreach ((array)(isset($p['Line']) ? $p['Line'] : array()) as $ln)
         foreach ((array)(is_array($ln) && isset($ln['LinkedTxn']) ? $ln['LinkedTxn'] : array()) as $lt)
             if (is_array($lt) && (isset($lt['TxnType']) ? $lt['TxnType'] : '') === 'Invoice' && preg_match('/^\d+$/', (string)(isset($lt['TxnId']) ? $lt['TxnId'] : ''))) $tids[(string)$lt['TxnId']] = true;
     foreach (array_keys($tids) as $tid) {
         $iv = invq_api($c, 'GET', '/invoice/' . $tid);
         if (!qbo_lib_ok($iv) || empty($iv['json']['Invoice']['Id'])) continue;
+        $paidInvs[] = $iv['json']['Invoice'];
         $num = invq_str(isset($iv['json']['Invoice']['DocNumber']) ? $iv['json']['Invoice']['DocNumber'] : '', 30);
         if ($num !== '') $nums[] = $num;
         if ($to === '') $to = invq_send_address($c, $iv['json']['Invoice']);
     }
-    if ($to === '') {
-        $cid = (string)(isset($p['CustomerRef']['value']) ? $p['CustomerRef']['value'] : '');
-        if (preg_match('/^\d+$/', $cid)) {
-            $cr = invq_api($c, 'GET', '/customer/' . $cid);
-            $to = invq_email_ok(isset($cr['json']['Customer']['PrimaryEmailAddr']['Address']) ? $cr['json']['Customer']['PrimaryEmailAddr']['Address'] : '');
-        }
+    // their QuickBooks customer, read once: the address if no invoice had one, the first name, and how long they've been with us
+    $cust = null;
+    $cid = (string)(isset($p['CustomerRef']['value']) ? $p['CustomerRef']['value'] : '');
+    if (preg_match('/^\d+$/', $cid)) {
+        $cr = invq_api($c, 'GET', '/customer/' . $cid);
+        if (qbo_lib_ok($cr) && !empty($cr['json']['Customer']['Id'])) $cust = $cr['json']['Customer'];
     }
+    if ($to === '' && $cust) $to = invq_email_ok(isset($cust['PrimaryEmailAddr']['Address']) ? $cust['PrimaryEmailAddr']['Address'] : '');
     if ($to === '') return array('ok' => false, 'error' => 'no_email');
     $name = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80);
+    $canOffer = function_exists('ty_send');   // QuickBooks' own receipt (the fallback) can't carry our words
+    $od = invq_offer_default($cust, $paidInvs);
+    if ($check) return array('ok' => true, 'check' => true, 'to' => $to, 'name' => $name, 'amount' => $amt, 'numbers' => $nums,
+                             'offer' => ($canOffer && $od['offer']), 'new' => $od['new'], 'since' => $od['since'], 'service' => $od['service'], 'can_offer' => $canOffer);
+    $useOffer = $canOffer && ($offer === null ? $od['offer'] : (bool)$offer);
     $asked = false; $pdfOk = false;
-    if (function_exists('ty_send')) {
-        $first = $name;
-        $cid = (string)(isset($p['CustomerRef']['value']) ? $p['CustomerRef']['value'] : '');
-        if (preg_match('/^\d+$/', $cid)) {
-            $cr = invq_api($c, 'GET', '/customer/' . $cid);
-            if (qbo_lib_ok($cr)) $first = invq_first_name(isset($cr['json']['Customer']['GivenName']) ? $cr['json']['Customer']['GivenName'] : '',
-                                                          isset($cr['json']['Customer']['DisplayName']) ? $cr['json']['Customer']['DisplayName'] : '');
-        }
+    if ($canOffer) {
+        $first = $cust ? invq_first_name(isset($cust['GivenName']) ? $cust['GivenName'] : '', isset($cust['DisplayName']) ? $cust['DisplayName'] : '') : $name;
         // QuickBooks' own receipt as the attachment; without it the email still says what was paid
         $pdf = invq_api($c, 'GET', '/payment/' . $pid . '/pdf', null, 'application/pdf');
         $raw = (qbo_lib_ok($pdf) && strlen($pdf['raw']) >= 100 && substr($pdf['raw'], 0, 4) === '%PDF') ? $pdf['raw'] : '';
         $pdfOk = ($raw !== '');
         $paidTs = strtotime((string)(isset($p['TxnDate']) ? $p['TxnDate'] : '') . ' 12:00');
         list($ok, $asked) = ty_send($to, $first, $amt, $nums, $paidTs ? $paidTs : 0,
-            'receipt-' . ($nums ? preg_replace('/[^A-Za-z0-9-]/', '-', $nums[0]) : $pid) . '.pdf', $raw);
+            'receipt-' . ($nums ? preg_replace('/[^A-Za-z0-9-]/', '-', $nums[0]) : $pid) . '.pdf', $raw, $useOffer);
         if (!$ok) {
             invq_log('thank-you FAILED payment ' . $pid . ' (our email) by ' . $who);
             return array('ok' => false, 'error' => 'send_failed', 'why' => 'email');
@@ -1072,15 +1075,15 @@ function invq_receipt($c, $payId, $invId, $who) {
         }
     }
     $inv = array_map('strval', array_keys($tids));
-    invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt, $asked) {
-        $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt, 'review' => $asked);
+    invq_store_locked(function ($d) use ($pid, $inv, $to, $who, $amt, $asked, $useOffer) {
+        $d['receipts'][] = array('id' => $pid, 'inv' => $inv, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt, 'review' => $asked, 'offer' => $useOffer);
         return array('ok' => true, 'data' => $d);
     });
     invq_log('thank-you for payment ' . $pid . ' ' . invq_money($amt) . ($nums ? ' #' . implode(', #', $nums) : '') . ' to ' . $to . ' by ' . $who
-        . ($asked ? ', with a review ask' : '') . ($pdfOk ? ', receipt attached' : ''));
+        . ($asked ? ', with a review ask' : '') . ($useOffer ? ', with the 365 PC Manager check-up offer' : '') . ($pdfOk ? ', receipt attached' : ''));
     invq_slack(':pray: *Thank-you sent* - ' . ($name !== '' ? $name : 'a customer') . ', ' . invq_money($amt) . ' received' . ($nums ? ' (#' . implode(', #', $nums) . ')' : '') . ', by ' . $who
-        . ($asked ? '. It asked for a Google review.' : '.'));
-    return array('ok' => true, 'to' => $to, 'amount' => $amt, 'numbers' => $nums, 'payment' => $pid, 'review' => $asked);
+        . ($asked ? '. It asked for a Google review.' : ($useOffer ? '. It offered their computer\'s check-up with 365 PC Manager - watch for them installing it.' : '.')));
+    return array('ok' => true, 'to' => $to, 'amount' => $amt, 'numbers' => $nums, 'payment' => $pid, 'review' => $asked, 'offer' => $useOffer);
 }
 
 /* The email QuickBooks will send for an invoice, seen before it goes (read only): QuickBooks' own invoice wording from
