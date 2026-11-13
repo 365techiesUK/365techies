@@ -379,7 +379,7 @@ def theme_inline(html):
 
 # The portal's switch. PORTAL_DEFAULT_LIGHT False = dark unless this browser has asked to try light
 # (localStorage portalLight=1, or ?light=1 once, which remembers it); True = light unless they chose dark.
-PORTAL_DEFAULT_LIGHT = False
+PORTAL_DEFAULT_LIGHT = True
 _PSWITCH_TRY = ('<script>try{var d=document.documentElement,L=localStorage;if(/[?&]light=1/.test(location.search))L.setItem("portalLight","1");'
                 'if(/[?&]light=0/.test(location.search))L.removeItem("portalLight");'
                 'if(L.getItem("theme")==="dark")d.setAttribute("data-theme","dark");'
@@ -415,6 +415,7 @@ def theme_portal(html):
     """The portal: light twins for its own CSS, variables for the colours in its script, and its switch."""
     if '<html lang="en-GB">' not in html:
         return html
+    html = plain_labels(html)
     html, n = theme_inline(html)
     html = _STYLE.sub(_style_twin, html)
     html = html.replace('</head>', '<style data-no-theme>' + _portal_extra(html) + '</style>\n</head>', 1)

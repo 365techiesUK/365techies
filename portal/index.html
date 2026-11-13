@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <script>try{var d=document.documentElement,L=localStorage;if(/[?&]light=1/.test(location.search))L.setItem("portalLight","1");if(/[?&]light=0/.test(location.search))L.removeItem("portalLight");if(L.getItem("theme")==="dark")d.setAttribute("data-theme","dark");else if(L.getItem("portalLight")==="1")d.setAttribute("data-theme","light")}catch(e){}</script>
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
        The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
@@ -575,7 +575,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -786,9 +786,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; 940e51a141</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; da6e49535f</p><script>
 (function () {
-  var P365BUILD = '940e51a141';
+  var P365BUILD = 'da6e49535f';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -11443,7 +11443,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
