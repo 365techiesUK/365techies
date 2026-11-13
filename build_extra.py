@@ -25265,6 +25265,9 @@ def write_family_page():
     d = _os.path.join(bp.BASE, "family")
     _os.makedirs(d, exist_ok=True)
     # content-derived id, placeholder still in place (no dateModified here to normalise)
+    # 13 Nov 2026: light by default (light_theme.theme_standalone), before the id so open tabs pick it up
+    import light_theme as _lt_fam
+    html = _lt_fam.theme_standalone(html)
     global FAMILY_BUILD_ID
     FAMILY_BUILD_ID = _hl.sha1(html.encode("utf-8")).hexdigest()[:10]
     with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
@@ -36334,6 +36337,8 @@ def write_activate_page():
 </html>
 '''
     import os as _os
+    import light_theme as _lt_act
+    html = _lt_act.theme_standalone(html)   # 13 Nov 2026: light by default
     d = _os.path.join(bp.BASE, "activate")
     _os.makedirs(d, exist_ok=True)
     with open(_os.path.join(d, "index.html"), "w", encoding="utf-8") as f:

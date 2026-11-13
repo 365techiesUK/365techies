@@ -425,3 +425,15 @@ def theme_portal(html):
     else:
         html = html.replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n  ' + _PSWITCH_TRY, 1)
     return html
+
+
+def theme_standalone(html):
+    """A self-contained page with its own CSS and no site chrome (/family/, /activate/): light by default,
+    dark for a browser that chose dark on the site or the portal."""
+    if '<html lang="en-GB">' not in html or '<head>' not in html:
+        return html
+    html = plain_labels(html)
+    html, n = theme_inline(html)
+    html = _STYLE.sub(_style_twin, html)
+    html = html.replace('<html lang="en-GB">', '<html lang="en-GB" data-theme="light">', 1)
+    return html.replace('<head>', '<head>\n' + SWITCH, 1)

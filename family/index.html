@@ -1,18 +1,19 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" data-theme="light">
 <head>
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="referrer" content="no-referrer" />
 <title>Family view &mdash; 365 PC Manager</title>
 <style>
-  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --soft:#86b6e8; --good:#00ce1b; --warn:#e0b341; --bad:#e8637e; --mut:#9fb5d3; --white:#f0f5fc; }
+  :root { --ink:#0b1226; --panel:#0d1530; --line:#2a3b63; --cyan:#1d97e3; --soft:#86b6e8; --good:#00ce1b; --warn:#e0b341; --bad:#e8637e; --mut:#9fb5d3; --white:#f0f5fc; }/*LT*/:root:where([data-theme="light"]){--ink:#e3e6ee;--panel:#dcdfea;--line:#a4b4d8;--cyan:#177cbb;--soft:#174779;--good:#009413;--warn:#9e781a;--bad:#9c1732;--mut:#355074;--white:#0d1a2c}/*TL*/
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
   .wrap { width:100%; max-width:640px; margin:0 auto; padding:1.2rem 1rem 2rem; flex:1; }
   header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
-  .lg { background:var(--cyan); color:#06101f; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  .lg { background:var(--cyan); color:#06101f; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }/*LT*/:where(html[data-theme="light"]) .lg{color:#e9edf3}/*TL*/
   .fv-h1 { font: inherit; font-weight: 700; margin: 0; display: inline; }
   header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
   h1 { font-size:1.35rem; margin:.2rem 0 .4rem; line-height:1.3; }
@@ -25,9 +26,9 @@
   .m .v { font-weight:600; margin-bottom:.45rem; }
   .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
   .chip { font-size:.76rem; padding:.22rem .55rem; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
-  .chip.g { color:var(--good); border-color:rgba(0,206,27,.35); }
-  .chip.w { color:var(--warn); border-color:rgba(224,179,65,.4); }
-  .note { background:rgba(224,179,65,.08); border:1px solid rgba(224,179,65,.3); border-radius:12px; padding:.85rem 1rem; font-size:.88rem; color:var(--white); margin:.2rem 0 1rem; line-height:1.5; }
+  .chip.g { color:var(--good); border-color:rgba(0,206,27,.35); }/*LT*/:where(html[data-theme="light"]) .chip.g{border-color:rgba(0,148,19,.35)}/*TL*/
+  .chip.w { color:var(--warn); border-color:rgba(224,179,65,.4); }/*LT*/:where(html[data-theme="light"]) .chip.w{border-color:rgba(158,120,26,.4)}/*TL*/
+  .note { background:rgba(224,179,65,.08); border:1px solid rgba(224,179,65,.3); border-radius:12px; padding:.85rem 1rem; font-size:.88rem; color:var(--white); margin:.2rem 0 1rem; line-height:1.5; }/*LT*/:where(html[data-theme="light"]) .note{background:rgba(158,120,26,.08);border:1px solid rgba(158,120,26,.3)}/*TL*/
   .quiet { color:var(--mut); font-size:.8rem; margin-top:1.1rem; line-height:1.5; }
   .err { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:1.4rem; text-align:center; color:var(--mut); line-height:1.6; }
   footer { border-top:1px solid var(--line); background:var(--panel); }
@@ -89,7 +90,7 @@
      script can't kill self-healing. Differences from the portal one: the share code
      rides in ?c=, so every navigation MUST carry the existing query along - dropping
      it would sign the family member out of the view. */
-  var P365FAM = '2b8d410d24';
+  var P365FAM = 'a33de89ba1';
   function stripU(s) { return s.replace(/([?&])u=[^&]*(&?)/, function (_, a, b) { return b ? a : ''; }); }
   function withU(id) { var q = stripU(location.search); return '/family/' + q + (q ? '&' : '?') + 'u=' + encodeURIComponent(id); }
   if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/family/' + stripU(location.search)); } catch (e) {} }
