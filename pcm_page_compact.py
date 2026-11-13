@@ -78,15 +78,24 @@ CSS = ('<style>'
        '.pnew-more>summary::-webkit-details-marker{display:none}.pnew-more>summary::after{content:" +"}'
        '.pnew-more[open]>summary::after{content:" \\2212"}'
        '.pnew-more__hist{max-width:820px;margin:1.3rem auto 0;color:var(--muted);line-height:1.6}'
-       # the 16 feature cards: four to a row with the icon beside the title (was three to a row, one left over)
-       'section[aria-label="What it does"] .tile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem;max-width:1240px;margin-left:auto;margin-right:auto}'
-       'section[aria-label="What it does"] .tile{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.45rem .65rem;align-items:center;align-content:start;padding:1rem 1.05rem 1.1rem;margin:0}'
-       'section[aria-label="What it does"] .tile>svg{margin:0}'
-       'section[aria-label="What it does"] .tile h3{margin:0;font-size:1rem;line-height:1.25}'
-       'section[aria-label="What it does"] .tile p{grid-column:1/-1;margin:0;font-size:.92rem;line-height:1.5}'
-       '@media(max-width:1100px){section[aria-label="What it does"] .tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}'
-       '@media(max-width:600px){section[aria-label="What it does"] .tile-grid{grid-template-columns:1fr;gap:.55rem}'
-       'section[aria-label="What it does"] .tile{padding:.8rem .9rem .9rem}}'
+       # the merged "see it + what it does" block: menu buttons, the picture, and that screen's feature cards beside it
+       '.pcmt{max-width:1240px;margin:1.2rem auto 0}'
+       '.pcmt__tabs{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.3rem}'
+       '.pcmt__stage{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:1.6rem 2rem;align-items:start}'
+       '.pcmt__shot{position:relative;aspect-ratio:1012/736;filter:drop-shadow(0 18px 28px rgba(0,0,0,.3))}'
+       '.pcmt__cap{margin:0 0 .8rem;font-family:var(--font-display);font-weight:600;font-size:1.2rem;line-height:1.3;color:var(--ink)}'
+       '.pcmt__panel{display:grid;gap:.6rem;align-content:start}.pcmt__panel+.pcmt__panel{margin-top:1.6rem}'
+       '.pcmt.is-on .pcmt__panel{margin-top:0}.pcmt.is-on .pcmt__panel:not(.is-sel){display:none}'
+       '.pcmt__panel .tile{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem .65rem;align-items:center;align-content:start;padding:.85rem 1rem .95rem;margin:0}'
+       '.pcmt__panel .tile>svg{margin:0}.pcmt__panel .tile h3{margin:0;font-size:1rem;line-height:1.25}'
+       '.pcmt__panel .tile p{grid-column:1/-1;margin:0;font-size:.92rem;line-height:1.5}'
+       '.pcmt__panel .pcmt__cap{margin-bottom:.2rem}'
+       '.pcmt__panel .pcmt__cap{grid-column:1/-1}'
+       '@media(min-width:1180px){.pcmt__panel--many{grid-template-columns:1fr 1fr}}'
+       '@media(max-width:900px){.pcmt__stage{grid-template-columns:1fr;gap:1rem}.pcmt__shot{max-width:640px;width:100%;margin:0 auto}'
+       '.pcmt__cap{font-size:1.08rem}.pcmt__tabs{gap:.4rem;margin-bottom:1rem}}'
+       '@media(max-width:600px){.pcmt-sec .lede{font-size:.93rem;line-height:1.5}.pcmt-sec .section-head{margin-bottom:.4rem}'
+       '.pcmt .pcmtour__tab{padding:.36rem .75rem;font-size:.82rem}}'
        '@media(max-width:600px){.pcmx>summary{padding:.85rem .95rem}.pcmx h2.pcmx__h{font-size:1.05rem}'
        '.pcmx__s{font-size:.9rem}.pcmx__body{padding:1rem .95rem 1.2rem}.pcmx-group{padding-top:1.6rem;padding-bottom:1.6rem}}'
        '</style>')
@@ -129,6 +138,69 @@ def _group(gkey, secs):
             '        <div class="section-head"><h2 class="section-title section-title--center">' + title
             + '<span class="title-underline title-underline--center"></span></h2>'
             + ('<p class="lede lede--center">' + lede + '</p>' if lede else '') + '</div>\n' + rows + '      </div>\n    </section>\n')
+
+
+# which feature cards sit beside which picture (the tab's own name -> the cards' titles, as written on the cards)
+_TOUR = {
+    'Home': ['Health score', 'Check everything', 'Eco, Everyday or Full speed'],
+    'Safety': ['Scam check &amp; safety settings', 'Network safety &amp; programs'],
+    'My PC': ['Boost, performance &amp; every drive', 'Windows Update &amp; printers', 'What keeps going wrong',
+              'Screen &amp; sound check', 'Gaming check'],
+    'Internet &amp; email': ['Network check &amp; devices', 'Virgin email: check &amp; move'],
+    'Photos &amp; files': ['Backup &amp; OneDrive check'],
+    'Get help': ['Help in one tap'],
+    'Booking': ['Service visits, reminders &amp; reports'],
+    'Games': ['Games'],
+}
+_TOUR_JS = ('<script>(function(){var r=document.getElementById("pcmtour");if(!r)return;'
+            'var t=[].slice.call(r.querySelectorAll("[role=tab]")),m=[].slice.call(r.querySelectorAll(".pcmt__shot img")),'
+            'p=[].slice.call(r.querySelectorAll(".pcmt__panel"));'
+            'function sel(i){t.forEach(function(b,j){b.setAttribute("aria-selected",j===i?"true":"false");b.tabIndex=j===i?0:-1});'
+            'm.forEach(function(g,j){g.style.opacity=j===i?"1":"0"});p.forEach(function(d,j){d.classList.toggle("is-sel",j===i)})}'
+            't.forEach(function(b,i){b.addEventListener("click",function(){sel(i)});b.addEventListener("keydown",function(e){var n=null;'
+            'if(e.key==="ArrowRight"||e.key==="ArrowDown")n=(i+1)%t.length;else if(e.key==="ArrowLeft"||e.key==="ArrowUp")n=(i-1+t.length)%t.length;'
+            'if(n!==null){e.preventDefault();t[n].focus();sel(n)}})});r.classList.add("is-on");sel(0)})();</script>')
+
+
+def _merge_tour(looks, does):
+    """The picture tour and the feature cards become ONE block: pick a menu item, see that screen and what it does.
+    Every card and every caption stays in the page as text. Returns None (and the two sections stay as they were) if the
+    old markup is not what this expects, so a change upstream can never lose a card."""
+    try:
+        pre = looks[:looks.index('<section')] + does[:does.index('<section')]
+        tabs = re.findall(r'<button type="button" role="tab"[^>]*data-i="(\d+)">(.*?)</button>', looks)
+        imgs = re.findall(r'<img data-i="\d+"[^>]*/>', looks)
+        caps = re.search(r"var caps=\['(.*?)'\];", looks).group(1).split("','")
+        style = re.search(r'<style>.*?</style>', looks, re.S).group(0)
+        l_h2 = re.search(r'<h2\b[^>]*>(.*?)</h2>', looks, re.S).group(1)
+        l_lede = re.search(r'<p class="lede[^>]*>(.*?)</p>', looks, re.S).group(1)
+        d_h2 = re.search(r'<h2\b[^>]*>(.*?)</h2>', does, re.S).group(1)
+        tiles = re.findall(r'<div class="tile">.*?</p></div>', does, re.S)
+        byname = {re.search(r'<h3>(.*?)</h3>', t, re.S).group(1): t for t in tiles}
+        names = [n for _, n in tabs]
+        assert len(tabs) == len(imgs) == len(caps) and len(byname) == len(tiles) and does.count('<div class="tile">') == len(tiles)
+        placed = [c for n in names for c in _TOUR.get(n, [])]
+        assert sorted(placed) == sorted(byname) and not [n for n in _TOUR if n not in names], (sorted(set(byname) - set(placed)), sorted(set(placed) - set(byname)))
+    except (AssertionError, AttributeError, ValueError) as e:
+        print('  pcm_page_compact: tour NOT merged (markup changed):', repr(e)[:200])
+        return None
+    strip = lambda h: re.sub(r'<span class="title-underline[^"]*"></span>', '', h).strip()
+    btns = ''.join('            <button type="button" role="tab" id="pcmt-tab-%d" aria-selected="%s" aria-controls="pcmt-panel-%d" class="pcmtour__tab">%s</button>\n'
+                   % (i, 'true' if i == 0 else 'false', i, n) for i, n in enumerate(names))
+    panels = ''.join('              <div class="pcmt__panel%s%s" role="tabpanel" id="pcmt-panel-%d" aria-labelledby="pcmt-tab-%d">\n'
+                     '                <p class="pcmt__cap">%s</p>\n%s              </div>\n'
+                     % (' is-sel' if i == 0 else '', ' pcmt__panel--many' if len(_TOUR.get(n, [])) > 3 else '', i, i, caps[i],
+                        ''.join('                ' + byname[c] + '\n' for c in _TOUR.get(n, [])))
+                     for i, n in enumerate(names))
+    return (pre + '    <section class="section pcmt-sec" aria-label="What it looks like and what it does">\n      <div class="wrap">\n'
+            '        <div class="section-head">\n          <h2 class="section-title section-title--center">' + strip(d_h2)
+            + '<span class="title-underline title-underline--center"></span></h2>\n'
+            '          <p class="lede lede--center"><strong>' + strip(l_h2) + '.</strong> ' + l_lede + '</p>\n        </div>\n'
+            '        <div id="pcmtour" class="pcmt">\n          <div role="tablist" aria-label="Pick a part of the app" class="pcmt__tabs">\n' + btns
+            + '          </div>\n          <div class="pcmt__stage">\n            <div class="pcmt__shot" id="tour-panel">\n'
+            + ''.join('              ' + m + '\n' for m in imgs)
+            + '            </div>\n            <div class="pcmt__panels">\n' + panels + '            </div>\n          </div>\n        </div>\n      </div>\n      '
+            + style + '\n      ' + _TOUR_JS + '\n    </section>\n')
 
 
 def _trim_whatsnew(sec):
@@ -188,6 +260,11 @@ def compact(content):
             secs[key] = blk
     if 'whatsnew' in secs:
         secs['whatsnew'] = _trim_whatsnew(secs['whatsnew'])
+    if 'looks' in secs and 'does' in secs:
+        merged = _merge_tour(secs['looks'], secs['does'])
+        if merged:
+            secs['looks'] = merged
+            del secs['does']
     out, used = [head, '    ' + CSS + '\n'], set()
     for item in ORDER:
         if item == '*':
