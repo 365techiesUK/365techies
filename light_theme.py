@@ -386,12 +386,36 @@ _PSWITCH_TRY = ('<script>try{var d=document.documentElement,L=localStorage;if(/[
                 'else if(L.getItem("portalLight")==="1")d.setAttribute("data-theme","light")}catch(e){}</script>')
 
 
+# Status colours the portal's script puts on text at run time (style="color:'+c+'"): pale tints made for the
+# dark page. They cannot be wrapped (the colour is a script value), so the light theme re-colours any element
+# whose style attribute carries one. Found from the script's own colour literals, so new ones are covered.
+_JS_HEX = re.compile(r"""['"](#[0-9a-fA-F]{6})['"]""")
+PORTAL_TOKENS = '--pgood:#0a7a22;--pwarn:#855f00;--pbad:#b3261e;'
+
+
+def _portal_extra(html):
+    out = [SCOPE + '{' + PORTAL_TOKENS + '}',
+           SCOPE + ' .pill.pro{color:#0a6b1f}']
+    seen = set()
+    for m in _JS_HEX.finditer(html):
+        c = m.group(1).lower()
+        if c in seen: continue
+        seen.add(c)
+        r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+        if colorsys.rgb_to_hls(r / 255, g / 255, b / 255)[1] < .52: continue      # already dark enough to read on white
+        new = _cap_text('#%02x%02x%02x' % _conv(r, g, b))
+        if _lum(*[int(new[i:i + 2], 16) for i in (1, 3, 5)]) > .40: new = '#%02x%02x%02x' % INK
+        out.append('%s [style*="color:%s"]:not([style*="background:%s"]),%s [style*="color: %s"]{color:%s !important}' % (SCOPE, c, c, SCOPE, c, new))
+    return ''.join(out)
+
+
 def theme_portal(html):
     """The portal: light twins for its own CSS, variables for the colours in its script, and its switch."""
     if '<html lang="en-GB">' not in html:
         return html
     html, n = theme_inline(html)
     html = _STYLE.sub(_style_twin, html)
+    html = html.replace('</head>', '<style data-no-theme>' + _portal_extra(html) + '</style>\n</head>', 1)
     if PORTAL_DEFAULT_LIGHT:
         html = html.replace('<html lang="en-GB">', '<html lang="en-GB" data-theme="light">', 1)
         html = html.replace('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n  ' + SWITCH, 1)
