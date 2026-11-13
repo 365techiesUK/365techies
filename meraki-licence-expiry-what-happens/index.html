@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -612,7 +612,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -804,7 +804,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">What Happens When a Meraki Licence Exp</span></nav>
-          <p class="eyebrow mono">// MERAKI &middot; LICENSING, DOCUMENTED</p>
+          <p class="eyebrow mono">MERAKI &middot; LICENSING, DOCUMENTED</p>
           <h1>When a Meraki licence expires, <em class="grad grad--cyan">what actually happens?</em></h1>
           <p class="lede">If we do not renew, does the Wi-Fi stop? The precise, documented answer - which is more reassuring than the rumour, and more dangerous, because nothing at all happens for the first thirty days.</p>
           <div class="page-hero__cta">
@@ -847,7 +847,7 @@
 <p>Licensing and hardware support are two separate clocks. The Wi-Fi 5 Meraki access points reached end of support in July 2026 &mdash; a licence in date does not extend hardware support, and supported hardware does not survive an expired licence.</p>
 <div class="aptwrap"><table class="apt"><caption class="apt__cap">Cisco Meraki Wi-Fi 5 access points &mdash; end-of-support dates, from Meraki&rsquo;s own published table.</caption><thead><tr><th scope="col">Model</th><th scope="col">End of sale</th><th scope="col">End of support</th><th scope="col">Status today</th></tr></thead><tbody><tr><th scope="row">Meraki MR33</th><td>07/05/2021</td><td>21/07/2026</td><td><span class="apbadge apbadge--expired">Support ended</span></td></tr><tr><th scope="row">Meraki MR42</th><td>14/07/2022</td><td>21/07/2026</td><td><span class="apbadge apbadge--expired">Support ended</span></td></tr><tr><th scope="row">Meraki MR52</th><td>07/04/2022</td><td>21/07/2026</td><td><span class="apbadge apbadge--expired">Support ended</span></td></tr><tr><th scope="row">Meraki MR53</th><td>07/05/2021</td><td>21/07/2026</td><td><span class="apbadge apbadge--expired">Support ended</span></td></tr></tbody></table></div><p class="apsrc">Source: <a href="https://documentation.meraki.com/General_Administration/Other_Topics/Meraki_End-of-Life_(EOL)_Products_and_Dates" target="_blank" rel="noopener">Cisco Meraki end-of-life products and dates</a></p>
 </div></section>
-    <section class="section" aria-label="Free WiFi survey"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">// BEFORE YOU RING ANYONE</p><h2 class="repairs__title">Walk the site and write down what people actually get</h2><p class="lede">Our <a href="/wifi-signal-test/">free Wi-Fi signal test</a> runs in a browser, needs no sign-up, and scores every room. Ten minutes with it turns &ldquo;the Wi-Fi is rubbish upstairs&rdquo; into numbers &mdash; which is the difference between a guess and a diagnosis, whoever ends up doing the work. See also our <a href="/room-by-room-wifi-test/">room-by-room method</a>.</p></div><a href="/wifi-signal-test/" class="button primary">Run the free survey</a></div></div></section>
+    <section class="section" aria-label="Free WiFi survey"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">BEFORE YOU RING ANYONE</p><h2 class="repairs__title">Walk the site and write down what people actually get</h2><p class="lede">Our <a href="/wifi-signal-test/">free Wi-Fi signal test</a> runs in a browser, needs no sign-up, and scores every room. Ten minutes with it turns &ldquo;the Wi-Fi is rubbish upstairs&rdquo; into numbers &mdash; which is the difference between a guess and a diagnosis, whoever ends up doing the work. See also our <a href="/room-by-room-wifi-test/">room-by-room method</a>.</p></div><a href="/wifi-signal-test/" class="button primary">Run the free survey</a></div></div></section>
     <section class="section section--alt" aria-label="More in this guide"><div class="wrap"><div class="section-head"><h2 class="section-title section-title--center" data-title>Read next<span class="title-underline title-underline--center"></span></h2></div><div class="tile-grid" data-stagger><div class="tile"><h3><a href="/business-access-point-end-of-life/">The full guide</a></h3><p>End-of-support dates for every model we could verify, and how to tell whether yours is actually the problem.</p></div><div class="tile"><h3><a href="/unsupported-access-point-security-risk/">Working but unpatched</a></h3><p>A different problem from broken, and a different decision.</p></div><div class="tile"><h3><a href="/wifi-controller-end-of-life/">Your controller is the real deadline</a></h3><p>Not the access points. This is the one that&rsquo;s easy to miss.</p></div></div></div></section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
@@ -864,7 +864,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

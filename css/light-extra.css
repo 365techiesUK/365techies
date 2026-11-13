@@ -19,3 +19,4 @@ html[data-theme="light"] #pcmbar{background:rgba(255,255,255,.97) !important;bor
 html[data-theme="light"] body .gpb-score small{color:#fff}
 html[data-theme="light"] body .ff-fuels button{color:#34466b}
 html[data-theme="light"] body .ff-fuels button[aria-pressed="true"],html[data-theme="light"] body .ff-fuels button.is-on{color:#fff}
+html[data-theme="light"] .nav-sos,html[data-theme="light"] .nav-sos *,html[data-theme="light"] a.button.sos,html[data-theme="light"] .mobile-cta-bar a.sos{color:#fff}

@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -659,7 +659,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -851,7 +851,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Broadband Down</span></nav>
-          <p class="eyebrow mono">// BROADBAND DOWN &middot; WHAT TO DO</p>
+          <p class="eyebrow mono">BROADBAND DOWN &middot; WHAT TO DO</p>
           <h1>Broadband down? <em class="grad grad--cyan">Work through this.</em></h1>
           <p class="lede">No sales pitch on this page. If your business has just gone offline, here is the order to work through &mdash; how to find out whether it is your equipment or the line, what to say when you report it so you are not fobbed off, and how to keep trading while you wait.</p>
           <div class="page-hero__cta">
@@ -875,7 +875,7 @@
 
     <section id="s1" class="section" aria-label="The first five minutes">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; FIRST FIVE MINUTES</p>
+        <p class="eyebrow mono">FIRST FIVE MINUTES</p>
         <h2 class="section-title" data-title>The first five minutes<span class="title-underline"></span></h2>
 <ol><li><strong>Look at the router&rsquo;s lights before you touch anything.</strong> Photograph them. Which light is wrong tells the engineer more than ten minutes of description will.</li><li><strong>Plug a laptop into the router with a cable.</strong> If the wired connection works, your line is fine and you have a WiFi or network problem &mdash; a completely different job, and our <a href="/wifi-troubleshooting/">WiFi fault-finding guide</a> takes it from there.</li><li><strong>Check your provider&rsquo;s status page</strong>, and check whether it is <a href="/is-it-down/">down for everyone or just you</a>. An area fault means there is nothing to fix at your end and a queue of people ahead of you.</li><li><strong>Tether a phone</strong> and see whether the internet works over mobile. If it does, the problem really is your line rather than the wider internet, and that is also your emergency stopgap for the next hour.</li><li><strong>Restart the router once.</strong> Once. Not repeatedly &mdash; see the warning below.</li></ol><div class="callout"><p><strong>Do not sit there rebooting the router.</strong> On copper and part-fibre lines, repeated resyncs are read as instability and the network responds by making your line slower but steadier &mdash; and that reduction can persist long after the fault is fixed. You can permanently slow your own broadband by rebooting it all morning.</p></div>
       </div>
@@ -895,21 +895,21 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="How to report it so you are not fobbed off">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; REPORTING IT</p>
+        <p class="eyebrow mono">REPORTING IT</p>
         <h2 class="section-title" data-title>How to report it so you are not fobbed off<span class="title-underline"></span></h2>
 <p>Have these ready before you ring, and the call goes very differently:</p><ul><li>Your <strong>account number</strong> and the <strong>circuit or line ID</strong> if you have it.</li><li><strong>What you have already tested</strong> &mdash; &ldquo;wired laptop straight into the router, no connection, router shows no broadband light&rdquo;. This alone skips twenty minutes of script.</li><li>When it started, and whether anything happened at the same time &mdash; street works, a power cut, a storm, a builder.</li></ul><p><strong>Then ask three specific questions and write the answers down:</strong></p><ol><li>&ldquo;What is my <strong>fault reference</strong>?&rdquo;</li><li>&ldquo;What <strong>care level</strong> is this line on, and what is the committed fix time under it?&rdquo;</li><li>&ldquo;Is there a <strong>declared area fault or major outage</strong>?&rdquo;</li></ol><p>That second question is the one almost nobody asks, and it is the one that tells you whether you are waiting hours or working days. On standard care the target is end of the <strong>second working day</strong>, excluding weekends and bank holidays &mdash; so a Friday fault can legitimately run to Tuesday.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="How to keep trading while you wait">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; KEEP TRADING</p>
+        <p class="eyebrow mono">KEEP TRADING</p>
         <h2 class="section-title" data-title>How to keep trading while you wait<span class="title-underline"></span></h2>
 <ul><li><strong>Card payments:</strong> most modern card readers can fall back to a mobile network on their own, so check yours before assuming you cannot take money. Know your acquirer&rsquo;s authorisation phone line as a last resort.</li><li><strong>Phones:</strong> if your phone system runs over broadband, divert the main number to a mobile now rather than later. Your provider can usually do this remotely in minutes. <em>After the analogue switch-off in January 2027 this will apply to almost everyone.</em></li><li><strong>Tether, but plan it:</strong> a phone hotspot will carry email and card terminals for a while. It will not carry a room full of people doing video calls, and it will eat somebody&rsquo;s data allowance.</li><li><strong>Tell customers before they find out.</strong> A note on the door and a post on your page costs nothing and buys a great deal of patience.</li><li><strong>Write down what broke.</strong> Not for now &mdash; for afterwards. The list of what you could not do is exactly the raw material for a <a href="/business-continuity-internet/">plan that stops it hurting next time</a>.</li></ul>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="When to stop waiting">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHEN TO ESCALATE</p>
+        <p class="eyebrow mono">WHEN TO ESCALATE</p>
         <h2 class="section-title" data-title>When to stop waiting<span class="title-underline"></span></h2>
 <p>Escalate when the estimated fix time is longer than your business can survive &mdash; and that is a number only you can set. If you cannot trade, cannot dispense, cannot take bookings or cannot pay staff, the estimate does not have to be unreasonable to be unacceptable.</p><p>At that point you have three realistic options:</p><ol><li><strong>A 4G or 5G router</strong>, if your mobile coverage is decent. Fastest and cheapest, and if you keep it afterwards it becomes automatic failover for next time. <strong>This is the right answer for most businesses.</strong></li><li><strong>Relocate</strong> temporarily &mdash; genuinely worth considering for office-based work, and free.</li><li><strong>Have a connection brought to you</strong> &mdash; <a href="/emergency-internet/">what our van does</a>. The right answer where mobile coverage is poor, where you have lost power as well, where the outage is running into days, or where you need real bandwidth rather than enough to limp.</li></ol><p>We would genuinely rather you took option one and never needed us. <a href="/contact/">Ask us</a> and we will tell you which of the three fits.</p>
       </div>
@@ -917,7 +917,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/emergency-internet/">get a connection brought to you</a><a href="/business-continuity-internet/">make a plan so it hurts less next time</a><a href="/is-it-down/">check if a service is down for everyone</a><a href="/wifi-troubleshooting/">if the line is fine but WiFi is not</a></div>
         </div>
       </div>
@@ -925,7 +925,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
         <section class="section" aria-label="In our free app" id="in-the-app">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// IS IT YOU OR THEM?</p>
+        <p class="eyebrow mono">IS IT YOU OR THEM?</p>
         <h2 class="section-title" data-title>Is it your PC, or the service?<span class="title-underline"></span></h2>
         <p>If only one website or app won&rsquo;t work, our free Windows app tells you whether it&rsquo;s down for everyone or just you.</p>
         <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Is it down, or just you? Let your PC check both ends</h3><p style="margin:0">Our free app asks our status checker whether Gmail, Outlook, BBC iPlayer, Netflix, WhatsApp, Facebook, Zoom and others are having problems for everyone &mdash; and at the same time tries to reach each one from your PC. So it can say <strong>it&rsquo;s down for everyone</strong>, <strong>it&rsquo;s just this PC or this connection</strong>, or <strong>this PC is offline</strong>. Only the services&rsquo; own front doors are contacted; nothing about you is sent.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>Internet &amp; email</b>, then <b>Is it down, or just me?</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="isitdown" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);aspect-ratio:16/9;background:#060c1c"><video muted loop playsinline preload="none" poster="/images/pcm-clip-isitdown.jpg" width="1280" height="720" aria-label="Is it down, or just me? in 365 PC Manager saying one service isn&rsquo;t reaching this PC and the rest are fine: Gmail, Outlook and Microsoft 365, BBC iPlayer, Facebook, WhatsApp, Instagram, YouTube, Amazon, Spotify and X working, Netflix working for everyone else but not reachable from this PC, and Zoom working with some people having problems" style="display:block;width:100%;height:100%;object-fit:cover"><source src="/images/pcm-clip-isitdown.mp4" type="video/mp4"></video></div><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption><a class="ytw" href="https://www.youtube.com/shorts/0Q6_z8NGpg4" target="_blank" rel="noopener" data-ytw="0Q6_z8NGpg4" data-ytw-shape="tall" data-ytw-title="Is It Down, or Just You? Check Both Ends at Once (YouTube)" data-ytw-live="2026-10-23T12:00:00+01:00" hidden><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><span>Watch the 27-second video, with sound</span></a><style>.ytw{display:inline-flex;align-items:center;gap:.55rem;max-width:100%;box-sizing:border-box;margin:.65rem 0 0;padding:.45rem 1rem .45rem .5rem;border-radius:999px;border:1px solid rgba(29,151,227,.55);background:rgba(29,151,227,.12);color:inherit;font-weight:700;font-size:.9rem;line-height:1.3;text-decoration:none;transition:background .2s ease,border-color .2s ease}/*LT*/:where(html[data-theme="light"]) .ytw{border:1px solid rgba(23,124,187,.55);background:rgba(23,124,187,.12)}/*TL*/.ytw[hidden]{display:none!important}.ytw svg{width:1.6rem;height:1.6rem;flex:none}.ytw:hover,.ytw:focus-visible{background:rgba(29,151,227,.26);border-color:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw:hover,:where(html[data-theme="light"]) .ytw:focus-visible{background:rgba(23,124,187,.26);border-color:#177cbb}/*TL*/.ytw-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}/*LT*/:where(html[data-theme="light"]) .ytw-dlg{background:#ebedf4}/*TL*/.ytw-dlg::backdrop{background:rgba(2,6,16,.84)}/*LT*/:where(html[data-theme="light"]) .ytw-dlg::backdrop{background:rgba(244,245,250,.84)}/*TL*/.ytw-dlg__v{border-radius:16px;overflow:hidden;background:#060c1c}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__v{background:#ebedf4}/*TL*/.ytw-dlg__v--tall{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16}.ytw-dlg__v--wide{width:min(94vw,calc(84vh * 16 / 9),1100px);aspect-ratio:16/9}.ytw-dlg__v iframe{display:block;width:100%;height:100%;border:0}.ytw-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x{border:1.5px solid rgba(10,16,31,.4);background:#dce0ec;color:#152242}/*TL*/.ytw-dlg__x:hover,.ytw-dlg__x:focus-visible{background:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x:hover,:where(html[data-theme="light"]) .ytw-dlg__x:focus-visible{background:#177cbb}/*TL*/</style><script>(function(){if(window.__ytw)return;window.__ytw=1;function go(){var now=Date.now();document.querySelectorAll("a[data-ytw]").forEach(function(a){var l=a.getAttribute("data-ytw-live");if(l&&now<Date.parse(l))return;a.hidden=false;a.addEventListener("click",function(e){var d=dlg();if(!d.showModal)return;e.preventDefault();play(d,a);});});}function dlg(){var d=document.getElementById("ytwdlg");if(d)return d;d=document.createElement("dialog");d.id="ytwdlg";d.className="ytw-dlg";d.setAttribute("aria-label","Video");d.innerHTML='<button type="button" class="ytw-dlg__x" aria-label="Close the video">&times;</button><div class="ytw-dlg__v"></div>';document.body.appendChild(d);if(!d.showModal)return d;d.querySelector(".ytw-dlg__x").addEventListener("click",function(){d.close();});d.addEventListener("click",function(e){if(e.target===d)d.close();});d.addEventListener("close",function(){d.querySelector(".ytw-dlg__v").innerHTML="";});return d;}function play(d,a){var v=d.querySelector(".ytw-dlg__v"),id=a.getAttribute("data-ytw"),i=document.createElement("iframe");v.className="ytw-dlg__v ytw-dlg__v--"+(a.getAttribute("data-ytw-shape")||"wide");i.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";i.title=a.getAttribute("data-ytw-title");i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");i.setAttribute("allowfullscreen","");v.innerHTML="";v.appendChild(i);d.showModal();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script></figure><script>(function(){var f=document.currentScript&&document.currentScript.previousElementSibling;var v=f&&f.querySelector("video");if(!v)return;function still(){v.controls=true;}if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
@@ -933,7 +933,7 @@
     </section>
 <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -978,7 +978,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

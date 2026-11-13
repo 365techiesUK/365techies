@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -681,7 +681,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -872,7 +872,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/dell-it-support-dorset/">Dell</a> <span>/</span> <span aria-current="page">Charging a Latitude on the move</span></nav>
-        <p class="eyebrow mono">// DELL LATITUDE &middot; POWER ON THE MOVE</p>
+        <p class="eyebrow mono">DELL LATITUDE &middot; POWER ON THE MOVE</p>
         <h1>Charging your Dell Latitude <em class="grad grad--cyan">in the car, on the train and off-grid</em></h1>
         <p class="lede">A Latitude that &ldquo;keeps running out of power&rdquo; on the road is nearly always being fed by the wrong adapter, not a bad battery. Dell wants 65 watts; most car sockets and phone chargers hand over 20 to 30. This guide gives you the rule, shows which Latitude 3000, 5000 and 7000 models charge over USB-C, and names a car adapter, a cable and a power bank that meet the spec. Independent advice from Dell specialists since 1995 &mdash; we are a Dell reseller, not a Dell authorised repairer. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -887,63 +887,63 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">THE ONE NUMBER THAT MATTERS</a><a href="#s2">DOES YOURS CHARGE OVER USB-C?</a><a href="#s3">IN THE CAR</a><a href="#s4">THE CABLE</a><a href="#s5">POWER BANKS</a><a href="#s6">MAKE IT LAST</a><a href="#s7">AN HONEST NOTE</a></nav>
     <section id="s1" class="section" aria-label="Your Latitude wants 65 watts, and most car adapters give it 20">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE ONE NUMBER THAT MATTERS</p>
+        <p class="eyebrow mono">THE ONE NUMBER THAT MATTERS</p>
         <h2 class="section-title" data-title>Your Latitude wants 65 watts, and most car adapters give it 20<span class="title-underline"></span></h2>
 <p>Every Latitude we see in the 3000, 5000 and 7000 series ships with a <strong>65 W</strong> power adapter, and some 5000-series configurations with dedicated graphics come with 90 W or 130 W. That is the power the laptop expects. USB-C Power Delivery lets almost any USB-C charger connect, which is exactly the trap: the laptop <em>accepts</em> a 20 W phone adapter, it just cannot live on it.</p><p>What happens on a weak supply is predictable. The battery icon shows the plug, but the charge creeps up slowly or holds still while you work, because a busy Latitude draws more than the adapter can give. Dell&rsquo;s firmware notices too: on start-up you may see <em>&ldquo;The AC power adapter wattage and type cannot be determined&rdquo;</em> or a slow-charger warning, and the machine quietly throttles itself to match the power available. That is the &ldquo;keeps running out of power&rdquo; complaint in one sentence: the adapter is a phone charger.</p><p>The fix is not a new laptop and usually not a new battery. It is a 12 V adapter, a cable and, if you work away from a socket for hours, a power bank that each deliver at least 65 W to one USB-C port. Everything below follows from that.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Check the port before you buy anything">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// DOES YOURS CHARGE OVER USB-C?</p>
+        <p class="eyebrow mono">DOES YOURS CHARGE OVER USB-C?</p>
         <h2 class="section-title" data-title>Check the port before you buy anything<span class="title-underline"></span></h2>
 <p>Not every Latitude charges through USB-C, and the ones that do have different appetites. We read Dell&rsquo;s own Setup and Specifications sheets for the models we service most:</p><div class="cmp-wrap" tabindex="0" role="group" aria-label="Which Dell Latitude models charge over USB-C (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th>Model</th><th>Charges over USB-C?</th><th>Adapter it ships with</th><th>Battery</th></tr></thead><tbody><tr><th scope="row">Latitude 3520</th><td>Yes &mdash; the USB 3.2 Gen 2 Type-C port supports Power Delivery. The round 4.5 mm barrel socket works too.</td><td>65 W, barrel or USB-C (20 V at 3.25 A)</td><td>41 Wh (3-cell) or 54 Wh (4-cell)</td></tr><tr><th scope="row">Latitude 5520</th><td>Yes &mdash; USB-C only, no barrel socket.</td><td>65 W, 90 W or 130 W USB-C depending on the build; the higher two go with dedicated graphics</td><td>Depends on the build</td></tr><tr><th scope="row">Latitude 7420, 7430, 7440</th><td>Yes &mdash; USB-C only, Thunderbolt 4 ports.</td><td>65 W USB-C (20 V at 3.25 A)</td><td>Depends on the build</td></tr><tr><th scope="row">Older 3000-series (3500, 3590 and earlier)</th><td>Mostly no &mdash; barrel socket only. Check the port for a battery or lightning symbol.</td><td>65 W barrel</td><td>Depends on the build</td></tr></tbody></table></div><p>Two quick ways to check your own machine. First, look at the USB-C port: Dell marks charging-capable ports with a small battery or lightning-bolt symbol beside them. Second, open Dell&rsquo;s Setup and Specifications guide for your model on dell.com and read the <em>Power adapter</em> table, which lists the wattage and whether the connector is barrel or USB-C. If your Latitude only has a barrel socket, skip to the car section: there is a barrel option for you too.</p><p>Three things stay true across every model. A 65 W adapter fully charges it while you work. A 45 W adapter charges it, slowly, and is fine overnight. Anything under about 30 W is a phone charger and will lose the race against a busy laptop.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Charging from the 12 V socket, done properly">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// IN THE CAR</p>
+        <p class="eyebrow mono">IN THE CAR</p>
         <h2 class="section-title" data-title>Charging from the 12 V socket, done properly<span class="title-underline"></span></h2>
 <p>The cigarette-lighter socket is a perfectly good power source for a Latitude. Most are fused at 10 to 15 amps, which is 120 to 180 watts of headroom, so a 65 W or 100 W laptop draw is nowhere near the limit. What matters is the adapter you plug into it.</p><ul><li><strong>Buy by the single-port figure, not the headline.</strong> An adapter sold as &ldquo;130 W&rdquo; often means 130 W shared across three ports. You need one USB-C port that delivers 65 W or more on its own, with Power Delivery (PD) in the spec. 100 W on that port gives comfortable headroom and covers a 90 W 5520 as well.</li><li><strong>Use that port alone while you work.</strong> Plug a phone into the same adapter and many split the power, dropping the laptop port to 45 W or less.</li><li><strong>12 to 24 V input</strong> if it will ever live in a van or lorry.</li><li><strong>Engine running, or watch the car battery.</strong> A laptop pulling 65 W for two hours with the engine off is the equivalent of leaving the headlights on. Most sockets are live only with the ignition on anyway.</li><li><strong>Heat.</strong> An adapter on a sunlit dashboard throttles or shuts down. Keep it in the console or a footwell.</li><li><strong>Barrel-only Latitude?</strong> A 12 V laptop adapter with a Dell 4.5 mm tip does the same job; check the tip size and 19.5 V output against the label on your mains charger, or ask us.</li></ul><p><strong>The one we would buy today:</strong> <a href="https://www.amazon.co.uk/dp/B0B3CSLPZR?tag=365techies0d-21" target="_blank" rel="sponsored noopener nofollow">UGREEN 130 W car charger with a 100 W USB-C cable</a> <span class="mono">(paid link)</span>. Its second USB-C port gives 100 W on its own, it takes 12 to 24 V, and the 1 m cable in the box is e-marked for 100 W, so it works out of the packet. Any adapter that meets the same three lines &mdash; 65 W or more on one PD port, 12 to 24 V, a proper cable &mdash; will do the job just as well; <a href="https://www.amazon.co.uk/s?k=100W+USB+C+PD+car+charger+laptop&amp;tag=365techies0d-21" target="_blank" rel="sponsored noopener nofollow">search Amazon for 100 W USB-C PD car chargers</a> <span class="mono">(paid link)</span> and read the per-port figure before you buy.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="The cable is half the problem">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE CABLE</p>
+        <p class="eyebrow mono">THE CABLE</p>
         <h2 class="section-title" data-title>The cable is half the problem<span class="title-underline"></span></h2>
 <p>USB-C cables look identical and are not. A cable without a tiny chip inside it (the &ldquo;e-marker&rdquo;) is limited to 3 amps, which at the 20 V a laptop asks for is 60 W. Most phone cables, and most of the free ones in drawers, are that type. Plug one into a 100 W adapter and the Latitude negotiates down to 60 W or, with a poor cable, to a phone-charging trickle, and the whole set-up looks like the adapter&rsquo;s fault.</p><p>What to look for: a cable <strong>rated 100 W or more (5 A, e-marked)</strong>, from a brand that prints the rating on the packaging or the plug. Length matters in a car; 1.8 m reaches the passenger seat from a centre-console socket without straining the port. Data speed does not matter for charging, so a &ldquo;charging only&rdquo; or USB 2.0 cable is fine as long as the wattage is right.</p><p><strong>Our pick:</strong> <a href="https://www.amazon.co.uk/dp/B0DG2PKSVK?tag=365techies0d-21" target="_blank" rel="sponsored noopener nofollow">Anker 240 W USB-C to USB-C cable, 1.8 m</a> <span class="mono">(paid link)</span>. It is rated well beyond anything a Latitude will ask for, the silicone jacket does not kink in a door pocket, and it is the cable we would keep in the car permanently. It does not carry video, which is irrelevant here.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="A power bank that actually charges a laptop">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// POWER BANKS</p>
+        <p class="eyebrow mono">POWER BANKS</p>
         <h2 class="section-title" data-title>A power bank that actually charges a laptop<span class="title-underline"></span></h2>
 <p>The same rule applies, and it catches more people out because power banks are marketed by capacity, not output. A bank has to push <strong>65 W out of one USB-C port</strong> to keep a Latitude charging while it is in use. Plenty of &ldquo;65 W&rdquo; banks are 65 W in total and cap a single port at 45 W, which is a slow charge, and a 20 W phone bank will not hold the line at all.</p><p>Capacity: a Latitude 3520 has a 41 Wh or 54 Wh battery. A 25,000 mAh bank holds roughly 90 Wh, and after the losses in the electronics you get about one full recharge of the laptop and a top-up. That is a working afternoon on a train or a day of site visits. Bigger than 100 Wh and the airlines will not let it in the cabin, which is why the serious laptop banks stop just under it. Power banks always go in hand luggage, never the hold.</p><p><strong>Our pick:</strong> <a href="https://www.amazon.co.uk/dp/B0DMDJBCDP?tag=365techies0d-21" target="_blank" rel="sponsored noopener nofollow">Anker 25,000 mAh laptop power bank, 165 W</a> <span class="mono">(paid link)</span>. Three USB-C outputs at up to 100 W each, so the laptop gets full power even with a phone on the next port, a built-in cable, and it sits under the 100 Wh flight limit. It recharges from the same 65 W laptop charger you already own. Anything else you consider needs the same two lines on the box: 65 W or more from one port, and under 100 Wh.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Get more hours from the battery you have">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// MAKE IT LAST</p>
+        <p class="eyebrow mono">MAKE IT LAST</p>
         <h2 class="section-title" data-title>Get more hours from the battery you have<span class="title-underline"></span></h2>
 <p>Even with the right adapter, a few settings decide whether the battery lasts a morning or a day.</p><ul><li><strong>Windows power mode.</strong> Settings &rarr; System &rarr; Power &amp; battery &rarr; set &ldquo;Best power efficiency&rdquo; on battery. On a Latitude doing email, web and Office this alone adds an hour or more.</li><li><strong>Screen brightness</strong> is the biggest single draw on a 15-inch laptop. Sixty per cent looks the same in a car as a hundred.</li><li><strong>Dell&rsquo;s own charge settings.</strong> Dell Power Manager (older models) or Dell Optimizer (newer ones) has a battery section. &ldquo;ExpressCharge&rdquo; fills quickly when you have twenty minutes at a socket; &ldquo;Primarily AC Use&rdquo; or a custom 50 to 80 per cent limit is kinder to a laptop that lives on the desk. Pick the one that matches how the machine is used, not the default.</li><li><strong>Check the battery is not the real problem.</strong> Open a Command Prompt and run <code>powercfg /batteryreport</code>, then open the report it saves. Compare <em>Design capacity</em> with <em>Full charge capacity</em>. A battery down to about 70 per cent of its design figure is worn; below that it will drain fast whatever you plug in, and the honest fix is a <a href="/dell-laptop-battery-replacement-dorset/">correct-fit replacement battery</a>, which on a 3520 or 5520 is a routine job.</li></ul><p>If you run a small fleet of Latitudes for people who work from the van or the car, this is the kind of thing we set up as part of a <a href="/dell-it-support-dorset/">Dell support plan</a>: the right adapters in the right cars, charge limits configured, and batteries swapped before they strand someone.</p>
       </div>
     </section>
     <section id="s7" class="section" aria-label="Our links, and the adapters to avoid">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// AN HONEST NOTE</p>
+        <p class="eyebrow mono">AN HONEST NOTE</p>
         <h2 class="section-title" data-title>Our links, and the adapters to avoid<span class="title-underline"></span></h2>
 <p>The product links on this page go to Amazon UK and carry our Associates tag. As an Amazon Associate we earn from qualifying purchases, at no extra cost to you. We chose each product by its specification first and its brand second, we do not show prices because they change weekly, and the advice above is exactly what we would give if the links did not exist.</p><p>On the adapters to avoid: the no-name 12 V adapters and &ldquo;100 W&rdquo; cables that fill the first page of any marketplace often do not deliver the figure on the label, and a few get hot enough to worry us. USB-C Power Delivery is a negotiation between the charger, the cable and the laptop, and a part that lies in that negotiation is what produces the &ldquo;wattage cannot be determined&rdquo; warning and the slow charge. Stick to brands that publish per-port figures and back them with a warranty, keep the receipt, and if a Latitude still misbehaves on known-good kit, ring us: that is a laptop fault, and we fix those.</p><p><strong>The whole page in four lines:</strong> 65 W on one USB-C port. A 100 W, 5 A cable. A power bank under 100 Wh that gives 65 W from one port. And if it still dies, check the battery&rsquo;s full-charge capacity before you blame anything else.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
+        <p class="eyebrow mono">RELATED</p>
 <p>Battery worn rather than under-fed? See <a href="/dell-laptop-battery-replacement-dorset/">Dell laptop battery replacement across Dorset</a>. Running a 3520 in a campervan off a leisure battery? The <a href="/dell-latitude-3520-guide/">Latitude 3520 owner&rsquo;s guide</a> covers the 12 V route without an inverter. Not sure which Latitude you have or should buy? Start with <a href="/dell-latitude-series-explained-3000-5000-7000/">Latitude 3000 vs 5000 vs 7000 explained</a>. Charging port loose or dead? That is a <a href="/dell-laptop-repair-bournemouth/">Dell laptop repair in Bournemouth</a>, and for a fleet of laptops that live in vans, our <a href="/dell-it-support-dorset/">Dell support in Dorset</a> keeps the right kit in the right cars.</p>
       </div>
     </section>
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="section" aria-label="Free PC health check" id="health-check-link">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// CHECK THE BATTERY</p>
+        <p class="eyebrow mono">CHECK THE BATTERY</p>
         <h2 class="section-title" data-title>How much charge does yours really hold?<span class="title-underline"></span></h2>
         <p>On a laptop, our free Windows app reads Windows&rsquo; own measurement of the battery and shows its health and how many charge cycles it has done, along with the rest of the PC&rsquo;s health.</p>
         <p style="margin:1rem 0 0"><a class="button primary" href="/free-pc-health-check/">Free PC health check &#8594;</a></p>
@@ -951,7 +951,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -996,7 +996,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

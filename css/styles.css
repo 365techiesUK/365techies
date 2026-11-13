@@ -55,7 +55,10 @@
 
   --font-display: "Clash Display", "Clash Display Fallback", "Clash Display Fallback Android", sans-serif;
   --font-body: "Archivo", "Archivo Fallback", "Archivo Fallback Android", "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", "IBM Plex Mono Fallback", "Courier New", monospace;
+  /* 13 Nov 2026: labels were set in the typewriter face ("// REMOTE SUPPORT") - plain for our mostly older
+     customers now. --font-mono is the LABEL face (the body font); real code, commands and keys use --font-code. */
+  --font-code: "IBM Plex Mono", "IBM Plex Mono Fallback", "Courier New", monospace;
+  --font-mono: var(--font-body);
 
   --header-h: 76px;
   --ticker-h: 30px;
@@ -2219,7 +2222,7 @@ html.ss-open { overflow: hidden; }
 .nav-search svg { width: 18px; height: 18px; }
 .nav-search__k { display: inline-flex; align-items: center; gap: 1px; }
 .nav-search kbd {
-  font-family: var(--font-mono); font-size: 0.72rem; line-height: 1; padding: 3px 5px; color: var(--muted);
+  font-family: var(--font-code); font-size: 0.72rem; line-height: 1; padding: 3px 5px; color: var(--muted);
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: var(--r-sm);
 }
 /* Search stays icon-only through the mid-width desktop band (now 1460-1919px): a
@@ -2246,7 +2249,7 @@ html.ss-open { overflow: hidden; }
 .search-box svg { width: 20px; height: 20px; color: var(--cyan); flex: none; }
 .search-box__txt { flex: 1; }
 .search-box kbd {
-  font-family: var(--font-mono); font-size: 0.72rem; padding: 4px 7px; color: var(--muted);
+  font-family: var(--font-code); font-size: 0.72rem; padding: 4px 7px; color: var(--muted);
   background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: var(--r-sm); flex: none;
 }
 .search-box--hero { margin-top: 1.6rem; }
@@ -2275,7 +2278,7 @@ html.ss-open { overflow: hidden; }
 }
 .ss-input::placeholder { color: var(--muted); }
 .ss-close { background: transparent; border: 0; cursor: pointer; flex: none; }
-.ss-close kbd { font-family: var(--font-mono); font-size: 0.72rem; padding: 4px 7px; color: var(--muted); background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.ss-close kbd { font-family: var(--font-code); font-size: 0.72rem; padding: 4px 7px; color: var(--muted); background: rgba(125, 170, 220, 0.12); border: 1px solid var(--line); border-radius: var(--r-sm); }
 .ss-close:hover kbd { color: var(--ink); border-color: rgba(29, 151, 227, 0.5); }
 
 .ss-list { list-style: none; margin: 0; padding: 0.4rem; overflow-y: auto; flex: 1; }
@@ -2294,8 +2297,8 @@ html.ss-open { overflow: hidden; }
 
 .ss-status { margin: 0; padding: 0.45rem 1rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); border-top: 1px solid var(--line); }
 .ss-foot { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; align-items: center; padding: 0.55rem 1rem 0.7rem; font-size: 0.78rem; color: var(--muted); }
-.ss-foot kbd { font-family: var(--font-mono); font-size: 0.62rem; padding: 2px 5px; color: var(--muted); background: rgba(125, 170, 220, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs); margin-right: 2px; }
-.ss-foot__brand { margin-left: auto; font-family: var(--font-mono); letter-spacing: 0.08em; opacity: 0.7; }
+.ss-foot kbd { font-family: var(--font-code); font-size: 0.62rem; padding: 2px 5px; color: var(--muted); background: rgba(125, 170, 220, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs); margin-right: 2px; }
+.ss-foot__brand { margin-left: auto; font-family: var(--font-code); letter-spacing: 0.08em; opacity: 0.7; }
 @media (max-width: 520px) { .ss-foot span:not(.ss-foot__brand) { display: none; } }
 
 /* ==========================================================================
@@ -2416,7 +2419,7 @@ html.ss-open { overflow: hidden; }
 .prose ul:not([class]) > li { position: relative; padding-left: 1.35rem; margin: 0 0 0.55rem; }
 .prose ul:not([class]) > li::before { content: "\25B8"; position: absolute; left: 0; color: var(--cyan); }
 .prose code, .prose kbd {
-  font-family: var(--font-mono); font-size: 0.85em; padding: 0.08em 0.4em;
+  font-family: var(--font-code); font-size: 0.85em; padding: 0.08em 0.4em;
   background: rgba(29, 151, 227, 0.1); border: 1px solid var(--line); border-radius: var(--r-xs);
 }
 
@@ -2884,6 +2887,9 @@ html { overflow-x: clip; }
   .site-footer__legal-links { margin-top: 1.6rem; }
 }
 @media (max-width: 767px) and (prefers-reduced-motion: reduce) { .footer-fold > summary::after { transition: none; } }
+
+/* code, commands and keys stay in the typewriter face wherever a page styles them (13 Nov 2026) */
+code, pre, kbd, samp, .kbt__code, .bk__code, #pg-value, .plus-key, .cw-keys { font-family: var(--font-code) !important; }
 
 /* HUB-CSS START (generated from hub_ui.HUB_CSS_SHEET - edit it there) */
 .dh{--hp-card:rgba(13,23,49,.66);--hp-card-hi:rgba(20,33,68,.78);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f}

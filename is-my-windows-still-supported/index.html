@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -648,7 +648,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -839,7 +839,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Is My Windows Still Supported?</span></nav>
-        <p class="eyebrow mono">// FREE WINDOWS SUPPORT CHECKER</p>
+        <p class="eyebrow mono">FREE WINDOWS SUPPORT CHECKER</p>
         <h1>Is your Windows <em class="grad grad--cyan">still supported?</em></h1>
         <p class="lede">One click tells you whether this PC runs Windows 10 or 11; pick the version it shows and you get the date its security updates end, in plain words, with what to do next. Nothing is sent to us.</p>
         <div class="page-hero__cta">
@@ -872,7 +872,7 @@
           .wsc__small{font-size:.85rem;color:var(--muted);margin:.8rem 0 0}
         </style>
         <div class="wsc">
-          <p class="eyebrow mono" style="margin:0 0 .5rem">// CHECK THIS PC</p>
+          <p class="eyebrow mono" style="margin:0 0 .5rem">CHECK THIS PC</p>
           <p class="wsc__det" id="wscDet" aria-live="polite">Checking which Windows this is&hellip;</p>
           <span class="wsc__lbl" id="wscPickL">Now pick the version your PC shows (Settings &gt; System &gt; About)</span>
           <div class="wsc__opts" role="group" aria-labelledby="wscPickL" id="wscOpts">
@@ -981,7 +981,7 @@
     </section>
     <section class="section" aria-label="How to check your Windows version by hand">
       <div class="wrap prose" style="max-width:880px" data-reveal>
-        <p class="eyebrow mono">// CHECK IT BY HAND</p>
+        <p class="eyebrow mono">CHECK IT BY HAND</p>
         <h2>Find your exact version in ten seconds</h2>
         <ol>
           <li>Press the <strong>Windows key + R</strong>, type <strong>winver</strong> and press Enter.</li>
@@ -993,14 +993,14 @@
     </section>
     <section class="section" aria-label="The free app">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// THE EXACT ANSWER</p>
+        <p class="eyebrow mono">THE EXACT ANSWER</p>
         <h2 style="margin:0 0 1rem">Want the exact version and your ESU status?</h2>
         <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Windows Update, read from Windows itself</h3><p style="margin:0">Our free app reads the exact Windows version from Windows itself, says whether the monthly updates are actually arriving and how long this version will keep getting them, and on Windows 10 checks whether this PC is really enrolled in Extended Security Updates. It reads and reports: it doesn&rsquo;t enrol you in anything or change Windows.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Windows Update</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="updates" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-updates-v36.webp" width="1272" height="1072" alt="Windows Update in 365 PC Manager: Windows is getting its monthly updates, the last monthly update installed on 24 Sep 2026, and the most recent updates, starting with Windows 11, version 26H2, each marked Installed" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app, on our office PC.</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1041,7 +1041,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

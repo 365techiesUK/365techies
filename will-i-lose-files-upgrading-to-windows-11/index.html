@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -668,7 +668,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -860,7 +860,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Will I lose my files?</span></nav>
-          <p class="eyebrow mono">// WINDOWS 11 UPGRADE</p>
+          <p class="eyebrow mono">WINDOWS 11 UPGRADE</p>
           <h1>Will I lose my files upgrading to <em class="grad grad--cyan">Windows 11</em>?</h1>
           <p class="lede">If you&rsquo;ve been putting off Windows 11 because you&rsquo;re scared of losing your photos, documents or programs &mdash; take a breath. Done the normal way, upgrading is an <strong>in-place upgrade</strong>: it keeps your files, your apps and your settings, and you carry on where you left off. Here&rsquo;s exactly what that means, the handful of situations that genuinely do erase data, and why we still back everything up first.</p>
           <div class="page-hero__cta">
@@ -884,7 +884,7 @@
 
     <section id="s1" class="section" aria-label="The short answer: no, your files are safe">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <p class="eyebrow mono">THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>The short answer: no, your files are safe<span class="title-underline"></span></h2>
 <p><strong>No &mdash; upgrading from Windows 10 to Windows 11 the standard way does not delete your files.</strong> A normal upgrade is an <strong>in-place upgrade</strong>, which keeps your personal files, your installed programs and your Windows settings, then simply swaps the operating system underneath them.</p><p>When you take the free upgrade through <strong>Windows Update</strong> (Settings &rarr; Update &amp; Security), Windows does this automatically &mdash; it doesn&rsquo;t even ask what to keep, because keeping everything is the default. You sign back in afterwards to the same desktop, the same documents and the same browser favourites. Your Word files, family photos, emails and saved passwords are all still there.</p><p>So why do so many people worry? Because the <em>only</em> ways to lose data during an upgrade are ones you have to deliberately choose &mdash; a clean install, or a workaround on a PC that isn&rsquo;t officially supported. We cover both below so you know exactly which buttons to avoid. If you&rsquo;d rather not touch any of it, our <a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a> does the whole thing for you, backup included.</p>
       </div>
@@ -904,42 +904,42 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="What &lsquo;keep my files&rsquo; actually covers">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHAT KEEP MY FILES COVERS</p>
+        <p class="eyebrow mono">WHAT KEEP MY FILES COVERS</p>
         <h2 class="section-title" data-title>What &lsquo;keep my files&rsquo; actually covers<span class="title-underline"></span></h2>
 <p>&lsquo;Keep my files&rsquo; on an in-place upgrade is broader than it sounds. It covers three things:</p><ul><li><strong>Your personal files</strong> &mdash; everything in Documents, Pictures, Desktop, Downloads, Music and Videos, plus files sitting elsewhere on the same drive.</li><li><strong>Your installed programs</strong> &mdash; Office, your browser and its bookmarks, printer software, accounting packages and the like, along with their licences and settings in most cases.</li><li><strong>Your Windows settings</strong> &mdash; accounts, Wi-Fi passwords, display and accessibility choices, and your personalisation.</li></ul><p>The honest caveat: <strong>most</strong> apps come across, but not always every single one. A few very old programs, some low-level utilities (older antivirus, VPN or disk tools) and drivers written for Windows 7-era hardware may need reinstalling or updating afterwards. Windows flags anything it can&rsquo;t carry over before it begins, and your <em>files</em> are never the thing at risk here &mdash; only the occasional program.</p><p>If you rely on a specific bit of software &mdash; say <a href="/quickbooks-sage-running-slow/">Sage or QuickBooks</a> &mdash; it&rsquo;s worth checking it&rsquo;s Windows 11-ready first. We do that as standard before we press go.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Why you still need a backup first">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHY BACK UP FIRST</p>
+        <p class="eyebrow mono">WHY BACK UP FIRST</p>
         <h2 class="section-title" data-title>Why you still need a backup first<span class="title-underline"></span></h2>
 <p>If the upgrade keeps everything, why back up? Because &lsquo;very unlikely&rsquo; is not &lsquo;impossible&rsquo;, and the one irreplaceable thing on your computer is your data.</p><p>An in-place upgrade rewrites a lot of your system in one go. The vast majority finish without a hitch, but occasionally one is interrupted &mdash; a <a href="/will-a-power-cut-damage-my-computer/">power cut</a> or a flat laptop battery mid-install, a failing hard drive that finally gives up under the strain, or a rare software conflict that leaves Windows needing repair. In those cases a good backup turns a disaster into an inconvenience.</p><p>Before any upgrade we&rsquo;d always recommend a simple rule: have a second copy of anything you can&rsquo;t bear to lose. That might be OneDrive, an external hard drive, or both. Our guides on <a href="/how-to-back-up-your-photos/">backing up your photos</a> and <a href="/backup-support/">backup support</a> walk you through it, or we&rsquo;ll set it up with you. Plug the laptop into mains power, make the backup, then upgrade &mdash; that&rsquo;s the whole safety net.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="The only cases that do wipe your files">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHEN FILES DO GET WIPED</p>
+        <p class="eyebrow mono">WHEN FILES DO GET WIPED</p>
         <h2 class="section-title" data-title>The only cases that do wipe your files<span class="title-underline"></span></h2>
 <p>There are really only two ways an upgrade erases your files, and both take a deliberate choice on your part.</p><p><strong>1. A clean install (choosing &lsquo;Nothing&rsquo;).</strong> If you upgrade using a downloaded ISO, a USB stick or the Media Creation Tool rather than Windows Update, setup shows a <em>&lsquo;Choose what to keep&rsquo;</em> screen with three options: <strong>Keep personal files and apps</strong>, <strong>Keep personal files only</strong>, or <strong>Nothing</strong>. Picking <strong>Nothing</strong> wipes the whole system drive &mdash; files, apps and settings. Leave it on the top option and your data is safe.</p><p><strong>If setup only offers &lsquo;Nothing&rsquo;</strong>, with the other two options greyed out, don&rsquo;t continue: close it. Setup can only keep your files and programs when what you&rsquo;re installing matches what&rsquo;s already there: the same edition, a newer version, and the same language Windows was <em>originally installed</em> in. That last one catches people out. A PC that shows UK English everywhere can still have been installed in US English with a UK language pack added on top, so the &ldquo;English International&rdquo; download doesn&rsquo;t match it (and in October 2026 Microsoft&rsquo;s UK download page was missing English International from its list anyway; the US page still had it). Rather than guessing at downloads, use <strong>Windows Update</strong>, or on Windows 11 <strong>Settings &rarr; System &rarr; Recovery &rarr; Fix problems using Windows Update</strong>: both pick the right version themselves and keep everything. If setup instead says it <em>couldn&rsquo;t update the system reserved partition</em>, that&rsquo;s a different, fixable problem: see <a href="/we-couldnt-update-the-system-reserved-partition/">we couldn&rsquo;t update the system reserved partition</a>.</p><p><strong>2. Forcing it onto an unsupported PC.</strong> Windows 11 needs fairly modern hardware (TPM 2.0 and a supported processor). If your PC doesn&rsquo;t qualify, the official route won&rsquo;t offer the upgrade at all. There are registry workarounds to force it, but Microsoft warns these machines aren&rsquo;t entitled to updates and the install can be unstable &mdash; and a botched forced upgrade is where people <em>do</em> lose data. If your PC isn&rsquo;t eligible, don&rsquo;t fight it yourself: when it&rsquo;s only the processor we can usually do it for you for &pound;60, with your files backed up first, or tell you honestly if the PC is past it. Or <a href="/should-you-upgrade-to-windows-11/">weigh up your options</a> first.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="How to upgrade without losing anything">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; HOW TO UPGRADE SAFELY</p>
+        <p class="eyebrow mono">HOW TO UPGRADE SAFELY</p>
         <h2 class="section-title" data-title>How to upgrade without losing anything<span class="title-underline"></span></h2>
 <p>For most people the safest route is the simplest one. Here&rsquo;s how the two paths differ:</p><ul><li><strong>Windows Update (recommended).</strong> Go to <strong>Settings &rarr; Update &amp; Security &rarr; Windows Update</strong>. If your PC is eligible, you&rsquo;ll see the Windows 11 upgrade offered with a <em>Download and install</em> button. This route keeps your files, apps and settings automatically &mdash; there&rsquo;s no &lsquo;Nothing&rsquo; option to trip over.</li><li><strong>Installation Assistant or media.</strong> Handy if the upgrade isn&rsquo;t showing yet. Just make sure you leave it on <strong>Keep personal files and apps</strong>. The Installation Assistant matches your PC&rsquo;s language by itself; with a downloaded ISO you have to pick the language Windows was originally installed in, and if &lsquo;Keep personal files and apps&rsquo; is greyed out, that&rsquo;s the usual reason.</li></ul><p>A reassuring safety valve: after upgrading, Windows keeps your old Windows 10 for <strong>10 days</strong>. If you don&rsquo;t get on with 11, you can <em>Go back</em> (Settings &rarr; System &rarr; Recovery) and return to 10 with your files intact &mdash; after 10 days those old files are cleared to free up space, so it&rsquo;s a one-time window. Our guide to <a href="/how-to-update-windows-safely/">updating Windows safely</a> covers the sensible pre-flight checks: back up, plug in, and don&rsquo;t rush it.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Why not to leave it too long">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; THE WINDOWS 10 DEADLINE</p>
+        <p class="eyebrow mono">THE WINDOWS 10 DEADLINE</p>
         <h2 class="section-title" data-title>Why not to leave it too long<span class="title-underline"></span></h2>
 <p>Windows 10 reached the end of Microsoft&rsquo;s free support on <strong>14 October 2025</strong>. It still switches on and works, but unless it is enrolled in Extended Security Updates it no longer gets the monthly security fixes that keep you safe from new threats &mdash; which matters most for online banking, email and shopping.</p><p>There&rsquo;s a stopgap: Microsoft&rsquo;s consumer <strong>Extended Security Updates (ESU)</strong> programme keeps critical security patches coming through to <strong>12 October 2027</strong>, and for home users there&rsquo;s a free way to enrol. It&rsquo;s a bridge, not a destination &mdash; but it buys you breathing room to upgrade calmly rather than in a panic. We explain the whole picture on <a href="/windows-10-end-of-life/">Windows 10 end of life</a> and can walk you through <a href="/windows-10-esu-free-enrolment-help/">free ESU enrolment</a>.</p><p>The takeaway: you don&rsquo;t need to rush the upgrade today, but you shouldn&rsquo;t ignore it either. If your PC is eligible, moving to Windows 11 &mdash; with a backup first &mdash; is the tidy long-term answer.</p>
       </div>
     </section>
     <section id="s7" class="section" aria-label="When to call us &mdash; and how we do it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/07 &mdash; LET US DO IT FOR YOU</p>
+        <p class="eyebrow mono">LET US DO IT FOR YOU</p>
         <h2 class="section-title" data-title>When to call us &mdash; and how we do it<span class="title-underline"></span></h2>
 <p>If the whole thing makes you nervous, that&rsquo;s exactly what we&rsquo;re here for. We&rsquo;ve been helping people across Bournemouth, Christchurch, Poole and Dorset since 1995, and a supervised Windows 11 upgrade is bread-and-butter work for us.</p><p>Here&rsquo;s how we do it: we check your PC is genuinely eligible, confirm your important programs are Windows 11-ready, and <strong>take a full backup of your files before we start</strong> &mdash; so even in the worst case, nothing is lost. Then we run the in-place upgrade, sign you back in, and make sure your email, printer, Wi-Fi and everyday apps all work before we hand it back. Most of it we can do <strong>remotely</strong> anywhere in the UK; if you&rsquo;d rather we came to you or collected the machine, we cover the Bournemouth, Poole and Dorset area in person, priced before we come.</p><p>It&rsquo;s all <strong>no-fix-no-fee</strong>, and we&rsquo;ll never talk you into an upgrade your PC isn&rsquo;t ready for. Call <a href="tel:+441202775566">01202 775566</a>, text 07520 615332, or see our <a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a>.</p>
       </div>
@@ -947,7 +947,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a><a href="/windows-10-end-of-life/">Windows 10 end of life</a><a href="/windows-10-esu-free-enrolment-help/">free ESU enrolment help</a><a href="/should-you-upgrade-to-windows-11/">should you upgrade to Windows 11?</a><a href="/how-to-back-up-your-photos/">how to back up your photos</a><a href="/how-to-update-windows-safely/">updating Windows safely</a></div>
         </div>
       </div>
@@ -955,7 +955,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1012,7 +1012,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

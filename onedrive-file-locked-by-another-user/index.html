@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -657,7 +657,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -848,7 +848,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/onedrive-problems/">OneDrive Problems</a> <span>/</span> <span aria-current="page">File Locked by Another User</span></nav>
-        <p class="eyebrow mono">// ONEDRIVE SUPPORT</p>
+        <p class="eyebrow mono">ONEDRIVE SUPPORT</p>
         <h1>OneDrive file locked for editing by another user &mdash; but nobody has it open</h1>
         <p class="lede">You open the spreadsheet and Excel tells you it is locked for editing by a colleague. You ask across the office; they closed it an hour ago. Or it names you. Or it names someone who left last year. The lock is real &mdash; something is holding the file &mdash; but the something is rarely a person sitting with it open. Here is where the lock actually comes from, the ten-minute rule that clears most of them, and what to do about the ones that stay. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -862,13 +862,13 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHERE THE LOCK COMES FROM</a><a href="#s2">02 &mdash; THE TEN-MINUTE RULE</a><a href="#s3">03 &mdash; WHEN IT IS YOU</a><a href="#s4">04 &mdash; THE ONES THAT STAY</a><a href="#s5">05 &mdash; STOP IT HAPPENING</a></nav>
     <section id="s1" class="section" aria-label="Four things that hold a file, and only one of them is a person">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHERE THE LOCK COMES FROM</p>
+        <p class="eyebrow mono">WHERE THE LOCK COMES FROM</p>
         <h2 class="section-title" data-title>Four things that hold a file, and only one of them is a person<span class="title-underline"></span></h2>
 <p>When a file lives in OneDrive or SharePoint and someone opens it in the desktop version of Word or Excel, the service can place a short-term lock on it so two people do not save over each other. Modern files with AutoSave on do not need the lock, because everyone edits together. The lock appears when something has stopped that from being possible.</p><ul><li><strong>A crashed or interrupted session.</strong> Excel closed unexpectedly, a laptop lid was shut, the Wi-Fi dropped mid-save. The program is gone but the service has not yet heard, and it keeps the lock for a while in case the person comes back. This is the commonest case by a distance.</li><li><strong>You, somewhere else.</strong> The same file open on your phone, on another PC, in a browser tab you forgot, or previewed in a Teams tab. To the service, that is another user.</li><li><strong>A file that cannot co-author.</strong> Old formats &mdash; <em>.xls</em>, <em>.doc</em> &mdash; files with macros, and anything opened with AutoSave off fall back to one-at-a-time editing, and the first person in holds it until they close it.</li><li><strong>A check-out.</strong> Some SharePoint libraries are set to require files to be checked out before editing. A checked-out file is locked to that person until they check it in, and if they have left, it stays that way until an owner intervenes.</li></ul>
       </div>
     </section>
     <section class="section" aria-label="Windows PCs only" style="padding-top:0">
-      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p><p style="margin:0;font-size:.98rem"><strong>We do not support OneDrive on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/onedrive" rel="noopener" target="_blank">Microsoft&rsquo;s own OneDrive help</a> is the place to start. </p></div></div>
+      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">WINDOWS PCS ONLY</p><p style="margin:0;font-size:.98rem"><strong>We do not support OneDrive on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/onedrive" rel="noopener" target="_blank">Microsoft&rsquo;s own OneDrive help</a> is the place to start. </p></div></div>
     </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
       <div class="wrap">
@@ -921,7 +921,7 @@
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Unlock the file, step by step<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 November 2026</span></p>
         </div>
@@ -1004,28 +1004,28 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
 
     <section id="s2" class="section section--alt" aria-label="Wait, and find out who really has it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE TEN-MINUTE RULE</p>
+        <p class="eyebrow mono">THE TEN-MINUTE RULE</p>
         <h2 class="section-title" data-title>Wait, and find out who really has it<span class="title-underline"></span></h2>
 <p>A lock left by an interrupted session clears itself after a short while &mdash; roughly ten minutes is a good working figure. So the first move is unglamorous: make a cup of tea. Meanwhile you can open the file read-only and copy anything you urgently need out of it.</p><p>If it is still locked afterwards, find out who genuinely has it. Open the file&rsquo;s location in a web browser rather than in File Explorer. In OneDrive or SharePoint, the file&rsquo;s details pane shows who last modified it and who it is shared with, and opening it in the browser shows who is currently in it. That is the truth; the name in the desktop error is a best guess that can be hours out of date.</p><p>If the name is a colleague, ask them to close it everywhere &mdash; the phone counts, the second monitor counts, the browser tab from this morning counts. If the name is yours, section 03. If the name is someone who has left, section 04. And if the file is on an old-fashioned shared drive rather than in OneDrive, the tools are different and we have a separate guide for that.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Finding the copy of yourself that is holding it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHEN IT IS YOU</p>
+        <p class="eyebrow mono">WHEN IT IS YOU</p>
         <h2 class="section-title" data-title>Finding the copy of yourself that is holding it<span class="title-underline"></span></h2>
 <p>Being told you have locked a file against yourself is common enough to be funny once. The service is right: some device signed in as you has the file open, and it is usually one of these.</p><ul><li><strong>Another computer.</strong> The office desktop still has it open from yesterday; the laptop at home never shut it. Close it there, or if you cannot get to that machine, sign it out of Office remotely from your Microsoft account&rsquo;s device list.</li><li><strong>Your phone or tablet.</strong> The Office or OneDrive app opened it last week and has held it since. Close the app fully, not just switch away from it.</li><li><strong>A browser tab.</strong> The file open in Excel in the browser, three windows back.</li><li><strong>Teams.</strong> A Teams tab or preview pane counts as having it open.</li></ul><p>Close all of them, wait the ten minutes, try again. If it still names you, sign out of OneDrive on this PC and back in, which drops any stale session it was holding on your behalf.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Stale locks, check-outs, and the leftover lock file">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE ONES THAT STAY</p>
+        <p class="eyebrow mono">THE ONES THAT STAY</p>
         <h2 class="section-title" data-title>Stale locks, check-outs, and the leftover lock file<span class="title-underline"></span></h2>
 <p>A lock that outlives the ten-minute rule and has no live owner needs a little more.</p><ul><li><strong>A file checked out to someone who has gone.</strong> In a library that requires check-out, an owner of the site can discard the check-out from the library&rsquo;s settings, which releases the file and keeps the last checked-in version. That is a site-owner job, and it is one of the things to do when someone leaves.</li><li><strong>The leftover lock file.</strong> When Word or Excel opens a document, it creates a small hidden companion file in the same folder whose name starts with <code>~$</code>. A crash can leave it behind, and while it exists Office believes the document is open. With the document definitely closed everywhere, show hidden files in that folder and delete the <code>~$</code> file. It is safe; Office recreates it next time.</li><li><strong>A lock the service will not drop.</strong> Rare, but it happens. Copy the file to a new name, carry on working in the copy, and delete the original once its lock finally clears. Nothing is lost and nobody is waiting.</li></ul><p>If locks like this are a weekly event in your office, the cause is almost always one of the habits in section 05, and that is a ten-minute conversation rather than a recurring emergency.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="The habits that make locks rare">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; STOP IT HAPPENING</p>
+        <p class="eyebrow mono">STOP IT HAPPENING</p>
         <h2 class="section-title" data-title>The habits that make locks rare<span class="title-underline"></span></h2>
 <ul><li><strong>Modern formats.</strong> Save old <em>.xls</em> and <em>.doc</em> files as <em>.xlsx</em> and <em>.docx</em> and they can co-author instead of locking.</li><li><strong>AutoSave on.</strong> With it on, several people can be in the same file at once and nobody holds it.</li><li><strong>Open from the shared place.</strong> Not from an emailed copy, not from a download.</li><li><strong>Shut down, do not just close the lid.</strong> A laptop that goes to sleep with a file open is the single biggest source of stale locks.</li><li><strong>Only require check-out where it is truly needed.</strong> It is the right setting for a document that must have one author at a time; it is the wrong default for a whole library.</li><li><strong>Include it in leaving.</strong> When someone goes, an owner checks their files in and reassigns what they owned, or the office inherits their locks.</li></ul><p>If you would rather have this set up properly than remember it, we do that: one remote session, while you watch, across Bournemouth, Poole and Dorset.</p>
       </div>
@@ -1033,7 +1033,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/who-has-a-file-open-on-shared-drive/">Who has a file open on the shared drive</a><a href="/sharepoint-not-syncing-file-explorer/">SharePoint not syncing to File Explorer</a><a href="/excel-onedrive-sync-conflicts/">Excel sync conflicts</a><a href="/onedrive-problems/">OneDrive problems</a><a href="/what-to-do-when-an-employee-leaves/">When an employee leaves</a></div>
         </div>
       </div>
@@ -1041,7 +1041,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1070,7 +1070,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <style>.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}/*LT*/:where(html[data-theme="light"]) .dpan{--hp-card:rgba(219,223,234,.66);--hp-edge:rgba(35,80,130,.17);--hp-edge-hi:rgba(15,80,130,.42);--hp-ink:#0c1929;--hp-body:#17304f;--hp-soft:#355074;--hp-dark:#eaeff5}/*TL*/ .dpan *{box-sizing:border-box} .dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}/*LT*/:where(html[data-theme="light"]) .dpan__card{background:radial-gradient(60% 90% at 0% 0%,rgba(23,124,187,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(184,123,0,.1),transparent 60%),rgba(224,228,238,.82)}/*TL*/ .dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)} .dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance} .dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)} .dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem} .dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)} .dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)} .dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__ico{box-shadow:inset 0 1px 0 rgba(10,16,31,.35),0 8px 18px -10px var(--c1)}/*TL*/ .dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round} .dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-fix{--c1:#177cbb;--c2:#005d8f}/*TL*/.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-buy{--c1:#b87b00;--c2:#8f6700}/*TL*/ .dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem} .dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)} .dpan__ticks li::before{content:"\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}/*LT*/:where(html[data-theme="light"]) .dpan__ticks li::before{color:#1b792b}/*TL*/ .dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem} .dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__rows a{background:rgba(237,239,246,.35)}/*TL*/ .dpan__rows a:hover{border-color:rgba(255,217,120,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__rows a:hover{border-color:rgba(143,103,0,.55)}/*TL*/ .dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)} .dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)} .dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan__rows em{color:#856000}/*TL*/ .dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)} .dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem} .dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__help a{background:rgba(237,239,246,.35);color:#11233c}/*TL*/ .dpan__help a:hover{border-color:rgba(121,208,255,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__help a:hover{border-color:rgba(0,93,143,.55)}/*TL*/ .dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)} .dpan__more a{color:var(--cyan-soft);text-decoration:none} .dpan__more a:hover{text-decoration:underline} .dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem} .dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}/*LT*/:where(html[data-theme="light"]) .dpan__btn{box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(10,16,31,.4)}/*TL*/ .dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none} .dpan__link:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__link:hover{color:#152242}/*TL*/ .dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)} .dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none} @media (max-width:820px){.dpan__grid{grid-template-columns:1fr}} .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-care{--c1:#0b8838;--c2:#0f8523}/*TL*/</style>
     <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
       <div class="dpan__card">
-        <p class="dpan__kicker">// Still stuck?</p>
+        <p class="dpan__kicker">Still stuck?</p>
         <h2 class="dpan__title">File still locked after all that?</h2>
         <p class="dpan__lede">We sort OneDrive and SharePoint for businesses across Bournemouth, Poole and Dorset &mdash; usually remotely, in one short session. Call 01202 775566.</p>
         <div class="dpan__grid">
@@ -1107,7 +1107,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

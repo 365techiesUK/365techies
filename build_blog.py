@@ -1479,6 +1479,9 @@ if os.path.exists(_hp):
     _hthemed = _lth.theme_page("", _hout.replace('<html lang="en-GB" data-theme="light">', '<html lang="en-GB">', 1))
     if _hthemed != _hout:
         _hout = _hthemed; _hchanged.append("light theme")
+    _hplain = _lth.plain_labels(_hout)
+    if _hplain != _hout:
+        _hout = _hplain; _hchanged.append("plain labels")
     if _hout != _hsrc:
         open(_hp, "w", encoding="utf-8").write(_hout)
         print("  homepage: synced from the template -> " + ", ".join(_hchanged))

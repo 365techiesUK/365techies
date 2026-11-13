@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Shuts Down at 30%</span></nav>
-          <p class="eyebrow mono">// LAPTOP BATTERY FAULTS</p>
+          <p class="eyebrow mono">LAPTOP BATTERY FAULTS</p>
           <h1>Laptop Shuts Down Suddenly at 30% Battery? The Percentage Is Lying to You</h1>
           <p class="lede">It says 30 percent, sometimes 40, and then without warning the laptop drops dead as though you pulled the plug &mdash; no shutdown, no warning, no low-battery message. This fault is often misdiagnosed, because everybody assumes it is a software or calibration problem. It is almost never either. Here is what is actually happening inside the battery, and why recalibrating it will not save you.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Instant death, not a shutdown">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
+        <p class="eyebrow mono">THE SYMPTOM</p>
         <h2 class="section-title" data-title>Instant death, not a shutdown<span class="title-underline"></span></h2>
 <p>The detail that matters is <em>how</em> it stops. A laptop that runs out of charge properly warns you, then hibernates or shuts down in an orderly way. What you are describing is different: the screen goes off mid-sentence, as though the power was physically cut. When you plug it back in and start it up, Windows often complains that it was not shut down correctly.</p><p>That is not a battery running empty. That is a battery hitting its protection cut-off.</p><p>It usually happens under load, too. People notice it when a video call starts, when something begins rendering, or when the fans spin up &mdash; not while the laptop sits idle on a desk. That pattern is a strong clue, and it points directly at the real cause.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The gauge is an estimate, not a measurement">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHY THE PERCENTAGE IS WRONG</p>
+        <p class="eyebrow mono">WHY THE PERCENTAGE IS WRONG</p>
         <h2 class="section-title" data-title>The gauge is an estimate, not a measurement<span class="title-underline"></span></h2>
 <p>Your laptop cannot directly measure how much energy is left in the battery. There is no fuel float in there. What it does instead is estimate, using the voltage it can see plus a learned model of how much capacity that battery pack is supposed to hold.</p><p>When the pack is new, that estimate is accurate, because the model matches reality. As the cells age, they lose capacity &mdash; and, crucially, they do not lose it evenly. One cell in the pack degrades faster than the others. That weak cell is still counted in the estimate as though it were healthy.</p><p>So the gauge does its sum, decides there is 30 percent left, and reports that in good faith. But the weak cell has already sagged close to its minimum safe voltage. The moment you ask for more current &mdash; a video call, a big spreadsheet, the fans kicking in &mdash; that cell's voltage drops below the safety threshold, and the battery's protection circuit disconnects the pack instantly to avoid damaging it.</p><p>The laptop does not shut down. The power is simply removed. That is why it behaves exactly like yanking the mains lead out, and why there is never a warning.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="The battery report, in one command">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; CHECK IT YOURSELF</p>
+        <p class="eyebrow mono">CHECK IT YOURSELF</p>
         <h2 class="section-title" data-title>The battery report, in one command<span class="title-underline"></span></h2>
 <p>Windows will tell you the truth about your battery, and you do not need to install anything.</p><p>Open the Start menu, type <strong>cmd</strong>, and open Command Prompt. Type this and press enter:</p><p><code>powercfg /batteryreport</code></p><p>It will save an HTML file and tell you where &mdash; usually in your user folder. Open that file in your browser and look for two numbers near the top: <strong>Design Capacity</strong> and <strong>Full Charge Capacity</strong>.</p><p>Design capacity is what the battery held when it was made. Full charge capacity is what it actually holds now, when completely full. Divide the second by the first and you have the real health of your battery.</p><p>If full charge capacity is down around half of design capacity or lower, you have your answer, and no amount of software will change it. The report also includes a battery life estimate history further down, which shows the decline over time &mdash; it is often a fairly stark graph.</p><p>On a Mac, the equivalent is holding Option and clicking the Apple menu, then System Information, then Power, where you will find cycle count and condition.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="The advice everybody gives, and why it disappoints">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHY RECALIBRATION WON'T FIX IT</p>
+        <p class="eyebrow mono">WHY RECALIBRATION WON'T FIX IT</p>
         <h2 class="section-title" data-title>The advice everybody gives, and why it disappoints<span class="title-underline"></span></h2>
 <p>Search this problem and you will be told to recalibrate: charge to 100 percent, discharge fully, charge again. It is offered as a cure. It is not one, and it is worth understanding why so you do not waste an evening on it.</p><p>Recalibration re-teaches the gauge. It lets the battery controller re-learn where full and empty actually sit, so the percentage it reports lines up better with reality. That is genuinely useful &mdash; if your problem is a <em>lying gauge</em>.</p><p>But it does nothing whatsoever to the cells. It adds no capacity, repairs no chemistry, and revives no weak cell. If your battery is worn, recalibration will make it report the truth more accurately &mdash; which usually means it now says 5 percent when it dies instead of 30. The laptop still dies at the same point. You have fixed the number, not the battery.</p><p>That is still mildly useful, because at least the warnings become honest. But if you were hoping to get your runtime back, this is not the route, and anyone promising otherwise is guessing.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Replacement, and the one safety point that matters">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHAT TO DO ABOUT IT</p>
+        <p class="eyebrow mono">WHAT TO DO ABOUT IT</p>
         <h2 class="section-title" data-title>Replacement, and the one safety point that matters<span class="title-underline"></span></h2>
 <p>A worn battery is a consumable, not a fault. Laptop batteries are generally expected to hold most of their capacity for a few hundred full charge cycles, and after three or four years of daily use a noticeable drop is completely normal. Replacing it is routine work and restores the machine properly.</p><p>Two things are worth saying before you order one yourself. First, quality varies enormously with cheap third-party packs, and a poor cell pack in a sealed laptop is a genuinely bad trade. Second, and more importantly:</p><p><strong>If the battery is swollen, stop using the laptop.</strong> The signs are a trackpad that has started to sit proud or click oddly, a base that no longer sits flat on the desk, or a gap opening between the case panels. A swollen lithium battery is a safety issue, not a performance one. Do not press it, do not puncture it, and unplug the charger. Have the battery removed by someone who does this routinely.</p><p>If you would rather someone else handled it, we replace laptop batteries routinely, we will check the real capacity figures first so you are not replacing a healthy battery for nothing, and we will tell you if the shutdowns turn out to be something else entirely. Free collection across Bournemouth, Poole and Dorset, and no fix means no fee.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/laptop-turns-off-when-unplugged/">Laptop only works plugged in</a><a href="/laptop-wont-turn-on-no-lights/">Laptop won't turn on, no lights</a><a href="/laptop-plugged-in-not-charging/">Laptop plugged in but not charging</a><a href="/laptop-repair/">Laptop repair</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
         <section class="section" aria-label="In our free app" id="in-the-app">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// CHECK THE BATTERY FIRST</p>
+        <p class="eyebrow mono">CHECK THE BATTERY FIRST</p>
         <h2 class="section-title" data-title>Is it the battery?<span class="title-underline"></span></h2>
         <p>Shutting off with charge still showing is the classic sign of a worn battery. Check how much it still holds: <a href="/how-to-check-laptop-battery-health/">how to check your laptop&rsquo;s battery health</a>, or let our free app read it for you.</p>
         <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Battery health: how much charge does yours really hold?</h3><p style="margin:0">On a laptop, our free app reads Windows&rsquo; own measurement of the battery and shows its <strong>health</strong> &mdash; how much of its original charge it still holds &mdash; and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page. A desktop never sees it, and nothing is estimated. It also explains how many laptops can stop charging at about 80% to slow the wear down.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>This PC</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="battery" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);aspect-ratio:16/9;background:#060c1c"><video muted loop playsinline preload="none" poster="/images/pcm-clip-battery.jpg" width="1280" height="720" aria-label="This PC in 365 PC Manager on a sample Dell Latitude 7490 laptop: the battery holds about 61% of its original charge, alongside the drive check and whether it can move to Windows 11 for free" style="display:block;width:100%;height:100%;object-fit:cover"><source src="/images/pcm-clip-battery.mp4" type="video/mp4"></video></div><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption><a class="ytw" href="https://www.youtube.com/shorts/C4PH6jjz3M8" target="_blank" rel="noopener" data-ytw="C4PH6jjz3M8" data-ytw-shape="tall" data-ytw-title="Laptop Battery Worn Out? See How Much Charge It Really Holds (YouTube)" data-ytw-live="2026-10-21T12:00:00+01:00" hidden><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><span>Watch the 23-second video, with sound</span></a><style>.ytw{display:inline-flex;align-items:center;gap:.55rem;max-width:100%;box-sizing:border-box;margin:.65rem 0 0;padding:.45rem 1rem .45rem .5rem;border-radius:999px;border:1px solid rgba(29,151,227,.55);background:rgba(29,151,227,.12);color:inherit;font-weight:700;font-size:.9rem;line-height:1.3;text-decoration:none;transition:background .2s ease,border-color .2s ease}/*LT*/:where(html[data-theme="light"]) .ytw{border:1px solid rgba(23,124,187,.55);background:rgba(23,124,187,.12)}/*TL*/.ytw[hidden]{display:none!important}.ytw svg{width:1.6rem;height:1.6rem;flex:none}.ytw:hover,.ytw:focus-visible{background:rgba(29,151,227,.26);border-color:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw:hover,:where(html[data-theme="light"]) .ytw:focus-visible{background:rgba(23,124,187,.26);border-color:#177cbb}/*TL*/.ytw-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}/*LT*/:where(html[data-theme="light"]) .ytw-dlg{background:#ebedf4}/*TL*/.ytw-dlg::backdrop{background:rgba(2,6,16,.84)}/*LT*/:where(html[data-theme="light"]) .ytw-dlg::backdrop{background:rgba(244,245,250,.84)}/*TL*/.ytw-dlg__v{border-radius:16px;overflow:hidden;background:#060c1c}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__v{background:#ebedf4}/*TL*/.ytw-dlg__v--tall{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16}.ytw-dlg__v--wide{width:min(94vw,calc(84vh * 16 / 9),1100px);aspect-ratio:16/9}.ytw-dlg__v iframe{display:block;width:100%;height:100%;border:0}.ytw-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x{border:1.5px solid rgba(10,16,31,.4);background:#dce0ec;color:#152242}/*TL*/.ytw-dlg__x:hover,.ytw-dlg__x:focus-visible{background:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x:hover,:where(html[data-theme="light"]) .ytw-dlg__x:focus-visible{background:#177cbb}/*TL*/</style><script>(function(){if(window.__ytw)return;window.__ytw=1;function go(){var now=Date.now();document.querySelectorAll("a[data-ytw]").forEach(function(a){var l=a.getAttribute("data-ytw-live");if(l&&now<Date.parse(l))return;a.hidden=false;a.addEventListener("click",function(e){var d=dlg();if(!d.showModal)return;e.preventDefault();play(d,a);});});}function dlg(){var d=document.getElementById("ytwdlg");if(d)return d;d=document.createElement("dialog");d.id="ytwdlg";d.className="ytw-dlg";d.setAttribute("aria-label","Video");d.innerHTML='<button type="button" class="ytw-dlg__x" aria-label="Close the video">&times;</button><div class="ytw-dlg__v"></div>';document.body.appendChild(d);if(!d.showModal)return d;d.querySelector(".ytw-dlg__x").addEventListener("click",function(){d.close();});d.addEventListener("click",function(e){if(e.target===d)d.close();});d.addEventListener("close",function(){d.querySelector(".ytw-dlg__v").innerHTML="";});return d;}function play(d,a){var v=d.querySelector(".ytw-dlg__v"),id=a.getAttribute("data-ytw"),i=document.createElement("iframe");v.className="ytw-dlg__v ytw-dlg__v--"+(a.getAttribute("data-ytw-shape")||"wide");i.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";i.title=a.getAttribute("data-ytw-title");i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");i.setAttribute("allowfullscreen","");v.innerHTML="";v.appendChild(i);d.showModal();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script></figure><script>(function(){var f=document.currentScript&&document.currentScript.previousElementSibling;var v=f&&f.querySelector("video");if(!v)return;function still(){v.controls=true;}if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
@@ -919,7 +919,7 @@
     </section>
 <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -960,7 +960,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

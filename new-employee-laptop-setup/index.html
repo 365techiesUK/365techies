@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">New Employee Laptop Setup</span></nav>
-          <p class="eyebrow mono">// BUSINESS IT</p>
+          <p class="eyebrow mono">BUSINESS IT</p>
           <h1>New Employee Laptop Setup: The Joiner Checklist</h1>
           <p class="lede">Taking someone on is the moment your business IT either gets set up properly or quietly stores up a problem for later. Done well, a new starter&rsquo;s laptop, accounts and access are straightforward; done ad hoc, they take years to unpick. This is the joiner checklist &mdash; the mirror image of what to do when an employee leaves &mdash; in the order it actually happens, written for small businesses in Bournemouth, Poole and across Dorset.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Start With a Laptop That Belongs to the Business">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE DEVICE</p>
+        <p class="eyebrow mono">THE DEVICE</p>
         <h2 class="section-title" data-title>Start With a Laptop That Belongs to the Business<span class="title-underline"></span></h2>
 <p>The first decision is the one people skip: whose laptop is it. A machine the business bought, on the business&rsquo;s own account, is the only version of this that ends well. Everything else &mdash; a personal laptop the new starter already owns, a spare from a director&rsquo;s house, the machine the last person handed back &mdash; creates a problem that only shows up later, usually on the day you need the device back.</p><p>A personally owned laptop sits outside whatever you use to manage company machines. You are relying on the owner to keep it patched and protected, and anything saved locally on it is a copy you cannot see or account for. If you do want to allow personal devices, what you can ask of them &mdash; and what you would need agreed in writing &mdash; is a question for your HR adviser or solicitor. Our part is making sure the work itself lives in your business accounts rather than on their hard drive.</p><p>A hand-me-down is a different trap: it is usually still signed in to somebody else&rsquo;s accounts, still holding their files and saved browser passwords, and often old enough that the battery and the warranty are both spent. If you are reusing a device, check first that anything the business still needs from the previous user has been recovered &mdash; local files, anything only stored in a locally cached mailbox, licence or software details &mdash; because a reset cannot be undone. Once you are sure, reset it back to a clean state and set it up under the new person&rsquo;s own business account. It is also worth knowing that consumer editions of Windows are not really built to be joined to a business account or managed centrally, so an off-the-shelf laptop bought in a hurry can be awkward to bring properly into a business setup.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Set the Accounts Up in Your Own Tenant, Not Someone&rsquo;s Personal Login">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; ACCOUNTS &amp; LICENCES</p>
+        <p class="eyebrow mono">ACCOUNTS &amp; LICENCES</p>
         <h2 class="section-title" data-title>Set the Accounts Up in Your Own Tenant, Not Someone&rsquo;s Personal Login<span class="title-underline"></span></h2>
 <p>This is the mistake that costs small businesses the most, and it almost never looks like a mistake at the time. Someone needs an email address in a hurry, so it gets created under whichever login is nearest &mdash; a director&rsquo;s personal Microsoft account, an old subscription belonging to whoever used to look after the computers, or the new starter setting themselves up with an address they already own.</p><p>What that quietly does is put your business email, files and licences inside an account your business does not control. When the person holding it leaves, or simply forgets the password, the mailbox and the subscription go with them. Getting control of a tenant nobody can sign in to is possible, but it is slow and evidence-heavy at exactly the moment you can least afford it.</p><p>Do it the boring way instead. Your business has its own Microsoft 365 tenant on your own domain name, with the administrator account held by the business rather than by one individual. Each employee gets their own named account and their own licence, assigned to them and paid for on a business payment method. The same rule applies to everything else they sign up to for work &mdash; accounting software, cloud storage, supplier portals, the odd online tool. If it is registered to somebody&rsquo;s personal email address, it is not really yours.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="What They Should &mdash; and Should Not &mdash; Have on Day One">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; DAY-ONE ACCESS</p>
+        <p class="eyebrow mono">DAY-ONE ACCESS</p>
         <h2 class="section-title" data-title>What They Should &mdash; and Should Not &mdash; Have on Day One<span class="title-underline"></span></h2>
 <p>The instinct on someone&rsquo;s first morning is to give them everything so they are not sitting there blocked. It feels helpful, and it is the reason so many small businesses end up with every member of staff able to open the payroll folder.</p><p>Day one should cover what the job genuinely needs: their own mailbox and calendar, the shared folders or sites for their team, the specific apps their role uses, the printer and the WiFi. Set those up before they arrive, so their first hour is work rather than waiting.</p><p>Hold back the things that are hard to unwind. A new starter does not need administrator rights on their own laptop, and they certainly do not need administrator rights over your Microsoft 365. Keep finance, payroll and HR folders, banking and card details, the domain and website logins and any shared password vault out of the initial setup. None of that is about trust &mdash; it is that access is easy to grant and awkward to take back, and every extra permission is one more thing to remember when they eventually move on.</p><p>Resist the shared login too. If your team has one account that everybody uses for a system, adding one more person to it makes the eventual clean-up harder. Separate accounts per person are the whole reason a leaver process can work at all.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Do the Security Once, Rather Than Retrofitting It">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; SECURITY BASICS</p>
+        <p class="eyebrow mono">SECURITY BASICS</p>
         <h2 class="section-title" data-title>Do the Security Once, Rather Than Retrofitting It<span class="title-underline"></span></h2>
 <p>Security done at setup is quick and almost invisible. The same security retrofitted six months later means interrupting somebody mid-job, resetting things they have come to rely on and explaining why the rules have changed. Do it once, before the laptop reaches them.</p><p>The basics worth building in from the start:</p><ul><li><strong>Multi-factor authentication</strong> switched on for their business account before the first sign-in, so it is simply how the job works rather than a change imposed later.</li><li><strong>A password manager</strong> from day one, so nobody ever has to tell them the password everybody shares.</li><li><strong>Disk encryption</strong> enabled, with the recovery key stored by the business and not on a note in the laptop bag.</li><li><strong>Automatic updates and reputable security software</strong> left switched on, and reporting somewhere a person actually looks.</li><li><strong>Work saved into your business cloud storage</strong> rather than a local desktop folder, so nothing important lives only on that one machine.</li><li><strong>A screen lock</strong>, plus five minutes on phishing, fake invoices and the boss apparently messaging from an unfamiliar number.</li></ul><p>None of this is exotic, and none of it needs a big budget. It is simply far easier to do on a machine nobody is using yet.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Write Down What You Set Up &mdash; the Leaver Process Depends On It">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; THE RECORD</p>
+        <p class="eyebrow mono">THE RECORD</p>
         <h2 class="section-title" data-title>Write Down What You Set Up &mdash; the Leaver Process Depends On It<span class="title-underline"></span></h2>
 <p>The last step takes minutes and is the one that pays for the whole exercise: write down what you set up. A joiner record does not need to be sophisticated &mdash; one document or spreadsheet, kept somewhere the business controls, listing:</p><ul><li>the device, with make, model and serial number, and who owns it;</li><li>the accounts created and the email address in use;</li><li>the licences assigned to that person;</li><li>the shared folders, sites and systems they were given access to;</li><li>the third-party apps and supplier portals they hold a login for;</li><li>the phone, SIM, dongles, keys or fobs handed over;</li><li>where the disk encryption recovery key is stored.</li></ul><p>This is the mirror image of our leaver checklist, and it is why the two belong together. Everything on that page &mdash; blocking sign-in, keeping the mailbox, reassigning files, reclaiming the licence, recovering the device &mdash; quietly assumes somebody knows what the person had. When nobody wrote it down, offboarding becomes detective work: a licence still being billed months on, a supplier portal only they could get into, a laptop nobody can unlock. Keep the record current as roles change, and the day somebody hands in their notice becomes an afternoon of admin rather than a fortnight of surprises.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/what-to-do-when-an-employee-leaves/">The mirror of this: when an employee leaves</a><a href="/employee-left-dont-know-computer-password/">A leaver whose password nobody knows</a><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/business-it-support-plans/">Business IT support plans</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

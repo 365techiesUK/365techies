@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -664,7 +664,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -856,7 +856,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Splashtop Remote Access Guide</span></nav>
-          <p class="eyebrow mono">// THE COMPLETE GUIDE</p>
+          <p class="eyebrow mono">THE COMPLETE GUIDE</p>
           <h1>Your PC, <em class="grad grad--cyan">from anywhere</em></h1>
           <p class="lede">The plain-English guide to Splashtop Business &mdash; the remote access we set up for our support customers. Connect to your home or work PC from any device, work at full speed, and leave it locked behind you.</p>
           <div class="page-hero__cta">
@@ -880,7 +880,7 @@
     <section class="section" aria-label="Two kinds of remote">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIRST, A QUICK DISTINCTION</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FIRST, A QUICK DISTINCTION</p>
           <h2 class="section-title section-title--center" data-title>Two kinds of &ldquo;remote&rdquo; &mdash; know which you need<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -900,7 +900,7 @@
     <section class="section" aria-label="Get connected" id="sptool">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// GET CONNECTED IN MINUTES</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>GET CONNECTED IN MINUTES</p>
           <h2 class="section-title section-title--center" data-title>Set up on the device you&rsquo;ll connect FROM<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Your work or home PC already has the Splashtop Streamer on it &mdash; we install and configure that for you (including keeping the PC awake). You just need the <strong>Splashtop Business app</strong> on whatever you&rsquo;re connecting from.</p>
         </div>
@@ -976,7 +976,7 @@
     <section class="section section--alt" aria-label="In-session toolbar" id="spttool">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// ONCE YOU&rsquo;RE IN</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>ONCE YOU&rsquo;RE IN</p>
           <h2 class="section-title section-title--center" data-title>The in-session toolbar, explained<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The little toolbar at the top of your session is where the power lives. Tap any button below &mdash; or press <strong>Play tour</strong>.</p>
         </div>
@@ -1054,7 +1054,7 @@
     <section class="section" aria-label="Speed and efficiency">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// SPEED &amp; EFFICIENCY</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>SPEED &amp; EFFICIENCY</p>
           <h2 class="section-title section-title--center" data-title>Make it fly<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
@@ -1070,7 +1070,7 @@
     <section class="section section--alt" aria-label="Security">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// LOCKED DOWN</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>LOCKED DOWN</p>
           <h2 class="section-title section-title--center" data-title>Secure by setup<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
@@ -1084,7 +1084,7 @@
     <section class="section section--alt" aria-label="From an iPad or tablet">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">// FROM YOUR IPAD OR TABLET</p>
+          <p class="eyebrow mono">FROM YOUR IPAD OR TABLET</p>
           <h2 class="section-title" data-title>Your iPad as a window to your Windows computer<span class="title-underline"></span></h2>
           <p>Already carry an iPad or tablet? With Splashtop Business you can <strong>connect from it straight to your Windows laptop or desktop</strong> &mdash; at home or at work &mdash; and use the full computer exactly as if you were sitting at it. Your files, your programs, your Windows desktop, on the device you already have with you.</p>
           <p>Two tricks make it genuinely comfortable rather than a novelty: <strong>pair a Bluetooth keyboard and mouse with the iPad</strong> and you get precise, accurate pointer control instead of finger-prodding &mdash; proper clicking, right-clicking and text selection on your remote Windows desktop. And <strong>pinch to zoom</strong> in and out of any part of the screen, which together with the iPad&rsquo;s accessibility options makes small text and fiddly interfaces easy on the eyes.</p>
@@ -1103,7 +1103,7 @@
     <section class="section" aria-label="Quick fixes">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// 60-SECOND FIXES</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>60-SECOND FIXES</p>
           <h2 class="section-title section-title--center" data-title>When it won&rsquo;t behave<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
@@ -1118,7 +1118,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1155,7 +1155,7 @@
     <section class="blog-section" aria-label="Free tools">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE TOOLS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FREE TOOLS</p>
           <h2 class="section-title section-title--center" data-title>Check your setup &mdash; free tools<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No sign-up, no catch — free tools built by our techies. <a href="/free-tools/">See all our free tools &#8594;</a></p>
         </div>
@@ -1181,7 +1181,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

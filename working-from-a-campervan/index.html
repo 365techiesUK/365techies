@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -628,7 +628,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -820,7 +820,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Working From a Campervan</span></nav>
-          <p class="eyebrow mono">// OUR MOBILE OFFICE</p>
+          <p class="eyebrow mono">OUR MOBILE OFFICE</p>
           <h1>Working from a campervan &mdash; <em class="grad grad--cyan">we run an IT business from ours</em></h1>
           <p class="lede">The 365 Crafter is our mobile office: an off-grid VW Crafter campervan powered by a Victron system, online through a Netgear 5G router with Starlink as backup. We work from it most days &mdash; remote support, admin, the lot &mdash; and its power system publishes a live public dashboard, so none of this is a brochure claim.</p>
           <div class="page-hero__cta">
@@ -844,21 +844,21 @@
 
     <section id="s1" class="section" aria-label="A working office that happens to have wheels">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 — THE VAN</p>
+        <p class="eyebrow mono">THE VAN</p>
         <h2 class="section-title" data-title>A working office that happens to have wheels<span class="title-underline"></span></h2>
 <p>The <strong>365 Crafter</strong> isn&rsquo;t a showroom or a marketing prop &mdash; it&rsquo;s where a good chunk of 365 Techies actually happens. Remote support sessions, bookings, invoices, the writing of pages like this one: done from the van, parked wherever the day&rsquo;s work has taken us around Dorset.</p><p>It runs entirely off-grid on a <strong>Victron power system</strong> charged by solar &mdash; no campsite hook-up, no generator. And because we&rsquo;d rather show you than tell you, the van&rsquo;s power system streams to a <a href="/off-grid-victron-energy/">live public dashboard</a>: real state of charge, real solar yield, right now. If the office were flat, you&rsquo;d see it.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="5G first, satellite second &mdash; and honest about why">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 — THE INTERNET</p>
+        <p class="eyebrow mono">THE INTERNET</p>
         <h2 class="section-title" data-title>5G first, satellite second &mdash; and honest about why<span class="title-underline"></span></h2>
 <p>The setup people always ask about. Our daily connection is a <strong>Netgear 5G router</strong> &mdash; for most of Dorset, mobile broadband is quick, low-faff and easily enough to run remote support sessions all day. <strong>Starlink is the backup</strong>, on a Business Priority service: it earns its keep in the deep not-spots, at outdoor events, and on the days a mast lets us down.</p><p>Two links, not one, because our diary doesn&rsquo;t care which mast is congested. That&rsquo;s the same advice we give <a href="/business-continuity-internet/">businesses about backup internet</a> &mdash; we just live it in miniature.</p><p>Depending on mobile signal daily also made us slightly obsessive about measuring it: the van logs signal as we drive, and we publish the results on our free <a href="/van-signal-map/">Dorset mobile signal map</a>.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Advice we&rsquo;d give anyone working from a van">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 — WHAT WE&rsquo;VE LEARNED</p>
+        <p class="eyebrow mono">WHAT WE&rsquo;VE LEARNED</p>
         <h2 class="section-title" data-title>Advice we&rsquo;d give anyone working from a van<span class="title-underline"></span></h2>
 <ul><li><strong>Signal beats speed.</strong> A steady 30&nbsp;Mbps you can hold a video call on is worth more than a flaky 300. Park for signal first, view second &mdash; you get used to it.</li><li><strong>Carry a second way online.</strong> It doesn&rsquo;t have to be satellite &mdash; even a different network&rsquo;s SIM in a phone covers most failures. One link is a promise to be let down.</li><li><strong>Budget power like money.</strong> Laptops, router and screens all day is a real load. Know what you use before you depend on it &mdash; our <a href="/off-grid-victron-energy/">live dashboard</a> is exactly that discipline, made visible.</li><li><strong>Rehearse the bad day.</strong> Turn the main link off deliberately and see whether work still happens. If the answer is no, fix that before it&rsquo;s a customer call you&rsquo;re dropping.</li></ul><p>And to be straight about what we <em>don&rsquo;t</em> do: we&rsquo;re not a motorhome fit-out shop, and we won&rsquo;t sell you a van kit. Where we can help is everything on the laptop side of the equation &mdash; <a href="/it-support-for-digital-nomads/">secure remote-work setups</a>, cloud, backups and <a href="/remote-support/">fast remote support</a> wherever you&rsquo;re parked.</p>
       </div>
@@ -866,7 +866,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -903,7 +903,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

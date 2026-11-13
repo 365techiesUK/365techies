@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -671,7 +671,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -862,7 +862,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/dell-it-support-dorset/">Dell</a> <span>/</span> <span aria-current="page">Update a Dell BIOS Safely</span></nav>
-        <p class="eyebrow mono">// DELL BIOS UPDATE</p>
+        <p class="eyebrow mono">DELL BIOS UPDATE</p>
         <h1>How to update a <em class="grad grad--cyan">Dell BIOS</em> safely</h1>
         <p class="lede">A BIOS update fixes bugs and security holes in the firmware that starts your Dell. It&rsquo;s routine, but it&rsquo;s the one update you mustn&rsquo;t interrupt, and on a PC with BitLocker it can ask for the recovery key unless you suspend BitLocker first. Here&rsquo;s the safe way, from Dell&rsquo;s own guidance. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -876,42 +876,42 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; BEFORE YOU START</a><a href="#s2">02 &mdash; THE EASY WAY</a><a href="#s3">03 &mdash; THE MANUAL WAY</a><a href="#s4">04 &mdash; WHAT NOT TO DO</a><a href="#s5">05 &mdash; AFTERWARDS</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
     <section id="s1" class="section" aria-label="Three things to do first">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; BEFORE YOU START</p>
+        <p class="eyebrow mono">BEFORE YOU START</p>
         <h2 class="section-title" data-title>Three things to do first<span class="title-underline"></span></h2>
 <ol><li><strong>Plug in the charger.</strong> On a laptop, Dell says the battery must be in and the charger plugged in for the whole update.</li><li><strong>Suspend BitLocker.</strong> Control Panel, then System and Security, then BitLocker Drive Encryption, then <strong>Suspend protection</strong>. If you skip this on a PC with BitLocker, Windows asks for the 48-digit recovery key at the next restart (Dell article 000134415). Know where your key is first: <a href="/computer-asking-for-bitlocker-recovery-key/">finding a BitLocker recovery key</a>.</li><li><strong>Save your work and close programs.</strong> The PC restarts during the update.</li></ol><p>If a BIOS password is set, some update methods won&rsquo;t run until it&rsquo;s removed (Dell article 000124211).</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Update with SupportAssist">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE EASY WAY</p>
+        <p class="eyebrow mono">THE EASY WAY</p>
         <h2 class="section-title" data-title>Update with SupportAssist<span class="title-underline"></span></h2>
 <ol><li>Open <strong>SupportAssist</strong> from the Start menu.</li><li>Run its updates check and choose the <strong>BIOS</strong> update if it&rsquo;s offered.</li><li>Let it restart. The screen shows Dell&rsquo;s BIOS update with a progress bar, and the fans may get loud. <strong>Leave it alone</strong> until Windows is back.</li></ol><p>Dell recommends this route for most people because it picks the right update for your exact model.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Or download it from Dell">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE MANUAL WAY</p>
+        <p class="eyebrow mono">THE MANUAL WAY</p>
         <h2 class="section-title" data-title>Or download it from Dell<span class="title-underline"></span></h2>
 <ol><li>Go to <strong>dell.com/support</strong>, typed in yourself, and enter your service tag or let Dell detect the PC (<a href="/how-to-find-dell-service-tag-and-check-warranty/">finding the service tag</a>).</li><li>Open <strong>Drivers &amp; Downloads</strong> and set the category to <strong>BIOS</strong>.</li><li>Download the latest BIOS for <em>that</em> machine, run it, and let the PC restart and finish.</li></ol>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="What not to do during a BIOS update">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHAT NOT TO DO</p>
+        <p class="eyebrow mono">WHAT NOT TO DO</p>
         <h2 class="section-title" data-title>What not to do during a BIOS update<span class="title-underline"></span></h2>
 <ul><li>Don&rsquo;t switch off, unplug or close the lid while it runs.</li><li>Don&rsquo;t install a BIOS meant for a different model.</li><li>Don&rsquo;t go back to an older BIOS unless Dell&rsquo;s notes tell you to.</li></ul>
       </div>
     </section>
     <section id="s5" class="section" aria-label="After the update">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; AFTERWARDS</p>
+        <p class="eyebrow mono">AFTERWARDS</p>
         <h2 class="section-title" data-title>After the update<span class="title-underline"></span></h2>
 <p>Check BitLocker is protecting the drive again: Control Panel, then BitLocker Drive Encryption. If it still says suspended, click <strong>Resume protection</strong>.</p><p>If Windows Update offers a Dell BIOS update and it keeps failing, Dell notes this can happen on PCs with a separate graphics card because BitLocker isn&rsquo;t suspended for it; suspend BitLocker yourself and try again, or use SupportAssist (Dell article 000216539).</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="When to call us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
+        <p class="eyebrow mono">WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us<span class="title-underline"></span></h2>
 <p>If the PC now asks for a recovery key you can&rsquo;t find, or won&rsquo;t start after an update, ring us before you try anything else.</p><p>Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your permission we connect to your Windows PC and sort it while you watch: remote help, usually &pound;60, and no fix, no fee. We&rsquo;re an independent Dell specialist and a Dell reseller since 2001, not Dell itself.</p>
       </div>
@@ -919,7 +919,7 @@
     <section class="section" aria-label="Free courses for beginners">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--info callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">FREE &middot; LEARN SOMETHING NEW</p>
           <p id="crs-band-txt" class="callout__lede"><strong>13 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
           <p class="callout__row">
             <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
@@ -932,7 +932,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/computer-asking-for-bitlocker-recovery-key/">computer asking for a BitLocker recovery key</a><a href="/how-to-find-dell-service-tag-and-check-warranty/">finding your Dell service tag</a><a href="/dell-supportassist-keeps-popping-up/">SupportAssist keeps popping up</a><a href="/dell-this-pc-cant-run-windows-11/">this Dell can&rsquo;t run Windows 11</a></div>
         </div>
       </div>
@@ -940,7 +940,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="section" aria-label="Free PC health check" id="health-check-link">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// SEE HOW IT&rsquo;S DOING FIRST</p>
+        <p class="eyebrow mono">SEE HOW IT&rsquo;S DOING FIRST</p>
         <h2 class="section-title" data-title>A free health check for your Dell<span class="title-underline"></span></h2>
         <p>Our free Windows app checks updates, drives, backup, Wi-Fi and start-up and explains what it finds in plain English. Handy before you ring us, and it shows your Dell&rsquo;s Service Tag too.</p>
         <p style="margin:1rem 0 0"><a class="button primary" href="/free-pc-health-check/">Free PC health check &#8594;</a></p>
@@ -948,7 +948,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -985,7 +985,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

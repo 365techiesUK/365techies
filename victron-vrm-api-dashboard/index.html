@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -723,7 +723,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -915,7 +915,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a> <span>/</span> <span aria-current="page">VRM API Dashboard</span></nav>
-          <p class="eyebrow mono">// VICTRON VRM API</p>
+          <p class="eyebrow mono">VICTRON VRM API</p>
           <h1>A worked example of a <em class="grad grad--cyan">Victron VRM API</em> dashboard</h1>
           <p class="lede">You want a worked example, not another copy of the API reference. Here&rsquo;s honestly what it takes to pull Victron VRM data into your own custom dashboard &mdash; the endpoints, the polling-vs-MQTT decision, the hosting, and the upkeep that outlasts the build &mdash; and how we do the whole thing for you if you&rsquo;d rather skip it.</p>
           <div class="page-hero__cta">
@@ -952,63 +952,63 @@
     </section>
     <section id="s1" class="section" aria-label="Yes &mdash; you can build a custom dashboard on the VRM API">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <p class="eyebrow mono">THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Yes &mdash; you can build a custom dashboard on the VRM API<span class="title-underline"></span></h2>
 <p><strong>Yes &mdash; and it&rsquo;s the right move when the stock VRM screens can&rsquo;t show what you need.</strong> The official VRM API gives you authenticated, read access to your installation&rsquo;s logged data; you pull it with a personal access token and render it in whatever layout, branding or device you like &mdash; which is precisely how a <em>victron vrm api custom dashboard</em> gets built.</p><p>What most people want next is a worked example rather than another walk through the reference. So here it is, honestly: you authenticate, discover your <strong>idSite</strong>, pull the handful of endpoints that carry the data you care about, decide how live it needs to be (polling or MQTT), then host it somewhere that keeps your token safe. None of it is exotic. The catch isn&rsquo;t the first build &mdash; it&rsquo;s keeping the thing alive once the novelty wears off.</p><p>VRM itself is excellent at what it does, and a custom dashboard doesn&rsquo;t replace it &mdash; you keep VRM&rsquo;s alarms, history and remote console. A custom view just sits alongside it, built on the same official API, for the layouts VRM was never designed to give you.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The endpoints you actually build on">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE ENDPOINTS THAT MATTER</p>
+        <p class="eyebrow mono">THE ENDPOINTS THAT MATTER</p>
         <h2 class="section-title" data-title>The endpoints you actually build on<span class="title-underline"></span></h2>
 <p>Four or five endpoints do almost all the work. Once you have a token and an <strong>idSite</strong>, this is the map:</p><ul><li><strong>Authenticate</strong> &mdash; create a personal access token in your VRM profile and send it in the <strong>X-Authorization</strong> header. No password in your code, and you can revoke it any time.</li><li><strong>Installations</strong> &mdash; list the sites your account can see and read the <strong>idSite</strong> for the system you&rsquo;re building on. Every other call keys off that ID.</li><li><strong>Stats</strong> &mdash; time-series data for charts: state of charge, battery voltage, PV yield, consumption, across a start/end window at your chosen interval.</li><li><strong>Diagnostics</strong> &mdash; the latest logged value of every parameter the GX device reports. This is the closest thing to a &lsquo;current state&rsquo; snapshot the API offers.</li><li><strong>Widgets</strong> &mdash; pre-shaped data for specific devices (battery summary, solar charger, inverter), handy when you&rsquo;d rather not assemble a view from raw parameters.</li><li><strong>Overallstats</strong> &mdash; lifetime and aggregated totals for the &lsquo;since install&rsquo; numbers.</li></ul><p>Request only the parameters you&rsquo;ll actually display. A tidy dashboard that pulls six values beats one that drags down everything and shows half of it.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="How &lsquo;live&rsquo; does it really need to be?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; POLLING VS THE MQTT REALTIME OPTION</p>
+        <p class="eyebrow mono">POLLING VS THE MQTT REALTIME OPTION</p>
         <h2 class="section-title" data-title>How &lsquo;live&rsquo; does it really need to be?<span class="title-underline"></span></h2>
 <p><strong>The single most important thing to understand:</strong> the VRM API is not a real-time feed. It serves <em>logged</em> data at your system&rsquo;s logging interval &mdash; 15 minutes by default, configurable on the GX device. That&rsquo;s perfect for charts, daily yield and lifetime totals, but it means a dashboard that only polls the API is always a little behind reality.</p><p>For a genuinely live view &mdash; state of charge ticking, load jumping as the kettle goes on &mdash; you take the other path: <strong>MQTT</strong>, which is the same stream VRM&rsquo;s own real-time data uses. You can subscribe locally on the LAN to the GX device&rsquo;s own broker (Cerbo GX, Venus GX or an older Color Control), or remotely through Victron&rsquo;s <strong>VRM MQTT broker</strong> &mdash; the path a hosted, worldwide dashboard uses to reach live data without ever being on site. So the honest design decision is:</p><ul><li><strong>Poll the API</strong> when &lsquo;updates every few minutes&rsquo; is fine &mdash; it&rsquo;s the simplest thing to build and host.</li><li><strong>Subscribe to MQTT</strong> when you need second-by-second live values &mdash; more moving parts (a persistent connection, and a keep-alive when you go through the VRM broker), but genuinely real-time.</li></ul><p>One constraint worth knowing early: <strong>non-Victron data can only join the picture through the GX device.</strong> A tank sensor or a third-party meter has to reach VRM via the GX first &mdash; the API won&rsquo;t accept arbitrary outside data.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Be a good API citizen, then find it a home">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; RATE-LIMIT COURTESY &amp; HOSTING</p>
+        <p class="eyebrow mono">RATE-LIMIT COURTESY &amp; HOSTING</p>
         <h2 class="section-title" data-title>Be a good API citizen, then find it a home<span class="title-underline"></span></h2>
 <p>The API is generous but not infinite, and courtesy keeps you out of trouble. <strong>Cache on your server, poll at a sane interval, and back off when you get an error</strong> rather than retrying in a tight loop. If ten browsers open your dashboard, they should all read from your cache &mdash; not fire ten fresh calls at Victron.</p><p>Which brings up the part beginners skip: <strong>this needs somewhere to live.</strong> Your access token must never sit in browser JavaScript where anyone could read it, so you put a small server or proxy in the middle. It holds the token, talks to the VRM API, caches the results, and serves clean data to your front-end &mdash; browser, wall-mounted TV, or website embed.</p><p>That&rsquo;s not theory for us. Our own off-grid support van runs exactly this pattern: a server-side proxy holds a read-only token and feeds two live dashboards from the official VRM API, so the credentials never touch the public page. It&rsquo;s a modest bit of infrastructure, but it&rsquo;s the difference between a demo that works on your laptop and one that runs unattended for years.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Building it is a weekend. Keeping it running is forever.">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; THE PART EVERYONE UNDERESTIMATES</p>
+        <p class="eyebrow mono">THE PART EVERYONE UNDERESTIMATES</p>
         <h2 class="section-title" data-title>Building it is a weekend. Keeping it running is forever.<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the honest bit the tutorials leave out. The first version, on your own screen, is genuinely satisfying &mdash; and it&rsquo;s the easy 20%. Then reality arrives:</p><ul><li><strong>Tokens</strong> get revoked, rotated or expire &mdash; and when one dies, the dashboard goes blank with no warning unless you built one.</li><li><strong>The API evolves.</strong> Fields get added, shapes shift, deprecations land. Code that worked last year quietly starts returning nulls.</li><li><strong>Hosting needs upkeep</strong> &mdash; patches, certificate renewals, the server rebooting at 3am and not bringing your service back up.</li><li><strong>Someone has to notice</strong> when it silently stops. A dashboard nobody trusts is worse than no dashboard at all.</li></ul><p>None of this is hard in isolation. It&rsquo;s that it never ends, and it always lands on the one person who understood the code &mdash; usually while they&rsquo;re meant to be doing their actual job. That ongoing ownership, not the initial build, is the real cost of a custom dashboard &mdash; and it&rsquo;s exactly the part we take off your plate.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Watch it work on our own off-grid van">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; SEE IT RUNNING LIVE</p>
+        <p class="eyebrow mono">SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>Watch it work on our own off-grid van<span class="title-underline"></span></h2>
 <p>We don&rsquo;t ask you to take this on trust from a slide deck. <strong>Our own off-grid support van &mdash; the 365 Crafter &mdash; is live on this site right now.</strong> It&rsquo;s a real vehicle with a Cerbo GX running Venus OS, MPPT solar and a lithium battery bank, and its data streams through the official VRM API onto our public page.</p><p>On <a href="/custom-vrm-dashboards/">our custom VRM dashboards page</a> you can watch the same van rendered in <strong>two completely different dashboard styles</strong> &mdash; proof that once you&rsquo;re building on the API, the layout and branding are yours, not VRM&rsquo;s fixed template. There&rsquo;s also a <strong>fleet-style demo</strong> where several vehicles appear on one screen; only the van is real live data, and it&rsquo;s clearly labelled as such, so you&rsquo;re never misled about what you&rsquo;re looking at.</p><p>It&rsquo;s the worked example the search results don&rsquo;t give you: not a code snippet buried in a forum thread, but a running dashboard you can open, poke at, and judge for yourself.</p>
       </div>
     </section>
     <section id="s7" class="section" aria-label="Pricing is quote-based &mdash; here&rsquo;s what moves it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
+        <p class="eyebrow mono">WHAT IT COSTS</p>
         <h2 class="section-title" data-title>Pricing is quote-based &mdash; here&rsquo;s what moves it<span class="title-underline"></span></h2>
 <p>We don&rsquo;t publish a price, because no two of these jobs are the same and a made-up number would be dishonest. Every dashboard is quoted from what you actually need. The things that move the figure:</p><ul><li><strong>How much data</strong> &mdash; a handful of KPIs versus a rich multi-panel layout with history.</li><li><strong>Live or polled</strong> &mdash; MQTT real-time is more work than periodic polling.</li><li><strong>How many sites</strong> &mdash; one van, or a whole fleet on one screen.</li><li><strong>Branding &amp; devices</strong> &mdash; your colours and logo, a website embed, or a wall-mounted TV/kiosk.</li><li><strong>Hosting &amp; ongoing support</strong> &mdash; the upkeep above, handled by us so it just keeps working.</li></ul><p>Tell us the shape of what you want and we&rsquo;ll give you a straight quote. We build, host and support it as a done-for-you service, <strong>worldwide</strong> &mdash; delivered remotely, with response times measured against UK office hours (Mon&ndash;Fri, 9&ndash;5 UK time).</p><p><strong>One thing we&rsquo;ll always be straight about:</strong> we&rsquo;re an independent service and are listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller. Victron and VRM are their trademarks; our work simply builds on their official, public API.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
+        <p class="eyebrow mono">RELATED</p>
 <p>Related: <a href="/custom-vrm-dashboards/">live custom VRM dashboards</a>, <a href="/customise-victron-vrm-dashboard/">customise your VRM dashboard</a>, <a href="/white-label-victron-monitoring/">white-label Victron monitoring</a>, <a href="/embed-victron-vrm-on-website/">embed VRM on your website</a>, <a href="/victron-grafana-dashboard-service/">Victron Grafana dashboards</a>, and <a href="/off-grid-victron-energy/">off-grid Victron energy</a>. The same official API also supports downloading GPS tracks &mdash; part of what powers the route history behind <a href="/victron-gps-tracking/">Victron GPS tracking</a> and <a href="/victron-boat-gps-tracking/">boat GPS tracking</a>.</p>
       </div>
     </section>
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1065,7 +1065,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

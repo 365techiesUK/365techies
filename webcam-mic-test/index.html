@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -712,7 +712,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -903,7 +903,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Webcam &amp; Mic Test</span></nav>
-        <p class="eyebrow mono">// FREE CAMERA &amp; MIC TEST</p>
+        <p class="eyebrow mono">FREE CAMERA &amp; MIC TEST</p>
         <h1>Test your <em class="grad grad--cyan">webcam &amp; mic</em> before the call</h1>
         <p class="lede">Video call in ten minutes? Check your camera, microphone and speakers right now &mdash; privately. Nothing is recorded and nothing leaves your device.</p>
         <div class="page-hero__cta">
@@ -917,7 +917,7 @@
     <section class="section" aria-label="Webcam and microphone test" id="avtool">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE CAMERA &amp; MIC TEST</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FREE CAMERA &amp; MIC TEST</p>
           <h2 class="section-title section-title--center" data-title>Test your webcam, mic &amp; speakers<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Video call in ten minutes and nothing works? Test everything here first. <strong>Everything stays on your device</strong> &mdash; nothing is recorded, streamed or sent anywhere.</p>
         </div>
@@ -1043,14 +1043,14 @@
     </section>
     <section class="section" aria-label="In our free app" id="in-the-app">
       <div class="wrap">
-        <p class="eyebrow mono">// ALSO IN OUR FREE WINDOWS APP</p>
+        <p class="eyebrow mono">ALSO IN OUR FREE WINDOWS APP</p>
         <h2 class="section-title" data-title>Who has used your camera?<span class="title-underline"></span></h2>
         <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">See which programs have used your camera and mic</h3><p style="margin:0">It lists the programs Windows says used your camera and microphone, and when each one last did &mdash; and what&rsquo;s using them right now. Windows keeps this record for programs that ask its permission, which almost all do, so the app says &ldquo;Windows has no record&rdquo;, never &ldquo;never used&rdquo;. It changes nothing: its buttons open Windows&rsquo; camera and microphone settings.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>Safety</b>, then <b>Camera &amp; microphone</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="cammic" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-cammic-v36.webp" width="1272" height="1328" alt="Camera and microphone in 365 PC Manager: Zoom Workplace is using the camera and microphone right now, WhatsApp and Sound Recorder with the dates they last used them, and a note on the I recorded you on your webcam email" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app catching it (a sample PC).</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1079,7 +1079,7 @@
     <section class="blog-section" aria-label="Free tools">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE TOOLS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FREE TOOLS</p>
           <h2 class="section-title section-title--center" data-title>While you&rsquo;re at it &mdash; more quick checks<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No sign-up, no catch — free tools built by our techies. <a href="/free-tools/">See all our free tools &#8594;</a></p>
         </div>
@@ -1103,7 +1103,7 @@
     </section>
     <section class="section section--alt" aria-label="How this tool works">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <p class="eyebrow mono">HOW IT WORKS</p>
         <h2 class="section-title" data-title>How to test your webcam and mic before a Teams meeting<span class="title-underline"></span></h2>
         <p class="lede"><strong>To test your webcam and mic for a Teams meeting, use this free on-device checker: click Test my camera to see a live preview, Test my microphone to watch the level meter move as you speak, and play the left/right/both tone to check your speakers — everything runs in your browser with nothing recorded, streamed or uploaded.</strong></p>
         <h3>Step by step</h3>
@@ -1127,7 +1127,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

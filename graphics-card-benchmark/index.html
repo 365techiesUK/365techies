@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -730,7 +730,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -1385,7 +1385,7 @@
     <section class="section section--alt" aria-label="What the scores mean">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOUR SCORE MEANS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>WHAT YOUR SCORE MEANS</p>
           <h2 class="section-title section-title--center" data-title>Your graphics, in plain English<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
@@ -1401,7 +1401,7 @@
     <section class="section" aria-label="Do you need a powerful GPU">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">// DO YOU EVEN NEED ONE?</p>
+          <p class="eyebrow mono">DO YOU EVEN NEED ONE?</p>
           <h2 class="section-title" data-title>How much graphics power do you actually need?<span class="title-underline"></span></h2>
           <p>The honest answer? Most people don&rsquo;t need much. If your computer is for email, web, Microsoft 365, video calls and everyday tasks, even basic integrated graphics are plenty &mdash; and a slow computer is far more often about an old hard drive, too little memory or software clutter than the graphics card. Our <a href="/pc-benchmark/">full PC benchmark</a> will show you where the real bottleneck is.</p>
           <p>A powerful graphics card genuinely matters if you play modern games, edit 4K video, do 3D, CAD or rendering, run AI models locally, or drive several high-resolution screens. If that&rsquo;s you and your score came back low, an upgrade transforms the experience.</p>
@@ -1419,14 +1419,14 @@
     </section>
     <section class="section" aria-label="In our free app" id="in-the-app">
       <div class="wrap">
-        <p class="eyebrow mono">// GRAPHICS CARD TEMPERATURES</p>
+        <p class="eyebrow mono">GRAPHICS CARD TEMPERATURES</p>
         <h2 class="section-title" data-title>How hot should your graphics card get?<span class="title-underline"></span></h2>
         <div class="prose" style="margin:0 0 1.4rem"><p>Under a heavy load, such as a game or the benchmark above, most graphics cards run at about 60 to 85&deg;C, and 30 to 50&deg;C when the PC is idle. Each card has its own limit, where it starts slowing itself down to protect itself: NVIDIA lists it as the <strong>maximum GPU temperature</strong> on each card&rsquo;s specification page &mdash; 93&deg;C for an RTX 3090, for example. AMD cards also report a &ldquo;hotspot&rdquo; reading, which normally runs well above the main one.</p><p><strong>Check yours while it works:</strong> press <strong>Ctrl + Shift + Esc</strong>, choose <strong>Performance</strong> and click <strong>GPU</strong>. Windows shows a separate graphics card&rsquo;s temperature there (built-in graphics usually has none). Run the benchmark in another window and watch it climb.</p><p><strong>Running close to its limit</strong>, fans loud and the frame rate dipping after a few minutes? The usual causes are dust in the card&rsquo;s fans and heatsink, poor airflow through the case, or old thermal paste and pads on a card a few years old. Clear the dust first (PC off and unplugged, short bursts of compressed air, holding the fans still); the rest is in <a href="/gaming-pc-slow-wont-load-games/">gaming PC slow or won&rsquo;t load games</a>, and for a laptop, <a href="/laptop-overheating/">laptop overheating</a>.</p></div><div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Watch an NVIDIA card while you play</h3><p style="margin:0">A card can be fine the day you check it and too hot every evening you play. On an NVIDIA card, our free app&rsquo;s <strong>Gaming check</strong> reads its temperature with NVIDIA&rsquo;s own software, along with the point where that card starts slowing itself down and its fan, and says how old its driver is. <strong>Watch while I play</strong> keeps an eye on it for up to an hour while you game, then tells you how hot the card got and whether it slowed itself down. It only reads: it never touches a fan, a speed or a setting. For other cards, Task Manager&rsquo;s reading above is the one to watch.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Gaming check</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="gaming" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-gaming-v36.webp" width="1272" height="1260" alt="Gaming check in 365 PC Manager saying 1 thing could be costing you frames: two NVIDIA graphics cards with their driver age, temperatures, fans and slots, a Watch while I play button, and the power mode set to Eco with a Switch to Full speed button" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app, on our office PC: it caught the power mode holding games back.</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1471,7 +1471,7 @@
     <section class="blog-section" aria-label="Free tools">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FREE TOOLS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FREE TOOLS</p>
           <h2 class="section-title section-title--center" data-title>More free computer tools<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No sign-up, no catch — free tools built by our techies. <a href="/free-tools/">See all our free tools &#8594;</a></p>
         </div>
@@ -1496,7 +1496,7 @@
     </section>
     <section class="section section--alt" aria-label="How this tool works">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// HOW IT WORKS</p>
+        <p class="eyebrow mono">HOW IT WORKS</p>
         <h2 class="section-title" data-title>How to benchmark your graphics card online<span class="title-underline"></span></h2>
         <p class="lede"><strong>This free online GPU benchmark renders a demanding 3D scene in your browser using WebGL and measures how many frames your graphics card can push, giving a graphics score and a tier from integrated to enthusiast &mdash; no download and nothing installed.</strong></p>
         <h3>Step by step</h3>
@@ -1517,7 +1517,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

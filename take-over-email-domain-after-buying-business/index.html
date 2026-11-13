@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Email After Acquisition</span></nav>
-          <p class="eyebrow mono">// BUSINESS IT</p>
+          <p class="eyebrow mono">BUSINESS IT</p>
           <h1>Taking over the email and domain after buying a business</h1>
           <p class="lede">You have bought the business. Now you need the email working, and you have discovered that nobody can quite say who holds the domain. It is a common loose end in a small business sale, and it is very rarely a technical problem &mdash; it is a question of who has which login, and whether they are still willing to answer the phone. Here is how to work out what you actually acquired, what to ask the seller for before you complete, and what your options are when the passwords have genuinely gone missing.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Work out what you have actually acquired">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHAT YOU BOUGHT</p>
+        <p class="eyebrow mono">WHAT YOU BOUGHT</p>
         <h2 class="section-title" data-title>Work out what you have actually acquired<span class="title-underline"></span></h2>
 <p>Before you chase anyone for a password, be clear about what changed hands. Three separate things get bundled together in most people&rsquo;s heads, and a sale can include any combination of them.</p><ul><li><strong>The domain name itself</strong> &mdash; the part after the @ sign, registered through a provider and renewed on a cycle. This is the asset that matters most.</li><li><strong>The platform the mailboxes run on</strong> &mdash; a Microsoft or Google subscription, or mailboxes bundled in with the web hosting. The messages physically live here.</li><li><strong>The individual addresses</strong> &mdash; info@, accounts@, the previous owner&rsquo;s own address, plus any forwarders and aliases that nobody has ever written down.</li></ul><p>It is entirely possible to buy a trading name, a customer list and a van, and not to have bought the domain at all. It is equally possible for the domain to be included on paper while the account it sits inside belongs to somebody who was never part of the sale. What the agreement says you acquired is a question for your solicitor; what you can actually sign into is the question we can help with, and the two are not always the same thing.</p><p>Start by writing down every email address you have seen the business use &mdash; on invoices, on the website, on signage, in the Google listing, on the quotes in the filing cabinet. That list is the true scope of the job.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The domain and the mailboxes are two different locks">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; TWO SEPARATE KEYS</p>
+        <p class="eyebrow mono">TWO SEPARATE KEYS</p>
         <h2 class="section-title" data-title>The domain and the mailboxes are two different locks<span class="title-underline"></span></h2>
 <p>This is where most handovers come unstuck. There are two locks, they are usually held in two different places, and being handed the key to one tells you nothing at all about the other.</p><p><strong>Control of the domain</strong> lives in an account at the provider it is registered with. Whoever can sign in there decides where the domain points &mdash; which mail platform receives the messages, where the website loads from, and whether the domain gets renewed at all. This is the master control.</p><p><strong>Control of the mailboxes</strong> lives on whatever platform hosts them, under an administrator account. Whoever holds that can create and remove mailboxes, reset passwords and read what is stored in them.</p><p>You can very easily end up holding one without the other. A seller who hands over the mailbox administrator login has given you the messages, but if a former web designer still holds the domain account, mail for the business can be redirected somewhere else at any time without your say-so, and nothing on your side will stop it. The reverse is far more comfortable: with the domain firmly under your control you can always rebuild mailboxes, even if the old ones are lost entirely.</p><p>If you can only secure one of the two before completion, secure the domain.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="How a handover normally works, in outline">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE HANDOVER</p>
+        <p class="eyebrow mono">THE HANDOVER</p>
         <h2 class="section-title" data-title>How a handover normally works, in outline<span class="title-underline"></span></h2>
 <p>Providers differ in the detail, but in outline a handover has two halves.</p><p><strong>The domain.</strong> Either the existing account changes hands &mdash; the seller passes over the sign-in and you update the contact details, the billing card and the recovery options to yours &mdash; or the domain is moved out into an account of your own, which normally means the current provider releasing it and the receiving provider pulling it across. Separately from where the domain is managed, there is a record of who the registered holder is, and bringing that into your name is its own step. Do not assume that moving a domain between providers has changed the name on it.</p><p><strong>The mailboxes.</strong> Either you take over the existing subscription and its administrator account, or you set up your own and copy the contents across before switching the mail routing over to it.</p><p>Order matters far more than speed. The mail routing is the switch that decides where new messages land, so it goes last, once the destination is genuinely ready and tested. Old mailboxes are best left running alongside for a while rather than closed on the day &mdash; suppliers, banks and customers carry on writing to whatever address they have on file for months afterwards, and a bounced message from a business that has just changed hands looks worse than it deserves to.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="What to ask the seller for before you complete">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; BEFORE COMPLETION</p>
+        <p class="eyebrow mono">BEFORE COMPLETION</p>
         <h2 class="section-title" data-title>What to ask the seller for before you complete<span class="title-underline"></span></h2>
 <p>Everything on this page becomes ten times harder once the money has changed hands. While the seller still wants the sale to go through, ask for the following in writing.</p><ul><li>Which provider the domain is registered with, the email address that account signs in with, and when the renewal falls due.</li><li>Who the registered holder of the domain currently is &mdash; the business, the previous owner personally, or a third party.</li><li>Which card or account pays the renewal, and whether it belongs to somebody who is leaving.</li><li>Which platform the mailboxes sit on, and who the administrator is.</li><li>A full list of mailboxes, shared mailboxes, aliases, forwarders and distribution lists, including any that quietly point at a personal address.</li><li>Where the website is hosted, and where the DNS records are actually managed &mdash; frequently a different place again.</li><li>Whether any two-step verification is tied to a mobile number or authenticator app belonging to somebody leaving, and the name of the web designer or IT provider who set it all up.</li></ul><p>Then ask for one short screen-share in which the seller signs into each account in front of you. Nothing exposes a missing login faster. If a password cannot be produced on that call, it does not exist &mdash; and you have found out while you still have some leverage.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="When the seller genuinely cannot get in">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; NO LOGINS</p>
+        <p class="eyebrow mono">NO LOGINS</p>
         <h2 class="section-title" data-title>When the seller genuinely cannot get in<span class="title-underline"></span></h2>
 <p>This is the trickiest version of the problem. The domain was registered years ago by a web designer using their own account, or an IT provider set the mail platform up under their own provider account, or the only sign-in is a personal address the previous owner stopped using two phones ago. It is common, and it is often recoverable &mdash; and sometimes it is not, which is worth knowing early either way. Work through it in this order.</p><ul><li><strong>Ask, politely and early.</strong> Plenty of third parties hand things over without any fuss when a new owner approaches them properly, so start there rather than assuming the worst.</li><li><strong>Gather the evidence first.</strong> Some providers will look at a request like this and some will not, and it usually comes down to what you can show about the business&rsquo;s connection to the account. Pull the paperwork together before you start &mdash; old renewal invoices, the card that paid, correspondence, company records &mdash; because you will be asked for it and it is far harder to find later.</li><li><strong>Find the renewal date.</strong> A domain nobody is paying for eventually lapses and becomes available to anyone. Knowing the date turns a vague worry into a deadline you can plan around.</li><li><strong>Protect the day to day meanwhile.</strong> Even without full account access there are usually steps that keep mail reaching the business while the rest is untangled.</li></ul><p>If it turns into a dispute about ownership rather than a technical problem, that is your solicitor&rsquo;s ground, not ours. And in a small number of cases the pragmatic answer is a fresh domain and a planned change of address for customers &mdash; nobody&rsquo;s first choice, but better than an indefinite standstill. We will tell you plainly which of those you are looking at.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/business-email-when-closing-your-company/">Business email when a company closes</a><a href="/former-it-provider-controls-microsoft-365/">When a former IT provider holds the keys</a><a href="/locked-out-microsoft-365-admin-account/">Locked out of the Microsoft 365 admin account</a><a href="/email-migration/">Email migration</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

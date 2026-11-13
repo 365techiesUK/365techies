@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -842,7 +842,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Screen Flickers Then Black</span></nav>
-        <p class="eyebrow mono">// LAPTOP DISPLAY FAULTS</p>
+        <p class="eyebrow mono">LAPTOP DISPLAY FAULTS</p>
         <h1>Laptop Screen Flickers, Then Goes Black? Here's What's Really Happening</h1>
         <p class="lede">It flickers for a second, maybe twice, then the screen goes dark &mdash; but you can still hear the fan, and the power light is on. That last detail matters more than anything: the laptop is still running, so this is a display fault, not a dead laptop. There are three realistic causes, and two free tests you can do in the next five minutes that will tell you which one you have before anybody opens the case. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -856,35 +856,35 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE SYMPTOM</a><a href="#s2">02 &mdash; THE TORCH TEST</a><a href="#s3">03 &mdash; THE EXTERNAL MONITOR TEST</a><a href="#s4">04 &mdash; THE HINGE CABLE</a><a href="#s5">05 &mdash; WHAT IT COSTS YOU TO GET WRONG</a></nav>
     <section id="s1" class="section" aria-label="Still running, just not showing you anything">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SYMPTOM</p>
+        <p class="eyebrow mono">THE SYMPTOM</p>
         <h2 class="section-title" data-title>Still running, just not showing you anything<span class="title-underline"></span></h2>
 <p>The pattern is nearly always the same. The screen flickers &mdash; sometimes a flash, sometimes a rolling shimmer &mdash; and then goes black. The backlight glow disappears with it, so the screen looks properly off rather than dark grey. Meanwhile the laptop is plainly still alive: the fan spins, the keyboard backlight stays on, the power LED is lit, and if you press the caps lock key the little light still toggles.</p><p>That combination is genuinely good news. A laptop that has crashed, overheated or lost its motherboard does not sit there humming with a working caps lock light. Something between the graphics output and your eyes has failed, and that is a much shorter list of parts than "the laptop is broken".</p><p>The three realistic causes, in the order we actually see them on the bench: the <strong>backlight</strong> has failed, the <strong>display cable</strong> has been damaged where it passes through the hinge, or the <strong>graphics driver</strong> has fallen over. The first two are hardware and need opening up. The third is free to rule out and takes two minutes, which is why it is worth doing first.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Is the picture still there, just unlit?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE TORCH TEST</p>
+        <p class="eyebrow mono">THE TORCH TEST</p>
         <h2 class="section-title" data-title>Is the picture still there, just unlit?<span class="title-underline"></span></h2>
 <p>This is the single most useful test in laptop display diagnosis, it costs nothing, and it takes about thirty seconds.</p><p>With the laptop switched on and the screen apparently black, take a bright torch &mdash; your phone light is fine &mdash; and shine it at the screen from a steep angle, close up. Move it slowly around, and look very carefully for a faint image: the Windows login box, a wallpaper, a cursor, anything.</p><p><strong>If you can faintly see an image</strong>, the panel and the graphics chip are both working and producing a picture. What has failed is the backlight that lights the panel from behind. On most laptops made in the last fifteen years that means the LED backlight strip or the small circuit that drives it &mdash; and that is a panel-level repair.</p><p><strong>If there is genuinely nothing there</strong>, no ghost of an image at any angle, then no picture is reaching the panel at all. That points at the display cable, the panel itself, or the graphics output. The next test separates those.</p><p>Do this in a dim room. In daylight a faint backlit-off image is very easy to miss, and a false negative here sends you down the wrong path.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Splitting the laptop from the screen">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE EXTERNAL MONITOR TEST</p>
+        <p class="eyebrow mono">THE EXTERNAL MONITOR TEST</p>
         <h2 class="section-title" data-title>Splitting the laptop from the screen<span class="title-underline"></span></h2>
 <p>Plug the laptop into an external monitor or a TV &mdash; HDMI, DisplayPort or USB-C, whatever it has. Then press the Windows key and P together and choose <em>Duplicate</em> or <em>Second screen only</em>. You may be doing this blind; that is fine, the key combination works whether you can see it or not.</p><p><strong>If the external screen shows a normal desktop</strong>, everything upstream is healthy. Windows is running, the graphics chip is fine, the motherboard is fine. The fault is in the lid: the panel, the backlight, or the cable feeding them. This is the most common outcome, and it is also the most repairable.</p><p><strong>If the external screen is black too</strong>, the problem is further back &mdash; the graphics output, the driver, or the machine is not really running as well as it appears. Try booting into Safe Mode, which loads a basic display driver instead of the manufacturer's. If Safe Mode gives you a picture on the laptop's own screen, you have a driver fault rather than a hardware one, and rolling the display driver back usually settles it.</p><p>Between the torch test and the monitor test you can place almost every one of these faults without a screwdriver, which is exactly why we ask customers to try both before booking anything in.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="When the flicker follows the lid">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE HINGE CABLE</p>
+        <p class="eyebrow mono">THE HINGE CABLE</p>
         <h2 class="section-title" data-title>When the flicker follows the lid<span class="title-underline"></span></h2>
 <p>There is one more pattern worth knowing, because it is common and it is very distinctive: the flicker changes when you move the screen.</p><p>The cable carrying the picture from the motherboard to the panel runs up through the hinge. Every time the laptop is opened and closed, that cable flexes. Over several years of daily use the conductors inside can crack, and a cracked conductor makes contact intermittently &mdash; which is exactly what a flicker is.</p><p>The tell is simple. Open and close the lid slowly while the laptop is on and watch what happens. If the picture flickers, returns, or goes black at a particular angle and comes back at another, the cable is the prime suspect rather than the panel. Same if pressing gently around the hinge or the screen bezel changes anything.</p><p>This one is worth catching early. A display cable is one of the cheaper parts in a laptop, and replacing it is a much smaller job than replacing a panel. Left alone, a failing cable does not heal &mdash; it goes from occasional flicker to permanently black, and people often assume by then that the whole screen has died.</p><p>One important caveat: if your laptop is more than a decade old and uses a CCFL backlight rather than LED, there is an inverter board in the mix as well. Almost everything sold since roughly 2010 is LED-backlit and has no inverter, so on a modern machine this is not the answer &mdash; but on a genuinely old laptop it still is.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="When it is worth fixing, and when it honestly isn't">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHAT IT COSTS YOU TO GET WRONG</p>
+        <p class="eyebrow mono">WHAT IT COSTS YOU TO GET WRONG</p>
         <h2 class="section-title" data-title>When it is worth fixing, and when it honestly isn't<span class="title-underline"></span></h2>
 <p>We will say this plainly, because it is the part most repair pages skip: not every one of these is worth repairing.</p><p>A display cable on a mainstream laptop is usually a sensible repair. A replacement panel on a mid-range machine often is too. But on a laptop that is already eight or nine years old, with a worn battery and a slow mechanical hard drive, spending money on a panel to keep a machine that will frustrate you in other ways within the year is not good value &mdash; and we will tell you that rather than take the work.</p><p>What is almost always worth doing, whatever you decide about the laptop, is getting your files off it. A display fault does not touch your data. The drive is fine, the documents and photos are all still there, and they can be recovered and moved to a new machine regardless of whether the screen ever works again. If you are weighing up a repair, that part is not urgent in the way people fear.</p><p>If you would rather not open anything yourself, that is exactly what we are for. We collect free across Bournemouth, Poole and Dorset, tell you what it is before we do anything, and if we cannot fix it you do not pay.</p>
       </div>
@@ -892,7 +892,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/laptop-wont-turn-on-no-lights/">Laptop won't turn on, no lights</a><a href="/laptop-screen-repair-cost-bournemouth/">Laptop screen repair costs</a><a href="/laptop-repair/">Laptop repair</a><a href="/data-recovery/">Data recovery</a></div>
         </div>
       </div>
@@ -900,7 +900,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -941,7 +941,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

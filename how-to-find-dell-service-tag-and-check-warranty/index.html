@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -673,7 +673,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -864,7 +864,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/dell-it-support-dorset/">Dell</a> <span>/</span> <span aria-current="page">Find Your Dell Service Tag</span></nav>
-        <p class="eyebrow mono">// DELL SERVICE TAG &amp; WARRANTY</p>
+        <p class="eyebrow mono">DELL SERVICE TAG &amp; WARRANTY</p>
         <h1>How to find your <em class="grad grad--cyan">Dell service tag</em> and check the warranty</h1>
         <p class="lede">Every Dell has a service tag: a short code that tells Dell exactly which machine it is, with its parts, drivers and warranty. It&rsquo;s printed on the computer, and Windows can read it too. Here&rsquo;s where to find it, and how to check what warranty is left. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -878,35 +878,35 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; ON THE COMPUTER</a><a href="#s2">02 &mdash; IN WINDOWS</a><a href="#s3">03 &mdash; THE WARRANTY</a><a href="#s4">04 &mdash; SECOND-HAND DELLS</a><a href="#s5">05 &mdash; WHEN TO CALL US</a></nav>
     <section id="s1" class="section" aria-label="Where the service tag is printed">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; ON THE COMPUTER</p>
+        <p class="eyebrow mono">ON THE COMPUTER</p>
         <h2 class="section-title" data-title>Where the service tag is printed<span class="title-underline"></span></h2>
 <ul><li><strong>Laptops:</strong> underneath, on a sticker or etched into the metal. Look for <strong>ST</strong> (the service tag) and <strong>EX</strong> (the Express Service Code).</li><li><strong>Desktops:</strong> on the back of the tower, and often on a black sticker with white letters on the top.</li></ul><p>The Express Service Code is the same code written as numbers only, for Dell&rsquo;s phone menus. Source: Dell, <a href="https://www.dell.com/support/contents/en-us/category/product-support/self-support-knowledgebase/locate-service-tag/" rel="noopener" target="_blank">find your service tag</a>.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Read it in Windows if the label has worn off">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; IN WINDOWS</p>
+        <p class="eyebrow mono">IN WINDOWS</p>
         <h2 class="section-title" data-title>Read it in Windows if the label has worn off<span class="title-underline"></span></h2>
 <ol><li>Right-click the <strong>Start</strong> button and choose <strong>Terminal</strong> (on Windows 10, <strong>Windows PowerShell</strong>).</li><li>Type <strong>GWMI -Class Win32_Bios | select SerialNumber</strong> and press Enter.</li><li>The <strong>SerialNumber</strong> it shows is your service tag.</li></ol><p>If it says GWMI isn&rsquo;t recognised, type <strong>Get-CimInstance Win32_BIOS | Select-Object SerialNumber</strong> instead. The old <em>wmic</em> command is switched off from Windows 11 version 24H2, which is why Dell now points to PowerShell (Dell article 000130711).</p><p>Two other ways: restart and tap <strong>F2</strong> as it starts to open the BIOS, where the service tag is on the overview page (leave without changing anything); or open <strong>SupportAssist</strong> from the Start menu, which shows it on its main screen.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Check the Dell warranty with the service tag">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE WARRANTY</p>
+        <p class="eyebrow mono">THE WARRANTY</p>
         <h2 class="section-title" data-title>Check the Dell warranty with the service tag<span class="title-underline"></span></h2>
 <ol><li>Go to <strong>dell.com/support</strong> in your browser, typed in yourself.</li><li>Type the service tag into the box (or let Dell detect the PC).</li><li>Open the warranty details for that machine: Dell shows the type of cover and when it ends.</li></ol><p><strong>Keep the tag to yourself:</strong> it&rsquo;s linked to the machine&rsquo;s Dell record, so Dell advises not to post it, or photos of the label, online.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Bought it second-hand or refurbished?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; SECOND-HAND DELLS</p>
+        <p class="eyebrow mono">SECOND-HAND DELLS</p>
         <h2 class="section-title" data-title>Bought it second-hand or refurbished?<span class="title-underline"></span></h2>
 <p>The warranty check shows what&rsquo;s left of the machine&rsquo;s original Dell cover. On an older ex-business laptop that has usually run out, so check before you rely on it.</p><p>Prefer one that&rsquo;s already been checked? Our refurbished Latitudes are ex-business machines we test, securely wipe and fit with a brand-new Samsung Pro SSD, then set up for you, with a 12-month guarantee as standard or five years while you&rsquo;re on one of our support plans. See <a href="/refurbished-dell-laptops-bournemouth/">refurbished Dell laptops</a>.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="When to call us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHEN TO CALL US</p>
+        <p class="eyebrow mono">WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us<span class="title-underline"></span></h2>
 <p>If the warranty has ended and the Dell needs a repair, or you can&rsquo;t find the tag at all, we can help.</p><p>Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your permission we connect to your Windows PC and sort it while you watch: remote help, usually &pound;60, and no fix, no fee. We&rsquo;re an independent Dell specialist and a Dell reseller since 2001, not Dell itself.</p>
       </div>
@@ -914,7 +914,7 @@
     <section class="section" aria-label="Free courses for beginners">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--info callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// FREE &middot; LEARN SOMETHING NEW</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">FREE &middot; LEARN SOMETHING NEW</p>
           <p id="crs-band-txt" class="callout__lede"><strong>13 free, friendly online courses</strong> for beginners and older learners &mdash; computer basics, email, WhatsApp, staying safe online and more. Short plain-English lessons, a printable certificate at the end, and never a sign-up form.</p>
           <p class="callout__row">
             <a class="button primary" id="crs-band-go" href="/free-courses/">Browse the Free Courses</a>
@@ -927,7 +927,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/how-to-update-dell-bios/">updating a Dell BIOS safely</a><a href="/dell-supportassist-keeps-popping-up/">SupportAssist keeps popping up</a><a href="/dell-out-of-warranty-repair/">out-of-warranty Dell repair</a><a href="/dell-it-support-dorset/">Dell support and repair in Dorset</a></div>
         </div>
       </div>
@@ -935,7 +935,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="section" aria-label="Free PC health check" id="health-check-link">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// THE QUICK WAY</p>
+        <p class="eyebrow mono">THE QUICK WAY</p>
         <h2 class="section-title" data-title>See the Service Tag without turning it over<span class="title-underline"></span></h2>
         <p>Our free Windows app shows your Dell&rsquo;s Service Tag on its <strong>This PC</strong> page, along with which Windows it has, until when it gets updates and a plain-English health check.</p>
         <p style="margin:1rem 0 0"><a class="button primary" href="/free-pc-health-check/">Free PC health check &#8594;</a></p>
@@ -943,7 +943,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -984,7 +984,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

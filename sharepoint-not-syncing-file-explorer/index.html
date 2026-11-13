@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -842,7 +842,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">SharePoint Not Syncing</span></nav>
-        <p class="eyebrow mono">// MICROSOFT 365 SUPPORT</p>
+        <p class="eyebrow mono">MICROSOFT 365 SUPPORT</p>
         <h1>SharePoint files not syncing to File Explorer</h1>
         <p class="lede">The team&rsquo;s document library has always lived in File Explorer under the company name, and now it is missing, or stuck on &ldquo;sync pending&rdquo;, or wearing a red cross. Open the same library in a web browser and everything is there. That last detail is the reassuring one: the files are safe in Microsoft 365, and what has stopped is the copy on this PC. There are two quite different ways a SharePoint library gets into File Explorer, and the fix depends on which one you used, so that is where to start. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -856,7 +856,7 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; TWO ROUTES, NOT ONE</a><a href="#s2">02 &mdash; READ THE ICON</a><a href="#s3">03 &mdash; THE FILES THAT JAM IT</a><a href="#s4">04 &mdash; THE RESET</a><a href="#s5">05 &mdash; WHEN IT IS NOT YOUR PC</a></nav>
     <section id="s1" class="section" aria-label="Sync and &ldquo;Add shortcut to OneDrive&rdquo; are different things">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; TWO ROUTES, NOT ONE</p>
+        <p class="eyebrow mono">TWO ROUTES, NOT ONE</p>
         <h2 class="section-title" data-title>Sync and &ldquo;Add shortcut to OneDrive&rdquo; are different things<span class="title-underline"></span></h2>
 <p>Both routes use the same OneDrive app &mdash; the cloud icon by the clock &mdash; signed in with your <em>work</em> account, and both end with the library&rsquo;s files in File Explorer. But they put them in different places, they fail differently, and Microsoft will not let you use both on the same library.</p><ul><li><strong>Sync</strong> is the older route. Press the Sync button on a library in the browser and the whole library appears in File Explorer under a heading with your organisation&rsquo;s name, alongside your OneDrive. It is the route most offices set up years ago.</li><li><strong>Add shortcut to OneDrive</strong> is the newer one, and the one Microsoft now leads with. The library appears as a folder <em>inside</em> your OneDrive, follows you to any PC you sign in on, and behaves better with large libraries.</li></ul><p>The two collide. If a library is already synced, trying to add a shortcut to it fails, and the other way round; you will see a message that the folder is already being synced, or that a shortcut already exists. So when a library has vanished from File Explorer, the first question is which route it used, because that tells you where to look for it and how to put it back. A library under the company name was synced; one inside your OneDrive folder was a shortcut.</p>
       </div>
@@ -864,7 +864,7 @@
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">NEED THIS FIXED RIGHT NOW?</p>
           <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
           <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
@@ -875,28 +875,28 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="What the cloud by the clock is telling you">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; READ THE ICON</p>
+        <p class="eyebrow mono">READ THE ICON</p>
         <h2 class="section-title" data-title>What the cloud by the clock is telling you<span class="title-underline"></span></h2>
 <p>Before changing anything, look at the OneDrive icon in the bottom-right corner of the screen &mdash; you may need to click the small arrow to see it. Its state is the diagnosis.</p><ul><li><strong>A grey cloud with a line through it</strong> means OneDrive is not signed in. Click it and sign in with your work address. Check the account list in its settings too: a personal OneDrive can be signed in while the work account has dropped off, and the library belongs to the work one.</li><li><strong>&ldquo;Paused&rdquo;</strong> is the commonest surprise. OneDrive pauses itself on a metered connection &mdash; a phone hotspot, some business broadband that reports itself that way &mdash; and when the laptop goes into battery saver. Both are switches in its settings, under Sync and backup.</li><li><strong>A red cross</strong> means particular files have errors. Click the icon and choose <em>View sync problems</em>: it names the files, and section 03 is about them.</li><li><strong>&ldquo;Sync pending&rdquo; that never ends</strong> usually means one of the problem files is blocking the queue, or the library is too large to sync in full. Same section.</li><li><strong>A blue cloud on a file</strong> is not a fault at all. It means the file is online-only &mdash; Files On-Demand keeps a placeholder and downloads it when you open it. The file is there; it is just not taking up space yet.</li></ul><p>If the icon is healthy and the library is simply absent, it may have been unlinked or the PC may never have had it: go back to the library in the browser and choose Sync or Add shortcut &mdash; one of them, not both.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="The handful of files that stop the whole library">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE FILES THAT JAM IT</p>
+        <p class="eyebrow mono">THE FILES THAT JAM IT</p>
         <h2 class="section-title" data-title>The handful of files that stop the whole library<span class="title-underline"></span></h2>
 <p>One awkward file can hold up thousands of good ones. <em>View sync problems</em> names them; these are the reasons they are on the list.</p><ul><li><strong>The path is too long.</strong> SharePoint on the web tolerates deep folder trees and long names that Windows cannot: the full local path, from the drive letter to the end of the file name, has a limit of around 260 characters. A library that is fine in the browser jams the moment it is synced to <code>C:\Users\YourName\Company Name\...</code>. Shortening a folder name or two near the top usually clears a whole run of errors.</li><li><strong>Characters Windows will not accept.</strong> Names containing <code>" * : &lt; &gt; ? / \ |</code>, or ending in a full stop or a space, cannot exist as Windows files. Rename them in the browser.</li><li><strong>A file that is open.</strong> A spreadsheet someone has had open for a week, or a file another program has locked, cannot be updated until it is closed.</li><li><strong>Too many items.</strong> Microsoft&rsquo;s own guidance is to keep the total across everything you sync under about 300,000 files; beyond that the app slows to a crawl and looks stuck. A whole-company library synced in full on every laptop gets there sooner than you would think. The remedy is not to sync the whole library: use Add shortcut to OneDrive for the folders each person actually works in, or choose folders in the app&rsquo;s settings.</li></ul>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Resetting OneDrive without losing anything">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE RESET</p>
+        <p class="eyebrow mono">THE RESET</p>
         <h2 class="section-title" data-title>Resetting OneDrive without losing anything<span class="title-underline"></span></h2>
 <p>When the icon looks healthy, the problem list is empty, and it still will not move, reset the app. This is safe: it clears the app&rsquo;s own bookkeeping and makes it look again, and it does not delete anything from Microsoft 365 or anything already uploaded. One check first &mdash; open <em>View sync problems</em> and make sure nothing is waiting to upload, because a file that only exists on this PC and has never made it to the cloud is the one thing a reset can leave behind.</p><p>Sign out of OneDrive and back in first; that alone clears a surprising number of stalls. If not, press the Windows key and R together, and run <code>%localappdata%\Microsoft\OneDrive\onedrive.exe /reset</code>. On some PCs the app lives under Program Files instead, in which case the same command with <code>C:\Program Files\Microsoft OneDrive\onedrive.exe</code> is the one that works; use whichever is present. The icon disappears and returns within a couple of minutes, and the app re-checks every file against the cloud. On a large library that takes a while, and files show as syncing without any data actually moving.</p><p>Afterwards, if the library is still absent, put it back <strong>once</strong>, by one route. If it had been synced, sync it again; if it had been a shortcut, add the shortcut again. Doing both is the collision from section 01, and it produces exactly the symptoms you started with.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="When everyone lost it at once, the cause is on the admin side">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHEN IT IS NOT YOUR PC</p>
+        <p class="eyebrow mono">WHEN IT IS NOT YOUR PC</p>
         <h2 class="section-title" data-title>When everyone lost it at once, the cause is on the admin side<span class="title-underline"></span></h2>
 <p>If one PC has the problem, it is the PC. If the whole office lost the library on the same morning, nothing on any of the PCs caused it &mdash; something changed in Microsoft 365, and no amount of resetting will bring it back. The usual suspects, in rough order of how often we meet them.</p><ul><li><strong>The library was set not to allow offline copies.</strong> There is a setting on each library, in its advanced settings, that controls whether it can be synced at all. A site owner tidying up can switch it off without realising what it does, and every synced copy stops.</li><li><strong>Sync was restricted to managed PCs.</strong> An administrator can allow syncing only from computers joined to the organisation, or only from particular devices. Home PCs and personal laptops drop off overnight.</li><li><strong>Permissions changed.</strong> A reorganised site, a group membership removed, or a guest account expiring. The library is still there; you no longer have the right to it.</li><li><strong>The organisation&rsquo;s own security rules.</strong> Conditional access policies can block sync from outside the office, or from a device that has not met a requirement.</li></ul><p>All of these are fixed in the Microsoft 365 admin centres, not on the PC, and they need whoever administers your tenant. If that is a previous IT provider who has gone quiet, that is a problem we have written about separately and one we deal with often. If it is us, or you would like it to be, this is a short remote session: we look at the PC side and the admin side together and put the library back where it was.</p>
       </div>
@@ -904,7 +904,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/onedrive-problems/">OneDrive problems</a><a href="/files-missing-from-onedrive/">Files missing from OneDrive</a><a href="/onedrive-keeps-asking-to-sign-in/">OneDrive keeps asking to sign in</a><a href="/excel-onedrive-sync-conflicts/">Excel sync conflicts</a><a href="/former-it-provider-controls-microsoft-365/">Former IT provider still controls Microsoft 365</a><a href="/microsoft-365-support/">Microsoft 365 support</a></div>
         </div>
       </div>
@@ -912,7 +912,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -941,7 +941,7 @@
     <style>.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}/*LT*/:where(html[data-theme="light"]) .dpan{--hp-card:rgba(219,223,234,.66);--hp-edge:rgba(35,80,130,.17);--hp-edge-hi:rgba(15,80,130,.42);--hp-ink:#0c1929;--hp-body:#17304f;--hp-soft:#355074;--hp-dark:#eaeff5}/*TL*/ .dpan *{box-sizing:border-box} .dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}/*LT*/:where(html[data-theme="light"]) .dpan__card{background:radial-gradient(60% 90% at 0% 0%,rgba(23,124,187,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(184,123,0,.1),transparent 60%),rgba(224,228,238,.82)}/*TL*/ .dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)} .dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance} .dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)} .dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem} .dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)} .dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)} .dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__ico{box-shadow:inset 0 1px 0 rgba(10,16,31,.35),0 8px 18px -10px var(--c1)}/*TL*/ .dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round} .dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-fix{--c1:#177cbb;--c2:#005d8f}/*TL*/.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-buy{--c1:#b87b00;--c2:#8f6700}/*TL*/ .dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem} .dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)} .dpan__ticks li::before{content:"\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}/*LT*/:where(html[data-theme="light"]) .dpan__ticks li::before{color:#1b792b}/*TL*/ .dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem} .dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__rows a{background:rgba(237,239,246,.35)}/*TL*/ .dpan__rows a:hover{border-color:rgba(255,217,120,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__rows a:hover{border-color:rgba(143,103,0,.55)}/*TL*/ .dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)} .dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)} .dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan__rows em{color:#856000}/*TL*/ .dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)} .dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem} .dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__help a{background:rgba(237,239,246,.35);color:#11233c}/*TL*/ .dpan__help a:hover{border-color:rgba(121,208,255,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__help a:hover{border-color:rgba(0,93,143,.55)}/*TL*/ .dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)} .dpan__more a{color:var(--cyan-soft);text-decoration:none} .dpan__more a:hover{text-decoration:underline} .dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem} .dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}/*LT*/:where(html[data-theme="light"]) .dpan__btn{box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(10,16,31,.4)}/*TL*/ .dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none} .dpan__link:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__link:hover{color:#152242}/*TL*/ .dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)} .dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none} @media (max-width:820px){.dpan__grid{grid-template-columns:1fr}} .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-care{--c1:#0b8838;--c2:#0f8523}/*TL*/</style>
     <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
       <div class="dpan__card">
-        <p class="dpan__kicker">// Still stuck?</p>
+        <p class="dpan__kicker">Still stuck?</p>
         <h2 class="dpan__title">Library still not syncing?</h2>
         <p class="dpan__lede">We support Microsoft 365, SharePoint and OneDrive for businesses across Bournemouth, Poole and Dorset &mdash; usually remotely, in one short session. Call 01202 775566.</p>
         <div class="dpan__grid">
@@ -978,7 +978,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

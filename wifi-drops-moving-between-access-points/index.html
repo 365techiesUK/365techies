@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -660,7 +660,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -852,7 +852,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Roaming and Sticky Clients</span></nav>
-          <p class="eyebrow mono">// ROAMING PLAYBOOK &middot; FOR IT MANAGERS</p>
+          <p class="eyebrow mono">ROAMING PLAYBOOK &middot; FOR IT MANAGERS</p>
           <h1>WiFi drops when you <em class="grad grad--cyan">walk around</em> the building?</h1>
           <p class="lede">Staff walk from the office to the warehouse and their session dies, then recovers a few seconds later. The infrastructure looks perfect in the controller. This page explains the one fact that makes sense of it: roaming is decided by the client device, not by your access points. Then it gives you the ordered walk test that finds the fault.</p>
           <div class="page-hero__cta">
@@ -925,7 +925,7 @@
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
           <h2 class="section-title section-title--center" data-title>Pin the fault down with me, one check at a time<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The checks from this playbook, one at a time. Do each one and it shows the next. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 November 2026</span></p>
         </div>
@@ -1082,7 +1082,7 @@ Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.
 </ul>
 <p>A properly powered-down, well-placed estate with sane minimum data rates will usually out-roam a louder, newer one. That work costs an afternoon and a walk test, and quite often it is the end of the matter.</p>
 <p><strong>When a redesign genuinely is the answer:</strong> there are real coverage holes that no amount of tuning will close, because there is no access point anywhere near them. There is not enough capacity for the number of devices now on the floor, which is a different fault wearing the same coat. Or the kit is old enough that it cannot offer modern roaming assistance at all, and the controller cannot be brought forward to a version that can. Those are honest reasons to spend, and in those cases the sequence is survey first, design second, hardware last &mdash; see <a href="/business-wifi-installation/">business WiFi installation</a>. If you would rather check the coverage yourself before anyone quotes you for anything, our <a href="/wifi-signal-test/">free WiFi signal test</a> runs in a browser and costs nothing.</p></div></div></div></section>
-    <section class="section" aria-label="Free measurement tool"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">// THE WALK TEST, WITHOUT THE KIT HIRE</p><h2 class="repairs__title">Walk the route and record what people actually get</h2><p class="lede">Our <a href="/wifi-signal-test/">free WiFi test</a> has a business mode built for exactly this: walk your fixed route, record each spot, and keep the result as a branded PDF. It will not replace a controller survey, but it gives you the before-and-after evidence that settles whether a change helped.</p></div><a href="/wifi-signal-test/" class="button primary">Open the business mode</a></div></div></section>
+    <section class="section" aria-label="Free measurement tool"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">THE WALK TEST, WITHOUT THE KIT HIRE</p><h2 class="repairs__title">Walk the route and record what people actually get</h2><p class="lede">Our <a href="/wifi-signal-test/">free WiFi test</a> has a business mode built for exactly this: walk your fixed route, record each spot, and keep the result as a branded PDF. It will not replace a controller survey, but it gives you the before-and-after evidence that settles whether a change helped.</p></div><a href="/wifi-signal-test/" class="button primary">Open the business mode</a></div></div></section>
     <section class="section section--alt" aria-label="The other playbooks"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Not quite your fault? The rest of the family<span class="title-underline"></span></h2><p>Same method, different situation. These are separate pages because they are genuinely separate faults &mdash; not the same advice reworded.</p><ul class="pbfam"><li><a href="/wifi-keeps-dropping/"><strong>WiFi keeps dropping at home</strong><span>Intermittent drops on a home broadband line: is it the WiFi, the line, or one misbehaving device?</span></a></li><li><a href="/campervan-wifi-keeps-dropping/"><strong>Campervan and motorhome WiFi</strong><span>Four links can drop in a vehicle &mdash; including the 12V supply nobody checks. Diagnose before you buy.</span></a></li></ul></div></section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
@@ -1099,7 +1099,7 @@ Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

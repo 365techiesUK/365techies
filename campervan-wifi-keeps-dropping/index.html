@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -660,7 +660,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -852,7 +852,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Campervan WiFi</span></nav>
-          <p class="eyebrow mono">// VEHICLE PLAYBOOK</p>
+          <p class="eyebrow mono">VEHICLE PLAYBOOK</p>
           <h1>Campervan WiFi keeps dropping? Find the <em class="grad grad--cyan">real culprit</em> before you buy more kit</h1>
           <p class="lede">In a vehicle there are four separate connections that can drop, and they fail in completely different ways. It is easy to blame the WiFi and buy a booster for a fault in an entirely different link. This page shows you how to tell them apart before you spend anything. The one that is easiest to miss is not radio at all: it is the 12V supply.</p>
           <div class="page-hero__cta">
@@ -925,7 +925,7 @@
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
           <h2 class="section-title section-title--center" data-title>Find which link is dropping, one check at a time<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The checks from this playbook, one at a time. Do each one and it shows the next. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 November 2026</span></p>
         </div>
@@ -1066,7 +1066,7 @@ Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.
 </ul>
 <p>The fixes that work most often are free or nearly free: move the router away from metal, use your own mobile data instead of the site&rsquo;s WiFi at peak times, and sort out the 12V feed. Plenty of people who do those three find there is nothing left to buy.</p>
 <p>The calculation genuinely changes if you work from a vehicle full time. When a dropped call costs you a client, redundancy stops being a luxury, and having two independent routes to the internet becomes the whole point. That is the situation where satellite starts to make sense on its own merits &mdash; we set out what it does and does not do on our <a href="/starlink-internet/">Starlink internet</a> page. Even then, fix the power and the antenna position first: satellite hardware draws considerably more than a mobile router, and an unstable 12V supply will restart it just as happily.</p></div></div></div></section>
-    <section class="section" aria-label="Free measurement tool"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">// TEN MINUTES, ONE DEFINITE ANSWER</p><h2 class="repairs__title">Test the pitch and the hub before you order anything</h2><p class="lede">The two-test check in the booster section takes ten minutes with our <a href="/broadband-speed-checker/">free speed checker</a> &mdash; no app, no sign-up. If the site&rsquo;s hub is slow too, you have just saved yourself the cost of a booster that could not have helped.</p></div><a href="/broadband-speed-checker/" class="button primary">Run the free speed test</a></div></div></section>
+    <section class="section" aria-label="Free measurement tool"><div class="wrap" style="max-width:860px;margin:0 auto"><div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4)"><div><p class="eyebrow mono">TEN MINUTES, ONE DEFINITE ANSWER</p><h2 class="repairs__title">Test the pitch and the hub before you order anything</h2><p class="lede">The two-test check in the booster section takes ten minutes with our <a href="/broadband-speed-checker/">free speed checker</a> &mdash; no app, no sign-up. If the site&rsquo;s hub is slow too, you have just saved yourself the cost of a booster that could not have helped.</p></div><a href="/broadband-speed-checker/" class="button primary">Run the free speed test</a></div></div></section>
     <section class="section section--alt" aria-label="The other playbooks"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Not quite your fault? The rest of the family<span class="title-underline"></span></h2><p>Same method, different situation. These are separate pages because they are genuinely separate faults &mdash; not the same advice reworded.</p><ul class="pbfam"><li><a href="/wifi-keeps-dropping/"><strong>WiFi keeps dropping at home</strong><span>Intermittent drops on a home broadband line: is it the WiFi, the line, or one misbehaving device?</span></a></li><li><a href="/wifi-drops-moving-between-access-points/"><strong>WiFi drops as you walk about</strong><span>Several access points and a controller: sticky clients, roaming, and why turning the power up makes it worse.</span></a></li></ul></div></section>
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
@@ -1083,7 +1083,7 @@ Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

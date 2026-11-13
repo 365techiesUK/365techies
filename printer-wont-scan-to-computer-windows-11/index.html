@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Printer Won't Scan (Win 11)</span></nav>
-          <p class="eyebrow mono">// PRINTER &amp; SCANNER SUPPORT</p>
+          <p class="eyebrow mono">PRINTER &amp; SCANNER SUPPORT</p>
           <h1>Printer Won't Scan to Your Computer on Windows 11? Here's Where to Start</h1>
           <p class="lede">Your printer prints without complaint, but ask it to scan and nothing arrives &mdash; or the scan option has vanished from Windows 11 altogether. It is a common problem, and the cause is rarely the scanner itself. Most cases come down to the driver Windows fitted on its own, a piece of software that has to be listening on your PC, or something on the computer quietly blocking the printer&rsquo;s side of the conversation. Here is how to tell which one you have, in plain English.</p>
           <div class="page-hero__cta">
@@ -867,7 +867,7 @@
 
     <section id="s1" class="section" aria-label="First, check you're on the right page">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; START HERE</p>
+        <p class="eyebrow mono">START HERE</p>
         <h2 class="section-title" data-title>First, check you're on the right page<span class="title-underline"></span></h2>
 <p>This page is for the everyday version of the problem: the printer prints perfectly, but scanning to the computer fails, hangs partway, or the scan option has quietly vanished from Windows 11. Nothing obvious changed, and the printer&rsquo;s own screen looks normal.</p><p>Before you spend an evening on it, three situations belong on a different page. If one of these is yours, the advice below will not fix it:</p><ul><li><strong>It stopped the day you changed router or broadband.</strong> Printing often carries on while scanning stops dead, for reasons specific to that change. We have a separate guide for that one.</li><li><strong>You are in an office and the scan is meant to land in a shared folder on a server or another PC.</strong> That is a file-sharing and permissions fault wearing a scanner costume, and it has its own guide. One warning in advance: you will find forum advice telling you to switch SMB1 back on or allow insecure guest logons. Both are real reductions in your security, and Microsoft left them off for good reason.</li><li><strong>Windows demands an administrator username and password before you can install the software or run the scan.</strong> That is a permissions question rather than a scanning one, and again, separate page.</li></ul><p>Everything else &mdash; one computer or a handful, printer on USB or WiFi, printing happily and scanning not &mdash; is what the rest of this page is for.</p>
       </div>
@@ -923,7 +923,7 @@
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Get scanning working on Windows 11, step by step<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 November 2026</span></p>
         </div>
@@ -1013,7 +1013,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">NEED THIS FIXED RIGHT NOW?</p>
           <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
           <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
@@ -1024,28 +1024,28 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     </section>
     <section id="s2" class="section section--alt" aria-label="The driver Windows fits by itself prints, but often cannot scan">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE USUAL CAUSE</p>
+        <p class="eyebrow mono">THE USUAL CAUSE</p>
         <h2 class="section-title" data-title>The driver Windows fits by itself prints, but often cannot scan<span class="title-underline"></span></h2>
 <p>Connect a printer and Windows 11 usually finds it and sets it up within seconds, with no disc and no download. That is genuinely clever, and it is also where most of these calls begin. The driver Windows fits on its own is built around <strong>printing</strong> &mdash; a common language nearly every modern printer understands. Scanning is a separate half of the machine, and on many models it needs the manufacturer&rsquo;s own components before Windows, or any scanning app, can see a scanner at all.</p><p>Some newer all-in-ones do scan through Windows&rsquo; built-in support with nothing extra installed. Plenty don&rsquo;t, and when they don&rsquo;t the symptom is exactly what you have: flawless printing, and a scanner no app on the computer can find.</p><p>The check takes a minute. In Windows Settings, go to <strong>Bluetooth &amp; devices</strong> and then <strong>Printers &amp; scanners</strong>. If your machine only ever appears as a printer, and Windows&rsquo; own scanning tools say no scanner is connected, you almost certainly have the print-only setup.</p><p>The fix is the manufacturer&rsquo;s full software package. On the maker&rsquo;s own support site, type in your exact model number, choose Windows 11, and download the <strong>full</strong> package rather than anything labelled basic or driver-only. Take it from the manufacturer and nowhere else: the general driver-download sites are one of the surest ways we know of picking up something nasty.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Start the scan at the computer, not at the printer">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHERE YOU PRESS START</p>
+        <p class="eyebrow mono">WHERE YOU PRESS START</p>
         <h2 class="section-title" data-title>Start the scan at the computer, not at the printer<span class="title-underline"></span></h2>
 <p>There are two families of scanning app on a Windows 11 PC. Windows has its own &mdash; the long-standing Windows Fax and Scan, and the newer Scan app, which on some machines has to be fetched from the Microsoft Store first. Then there is the manufacturer&rsquo;s app, which arrives with that full package. Names vary by brand, but HP Smart, Epson ScanSmart, Brother iPrint&amp;Scan and Canon IJ Scan Utility are the sort of thing you are looking for.</p><p>Now the part that catches almost everybody. Pressing <strong>scan to computer</strong> at the printer is not the same operation as scanning from the PC. The printer is not posting a file to some general address. It is calling a piece of the manufacturer&rsquo;s software that has to be installed on your computer, running, and registered to that particular printer. If that helper was never installed, or lost its registration after an update or a reinstall, or the computer is asleep, the panel simply reports that it cannot find a computer. On some makes the option also has to be switched on from the software, and it can switch itself back off unless you tick the setting that keeps it enabled.</p><p>So try it the other way round: open a scanning app on the computer and start the scan from there. If that works while the printer&rsquo;s own button doesn&rsquo;t, you have learned exactly where the fault sits. Plenty of our customers simply keep the computer-first habit, because it is the more dependable of the two.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="USB and network faults look identical, but they are not">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; USB OR NETWORK</p>
+        <p class="eyebrow mono">USB OR NETWORK</p>
         <h2 class="section-title" data-title>USB and network faults look identical, but they are not<span class="title-underline"></span></h2>
 <p>The message on screen is the same either way &mdash; no scanner found &mdash; so it helps to know which kind of problem you are chasing.</p><p><strong>If the printer is on a USB cable:</strong> plug it straight into the computer rather than through a hub, a monitor or a laptop dock, and try a different port. Then try a different cable if you have one. Printer cables are often long, old and coiled behind furniture, and they do fail. If scanning works from cold but stops after the laptop has been asleep, Windows&rsquo; USB power-saving is a fair suspect &mdash; it can put ports to sleep, and not everything wakes gracefully.</p><p><strong>If the printer is on WiFi or a network cable:</strong> the two devices have to be on the same network. A printer sitting on a guest network, or a laptop connected to one, cannot be scanned from no matter how healthy both look. The other common one is a moving address: leave a printer switched off for a week and the router may hand it a different one when it comes back, while the software on the PC is still looking for the old address. Settle that by giving the printer a fixed address in its own settings, by reserving one for it on the router, or simply by re-running the manufacturer&rsquo;s setup so it finds the printer again.</p><p>One quick test is worth a great deal here. If you can borrow a USB cable and connect the printer directly for a single scan, you will know within two minutes whether you have a scanner problem or a network problem.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Security suites and VPNs block the very thing scanning needs">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; THE QUIET BLOCKER</p>
+        <p class="eyebrow mono">THE QUIET BLOCKER</p>
         <h2 class="section-title" data-title>Security suites and VPNs block the very thing scanning needs<span class="title-underline"></span></h2>
 <p>Printing is mostly your computer talking outwards. Scanning leans much harder on the two devices being able to find and reach each other in both directions &mdash; Windows&rsquo; own network scanning and the manufacturer&rsquo;s scan-to-PC helper both need the printer to be able to reach your computer, not just the other way round. A firewall that quietly allows printing while blocking that side of the conversation produces exactly the fault we see often, where printing has never missed a beat and scanning has never once worked on that machine.</p><p>A full internet security suite &mdash; the sort that replaces Windows&rsquo; own firewall with one of its own &mdash; will often allow the printing and block the rest without saying a word about it. To test that, and only to test it, turn the suite&rsquo;s firewall off for a moment while you are on your own network at home or in the office, try one scan, then turn it straight back on. If the scan worked you have your answer, but leaving the firewall off is not the fix. Use the suite&rsquo;s own list of trusted devices or allowed applications to permit the printer and its scanning software. Same result, none of the exposure.</p><p>VPN software on the computer deserves the same test. Many VPN apps send everything down the tunnel and cut the computer off from other devices on the local network, and your printer is one of those devices. Disconnect the VPN briefly and try the scan again.</p><p>If you have worked through all of this and the scanner still is not there, that is a fair point to stop. This is the sort of job we can often finish remotely, in one short session, with you watching every step we take.</p>
       </div>
@@ -1053,7 +1053,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/printer-prints-but-wont-scan-after-new-router/">If it started after a new router</a><a href="/scan-to-folder-stopped-working-after-windows-update/">If it scans to a shared network folder</a><a href="/printer-asking-for-admin-password/">Blocked by an admin password</a><a href="/printer-support/">Printer support</a></div>
         </div>
       </div>
@@ -1061,7 +1061,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1090,7 +1090,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <style>.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}/*LT*/:where(html[data-theme="light"]) .dpan{--hp-card:rgba(219,223,234,.66);--hp-edge:rgba(35,80,130,.17);--hp-edge-hi:rgba(15,80,130,.42);--hp-ink:#0c1929;--hp-body:#17304f;--hp-soft:#355074;--hp-dark:#eaeff5}/*TL*/ .dpan *{box-sizing:border-box} .dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}/*LT*/:where(html[data-theme="light"]) .dpan__card{background:radial-gradient(60% 90% at 0% 0%,rgba(23,124,187,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(184,123,0,.1),transparent 60%),rgba(224,228,238,.82)}/*TL*/ .dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)} .dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance} .dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)} .dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem} .dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)} .dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)} .dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__ico{box-shadow:inset 0 1px 0 rgba(10,16,31,.35),0 8px 18px -10px var(--c1)}/*TL*/ .dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round} .dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-fix{--c1:#177cbb;--c2:#005d8f}/*TL*/.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-buy{--c1:#b87b00;--c2:#8f6700}/*TL*/ .dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem} .dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)} .dpan__ticks li::before{content:"\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}/*LT*/:where(html[data-theme="light"]) .dpan__ticks li::before{color:#1b792b}/*TL*/ .dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem} .dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__rows a{background:rgba(237,239,246,.35)}/*TL*/ .dpan__rows a:hover{border-color:rgba(255,217,120,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__rows a:hover{border-color:rgba(143,103,0,.55)}/*TL*/ .dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)} .dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)} .dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan__rows em{color:#856000}/*TL*/ .dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)} .dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem} .dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__help a{background:rgba(237,239,246,.35);color:#11233c}/*TL*/ .dpan__help a:hover{border-color:rgba(121,208,255,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__help a:hover{border-color:rgba(0,93,143,.55)}/*TL*/ .dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)} .dpan__more a{color:var(--cyan-soft);text-decoration:none} .dpan__more a:hover{text-decoration:underline} .dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem} .dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}/*LT*/:where(html[data-theme="light"]) .dpan__btn{box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(10,16,31,.4)}/*TL*/ .dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none} .dpan__link:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__link:hover{color:#152242}/*TL*/ .dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)} .dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none} @media (max-width:820px){.dpan__grid{grid-template-columns:1fr}} .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-care{--c1:#0b8838;--c2:#0f8523}/*TL*/</style>
     <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
       <div class="dpan__card">
-        <p class="dpan__kicker">// Still stuck?</p>
+        <p class="dpan__kicker">Still stuck?</p>
         <h2 class="dpan__title">Still no scanner?</h2>
         <p class="dpan__lede">We sort scanning faults remotely &mdash; you watch every step, and it&rsquo;s no fix, no fee. Call 01202 775566 and we&rsquo;ll take a look together.</p>
         <div class="dpan__grid">
@@ -1127,7 +1127,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

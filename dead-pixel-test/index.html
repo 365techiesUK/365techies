@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -696,7 +696,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -887,7 +887,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Dead Pixel Test</span></nav>
-        <p class="eyebrow mono">// FREE SCREEN TEST</p>
+        <p class="eyebrow mono">FREE SCREEN TEST</p>
         <h1>Free <em class="grad grad--cyan">dead pixel</em> test</h1>
         <p class="lede">Fill your screen with one colour at a time to spot dead or stuck pixels, light leaking in at the edges, and patchy or stripy areas. Ideal for a new laptop or monitor while you can still send it back. Nothing to install, and nothing flashes. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -901,7 +901,7 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE TEST</a><a href="#s2">02 &mdash; WHAT YOU&rsquo;RE LOOKING FOR</a><a href="#s3">03 &mdash; WHAT TO DO</a><a href="#s4">04 &mdash; THE QUICK WAY</a><a href="#s5">05 &mdash; WHEN TO CALL US</a></nav>
     <section id="s1" class="section" aria-label="Test your screen for dead pixels">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE TEST</p>
+        <p class="eyebrow mono">THE TEST</p>
         <h2 class="section-title" data-title>Test your screen for dead pixels<span class="title-underline"></span></h2>
 <p>Wipe the screen with a soft, dry cloth first: a speck of dust looks just like a dead pixel. Turn the brightness up, then start the test and look closely at each colour, corner to corner.</p><div class="dpt" id="dpt"><div class="dpt__sw" role="group" aria-label="Colours in the test"><span style="background:#000" title="Black"></span><span style="background:#fff" title="White"></span><span style="background:#f00" title="Red"></span><span style="background:#0f0" title="Green"></span><span style="background:#00f" title="Blue"></span><span style="background:#808080" title="Grey"></span><span style="background:linear-gradient(90deg,#000,#fff)" title="Black to white"></span></div><p class="dpt__go"><button type="button" class="button primary" id="dpt-go">Start the full-screen test</button></p><p class="dpt__how">Tap the screen, or press the space bar or an arrow key, for the next colour. Press Esc, or tap the last colour, to finish. Nothing flashes.</p></div><div class="dpt-full" id="dpt-full" role="dialog" aria-modal="true" aria-label="Screen test" tabindex="-1" hidden><p class="dpt-hint" id="dpt-hint"></p></div><style>.dpt{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}/*LT*/:where(html[data-theme="light"]) .dpt{border:1px solid rgba(23,124,187,.42);background:linear-gradient(135deg,rgba(23,124,187,.10),rgba(10,16,31,.02))}/*TL*/.dpt__sw{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.5rem}.dpt__sw span{display:block;aspect-ratio:4/3;border-radius:10px;border:1px solid rgba(125,170,220,.35)}/*LT*/:where(html[data-theme="light"]) .dpt__sw span{border:1px solid rgba(35,80,130,.35)}/*TL*/.dpt__go{margin:1rem 0 0;text-align:center}.dpt__go .button{font-size:1.1rem;min-height:52px}.dpt__how{margin:.8rem 0 0;font-size:.9rem;color:var(--muted);text-align:center}.dpt-full{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;cursor:pointer}.dpt-full[hidden]{display:none!important}.dpt-full:focus{outline:none}.dpt-hint{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);margin:0;padding:.55rem 1rem;border-radius:12px;background:rgba(20,22,26,.85);color:#fff;font:600 .95rem var(--font-body);max-width:calc(100% - 32px);text-align:center;transition:opacity .5s}/*LT*/:where(html[data-theme="light"]) .dpt-hint{background:rgba(233,233,235,.85);color:#152242}/*TL*/.dpt-hint.gone{opacity:0}@media (max-width:520px){.dpt{padding:1rem .8rem}.dpt__sw{grid-template-columns:repeat(4,minmax(0,1fr))}}@media (prefers-reduced-motion:reduce){.dpt-hint{transition:none}}</style><script>(function(){var F=document.getElementById("dpt-full"),H=document.getElementById("dpt-hint");if(!F||!document.body)return;document.body.appendChild(F);var C=[["#000","Black: look for bright dots, and light leaking in at the edges"],["#fff","White: look for black or coloured dots"],["#f00","Red"],["#0f0","Green"],["#00f","Blue"],["#808080","Grey: look for patches that are lighter or darker"],["linear-gradient(90deg,#000,#fff)","Black to white: look for stripes instead of a smooth fade"]],i=0,ht;function show(){F.style.background=C[i][0];H.textContent=(i+1)+" of "+C.length+" \u00b7 "+C[i][1]+(i===C.length-1?" \u00b7 tap to finish":"");H.classList.remove("gone");clearTimeout(ht);ht=setTimeout(function(){H.classList.add("gone");},3000);}function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null;}function open(){i=0;F.hidden=false;document.documentElement.style.overflow="hidden";var r=F.requestFullscreen||F.webkitRequestFullscreen;if(r){try{var p=r.call(F);if(p&&p.then)p.then(null,function(){});}catch(e){}}show();try{F.focus();}catch(e){}}function close(){if(fsEl()){var x=document.exitFullscreen||document.webkitExitFullscreen;try{if(x)x.call(document);}catch(e){}}F.hidden=true;document.documentElement.style.overflow="";}function next(d){i+=d;if(i>=C.length){close();return;}if(i<0)i=0;show();}var was=false;function fsc(){var on=!!fsEl();if(was&&!on&&!F.hidden)close();was=on;}document.addEventListener("fullscreenchange",fsc);document.addEventListener("webkitfullscreenchange",fsc);document.getElementById("dpt-go").addEventListener("click",open);F.addEventListener("click",function(){next(1);});document.addEventListener("keydown",function(e){if(F.hidden)return;var k=e.key;if(k==="Escape"){close();return;}if(k===" "||k==="ArrowRight"||k==="ArrowDown"||k==="Enter"){e.preventDefault();next(1);}else if(k==="ArrowLeft"||k==="ArrowUp"){e.preventDefault();next(-1);}});})();</script>
       </div>
@@ -921,28 +921,28 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="What each fault looks like">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHAT YOU&rsquo;RE LOOKING FOR</p>
+        <p class="eyebrow mono">WHAT YOU&rsquo;RE LOOKING FOR</p>
         <h2 class="section-title" data-title>What each fault looks like<span class="title-underline"></span></h2>
 <ul><li><strong>Dead pixel:</strong> a tiny dot that stays black on every colour, easiest to see on white.</li><li><strong>Stuck pixel:</strong> a dot that stays red, green or blue whatever the colour, easiest to see on black.</li><li><strong>Bright (hot) pixel:</strong> a white dot on the black screen.</li><li><strong>Backlight bleed:</strong> pale patches of light at the edges or corners of the black screen, best seen in a dark room. A little is normal on many screens; large bright patches are not.</li><li><strong>Patchy areas:</strong> parts of the grey screen lighter or darker than the rest.</li><li><strong>Banding:</strong> stripes in the black-to-white fade instead of a smooth change. Often a colour setting or the cable; sometimes the screen.</li></ul>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Found one? What to do">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT TO DO</p>
+        <p class="eyebrow mono">WHAT TO DO</p>
         <h2 class="section-title" data-title>Found one? What to do<span class="title-underline"></span></h2>
 <ol><li><strong>Make sure it&rsquo;s not dust.</strong> Wipe gently and test again.</li><li><strong>Give a stuck pixel a few days.</strong> Stuck pixels sometimes clear by themselves with normal use. Dead pixels usually don&rsquo;t.</li><li><strong>Don&rsquo;t press on the screen</strong> or use a &ldquo;pixel fixer&rdquo; that flashes colours quickly. Pressing can damage the screen, and fast flashing can trigger seizures in people with photosensitive epilepsy, which is why this test never flashes.</li><li><strong>Bought it in the last 30 days?</strong> Under the Consumer Rights Act you can reject faulty goods for a refund within 30 days. Whether a single pixel counts as a fault is often decided by the maker&rsquo;s pixel policy, so ask the retailer straight away.</li><li><strong>Check the cable and settings for banding.</strong> Try another cable or port, and make sure the screen runs at its own best resolution and refresh rate: see <a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a>.</li><li><strong>A laptop screen with lines, patches or many dead pixels</strong> usually needs a new screen. We can fit one, with the price agreed first.</li></ol>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Check your screen&rsquo;s settings with our free app">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE QUICK WAY</p>
+        <p class="eyebrow mono">THE QUICK WAY</p>
         <h2 class="section-title" data-title>Check your screen&rsquo;s settings with our free app<span class="title-underline"></span></h2>
 <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Screen check: is your screen at its sharpest and smoothest?</h3><p style="margin:0">For every screen it shows the name and year it was made, the size and refresh rate it&rsquo;s running at, its own best size, and a better setting when Windows offers one. It never changes the setting itself &mdash; it opens Display settings, and Windows puts the old setting back if the screen goes blank.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Screen check</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="screen" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-screen-v36.webp" width="1272" height="1012" alt="Screen check in 365 PC Manager saying a sharper or smoother setting is available: a 2560 x 1440 monitor running at 60 Hz that can do 144 Hz" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app catching it (a sample PC).</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
     </section>
     <section id="s5" class="section" aria-label="When to call us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHEN TO CALL US</p>
+        <p class="eyebrow mono">WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us<span class="title-underline"></span></h2>
 <p>Still not right? Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. With your permission we connect to your Windows PC and sort software problems while you watch: usually the same day, remote help usually &pound;60, and no fix, no fee. If it&rsquo;s the laptop screen itself, we collect the laptop free across Bournemouth, Christchurch, Poole and Dorset, tell you the price before any work, repair it and bring it back.</p>
       </div>
@@ -950,7 +950,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a><a href="/keyboard-test/">keyboard test</a><a href="/speaker-and-headphone-test/">speaker and headphone test</a><a href="/computer-spec-checker/">check your PC&rsquo;s specs</a><a href="/free-tools/">all our free tools</a></div>
         </div>
       </div>
@@ -958,7 +958,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1003,7 +1003,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -842,7 +842,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">M365 Owner Handover</span></nav>
-        <p class="eyebrow mono">// MICROSOFT 365 SUPPORT</p>
+        <p class="eyebrow mono">MICROSOFT 365 SUPPORT</p>
         <h1>Transferring Microsoft 365 when the owner leaves the company</h1>
         <p class="lede">The person who set Microsoft 365 up is retiring, selling up, or moving on &mdash; and their login is the one everything hangs off. It is the administrator, it is the billing contact, it is very possibly the only account that can add or remove anyone else, and the code that proves it is them arrives on their personal phone. Handled in the right order this is a morning&rsquo;s work. Handled in the wrong order, or after they have gone, it is how a business ends up locked out of its own email. Here is what that account actually holds, the order to move it in, and the two mistakes to avoid. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -856,35 +856,35 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT THE ACCOUNT HOLDS</a><a href="#s2">02 &mdash; THE ORDER</a><a href="#s3">03 &mdash; THE MAILBOX AND THE FILES</a><a href="#s4">04 &mdash; THE TWO MISTAKES</a><a href="#s5">05 &mdash; WHAT WE DO, AND WHAT WE DON&rsquo;T</a></nav>
     <section id="s1" class="section" aria-label="Everything that quietly lives in the owner&rsquo;s login">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHAT THE ACCOUNT HOLDS</p>
+        <p class="eyebrow mono">WHAT THE ACCOUNT HOLDS</p>
         <h2 class="section-title" data-title>Everything that quietly lives in the owner&rsquo;s login<span class="title-underline"></span></h2>
 <p>A Microsoft 365 account that was created by the person who set the business up is rarely just a mailbox. Over the years it accumulates roles that nobody wrote down, and three of them depend on a phone that is about to walk out of the door.</p><ul><li><strong>The Global Administrator role.</strong> The power to add and remove people, reset passwords, change settings, and hand out every other role. Very often it is the <em>only</em> account that has it.</li><li><strong>The billing relationship.</strong> The subscription is paid from a card or an account in someone&rsquo;s name, and the renewal notices go to their address.</li><li><strong>The domain.</strong> Your email address ends in your company&rsquo;s name because that domain was verified from this account, and the login to the company that registers the domain is often the owner&rsquo;s personal one.</li><li><strong>The second factor.</strong> The authenticator app or the text-message code that proves it is really them lands on their personal phone. Every one of the powers above is behind it.</li><li><strong>Years of business email</strong>, a OneDrive full of company files, and ownership of the Teams, groups and SharePoint sites the office runs on.</li></ul><p>None of that is a problem while they are still here and still answering their phone. The whole job is to move it before that stops being true.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The handover, in the order that cannot lock you out">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE ORDER</p>
+        <p class="eyebrow mono">THE ORDER</p>
         <h2 class="section-title" data-title>The handover, in the order that cannot lock you out<span class="title-underline"></span></h2>
 <p>The sequence matters more than any single step. Done in this order, at no point is there only one person who can get in.</p><ol><li><strong>Make a second Global Administrator first.</strong> Before anything else, a real, named person who is staying gets the Global Administrator role, sets up their own second factor on their own phone, and signs in to prove it works. Alongside it, keep an emergency admin account whose details are written down and stored somewhere safe &mdash; a sealed envelope in the safe is not old-fashioned, it is exactly right &mdash; for the day both phones are lost.</li><li><strong>Move the billing.</strong> In the admin centre&rsquo;s billing area, add the new person as a billing administrator and change the payment method and the contact that renewal notices go to. The exact screens move about; the principle does not.</li><li><strong>Secure the domain.</strong> Find out who holds the login for the company that registers your domain, and make sure it is the business, with a recovery address that is not the leaver&rsquo;s personal one. Losing the domain login is the one mistake that cannot be undone from inside Microsoft 365.</li><li><strong>Check nothing else routes through their phone.</strong> Recovery phone numbers on the tenant, the second factor on any shared accounts, the alerts Microsoft sends when something is wrong.</li><li><strong>Write down the licences.</strong> What is paid for, who has what, and when it renews. Ten minutes now saves an argument later.</li><li><strong>Only then deal with the leaver&rsquo;s own account.</strong> Section 03.</li></ol>
       </div>
     </section>
     <section id="s3" class="section" aria-label="What to do with their email, their OneDrive and the things they own">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE MAILBOX AND THE FILES</p>
+        <p class="eyebrow mono">THE MAILBOX AND THE FILES</p>
         <h2 class="section-title" data-title>What to do with their email, their OneDrive and the things they own<span class="title-underline"></span></h2>
 <p>Once the powers have moved, the leaver&rsquo;s own account can be dealt with calmly, and the guiding rule is: <strong>do not delete it until everything in it has somewhere else to be.</strong></p><ul><li><strong>The mailbox.</strong> The usual answer is to convert it to a shared mailbox. The years of email stay searchable, chosen people can read it and reply from the address, it no longer needs a licence, and nobody has to know the leaver&rsquo;s password. Forwarding new mail to a colleague, with an automatic reply saying who now looks after what, covers the transition.</li><li><strong>Their OneDrive.</strong> Anything in it that belongs to the business moves to a shared location &mdash; a SharePoint library or a Teams channel &mdash; before the account goes. Microsoft keeps a departed user&rsquo;s OneDrive reachable to an administrator for a limited period after the account is deleted, and how long is set by policy, so treat that as a safety net rather than a plan.</li><li><strong>Ownership of Teams, groups and sites.</strong> Anything the leaver owned needs a new owner named, or the office will discover one day that nobody can add a member to the team it works in.</li><li><strong>The address itself.</strong> Customers will keep writing to it for years. Keep it alive as the shared mailbox, or as an alias on whoever inherits the role.</li></ul><p>Then, and only then, remove the licence and the account.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="The two ways this locks a business out, and what to do if it already has">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE TWO MISTAKES</p>
+        <p class="eyebrow mono">THE TWO MISTAKES</p>
         <h2 class="section-title" data-title>The two ways this locks a business out, and what to do if it already has<span class="title-underline"></span></h2>
 <p>Almost every locked-out business we meet made one of two mistakes, and both are made with good intentions.</p><ul><li><strong>Removing the only administrator before making another.</strong> Someone tidies up the leaver&rsquo;s account on their last day, and with it goes the only login that can create an administrator. Nobody notices until the next time someone needs adding or a password resetting.</li><li><strong>Leaving the second factor on a phone that has gone.</strong> The account still exists, the password is known, and every sign-in stops at a code that is being sent to a phone the business no longer has. We have written this one up on its own, because it is that common.</li></ul><p>If it has already happened, do not panic and do not start guessing at recovery options that could make it worse. First, ask the leaver. Most people will happily spend twenty minutes on the phone doing a handover they did not realise was needed. If they cannot be reached, or the parting was not friendly, Microsoft has a process for a business that can prove it owns the domain to regain control of its tenant. It works, it involves paperwork and patience rather than a quick fix, and it is much easier with someone who has been through it before. If a previous IT provider holds the keys instead of a former owner, that is a related problem we have also written up.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="The technical handover is our job; the sale is not">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHAT WE DO, AND WHAT WE DON&rsquo;T</p>
+        <p class="eyebrow mono">WHAT WE DO, AND WHAT WE DON&rsquo;T</p>
         <h2 class="section-title" data-title>The technical handover is our job; the sale is not<span class="title-underline"></span></h2>
 <p>We do the whole technical side of this, usually in one or two remote sessions with whoever is taking over: the new administrator and the emergency account, the billing contact, the domain check, the second factor moved to the right phones, the mailbox converted, the files moved to shared places, the ownership of teams and sites reassigned, and a one-page record of what is licensed and who holds what. When the leaver is still around we bring them into the session so nothing depends on a password being read out. When they are not, we work the recovery route with you.</p><p>What we do not do is advise on the sale, the shareholding, the employment side or the contracts &mdash; who is entitled to what, what must be kept for how long, what the leaver may take with them. Those are for your solicitor or your accountant, and we will happily work alongside them. Our job is that when the answer comes back, the systems are ready to do what it says.</p><p>If you would like Microsoft 365 looked after properly afterwards rather than left in one person&rsquo;s name again, we do that too, per user, without a contract. The first conversation is free either way.</p>
       </div>
@@ -892,7 +892,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/locked-out-microsoft-365-admin-account/">Locked out of the Microsoft 365 admin account</a><a href="/former-it-provider-controls-microsoft-365/">Former IT provider still controls Microsoft 365</a><a href="/what-to-do-when-an-employee-leaves/">When an employee leaves</a><a href="/business-email-when-closing-your-company/">Business email when closing a company</a><a href="/take-over-email-domain-after-buying-business/">Taking over email after buying a business</a><a href="/microsoft-365-support/">Microsoft 365 support</a></div>
         </div>
       </div>
@@ -900,7 +900,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -941,7 +941,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

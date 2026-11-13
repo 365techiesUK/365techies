@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -709,7 +709,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -901,7 +901,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Basic PAYE Tools Database Error</span></nav>
-          <p class="eyebrow mono">// BASIC PAYE TOOLS</p>
+          <p class="eyebrow mono">BASIC PAYE TOOLS</p>
           <h1>&lsquo;Could Not Access the Database&rsquo; in <em class="grad grad--cyan">Basic PAYE Tools</em></h1>
           <p class="lede">Seeing &lsquo;could not access the database&rsquo; in Basic PAYE Tools &mdash; often with a payroll deadline bearing down &mdash; is alarming, but your records are almost always recoverable. Here&rsquo;s exactly what the message means, how to fix it without losing a thing, and when it&rsquo;s worth handing to us.</p>
           <div class="page-hero__cta">
@@ -925,42 +925,42 @@
 
     <section id="s1" class="section" aria-label="What the &lsquo;could not access the database&rsquo; error means">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE QUICK ANSWER</p>
+        <p class="eyebrow mono">THE QUICK ANSWER</p>
         <h2 class="section-title" data-title>What the &lsquo;could not access the database&rsquo; error means<span class="title-underline"></span></h2>
 <p>If <strong>Basic PAYE Tools</strong> shows &lsquo;could not access the database&rsquo;, it means the small database file the program keeps on your own computer has become corrupted, locked or moved &mdash; so the software can no longer open your payroll records. The safe fix is to <strong>close the program, take a full copy of its data folder first</strong>, then let Basic PAYE Tools rebuild a fresh database and restore your most recent automatic backup.</p><p>The single most important thing is what <em>not</em> to do: <strong>do not reinstall or &lsquo;repair&rsquo; the software before you have copied your data</strong>. Your employees, pay history and RTI submissions live in a hidden folder on the PC, not in the program itself, so a careless uninstall or clean-up can wipe the only copy you have.</p><p>If your Full Payment Submission is due today and you cannot afford to experiment, that is exactly the sort of job we handle. We can usually take a look the same day over a <a href="/remote-support/">secure remote session</a> &mdash; see <a href="/emergency-it-help/">emergency IT help</a> if the clock is against you.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The common causes behind the error">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHY IT HAPPENS</p>
+        <p class="eyebrow mono">WHY IT HAPPENS</p>
         <h2 class="section-title" data-title>The common causes behind the error<span class="title-underline"></span></h2>
 <p>Basic PAYE Tools stores everything in a single <strong>SQLite database file</strong> on your computer. When that file cannot be opened, you get the &lsquo;could not access the database&rsquo; message. There are a handful of common reasons.</p><ul><li><strong>A corrupted database.</strong> The program was closed mid-write &mdash; a crash, a power cut or the PC being switched off while it was still saving &mdash; and the file is now damaged.</li><li><strong>Antivirus or Controlled Folder Access.</strong> Some security software locks or quarantines the database file, so Windows reports &lsquo;access denied&rsquo; even though the file is still there.</li><li><strong>Cloud sync interference.</strong> If the data folder or its backups sit inside OneDrive, Dropbox or another synced folder, the sync client can lock the file mid-upload and corrupt it. A live database should never live in a synced folder.</li><li><strong>A different Windows user.</strong> The data is saved per Windows login. If you are signed into a new or renamed profile &mdash; common after an update or on a new PC &mdash; the tools open empty or cannot find the file.</li><li><strong>A failed update or move.</strong> An interrupted Basic PAYE Tools update, or files copied to a new machine incorrectly, can leave the database in a state it cannot read.</li></ul><p>Knowing which of these applies matters, because the fix for a corrupt file is very different from the fix for a permissions or profile problem.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Before you touch anything, take a copy">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; COPY YOUR DATA FIRST</p>
+        <p class="eyebrow mono">COPY YOUR DATA FIRST</p>
         <h2 class="section-title" data-title>Before you touch anything, take a copy<span class="title-underline"></span></h2>
 <p>Before you change a single thing, make a copy of your payroll data. This is the step that turns a stressful morning into a non-event.</p><p>Your Basic PAYE Tools data lives in a hidden folder. To find it, open <strong>File Explorer</strong>, click in the address bar, type <strong>%appdata%</strong> and press Enter. Open the <strong>HMRC</strong> folder, then <strong>payetools-rti</strong>. Inside you will see the database file and a <strong>backups</strong> folder containing dated automatic backups.</p><p><strong>Copy the entire payetools-rti folder</strong> to somewhere safe first &mdash; your Desktop, or better still a USB stick &mdash; so you always have an untouched original to fall back on. If anything goes wrong later, you can put this copy back and be no worse off.</p><p>This is also why <strong>reinstalling is the wrong first move</strong>. Reinstalling the program does not repair a corrupt database, and some &lsquo;fix it&rsquo; guides online tell you to delete or clear the data folder &mdash; which permanently destroys your pay history. Copy first, always. If you would rather not poke around in hidden folders at all, our <a href="/backup-support/">backup and recovery</a> and <a href="/data-recovery/">data recovery</a> help can do it for you.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Rebuilding the database and restoring your backup">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE SAFE FIX, STEP BY STEP</p>
+        <p class="eyebrow mono">THE SAFE FIX, STEP BY STEP</p>
         <h2 class="section-title" data-title>Rebuilding the database and restoring your backup<span class="title-underline"></span></h2>
 <p>Once you have a copy of the folder, the recovery itself is straightforward. In short: close the program, rename the database file so Basic PAYE Tools builds a fresh one, then restore your latest backup from inside the tools.</p><ul><li><strong>Close Basic PAYE Tools completely</strong> so nothing is holding the file open.</li><li>In the <strong>payetools-rti</strong> folder, <strong>rename the database file</strong> (often shown as <em>sqlite3</em>) &mdash; for example add an &lsquo;x&rsquo; to the end. Do not delete it; you may still need it.</li><li><strong>Reopen Basic PAYE Tools.</strong> With no database to read, it builds a new, empty one. This can take several minutes &mdash; let it finish.</li><li>From the homepage, choose <strong>&lsquo;Restore your data&rsquo;</strong> and point it at your most recent backup in the <strong>backups</strong> folder. Restoring can also take a few minutes.</li><li><strong>Check your data is back</strong> &mdash; your employer details, employees and last submission &mdash; before you file anything new.</li></ul><p>If the tools still will not open, or the newest backup is older than your last pay run, stop there rather than risk your records. That is the point to <a href="/remote-support/">get a pair of expert hands on it</a> &mdash; guessing at this stage is how payroll data gets lost for good.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="If you run on a network or shared PC">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; SHARED &amp; NETWORKED SETUPS</p>
+        <p class="eyebrow mono">SHARED &amp; NETWORKED SETUPS</p>
         <h2 class="section-title" data-title>If you run on a network or shared PC<span class="title-underline"></span></h2>
 <p>The fix above is for the standard single-PC install. If your Basic PAYE Tools was set up to be shared &mdash; several people using it, or the database held on a server or mapped network drive &mdash; there are extra things that can break it, and the safe steps are different.</p><p>On a networked install, &lsquo;could not access the database&rsquo; often points to a <strong>dropped connection to the shared folder</strong>, a permissions change, or two people having it open at once. The database file can also be locked by whichever machine opened it last. Renaming files on a shared setup without understanding the layout is risky, because you can orphan everyone else&rsquo;s access.</p><p>This is very similar territory to other multi-user accounting databases &mdash; see our guide on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a>, and on <a href="/quickbooks-sage-running-slow/">QuickBooks and Sage running slow</a>. If your payroll or accounts software is shared across the office, it is usually quicker and far safer to let us map the setup and fix it properly. Many local firms already rely on us for their <a href="/it-support-for-accountants-dorset/">accountancy and payroll IT support</a>.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="When it&rsquo;s worth handing this to us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
+        <p class="eyebrow mono">WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When it&rsquo;s worth handing this to us<span class="title-underline"></span></h2>
 <p>Plenty of people fix this themselves with the steps above, and that is genuinely fine. Call us when the stakes are too high to experiment: a submission due <strong>today</strong>, no recent backup, a shared or networked install, or simply a &lsquo;could not access the database&rsquo; message that will not clear.</p><p>We are <strong>365 Techies</strong> &mdash; a family-run IT firm in Kinson, Bournemouth, trading since 1995, with a 4.9-star Google rating. We work <strong>remotely across the whole of the UK</strong>, and can be in the folder with you within minutes over a secure connection. For homes and offices in <strong>Bournemouth, Christchurch, Poole and across Dorset</strong> we also visit in person (priced before we come) or collect the machine.</p><p>You get plain-English help, no jargon, and our <strong>no-fix-no-fee</strong> promise &mdash; if we cannot get you back in, you do not pay. We are Windows specialists and we look after the IT around payroll; we do not give tax or payroll advice, so for the figures themselves you will still talk to your accountant or HMRC.</p><p><strong>Call 01202 775566</strong>, text <strong>07520 615332</strong>, or <a href="/small-business-it-support/">see our small-business IT support</a>. Office hours are Monday to Friday, 9 to 5, usually with same-day remote help.</p>
       </div>
@@ -968,7 +968,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/quickbooks-sage-running-slow/">QuickBooks &amp; Sage running slow</a><a href="/it-support-for-accountants-dorset/">IT support for accountants</a><a href="/data-recovery/">data recovery</a><a href="/backup-support/">backup support</a><a href="/remote-support/">remote IT support</a></div>
         </div>
       </div>
@@ -976,7 +976,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1029,7 +1029,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

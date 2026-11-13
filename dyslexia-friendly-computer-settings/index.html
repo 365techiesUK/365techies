@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -681,7 +681,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -872,7 +872,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Dyslexia-Friendly Settings</span></nav>
-        <p class="eyebrow mono">// DYSLEXIA-FRIENDLY COMPUTER SETTINGS</p>
+        <p class="eyebrow mono">DYSLEXIA-FRIENDLY COMPUTER SETTINGS</p>
         <h1>Dyslexia-friendly <em class="grad grad--cyan">fonts and settings</em></h1>
         <p class="lede">Try fonts, sizes, spacing and background colours in the reading box until text feels easier, then set the same things on your Windows PC, along with read aloud, Immersive Reader and voice typing. Everything here is free and already on your computer. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -886,7 +886,7 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; TRY IT</a><a href="#s2">02 &mdash; WHAT HELPS</a><a href="#s3">03 &mdash; SET IT UP ON WINDOWS</a><a href="#s4">04 &mdash; PHONES AND TABLETS</a><a href="#s5">05 &mdash; WANT A HAND?</a></nav>
     <section id="s1" class="section" aria-label="Find the settings that suit you">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; TRY IT</p>
+        <p class="eyebrow mono">TRY IT</p>
         <h2 class="section-title" data-title>Find the settings that suit you<span class="title-underline"></span></h2>
 <p>Change the font, size, spacing and background below until the paragraph is comfortable to read. Paste in your own text if you like. When it feels right, note down what you chose, shown under the box.</p><div class="dys" id="dys"><div class="dys__ctl"><label>Font <select id="dys-font"><option value="Arial,Helvetica,sans-serif">Arial</option><option value="Verdana,Geneva,sans-serif">Verdana</option><option value="'Comic Sans MS','Comic Sans',cursive">Comic Sans</option><option value="Tahoma,Geneva,sans-serif">Tahoma</option><option value="'Century Gothic','Apple Gothic',sans-serif">Century Gothic</option><option value="'Trebuchet MS',sans-serif">Trebuchet</option><option value="Calibri,Carlito,sans-serif">Calibri</option><option value="Georgia,'Times New Roman',serif">Georgia (a serif font, to compare)</option></select></label><label>Size <input type="range" id="dys-size" min="14" max="32" step="1" value="19"><output id="dys-size-o">19 px</output></label><label>Line spacing <input type="range" id="dys-lh" min="1.2" max="2.4" step="0.1" value="1.6"><output id="dys-lh-o">1.6</output></label><label>Letter spacing <input type="range" id="dys-ls" min="0" max="0.2" step="0.01" value="0.03"><output id="dys-ls-o">a little</output></label><label>Word spacing <input type="range" id="dys-ws" min="0" max="0.5" step="0.05" value="0.1"><output id="dys-ws-o">a little</output></label></div><fieldset class="dys__bg"><legend>Background</legend><label><input type="radio" name="dys-bg" value="#fbf5e6" checked><i style="background:#fbf5e6"></i>Cream</label><label><input type="radio" name="dys-bg" value="#fffbd1"><i style="background:#fffbd1"></i>Pale yellow</label><label><input type="radio" name="dys-bg" value="#e3f0fb"><i style="background:#e3f0fb"></i>Pale blue</label><label><input type="radio" name="dys-bg" value="#e6f5e3"><i style="background:#e6f5e3"></i>Pale green</label><label><input type="radio" name="dys-bg" value="#fde9dd"><i style="background:#fde9dd"></i>Peach</label><label><input type="radio" name="dys-bg" value="#ffffff"><i style="background:#fff"></i>White</label><label><input type="radio" name="dys-bg" value="#1e1e1e"><i style="background:#1e1e1e"></i>Dark</label></fieldset><textarea id="dys-text" class="dys__text" spellcheck="false" aria-label="Text to read: type or paste your own">Reading should feel comfortable. Try a few fonts, then make the text bigger, add a little space between the lines, and pick a background colour. When this paragraph is easy to read, write down what you chose, and set the same things on your computer using the steps below. You can paste your own text in here too: a letter, an email or a page from a website.</textarea><p class="dys__sum" id="dys-sum" aria-live="polite"></p><p class="dys__note">A font that isn&rsquo;t on your device shows in a similar one. Nothing you type is sent anywhere; your choices are remembered on this device only.</p></div><style>.dys{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}/*LT*/:where(html[data-theme="light"]) .dys{border:1px solid rgba(23,124,187,.42);background:linear-gradient(135deg,rgba(23,124,187,.10),rgba(10,16,31,.02))}/*TL*/.dys__ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:.8rem 1rem}.dys__ctl label{display:flex;flex-direction:column;gap:.35rem;font-size:.86rem;color:var(--muted)}.dys__ctl select{min-height:46px;padding:.5rem .6rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.3);color:var(--ink,#eaf4ff);font:inherit;font-size:1rem}/*LT*/:where(html[data-theme="light"]) .dys__ctl select{border:1px solid rgba(35,80,130,.35);background:rgba(0,0,0,0.09);color:var(--ink,#0e1d2f)}/*TL*/.dys__ctl input[type=range]{accent-color:#4fd8c4;width:100%}/*LT*/:where(html[data-theme="light"]) .dys__ctl input[type=range]{accent-color:#1b796b}/*TL*/.dys__ctl output{color:var(--ink,#eaf4ff);font-size:.9rem}/*LT*/:where(html[data-theme="light"]) .dys__ctl output{color:var(--ink,#0e1d2f)}/*TL*/.dys__bg{margin:1rem 0 0;padding:0;border:0;min-width:0;display:flex;flex-wrap:wrap;gap:.45rem}.dys__bg legend{float:left;width:100%;margin:0 0 .45rem;padding:0;font-size:.86rem;color:var(--muted)}.dys__bg label{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:.4rem .8rem;border-radius:999px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.25);font-size:.92rem;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .dys__bg label{border:1px solid rgba(35,80,130,.35);background:rgba(0,0,0,0.075)}/*TL*/.dys__bg input{position:absolute;opacity:0;width:1px;height:1px}.dys__bg i{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.35)}/*LT*/:where(html[data-theme="light"]) .dys__bg i{border:1px solid rgba(0,0,0,0.105)}/*TL*/.dys__bg label:has(input:checked){border-color:#4fd8c4;background:rgba(79,216,196,.18)}/*LT*/:where(html[data-theme="light"]) .dys__bg label:has(input:checked){border-color:#1b796b;background:rgba(27,121,107,.18)}/*TL*/.dys__bg label:has(input:focus-visible){outline:2px solid #4fd8c4}/*LT*/:where(html[data-theme="light"]) .dys__bg label:has(input:focus-visible){outline:2px solid #1b796b}/*TL*/.dys__text{display:block;width:100%;box-sizing:border-box;margin:1rem 0 0;min-height:16rem;padding:1.1rem 1.2rem;border-radius:14px;border:1px solid rgba(125,170,220,.35);background:#fbf5e6;color:#1f1f1f;font-family:Arial,Helvetica,sans-serif;font-size:19px;line-height:1.6;text-align:left;resize:vertical}/*LT*/:where(html[data-theme="light"]) .dys__text{border:1px solid rgba(35,80,130,.35);background:#342a0f;color:#e2e2e2}/*TL*/.dys__sum{margin:.8rem 0 0;font-size:.92rem}.dys__note{margin:.5rem 0 0;font-size:.8rem;color:var(--muted)}@media (max-width:520px){.dys{padding:1rem .8rem}}</style><script>(function(){var T=document.getElementById("dys-text");if(!T)return;function $(i){return document.getElementById(i);}var o={font:"Verdana,Geneva,sans-serif",size:19,lh:1.6,ls:.03,ws:.1,bg:"#fbf5e6"};try{var s=JSON.parse(localStorage.getItem("dys1")||"null");if(s)for(var k in o)if(s.hasOwnProperty(k))o[k]=s[k];}catch(e){}function amt(v,a,b){return v<=0?"none":v<a?"a little":v<b?"more":"a lot";}function apply(){T.style.fontFamily=o.font;T.style.fontSize=o.size+"px";T.style.lineHeight=o.lh;T.style.letterSpacing=o.ls+"em";T.style.wordSpacing=o.ws+"em";T.style.background=o.bg;T.style.color=o.bg==="#1e1e1e"?"#f2f2f2":"#1f1f1f";$("dys-size-o").textContent=o.size+" px";$("dys-lh-o").textContent=(+o.lh).toFixed(1);$("dys-ls-o").textContent=amt(o.ls,.05,.12);$("dys-ws-o").textContent=amt(o.ws,.15,.3);var f=$("dys-font"),bgn="";for(var i=0;i<f.options.length;i++)if(f.options[i].value===o.font)f.selectedIndex=i;var r=document.getElementsByName("dys-bg");for(var j=0;j<r.length;j++){r[j].checked=r[j].value===o.bg;if(r[j].checked)bgn=r[j].parentNode.textContent;}$("dys-sum").textContent="Your choice: "+f.options[f.selectedIndex].text.replace(/ \(.*\)/,"")+", "+o.size+" px (about "+Math.round(o.size*.75)+" point), line spacing "+(+o.lh).toFixed(1)+", "+bgn.toLowerCase()+" background.";try{localStorage.setItem("dys1",JSON.stringify(o));}catch(e){}}$("dys-font").addEventListener("change",function(){o.font=this.value;apply();});[["dys-size","size"],["dys-lh","lh"],["dys-ls","ls"],["dys-ws","ws"]].forEach(function(p){var el=$(p[0]);el.value=o[p[1]];el.addEventListener("input",function(){o[p[1]]=+el.value;apply();});});var r=document.getElementsByName("dys-bg");for(var i=0;i<r.length;i++)r[i].addEventListener("change",function(){if(this.checked){o.bg=this.value;apply();}});apply();})();</script>
       </div>
@@ -906,28 +906,28 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="What the British Dyslexia Association recommends">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHAT HELPS</p>
+        <p class="eyebrow mono">WHAT HELPS</p>
         <h2 class="section-title" data-title>What the British Dyslexia Association recommends<span class="title-underline"></span></h2>
 <p>The <a href="https://cdn.bdadyslexia.org.uk/uploads/documents/Advice/style-guide/BDA-Style-Guide-2023.pdf" rel="noopener" target="_blank">British Dyslexia Association&rsquo;s style guide</a> suggests:</p><ul><li><strong>Sans serif fonts,</strong> such as Arial and Comic Sans, or Verdana, Tahoma, Century Gothic, Trebuchet, Calibri and Open Sans: the letters look less crowded.</li><li><strong>12 to 14 point</strong> (16 to 19 pixels on screen), or bigger if you prefer.</li><li><strong>Bold for emphasis,</strong> not underlining or italics, which can make words run together.</li><li><strong>Cream or a soft pastel background</strong> rather than white, which can look too dazzling, with dark text.</li><li><strong>Text lined up on the left,</strong> not spread out to both edges.</li></ul><p>Everyone is different, which is why the box above lets you try. Special dyslexia fonts such as OpenDyslexic are free to download, and some people like them; the style guide recommends ordinary sans serif fonts, so try both and keep what works.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Set it up on your Windows PC">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; SET IT UP ON WINDOWS</p>
+        <p class="eyebrow mono">SET IT UP ON WINDOWS</p>
         <h2 class="section-title" data-title>Set it up on your Windows PC<span class="title-underline"></span></h2>
 <ul><li><strong>Bigger text everywhere:</strong> Settings, Accessibility, Text size. Drag the slider and press Apply.</li><li><strong>Web pages your way, in Microsoft Edge:</strong> press <em>F9</em> (or the book icon in the address bar) for Immersive Reader. Its <strong>Text preferences</strong> change the text size, spacing and page colour, <strong>Line focus</strong> shows one, three or five lines at a time, and <strong>Picture dictionary</strong> shows a picture of a word.</li><li><strong>Have it read to you:</strong> in Edge, press <em>Ctrl</em> + <em>Shift</em> + <em>U</em> to read the page aloud. In Word, use <strong>Read Aloud</strong> on the Review tab.</li><li><strong>Word documents your way:</strong> on the <strong>View</strong> tab, <strong>Immersive Reader</strong> changes the column width, page colour, line focus and text spacing, and can split words into syllables.</li><li><strong>Your favourite font in every new Word document:</strong> on the Home tab, click the small arrow in the Font group, choose the font and size, then <strong>Set As Default</strong> and <strong>All documents</strong>.</li><li><strong>Write by speaking:</strong> press <em>Windows</em> + <em>H</em> and talk; your words appear as text.</li><li><strong>Spelling help:</strong> Settings, Time &amp; language, Typing: switch on <strong>Autocorrect misspelled words</strong> and <strong>Highlight misspelled words</strong>.</li><li><strong>Find where you&rsquo;re typing:</strong> Settings, Accessibility, Text cursor makes the cursor thicker and easier to see.</li></ul><p>More built-in help is in our <a href="/windows-accessibility-features-guide/">Windows accessibility guide</a>.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="On an Android phone or tablet">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; PHONES AND TABLETS</p>
+        <p class="eyebrow mono">PHONES AND TABLETS</p>
         <h2 class="section-title" data-title>On an Android phone or tablet<span class="title-underline"></span></h2>
 <p>Settings, Accessibility has <strong>Font size</strong> and <strong>Display size</strong>, and <strong>Select to Speak</strong>, which reads out whatever you tap. Google&rsquo;s free <strong>Reading mode</strong> app shows articles in your choice of font, size and colour, and can read them aloud. Menus vary a little between makes of phone.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="We can set it up for you">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WANT A HAND?</p>
+        <p class="eyebrow mono">WANT A HAND?</p>
         <h2 class="section-title" data-title>We can set it up for you<span class="title-underline"></span></h2>
 <p>We can set all of this up on a Windows PC, remotely while you watch, and show you how to use it. Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. See also our <a href="/it-support-for-disabled-people/">accessible IT support</a>.</p>
       </div>
@@ -935,7 +935,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/windows-accessibility-features-guide/">Windows accessibility features</a><a href="/assistive-technology-at-home/">assistive technology at home</a><a href="/visual-timer/">visual timer</a><a href="/it-support-for-disabled-people/">accessible IT support</a></div>
         </div>
       </div>
@@ -943,7 +943,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -988,7 +988,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

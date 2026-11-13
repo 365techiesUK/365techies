@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Wipe a Late Relative's Laptop</span></nav>
-          <p class="eyebrow mono">// BEREAVEMENT SUPPORT</p>
+          <p class="eyebrow mono">BEREAVEMENT SUPPORT</p>
           <h1>Wiping a laptop that belonged to someone who has died</h1>
           <p class="lede">If you are clearing a laptop that belonged to someone who has died, there is one thing to do before the wipe: get the contents off it. Wiping cannot be undone, and photographs and documents nobody knew were there go with it. This page covers that first, then what a proper wipe actually involves, and how to hand the machine on to someone who will use it.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Before you wipe it, get the contents off">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; BEFORE ANYTHING ELSE</p>
+        <p class="eyebrow mono">BEFORE ANYTHING ELSE</p>
         <h2 class="section-title" data-title>Before you wipe it, get the contents off<span class="title-underline"></span></h2>
 <p>We would ask you to read this part before you do anything else, because it is the one step that cannot be taken back.</p><p>Wiping a laptop is permanent. The moment it is done, everything on it is gone &mdash; photographs, letters, scanned paperwork, videos, saved messages, address books, and all the small ordinary files nobody thinks about until they are missing. Families very often wipe a machine quickly, in the middle of clearing a house, and only realise months later that the only copies of certain photographs were on it. That loss is not recoverable, and it is a hard one to sit with.</p><p>So before the wipe, take the contents off. In practice that means copying everything of value onto an external drive, a memory stick or a cloud account of your own, and then checking that you can actually open what you have copied. If the laptop is locked, if you are not sure what is on it, or if you would simply rather someone else did the looking, that is a normal and reasonable thing to ask for help with.</p><p>We have a separate page about recovering the contents of a late relative&rsquo;s laptop, and we would suggest starting there. Nothing here is urgent. The laptop can sit in a cupboard for as long as you need it to.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The password is usually not the obstacle you fear">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE PASSWORD</p>
+        <p class="eyebrow mono">THE PASSWORD</p>
         <h2 class="section-title" data-title>The password is usually not the obstacle you fear<span class="title-underline"></span></h2>
 <p>A great many people put this job off because they do not know the password, and assume that makes the laptop impossible to clear. For wiping, that is often not the barrier people fear &mdash; though not always.</p><p>Modern laptops have a built-in way of resetting themselves that sits underneath the normal sign-in screen. It does not need the account password, because it is not trying to get into the account &mdash; it is throwing the account away along with everything else. Which means wiping is often the easy part and reading the contents is the hard part: the opposite of what most people expect.</p><p><strong>The consequence matters.</strong> Not knowing the password is not a reason to rush into a wipe, and it is not a reason to assume the photographs are already lost. Getting into a machine to read what is on it is a different job with a different set of answers. On many newer laptops the drive is also encrypted, which makes that job one worth handing to someone who does it regularly rather than experimenting with on a machine you cannot replace. That encryption matters for the wipe too. If the laptop asks for a recovery key before it will reset, or a Mac asks for the original owner&rsquo;s account details, stop there rather than guessing &mdash; that is a different job, and a machine can end up locked in a way that leaves it no use to anyone.</p><p>If you do happen to have the password, or you find it written down somewhere, keep a note of it until the laptop has been dealt with. It makes everything that follows simpler.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="What &ldquo;properly wiped&rdquo; actually means">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT WIPING MEANS</p>
+        <p class="eyebrow mono">WHAT WIPING MEANS</p>
         <h2 class="section-title" data-title>What &ldquo;properly wiped&rdquo; actually means<span class="title-underline"></span></h2>
 <p>Dragging files to the bin and emptying it is not a wipe. It removes the signposts to the data rather than the data itself, and on an older machine ordinary recovery software can bring a great deal of it back. The same is true of deleting the old user account, or simply setting up a fresh account for whoever is taking the laptop on &mdash; the previous files are still sitting there underneath.</p><p>A proper wipe means the whole drive is cleared and the operating system put back to the state it was in when the laptop was new. Windows laptops and recent Macs both have something like this built in: a reset that offers to remove everything rather than keep the files. Some versions offer a further option to clean the drive more thoroughly as well, which takes considerably longer but is the sensible choice when the machine is leaving the family.</p><p>For a laptop going to a relative, a friend or a charity, that built-in reset with everything removed is generally enough. Where a machine held business records, client information or anything you would be uneasy about, the safer route is to have the drive erased to a recognised standard, or removed and replaced altogether.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Accounts signed in on the laptop are a separate matter">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; ACCOUNTS</p>
+        <p class="eyebrow mono">ACCOUNTS</p>
         <h2 class="section-title" data-title>Accounts signed in on the laptop are a separate matter<span class="title-underline"></span></h2>
 <p>Clearing the drive deals with the laptop itself. It does not deal with the accounts that were signed in on it. Email, cloud storage, photo libraries, subscriptions, online shopping and password managers all live on someone else&rsquo;s servers, and they carry on existing after the machine has been reset.</p><p>That cuts two ways. First, anything kept only in the cloud &mdash; photographs that were syncing automatically, documents saved online rather than on the drive &mdash; will not be preserved by copying files off the laptop, so it deserves its own look before anything is closed down. Second, where accounts were left signed in, it is worth signing out of them or removing them, from another device if need be, rather than leaving it to the wipe alone. Some machines, Apple ones in particular, can stay tied to the original owner&rsquo;s account even after being erased, and that is far easier to sort out before the laptop leaves your hands than afterwards.</p><p>Most large providers do have a process for the account of someone who has died. They differ from one company to the next and they change over time, so check that provider&rsquo;s own bereavement or help pages rather than anything read second hand.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Passing it on, donating or recycling">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; PASSING IT ON</p>
+        <p class="eyebrow mono">PASSING IT ON</p>
         <h2 class="section-title" data-title>Passing it on, donating or recycling<span class="title-underline"></span></h2>
 <p>A working laptop that has been properly cleared is a genuinely useful thing to give away. A grandchild starting a course, a neighbour without a computer, a local charity, a community reuse or repair scheme, a school &mdash; there are more places that will welcome a tidy, working machine than most people imagine. It is a kinder ending than a drawer.</p><p>A few practical points when you hand it over:</p><ul><li>Say plainly what it is &mdash; roughly how old, whether the battery still holds a charge, and whether the operating system is still supported.</li><li>After the reset, charge it and check it starts up to the fresh setup screen, so the next person is not handed a puzzle.</li><li>Include the power lead. It is the thing most often left behind.</li><li>If the machine is genuinely past use, electrical items belong at a household waste recycling point rather than in the bin, and some charities will take a non-working laptop for parts.</li></ul><p>One last thing, said kindly: whose laptop it is, and who is entitled to what was on it, is a question for whoever is handling the estate rather than for us. Our part is the technical side &mdash; getting the contents off safely, and clearing the machine properly once you are ready.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/recover-photos-deceased-relatives-laptop/">Read first: recovering photos and files</a><a href="/data-recovery/">Data recovery</a><a href="/how-to-wipe-and-recycle-old-computer/">Wiping and recycling an old computer</a><a href="/secure-it-disposal/">Secure IT disposal</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

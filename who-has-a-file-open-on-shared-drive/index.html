@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -703,7 +703,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -895,7 +895,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Who has a file open?</span></nav>
-          <p class="eyebrow mono">// SHARED DRIVE FILE LOCKS</p>
+          <p class="eyebrow mono">SHARED DRIVE FILE LOCKS</p>
           <h1>How to see <em class="grad grad--cyan">who has it open</em> on a shared network drive</h1>
           <p class="lede">&lsquo;The file is in use by another user&rsquo; and nobody will admit it&rsquo;s them? Here&rsquo;s how to see exactly who has a file open on a shared network drive, clear a stale lock safely, and stop it happening again.</p>
           <div class="page-hero__cta">
@@ -919,42 +919,42 @@
 
     <section id="s1" class="section" aria-label="See who has the file open in about 30 seconds">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; QUICK ANSWER</p>
+        <p class="eyebrow mono">QUICK ANSWER</p>
         <h2 class="section-title" data-title>See who has the file open in about 30 seconds<span class="title-underline"></span></h2>
 <p>To see who has a file open on a shared network drive, sit at the computer that actually shares the folder and open <strong>Computer Management</strong>. Under <strong>System Tools</strong>, expand <strong>Shared Folders</strong> and click <strong>Open Files</strong> &mdash; the list shows every file currently open across your network and the Windows username holding each one, so whoever triggered &lsquo;file in use by another user&rsquo; is right there in the <strong>Accessed By</strong> column.</p><p>The catch most guides skip: this only works from the <strong>host</strong> &mdash; the PC or server that shares the folder out. You can&rsquo;t see the list from your own machine mapped to the drive, and you&rsquo;ll need administrator rights on the host to read it. If your &lsquo;server&rsquo; is really just an ordinary desktop under someone&rsquo;s desk, that&rsquo;s where you go (or where you remote in). We cover that setup, and its wobbles, in our guide to a <a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a>. The full click-by-click steps are below.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Using Computer Management &rsaquo; Open Files">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; OPEN FILES, STEP BY STEP</p>
+        <p class="eyebrow mono">OPEN FILES, STEP BY STEP</p>
         <h2 class="section-title" data-title>Using Computer Management &rsaquo; Open Files<span class="title-underline"></span></h2>
 <p>Here&rsquo;s the reliable way to check, on the host PC that shares the folder:</p><ul><li>Right-click the <strong>Start</strong> button and choose <strong>Computer Management</strong> (or press <strong>Windows + R</strong>, type <strong>compmgmt.msc</strong> and press Enter).</li><li>In the left pane, expand <strong>System Tools</strong>, then <strong>Shared Folders</strong>, then click <strong>Open Files</strong>.</li><li>Read across the columns: <strong>Open File</strong> is the path, <strong>Accessed By</strong> is the Windows account that has it open, <strong>#Locks</strong> shows how many locks are held, and <strong>Open Mode</strong> tells you whether it&rsquo;s open Read or Write+Read.</li><li>Click <strong>Sessions</strong> (just above Open Files) to see which users, and which computers, are connected to the share right now.</li></ul><p>If you genuinely need to free the file and the person is unreachable, right-click the entry and choose <strong>Close Open File</strong>. Treat this as a last resort: any unsaved changes that person made are lost the moment you do it, and force-closing a live database file (Sage or QuickBooks, say) can corrupt it. You&rsquo;ll need administrator rights on the host both to see the list and to close anything on it.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Why Excel just says &lsquo;another user&rsquo;">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT THE MESSAGE MEANS</p>
+        <p class="eyebrow mono">WHAT THE MESSAGE MEANS</p>
         <h2 class="section-title" data-title>Why Excel just says &lsquo;another user&rsquo;<span class="title-underline"></span></h2>
 <p>When Excel or Word says a file is &lsquo;locked for editing&rsquo;, it sometimes names the culprit &mdash; &lsquo;locked for editing by John Smith&rsquo; &mdash; and sometimes just shrugs with &lsquo;another user&rsquo;. That isn&rsquo;t Windows being coy. Office only shows a name if that person once typed one into <strong>File, Options, General, User name</strong>. On many small-office PCs that box was never filled in, or everyone signs in as the same generic account, so you get the unhelpful &lsquo;another user&rsquo; every time.</p><p>That&rsquo;s exactly why the <strong>Open Files</strong> list on the host beats the pop-up: it shows the real <strong>Windows account</strong> holding the file, not whatever name Office happens to have on record. If two people swear blind they don&rsquo;t have it open and the message still nags, don&rsquo;t trust the message &mdash; go to the host and read the truth from Open Files. More often than not, the &lsquo;phantom&rsquo; user is a session someone left open on a machine they walked away from, or a laptop that dropped off the wifi mid-save.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Phantom locks and the hidden ~$ file">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE HIDDEN ~$ LOCK FILE</p>
+        <p class="eyebrow mono">THE HIDDEN ~$ LOCK FILE</p>
         <h2 class="section-title" data-title>Phantom locks and the hidden ~$ file<span class="title-underline"></span></h2>
 <p>Alongside every open Office document sits a tiny hidden companion &mdash; the <strong>owner file</strong>. Open <strong>Budget.xlsx</strong> and Excel quietly creates <strong>~$Budget.xlsx</strong> in the same folder; it&rsquo;s the flag that tells everyone else &lsquo;someone has this&rsquo;. Word does the same, though its owner file drops the first couple of letters of the name. Close the document properly and Office deletes the owner file automatically.</p><p>The trouble starts when Office <em>doesn&rsquo;t</em> close properly &mdash; a crash, a frozen laptop, or a network drop mid-save. The ~$ file is orphaned, and the document stays &lsquo;locked&rsquo; even though nobody is actually in it. That&rsquo;s a <strong>phantom lock</strong>.</p><p>To find it, open the folder on the drive, click <strong>View</strong>, then <strong>Show</strong>, then tick <strong>Hidden items</strong>. You&rsquo;ll see the ~$ file sitting next to your document. Once you&rsquo;ve <em>confirmed on the host that nobody genuinely has the file open</em> (check Open Files first), it&rsquo;s safe to delete the stale ~$ file &mdash; it holds no data of its own, so you lose nothing. Deleting it frees the lock; it won&rsquo;t, however, recover any work that was lost in the crash.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Closing a stuck session without breaking anything">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; CLEAR A STUCK LOCK SAFELY</p>
+        <p class="eyebrow mono">CLEAR A STUCK LOCK SAFELY</p>
         <h2 class="section-title" data-title>Closing a stuck session without breaking anything<span class="title-underline"></span></h2>
 <p>Prefer the keyboard? From the host PC you can list and clear locks without opening Computer Management. Open <strong>Command Prompt as administrator</strong> and type <strong>net file</strong> &mdash; you&rsquo;ll get a numbered list of every open file with the user holding it. Note the ID, then run <strong>net file [id] /close</strong> to release that one lock.</p><p>PowerShell gives you more detail. <strong>Get-SmbOpenFile | Select ClientUserName, ClientComputerName, Path</strong> lists open files with the exact account <em>and</em> the computer they&rsquo;re on &mdash; handy for pinning down which machine stranded the lock. <strong>Close-SmbOpenFile</strong> then closes it. Both need an elevated window, and both must be run on the machine that shares the folder.</p><p>Whichever route you take, the same caution applies: closing a lock from underneath a live document throws away that person&rsquo;s unsaved changes, and force-closing an open accounts or database file risks corrupting it. If the &lsquo;stuck&rsquo; file is a shared Sage company or another multi-user database, stop and read our note on <a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user connection problems</a> before you pull the plug &mdash; the right fix is usually to get everyone out cleanly, not to sever the lock.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Why this keeps happening &mdash; and when to call us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHY IT KEEPS HAPPENING</p>
+        <p class="eyebrow mono">WHY IT KEEPS HAPPENING</p>
         <h2 class="section-title" data-title>Why this keeps happening &mdash; and when to call us<span class="title-underline"></span></h2>
 <p>If you&rsquo;re hunting down locked files every few days, the deeper problem usually isn&rsquo;t the file &mdash; it&rsquo;s the setup. Many small offices share their folders from one ordinary desktop that everyone maps a drive to. The moment that machine sleeps, reboots for an update, drops off the wifi, or simply gets switched off at the wall on a Friday, every open lock is stranded and Monday starts with &lsquo;file in use&rsquo; errors. It&rsquo;s the classic sign of a <a href="/desktop-pc-used-as-office-server/">desktop PC being used as an office server</a> that has quietly outgrown the job.</p><p>Windows updates can make it worse: the Windows 11 24H2 update broke shared-folder access for a lot of small networks, which we walk through in our guide to <a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after 24H2</a>. If drives also keep vanishing, our note on a <a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive that keeps disconnecting</a> is worth a read.</p><p><strong>When to call us:</strong> if this is eating your team&rsquo;s time, we&rsquo;ll log in remotely &mdash; usually the same day &mdash; find who&rsquo;s really holding the file, clear stranded locks safely, and tell you honestly whether your sharing setup just needs tidying or a proper move to a server or cloud. We&rsquo;re a family-run Bournemouth firm offering <a href="/small-business-it-support/">small-business IT support</a> with no-fix-no-fee. Call <strong>01202 775566</strong> and we&rsquo;ll take a look.</p>
       </div>
@@ -962,7 +962,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/desktop-pc-used-as-office-server/">desktop PC used as an office server</a><a href="/shared-folders-not-working-after-windows-11-24h2-update/">shared folders not working after Windows 11 24H2</a><a href="/mapped-network-drive-keeps-disconnecting/">mapped network drive keeps disconnecting</a><a href="/restrict-staff-access-to-shared-folders-windows-11/">restrict staff access to shared folders</a><a href="/sage-50-multi-user-cannot-connect/">Sage 50 multi-user cannot connect</a><a href="/small-business-it-support/">small-business IT support</a><a href="/onedrive-file-locked-by-another-user/">OneDrive file locked by another user</a></div>
         </div>
       </div>
@@ -970,7 +970,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1023,7 +1023,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

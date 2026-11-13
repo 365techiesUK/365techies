@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Office File Sharing</span></nav>
-          <p class="eyebrow mono">// OFFICE FILE SHARING</p>
+          <p class="eyebrow mono">OFFICE FILE SHARING</p>
           <h1>How to share files between computers in a small office without a server</h1>
           <p class="lede">You do not need a server to share files properly. What you do need is a decision, made on purpose, about where your files are going to live. There are three honest options for an office with no server, and each of them is right for somebody. This page sets out what each one really costs you in money, in reliability and in hassle, so you can choose before the choice gets made for you by accident.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="What almost every small office does first">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE DEFAULT DRIFT</p>
+        <p class="eyebrow mono">THE DEFAULT DRIFT</p>
         <h2 class="section-title" data-title>What almost every small office does first<span class="title-underline"></span></h2>
 <p>Very few small businesses sit down and choose a file sharing system. What normally happens is this: someone needs a document that lives on the accounts PC, so a folder gets shared. Then a second folder. Then that one machine quietly becomes where everything important lives &mdash; quotes, invoices, job photos, the customer list &mdash; and nobody ever actually decided that.</p><p>It works, right up until it doesn&rsquo;t. The person whose PC it is goes on holiday and shuts it down. It drops off to sleep at half five and nobody can reach it. Somebody new joins and can see everything, including the payroll folder, because there was never a sensible way to give them only part of it. Eventually the machine is replaced and the whole office filing cabinet has to move with it, in a hurry, with a folder or two missed.</p><p>There is a security tail to this as well. When a home-grown share starts misbehaving, a lot of the advice you will find online tells you to switch old, insecure options back on to make the computers talk to each other again. That advice often works, and it quietly leaves your office easier to attack. If you are choosing now, you can avoid ever being in that position.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Sharing a folder from one of your PCs">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; OPTION A</p>
+        <p class="eyebrow mono">OPTION A</p>
         <h2 class="section-title" data-title>Sharing a folder from one of your PCs<span class="title-underline"></span></h2>
 <p>This is the cheapest option, because you already own everything. One computer holds the files and the others reach it across the office network. For two or three people sitting in the same room, working on ordinary documents, it can be a perfectly reasonable answer &mdash; as long as you go in with your eyes open about what you are agreeing to.</p><ul><li><strong>Cost shape:</strong> nothing up front. The cost turns up later, as somebody&rsquo;s time, when it breaks or has to move.</li><li><strong>Availability:</strong> that PC has to be powered on and awake. Nobody needs to be signed in to it, but sleep settings, someone shutting it down on their way out, and a machine left switched off after a restart all take the files away from everyone else.</li><li><strong>Who sees what:</strong> possible, but fiddly. In practice most offices end up with one big share that everybody can open, which is fine until it is not.</li><li><strong>Backup:</strong> none by default. Every file the business owns is sitting on one drive, in one box, under one desk.</li><li><strong>Working from home:</strong> effectively no, not in any way we would be happy to set up.</li><li><strong>Growth:</strong> Windows Home and Pro allow 20 file-sharing connections at once, and it is a licensing ceiling rather than a performance one, so it arrives as a wall rather than a slowdown. The nearer limit in practice is that the machine is somebody&rsquo;s workstation first, so their work and everyone else&rsquo;s file access compete for the same computer.</li></ul><p>The one that catches people out is replacement. The day that PC is retired, everything the business has ever produced has to be moved across, usually on a busy morning, with everyone waiting on you.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="A NAS box on the office network">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; OPTION B</p>
+        <p class="eyebrow mono">OPTION B</p>
         <h2 class="section-title" data-title>A NAS box on the office network<span class="title-underline"></span></h2>
 <p>A NAS is a small, always-on box with hard drives in it that plugs into your router or switch and does exactly one job: hold files for everybody. Nobody logs into it to check their email, and nobody switches it off at half five on their way out. The boxes sold for this are built for your situation &mdash; a few members of staff, one office, no IT department in the building.</p><ul><li><strong>Cost shape:</strong> a one-off purchase for the box and its drives, then very little until it is due for replacement several years later. It does not get more expensive when you hire.</li><li><strong>Availability:</strong> on all the time, using very little electricity, completely independent of anybody&rsquo;s desktop.</li><li><strong>Who sees what:</strong> proper accounts and groups. Accounts folder for the directors, jobs folder for everyone, and it stays that way when someone new starts.</li><li><strong>Speed:</strong> as fast as your office network, which for very large files is a different world from broadband. This is where a NAS beats cloud &mdash; a shared PC is on the same network and is no slower.</li><li><strong>Growth:</strong> comfortable well past the point where a shared PC gives up.</li></ul><p>Two honest warnings. A NAS with two drives set up as a mirror protects you from one drive failing &mdash; check it is a mirror, because the same box can be set up to combine the two drives for capacity instead, which leaves you worse off than one drive. Either way it does nothing about fire, theft, ransomware or somebody deleting the wrong folder, so it still needs a backup that leaves the building. And reaching it from home means opening a door into your office network, which is worth doing carefully rather than by following the first guide that comes up.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Cloud storage: OneDrive, SharePoint or Google Drive">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; OPTION C</p>
+        <p class="eyebrow mono">OPTION C</p>
         <h2 class="section-title" data-title>Cloud storage: OneDrive, SharePoint or Google Drive<span class="title-underline"></span></h2>
 <p>Here the files live in a data centre and each PC keeps itself in step with them. The desktop apps make it look like an ordinary folder or drive in File Explorer, so staff carry on working the way they already do. If you are paying for Microsoft 365 or Google Workspace, you are very probably paying for this already and not using it.</p><ul><li><strong>Cost shape:</strong> a monthly amount per person that goes up every time you hire and never stops. Nothing to buy, nothing to replace, nothing to insure.</li><li><strong>Availability:</strong> not tied to any machine in your building. If the office is shut, or the power is off, or someone is sitting in a customer&rsquo;s car park, the files are still there.</li><li><strong>Who sees what:</strong> good control per folder, plus version history, so a document somebody has overwritten can usually be rolled back.</li><li><strong>Working from home:</strong> this is the option that was designed for it. The others are being talked into it.</li><li><strong>Growth:</strong> adding a person is an admin job that takes minutes, not a hardware job.</li></ul><p>The trap worth knowing about is that personal storage and company storage are not the same thing. Files in a member of staff&rsquo;s own personal Microsoft or Google account belong to them, and you have no route to them at all once they leave. Files in their work account&rsquo;s OneDrive or Drive do belong to the business, but only an administrator can get at them, and only for a limited window before they are cleared. Files in a shared team library are simply still there for whoever is left. Getting that right at the start saves a genuinely awkward conversation later. Cloud also leans on your broadband, so if you move very large files all day it is worth checking what your line can really do.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Which one is right for your office">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; CHOOSING</p>
+        <p class="eyebrow mono">CHOOSING</p>
         <h2 class="section-title" data-title>Which one is right for your office<span class="title-underline"></span></h2>
 <p>There is no universal answer, but there are patterns we see over and over in Dorset offices.</p><ul><li><strong>Two or three of you, one room, ordinary documents, nobody works from home:</strong> a shared folder is defensible &mdash; provided you add a real backup and everybody knows which machine it depends on.</li><li><strong>Anybody works from home, from a van, or from a customer&rsquo;s site:</strong> start with cloud. Every other option spends its life fighting you.</li><li><strong>Large files &mdash; video, CAD, surveys, scanned archives &mdash; or broadband you would not describe as good:</strong> a NAS for the heavy work, with cloud for the everyday documents.</li><li><strong>Growing, hiring, or being asked about data protection by your own customers:</strong> cloud for documents, with a NAS or a separate cloud backup sitting behind it.</li></ul><p>Whichever way you lean, ask four questions before anybody buys anything. Where does the second copy live, and has anyone ever tested getting a file back from it? What happens the day the person who set it all up is not available? What happens when a member of staff leaves? And could you carry on working if the office was shut for a week? A setup that answers all four is a good setup, whichever of the three it is built on.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/windows-11-network-credentials-shared-folder/">Windows 11 asking for network credentials</a><a href="/shared-folder-read-only-cant-save-windows-11/">Shared folder is read-only</a><a href="/windows-11-cant-access-windows-10-shared-folder/">Windows 11 cannot open a Windows 10 share</a><a href="/fix-shared-folder-error-0x80004005/">Error 0x80004005 explained</a><a href="/server-network-support/">Server and network support</a><a href="/cloud-backup/">Cloud backup</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -797,7 +797,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -989,7 +989,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/dell-it-support-dorset/">Dell</a> <span>/</span> <span aria-current="page">Refurbished Dell</span></nav>
-          <p class="eyebrow mono">// REFURBISHED &middot; BUSINESS-GRADE</p>
+          <p class="eyebrow mono">REFURBISHED &middot; BUSINESS-GRADE</p>
           <h1>Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em></h1>
           <p class="lede">Tested ex-business Dells from &pound;510, each with a new 1TB Samsung 990&nbsp;PRO, set up for you and backed by our 5-year guarantee on a 365 support plan. A real local firm that comes to you.</p>
           <div class="page-hero__cta">
@@ -1024,7 +1024,7 @@
     <section class="section" aria-label="Pick and reserve your Dell" id="pick">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK &middot; ASK &middot; SORTED</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>PICK &middot; ASK &middot; SORTED</p>
           <h2 class="section-title section-title--center" data-title>Pick your machine &mdash; check availability &amp; get your quote<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Every machine comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro professionally set up, and your data moved across, all included. The 12-month guarantee becomes 5 years on a support plan. <strong>All prices are guide prices</strong> and stock moves week to week, so not every model is in at once. Tell us your pick and we&rsquo;ll confirm availability, the exact machine, grade and price (or offer the nearest equivalent), with no obligation.</p>
         </div>
@@ -1185,7 +1185,7 @@
           </div>
           <div class="dpick__formwrap" id="dpick-form" hidden tabindex="-1">
             <div class="dpick__chosen" aria-live="polite">
-              <p class="mono dpick__chosenlabel">// YOUR PICK</p>
+              <p class="mono dpick__chosenlabel">YOUR PICK</p>
               <p class="dpick__chosentext" id="dpick-chosen">&nbsp;</p>
               <p class="dpick__note">Guide price &mdash; stock varies, so we&rsquo;ll confirm availability and the exact machine, grade and price when we&rsquo;re in touch (or suggest the nearest equivalent). No payment now, no obligation. <strong>Want to see it first?</strong> We&rsquo;ll bring it to your home or business in our service area, or meet you at the Kinson Community Centre by appointment. Just say so in the message.</p>
             </div>
@@ -1217,7 +1217,7 @@
               <label class="field"><span>Anything we should know? (optional)</span><textarea name="message" rows="3" placeholder="What you&rsquo;ll use it for, screen-size preference, Windows 11 Home or Pro, your old monitor&rsquo;s connector, part-exchange&hellip;"></textarea></label>
               <button type="submit" class="button primary button--lg" style="width:100%">Check availability &amp; get my quote &#8594;</button>
               <p class="form-status mono" role="status" style="margin-top:.9rem"></p>
-              <p class="mono" style="margin-top:.4rem;color:var(--faint);font-size:.72rem">// NO PAYMENT NOW &middot; NO OBLIGATION &middot; MON&ndash;FRI 9&ndash;5 &middot; OR CALL 01202 775566</p>
+              <p class="mono" style="margin-top:.4rem;color:var(--faint);font-size:.72rem">NO PAYMENT NOW &middot; NO OBLIGATION &middot; MON&ndash;FRI 9&ndash;5 &middot; OR CALL 01202 775566</p>
             </form>
           </div>
         </div>
@@ -1370,7 +1370,7 @@
             +'<div class="dcmp__grid"><div class="dcmp__col"><h4>Your current computer</h4><ul><li>'+mine.join('</li><li>')+'</li></ul></div>'
             +'<div class="dcmp__col"><h4>'+dName+' (as we supply it)</h4><ul><li>'+dells.join('</li><li>')+'</li></ul></div></div>'
             +'<p class="dcmp__advice">'+advice+'</p>'
-            +'<p class="dcmp__hedge">// BROWSERS ONLY REVEAL SO MUCH — WE’LL CONFIRM THE FULL PICTURE WHEN WE’RE IN TOUCH</p>';
+            +'<p class="dcmp__hedge">BROWSERS ONLY REVEAL SO MUCH — WE’LL CONFIRM THE FULL PICTURE WHEN WE’RE IN TOUCH</p>';
           if(cmpField){cmpField.value='Their current computer (browser-detected): '
             +[DET.os||null,DET.threads?DET.threads+' threads':null,DET.mem?(DET.mem>=8?'8GB+':'~'+DET.mem+'GB')+' RAM':null,
               DET.gpu?DET.gpu+(DET.era&&DET.era.era?' (~'+DET.era.era+')':''):null].filter(Boolean).join(' | ')
@@ -1386,7 +1386,7 @@
     <section class="blog-section" aria-label="Choose your Latitude series" id="series">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK YOUR SERIES &middot; LAPTOPS &amp; DESKTOPS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>PICK YOUR SERIES &middot; LAPTOPS &amp; DESKTOPS</p>
           <h2 class="section-title section-title--center" data-title>Which Dell suits you?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Every refurbished Dell we sell comes with a <strong>new 1TB Samsung 990 PRO SSD</strong>, Windows 11 Home or Pro professionally set up, and your data moved across, all included. It carries a 12-month return-to-base guarantee, or <strong>5 years on a 365 support plan</strong>. Honest tiers, honest prices &mdash; typical figures that depend on the exact machine and grade in stock.</p>
         </div>
@@ -1403,7 +1403,7 @@
     <section class="section section--alt" aria-label="Watch: Dell support across Dorset">
       <div class="wrap wrap--narrow">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// WATCH &middot; REFURBISHED DELL IN ACTION</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>WATCH &middot; REFURBISHED DELL IN ACTION</p>
           <h2 class="section-title section-title--center" data-title>See a refurbished Dell at work<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="rvid" data-rvid data-short="b5VNskKmEAM" data-wide="1GQrPS59VCw">
@@ -1451,7 +1451,7 @@
     <section class="section section--alt" id="spin" aria-label="Turn one around">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// SEE ONE PROPERLY</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>SEE ONE PROPERLY</p>
           <h2 class="section-title section-title--center" data-title>Turn one around<span class="title-underline title-underline--center"></span></h2>
         </div>
         <p class="dspin-lede" data-reveal>Drag the laptop to turn it, swipe it on a phone, or use the arrow keys. These are 36 photographs of one real machine, taken right the way round &mdash; the lid, both sides and every port &mdash; so you can look at it the way you would in a shop.</p>
@@ -1567,7 +1567,7 @@
     <section class="section" id="match" aria-label="Find me a refurbished Dell">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIND ME A DELL</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FIND ME A DELL</p>
           <h2 class="section-title section-title--center" data-title>Tell us what you need &mdash; we&rsquo;ll match you a Dell<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Not sure where to start, or worried about the technical bits? Don&rsquo;t be &mdash; that&rsquo;s exactly what we&rsquo;re here for. Stock changes all the time, so rather than a fixed list, tell us a little about what you&rsquo;re after. We&rsquo;ll find the right refurbished Dell, or let you know the moment a match comes in. No obligation.</p>
         </div>
@@ -1603,14 +1603,14 @@
           </label>
           <label class="field"><span>Anything else?</span><textarea name="message" placeholder="The kind of work you do, screen size, must-haves, or an old machine to trade in&hellip;"></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Find me a refurbished Dell</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// NO OBLIGATION &middot; NO HARD SELL &middot; A REAL PERSON REPLIES WITHIN ONE WORKING DAY (MON&ndash;FRI) &middot; OR CALL 01202 775566</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">NO OBLIGATION &middot; NO HARD SELL &middot; A REAL PERSON REPLIES WITHIN ONE WORKING DAY (MON&ndash;FRI) &middot; OR CALL 01202 775566</p>
         </form>
         <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to just talk it through? Call <a href="tel:+441202775566">01202 775566</a>, text <a href="sms:+447520615332">07520 615332</a> or <a href="mailto:help@365techies.co.uk">email us</a> &mdash; a real Dorset family firm, here since 1995.</p>
       </div>
     </section>
     <section class="how" aria-label="How it works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/08 — HOW IT WORKS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From &lsquo;help me choose&rsquo; to fully set up<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
         <li data-reveal>
@@ -1635,7 +1635,7 @@
       </div>
     </section>
     <section class="reviews" aria-label="Customer reviews">
-      <p class="eyebrow eyebrow--center mono" data-reveal>// GOOGLE REVIEWS</p>
+      <p class="eyebrow eyebrow--center mono" data-reveal>GOOGLE REVIEWS</p>
       <h2 class="section-title section-title--center" data-title>Rated 4.9 on Google<span class="title-underline title-underline--center"></span></h2>
       <p class="reviews__badge mono" data-reveal><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;RATED 4.9 ON GOOGLE</p>
       <div class="reviews__grid">
@@ -1663,7 +1663,7 @@
     <section data-hw-fold class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 — WHY REFURBISHED DELL</p>
+          <p class="eyebrow mono">WHY REFURBISHED DELL</p>
           <h2 class="section-title" data-title>Proper grown-up kit, for a lot less<span class="title-underline"></span></h2>
           <p>There&rsquo;s a world of difference between a cheap new high-street laptop and a Dell Latitude or OptiPlex. The business range is built to work hard for years &mdash; tougher materials, better components and stronger security &mdash; and Dell&rsquo;s Latitude laptops are tested to military-standard durability methods.</p>
           <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>25 years</strong>. We recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
@@ -1683,7 +1683,7 @@
     <section data-hw-fold class="section" aria-label="Refurbishing Dell since 2001">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PROOF &mdash; NOT A POP-UP SELLER</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>PROOF &mdash; NOT A POP-UP SELLER</p>
           <h2 class="section-title section-title--center" data-title>We&rsquo;ve been refurbishing Dell since 2001<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>These photos are from our computer sales, service &amp; support centre in Moordown, Winton (2008&ndash;2017) &mdash; the same family firm, on the same phone number, still doing this today. They show the operation behind the machine you&rsquo;ll get: not a stock list, just decades of doing it properly.</p>
         </div>
@@ -1707,7 +1707,7 @@
     <section data-hw-fold class="section section--alt" aria-label="How we refurbish">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — TESTED, REFURBISHED &amp; READY</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>TESTED, REFURBISHED &amp; READY</p>
           <h2 class="section-title section-title--center" data-title>What &lsquo;refurbished&rsquo; means here<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>No mystery boxes. Every machine goes through the same honest process before it reaches you &mdash; and we tell you exactly what you&rsquo;re getting.</p>
         </div>
@@ -1725,7 +1725,7 @@
     <section data-hw-fold class="section" aria-label="Warranty and your rights">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — PEACE OF MIND</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>PEACE OF MIND</p>
           <h2 class="section-title section-title--center" data-title>Warranty &amp; your rights<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -1758,7 +1758,7 @@
     <section data-hw-fold class="section section--alt" aria-label="Your data is safe">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR DATA</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>YOUR DATA</p>
           <h2 class="section-title section-title--center" data-title>Your data is safe &mdash; coming and going<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="prose" data-reveal style="max-width:72ch;margin:0 auto;text-align:center">
@@ -1769,7 +1769,7 @@
     <section data-hw-fold class="section section--alt" aria-label="Why buy from us">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — WHY BUY FROM US</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>WHY BUY FROM US</p>
           <h2 class="section-title section-title--center" data-title>A real local firm, not a marketplace gamble<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -1800,7 +1800,7 @@
     <section data-hw-fold class="section" aria-label="Home and business">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/05 — HOME &amp; BUSINESS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>HOME &amp; BUSINESS</p>
           <h2 class="section-title section-title--center" data-title>The right refurbished Dell, whoever you are<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="split-2">
@@ -1831,7 +1831,7 @@
     <section data-hw-fold class="section section--alt" aria-label="Good for the planet">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/06 — POCKET &amp; PLANET</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>POCKET &amp; PLANET</p>
           <h2 class="section-title section-title--center" data-title>Good for your wallet, good for the planet<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="prose" data-reveal style="max-width:72ch;margin:0 auto;text-align:center">
@@ -1843,7 +1843,7 @@
     <section data-hw-fold class="section" aria-label="Business-grade versus consumer">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/07 — BUSINESS vs CONSUMER</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>BUSINESS vs CONSUMER</p>
           <h2 class="section-title section-title--center" data-title>Why a business-grade Dell beats a cheap new machine<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Latitude laptops and OptiPlex PCs were built for offices that can&rsquo;t afford downtime &mdash; not built down to a price for a shop shelf. Here&rsquo;s the difference you actually feel.</p>
         </div>
@@ -1877,7 +1877,7 @@
     <section class="section section--alt" id="order-new" aria-label="Brand-new Dell hardware">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PREFER BRAND NEW?</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>PREFER BRAND NEW?</p>
           <h2 class="section-title section-title--center" data-title>We supply brand-new Dell too &mdash; sorted end to end<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>We&rsquo;ve been a <strong>Dell reseller since 2001</strong>. If you&rsquo;d rather have the latest kit than refurbished, we&rsquo;ll help you choose the right new Dell laptop or desktop for what you actually do and <strong>arrange the order and delivery through our Dell account manager</strong>. That helps keep things moving, because a brand-new build can sometimes take a while to arrive. Current Dell UK models and prices are <a href="#new-dell">further down this page</a>.</p>
         </div>
@@ -1895,7 +1895,7 @@
     <section class="section" aria-label="What brand-new Dell costs" id="new-dell">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FOR COMPARISON &middot; BRAND-NEW AT DELL UK</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FOR COMPARISON &middot; BRAND-NEW AT DELL UK</p>
           <h2 class="section-title section-title--center" data-title>What does brand-new business Dell cost?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Buying brand-new instead? In 2025 Dell retired the Latitude and OptiPlex names. New business laptops are now <strong>Dell Pro</strong> (Essential, Base, Plus and Premium tiers) and desktops are <strong>Dell Pro</strong> Micro, Slim and Tower. Same business DNA, new badges. Here&rsquo;s Dell UK&rsquo;s current business range at their own from-prices &mdash; each link opens Dell&rsquo;s live page in a new tab. Compare it with our refurbished business-grade range above: laptops from <strong>&pound;510</strong>, desktops from <strong>&pound;545</strong>. Each comes with a new 1TB Samsung 990 PRO, Windows 11 set up and data moved across.</p>
         </div>
@@ -1912,7 +1912,7 @@
           <tr><td><strong>Dell Pro Tower Plus (QBT1250)</strong><br><span class="ndell__succ">OptiPlex Plus Tower successor</span></td><td>Core Ultra 7 265 (20 cores) &middot; 16GB &middot; 512GB SSD &middot; configurable tower</td><td class="ndell__p">from &pound;1,666</td><td><a href="https://www.dell.com/en-uk/shop/desktop-computers/dell-pro-tower-plus-desktop/spd/dell-pro-qbt1250-plus-desktop/gcto_qbt1250_emea" target="_blank" rel="noopener noreferrer">View at Dell UK &#8599;</a></td></tr>
           </tbody>
         </table></div>
-        <p class="mono ndell__note" data-reveal>// DELL UK FROM-PRICES CHECKED 16 JULY 2026 &mdash; THEIR PRICES AND OFFERS CHANGE OFTEN; THE LINKS SHOW TODAY&rsquo;S. WANT NEW RATHER THAN REFURBISHED? WE&rsquo;VE BEEN A DELL RESELLER SINCE 2001 &mdash; WE&rsquo;LL ORDER IT, SET IT UP AND SUPPORT IT THE SAME WAY. CALL 01202 775566.</p>
+        <p class="mono ndell__note" data-reveal>DELL UK FROM-PRICES CHECKED 16 JULY 2026 &mdash; THEIR PRICES AND OFFERS CHANGE OFTEN; THE LINKS SHOW TODAY&rsquo;S. WANT NEW RATHER THAN REFURBISHED? WE&rsquo;VE BEEN A DELL RESELLER SINCE 2001 &mdash; WE&rsquo;LL ORDER IT, SET IT UP AND SUPPORT IT THE SAME WAY. CALL 01202 775566.</p>
       </div>
       <style>
         .ndell td{vertical-align:top}
@@ -1925,7 +1925,7 @@
     <section class="section section--alt" aria-label="Accessories" id="accessories">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// COMPLETE THE SETUP</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>COMPLETE THE SETUP</p>
           <h2 class="section-title section-title--center" data-title>Accessories, supplied and set up with your Dell<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Everything around the computer, from trusted brands, working before we&rsquo;re done &mdash; quoted individually, or tick the boxes in the <a href="#pick">picker</a> to add them to your machine quote.</p>
         </div>
@@ -1939,7 +1939,7 @@
     </section>
     <section class="section" aria-label="Free PC health check" id="health-check-link">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// BEFORE YOU BUY</p>
+        <p class="eyebrow mono">BEFORE YOU BUY</p>
         <h2 class="section-title" data-title>How is the computer you have now doing?<span class="title-underline"></span></h2>
         <p>Before you replace it, our free Windows app shows in plain English whether your current PC is up to date, how its drives are doing, whether it&rsquo;s backed up and, on a laptop, how much charge the battery still holds.</p>
         <p style="margin:1rem 0 0"><a class="button primary" href="/free-pc-health-check/">Free PC health check &#8594;</a></p>
@@ -1947,7 +1947,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -2012,7 +2012,7 @@
     <section class="blog-section" aria-label="Owner's guide" id="guides">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// INCLUDED WITH EVERY MACHINE</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>INCLUDED WITH EVERY MACHINE</p>
           <h2 class="section-title section-title--center" data-title>The easy owner&rsquo;s guide<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Every laptop we supply comes with a plain-English guide. Every port is explained with an interactive tour, with three ways to power it (including the efficient 12V USB-C trick for vans and off-grid), battery care and 60-second fixes.</p>
         </div>
@@ -2209,7 +2209,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

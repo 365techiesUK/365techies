@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -636,7 +636,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -828,7 +828,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Worth Repairing an Old Laptop?</span></nav>
-          <p class="eyebrow mono">// REPAIR OR REPLACE</p>
+          <p class="eyebrow mono">REPAIR OR REPLACE</p>
           <h1>Is it worth repairing a <em class="grad grad--cyan">5-year-old laptop?</em></h1>
           <p class="lede">As a rough rule: if the repair costs more than about half the price of a comparable replacement — and the laptop is well over five years old with other faults — replacing is usually the smarter spend. But a slow-but-healthy laptop is very often transformed by a cheap SSD or memory upgrade. Here’s how to decide, honestly.</p>
           <div class="page-hero__cta">
@@ -852,7 +852,7 @@
 
     <section id="s1" class="section" aria-label="The simple 50% rule of thumb">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE 50% RULE</p>
+        <p class="eyebrow mono">THE 50% RULE</p>
         <h2 class="section-title" data-title>The simple 50% rule of thumb<span class="title-underline"></span></h2>
           <p>The quickest test the trade uses: <strong>if the repair costs more than about half the price of a comparable new or refurbished laptop, lean towards replacing.</strong> Comfortably under that, and it’s usually worth fixing.</p>
           <p>Age matters alongside cost. Under about five years old and a laptop is generally worth saving; well over five years <em>with repeated or expensive faults</em> points towards replacement. A five-year-old machine that just needs one cheap fix, though, can easily have years of life left. For a personal verdict in four quick questions, try our free <a href="/repair-or-replace-advisor/">repair-or-replace advisor</a>.</p>
@@ -861,7 +861,7 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="Sometimes the fix is tiny (and transforms the laptop)">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// CHEAP WINS</p>
+        <p class="eyebrow mono">CHEAP WINS</p>
         <h2 class="section-title" data-title>Sometimes the fix is tiny (and transforms the laptop)<span class="title-underline"></span></h2>
           <p>Here’s the thing most people don’t realise: a laptop that’s simply <strong>slow</strong> is usually not worn out at all — it’s held back by an ageing hard drive or years of software clutter. A small, inexpensive upgrade often makes it feel brand new:</p>
           <ul>
@@ -875,7 +875,7 @@
     </section>
     <section id="s3" class="section" aria-label="Can it still run Windows safely? The Windows 10 factor">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE WINDOWS 10 FACTOR</p>
+        <p class="eyebrow mono">THE WINDOWS 10 FACTOR</p>
         <h2 class="section-title" data-title>Can it still run Windows safely? The Windows 10 factor<span class="title-underline"></span></h2>
           <p>One extra thing genuinely tips the balance in 2026: <strong>Windows 10 support ended on 14 October 2025.</strong> If your old laptop can still upgrade to Windows 11, a cheap fix or upgrade keeps it safe and going for years. If it <em>can’t</em> meet the Windows 11 requirements — broadly a TPM 2.0 security chip, Secure Boot and a newer processor (Intel 8th-gen or AMD Ryzen 2000 and up) — that’s a real nudge towards replacing.</p>
           <p>You do have a stopgap: consumer <strong>Extended Security Updates (ESU)</strong> provide critical security patches for Windows 10 22H2, and Microsoft has now extended the free consumer programme so cover runs to <strong>October 2027</strong>. You can enrol at no cost by turning on Windows Backup (settings sync) with a Microsoft account or by redeeming 1,000 Microsoft Rewards points, or pay a one-off fee ($30 or the local equivalent, plus VAT) instead. It’s a security bridge — not a long-term answer, and it doesn’t bring new features. See <a href="/windows-10-end-of-life/">what Windows 10 end of life means for you</a> for the full picture.</p>
@@ -884,7 +884,7 @@
     </section>
     <section id="s4" class="section section--alt" aria-label="Repair and upgrade, or switch to a refurbished Dell">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// YOUR TWO GOOD OPTIONS</p>
+        <p class="eyebrow mono">YOUR TWO GOOD OPTIONS</p>
         <h2 class="section-title" data-title>Repair and upgrade, or switch to a refurbished Dell<span class="title-underline"></span></h2>
           <p>Whichever way it falls, you’ve got a sensible option:</p>
           <ul>
@@ -897,7 +897,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/repair-or-replace-advisor/">repair or replace advisor</a><a href="/laptop-repair/">laptop repair</a><a href="/laptop-screen-repair-cost-bournemouth/">laptop screen repair costs</a><a href="/windows-10-end-of-life/">Windows 10 end of life</a><a href="/dell-hardware/">refurbished Dell laptops from £510</a></div>
         </div>
       </div>
@@ -905,7 +905,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -946,7 +946,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

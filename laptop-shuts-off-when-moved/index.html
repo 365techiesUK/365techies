@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Shuts Off When Moved</span></nav>
-          <p class="eyebrow mono">// INTERMITTENT POWER FAULTS</p>
+          <p class="eyebrow mono">INTERMITTENT POWER FAULTS</p>
           <h1>Laptop Shuts Off When You Move It? That's a Loose Connection, and It's Findable</h1>
           <p class="lede">Pick it up, shift it on your lap, nudge it across the desk &mdash; and it dies instantly. Put it down, press the power button, and it comes back as though nothing happened. Faults that respond to movement feel random and alarming, but they are actually one of the more logical problems to track down, because physical movement can only affect physical connections. One question narrows the field enormously.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Mains only, battery only, or both?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE ONE QUESTION</p>
+        <p class="eyebrow mono">THE ONE QUESTION</p>
         <h2 class="section-title" data-title>Mains only, battery only, or both?<span class="title-underline"></span></h2>
 <p>Before anything else, work out which power source the fault follows. It takes five minutes and it eliminates most of the possibilities in one go.</p><p><strong>Test one:</strong> unplug the charger completely and run the laptop on battery alone. Move it, tilt it, lift it. Does it cut out?</p><p><strong>Test two:</strong> if the battery is removable, take it out and run on the mains lead alone. Move it again. Does it cut out?</p><p>Now read off the answer:</p><ul><li><strong>Only on mains</strong> &mdash; the charging circuit is the suspect: the power socket where the lead plugs in, or the lead itself.</li><li><strong>Only on battery</strong> &mdash; the battery connection is the suspect: the contacts, the connector, or the pack.</li><li><strong>On both</strong> &mdash; the fault is further inside, past the point where the two power sources merge. Usually memory, a cable, or the board itself.</li></ul><p>Almost nobody does this test before searching for answers, and it is genuinely the difference between a targeted repair and guesswork.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The DC jack, and why it fails so often">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; MAINS ONLY</p>
+        <p class="eyebrow mono">MAINS ONLY</p>
         <h2 class="section-title" data-title>The DC jack, and why it fails so often<span class="title-underline"></span></h2>
 <p>If the laptop only cuts out when running from the charger, look at where the power lead enters the machine.</p><p>The socket the charger plugs into &mdash; the DC jack &mdash; is soldered to a circuit board, and it takes physical abuse that nothing else in the laptop takes. Every time the lead is plugged in, pulled out at an angle, tripped over, or leant against a sofa cushion, that force goes through those solder joints. Over years, they crack.</p><p>A cracked joint still touches most of the time, which is why the laptop works normally when it is sitting still. Move it, and the crack opens for a fraction of a second, power is lost, and the machine dies instantly.</p><p>The tells are worth knowing. Wiggle the plug gently where it enters the laptop while it is running: if the charging light flickers or the machine cuts out, you have found it. Some people notice the plug feels loose or sits at a different angle than it used to, or that they have started propping the lead in a particular position to keep it charging &mdash; that habit is itself a symptom.</p><p>Rule out the cheap thing first, though: try a different charger if you can borrow one. Charger leads fail internally near the plug ends, and a broken cable behaves identically to a broken socket for a fraction of the repair cost.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Contacts, connectors and worn packs">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; BATTERY ONLY</p>
+        <p class="eyebrow mono">BATTERY ONLY</p>
         <h2 class="section-title" data-title>Contacts, connectors and worn packs<span class="title-underline"></span></h2>
 <p>If it only cuts out on battery, the connection between the pack and the laptop is the place to look.</p><p>On older laptops with a removable battery this is often simple. The pack connects through a row of metal contacts, and those can tarnish, collect dust, or lose spring tension over the years. Removing the battery, checking the contacts on both sides are clean and undamaged, and refitting it firmly resolves a fair number of these. If the pack has ever been dropped or the laptop carried by its edges, the retaining clips may also have loosened so the pack no longer seats tightly.</p><p>On modern laptops the battery is internal and connects with a small plug on the motherboard. Those can work loose, particularly after previous service work, but getting to it means opening the case.</p><p>Do not overlook the obvious alternative: a badly worn battery can also cut out under movement, because movement usually coincides with the machine doing something and drawing more current. If the pack is old, run <code>powercfg /batteryreport</code> from Command Prompt and compare Full Charge Capacity with Design Capacity before assuming the connection is at fault.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Memory, cables and board flex">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; ON BOTH</p>
+        <p class="eyebrow mono">ON BOTH</p>
         <h2 class="section-title" data-title>Memory, cables and board flex<span class="title-underline"></span></h2>
 <p>If the laptop cuts out on mains and on battery, the fault sits past the point where both supplies join, and the list is short.</p><p><strong>Loose memory.</strong> RAM modules sit in sprung slots and are held by clips. A module that is not fully seated, or one whose contacts have tarnished, can lose connection under vibration &mdash; and a laptop that loses its memory stops instantly, with no shutdown. This is one of the more common causes and one of the easier to correct: on machines with an access panel, reseating the modules firmly is straightforward.</p><p><strong>Internal cables.</strong> Drives, keyboards and daughterboards connect with ribbon cables and small connectors. Any of these working loose can cause an abrupt stop.</p><p><strong>Board flex.</strong> This is the least welcome answer. Laptop motherboards are thin, and a laptop that has been dropped, or carried open by one corner, or used on soft surfaces where the base twists, can develop cracked solder joints on the board itself. The symptom is exactly what you are seeing, and the repair is specialist work that is not always economic on an older machine.</p><p>There is a useful narrowing test here. Set the laptop on a flat, hard surface and press gently on different areas of the base while it runs &mdash; the palm rest, near the hinges, over the memory hatch. If a particular spot reproduces the cut-out reliably, that is where to look, and it saves a great deal of blind dismantling.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Sudden power loss is rough on your data">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; WHY IT'S WORTH SORTING</p>
+        <p class="eyebrow mono">WHY IT'S WORTH SORTING</p>
         <h2 class="section-title" data-title>Sudden power loss is rough on your data<span class="title-underline"></span></h2>
 <p>There is a reason we do not tell people to live with this one.</p><p>An abrupt power cut is not a shutdown. Windows does not get the chance to finish writing what it was doing, and files that were mid-write can be left incomplete or corrupted. Do it once and you will very likely get away with it. Do it repeatedly over months, and the odds catch up &mdash; usually with the file system, occasionally with something you cared about.</p><p>So while an intermittent power fault feels like an annoyance rather than an emergency, it is quietly a data risk. If you are going to leave it for a while, make sure whatever matters on that laptop is backed up somewhere else first.</p><p>The good news is that these faults are genuinely fixable. A DC jack is a common repair, memory reseating costs almost nothing, and even the more awkward ones can usually be identified precisely once the machine is open. What they are not is a reason to write off an otherwise good laptop, which is what a lot of people quietly assume when a machine starts behaving unpredictably.</p><p>If you would rather hand it over: free collection across Bournemouth, Poole and Dorset, an honest answer about whether it is worth repairing, and no fix means no fee.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/laptop-turns-off-when-unplugged/">Laptop only works plugged in</a><a href="/laptop-wont-turn-on-no-lights/">Laptop won't turn on, no lights</a><a href="/laptop-repair/">Laptop repair</a><a href="/data-recovery/">Data recovery</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
         <section class="section" aria-label="In our free app" id="in-the-app">
       <div class="wrap" style="max-width:980px">
-        <p class="eyebrow mono">// CHECK THE BATTERY</p>
+        <p class="eyebrow mono">CHECK THE BATTERY</p>
         <h2 class="section-title" data-title>Rule out the battery<span class="title-underline"></span></h2>
         <p>If it only switches off on battery, check the battery&rsquo;s health before anything else: <a href="/how-to-check-laptop-battery-health/">how to check your laptop&rsquo;s battery health</a>, or let our free app read it for you.</p>
         <div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Battery health: how much charge does yours really hold?</h3><p style="margin:0">On a laptop, our free app reads Windows&rsquo; own measurement of the battery and shows its <strong>health</strong> &mdash; how much of its original charge it still holds &mdash; and how many <strong>charge cycles</strong> it has done, on its <strong>This PC</strong> page. A desktop never sees it, and nothing is estimated. It also explains how many laptops can stop charging at about 80% to slow the wear down.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>This PC</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="battery" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><div style="border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8);aspect-ratio:16/9;background:#060c1c"><video muted loop playsinline preload="none" poster="/images/pcm-clip-battery.jpg" width="1280" height="720" aria-label="This PC in 365 PC Manager on a sample Dell Latitude 7490 laptop: the battery holds about 61% of its original charge, alongside the drive check and whether it can move to Windows 11 for free" style="display:block;width:100%;height:100%;object-fit:cover"><source src="/images/pcm-clip-battery.mp4" type="video/mp4"></video></div><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app on sample PCs &middot; 9 seconds, no sound</figcaption><a class="ytw" href="https://www.youtube.com/shorts/C4PH6jjz3M8" target="_blank" rel="noopener" data-ytw="C4PH6jjz3M8" data-ytw-shape="tall" data-ytw-title="Laptop Battery Worn Out? See How Much Charge It Really Holds (YouTube)" data-ytw-live="2026-10-21T12:00:00+01:00" hidden><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#ff0033"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><span>Watch the 23-second video, with sound</span></a><style>.ytw{display:inline-flex;align-items:center;gap:.55rem;max-width:100%;box-sizing:border-box;margin:.65rem 0 0;padding:.45rem 1rem .45rem .5rem;border-radius:999px;border:1px solid rgba(29,151,227,.55);background:rgba(29,151,227,.12);color:inherit;font-weight:700;font-size:.9rem;line-height:1.3;text-decoration:none;transition:background .2s ease,border-color .2s ease}/*LT*/:where(html[data-theme="light"]) .ytw{border:1px solid rgba(23,124,187,.55);background:rgba(23,124,187,.12)}/*TL*/.ytw[hidden]{display:none!important}.ytw svg{width:1.6rem;height:1.6rem;flex:none}.ytw:hover,.ytw:focus-visible{background:rgba(29,151,227,.26);border-color:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw:hover,:where(html[data-theme="light"]) .ytw:focus-visible{background:rgba(23,124,187,.26);border-color:#177cbb}/*TL*/.ytw-dlg{padding:0;border:0;border-radius:16px;background:#060c1c;max-width:none;max-height:none;overflow:visible}/*LT*/:where(html[data-theme="light"]) .ytw-dlg{background:#ebedf4}/*TL*/.ytw-dlg::backdrop{background:rgba(2,6,16,.84)}/*LT*/:where(html[data-theme="light"]) .ytw-dlg::backdrop{background:rgba(244,245,250,.84)}/*TL*/.ytw-dlg__v{border-radius:16px;overflow:hidden;background:#060c1c}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__v{background:#ebedf4}/*TL*/.ytw-dlg__v--tall{width:min(92vw,calc(86vh * 9 / 16),506px);aspect-ratio:9/16}.ytw-dlg__v--wide{width:min(94vw,calc(84vh * 16 / 9),1100px);aspect-ratio:16/9}.ytw-dlg__v iframe{display:block;width:100%;height:100%;border:0}.ytw-dlg__x{position:absolute;top:-.7rem;right:-.7rem;z-index:1;width:2.75rem;height:2.75rem;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);background:#0b1430;color:#fff;font-size:1.7rem;line-height:1;cursor:pointer}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x{border:1.5px solid rgba(10,16,31,.4);background:#dce0ec;color:#152242}/*TL*/.ytw-dlg__x:hover,.ytw-dlg__x:focus-visible{background:#1d97e3}/*LT*/:where(html[data-theme="light"]) .ytw-dlg__x:hover,:where(html[data-theme="light"]) .ytw-dlg__x:focus-visible{background:#177cbb}/*TL*/</style><script>(function(){if(window.__ytw)return;window.__ytw=1;function go(){var now=Date.now();document.querySelectorAll("a[data-ytw]").forEach(function(a){var l=a.getAttribute("data-ytw-live");if(l&&now<Date.parse(l))return;a.hidden=false;a.addEventListener("click",function(e){var d=dlg();if(!d.showModal)return;e.preventDefault();play(d,a);});});}function dlg(){var d=document.getElementById("ytwdlg");if(d)return d;d=document.createElement("dialog");d.id="ytwdlg";d.className="ytw-dlg";d.setAttribute("aria-label","Video");d.innerHTML='<button type="button" class="ytw-dlg__x" aria-label="Close the video">&times;</button><div class="ytw-dlg__v"></div>';document.body.appendChild(d);if(!d.showModal)return d;d.querySelector(".ytw-dlg__x").addEventListener("click",function(){d.close();});d.addEventListener("click",function(e){if(e.target===d)d.close();});d.addEventListener("close",function(){d.querySelector(".ytw-dlg__v").innerHTML="";});return d;}function play(d,a){var v=d.querySelector(".ytw-dlg__v"),id=a.getAttribute("data-ytw"),i=document.createElement("iframe");v.className="ytw-dlg__v ytw-dlg__v--"+(a.getAttribute("data-ytw-shape")||"wide");i.src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";i.title=a.getAttribute("data-ytw-title");i.setAttribute("allow","accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture");i.setAttribute("allowfullscreen","");v.innerHTML="";v.appendChild(i);d.showModal();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();})();</script></figure><script>(function(){var f=document.currentScript&&document.currentScript.previousElementSibling;var v=f&&f.querySelector("video");if(!v)return;function still(){v.controls=true;}if((window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)||!("IntersectionObserver" in window)){still();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){v.preload="auto";var p=v.play();if(p&&p.catch)p.catch(still);}else{v.pause();}}},{threshold:.6}).observe(v);})();</script></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
@@ -919,7 +919,7 @@
     </section>
 <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -960,7 +960,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

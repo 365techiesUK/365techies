@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -699,7 +699,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -891,7 +891,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a> <span>/</span> <span aria-current="page">Boat GPS Tracking</span></nav>
-          <p class="eyebrow mono">// BOAT GPS TRACKING</p>
+          <p class="eyebrow mono">BOAT GPS TRACKING</p>
           <h1>Boat GPS tracking, batteries and tanks on <em class="grad grad--cyan">one live dashboard</em></h1>
           <p class="lede">Your boat almost certainly has a GPS aboard already &mdash; and if it runs Victron kit, one cable turns that into live boat GPS tracking: position, route history, batteries and tanks on a dashboard built for you. This page is the honest version of how that works at sea, from marina wifi to Starlink, including what happens when the internet disappears. We&rsquo;re an independent service, listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller &mdash; and not affiliated with or endorsed by SpaceX.</p>
           <div class="page-hero__cta">
@@ -928,56 +928,56 @@
     </section>
     <section id="s1" class="section" aria-label="How boat GPS tracking works with a Victron system">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <p class="eyebrow mono">THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>How boat GPS tracking works with a Victron system<span class="title-underline"></span></h2>
 <p>If you want to track your boat, the answer is usually simpler than buying another subscription tracker: <strong>your boat almost certainly has a GPS aboard already; one cable joins it to your Victron GX device; and from then on your position travels with your battery, solar and tank data &mdash; onto Victron&rsquo;s VRM portal, and onto a live dashboard we design and build around your boat.</strong> Live tracking whenever the boat has internet; a complete route history even when it doesn&rsquo;t.</p><p>It works because the GX device &mdash; a Cerbo GX on most modern installs &mdash; is already the hub of Victron boat monitoring. Once it can see a GPS, over NMEA&nbsp;2000 or a cheap USB receiver, position becomes just another value it logs and streams. VRM then gives you a map, location history and a geofence out of the box &mdash; those are Victron&rsquo;s features and they deserve the credit; Victron&rsquo;s own boating blog markets exactly this combination for recording and sharing a boat&rsquo;s live track. What we add is the layer on top: a branded, glanceable dashboard for your boat or your whole charter fleet, with the route archived for good.</p><p>The rest of this page is the honest detail: which GPS to use, what internet at sea really looks like from marina wifi to Starlink, what survives when you sail out of coverage &mdash; and what this is not (a theft tracker).</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Reuse the GPS your boat already has (or add one for around &pound;18)">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; GPS ABOARD</p>
+        <p class="eyebrow mono">GPS ABOARD</p>
         <h2 class="section-title" data-title>Reuse the GPS your boat already has (or add one for around &pound;18)<span class="title-underline"></span></h2>
 <p>Two honest routes, in order of preference.</p><p><strong>Reuse your NMEA 2000 GPS.</strong> Victron&rsquo;s &lsquo;VE.Can to NMEA2000 micro-C male&rsquo; cable (part ASS030520200, around &pound;52 from UK retailers at the time of writing &mdash; the OSUKL 3802 adapter is an alternative) joins the Cerbo&rsquo;s VE.Can port to your N2K backbone, with that port set to its 250&nbsp;kbit/s NMEA&nbsp;2000 profile. One caveat that genuinely matters: the Cerbo accepts position from devices presenting Device Class 60 (Navigation) and Device Function 145 (Ownship Position, GNSS). Dedicated N2K GPS sensors and antennas reliably do; whether a given <strong>chartplotter</strong> re-broadcasts its position with that class and function varies by manufacturer, so it has to be checked per device &mdash; we do exactly that when we scope your boat.</p><p><strong>Or add a USB GPS for around &pound;18.</strong> Venus OS auto-recognises most USB receivers that speak NMEA&nbsp;0183 at 4800 or 38400 baud. Victron&rsquo;s officially tested list includes GlobalSat units such as the BU-353S4; the u-blox VK-162 (around &pound;17.50 from UK retailers at the time of writing, sold specifically for Victron use) meets the same criterion but is community-verified rather than officially listed &mdash; worth knowing the difference. One gotcha: on a Cerbo GX the USB port nearest the HDMI connector is power-only, so a GPS plugged in there does nothing. The full wiring detail lives on our <a href="/cerbo-gx-gps/">Cerbo GX GPS</a> page.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Marina wifi, 4G, and Starlink on a boat &mdash; honestly tiered">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; INTERNET AT SEA</p>
+        <p class="eyebrow mono">INTERNET AT SEA</p>
         <h2 class="section-title" data-title>Marina wifi, 4G, and Starlink on a boat &mdash; honestly tiered<span class="title-underline"></span></h2>
 <p>GPS fixes your position; internet is what carries it off the boat. At sea that deserves an honest tiering, not a hand-wave.</p><ul><li><strong>Marina wifi.</strong> Often free, and fine while berthed &mdash; the dashboard and VRM work over whatever connection the GX already has.</li><li><strong>4G, coastal.</strong> Victron&rsquo;s GX LTE 4G-E gives the GX its own SIM-based connection &mdash; and with its optional antenna, GPS too &mdash; but it provides internet <em>for the GX only</em>, not wifi for the crew. Usable 4G typically reaches 3&ndash;8 miles offshore, up to around 18&ndash;20 miles with a high-gain marine antenna in good conditions. A coastal solution, honestly stated &mdash; not an offshore one; Victron&rsquo;s own manual anticipates boats sailing out of coverage.</li><li><strong>Starlink Roam.</strong> The consumer Roam plans support in-motion use and work in marinas, inland waterways and coastal water within 12 nautical miles of shore, with use on territorial waters capped at 5 consecutive days and 60 days per year.</li><li><strong>Genuinely offshore.</strong> Beyond that you need Ocean Mode &mdash; a per-GB add-on available only on Roam Unlimited &mdash; or business-grade Global Priority for ocean-wide, in-motion coverage.</li></ul><p>We deliberately print no Starlink prices here: plans start from around &pound;55 a month at the time of writing, but check <a href="https://www.starlink.com/">starlink.com</a> for current pricing and terms. Starlink is a trademark of SpaceX; we are not affiliated with or endorsed by SpaceX. And the good news underneath all of this: your route does not depend on staying connected, as the next section shows.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="What happens when the internet disappears">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; OFFSHORE</p>
+        <p class="eyebrow mono">OFFSHORE</p>
         <h2 class="section-title" data-title>What happens when the internet disappears<span class="title-underline"></span></h2>
 <p>The headline first, because it is the question every sailor asks: <strong>live tracking whenever the boat has internet; a complete route history even when it doesn&rsquo;t.</strong></p><p>When the connection drops, the GX device buffers its datalogs &mdash; GPS positions included &mdash; in non-volatile internal memory. Victron&rsquo;s manual states the internal buffer can hold logs for several days, and a microSD card or USB stick extends that enormously: 1&nbsp;GB is roughly three years of 1-minute logging. The GX continually attempts to reconnect, and the moment it succeeds it uploads the stored logs &mdash; your route backfills into VRM and onto your dashboard as if the gap never happened.</p><p>What pauses while offline is only the live layer: the moving map pin, VRM&rsquo;s alarms and geofence notifications, and remote access. One more honest note on resolution: a logged route is only as detailed as the log interval, and the default is 15 minutes &mdash; enough to draw a passage as a few long straight legs. We set tracked boats to 1-minute logging (about 25&nbsp;MB a month of data), and for the smooth live trail on the dashboard our backend records the streaming positions itself &mdash; that is part of what we build.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="The VRM geofence, and the anchor-alarm question">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; ANCHOR WATCH &amp; GEOFENCE</p>
+        <p class="eyebrow mono">ANCHOR WATCH &amp; GEOFENCE</p>
         <h2 class="section-title" data-title>The VRM geofence, and the anchor-alarm question<span class="title-underline"></span></h2>
 <p>Two different jobs, honestly separated.</p><p><strong>Marina geofence &mdash; a built-in VRM feature, and Victron&rsquo;s credit to take.</strong> VRM has had geofencing since at least 2019: draw a circle, rectangle or free shape around the boat&rsquo;s position and VRM raises an alarm when the boat leaves it <em>and</em> when location data stops arriving &mdash; so a disconnected GPS or powered-down system raises a flag too, which is exactly the behaviour you want. A slider disarms it before legitimate trips, and Victron&rsquo;s manual notes the feature is typically used for RVs and boats. Two practical caveats from real use: GPS drift can cause false alarms if the antenna lacks a clear view of the sky, and a moored boat swings &mdash; so we size the fence with both in mind, and pair it with VRM&rsquo;s communication-monitoring alarm for full coverage.</p><p><strong>Anchor watch is a different tool.</strong> A true anchor alarm wants a tight radius and an instant, local alert. Venus OS Large can run Signal K, which includes an anchor alarm &mdash; but that is a community-supported extra for which Victron does not provide support, and no networked dashboard should ever be your only anchor watch. We will tell you straight whether your setup suits it before you rely on it.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="What we build for your boat &mdash; or your whole fleet">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; THE DASHBOARD</p>
+        <p class="eyebrow mono">THE DASHBOARD</p>
         <h2 class="section-title" data-title>What we build for your boat &mdash; or your whole fleet<span class="title-underline"></span></h2>
 <p>VRM&rsquo;s map is functional; what we build is the screen a skipper or a charter office actually wants to look at. Your boat&rsquo;s live position and recent trail, branded your way, beside the numbers that matter aboard: state of charge, solar, tanks, shore power &mdash; and, tellingly, <strong>the Starlink dish&rsquo;s own power draw</strong>. A standard dish in use draws roughly 75&ndash;100&nbsp;W &mdash; left on around the clock that is in the region of 150&nbsp;Ah a day from a 12&nbsp;V bank, often the single biggest load aboard (the Mini is nearer 20&ndash;40&nbsp;W). Seeing the dish beside your batteries is genuinely useful, not decoration.</p><p>Position rides the same live feed our dashboards already use, so the pin is near-live &mdash; typically updating every second or two rather than on VRM&rsquo;s logging cadence &mdash; and we filter out GPS drift so a night at anchor doesn&rsquo;t scribble on your map. VRM keeps its detailed data for at least six months; our dashboards can archive your tracks for good, with .kml export for Google Earth. For <strong>charter and hire fleets</strong>, VRM&rsquo;s multi-installation map already shows every installation on one map &mdash; Victron&rsquo;s feature, happily credited &mdash; and we build on it: every boat on one branded screen, on your own website if you like, with your VRM token kept in one server-side file rather than in the page code. See how that pattern works for <a href="/motorhome-hire-fleet-monitoring/">hire fleets</a> and <a href="/white-label-victron-monitoring/">white-label monitoring</a>.</p><p>Proof rather than promises: our own off-grid van streams its real Victron telemetry live on this site, on the <a href="/custom-vrm-dashboards/">custom VRM dashboards</a> page &mdash; the same architecture a boat tracker rides on. We haven&rsquo;t yet fitted a GPS demo to the van, so we won&rsquo;t pretend one exists; ask us and we&rsquo;ll happily demonstrate the tracking side.</p>
       </div>
     </section>
     <section id="s7" class="section" aria-label="Not a theft tracker &mdash; and we won&rsquo;t sell it as one">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/07 &mdash; WHAT THIS IS NOT</p>
+        <p class="eyebrow mono">WHAT THIS IS NOT</p>
         <h2 class="section-title" data-title>Not a theft tracker &mdash; and we won&rsquo;t sell it as one<span class="title-underline"></span></h2>
 <p>Said plainly, because any page about boat GPS tracking will attract the question: <strong>this is not a marine theft-recovery tracker, and we will not sell it to you as one.</strong></p><ul><li>It carries <strong>no Thatcham S5/S7 certification</strong> and is not recognised by insurers as a security device.</li><li>It is powered from the boat&rsquo;s <strong>house battery</strong> &mdash; isolate the batteries and the tracking stops.</li><li>It is <strong>not concealed</strong>, and there is no internal backup battery to keep it reporting once power is cut.</li></ul><p>If your insurer requires a tracker, buy a dedicated marine tracking unit designed and certified for that job &mdash; they exist, and they are the right tool. What this system honestly offers instead is awareness: the VRM geofence with its signal-loss alarm tells you if the boat moves out of its fence <em>or</em> goes quiet, which is real value at a marina &mdash; but it is monitoring, not certified security. We draw the same line on our <a href="/victron-gps-tracking/">Victron GPS tracking</a> page, and we would rather lose a sale than blur it.</p>
       </div>
     </section>
     <section id="s8" class="section section--alt" aria-label="What it costs, and how to start">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/08 &mdash; COSTS &amp; GETTING STARTED</p>
+        <p class="eyebrow mono">COSTS &amp; GETTING STARTED</p>
         <h2 class="section-title" data-title>What it costs, and how to start<span class="title-underline"></span></h2>
 <p><strong>Hardware, indicatively.</strong> A boat reusing its NMEA&nbsp;2000 GPS typically needs around &pound;52 of cable; a USB GPS is around &pound;18; a boat with no internet aboard can add the GX LTE 4G-E with its active GPS antenna for around &pound;215 plus a data SIM. All are third-party retail prices from UK retailers at the time of writing, not ours &mdash; and for Starlink, check <a href="https://www.starlink.com/">starlink.com</a> directly.</p><p><strong>Our work is quoted individually</strong>, because boats genuinely vary. The honest cost drivers: one boat or a fleet; how many screens and what branding; whether you want the permanent route archive; own-website deployment on your subdomain; and how hard it all needs to stay up. Map hosting is included in your quote &mdash; we don&rsquo;t promise &lsquo;free maps&rsquo; that policy would let us down on later.</p><p><strong>The honest disclosures, once more:</strong> 365 Techies is an independent service, listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller; Victron and VRM are their trademarks, and the platform underneath is theirs. Starlink is a trademark of SpaceX; we are not affiliated with or endorsed by SpaceX either. Delivery is remote and worldwide, support is Monday to Friday, 9&ndash;5 UK time. Call +44 1202 775566, email help@365techies.co.uk, or start on the <a href="/contact/">contact page</a> and tell us about your boat.</p>
       </div>
@@ -985,7 +985,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/victron-gps-tracking/">Victron GPS tracking</a><a href="/cerbo-gx-gps/">Cerbo GX GPS</a><a href="/motorhome-hire-fleet-monitoring/">hire-fleet monitoring</a><a href="/white-label-victron-monitoring/">white-label Victron monitoring</a><a href="/cerbo-gx-mqtt-dashboard/">Cerbo GX MQTT dashboards</a><a href="/custom-vrm-dashboards/">custom VRM dashboards</a></div>
         </div>
       </div>
@@ -993,7 +993,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1050,7 +1050,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -683,7 +683,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -874,7 +874,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">What a PC Costs to Run</span></nav>
-        <p class="eyebrow mono">// WHAT A PC COSTS TO RUN, UK PRICES</p>
+        <p class="eyebrow mono">WHAT A PC COSTS TO RUN, UK PRICES</p>
         <h1>How much does your PC <em class="grad grad--cyan">cost to run</em>?</h1>
         <p class="lede">Pick your kind of computer, how long it&rsquo;s on and your price a unit, and the calculator works out the cost an hour, a day, a month and a year at UK prices. Filled in with today&rsquo;s price cap of 26.32p a unit. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -888,7 +888,7 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; THE CALCULATOR</a><a href="#s2">02 &mdash; WORKED EXAMPLES</a><a href="#s3">03 &mdash; WHAT USES IT</a><a href="#s4">04 &mdash; CUT THE COST</a><a href="#s5">05 &mdash; MEASURE YOURS</a></nav>
     <section id="s1" class="section" aria-label="Work out what your PC costs to run">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE CALCULATOR</p>
+        <p class="eyebrow mono">THE CALCULATOR</p>
         <h2 class="section-title" data-title>Work out what your PC costs to run<span class="title-underline"></span></h2>
 <p>Choose the kind of computer, or type its watts if you know them, then how many hours a day it&rsquo;s on. The figures are typical; yours will differ with what you do on it, and the app below measures the real thing.</p><div class="pcc" id="pcc"><div class="pcc__in"><label class="pcc__f"><span>What kind of computer?</span><select id="pcc-kind"><option value="30">Laptop, email and browsing (about 30 W)</option><option value="60">Laptop working hard (about 60 W)</option><option value="80" selected>Office desktop and screen (about 80 W)</option><option value="120">Gaming PC, browsing (about 120 W)</option><option value="380">Gaming PC and screen, gaming (about 380 W)</option><option value="550">High-end gaming PC, gaming (about 550 W)</option><option value="custom">I know the watts</option></select></label><label class="pcc__f"><span>Watts</span><input id="pcc-w" type="number" min="1" max="3000" step="1" value="80" inputmode="numeric"></label><label class="pcc__f"><span>Hours a day</span><input id="pcc-h" type="number" min="0.5" max="24" step="0.5" value="8" inputmode="decimal"></label><label class="pcc__f"><span>Price a unit (p per kWh)</span><input id="pcc-p" type="number" min="1" max="100" step="0.01" value="26.32" inputmode="decimal"></label></div><div class="pcc__out" aria-live="polite"><div><b id="pcc-hr">&ndash;</b><span>an hour</span></div><div><b id="pcc-day">&ndash;</b><span>a day</span></div><div><b id="pcc-mo">&ndash;</b><span>a month</span></div><div><b id="pcc-yr">&ndash;</b><span>a year</span></div></div><p class="pcc__note">At your price a unit, from the watts and hours above. Standing charge not included: you pay that whether the PC is on or not. The price filled in is the price cap for 1 October to 31 December 2026 (<a href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region" rel="noopener" target="_blank">Ofgem</a>, Direct Debit, average across Great Britain); your bill shows your own. Nothing you type leaves this page.</p></div><style>.pcc{margin:1rem 0 0;padding:1.2rem 1.25rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))}/*LT*/:where(html[data-theme="light"]) .pcc{border:1px solid rgba(23,124,187,.42);background:linear-gradient(135deg,rgba(23,124,187,.10),rgba(10,16,31,.02))}/*TL*/.pcc__in{display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;gap:.8rem}.pcc__f{display:flex;flex-direction:column;gap:.35rem;font-size:.86rem;color:var(--muted)}.pcc__f select,.pcc__f input{min-height:46px;padding:.55rem .7rem;border-radius:10px;border:1px solid rgba(125,170,220,.35);background:rgba(0,0,0,.3);color:var(--ink,#eaf4ff);font:inherit;font-size:1rem}/*LT*/:where(html[data-theme="light"]) .pcc__f select,:where(html[data-theme="light"]) .pcc__f input{border:1px solid rgba(35,80,130,.35);background:rgba(0,0,0,0.09);color:var(--ink,#0e1d2f)}/*TL*/.pcc__out{margin:1.1rem 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}.pcc__out div{padding:.9rem .8rem;border-radius:14px;border:1px solid rgba(125,170,220,.22);background:rgba(255,255,255,.03);text-align:center}/*LT*/:where(html[data-theme="light"]) .pcc__out div{border:1px solid rgba(35,80,130,.22);background:rgba(10,16,31,.03)}/*TL*/.pcc__out b{display:block;font-size:1.6rem;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--ink,#eaf4ff)}/*LT*/:where(html[data-theme="light"]) .pcc__out b{color:var(--ink,#0e1d2f)}/*TL*/.pcc__out span{display:block;margin-top:.2rem;font-size:.8rem;color:var(--muted)}.pcc__note{margin:.9rem 0 0;font-size:.8rem;line-height:1.5;color:var(--muted)}.pcc__note a{color:var(--cyan-soft)}@media (max-width:760px){.pcc__in{grid-template-columns:1fr 1fr}.pcc__in .pcc__f:first-child{grid-column:1/-1}.pcc__out{grid-template-columns:1fr 1fr}}</style><script>(function(){var k=document.getElementById("pcc-kind"),w=document.getElementById("pcc-w"),h=document.getElementById("pcc-h"),p=document.getElementById("pcc-p");if(!k)return;function m(pence){if(!isFinite(pence)||pence<0)return "\u2013";if(pence<100)return pence.toFixed(1)+"p";var l=pence/100;return "\u00a3"+(l<10?l.toFixed(2):Math.round(l).toLocaleString("en-GB"));}function go(){var W=+w.value,H=Math.min(24,+h.value),P=+p.value,hr=W/1000*P,day=hr*H;document.getElementById("pcc-hr").textContent=m(hr);document.getElementById("pcc-day").textContent=m(day);document.getElementById("pcc-mo").textContent=m(day*365/12);document.getElementById("pcc-yr").textContent=m(day*365);}k.addEventListener("change",function(){if(k.value!=="custom")w.value=k.value;go();});[w,h,p].forEach(function(x){x.addEventListener("input",function(){if(x===w)k.value="custom";go();});});go();})();</script>
       </div>
@@ -908,28 +908,28 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="What typical PCs cost at 26.32p a unit">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WORKED EXAMPLES</p>
+        <p class="eyebrow mono">WORKED EXAMPLES</p>
         <h2 class="section-title" data-title>What typical PCs cost at 26.32p a unit<span class="title-underline"></span></h2>
 <div class="price-table-wrap" tabindex="0" role="group" aria-label="Running costs (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><thead><tr><th scope="col">Computer</th><th scope="col">Power and use</th><th scope="col">An hour</th><th scope="col">A day</th><th scope="col">A year</th></tr></thead><tbody><tr><th scope="row">A laptop for email and browsing</th><td>30&nbsp;W, 6 hours a day</td><td>0.8p</td><td>4.7p</td><td>&pound;17</td></tr><tr><th scope="row">An office desktop and its screen</th><td>80&nbsp;W, 8 hours a day</td><td>2.1p</td><td>16.8p</td><td>&pound;61</td></tr><tr><th scope="row">A gaming PC and screen, 3 hours of games</th><td>380&nbsp;W, 3 hours a day</td><td>10.0p</td><td>30.0p</td><td>&pound;110</td></tr><tr><th scope="row">A desktop left on day and night, mostly idle</th><td>80&nbsp;W, 24 hours a day</td><td>2.1p</td><td>50.5p</td><td>&pound;184</td></tr></tbody></table></div><p style="font-size:.85rem;color:var(--muted)">Typical figures, at 26.32p a unit, without the standing charge. Price from <a href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region" rel="noopener" target="_blank">Ofgem</a>, 1 October to 31 December 2026.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Where the power goes">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHAT USES IT</p>
+        <p class="eyebrow mono">WHAT USES IT</p>
         <h2 class="section-title" data-title>Where the power goes<span class="title-underline"></span></h2>
 <ul><li><strong>The graphics card, when you game.</strong> In a gaming PC it uses more than everything else put together while a game runs, and very little when you&rsquo;re just browsing.</li><li><strong>The processor.</strong> Busy when you&rsquo;re working it, idling the rest of the time.</li><li><strong>The screen.</strong> Usually 15 to 40 watts for a desktop monitor, more for a big or very bright one.</li><li><strong>Being left on.</strong> An idle desktop still draws tens of watts, all day and all night. Asleep, it&rsquo;s a watt or two.</li></ul><p>The size of the power supply doesn&rsquo;t set the bill: a 750-watt supply only gives the parts what they ask for.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Easy ways to cut it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; CUT THE COST</p>
+        <p class="eyebrow mono">CUT THE COST</p>
         <h2 class="section-title" data-title>Easy ways to cut it<span class="title-underline"></span></h2>
 <ol><li><strong>Let it sleep.</strong> Settings &gt; System &gt; Power: put the screen and the PC to sleep after 10 to 15 minutes.</li><li><strong>Switch it off overnight.</strong> Modern PCs don&rsquo;t mind being switched off, and they start in seconds.</li><li><strong>Use a power-saving mode for everyday work.</strong> Email, browsing and films don&rsquo;t need full speed.</li><li><strong>Cap the frame rate in games.</strong> A game running at hundreds of frames a second on a 144Hz screen burns power for nothing.</li><li><strong>Turn the screen&rsquo;s brightness down a little.</strong> It&rsquo;s easier on the eyes too.</li></ol>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Measure what yours really uses">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; MEASURE YOURS</p>
+        <p class="eyebrow mono">MEASURE YOURS</p>
         <h2 class="section-title" data-title>Measure what yours really uses<span class="title-underline"></span></h2>
 <p>A plug-in energy meter between the wall and the PC&rsquo;s plug gives the whole figure, screen included. Or let the app below measure as you go:</p><div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))"><div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p><h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">Power &amp; running cost: what yours really uses</h3><p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p><p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>Power &amp; running cost</b>.</p><p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="/downloads/pcm/365-pc-manager-setup-v48.exe" download data-pfa-dl="power" style="text-decoration:none">Download 365 PC Manager free &#8595;</a><a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p><p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.</p></div><figure style="margin:0"><img src="/images/pcm-feat-power-v36.webp" width="1272" height="1408" alt="Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app catching it (a sample PC).</figcaption></figure></div><style>@media (max-width:820px){.pfa{grid-template-columns:1fr!important}}</style><script>(function(){var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){try{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")});}catch(e){}});})();</script>
       </div>
@@ -937,7 +937,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/pc-benchmark/">free PC benchmark</a><a href="/computer-spec-checker/">check your PC&rsquo;s specs</a><a href="/gaming-pc-tune-up/">gaming PC tune-up</a><a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a><a href="/will-a-power-cut-damage-my-computer/">will a power cut damage my computer?</a><a href="/free-pc-health-check/">the free 365 PC Manager app</a></div>
         </div>
       </div>
@@ -945,7 +945,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -994,7 +994,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

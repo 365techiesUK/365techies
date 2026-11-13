@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -685,7 +685,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -877,7 +877,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Custom VRM Dashboards</span></nav>
-          <p class="eyebrow mono">// CUSTOM DASHBOARDS &middot; WORLDWIDE</p>
+          <p class="eyebrow mono">CUSTOM DASHBOARDS &middot; WORLDWIDE</p>
           <h1>Custom dashboards for your <em class="grad grad--green">Victron VRM</em> system</h1>
           <p class="lede">Your Victron system, your dashboard, your way &mdash; any layout, any KPI, several installations on one live screen, hosted on the web so you can view it anywhere in the world. Designed, built and supported for you by the family firm that runs its own van on one &mdash; and a <a href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener"><strong>Victron Recommended Software Integrator</strong></a>. Scroll down: the demo on this page is <strong>live</strong>. Rated 4.9 on Google.</p>
           <div class="page-hero__cta">
@@ -916,7 +916,7 @@
     <section class="section" aria-label="Live demo — business-style dashboard">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/01 &mdash; LIVE DEMO &middot; REAL DATA</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>LIVE DEMO &middot; REAL DATA</p>
           <h2 class="section-title section-title--center" data-title>This is live, right now, from our own van<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Below is the <strong>365 Crafter</strong> &mdash; our own off-grid support van &mdash; streamed live over Victron&rsquo;s MQTT feed &mdash; the same per-second stream the official apps use &mdash; with history and totals from the official VRM API, exactly the architecture we&rsquo;d use for yours. Same van, two completely different dashboards: here it&rsquo;s a clean business view; on our <a href="/off-grid-victron-energy/">off-grid page</a> the identical data drives a car-style instrument cluster with a <strong>live grid-savings comparison</strong> &mdash; every solar watt valued against what the same power would cost on grid electricity. As far as we know, that&rsquo;s <strong>a first for a Victron off-grid system</strong>. That&rsquo;s the point &mdash; <strong>your dashboard, your way</strong>.</p>
         </div>
@@ -1009,7 +1009,7 @@
     <section class="section" aria-label="VRM vs a custom dashboard">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; HONEST COMPARISON</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>HONEST COMPARISON</p>
           <h2 class="section-title section-title--center" data-title>VRM is excellent. Here&rsquo;s what custom adds.<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Let&rsquo;s be straight: Victron&rsquo;s VRM portal is polished, free, and keeps getting better &mdash; live data every couple of seconds while you&rsquo;re watching, a rearrangeable Advanced tab with a custom widget builder, alarms to your phone, even remote control of your system. <strong>A custom dashboard doesn&rsquo;t replace VRM &mdash; it sits alongside it</strong> (read-only, via Victron&rsquo;s own API) and does the things VRM deliberately doesn&rsquo;t.</p>
         </div>
@@ -1033,7 +1033,7 @@
     <section class="section section--alt" aria-label="Fleet demo — several installations on one screen">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; ONE SCREEN &middot; EVERY SITE</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>ONE SCREEN &middot; EVERY SITE</p>
           <h2 class="section-title section-title--center" data-title>Several installations. One live screen.<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>VRM shows you one installation at a time (its fleet tools are a sortable list, and the Fleet dashboard needs ten or more sites). A custom dashboard puts <strong>every site you care about on one screen</strong> &mdash; live. Below, only the van is real; the other five are <strong>clearly-marked demo sites</strong> so you can see what your fleet would look like.</p>
         </div>
@@ -1100,13 +1100,13 @@
     <section class="section section--alt" aria-label="Our Victron specialisations">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE&rsquo;RE RECOGNISED FOR</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>WHAT WE&rsquo;RE RECOGNISED FOR</p>
           <h2 class="section-title section-title--center" data-title>Our Victron specialisations<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The same skills and sectors listed on our <a href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener"><strong>Victron Recommended Software Integrator</strong></a> profile &mdash; so you know exactly what we build on, and who we build it for.</p>
         </div>
         <div class="split-2" style="margin-top:1.2rem">
           <div class="prose" data-reveal>
-            <p class="eyebrow mono">// SOFTWARE WE BUILD ON</p>
+            <p class="eyebrow mono">SOFTWARE WE BUILD ON</p>
             <ul>
               <li><strong>Victron VRM API</strong> &mdash; custom dashboards on Victron&rsquo;s official <a href="/victron-vrm-api-dashboard/">VRM API</a>: any KPI, any layout, several sites on one live screen.</li>
               <li><strong>MQTT</strong> &mdash; live, per-second data straight from the Cerbo GX for genuinely real-time views, not the 15-minute logging interval.</li>
@@ -1114,7 +1114,7 @@
             </ul>
           </div>
           <div class="prose" data-reveal>
-            <p class="eyebrow mono">// SECTORS WE BUILD FOR</p>
+            <p class="eyebrow mono">SECTORS WE BUILD FOR</p>
             <ul>
               <li><strong>Professional &amp; recreational vehicles</strong> &mdash; <a href="/motorhome-hire-fleet-monitoring/">motorhome, campervan &amp; hire-fleet monitoring</a>.</li>
               <li><strong>Professional &amp; leisure marine</strong> &mdash; boat and charter-fleet power monitoring, anywhere in the world.</li>
@@ -1127,7 +1127,7 @@
     <section class="section" aria-label="How it works">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>HOW IT WORKS</p>
           <h2 class="section-title section-title--center" data-title>Built on Victron&rsquo;s open ecosystem &mdash; never replacing it<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Your VRM stays the system of record; we add the layer that makes the data make sense &mdash; the same way we built our own van&rsquo;s live dashboard.</p>
         </div>
@@ -1141,7 +1141,7 @@
     <section class="section" aria-label="What can go on your dashboard">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/04 &mdash; ANYTHING YOU LIKE</p>
+          <p class="eyebrow mono">ANYTHING YOU LIKE</p>
           <h2 class="section-title" data-title>Monitor everything that matters &mdash; on one page<span class="title-underline"></span></h2>
           <p>A custom dashboard isn&rsquo;t a fixed product &mdash; it&rsquo;s a page we design around <strong>your</strong> operation. Everything on our own van dashboard is an example you can see working today: live solar flow, battery state, tank levels, a &pound;-savings meter at our real tariff, engine-charging hours, even a 7-day solar forecast calibrated to the van&rsquo;s own history.</p>
           <p>Yours might add site totals, alerts when a battery runs low, a generator-run log, this week vs last week, occupancy, temperatures &mdash; whatever information actually helps you decide things. That&rsquo;s the &ldquo;information efficiency&rdquo; win: <strong>one glance instead of six logins</strong>.</p>
@@ -1161,7 +1161,7 @@
     <section class="section section--alt" aria-label="Industries">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; IDEAS BY INDUSTRY</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>IDEAS BY INDUSTRY</p>
           <h2 class="section-title section-title--center" data-title>Who puts these on a wall?<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
@@ -1177,7 +1177,7 @@
     <section class="section" aria-label="For Victron installers">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/06 &mdash; FOR VICTRON INSTALLERS</p>
+          <p class="eyebrow mono">FOR VICTRON INSTALLERS</p>
           <h2 class="section-title" data-title>Installers: give your customers a dashboard VRM can&rsquo;t<span class="title-underline"></span></h2>
           <p>You fit brilliant systems &mdash; then hand customers the same VRM portal as everyone else. There&rsquo;s no white-label VRM (the long-requested &ldquo;Dealer ID&rdquo; branding feature never shipped), and the Fleet dashboard only unlocks at ten-plus sites.</p>
           <p><strong>We build the dashboard layer for you:</strong> your branding, your customer&rsquo;s layout, hosted and supported by us, or set up on a subdomain of your own website &mdash; you stay the installer and the hero. It&rsquo;s a clean add-on to quote on every job, and a reason customers pick you over the next quote. And we&rsquo;re a <strong>Victron Recommended Software Integrator</strong> &mdash; listed in Victron&rsquo;s own network of vetted integrators, building on the official VRM API.</p>
@@ -1196,7 +1196,7 @@
     <section class="section" aria-label="On your own website">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/07 &mdash; ON YOUR OWN WEBSITE</p>
+          <p class="eyebrow mono">ON YOUR OWN WEBSITE</p>
           <h2 class="section-title" data-title>Your brand, your domain &mdash; your dashboard can live on your own website<span class="title-underline"></span></h2>
           <p>Everywhere else on this page we say the same thing: we build it, we host it, we look after it, and you get a link. That stays the default, and for most owners it&rsquo;s the easy answer. But if you run a business &mdash; an installer, a hire fleet, a marina, a holiday site &mdash; there&rsquo;s a second route worth knowing about: <strong>your dashboard can live on your own website</strong>, ideally on a fresh subdomain such as <strong>monitor.yourcompany.co.uk</strong> or dash.yourcompany.co.uk, linked straight into your main site&rsquo;s navigation.</p><p>Your part is three small jobs, none of them technical heroics. One: create a VRM access token in your own VRM account &mdash; a two-minute job, and we send a plain-English walkthrough. We recommend creating it under a &lsquo;monitor only&rsquo; VRM user (which VRM genuinely supports, per site), so the token can only ever <strong>read</strong> data. Two: add the subdomain in your hosting control panel &mdash; one click in cPanel, Site&nbsp;Tools, Plesk and the like. Three: give us FTP or SFTP access scoped to just that subdomain&rsquo;s folder. We do everything else &mdash; design, build and deployment.</p><p>Why bother? Because the ownership sums change:</p><ul><li><strong>Your address, end to end.</strong> Customers click from your menu to monitor.yourcompany.co.uk and back without ever leaving your domain &mdash; the same your-brand-only finish as our <a href="/white-label-victron-monitoring/">white-label monitoring</a>, on hosting you already pay for.</li><li><strong>The token is yours and stays server-side.</strong> It sits in one server-side file the dashboard reads; it never appears in the page code and is never visible to visitors &mdash; and you can revoke it in VRM whenever you like.</li><li><strong>Our access is fenced in.</strong> The FTP or SFTP login only reaches the new subdomain&rsquo;s folder &mdash; we never need, and never ask for, the rest of your site. Revoke that too, any time.</li><li><strong>Room to grow.</strong> Extra pages, extra dashboards and extra features can be added there over time as your needs change.</li><li><strong>Long-term ownership.</strong> The dashboard sits on your hosting, at your domain &mdash; if our arrangement ever ended, the files would still be sitting on your server.</li></ul><p>One honest requirement: the dashboard needs a small server-side relay to keep that token out of the page &mdash; a small PHP file, which nearly all ordinary shared hosting runs as standard. If yours can&rsquo;t, nothing is lost: we simply host it for you instead, exactly as described above.</p><p>And this isn&rsquo;t theory &mdash; it&rsquo;s how we run our own. The live 365&nbsp;Crafter van dashboards further up this page work on precisely this architecture: a static page, one server-side file holding a read-only token, and a small relay. If all you want is a simple widget on an existing page, our guide to <a href="/embed-victron-vrm-on-website/">embedding VRM on your website</a> may be enough; if you want the full custom dashboard under your own roof, this is the route. Tell us which way you lean when you <a href="#quote">book a free demo</a> &mdash; either answer is fine by us.</p>
         </div>
@@ -1213,7 +1213,7 @@
     <section class="section section--alt" aria-label="Worldwide and expats">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/08 &mdash; WORLDWIDE &middot; EXPATS</p>
+          <p class="eyebrow mono">WORLDWIDE &middot; EXPATS</p>
           <h2 class="section-title" data-title>Off-grid in Spain, Portugal, France &mdash; supported in plain English<span class="title-underline"></span></h2>
           <p>English-speaking expats run Victron systems on villas, fincas, quintas and smallholdings across Europe &mdash; often a long way from the installer who fitted them. Because a custom dashboard is <strong>hosted on the web and built on the VRM cloud API, where you are doesn&rsquo;t matter</strong>: we design, build and support it remotely, from the UK, in plain English.</p>
           <p>Check the batteries from the airport. Show a house-sitter one simple page. Get an alert before the freezer becomes a problem. And when you want changes, you deal with a real, family-run UK firm (est. 1995, rated 4.9 on Google) &mdash; not a forum thread.</p>
@@ -1232,7 +1232,7 @@
     <section class="section" aria-label="Beyond Victron">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">/09 &mdash; BEYOND VICTRON</p>
+          <p class="eyebrow mono">BEYOND VICTRON</p>
           <h2 class="section-title" data-title>Not just Victron &mdash; if it has a feed, we can usually dash it<span class="title-underline"></span></h2>
           <p>Victron&rsquo;s VRM API is where we started (our own van runs on it), but the same approach works for <strong>most systems that expose an API, a data feed or an export</strong>: other solar and battery brands, weather stations, tank and level sensors, heating, EV chargers, network kit &mdash; even business numbers like bookings or sales alongside your energy data.</p>
           <p>One screen, many sources &mdash; that&rsquo;s usually where dashboards earn their keep. Tell us what you run and we&rsquo;ll tell you honestly what&rsquo;s feasible before any money changes hands. This pairs naturally with the <a href="/ai/agents/">custom software and AI systems</a> we build.</p>
@@ -1296,7 +1296,7 @@
     </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1349,7 +1349,7 @@
     <section class="section" id="quote" aria-label="Book a free demo">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// BOOK A FREE DEMO</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>BOOK A FREE DEMO</p>
           <h2 class="section-title section-title--center" data-title>See your dashboard before you spend a penny<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Tell us a little about your setup and we&rsquo;ll come back within one working day (Mon&ndash;Fri, UK) with a demo and honest answers &mdash; then a fixed quote if you want one. No obligation, no hard sell.</p>
         </div>
@@ -1371,7 +1371,7 @@
           </label>
           <label class="field"><span>Anything else?</span><textarea name="message" placeholder="What kit you run, how many sites, what you&rsquo;d like to see at a glance&hellip;"></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Book my free demo</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// NO OBLIGATION &middot; FIXED QUOTE BEFORE ANY WORK &middot; A REAL PERSON REPLIES WITHIN ONE UK WORKING DAY</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">NO OBLIGATION &middot; FIXED QUOTE BEFORE ANY WORK &middot; A REAL PERSON REPLIES WITHIN ONE UK WORKING DAY</p>
         </form>
         <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to talk? Call <a href="tel:+441202775566">+44 1202 775566</a>, text <a href="sms:+447520615332">+44 7520 615332</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> &mdash; a family-run UK firm, since 1995.</p>
       </div>
@@ -1379,7 +1379,7 @@
     <section class="blog-section" aria-label="Guides for installers">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FOR INSTALLERS &amp; OPERATORS &mdash; HONEST GUIDES</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FOR INSTALLERS &amp; OPERATORS &mdash; HONEST GUIDES</p>
           <h2 class="section-title section-title--center" data-title>The questions installers ask us<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Straight answers on VRM&rsquo;s limits, the DIY routes and when done-for-you makes sense &mdash; written from a team that runs its own live VRM-API dashboard.</p>
         </div>
@@ -1415,7 +1415,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

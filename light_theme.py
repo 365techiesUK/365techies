@@ -21,7 +21,11 @@ INK = (21, 34, 66)            # #152242, the light theme's body ink
 MIX_BLACK = '#c5d2e6'         # what "mix with black" (a recessed dark panel) becomes on a light page
 
 # Page families that keep the dark look until their own styling has been checked in light.
-NOT_YET = ('games', 'bournemouth/games', 'dementia-clock')
+NOT_YET = ('bournemouth/games', 'dementia-clock')
+
+# Components that are dark by DESIGN on a light page (a game's poster tile is artwork, not a panel):
+# rules whose every selector starts with one of these keep their dark colours.
+KEEP_DARK = re.compile(r'^\.(?:gt|gt-|gt--)[\w-]*')
 
 _HEX = re.compile(r'#([0-9a-fA-F]{3,8})\b(?![0-9a-zA-Z_-])')
 _RGB = re.compile(r'\b(rgba?)\(([^()]*)\)')
@@ -230,6 +234,11 @@ def _rules(css):
 _NEST = ('@media', '@supports', '@container', '@layer')
 
 
+def _keep_dark(prelude):
+    sels = [x.strip() for x in _split(prelude, ',') if x.strip()]
+    return bool(sels) and all(KEEP_DARK.match(x) for x in sels)
+
+
 def light_css(css, where=False):
     """Only the light twins of css (for CSS that lives somewhere this file cannot edit)."""
     out = []
@@ -242,7 +251,7 @@ def light_css(css, where=False):
                 inner = light_css(body, where)
                 if inner: out.append(prelude + '{' + inner + '}')
             continue                                    # @keyframes, @font-face, @property: left alone
-        decls = _light_decls(body)
+        decls = '' if _keep_dark(prelude) else _light_decls(body)
         if decls:
             out.append(_scope_selector(prelude, where) + '{' + decls + '}')
     return ''.join(out)
@@ -263,7 +272,7 @@ def themed_css(css, mark=False):
             if prelude.split()[0].lower() in _NEST:
                 out.append(css[pos:brace + 1] + themed_css(body, mark) + '}'); pos = end
             continue
-        decls = _light_decls(body)
+        decls = '' if _keep_dark(prelude) else _light_decls(body)
         if decls:
             out.append(css[pos:end] + m1 + _scope_selector(prelude, True) + '{' + decls + '}' + m2); pos = end
     out.append(css[pos:])
@@ -306,3 +315,13 @@ VOLATILE = [
 def js_css(src):
     """The CSS a script injects through double-quoted string literals (interior.js: the share sheet)."""
     return ''.join(re.findall(r'"([^"]*\{[^"]*\})"', src))
+
+# ---- plain labels (13 Nov 2026) ---------------------------------------------------------------
+# Section labels were written like code: "// REMOTE SUPPORT", "/01 - WHO WE ARE". The marks go; the
+# words stay. Applied after stamp_lastmod, so dropping a decoration re-dates no page.
+_SLASH = re.compile(r'(<(?:p|span|div|h[1-6]|li|a|strong|summary|button|label|small|dt|em|b)\b[^>]*\bclass="[^"]*"[^>]*>)\s*//\s+(?=[A-Z0-9&])')
+_NUMBER = re.compile(r'(<(?:p|span|div|h[1-6])\b[^>]*\bclass="[^"]*(?:eyebrow|mono|kicker)[^"]*"[^>]*>)\s*/0\d\s+(?:&mdash;|\u2014|-)\s+')
+
+
+def plain_labels(html):
+    return _NUMBER.sub(r'\1', _SLASH.sub(r'\1', html))

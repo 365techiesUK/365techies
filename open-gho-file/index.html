@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -689,7 +689,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -880,7 +880,7 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Open a GHO File</span></nav>
-        <p class="eyebrow mono">// AN OLD GHOST BACKUP?</p>
+        <p class="eyebrow mono">AN OLD GHOST BACKUP?</p>
         <h1>Open a <em class="grad grad--cyan">.gho file</em> and get your files back</h1>
         <p class="lede">You&rsquo;ve found an old backup ending in .gho, perhaps with some .ghs files beside it, and Windows has no idea what to do with it. It&rsquo;s a Norton Ghost backup: a copy of a whole computer&rsquo;s disk, usually from the 2000s, and the files inside are often still there. Here&rsquo;s how to keep it safe, how to open it, and what to do when it won&rsquo;t. Rated 4.9 on Google.</p>
         <div class="page-hero__cta">
@@ -894,7 +894,7 @@
     <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; WHAT YOU&rsquo;VE FOUND</a><a href="#s2">02 &mdash; BEFORE ANYTHING ELSE</a><a href="#s3">03 &mdash; IF YOU HAVE GHOST EXPLORER</a><a href="#s4">04 &mdash; WHEN IT WON&rsquo;T OPEN</a><a href="#s5">05 &mdash; HOW WE DO IT</a><a href="#s6">06 &mdash; WHEN TO CALL US</a></nav>
     <section id="s1" class="section" aria-label="What a .gho file is">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHAT YOU&rsquo;VE FOUND</p>
+        <p class="eyebrow mono">WHAT YOU&rsquo;VE FOUND</p>
         <h2 class="section-title" data-title>What a .gho file is<span class="title-underline"></span></h2>
 <p><strong>Ghost</strong> (Norton Ghost at home, Symantec Ghost in offices and schools) was the best-known way to back up a whole computer from the late 1990s to the early 2010s. It copies a whole disk, or one part of it (a partition), into a compressed file ending in <strong>.gho</strong>: Windows, programs, settings and every document and photo, as they were on the day.</p><ul><li><strong>.gho</strong> is the backup itself, or its first part.</li><li><strong>.ghs</strong> files are the extra parts of a backup that was split up. They&rsquo;re named after it with a number on the end, for example <code>Backup.gho</code>, <code>Backup001.ghs</code>, <code>Backup002.ghs</code>. Ghost often split big backups into pieces of about 2 GB, or one piece per CD or DVD. You need every part.</li></ul><p>Windows can&rsquo;t open a .gho file, and neither can 7-Zip or the other usual zip tools. It needs Ghost&rsquo;s own <strong>Ghost Explorer</strong>, or someone who can read the format another way.</p>
       </div>
@@ -914,35 +914,35 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="Keep the backup safe first">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; BEFORE ANYTHING ELSE</p>
+        <p class="eyebrow mono">BEFORE ANYTHING ELSE</p>
         <h2 class="section-title" data-title>Keep the backup safe first<span class="title-underline"></span></h2>
 <ol><li><strong>Copy every part to another drive,</strong> the .gho and all its .ghs files into one folder, and work on the copy. If they&rsquo;re on old CDs or DVDs, copy each disc now: old discs stop reading.</li><li><strong>Don&rsquo;t rename the parts.</strong> Ghost finds the next piece by its name.</li><li><strong>Check nothing is missing:</strong> the numbers should run in order (001, 002, 003&hellip;) with no gaps.</li><li><strong>Never &ldquo;restore&rdquo; the backup onto the computer you use.</strong> A Ghost restore replaces everything on the disk it goes to. To get files back you only need to <em>open</em> the backup, not restore it.</li><li><strong>Be careful what you download.</strong> Norton Ghost hasn&rsquo;t been sold since April 2013, so the copies of Ghost Explorer on download sites are old, unofficial and sometimes come with junk. Don&rsquo;t run one you&rsquo;re not sure of.</li></ol>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Opening it with Ghost Explorer">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; IF YOU HAVE GHOST EXPLORER</p>
+        <p class="eyebrow mono">IF YOU HAVE GHOST EXPLORER</p>
         <h2 class="section-title" data-title>Opening it with Ghost Explorer<span class="title-underline"></span></h2>
 <p>Ghost Explorer (<code>Ghostexp.exe</code>) came with Ghost itself. If you still have the Ghost that made the backup, on an old disc or an old computer, it&rsquo;s the official way in.</p><ol><li>Open <strong>Ghost Explorer</strong>, choose <strong>File, Open</strong>, and pick the <strong>.gho</strong> file (not a .ghs).</li><li>Browse the folders as you would in File Explorer. Your own files are usually under <strong>Documents and Settings</strong> (Windows XP) or <strong>Users</strong> (Windows 7 and later), then your name, then Documents, Pictures and Desktop.</li><li>Select what you want, choose <strong>Extract</strong>, and save it to a folder on another drive.</li><li>If it asks for the next part, point it at the folder with the .ghs files.</li></ol><p><strong>If it reports an error or a damaged backup,</strong> Broadcom&rsquo;s support pages for Ghost say to start Ghost Explorer from the command line with <code>-ignoreindex</code>, which finds the files by reading the backup directly, and <code>-corrupt</code>, which skips a damaged area and carries on with the next file.</p><p>A newer Ghost won&rsquo;t necessarily help: the later home versions of Norton Ghost made a different kind of backup (.v2i) and can&rsquo;t open a .gho.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Why a Ghost backup won&rsquo;t open">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHEN IT WON&rsquo;T OPEN</p>
+        <p class="eyebrow mono">WHEN IT WON&rsquo;T OPEN</p>
         <h2 class="section-title" data-title>Why a Ghost backup won&rsquo;t open<span class="title-underline"></span></h2>
 <ul><li><strong>A missing part.</strong> One .ghs file missing, often a disc that was never copied, and Ghost stops there. Look for every disc or file in the set.</li><li><strong>An unfinished copy.</strong> A copy that stopped part-way (a full memory stick, a failing disc) is shorter than the original. If you still have the original, compare the sizes.</li><li><strong>A password.</strong> Ghost could lock a backup with a password. Without it, nobody can open it, us included.</li><li><strong>Damage.</strong> Scratched discs and old drives lose pieces. The files before and after the damage can often still be saved.</li><li><strong>&ldquo;Not a Ghost image file&rdquo;.</strong> Usually a .ghs opened instead of the .gho, a Ghost Explorer from a different version, or a file that isn&rsquo;t a Ghost backup at all despite its name.</li></ul>
       </div>
     </section>
     <section id="s5" class="section" aria-label="We can read Ghost backups without Ghost">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; HOW WE DO IT</p>
+        <p class="eyebrow mono">HOW WE DO IT</p>
         <h2 class="section-title" data-title>We can read Ghost backups without Ghost<span class="title-underline"></span></h2>
 <p>We&rsquo;ve built our own reader for Ghost backups, so we don&rsquo;t need a working copy of Ghost or an old computer to run it on. In November 2026 we used it on a backup made in 2009 and split into two parts (3.4 GB in all): it listed all 36,430 files inside, and we copied out the ones that were wanted. We never change the original; we work on a copy.</p><ol><li><strong>We look at it first</strong> and tell you whether it can be read, and what&rsquo;s inside: folders, photos, documents, emails.</li><li><strong>You choose</strong> what you want back, and we tell you the price before we start. No fix, no fee.</li><li><strong>We copy your files</strong> onto a memory stick, a drive of yours or your OneDrive, in folders you&rsquo;ll recognise.</li></ol><p>Around Bournemouth, Christchurch and Poole we collect the drive or discs from you. Elsewhere in the UK, ring us and we&rsquo;ll agree the easiest way to get it to us.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="When to call us">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; WHEN TO CALL US</p>
+        <p class="eyebrow mono">WHEN TO CALL US</p>
         <h2 class="section-title" data-title>When to call us<span class="title-underline"></span></h2>
 <p>Can&rsquo;t open it, missing a part, or don&rsquo;t want to risk the only copy? Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. Tell us roughly when the backup was made and how many parts it has. See also <a href="/data-recovery/">data recovery</a>.</p><p style="font-size:.85rem;color:var(--muted)">Sources: Broadcom, <a href="https://knowledge.broadcom.com/external/article/151704/handling-a-corrupted-ghost-image-gho-fil.html" rel="noopener" target="_blank">handling a corrupted Ghost image</a>; Wikipedia, <a href="https://en.wikipedia.org/wiki/Ghost_(disk_utility)" rel="noopener" target="_blank">Ghost (disk utility)</a>; <a href="https://www.7-zip.org/" rel="noopener" target="_blank">7-Zip&rsquo;s list of formats</a>. Read 3 November 2026.</p>
       </div>
@@ -950,7 +950,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/data-recovery/">data recovery</a><a href="/how-to-recover-deleted-files/">how to recover deleted files</a><a href="/what-windows-backup-backs-up/">what Windows Backup really backs up</a><a href="/restore-windows-7-backup-on-windows-11/">how to restore a Windows 7 backup</a><a href="/how-to-back-up-your-photos/">how to back up your photos</a></div>
         </div>
       </div>
@@ -958,7 +958,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1007,7 +1007,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

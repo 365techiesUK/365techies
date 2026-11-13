@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -687,7 +687,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -879,7 +879,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Mapped Drive Keeps Disconnecting</span></nav>
-          <p class="eyebrow mono">// MAPPED DRIVE FIXES</p>
+          <p class="eyebrow mono">MAPPED DRIVE FIXES</p>
           <h1>Mapped network drive <em class="grad grad--cyan">keeps disconnecting</em> on Windows 11?</h1>
           <p class="lede">A mapped drive that shows a red X, throws "the network path was not found", or makes you reconnect every morning is a common small-office headache. The good news: it's almost always a handful of predictable causes — saved credentials, network-card power settings, SMB timeouts or flaky Wi-Fi — and we can usually sort it remotely. Straight-talking help for Windows offices across Bournemouth, Christchurch, Poole and Dorset.</p>
           <div class="page-hero__cta">
@@ -903,7 +903,7 @@
 
     <section id="s1" class="section" aria-label="Why mapped drives drop — and why it's usually an easy fix">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// WHY IT HAPPENS</p>
+        <p class="eyebrow mono">WHY IT HAPPENS</p>
         <h2 class="section-title" data-title>Why mapped drives drop — and why it's usually an easy fix<span class="title-underline"></span></h2>
 <p>A mapped network drive is just a shortcut that gives a shared folder — on a server, a NAS box, or another office PC — its own drive letter like <strong>S:</strong> or <strong>Z:</strong>, so it behaves like part of your own computer. When it "disconnects", the letter is still there but Windows has lost its live connection to the folder behind it, so you see a red X on the drive, a "reconnecting" spinner, or errors like <em>"the network path was not found"</em> or <em>"an error occurred while reconnecting"</em>.</p><p>Here's the reassuring part: on small-office networks this is rarely a sign of something seriously broken. It's almost always one of a short list of well-known causes — forgotten credentials, a power-saving setting quietly switching your network card off, a Windows or SMB timeout dropping idle connections, or an unstable Wi-Fi link. Work through the fixes below in order and most drives settle down. If you'd rather not touch the technical bits, this is exactly the kind of thing we quietly fix for offices as part of <a href="/it-support-poole/">day-to-day IT support</a> — often before your team even notices.</p>
       </div>
@@ -911,7 +911,7 @@
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">NEED THIS FIXED RIGHT NOW?</p>
           <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
           <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
@@ -922,35 +922,35 @@
     </section>
     <section id="s2" class="section section--alt" aria-label="Saved credentials and network-card power settings">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE TOP TWO CAUSES</p>
+        <p class="eyebrow mono">THE TOP TWO CAUSES</p>
         <h2 class="section-title" data-title>Saved credentials and network-card power settings<span class="title-underline"></span></h2>
 <p><strong>1. Credentials aren't being saved.</strong> A very common cause. If the drive lives on a server or NAS that needs a username and password, and those aren't stored, Windows quietly drops the connection whenever the session lapses — and you're prompted to sign in again (or just get an error). The fix is to store the login in <strong>Credential Manager</strong>: open the Start menu, search <strong>Credential Manager</strong>, choose <strong>Windows Credentials</strong>, then <strong>Add a Windows credential</strong>. Enter the server or NAS name (for example <em>\\SERVER</em> or its IP address) with the correct username and password. When you re-map the drive, tick <strong>"Reconnect at sign-in"</strong> and, if the share needs a different login, <strong>"Connect using different credentials"</strong> so it signs in cleanly every time. In business setups it's worth doing this consistently across every PC — something we handle as standard.</p><p><strong>2. Windows is powering down the network card.</strong> A sneaky one. By default, Windows is often allowed to switch off your network adapter to save power — and when it does, your mapped drive drops. To stop it: right-click <strong>Start</strong>, open <strong>Device Manager</strong>, expand <strong>Network adapters</strong>, right-click your adapter, choose <strong>Properties</strong>, go to the <strong>Power Management</strong> tab, and <strong>untick "Allow the computer to turn off this device to save power"</strong>. On laptops it's also worth setting the power plan so it doesn't aggressively sleep the network. These two fixes alone often settle a dropping drive.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="SMB session timeouts and reconnecting at logon">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// TIMEOUTS & RECONNECTION</p>
+        <p class="eyebrow mono">TIMEOUTS & RECONNECTION</p>
         <h2 class="section-title" data-title>SMB session timeouts and reconnecting at logon<span class="title-underline"></span></h2>
 <p><strong>Idle SMB sessions time out.</strong> SMB is the protocol Windows uses to talk to shared folders. To save resources, Windows and many servers/NAS devices automatically drop a connection that's been idle for a while (an "autodisconnect"). Come back after a coffee break and the drive shows disconnected until you double-click it. On the Windows server side this behaviour is controlled by the <em>autodisconnect</em> setting, and on a NAS the idle-timeout can usually be raised — but these are settings best changed knowingly, because getting them wrong can cause other issues, so it's a fair point to hand to us. Another common trigger on managed networks is <strong>Group Policy drive maps set to "Recreate"</strong> instead of "Update", which drop and rebuild the drive on every refresh; switching them to "Update" clears a whole class of these disconnects.</p><p><strong>Reconnect at logon — and persistent mapping.</strong> Make sure the drive is set to reconnect automatically. When you map it (in File Explorer, <strong>This PC</strong> → <strong>Map network drive</strong>), tick <strong>"Reconnect at sign-in"</strong>. In a managed office, drives are often mapped centrally by a <strong>Group Policy or a logon script</strong> instead, so they appear reliably on every machine the same way — which is far more robust than each person mapping their own. If your drives are mapped by hand and keep drifting out of sync across the team, moving to a proper policy-based mapping is one of the tidy-ups we do when we take on an office's <a href="/it-support-bournemouth/">IT support</a>.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Wi-Fi vs wired, and the wider network">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// THE NETWORK ITSELF</p>
+        <p class="eyebrow mono">THE NETWORK ITSELF</p>
         <h2 class="section-title" data-title>Wi-Fi vs wired, and the wider network<span class="title-underline"></span></h2>
 <p>Sometimes the drive is innocent and the <em>network</em> is the problem. <strong>Wi-Fi is the usual suspect.</strong> A shared drive needs a steady, always-on connection, and Wi-Fi — especially at the edge of a busy office, on a crowded channel, or roaming between access points — drops packets that a mapped drive doesn't tolerate well. If a machine that keeps disconnecting is on Wi-Fi, the single most effective fix is often to <strong>plug it into a network cable</strong>. Where wiring isn't practical, we look at access-point placement, channels and mesh coverage so the connection stays rock-solid.</p><p>Beyond that, we check the boring-but-important basics that catch offices out: a NAS or server going to sleep, a flaky switch or network cable, IP addresses changing so the drive points at the wrong place, or the server simply being overloaded at busy times. None of it is exotic — but chasing it down across several PCs eats an afternoon, which is why offices across <a href="/it-support-bournemouth/">Bournemouth</a> and <a href="/it-support-poole/">Poole</a> simply hand it to us. We find the actual cause, fix it properly, and make sure it stays fixed for the whole team.</p>
       </div>
     </section>
     <section class="section" aria-label="Related">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">// RELATED</p>
+        <p class="eyebrow mono">RELATED</p>
 <p>Sorting one disconnecting drive is often the tip of the iceberg — if your office network could do with being made properly reliable, our local <a href="/it-support-poole/">IT services in Poole</a> and <a href="/it-support-bournemouth/">IT services in Bournemouth</a> keep shares, servers, NAS and Wi-Fi running day to day. For account and file-sharing headaches see <a href="/microsoft-365-support/">Microsoft 365 support</a>, browse our wider <a href="/it-support-dorset/">IT support across Dorset</a>, or take a look at ongoing <a href="/monthly-it-support/">monthly IT support</a> so niggles like this are handled before they cost your team time.</p>
       </div>
     </section>
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -983,7 +983,7 @@
     <style>.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}/*LT*/:where(html[data-theme="light"]) .dpan{--hp-card:rgba(219,223,234,.66);--hp-edge:rgba(35,80,130,.17);--hp-edge-hi:rgba(15,80,130,.42);--hp-ink:#0c1929;--hp-body:#17304f;--hp-soft:#355074;--hp-dark:#eaeff5}/*TL*/ .dpan *{box-sizing:border-box} .dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}/*LT*/:where(html[data-theme="light"]) .dpan__card{background:radial-gradient(60% 90% at 0% 0%,rgba(23,124,187,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(184,123,0,.1),transparent 60%),rgba(224,228,238,.82)}/*TL*/ .dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)} .dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance} .dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)} .dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem} .dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)} .dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)} .dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__ico{box-shadow:inset 0 1px 0 rgba(10,16,31,.35),0 8px 18px -10px var(--c1)}/*TL*/ .dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round} .dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-fix{--c1:#177cbb;--c2:#005d8f}/*TL*/.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-buy{--c1:#b87b00;--c2:#8f6700}/*TL*/ .dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem} .dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)} .dpan__ticks li::before{content:"\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}/*LT*/:where(html[data-theme="light"]) .dpan__ticks li::before{color:#1b792b}/*TL*/ .dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem} .dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__rows a{background:rgba(237,239,246,.35)}/*TL*/ .dpan__rows a:hover{border-color:rgba(255,217,120,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__rows a:hover{border-color:rgba(143,103,0,.55)}/*TL*/ .dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)} .dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)} .dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan__rows em{color:#856000}/*TL*/ .dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)} .dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem} .dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__help a{background:rgba(237,239,246,.35);color:#11233c}/*TL*/ .dpan__help a:hover{border-color:rgba(121,208,255,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__help a:hover{border-color:rgba(0,93,143,.55)}/*TL*/ .dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)} .dpan__more a{color:var(--cyan-soft);text-decoration:none} .dpan__more a:hover{text-decoration:underline} .dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem} .dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}/*LT*/:where(html[data-theme="light"]) .dpan__btn{box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(10,16,31,.4)}/*TL*/ .dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none} .dpan__link:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__link:hover{color:#152242}/*TL*/ .dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)} .dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none} @media (max-width:820px){.dpan__grid{grid-template-columns:1fr}} .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-care{--c1:#0b8838;--c2:#0f8523}/*TL*/</style>
     <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
       <div class="dpan__card">
-        <p class="dpan__kicker">// Still stuck?</p>
+        <p class="dpan__kicker">Still stuck?</p>
         <h2 class="dpan__title">Tired of reconnecting that drive every morning? Let us settle it for good.</h2>
         <p class="dpan__lede">This is bread-and-butter work for us — we connect remotely with your permission using Splashtop SOS (you watch, we phone first, it ends when we're done), work through the real causes in order, and get your shared drive rock-solid so the whole office stops losing time. No call-out fee, and no fix, no fee. Serving businesses across Bournemouth, Christchurch, Poole and Dorset.</p>
         <div class="dpan__grid">
@@ -1020,7 +1020,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

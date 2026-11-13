@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">TalkTalk Email on Android</span></nav>
-          <p class="eyebrow mono">// EMAIL SUPPORT</p>
+          <p class="eyebrow mono">EMAIL SUPPORT</p>
           <h1>TalkTalk email not working on your Android phone</h1>
           <p class="lede">It worked for years. Now the phone says it could not sign in, or nothing new has arrived since a date you can name, or it sends but never receives &mdash; and yet the same email works perfectly in a web browser or on the computer. That last part is the clue. The account is fine; what has gone stale is the set of instructions the phone remembered when the account was first added, often years ago. Here is why that happens with TalkTalk in particular, how to prove which side the fault is on in two minutes, and the setup that works now.</p>
           <div class="page-hero__cta">
@@ -867,13 +867,13 @@
 
     <section id="s1" class="section" aria-label="Why an account that worked for years stops on the phone">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHY NOW</p>
+        <p class="eyebrow mono">WHY NOW</p>
         <h2 class="section-title" data-title>Why an account that worked for years stops on the phone<span class="title-underline"></span></h2>
 <p>An email app on a phone does not look up how to reach your provider every time. It asks once, when the account is added, and stores the answer: which server to talk to, on which port, with which kind of security, using which method. Then it uses that answer for years. Providers, meanwhile, change their side &mdash; retiring old server names, switching off the unencrypted connections that were normal a decade ago, moving the whole mail service to a new platform &mdash; and TalkTalk has done all of those at one time or another. A phone set up under the old instructions keeps knocking at a door that has been bricked up.</p><p>Three things account for many TalkTalk cases on Android.</p><ul><li><strong>The phone was set up with POP, not IMAP.</strong> Older phones and older versions of the mail apps guessed at settings, and often chose the old POP method. POP downloads mail to one device and can remove it from the server, which is why email sometimes vanishes from the computer after the phone has fetched it, or the other way round. It also stops working the moment the provider retires the old server name it was pointed at.</li><li><strong>The password changed, and the phone is still trying the old one.</strong> TalkTalk has required password resets over the years, and if the phone keeps presenting the old password it can lock the account for a while &mdash; which then breaks the computer too, for an hour or so, and sends you looking in the wrong place.</li><li><strong>The phone itself stopped the app checking.</strong> Android is aggressive about battery. A mail app that has been put to sleep by battery optimisation, or an account whose sync has been switched off, simply stops fetching, and no server setting fixes that.</li></ul><p>One more thing worth knowing: addresses ending <code>@talktalk.net</code>, <code>@tiscali.co.uk</code> and <code>@lineone.net</code> are all the same TalkTalk Mail service underneath, so everything on this page applies to all of them.</p>
       </div>
     </section>
     <section class="section" aria-label="Windows PCs only" style="padding-top:0">
-      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">// ANDROID AND WINDOWS, NOT APPLE</p><p style="margin:0;font-size:.98rem"><strong>We do not support email on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, <a href="https://support.apple.com/mail" rel="noopener" target="_blank">Apple&rsquo;s own Mail help</a> is the place to start. </p></div></div>
+      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">ANDROID AND WINDOWS, NOT APPLE</p><p style="margin:0;font-size:.98rem"><strong>We do not support email on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, <a href="https://support.apple.com/mail" rel="noopener" target="_blank">Apple&rsquo;s own Mail help</a> is the place to start. </p></div></div>
     </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
       <div class="wrap">
@@ -926,7 +926,7 @@
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>FIX IT WITH ME &middot; STEP BY STEP</p>
           <h2 class="section-title section-title--center" data-title>Get TalkTalk mail working on the phone, step by step<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 November 2026</span></p>
         </div>
@@ -1009,7 +1009,7 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>
-          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">// NEED THIS FIXED RIGHT NOW?</p>
+          <p class="eyebrow eyebrow--center mono" style="margin-bottom:0.5rem">NEED THIS FIXED RIGHT NOW?</p>
           <p class="callout__lede">Skip the DIY &mdash; <strong>call 01202 775566</strong> and we can be looking at your screen within minutes. You watch everything we do, and most problems on this page are fixed in one short remote session. (Mon&ndash;Fri, 9am&ndash;5pm.)</p>
           <p class="callout__row">
             <a class="button primary" href="/sos/">Start SOS Remote Support</a>
@@ -1020,28 +1020,28 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
     </section>
     <section id="s2" class="section section--alt" aria-label="Two minutes that tell you whether it is the account or the phone">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; PROVE WHICH SIDE</p>
+        <p class="eyebrow mono">PROVE WHICH SIDE</p>
         <h2 class="section-title" data-title>Two minutes that tell you whether it is the account or the phone<span class="title-underline"></span></h2>
 <p>Before touching any settings, find out where the fault is. Open a web browser &mdash; on the phone is fine, on a computer is easier &mdash; and sign in to TalkTalk&rsquo;s webmail with the full email address and the password.</p><ul><li><strong>If webmail refuses the password</strong>, the account is the problem, and nothing on the phone will help until it is sorted. Use the forgotten-password route through your TalkTalk account, set a new password, and then wait a little while before trying the phone: if the phone has been hammering the old password, the account may be temporarily locked and needs a few minutes to clear.</li><li><strong>If webmail opens and the mail is all there</strong>, the account is fine and the phone is at fault. That is the usual outcome, and it is the good one: the fix is on the device in your hand, and nothing is lost.</li></ul><p>While you are in webmail, look at the date of the newest message. If new mail is arriving there but stopped on the phone on a particular day, that day is often the day a password was changed, the phone updated, or the provider retired something &mdash; a useful clue, though not one you need in order to fix it.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Remove the old account and add it back by hand">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE SETUP THAT WORKS</p>
+        <p class="eyebrow mono">THE SETUP THAT WORKS</p>
         <h2 class="section-title" data-title>Remove the old account and add it back by hand<span class="title-underline"></span></h2>
 <p>Do not try to edit the existing account on the phone. Its stored settings are the problem, and mail apps hide half of them. Remove it and add it again manually, choosing the settings yourself rather than letting the app guess. Nothing is lost by removing it: with IMAP, every message lives on the server and comes straight back.</p><p>In the Gmail app, open the menu, go to Settings, choose <em>Add account</em>, and pick <em>Other</em> rather than any of the named providers. In the Samsung Email app the equivalent is Add account, then Other. When the app asks what kind of account, choose <strong>IMAP</strong>, never POP. Then enter the settings by hand.</p><p>At the time of writing, TalkTalk&rsquo;s current settings are: incoming server <code>mail.talktalk.net</code> on port 993 with SSL/TLS security, outgoing server <code>smtp.talktalk.net</code> on port 587 with STARTTLS, the username is your <em>full</em> email address, and the password is your TalkTalk Mail password. Leave the outgoing sign-in setting as the app sets it, and if sending refuses, compare the outgoing settings with TalkTalk&rsquo;s own Android guide before changing them. Providers do change these, so if the phone still refuses, check them against TalkTalk&rsquo;s own help pages rather than against a forum post from years ago &mdash; and if anything on this page ever disagrees with TalkTalk&rsquo;s own, TalkTalk is right.</p><p>Once it connects, the folders fill in over a few minutes. If you had a lot of mail, give it time before deciding something is missing.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="When the settings are right and it still goes quiet">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE ANDROID TRAPS</p>
+        <p class="eyebrow mono">THE ANDROID TRAPS</p>
         <h2 class="section-title" data-title>When the settings are right and it still goes quiet<span class="title-underline"></span></h2>
 <p>If the account was added correctly and worked for a day or a week and then went quiet, the settings are not the problem &mdash; the phone is stopping the app from doing its job. These are the switches to check, and they are the same on most Android phones even if the exact wording varies.</p><ul><li><strong>Battery optimisation.</strong> Android puts apps to sleep to save power, and a sleeping mail app does not check for mail. In Settings, under Apps, find the mail app, open its battery setting and set it to unrestricted, or take it out of the optimised list. On some phones there is a separate &ldquo;sleeping apps&rdquo; list in the battery settings that does the same thing.</li><li><strong>Account sync switched off.</strong> In Settings, under Accounts (or Passwords and accounts), open the email account and check that sync for mail is on. A single accidental tap turns it off and nothing announces it.</li><li><strong>Sync frequency set to manual.</strong> Inside the mail app&rsquo;s account settings there is a check frequency. Manual means it only looks when you open the app and pull down.</li><li><strong>Storage full.</strong> A phone with no free space stops downloading new mail silently. Free some space and it catches up.</li><li><strong>Sending fails only on mobile data.</strong> An account that sends fine on home Wi-Fi but not out and about is a symptom of stale outgoing settings from an older setup. Compare the outgoing server, port and security with TalkTalk&rsquo;s own Android guide, correct them, and it sends everywhere.</li></ul><p>And a note on two devices: if the old setup used POP on the phone and the computer also collects the mail, the two can fight over what has been downloaded and what should be deleted. Putting both on IMAP ends that for good, because both then look at the same mailbox on the server.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Is a broadband provider&rsquo;s email worth keeping?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; THE BIGGER QUESTION</p>
+        <p class="eyebrow mono">THE BIGGER QUESTION</p>
         <h2 class="section-title" data-title>Is a broadband provider&rsquo;s email worth keeping?<span class="title-underline"></span></h2>
 <p>Once the phone is working again, this is worth five minutes&rsquo; thought. An email address that belongs to a broadband provider is tied to the broadband account. If you leave TalkTalk, the mailbox now only carries on if you subscribe to TalkTalk&rsquo;s paid Everymail service &mdash; and the general rule with any provider&rsquo;s email is the same: it is not really yours, and it can become a reason you cannot switch broadband even when you want to.</p><p>The alternative is an address that is independent of who supplies your internet &mdash; Gmail or Outlook.com for most people &mdash; with the old TalkTalk address kept alive and forwarding into it while friends, banks and online shops are gradually moved across. It does not have to happen in one go, and nothing needs to be lost. We have written up the same move for other providers, and the pattern is identical; we also do it for people, remotely while you watch, and set the phone up properly at the same time.</p><p>None of that is urgent. Get the phone working first. But if this is the second or third time the provider&rsquo;s email has stopped on a device, that is the provider telling you something.</p>
       </div>
@@ -1049,7 +1049,7 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/outlook-not-syncing-android/">Outlook not syncing on Android</a><a href="/outlook-app-asking-to-sign-in-android/">Outlook app keeps asking to sign in</a><a href="/move-plusnet-email-to-gmail/">Moving Plusnet email to Gmail</a><a href="/btinternet-email-wont-add-to-new-outlook/">BT email and the new Outlook</a><a href="/sky-email-wont-add-to-new-outlook/">Sky email and the new Outlook</a></div>
         </div>
       </div>
@@ -1057,7 +1057,7 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1086,7 +1086,7 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
     <style>.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}/*LT*/:where(html[data-theme="light"]) .dpan{--hp-card:rgba(219,223,234,.66);--hp-edge:rgba(35,80,130,.17);--hp-edge-hi:rgba(15,80,130,.42);--hp-ink:#0c1929;--hp-body:#17304f;--hp-soft:#355074;--hp-dark:#eaeff5}/*TL*/ .dpan *{box-sizing:border-box} .dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}/*LT*/:where(html[data-theme="light"]) .dpan__card{background:radial-gradient(60% 90% at 0% 0%,rgba(23,124,187,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(184,123,0,.1),transparent 60%),rgba(224,228,238,.82)}/*TL*/ .dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)} .dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance} .dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)} .dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem} .dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)} .dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)} .dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__ico{box-shadow:inset 0 1px 0 rgba(10,16,31,.35),0 8px 18px -10px var(--c1)}/*TL*/ .dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round} .dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-fix{--c1:#177cbb;--c2:#005d8f}/*TL*/.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-buy{--c1:#b87b00;--c2:#8f6700}/*TL*/ .dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem} .dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)} .dpan__ticks li::before{content:"\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}/*LT*/:where(html[data-theme="light"]) .dpan__ticks li::before{color:#1b792b}/*TL*/ .dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem} .dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__rows a{background:rgba(237,239,246,.35)}/*TL*/ .dpan__rows a:hover{border-color:rgba(255,217,120,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__rows a:hover{border-color:rgba(143,103,0,.55)}/*TL*/ .dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)} .dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)} .dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}/*LT*/:where(html[data-theme="light"]) .dpan__rows em{color:#856000}/*TL*/ .dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)} .dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem} .dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}/*LT*/:where(html[data-theme="light"]) .dpan__help a{background:rgba(237,239,246,.35);color:#11233c}/*TL*/ .dpan__help a:hover{border-color:rgba(121,208,255,.55)}/*LT*/:where(html[data-theme="light"]) .dpan__help a:hover{border-color:rgba(0,93,143,.55)}/*TL*/ .dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)} .dpan__more a{color:var(--cyan-soft);text-decoration:none} .dpan__more a:hover{text-decoration:underline} .dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem} .dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}/*LT*/:where(html[data-theme="light"]) .dpan__btn{box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(10,16,31,.4)}/*TL*/ .dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none} .dpan__link:hover{color:#fff}/*LT*/:where(html[data-theme="light"]) .dpan__link:hover{color:#152242}/*TL*/ .dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)} .dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none} @media (max-width:820px){.dpan__grid{grid-template-columns:1fr}} .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}/*LT*/:where(html[data-theme="light"]) .dpan .hp-c-care{--c1:#0b8838;--c2:#0f8523}/*TL*/</style>
     <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
       <div class="dpan__card">
-        <p class="dpan__kicker">// Still stuck?</p>
+        <p class="dpan__kicker">Still stuck?</p>
         <h2 class="dpan__title">Phone still refusing to fetch your email?</h2>
         <p class="dpan__lede">We set up email on phones and computers for people across Bournemouth, Poole and Dorset &mdash; usually remotely, while you watch. Call 01202 775566.</p>
         <div class="dpan__grid">
@@ -1123,7 +1123,7 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -675,7 +675,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -867,7 +867,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">CCTV from a Detached Garage</span></nav>
-          <p class="eyebrow mono">// CCTV CONNECTIVITY</p>
+          <p class="eyebrow mono">CCTV CONNECTIVITY</p>
           <h1>How to get CCTV from a <em class="grad grad--cyan">detached garage</em> to the house</h1>
           <p class="lede">Cameras up on the garage, but nothing showing indoors? The garage has power and no network reaching it &mdash; here are the four reliable ways to get the picture back to the house, honestly weighed up, and how we install them across Dorset.</p>
           <div class="page-hero__cta">
@@ -891,42 +891,42 @@
 
     <section id="s1" class="section" aria-label="The four ways to get garage cameras back to the house">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <p class="eyebrow mono">THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>The four ways to get garage cameras back to the house<span class="title-underline"></span></h2>
 <p>To get CCTV from a detached garage to the house, you connect the garage cameras to your home network so the recorder, your phone or a PC indoors can see them. The catch is almost always the same: the garage has power but no network cable reaching it, and ordinary Wi-Fi will not stretch reliably across the garden and through two sets of external walls.</p><p>There are four dependable ways to bridge that gap, in rough order of reliability:</p><ul><li><strong>A buried armoured ethernet cable</strong> &mdash; the gold standard: one rugged cable carries both the picture and the camera power.</li><li><strong>A point-to-point wireless bridge</strong> &mdash; two small dishes that behave like an invisible ethernet cable across the garden. This is our specialism.</li><li><strong>Powerline adapters</strong> &mdash; network sent over the mains wiring, which works only in the right circumstances (more on that below).</li><li><strong>Standalone 4G or solar cameras</strong> &mdash; they skip your network entirely and stream over mobile data, with their own trade-offs.</li></ul><p>Which one is right depends on the distance, whether you can dig, and whether there is a clear line of sight from the house to the garage. We help homeowners across <a href="/it-support-dorset/">Dorset</a> weigh up the options and fit the right one.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Buried armoured ethernet: the most reliable link">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; THE WIRED WAY</p>
+        <p class="eyebrow mono">THE WIRED WAY</p>
         <h2 class="section-title" data-title>Buried armoured ethernet: the most reliable link<span class="title-underline"></span></h2>
 <p>If you can get a cable from the house to the garage, a wired ethernet link is the most reliable option by a distance &mdash; nothing to drop out, and nothing affected by weather or interference. For an outdoor run you want <strong>external-grade or steel-wire-armoured (SWA) cable rated for direct burial</strong>, not the flat white cable sold for indoors, which perishes in sunlight and damp.</p><p>One neat advantage: a single ethernet run carries both the camera&rsquo;s picture and its power over <a href="/it-jargon-buster/ethernet/">Power over Ethernet (PoE)</a>, so you do not need a separate plug out at each camera. The one limit to remember is distance &mdash; a PoE run is good for about 100 metres from the switch to the camera, which comfortably covers most gardens.</p><p>In practice we run the armoured cable from a small PoE switch or your recorder in the house, out through the wall, along or under the garden (buried deep enough to stay clear of a spade and kept away from mains cables), and into the garage. If you also want general internet out there, the same cable can feed a <a href="/share-internet-between-two-buildings/">link between the two buildings</a> for Wi-Fi and computers too.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Point-to-point wireless bridge: no trench needed">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; OUR SPECIALISM</p>
+        <p class="eyebrow mono">OUR SPECIALISM</p>
         <h2 class="section-title" data-title>Point-to-point wireless bridge: no trench needed<span class="title-underline"></span></h2>
 <p>When digging a trench is not practical &mdash; a driveway in the way, a long run, or a garage you rent &mdash; a <strong>point-to-point wireless bridge</strong> is usually the answer, and it is the job we are best known for. Two small weatherproof units, one on the house and one on the garage, form a private, dedicated wireless link that behaves like an invisible ethernet cable. It is far steadier than a Wi-Fi extender because the two units only ever talk to each other.</p><p>The one requirement is a reasonably <strong>clear line of sight</strong> between the house and the garage &mdash; a bridge does not like a big tree or a wall in the middle. Each end needs mains power, and at the garage a small PoE switch then powers your cameras. Once the link is up, the garage cameras appear on your home network exactly as if they were wired in.</p><p>We have been building these links for years &mdash; back in 2015 we installed a point-to-point wireless link right across the River Avon for the Environment Agency to carry a fish-counter&rsquo;s data. A garden is a good deal easier. It is the same approach we use for <a href="/rural-and-farm-wifi-dorset/">rural and farm Wi-Fi</a> and <a href="/wifi-in-a-granny-annexe/">outbuildings like granny annexes</a>.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Powerline adapters and Wi-Fi extenders: where they fall short">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE CHEAPER OPTIONS</p>
+        <p class="eyebrow mono">THE CHEAPER OPTIONS</p>
         <h2 class="section-title" data-title>Powerline adapters and Wi-Fi extenders: where they fall short<span class="title-underline"></span></h2>
 <p><strong>Powerline adapters</strong> send your network signal through the existing mains wiring: you plug one in by the router and one in the garage. When they work they are tidy and cheap &mdash; but with a detached garage they often do not. The signal has to travel over the same electrical circuit, and many detached garages are fed from their own consumer unit or a long armoured supply that the data struggles to cross. Electrical noise from tools and chargers can knock it about too. They are worth a try for a budget setup, but we would not rely on them for cameras you need running around the clock.</p><p><strong>Wi-Fi extenders and mesh points</strong> are the other tempting shortcut. The trouble is that ordinary Wi-Fi was never meant to punch through two external walls and across a garden; you tend to get a weak, dropping signal that a continuous camera stream quickly overwhelms. An outdoor mesh unit with line of sight can sometimes help, but for a garage a proper bridge is almost always steadier.</p><p>If you have already tried a plug-in adapter and it keeps dropping, that is exactly the sort of thing we sort out on a <a href="/home-network-setup/">home network visit</a>.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Solar and 4G cameras: skipping your network altogether">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; NO CABLE, NO NETWORK</p>
+        <p class="eyebrow mono">NO CABLE, NO NETWORK</p>
         <h2 class="section-title" data-title>Solar and 4G cameras: skipping your network altogether<span class="title-underline"></span></h2>
 <p>If the garage has no power and no realistic way to run a link, a <strong>standalone battery camera with a solar panel and a 4G SIM</strong> is worth considering. It runs on its own battery, tops up from the sun, and sends footage over mobile data to an app rather than to your home recorder &mdash; so it needs no cable at all.</p><p>The honest trade-offs matter, though. It only works where there is a <strong>decent mobile signal</strong> at the garage; the SIM needs a data plan (typical everyday use is around a couple of gigabytes a month, and a lot more if you record in HD continuously); the solar top-up drops off in a dark British winter, so most of these cameras record on motion rather than non-stop to save battery; and the footage lives in the camera maker&rsquo;s own app or cloud, separate from any other cameras you own. For one camera watching a remote garage door they are excellent. For a joined-up system, a wired or bridged link back to the house is the better foundation.</p><p>You can read more about the wider picture on our <a href="/cctv-smart-home/">CCTV &amp; smart-home</a> page.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Our lane: getting the signal home reliably">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; HOW WE HELP</p>
+        <p class="eyebrow mono">HOW WE HELP</p>
         <h2 class="section-title" data-title>Our lane: getting the signal home reliably<span class="title-underline"></span></h2>
 <p>Here is the honest boundary. <strong>Our job is the connectivity</strong> &mdash; getting a solid, reliable signal from the garage back to the house and onto your network, whether that is a buried cable, a wireless bridge, or sorting out a link that keeps dropping. Designing a large multi-camera security system, choosing exactly which cameras go where, and running a monitored alarm is the specialist CCTV trade&rsquo;s job; for a big installation we will happily work alongside your camera installer, laying the network they plug into.</p><p>Because this is a physical install, it is not something we can do remotely &mdash; we come to you. We cover home visits (priced before we come) and collections across <strong>Bournemouth, Christchurch, Poole and the wider Dorset area</strong> from our base in Kinson, and we have been doing this since 1995. Every job is <strong>no fix, no fee</strong>, so if we cannot get you a reliable link you do not pay for the visit.</p><p>The best first step is a quick chat about where the garage is and what you can see between it and the house. Call us on <a href="tel:+441202775566">01202 775566</a>, text <strong>07520 615332</strong>, or <a href="/book-service/">book a visit</a> and we will talk you through the right option.</p>
       </div>
@@ -934,7 +934,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/share-internet-between-two-buildings/">Share internet between two buildings</a><a href="/wifi-in-a-granny-annexe/">Wi-Fi in a granny annexe</a><a href="/rural-and-farm-wifi-dorset/">rural &amp; farm Wi-Fi in Dorset</a><a href="/cctv-smart-home/">CCTV &amp; smart-home</a><a href="/home-network-setup/">home network setup</a><a href="/wifi-installation/">Wi-Fi installation</a><a href="/cctv-not-working-after-changing-broadband/">CCTV not working after changing broadband</a></div>
         </div>
       </div>
@@ -942,7 +942,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -995,7 +995,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

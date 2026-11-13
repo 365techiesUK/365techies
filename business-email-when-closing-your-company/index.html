@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Email When Closing a Company</span></nav>
-          <p class="eyebrow mono">// BUSINESS IT WIND-DOWN</p>
+          <p class="eyebrow mono">BUSINESS IT WIND-DOWN</p>
           <h1>What Happens to Your Business Email When You <em class="grad grad--cyan">Close Your Company</em></h1>
           <p class="lede">Winding a business down is a long list of jobs, and the email tends to sit near the bottom of it &mdash; right up until the day it stops and takes years of correspondence with it. Here is the sensible order: find the domain, find out who really controls it, take a complete copy of the mail, then decide what to keep. Family-run in Bournemouth since 1995, rated 4.9 on Google.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Your domain is the thing everything else hangs off">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE DOMAIN</p>
+        <p class="eyebrow mono">THE DOMAIN</p>
         <h2 class="section-title" data-title>Your domain is the thing everything else hangs off<span class="title-underline"></span></h2>
 <p>When a business closes, the thing that decides whether email keeps arriving is not the company at all &mdash; it is the <strong>domain name</strong>. Your domain is a separate registration held with a registrar, on its own renewal cycle, and it carries on renewing (or quietly lapses) independently of anything happening to the business. Nothing about winding down automatically cancels it, and nothing automatically preserves it either.</p><p>That cuts both ways. A domain that renews against a company card will stop renewing when that account is closed, and one that renews against someone&rsquo;s personal card can keep quietly renewing for years after everything else has gone &mdash; so the question is not what will happen by accident, but which of the two you have and which you actually want.</p><p>So the first job is to locate the domain properly: which registrar holds it, when it next comes up for renewal, and which card or direct debit pays for it. A public WHOIS lookup will normally tell you the registrar and the renewal date even if the login is long lost. Whether you keep the domain or let it go is a decision for later &mdash; for now, the point is simply that you know where it lives and what is keeping it alive.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="The part that catches people out: who actually controls the accounts">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHO HOLDS THE KEYS</p>
+        <p class="eyebrow mono">WHO HOLDS THE KEYS</p>
         <h2 class="section-title" data-title>The part that catches people out: who actually controls the accounts<span class="title-underline"></span></h2>
 <p>The single biggest delay in a tidy wind-down is discovering that the person who controls the domain registrar account and the Microsoft 365 tenant is not you. Very often it is a former IT provider, the web designer who built the site years ago, or a member of staff who set the whole thing up on a login of their own. Registered in their name, billed to their card, with the notification address pointing somewhere you cannot see.</p><p>That is not a disaster, but it takes the longest to unpick, so start it on day one and get on with everything else alongside it. What you are trying to establish is:</p><ul><li>Who is listed as the registered holder of the domain, and which registrar it sits with.</li><li>Who holds a <strong>Global Administrator</strong> account on your Microsoft 365 tenant &mdash; or the control panel login, if your mail is with a web host.</li><li>Which card or direct debit each of those renews against.</li></ul><p>Ask in writing, politely, and ask early. Most providers hand things over without fuss &mdash; but do it while relations are good and while you still have a working mailbox on the domain, because the verification messages that confirm a handover are usually sent to an address on the very domain you are trying to take control of.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Take a complete copy of the mail before anything is switched off">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; GET THE MAIL OUT</p>
+        <p class="eyebrow mono">GET THE MAIL OUT</p>
         <h2 class="section-title" data-title>Take a complete copy of the mail before anything is switched off<span class="title-underline"></span></h2>
 <p>Almost everything else on this page can be undone. Deleted mailbox data usually cannot. So before a single licence is cancelled or a mailbox removed, take a full export &mdash; and then open it and check it genuinely works.</p><p>Make sure the copy covers:</p><ul><li>Every mailbox, not just yours &mdash; including staff who have already left.</li><li>The shared addresses like info@, accounts@ and sales@, which often have no licence of their own and are the first thing forgotten.</li><li>Calendars and contacts as well as the messages themselves.</li><li>Anything else living in the same accounts &mdash; files in OneDrive or SharePoint, and Teams conversations, are separate exports again.</li></ul><p>How you export depends on the setup. A desktop copy of Outlook can usually save a mailbox out to a single data file, and a mailbox hosted with a web provider can often be copied by connecting a desktop mail program and dragging everything into local folders. Depending on your subscription and permissions, some tenants can also export mailboxes centrally using Microsoft&rsquo;s admin and compliance tools &mdash; that is not available on every plan, so confirm it works on yours before you rely on it rather than exporting from the desktop. Not every version of Outlook offers the same options either, so check what yours can do first. Keep two copies, in two different places.</p><p>How long you need to keep any of it is a question for your accountant or solicitor rather than for us. Our job is making sure you physically have it.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="What actually happens when nobody is paying for the mailboxes">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; WHEN THE MAILBOXES STOP</p>
+        <p class="eyebrow mono">WHEN THE MAILBOXES STOP</p>
         <h2 class="section-title" data-title>What actually happens when nobody is paying for the mailboxes<span class="title-underline"></span></h2>
 <p>Mailboxes are separate from the domain, and they usually stop for one of two reasons: somebody stops paying, or whoever controls the tenant switches them off. With Microsoft 365, cancelling the subscription or letting it lapse takes the mailboxes out of service &mdash; sign-in stops working, Outlook stops syncing, and mail sent to those addresses starts bouncing straight back to whoever sent it. Removing a single user&rsquo;s licence has much the same effect for that person, even while the rest of the subscription carries on.</p><p>There is normally a limited window after a subscription ends before the data is removed for good, but how long that window is varies, and it is not something to build a plan around. Work on the basis that once you cancel, the contents are going &mdash; which is exactly why the export in the previous step comes first.</p><p>The real trap is what else those addresses are quietly attached to. A work email address is very often the recovery address for the bank, the accounting software, the phone and broadband accounts, the website hosting, social media pages and the domain registrar itself. If the mailbox dies while those still point at it, the password reset link goes to a mailbox that no longer exists. Work through your logins and move each one to an address that will still be there afterwards &mdash; ideally before you cancel anything at all.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Keeping the domain alive cheaply, or letting it go entirely">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; KEEP IT OR LET IT GO</p>
+        <p class="eyebrow mono">KEEP IT OR LET IT GO</p>
         <h2 class="section-title" data-title>Keeping the domain alive cheaply, or letting it go entirely<span class="title-underline"></span></h2>
 <p>Once the mail is safely out, there are two honest choices, and both are fine.</p><p><strong>Keep the domain.</strong> It stays registered, and instead of a full set of mailboxes you point it at simple forwarding or at one modest mailbox. Anything still sent to the old addresses then lands somewhere a human will see it, rather than bouncing. That is one annual renewal instead of a licence per person, and it is worth it if you may trade again, if the name is tied to you personally, or if you would rather nobody else picked it up. If the domain is registered to the company rather than to you, whether it can be moved into your own name is one for your solicitor or accountant &mdash; we only handle the technical side once that is settled. A catch-all that accepts anything at the domain will collect a lot of spam, so a handful of named forwards is tidier.</p><p><strong>Let it go.</strong> Perfectly reasonable when the trading name is finished &mdash; just be clear about what it means. Once a registration lapses and is released, anybody can register that domain, and whoever does can receive mail sent to those addresses. So before you let that happen, make certain every login and subscription has been moved off it, tell your key contacts the new address, and leave forwarding or an auto-reply running for a good while first.</p><p>Whichever you choose, make it a decision rather than an accident: put a personal email address on the registrar account, and note the renewal date somewhere that is not a work calendar about to be deleted.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/take-over-email-domain-after-buying-business/">Taking over a domain after buying a business</a><a href="/business-email-down-domain-expired/">Business email down after a domain expired</a><a href="/email-migration/">Email migration</a><a href="/former-it-provider-controls-microsoft-365/">When a former IT provider holds the keys</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

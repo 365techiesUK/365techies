@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -682,7 +682,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -874,7 +874,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a> <span>/</span> <span aria-current="page">Customise VRM Dashboard</span></nav>
-          <p class="eyebrow mono">// VICTRON VRM CUSTOMISATION</p>
+          <p class="eyebrow mono">VICTRON VRM CUSTOMISATION</p>
           <h1>How to customise the <em class="grad grad--cyan">Victron VRM dashboard</em></h1>
           <p class="lede">Frustrated that the stock VRM dashboard won&rsquo;t let you move the tiles around? You&rsquo;re not imagining it &mdash; the main layout is fixed. Here&rsquo;s an honest, installer-grade map of exactly what you can and can&rsquo;t customise in VRM, plus the two real routes to the dashboard you actually want.</p>
           <div class="page-hero__cta">
@@ -911,49 +911,49 @@
     </section>
     <section id="s1" class="section" aria-label="Can you re-arrange the VRM dashboard?">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; THE SHORT ANSWER</p>
+        <p class="eyebrow mono">THE SHORT ANSWER</p>
         <h2 class="section-title" data-title>Can you re-arrange the VRM dashboard?<span class="title-underline"></span></h2>
 <p><strong>The short answer:</strong> you cannot re-arrange the main VRM dashboard &mdash; the top-level summary layout is fixed by Victron, with no drag-and-drop to move, reorder or remove the tiles. Everything you <em>can</em> customise lives on the <strong>Advanced</strong> tab (your own graph widgets), alongside device naming and alarm rules; anything past that &mdash; a bespoke layout, your own branding, or a single live multi-site screen &mdash; means going outside stock VRM via the official VRM API.</p><p>That is not a knock on VRM. For remote monitoring and diagnostics it is genuinely excellent, and most installers never need more than the stock views. But the exact frustration that brings people to this page &mdash; &ldquo;why can&rsquo;t I move these tiles around?&rdquo; &mdash; has a clear, honest answer, and it hasn&rsquo;t changed for years. Below we map precisely what stock VRM lets you change, what it flatly won&rsquo;t, and the two real routes to a dashboard that looks and behaves the way you want &mdash; whether you build it yourself or have it <a href="/custom-vrm-dashboards/">done for you</a>.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="What you can customise in stock VRM">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; WHAT STOCK VRM LETS YOU CHANGE</p>
+        <p class="eyebrow mono">WHAT STOCK VRM LETS YOU CHANGE</p>
         <h2 class="section-title" data-title>What you can customise in stock VRM<span class="title-underline"></span></h2>
 <p>Give VRM its due &mdash; there is more customisation than people realise, it just isn&rsquo;t where you expect it. On the <strong>Advanced</strong> tab you can:</p><ul><li><strong>Choose and arrange graph widgets</strong> &mdash; show, hide and stack the standard widgets for the metrics you actually care about, then set the date range and export the underlying data.</li><li><strong>Build a Custom Widget</strong> &mdash; the most powerful and least-known feature. You can plot up to <strong>6 parameters</strong> on one colour-coded chart (ideal for comparing the voltage and current of each phase of a three-phase system), reach many undocumented datapoints that have no standard widget, and now include calculated parameters drawn from the standard widgets.</li><li><strong>Rename the installation and devices</strong> &mdash; friendly names instead of serial numbers, which quietly makes every other screen easier to read.</li><li><strong>Set alarm rules and notifications</strong> &mdash; thresholds and alerts tuned to each site.</li></ul><p>For a single installation watched by someone who knows the system, that is a lot of genuine control, and the Custom Widget in particular is worth mastering before you look further. Our service <strong>builds on top of</strong> VRM through its official API &mdash; it never replaces it, and none of the above stops working. The limits below are simply the points where stock VRM was never designed to go.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="What stock VRM won&rsquo;t do">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; WHERE STOCK VRM STOPS</p>
+        <p class="eyebrow mono">WHERE STOCK VRM STOPS</p>
         <h2 class="section-title" data-title>What stock VRM won&rsquo;t do<span class="title-underline"></span></h2>
 <p>Here is the honest ceiling &mdash; the things stock VRM genuinely will not do, verified against the VRM manual and Victron staff statements on the Community forum, so you don&rsquo;t waste an afternoon hunting for a setting that isn&rsquo;t there:</p><ul><li><strong>The main dashboard layout is fixed.</strong> You cannot drag, reorder or remove the summary tiles on the primary dashboard. Only the Advanced tab is composable.</li><li><strong>No branding or white-label.</strong> The long-promised &ldquo;Dealer ID&rdquo; white-label feature was announced but <strong>never shipped</strong> &mdash; confirmed by Victron staff on the Community forum. You cannot put your own logo on a client&rsquo;s VRM. If branding matters, see <a href="/white-label-victron-monitoring/">white-label Victron monitoring</a>.</li><li><strong>No single live multi-site screen.</strong> The installer/fleet list is a table, some features need 10+ sites before they appear, and it is not brandable &mdash; there is no one-screen live overview of every system at once.</li><li><strong>Share links and embeds are not real-time.</strong> VRM share links and iframe embeds are read-only and refresh at the <strong>logging interval</strong> (default 15 minutes), so they are unsuitable for a live wall display &mdash; more in <a href="/embed-victron-vrm-on-website/">embed VRM on a website</a>.</li><li><strong>Money KPIs and outside data are constrained.</strong> Cost and earnings KPIs only exist via Dynamic ESS, and non-Victron data can only reach VRM through the GX device.</li></ul><p>None of this is a flaw &mdash; it is simply the edge of what the stock portal was built for.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="Route one: build it yourself with Node-RED or the API">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; ROUTE ONE: DO IT YOURSELF</p>
+        <p class="eyebrow mono">ROUTE ONE: DO IT YOURSELF</p>
         <h2 class="section-title" data-title>Route one: build it yourself with Node-RED or the API<span class="title-underline"></span></h2>
 <p>If you have the time and the appetite, you can absolutely build a custom view yourself &mdash; and for a lot of capable installers this is the right call. There are two honest DIY routes, both using Victron&rsquo;s own tooling:</p><ul><li><strong>On the GX device (Node-RED).</strong> <a href="/cerbo-gx-mqtt-dashboard/">Venus OS Large</a> ships <strong>Node-RED</strong> and Signal K pre-installed, with the Victron nodes ready to go. You can build fully custom dashboards &mdash; gauges, graphs, indicators, even switches and sliders &mdash; and view them locally or remotely through the VRM menu. It reads live data straight off the GX via MQTT/dbus, so it is properly real-time.</li><li><strong>Off the device (the official API).</strong> The <a href="/victron-vrm-api-dashboard/">official VRM API</a> lets you pull your installation data into a front end you control, or into <a href="/victron-grafana-dashboard-service/">Grafana</a> for polished time-series dashboards.</li></ul><p>Credit where it is due: these are powerful, well-documented and effectively free if your time is free. The honest caveats are the boring ones &mdash; you own the hosting, the API token handling and security, keeping the thing running, and fixing it when Venus OS or your data model changes. For a single site that is a fun weekend; across a fleet, or as something a client relies on, it becomes real, ongoing work. That trade-off &mdash; not capability &mdash; is what usually decides between doing it yourself and having it done.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="Route two: a done-for-you custom dashboard">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; ROUTE TWO: DONE FOR YOU</p>
+        <p class="eyebrow mono">ROUTE TWO: DONE FOR YOU</p>
         <h2 class="section-title" data-title>Route two: a done-for-you custom dashboard<span class="title-underline"></span></h2>
 <p>The alternative is to have it built, hosted and supported for you. That is what we do: a bespoke dashboard sitting on top of the <strong>official VRM API</strong>, laid out the way you want, in your branding, refreshing far more responsively than a share link, and spanning multiple sites where you need it &mdash; without you owning any of the plumbing.</p><p><strong>We are an independent service and are listed in Victron Energy&rsquo;s Recommended Software Integrator Program &mdash; though not a Victron dealer, distributor or reseller &mdash; Victron and VRM are their trademarks.</strong> We don&rsquo;t replace your VRM or your hardware; we build a presentation layer on top of the data VRM already collects, via the API Victron publishes for exactly this purpose.</p><p>We are a family-run UK firm (Bournemouth) that has been trading since 1995, and we deliver this <strong>worldwide</strong> as a remote service. Where response times matter, we&rsquo;re honest about them: our office hours are Monday to Friday, 9&ndash;5 UK time. You keep full control of your own VRM installation and access; we simply build and look after the dashboard. If you have outgrown the stock views but don&rsquo;t want another system to maintain, this is the route &mdash; and you can see exactly what it produces before you commit.</p>
       </div>
     </section>
     <section id="s6" class="section section--alt" aria-label="Watch a real dashboard streaming live">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/06 &mdash; SEE IT RUNNING LIVE</p>
+        <p class="eyebrow mono">SEE IT RUNNING LIVE</p>
         <h2 class="section-title" data-title>Watch a real dashboard streaming live<span class="title-underline"></span></h2>
 <p><strong>Don&rsquo;t take our word for it &mdash; watch a real one.</strong> Our own off-grid support van, the <strong>365 Crafter</strong>, runs a Cerbo GX on Venus OS with MPPT solar and a lithium battery bank, and it streams <strong>live</strong> through the official VRM API onto our site.</p><p>On <a href="/custom-vrm-dashboards/">our custom VRM dashboards page</a> you can see the <em>same</em> live feed rendered in <strong>two completely different dashboard styles</strong> &mdash; proof that the layout, not the data, is what we change. There is also a fleet-style demo where, in the interest of honesty, <strong>only the van is real</strong> and the other vehicles are clearly labelled as placeholders. It is genuine hardware sending genuine data, not a mock-up or a screenshot &mdash; the most honest way we can show you what a done-for-you dashboard actually looks and behaves like before you spend anything.</p>
       </div>
     </section>
     <section id="s7" class="section" aria-label="What a custom VRM dashboard costs">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/07 &mdash; WHAT IT COSTS</p>
+        <p class="eyebrow mono">WHAT IT COSTS</p>
         <h2 class="section-title" data-title>What a custom VRM dashboard costs<span class="title-underline"></span></h2>
 <p>Pricing is <strong>quote-based</strong>, because a one-site read-only display and a branded multi-site fleet dashboard with live controls are very different jobs. We won&rsquo;t publish a number that turns out to be wrong for you. The things that move the price are straightforward:</p><ul><li><strong>Scale</strong> &mdash; how many sites and devices, and how many screens or views you need.</li><li><strong>Depth of each view</strong> &mdash; how many parameters, and whether you need calculated values, historical charts or live controls.</li><li><strong>Branding</strong> &mdash; a light touch versus a fully white-labelled, client-facing portal.</li><li><strong>Data sources</strong> &mdash; VRM-only, or non-Victron inputs that have to reach VRM through the GX device.</li><li><strong>Build only or build-and-run</strong> &mdash; a one-off handover versus ongoing hosting, monitoring and support.</li></ul><p>Tell us what you&rsquo;re trying to see and we&rsquo;ll give you a clear, honest quote &mdash; not a menu of tiers you have to reverse-engineer. Start by looking at the live demo, then <a href="/contact/">get a quote</a> or call <strong>01202&nbsp;775566</strong>.</p>
       </div>
@@ -961,7 +961,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/custom-vrm-dashboards/">Custom VRM dashboards (live demo)</a><a href="/victron-vrm-api-dashboard/">VRM API dashboards</a><a href="/cerbo-gx-mqtt-dashboard/">Cerbo GX &amp; MQTT dashboards</a><a href="/white-label-victron-monitoring/">White-label Victron monitoring</a><a href="/embed-victron-vrm-on-website/">Embed VRM on a website</a><a href="/off-grid-victron-energy/">Off-grid Victron energy</a></div>
         </div>
       </div>
@@ -969,7 +969,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -1030,7 +1030,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>

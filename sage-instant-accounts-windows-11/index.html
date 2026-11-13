@@ -75,7 +75,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=123" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -113,7 +113,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=123&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -651,7 +651,7 @@
 
   <div class="menu-backdrop" aria-hidden="true"></div>
   <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <p class="mobile-menu__label mono">NAVIGATION</p>
     <nav class="mobile-menu__nav" aria-label="Mobile">
       <a href="/">Home</a>
       <a href="/dell-it-support-dorset/">Dell</a>
@@ -843,7 +843,7 @@
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Sage Instant on Windows 11</span></nav>
-          <p class="eyebrow mono">// BUSINESS IT</p>
+          <p class="eyebrow mono">BUSINESS IT</p>
           <h1>Sage Instant Accounts won&rsquo;t work on Windows 11</h1>
           <p class="lede">You&rsquo;ve bought a new PC, and the accounts software your business has run on for years refuses to install. This is not a fault you can simply fix &mdash; it&rsquo;s a decision. Here are the real options, their honest trade-offs, and the part most people overlook: getting years of historic data off the old machine before it fails.</p>
           <div class="page-hero__cta">
@@ -867,35 +867,35 @@
 
     <section id="s1" class="section" aria-label="Why the new PC won&rsquo;t run it">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/01 &mdash; WHAT&rsquo;S HAPPENING</p>
+        <p class="eyebrow mono">WHAT&rsquo;S HAPPENING</p>
         <h2 class="section-title" data-title>Why the new PC won&rsquo;t run it<span class="title-underline"></span></h2>
 <p>Sage Instant Accounts is long-discontinued software. It was written for versions of Windows that came and went years ago, and support for it ended a long time back. When a new Windows 11 machine refuses to install it, throws an error partway through, or installs but then won&rsquo;t open, nothing has gone wrong in the usual sense &mdash; you are simply asking a modern operating system to run something built for a much older one.</p><p>That matters because it changes what a sensible response looks like. With a normal fault there is a fix: a setting, an update, a reinstall. Here there is often no fix at all. No update is coming for a product this old, and there is no support line for software that is no longer sold or supported. Any workaround you find is something you are doing <em>to</em> the software, not something anyone supports &mdash; and if it stops working next month, there is nobody to escalate it to.</p><p>The other thing worth understanding early: the software and the data are two separate things. The program is replaceable &mdash; there are plenty of current accounting packages. Your <strong>years of ledgers, invoices, customers and year-end figures</strong> are not. Almost everyone arrives at this problem thinking about the program, and leaves realising the data was the thing that actually mattered.</p>
       </div>
     </section>
     <section id="s2" class="section section--alt" aria-label="Get a verified copy of the data off the old machine">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/02 &mdash; DO THIS FIRST</p>
+        <p class="eyebrow mono">DO THIS FIRST</p>
         <h2 class="section-title" data-title>Get a verified copy of the data off the old machine<span class="title-underline"></span></h2>
 <p>Before you try any workaround, before you buy anything, before you let anyone wipe or reuse the old computer &mdash; secure the data. The machine running your accounts is, by definition, old. It has done years of service, and hardware of that age fails without much warning. If it dies while you are still weighing up options, the decision gets made for you, badly.</p><p>What that means in practice:</p><ul><li>Take a full copy of the whole machine, not just the folder you think the accounts live in. Older software scatters things in places you would not guess.</li><li>Use the accounting software&rsquo;s own backup routine as well, while the old PC still runs. It packages the data the way the program expects it.</li><li>Keep at least two copies in two places &mdash; an external drive and somewhere off the premises or in reputable cloud storage.</li><li><strong>Verify it.</strong> A copy nobody has opened is a hope, not a backup. Restore it somewhere and check that it genuinely loads and the figures look right.</li></ul><p>That last point is the one people skip, and it is the one that bites. We have seen backup routines run faithfully for years and turn out to have been copying an empty folder the whole time. Nobody looked, because nobody had needed to until the day they did.</p>
       </div>
     </section>
     <section id="s3" class="section" aria-label="Your four realistic routes, honestly compared">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/03 &mdash; THE OPTIONS</p>
+        <p class="eyebrow mono">THE OPTIONS</p>
         <h2 class="section-title" data-title>Your four realistic routes, honestly compared<span class="title-underline"></span></h2>
 <p><strong>Keep the old machine alive, read-only.</strong> Stop using it day to day, take it off the internet, and keep it purely to look things up. This is cheap and it works &mdash; but only for as long as the hardware lasts, and an ageing PC left online is a genuine security risk to the rest of your network. Treat it as a temporary reference, never as something you depend on.</p><p><strong>Run the old software in some compatibility arrangement.</strong> There are ways to coax older programs into running on modern Windows, including running an older system inside a virtual machine on the new PC. Sometimes it works well. Often it is fiddly, and printing, PDFs, emailing invoices and anything touching the network are where it tends to fall over. Be clear-eyed about this one: it is unsupported, it can break with a Windows update, and you would be running your books on something with no safety net underneath it.</p><p><strong>Move to current accounting software.</strong> The proper answer for anything ongoing. Modern packages are supported and run on current Windows, so you are not fighting the machine every time something changes. It costs effort to move and there is a learning curve, but it ends the problem rather than postponing it &mdash; and whether your current setup still meets your filing obligations is a question for your accountant.</p><p><strong>Do both.</strong> The route most businesses actually take: new software for live work, plus a safe, well-labelled archive of the old data for looking back.</p>
       </div>
     </section>
     <section id="s4" class="section section--alt" aria-label="What happens to years of old records either way">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/04 &mdash; THE HISTORIC DATA</p>
+        <p class="eyebrow mono">THE HISTORIC DATA</p>
         <h2 class="section-title" data-title>What happens to years of old records either way<span class="title-underline"></span></h2>
 <p>This is the question people ask last and should ask first. How much history comes across varies a lot from package to package, and it is one of the first things to ask before you choose. In many cases you move the balances and your customer, supplier and product lists, and the detailed year-by-year transaction history stays behind &mdash; but check that with the software&rsquo;s supplier or your accountant rather than assuming either way.</p><p>That history does not vanish, but it stops being something you can simply click into. So plan for it deliberately rather than discovering the gap in eighteen months:</p><ul><li>While the old software still runs, export or print the reports you would ever want to look back at &mdash; trial balances, year-end summaries, ledgers, VAT reports &mdash; to PDF and, where you can, to spreadsheet format.</li><li>Do it for every year you hold, not just the recent ones.</li><li>Store those exports somewhere ordinary and future-proof, with the raw backup files kept alongside them.</li><li>Label the folders clearly enough that someone else could find the 2016 year-end without ringing you.</li></ul><p>A PDF and a spreadsheet will still open in twenty years. A backup file from discontinued software may not open at all without the discontinued software &mdash; and by then the machine that ran it will be long gone.</p><p>How long you are required to keep any of it is a question for your accountant, not for us. Ask them before you delete or dispose of anything.</p>
       </div>
     </section>
     <section id="s5" class="section" aria-label="What we do when you call us about this">
       <div class="wrap prose" data-reveal>
-        <p class="eyebrow mono">/05 &mdash; HOW WE HELP</p>
+        <p class="eyebrow mono">HOW WE HELP</p>
         <h2 class="section-title" data-title>What we do when you call us about this<span class="title-underline"></span></h2>
 <p>We handle the IT side, and we are straight about where that line sits. We are not accountants and we won&rsquo;t advise you on which package suits your books, what you must retain, or anything tax-related. Talk to your accountant &mdash; they will very often have a strong preference about the software anyway, and asking them first makes everything simpler.</p><p>What we do:</p><ul><li>Collect the old machine &mdash; free collection across Bournemouth, Poole and Dorset &mdash; and take a full, verified copy of it before anything else is attempted.</li><li>Check whether the old software can be made to run in a contained way on the new PC, and tell you honestly if it can&rsquo;t or shouldn&rsquo;t.</li><li>Export your historic reports while the old system is still willing to produce them.</li><li>Set the new PC up properly, move your files, email and printers across, and get the replacement software installed and running.</li><li>Make sure the new setup is genuinely backed up, so you are not having this same conversation again in ten years&rsquo; time.</li></ul><p>We have been doing this in Dorset since 1995, so we have watched a great many accounts systems reach the end of the road. There is no fix, no fee &mdash; if we can&rsquo;t get somewhere useful, you don&rsquo;t pay for the attempt. Ring 01202 775566 and we&rsquo;ll talk it through before you commit to anything.</p>
       </div>
@@ -903,7 +903,7 @@
     <section class="section" aria-label="Related">
       <div class="wrap">
         <div class="related" data-reveal>
-          <p class="related__head">// KEEP GOING</p>
+          <p class="related__head">KEEP GOING</p>
           <div class="related__links"><a href="/data-recovery/">Data recovery</a><a href="/how-to-prepare-business-for-windows-11/">Preparing a business for Windows 11</a><a href="/windows-11-support/">Windows 11 support</a><a href="/business-it-consultancy/">Business IT consultancy</a><a href="/old-program-wont-open-on-windows-11/">Old program won&rsquo;t open on Windows 11</a></div>
         </div>
       </div>
@@ -911,7 +911,7 @@
     <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
         <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
         <div class="faq-wrap">
         <details class="faq" data-reveal>
@@ -952,7 +952,7 @@
   <footer class="site-footer">
     <div class="footer-areas">
       <details class="footer-fold" open>
-      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
