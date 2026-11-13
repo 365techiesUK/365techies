@@ -112,11 +112,75 @@ function nj_save_job($job) {   // into pcm-jobs.json, under the reader's own loc
     });
     return !empty($res['ok']);
 }
-function nj_create($raw, $by, $from = '', $extra = array(), $now = null, $post = null, $save = null) {
+/* 13 Nov 2026 (owner: "Neil Rodgers is in there 3 times when it's only 1 job"). One job was written up three times
+   in an afternoon: New job, New job again to add the outcome, then "Log a job we've done". Every write-up is a card in
+   Slack and a row in the Invoices tab, two of them priced - the same job could have been invoiced twice.
+   So before a card is posted: does this customer already have an OPEN job (not hidden, not invoiced) from the last
+   week? If so nothing is posted and the form asks. The answer comes back as force (a different job: add it) or
+   replace (the same job: add this write-up and hide the older ones, exactly what "Not a job - hide it" does). */
+define('NJ_DUP_DAYS', 7);
+function nj_when($ts, $now) {
+    $tz = new DateTimeZone('Europe/London');
+    $d = new DateTime('@' . (int)$ts); $d->setTimezone($tz);
+    $n = new DateTime('@' . (int)$now); $n->setTimezone($tz);
+    return ($d->format('Y-m-d') === $n->format('Y-m-d') ? 'today' : $d->format('D j M')) . ' ' . $d->format('H:i');
+}
+function nj_same_customer($v, $j) {
+    $norm = function ($s) { return strtolower(preg_replace('/\s+/', ' ', trim((string)$s))); };
+    $e = $norm(isset($v['email']) ? $v['email'] : ''); $je = $norm(isset($j['email']) ? $j['email'] : '');
+    if ($e !== '' && $je !== '') return $e === $je;
+    $n = $norm(isset($v['name']) ? $v['name'] : ''); $jn = $norm(isset($j['name']) ? $j['name'] : '');
+    return $n !== '' && $n === $jn;
+}
+function nj_open_jobs($v, $now, $jobs = null) {
+    if ($jobs === null) {
+        $data = defined('SJ_JOBS') ? @json_decode((string)@file_get_contents(SJ_JOBS), true) : null;
+        $jobs = (is_array($data) && isset($data['jobs']) && is_array($data['jobs'])) ? $data['jobs'] : array();
+    }
+    $out = array();
+    foreach ($jobs as $j) {
+        if (!is_array($j) || (string)(isset($j['status']) ? $j['status'] : '') === 'dismissed') continue;
+        if (!empty($j['invoice_no']) || !empty($j['invoice_doc']) || !empty($j['invoiced_in_slack'])) continue;
+        $ts = (int)(isset($j['ts']) ? $j['ts'] : 0);
+        if ($ts < $now - NJ_DUP_DAYS * 86400 || $ts > $now + 3600) continue;
+        if (!nj_same_customer($v, $j)) continue;
+        $desc = (string)(isset($j['desc']) ? $j['desc'] : '');
+        $out[] = array('id' => (string)$j['id'], 'ts' => $ts, 'name' => (string)(isset($j['name']) ? $j['name'] : ''), 'when' => nj_when($ts, $now),
+            'amount' => round((float)(isset($j['amount']) ? $j['amount'] : 0), 2),
+            'desc' => function_exists('mb_substr') ? mb_substr($desc, 0, 140) : substr($desc, 0, 140));
+    }
+    usort($out, function ($a, $b) { return $b['ts'] - $a['ts']; });
+    return array_slice($out, 0, 5);
+}
+function nj_replace_jobs($ids, $who, $newId) {   // hide the older write-ups of the same job; never one that has an invoice
+    $ids = array_values(array_filter(array_map('strval', (array)$ids), 'strlen'));
+    if (!$ids) return 0;
+    $n = 0;
+    sj_jobs_locked(function ($d) use ($ids, $who, $newId, &$n) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || !in_array((string)(isset($j['id']) ? $j['id'] : ''), $ids, true) || (string)$j['id'] === (string)$newId) continue;
+            if (!empty($j['invoice_no']) || (string)(isset($j['status']) ? $j['status'] : '') === 'dismissed') continue;
+            $d['jobs'][$i]['status'] = 'dismissed'; $d['jobs'][$i]['dismissed_by'] = $who . ' (same job, written up again)';
+            $d['jobs'][$i]['dismissed_at'] = time(); $d['jobs'][$i]['replaced_by'] = (string)$newId; $n++;
+        }
+        return $n ? array('ok' => true, 'data' => $d) : array('ok' => true);
+    });
+    return $n;
+}
+
+function nj_create($raw, $by, $from = '', $extra = array(), $now = null, $post = null, $save = null, $openJobs = null) {
     $now = $now === null ? time() : (int)$now;
     $v = nj_read($raw);
     $errs = nj_validate($v);
     if ($errs) return array('ok' => false, 'error' => reset($errs), 'errors' => $errs);
+    /* the same customer, an open job this week: ask first (see nj_open_jobs) */
+    $force = is_array($raw) && !empty($raw['force']);
+    $replace = is_array($raw) && isset($raw['replace']) && is_scalar($raw['replace'])
+        ? array_values(array_filter(explode(',', preg_replace('/[^0-9A-Za-z,\-]/', '', (string)$raw['replace'])), 'strlen')) : array();
+    if (!$force && !$replace) {
+        $dups = nj_open_jobs($v, $now, $openJobs);
+        if ($dups) return array('ok' => false, 'error' => 'dup', 'errors' => array(), 'dups' => $dups);
+    }
     $text = nj_card_text($v);
     $args = array('channel' => SJ_DEFAULT_CHANNEL, 'text' => $text, 'unfurl_links' => false, 'blocks' => array(
         array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => function_exists('mb_substr') ? mb_substr($text, 0, 2900) : substr($text, 0, 2900))),
@@ -134,8 +198,9 @@ function nj_create($raw, $by, $from = '', $extra = array(), $now = null, $post =
     $job['by'] = ($by !== '' ? $by : 'Staff') . ' (portal)';
     foreach ((array)$extra as $k => $x) if (!isset($job[$k])) $job[$k] = $x;
     $saved = (bool)call_user_func($save !== null ? $save : 'nj_save_job', $job);
+    $replaced = ($replace && $save === null) ? nj_replace_jobs($replace, $by !== '' ? $by : 'staff', $job['id']) : 0;
     if (function_exists('sj_log')) sj_log('portal new job ' . $job['id'] . ' by ' . $by . ($ts !== '' ? ' (posted)' : ' (Slack: ' . (is_array($r) && isset($r['error']) ? $r['error'] : 'no answer') . ')') . ($saved ? '' : ' - store busy'));
     return array('ok' => $saved || $ts !== '', 'id' => $job['id'], 'job' => $job, 'name' => $v['name'], 'phone' => $v['phone'], 'mobile' => $v['mobile'], 'email' => $v['email'],
         'slack' => $ts !== '', 'slack_error' => $ts !== '' ? '' : (string)(is_array($r) && isset($r['error']) ? $r['error'] : 'no answer'),
-        'saved' => $saved, 'error' => ($saved || $ts !== '') ? '' : 'Neither Slack nor the job list took it - try again.', 'errors' => array());
+        'replaced' => $replaced, 'saved' => $saved, 'error' => ($saved || $ts !== '') ? '' : 'Neither Slack nor the job list took it - try again.', 'errors' => array());
 }

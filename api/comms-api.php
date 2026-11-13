@@ -157,7 +157,7 @@ if ($do === 'check') {
             . ($t === 'email' ? ' from ' . (string)($fromIt['mail']['from'] ?? '') : ((string)$fromIt['number'] !== '' ? ' from ' . $uk($fromIt['number']) : ''));
     }
     $rj = nj_create((array)($in['v'] ?? array()), $by, $fromLabel, $fromIt ? array('comms' => $fromIt['id']) : array());
-    if (empty($rj['ok'])) { $err = (string)$rj['error']; $jobOut = array('errors' => (array)($rj['errors'] ?? array())); }
+    if (empty($rj['ok'])) { $err = (string)$rj['error']; $jobOut = array('errors' => (array)($rj['errors'] ?? array()), 'dups' => (array)($rj['dups'] ?? array())); }
     else {
         $jobOut = array('id' => $rj['id'], 'name' => $rj['name'], 'phone' => $rj['phone'], 'mobile' => $rj['mobile'], 'email' => $rj['email'], 'slack' => $rj['slack']);
         $note = $rj['name'] . ' is in the job list' . ($rj['slack'] ? ', and the New job in card is in #sos-jobs-in-out.' : '.')

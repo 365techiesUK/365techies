@@ -786,9 +786,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; ed12f58343</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; 2a93cd564b</p><script>
 (function () {
-  var P365BUILD = 'ed12f58343';
+  var P365BUILD = '2a93cd564b';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -9597,12 +9597,27 @@
     document.addEventListener('keydown', ncKey);
     var first = document.getElementById(NC.pre.name ? 'nc_address' : 'nc_name'); if (first) first.focus();
   }
+  // 13 Nov 2026 (owner: Neil Rodgers was in the job list 3 times for 1 job): the server answers "dup" when this customer
+  // already has an open job from the last week, and nothing is posted. Ask; go(extra) sends the form again with the answer.
+  function dupAsk(el, dups, go) {
+    var d0 = dups[0] || {};
+    el.innerHTML = '<div style="border:1px solid var(--pwarn);border-radius:10px;padding:.7rem .8rem;margin:.4rem 0;font-weight:400">'
+      + '<b>' + esc(d0.name || 'This customer') + ' already has ' + (dups.length > 1 ? dups.length + ' open jobs' : 'an open job') + ' in the list.</b>'
+      + dups.map(function (x) { return '<div class="quiet" style="margin-top:.25rem">' + esc(x.when + (x.amount ? ' \u00b7 \u00a3' + Number(x.amount).toFixed(2) : ' \u00b7 no price') + ' \u00b7 ' + (x.desc || '')) + '</div>'; }).join('')
+      + '<div style="margin-top:.5rem">Is this the same job?</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.45rem">'
+      + '<button type="button" data-dup="replace">Same job \u2014 use this write-up, hide the old one' + (dups.length > 1 ? 's' : '') + '</button>'
+      + '<button type="button" class="ghost" data-dup="force">Different job \u2014 add it as well</button></div></div>';
+    el.querySelector('[data-dup="replace"]').onclick = function () { el.textContent = ''; go({ replace: dups.map(function (x) { return x.id; }).join(',') }); };
+    el.querySelector('[data-dup="force"]').onclick = function () { el.textContent = ''; go({ force: 1 }); };
+  }
   function ncSave() {
     if (NC.busy) return;
     var v = {}, er = document.getElementById('ncerr'), b = document.getElementById('ncsave');
     NC_F.forEach(function (x) { var e2 = document.getElementById('nc_' + x[0]); v[x[0]] = e2 ? e2.value : ''; var s2 = document.getElementById('nc_' + x[0] + '_e'); if (s2) s2.textContent = ''; });
     er.textContent = '';
     if (!v.name.trim()) { document.getElementById('nc_name_e').textContent = 'Please put the customer\u2019s name.'; document.getElementById('nc_name').focus(); return; }
+    if (NC.dup) { v.force = NC.dup.force || 0; v.replace = NC.dup.replace || ''; NC.dup = null; }
     NC.busy = true; b.disabled = true; b.textContent = 'Saving\u2026';
     post('/api/comms-api.php', { stoken: S.stoken, machine: mid(), do: 'newjob', v: v, from: NC.pre.from || '' })
       .then(function (d) {
@@ -9611,6 +9626,7 @@
         // Voicemails column's status line, where it sat for good beside somebody else's voicemail
         if (d && d.ok && d.job && d.job.id) { var jerr = d.err || ''; d.note = ''; d.err = ''; CM.d = d; renderComms(); ncDone(d.job, jerr); return; }
         b.disabled = false; b.textContent = NC.save;
+        if (d && d.job && d.job.dups && d.job.dups.length) { dupAsk(er, d.job.dups, function (x) { NC.dup = x; ncSave(); }); return; }
         var errs = (d && d.job && d.job.errors) || {}, firstBad = '';
         Object.keys(errs).forEach(function (k) { var s3 = document.getElementById('nc_' + k + '_e'); if (s3) { s3.textContent = errs[k]; if (!firstBad) firstBad = k; } });
         if (firstBad) { var fb = document.getElementById('nc_' + firstBad); if (fb) fb.focus(); }
@@ -10000,9 +10016,12 @@
         b.disabled = true; b.textContent = 'Logging\u2026';
         post(BK, { action: 'custlogjob', stoken: S.stoken, machine: mid(), ref: p.ref, eventId: parseInt(sel.value, 10) || 0,
                    jobtype: document.getElementById('lj_type').value, what: what, price: document.getElementById('lj_price').value.trim(), at: document.getElementById('lj_at').value,
-                   book: document.getElementById('lj_book').checked ? 1 : 0 }).then(function (r) {
+                   book: document.getElementById('lj_book').checked ? 1 : 0,
+                   force: (b._dup && b._dup.force) || 0, replace: (b._dup && b._dup.replace) || '' }).then(function (r) {
+          b._dup = null;
           if (!r || !r.ok) {
             b.disabled = false; b.textContent = '\u2705 Log it';
+            if (r && r.error === 'dup' && r.dups && r.dups.length) { dupAsk(er, r.dups, function (x) { b._dup = x; b.click(); }); return; }
             var errs = (r && r.errors) || {};
             if (errs.what) wE.textContent = errs.what;
             if (errs.price) pE.textContent = errs.price;

@@ -2979,9 +2979,11 @@ if ($action === 'custlogjob') {
     $nj = nj_create(array('name' => $name, 'company' => $f['company'], 'address' => $f['address'], 'postcode' => $f['postcode'],
         'phone' => $f['phone'], 'mobile' => $f['mobile'], 'email' => $f['email'], 'website' => $f['website'], 'jobtype' => $jobtype,
         'issue' => $svcName !== '' ? $svcName : 'Quick job', 'work' => $what, 'assigned' => $first, 'priority' => '',
-        'price' => (string)(isset($in['price']) ? $in['price'] : '')), $first, 'a job logged as done',
+        'price' => (string)(isset($in['price']) ? $in['price'] : ''),
+        'force' => !empty($in['force']), 'replace' => (string)(isset($in['replace']) && is_scalar($in['replace']) ? $in['replace'] : '')), $first, 'a job logged as done',
         // kept on the job: the diary shows it on its day at this time (agenda), with what we did
         array('done_at' => $doneTs, 'done_svc' => $svcName !== '' ? $svcName : 'Quick job', 'done_note' => $note, 'done_cid' => $sbId, 'done_by' => $who));
+    if (empty($nj['ok']) && !empty($nj['dups'])) out(array('ok' => false, 'error' => 'dup', 'dups' => $nj['dups']));   // an open job this week: the form asks (13 Nov 2026)
     if (empty($nj['ok'])) out(array('ok' => false, 'error' => 'check', 'errors' => isset($nj['errors']) ? $nj['errors'] : array(), 'why' => isset($nj['error']) ? $nj['error'] : ''));
     $bk = array('ok' => false, 'why' => 'not_asked');
     if (!empty($in['book'])) {
