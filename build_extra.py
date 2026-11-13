@@ -812,11 +812,10 @@ def pcm_landing():
           <a class="pcm-new" href="https://apps.microsoft.com/detail/XP99J1CFV8W876?mode=direct"><b>NEW</b><span class="pcm-new__l">Now on the Microsoft Store, checked by Microsoft</span><span class="pcm-new__s">Now on the Microsoft Store</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// FREE COMPUTER HEALTH CHECK &middot; WINDOWS 10 &amp; 11 &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
           <h1>Free computer health check: your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
-          <p class="lede">365 PC Manager is a free computer health check for your PC or laptop: one app that checks it all in a minute. It shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
+          <p class="lede">365 PC Manager is a free computer health check for your PC or laptop. It checks everything in a minute and tells you what it found in plain English: <strong>no fake errors, no scare tactics, nothing to buy</strong>.</p>
           <div class="page-hero__cta">
             <a href="{_pcm_c1[1]}" class="button primary button--lg">{_pcm_c1[0]}</a>
             {_pcm_hero_store}
-            <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Made in Dorset &middot; {"signed by 365 Techies Ltd" if PCM_LIVE else "coming soon"}</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
