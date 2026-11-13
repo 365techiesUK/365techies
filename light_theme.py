@@ -395,7 +395,9 @@ PORTAL_TOKENS = '--pgood:#0a7a22;--pwarn:#855f00;--pbad:#b3261e;'
 
 def _portal_extra(html):
     out = [SCOPE + '{' + PORTAL_TOKENS + '}',
-           SCOPE + ' .pill.pro{color:#0a6b1f}']
+           # the portal declares its tokens on its own root, so the light values go there too
+           SCOPE + ' #p365app,' + SCOPE + ' .p365ov{' + PORTAL_TOKENS + '}',
+           SCOPE + ' #p365app .pill.pro,' + SCOPE + ' .p365ov .pill.pro{color:#0a6b1f}']
     seen = set()
     for m in _JS_HEX.finditer(html):
         c = m.group(1).lower()
