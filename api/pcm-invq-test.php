@@ -186,13 +186,13 @@ $chgFn = ($chgFn0 !== false && $chgFn1 > $chgFn0) ? substr($SW, $chgFn0, $chgFn1
 /* 13 Nov 2026: the second edit, "Change email" - its own section, from WRITE 1c to WRITE 2 */
 $emFn0 = strpos($SW, 'function invq_email_for_job('); $emFn1 = $emFn0 !== false ? strpos($SW, '/* ---- WRITE 2:', $emFn0) : false;
 $emFn = ($emFn0 !== false && $emFn1 > $emFn0) ? substr($SW, $emFn0, $emFn1 - $emFn0) : '';
-ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 4 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $chgFn, $mm2) === 1
-   && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $emFn, $mm3) === 1
+ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 5 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $chgFn, $mm2) === 1
+   && preg_match_all("/invq_api\(\\\$c, 'POST', '\/invoice'/", $emFn, $mm3) === 1 && preg_match_all("/invq_api\(\\\$c, 'POST', '\/customer'/", $emFn, $mm4) === 1
    && substr_count($SW, 'sparse') === substr_count($chgFn, 'sparse') + substr_count($emFn, 'sparse') && strpos($chgFn, "'sparse' => true") !== false && strpos($emFn, "'sparse' => true") !== false
    && !preg_match('/\/void|operation=void|operation=delete|\/customer\/\d/', $SW)
    && strpos($chgFn, 'invq_change_blocked(') !== false && strpos($chgFn, 'invq_change_blocked(') < strpos($chgFn, "invq_api(\$c, 'POST'")
    && strpos($emFn, 'invq_email_change_blocked(') !== false && strpos($emFn, 'invq_email_change_blocked(') < strpos($emFn, "invq_api(\$c, 'POST'"),
-   'creates: a customer and an invoice; the only edits are "Change it" and "Change email" (each a sparse update, only after its unsent / unpaid check); nothing voids or deletes');
+   'creates: a customer and an invoice; the only edits are "Change it" and "Change email" (the invoice, and with it the customer\'s address; each a sparse update, only after its unsent / unpaid check); nothing voids or deletes');
 ok(strpos($SW, 'INVQ_MAX_SENDS_HOUR') !== false && strpos($SW, 'INVQ_MAX_CREATES_RUN') !== false, 'tripwires on sends and creates');
 ok(strpos($SW, "'BillEmail' => array('Address' => \$email)") !== false, 'a created invoice carries the customer email, so it can be sent');
 $gi = (string)file_get_contents(__DIR__ . '/../.gitignore');
@@ -436,9 +436,24 @@ ok(strpos($emFn, "strcasecmp(invq_bill_email(\$res['json']['Invoice']), \$email)
 ok(strpos($emFn, "\$d['jobs'][\$i]['email'] = \$email;") !== false && strpos($emFn, "\$d['jobs'][\$i]['email_by'] = 'staff';") !== false && strpos($emFn, "\$by['email'] =") !== false
    && strpos($emFn, "\$d['cache'] = null;") !== false,
    'the job takes the new address too (staff-set, so the next read of the Slack post keeps it), and the list is re-read');
-ok(strpos($EP, "'change', 'invemail', 'contact'") !== false && strpos($emBlock, 'invq_email_for_job($c, $job, $em, $who)') !== false && strpos($emBlock, "\$in['id']") === false
+ok(strpos($EP, "'change', 'invemail', 'contact'") !== false && strpos($emBlock, "invq_email_for_job(\$c, \$job, \$em, \$who, !empty(\$in['record']))") !== false && strpos($emBlock, "\$in['id']") === false
    && strpos($emBlock, "if (\$job === '') fail('bad_job');") !== false,
-   'the request names the job (never an invoice id) and an address; the server finds the invoice');
+   'the request names the job (never an invoice id), an address and a yes/no for the customer record; the server finds the invoice');
+echo "-- 13 Nov 2026 (later): and their QuickBooks customer record, when the box is ticked\n";
+$cuPos = strpos($emFn, 'if ($record) {');
+ok($cuPos !== false && strpos($emFn, "\$cid = invq_customer_id(\$inv);", $cuPos) !== false && strpos($emFn, "invq_api(\$c, 'GET', '/customer/' . \$cid)", $cuPos) !== false
+   && strpos($emFn, '$in[') === false,
+   'only when asked, and only the invoice\'s own customer - never one named by the request');
+ok(strpos($emFn, "\$cupd = array('Id' => \$cid, 'SyncToken' => (string)(isset(\$cu0['SyncToken']) ? \$cu0['SyncToken'] : '0'), 'sparse' => true, 'PrimaryEmailAddr' => array('Address' => \$email));") !== false
+   && strpos($emFn, "\$cupd['") === false && strpos($emFn, 'DisplayName') === false && strpos($emFn, 'BillAddr') === false,
+   'the customer update is PrimaryEmailAddr alone (name, address and the rest untouched)');
+ok(strpos($emFn, "if (strcasecmp(\$cust['was'], \$email) !== 0) {") !== false, 'a record that already has the address is not written');
+ok(strpos($emFn, "if (strcasecmp(\$got, \$email) === 0) { \$cust['changed'] = true; invq_map_put(\$c, \$email, \$cid); }") !== false,
+   'it counts only if QuickBooks answers with the new address, and then the customer map learns it (a later job with the new address finds this customer, not a new one)');
+ok(strpos($emFn, "\$cust['error'] = 'qbo_customer';") !== false && strpos($emFn, "return array('ok' => false, 'error' => 'qbo_customer'") === false
+   && strpos($emFn, "return array('ok' => true, 'invoice' => \$invId, 'to' => \$email, 'was' => \$was, 'same' => \$same, 'customer' => \$cust);") !== false,
+   'a refused customer change never undoes the invoice change: the answer says which happened');
+ok(strpos($emFn, 'if ($record) {') > strpos($emFn, "invq_email_change_blocked(\$inv)"), 'the customer is only touched after the invoice passed its unsent / unpaid check');
 
 echo "-- 23 Oct 2026 (later still): due in 3 days, not whatever QuickBooks' terms make it\n";
 ok(INVQ_DUE_DAYS === 3 && invq_due_date(strtotime('2026-10-23 19:57:00 UTC')) === '2026-10-26' && invq_due_date(strtotime('2026-12-30 09:00:00 UTC')) === '2027-01-02', 'raised on 23 Oct -> due 26 Oct (3 days), across the year end too');

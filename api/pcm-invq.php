@@ -279,9 +279,10 @@ if ($action === 'invemail') {
     if ($job === '') fail('bad_job');
     $em = invq_email_ok((isset($in['email']) && is_string($in['email'])) ? $in['email'] : '');
     if ($em === '') fail('bad_email');
-    $r = invq_email_for_job($c, $job, $em, $who);
+    /* "Also put it on their QuickBooks customer record" (13 Nov 2026, later): a yes/no only - the customer is the invoice's own */
+    $r = invq_email_for_job($c, $job, $em, $who, !empty($in['record']));
     if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1)));
-    out(array('ok' => true, 'invoice' => $r['invoice'], 'to' => $r['to'], 'was' => $r['was'], 'same' => !empty($r['same'])));
+    out(array('ok' => true, 'invoice' => $r['invoice'], 'to' => $r['to'], 'was' => $r['was'], 'same' => !empty($r['same']), 'customer' => $r['customer']));
 }
 
 if ($action === 'pdf') {

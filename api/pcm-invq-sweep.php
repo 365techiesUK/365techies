@@ -807,9 +807,13 @@ function invq_change_for_job($c, $jobId, $who, $lines, $memo, $discount) {
    invoice email". "Approve & send" goes to the address ON the invoice (BillEmail, see invq_send_address),
    copied from the customer when it was raised, so a corrected address never reached it. This writes the new address onto
    the invoice - an update of BillEmail alone: lines, note and due date untouched - and onto the job, only while the
-   invoice is unsent and nothing has been paid against it. The QuickBooks customer record is not changed. The send still
-   reads the address from QuickBooks at the moment of sending, and the preview's "To:" shows it first. */
-function invq_email_for_job($c, $jobId, $email, $who) {
+   invoice is unsent and nothing has been paid against it. The send still reads the address from QuickBooks at the moment
+   of sending, and the preview's "To:" shows it first.
+   13 Nov 2026 (later; owner: "also update her QuickBooks customer email from the portal"): with $record the invoice's
+   QuickBooks customer gets the address too (PrimaryEmailAddr alone), so the next invoice picks it up, and the customer map
+   learns it, so a later job with the new address finds the same customer instead of making a second one. The invoice change
+   stands even if QuickBooks refuses the customer change; the answer says which happened. */
+function invq_email_for_job($c, $jobId, $email, $who, $record = false) {
     $email = invq_email_ok($email);
     if ($email === '') return array('ok' => false, 'error' => 'bad_email');
     $job = null;
@@ -834,6 +838,24 @@ function invq_email_for_job($c, $jobId, $email, $who) {
             return array('ok' => false, 'error' => 'qbo_invoice', 'why' => invq_why($res));
         }
     }
+    /* their QuickBooks customer record too, when asked - the invoice's own customer, never one named by the request */
+    $cust = array('asked' => (bool)$record, 'was' => '', 'changed' => false, 'error' => '');
+    if ($record) {
+        $cid = invq_customer_id($inv);
+        $cr = preg_match('/^\d+$/', $cid) ? invq_api($c, 'GET', '/customer/' . $cid) : null;
+        if (!$cr || !qbo_lib_ok($cr) || empty($cr['json']['Customer']['Id'])) $cust['error'] = 'no_customer';
+        else {
+            $cu0 = $cr['json']['Customer'];
+            $cust['was'] = invq_email_ok(isset($cu0['PrimaryEmailAddr']['Address']) ? $cu0['PrimaryEmailAddr']['Address'] : '');
+            if (strcasecmp($cust['was'], $email) !== 0) {
+                $cupd = array('Id' => $cid, 'SyncToken' => (string)(isset($cu0['SyncToken']) ? $cu0['SyncToken'] : '0'), 'sparse' => true, 'PrimaryEmailAddr' => array('Address' => $email));
+                $cres = invq_api($c, 'POST', '/customer', $cupd);
+                $got = (qbo_lib_ok($cres) && !empty($cres['json']['Customer']['Id'])) ? invq_email_ok(isset($cres['json']['Customer']['PrimaryEmailAddr']['Address']) ? $cres['json']['Customer']['PrimaryEmailAddr']['Address'] : '') : '';
+                if (strcasecmp($got, $email) === 0) { $cust['changed'] = true; invq_map_put($c, $email, $cid); }
+                else { $cust['error'] = 'qbo_customer'; invq_log('customer email change FAILED for customer ' . $cid . ' (job ' . $jobId . ') ' . invq_why($cres)); }
+            }
+        }
+    }
     invq_jobs_locked(function ($d) use ($jobId, $email, $who) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
@@ -848,8 +870,9 @@ function invq_email_for_job($c, $jobId, $email, $who) {
         return array('ok' => false, 'error' => 'no_such_job');
     });
     invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
-    invq_log('invoice ' . $invId . ' email ' . ($same ? 'already ' . $email : $was . ' -> ' . $email) . ' for job ' . $jobId . ' by ' . $who);
-    return array('ok' => true, 'invoice' => $invId, 'to' => $email, 'was' => $was, 'same' => $same);
+    invq_log('invoice ' . $invId . ' email ' . ($same ? 'already ' . $email : $was . ' -> ' . $email) . ' for job ' . $jobId . ' by ' . $who
+        . ($cust['changed'] ? '; customer record ' . $cust['was'] . ' -> ' . $email : ($cust['error'] !== '' ? '; customer record NOT changed (' . $cust['error'] . ')' : '')));
+    return array('ok' => true, 'invoice' => $invId, 'to' => $email, 'was' => $was, 'same' => $same, 'customer' => $cust);
 }
 
 /* ---- WRITE 2: QuickBooks emails an invoice -------------------------------- */

@@ -32331,7 +32331,8 @@ def write_portal_page():
     function emailForm(j) {
       var now = (j.invoice && j.invoice.email) || j.email || '';
       return '<div class="invqemform" style="display:none;margin:.4rem 0 0;padding:.5rem .6rem;border:1px dashed rgba(125,170,220,.45);border-radius:10px">'
-        + '<div class="quiet" style="font-size:.82rem;margin:0 0 .3rem">This invoice goes to <strong>' + (now ? esc(now) : 'no address yet') + '</strong>. Type the right address: it is changed on the invoice in QuickBooks (and on this job), nothing is sent, and the preview then shows it. Their QuickBooks customer record isn\\u2019t changed.</div>'
+        + '<div class="quiet" style="font-size:.82rem;margin:0 0 .3rem">This invoice goes to <strong>' + (now ? esc(now) : 'no address yet') + '</strong>. Type the right address: it is changed on the invoice in QuickBooks (and on this job), nothing is sent, and the preview then shows it.</div>'
+        + '<label style="display:flex;gap:.35rem;align-items:center;font-size:.82rem;margin:0 0 .35rem"><input class="invqemrec" type="checkbox" checked style="margin:0;width:auto"> Also put it on their QuickBooks customer record, so their next invoice goes there too</label>'
         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><input class="invqemin" type="email" maxlength="120" value="' + esc(now) + '" data-orig="' + esc(now) + '" placeholder="name@example.com" aria-label="The email address the invoice goes to" style="width:260px;margin:0">'
         + '<button class="sm invqemsave" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udcbe Save the email</button>'
         + '<button class="sm ghost invqemcancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqemmsg" style="font-size:.82rem"></span></div></div>';
@@ -32605,15 +32606,22 @@ def write_portal_page():
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqemsave'), function (b) {
       b.onclick = function () {
-        var f = b.closest('.invqemform'), msg = f.querySelector('.invqemmsg'), inp = f.querySelector('.invqemin');
-        var v = (inp.value || '').trim().toLowerCase();
+        var f = b.closest('.invqemform'), msg = f.querySelector('.invqemmsg'), inp = f.querySelector('.invqemin'), rc = f.querySelector('.invqemrec');
+        var v = (inp.value || '').trim().toLowerCase(), rec = !!(rc && rc.checked);
         if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v)) { msg.textContent = 'That email address doesn\\u2019t look right.'; return; }
-        if (v === (inp.getAttribute('data-orig') || '').trim().toLowerCase()) { msg.textContent = 'That\\u2019s the address it already goes to.'; return; }
+        /* the same address is still worth sending when the box is ticked: the customer record may hold the old one */
+        if (v === (inp.getAttribute('data-orig') || '').trim().toLowerCase() && !rec) { msg.textContent = 'That\\u2019s the address it already goes to.'; return; }
         b.disabled = true; msg.textContent = 'Changing it in QuickBooks\\u2026';
-        post(INVQ, { action: 'invemail', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), email: v }).then(function (j) {
+        post(INVQ, { action: 'invemail', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job'), email: v, record: rec }).then(function (j) {
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
-          msg.textContent = 'Saved \\u2014 the invoice now goes to ' + j.to + '.';
-          loadInvq(true);
+          var cu = j.customer || {}, t = j.same ? 'The invoice already goes to ' + j.to : 'Saved \\u2014 the invoice now goes to ' + j.to;
+          if (cu.asked) t += cu.changed ? ', and their QuickBooks customer record now has it too (it had ' + (cu.was || 'no address') + ').'
+            : cu.error ? '. Their QuickBooks customer record couldn\\u2019t be changed \\u2014 change it there (Open in QuickBooks).'
+            : ', and their QuickBooks customer record already had it.';
+          else t += '.';
+          msg.textContent = t;
+          /* long enough to read what happened, then the list again */
+          setTimeout(function () { loadInvq(true); }, cu.error ? 6000 : 2500);
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });
