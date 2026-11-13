@@ -148,10 +148,10 @@ _VOLATILE = [
     (_cdre.compile(r'<style>\s*#fixflow \.ff\{.*?</style>', _cdre.S), '<style>FIXFLOW</style>'),
     # 8 Oct 2026: the 365 PC Manager promo band's laptop picture (on ~110 service and town pages) is a site-wide promo,
     # not page content - swapping it for a new app version must not re-date them. Re-based once with REBASE_HASHES=1.
-    (_cdre.compile(r'<img src="/images/pcm-laptop-[\w-]+\.webp" alt="365 PC Manager on a laptop:[^"]*"[^>]*>'), '<img PCMBAND>'),
+    (_cdre.compile(r'<img src="/images/pcm-(?:laptop|window)-[\w-]+\.webp" alt="365 PC Manager(?: on a laptop)?:[^"]*"[^>]*>'), '<img PCMBAND>'),
     # 1 Nov 2026: the keep band's app card picture (6 pages) is the same site-wide promo as the band above. Stripped so a
     # new app version's picture never re-dates them; those 6 rows were re-based by hand with this rule in place.
-    (_cdre.compile(r'<a class="kb-shot" href="/free-pc-health-check/"[^>]*><img src="/images/pcm-laptop-[\w-]+\.webp"[^>]*>'), '<a class="kb-shot"><img PCMKB>'),
+    (_cdre.compile(r'<a class="kb-shot" href="/free-pc-health-check/"[^>]*><img src="/images/pcm-(?:laptop|window)-[\w-]+\.webp"[^>]*>'), '<a class="kb-shot"><img PCMKB>'),
     (_cdre.compile(r'(<a class="kb-shot" href="/free-pc-health-check/"[^>]*>)<img [^>]*>'), r'\1<img PCMBAND>'),
     # 10 Oct 2026: an <!--ssr:x-->...<!--/ssr:x--> region holds a live reading - PHP rewrites it on every request, and
     # sea-today bakes the feed into it at build time with its own "as read at" stamp. Live data, not page copy: it
@@ -3441,7 +3441,7 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           </div>
         </div>
         <div data-reveal>
-          <img src="/images/pcm-laptop-home-v48-1200.webp" alt="365 PC Manager on a laptop: the health score, what to do next and your PC&rsquo;s service" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
+          <img src="/images/pcm-window-home-v48.webp" alt="365 PC Manager: the health score and your PC&rsquo;s service" width="1012" height="736" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
         <ul class="checklist" data-stagger>
           <li>Free forever, no sign-up, uninstall any time</li>
           <li>Every program kept up to date, not just Windows</li>
@@ -3751,7 +3751,7 @@ def keep_band(cfg):
     if cfg.get("app", True):
         app = f'''
           <div class="kb-card kb-app" data-reveal>
-            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-home-v48-1200.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and your PC&rsquo;s service" loading="lazy" decoding="async"></a>
+            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-window-home-v48.webp" width="1012" height="736" alt="365 PC Manager Home - the health score and your PC&rsquo;s service" loading="lazy" decoding="async"></a>
             <p class="kb-tag">FREE APP &middot; WINDOWS &middot; REAL SCREENSHOT</p>
             <h3>{cfg.get("app_h3", "See how this PC is really doing")}</h3>
             <ul class="kb-list">{li(cfg.get("app_list", KEEP_BAND_APP))}</ul>
