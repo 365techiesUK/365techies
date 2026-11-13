@@ -152,6 +152,38 @@ _TOUR = {
     'Booking': ['Service visits, reminders &amp; reports'],
     'Games': ['Games'],
 }
+# 13 Nov 2026 (owner: "write the sentences for Music, Radio and DJ decks"): these three pictures had no feature cards.
+# Every claim is one the page already makes in its "what's new" cards.
+def _tile(ico, title, text):
+    return ('<div class="tile"><svg class="tile__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '
+            'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ico + '</svg><h3>' + title + '</h3><p>' + text + '</p></div>')
+
+
+_TOUR_EXTRA = {
+    'Music': [
+        _tile('<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>', 'Music &amp; videos',
+              'Your songs, albums, playlists (iTunes ones too), CDs and videos in one window, with an equaliser, Volume boost, '
+              'Night mode and Clear speech.'),
+        _tile('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 1 2-2h13v2z"/>', 'Audiobooks, webcams &amp; a light show',
+              'Free classic audiobooks read aloud by LibriVox volunteers, webcams from round the world, and a light show that '
+              'follows the beat of whatever is playing.'),
+    ],
+    'Radio': [
+        _tile('<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8l10-5"/><circle cx="8.5" cy="14" r="2.5"/><path d="M15 12h3M15 16h3"/>',
+              'Radio near you',
+              'The stations for your country, a Near you list of local ones, and the BBC stations a tap away. Tap the heart to '
+              'keep your favourites.'),
+        _tile('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 3 2 6M19 3l3 3"/>', 'Wake-up &amp; away timer',
+              'Wake to the radio starting almost silent and rising gently. Or have it play between set times while you&rsquo;re '
+              'out, so the house sounds lived-in.'),
+    ],
+    'DJ decks': [
+        _tile('<path d="M3 12h3l2-6 4 12 3-9 2 3h4"/>', 'Auto DJ',
+              'Mixes each song into the next on the beat. Nothing to learn: put your music on and leave it to it.'),
+        _tile('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3v2M12 19v2"/>', 'Have a go on the decks',
+              'Two turntables you can scratch, with cue points, loops, effects, a sampler and video mixing.'),
+    ],
+}
 _TOUR_JS = ('<script>(function(){var r=document.getElementById("pcmtour");if(!r)return;'
             'var t=[].slice.call(r.querySelectorAll("[role=tab]")),m=[].slice.call(r.querySelectorAll(".pcmt__shot img")),'
             'p=[].slice.call(r.querySelectorAll(".pcmt__panel"));'
@@ -190,7 +222,7 @@ def _merge_tour(looks, does):
     panels = ''.join('              <div class="pcmt__panel%s%s" role="tabpanel" id="pcmt-panel-%d" aria-labelledby="pcmt-tab-%d">\n'
                      '                <p class="pcmt__cap">%s</p>\n%s              </div>\n'
                      % (' is-sel' if i == 0 else '', ' pcmt__panel--many' if len(_TOUR.get(n, [])) > 3 else '', i, i, caps[i],
-                        ''.join('                ' + byname[c] + '\n' for c in _TOUR.get(n, [])))
+                        ''.join('                ' + t + '\n' for t in [byname[c] for c in _TOUR.get(n, [])] + _TOUR_EXTRA.get(n, [])))
                      for i, n in enumerate(names))
     return (pre + '    <section class="section pcmt-sec" aria-label="What it looks like and what it does">\n      <div class="wrap">\n'
             '        <div class="section-head">\n          <h2 class="section-title section-title--center">' + strip(d_h2)
