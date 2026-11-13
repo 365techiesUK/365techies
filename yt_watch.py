@@ -121,6 +121,9 @@ W11LIKE10_SHORT = ("wooj75h4rYs", 31, "2026-11-04T19:00:00+00:00", "Make Windows
 # 10 Nov 2026: the OST to PST Short (24 s, reels/ost-to-pst-2026-11-10: the real Techies One 0.23.1 on a made-up .ost),
 # public that evening (owner: "put them like public now"), under the how-to film on /ost-to-pst-converter/.
 OSTPST_SHORT = ("P5F5x_YTm6s", 24, None, "Old Outlook OST File? Turn It Into a PST, Free")
+# The plan-B Short made the day after the Microsoft 365 outage of 12-13 Nov 2026 (public 13 Nov; claim limits in
+# reels/shorts-redo-2026-10-26/t1planb/vo/lines.py).
+OUTAGE_SHORT = ("bOFdF5zFBVk", 28, None, "Outlook Down? Your Gmail Was Fine. Keep a Plan B")
 
 
 def length(secs):

@@ -272,7 +272,7 @@
  },
  "btinternet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "1c89baacced07e3f",
+  "h": "f58c74e2b0ca1685",
   "last": "2026-11-13"
  },
  "business-access-point-end-of-life": {
@@ -367,7 +367,7 @@
  },
  "cant-send-btinternet-email-new-outlook": {
   "first": "2026-07-28",
-  "h": "b139b71986467049",
+  "h": "67f5ab02ce9705c7",
   "last": "2026-11-13"
  },
  "case-studies": {
@@ -472,7 +472,7 @@
  },
  "comcast-email-moving-to-yahoo": {
   "first": "2026-10-11",
-  "h": "44f2755d5f25f0da",
+  "h": "b53fcbb2ad88bc92",
   "last": "2026-11-13"
  },
  "common-outlook-problems-and-fixes": {
@@ -1102,7 +1102,7 @@
  },
  "download-classic-outlook": {
   "first": "2026-10-23",
-  "h": "4bdb3220cad2a594",
+  "h": "ec2a6fdbfd748f1b",
   "last": "2026-11-13"
  },
  "downtime-cost-calculator": {
@@ -1121,7 +1121,7 @@
  },
  "eircom-email-price-increase": {
   "first": "2026-10-11",
-  "h": "f13325959a6750c4",
+  "h": "71eef948c7b7a10f",
   "last": "2026-11-13"
  },
  "email-basics-course": {
@@ -1331,7 +1331,7 @@
  },
  "greenby-email-login": {
   "first": "2026-10-13",
-  "h": "fb08cb0c21f85aa7",
+  "h": "264b0746465b7ed4",
   "last": "2026-11-13"
  },
  "hard-drive-upgrade": {
@@ -1461,7 +1461,7 @@
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
-  "h": "d5a52aa7dbfdabc5",
+  "h": "89ee22230c13d54a",
   "last": "2026-11-13"
  },
  "how-to-keep-children-safe-online": {
@@ -1660,7 +1660,7 @@
  },
  "is-it-down": {
   "first": "2026-07-28",
-  "h": "4ff7555afa558f2e",
+  "h": "e1d2bbda212cbc80",
   "last": "2026-11-13"
  },
  "is-it-safe-to-buy-a-refurbished-laptop": {
@@ -1677,6 +1677,10 @@
   "first": "2026-10-11",
   "h": "4f1ae05e78735108",
   "last": "2026-11-13"
+ },
+ "is-outlook-down": {
+  "first": "2026-11-13",
+  "h": "a91a4dad9a2e33b3"
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
@@ -2420,7 +2424,7 @@
  },
  "move-plusnet-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "2ee6487a3353bba7",
+  "h": "c4a92edcdab9c3a2",
   "last": "2026-11-13"
  },
  "move-virgin-media-email-to-gmail": {
@@ -2460,7 +2464,7 @@
  },
  "new-outlook-emails-stuck-in-drafts": {
   "first": "2026-07-28",
-  "h": "156b014acf83a6af",
+  "h": "11cc9afc8ca9c6a2",
   "last": "2026-11-13"
  },
  "new-outlook-missing-features": {
@@ -2470,17 +2474,17 @@
  },
  "new-outlook-no-send-receive-button": {
   "first": "2026-07-28",
-  "h": "a0d46c5a820e24a5",
+  "h": "16cf9cabf9549ffb",
   "last": "2026-11-13"
  },
  "new-outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "a119066a31f5ab83",
+  "h": "33ad7ea5b3300c26",
   "last": "2026-11-13"
  },
  "new-outlook-only-showing-recent-emails": {
   "first": "2026-07-28",
-  "h": "e64808af91dde719",
+  "h": "090a79e32f55dba0",
   "last": "2026-11-13"
  },
  "new-outlook-search-not-working": {
@@ -2710,7 +2714,7 @@
  },
  "outlook-cant-add-account-new-outlook": {
   "first": "2026-07-28",
-  "h": "1872c885553fd521",
+  "h": "f02b5691f4f7042f",
   "last": "2026-11-13"
  },
  "outlook-cant-sign-in": {
@@ -2800,7 +2804,7 @@
  },
  "outlook-not-responding": {
   "first": "2026-07-28",
-  "h": "455fd5a79b59933e",
+  "h": "62d3653c47acaa05",
   "last": "2026-11-13"
  },
  "outlook-not-sending-emails": {
@@ -2810,7 +2814,7 @@
  },
  "outlook-not-showing-new-emails": {
   "first": "2026-07-28",
-  "h": "efaaa89eb203b8f1",
+  "h": "12cd4f969f81ca79",
   "last": "2026-11-13"
  },
  "outlook-not-syncing": {
@@ -2880,7 +2884,7 @@
  },
  "outlook-search-not-finding-old-emails": {
   "first": "2026-07-28",
-  "h": "67fe9613f6373859",
+  "h": "91f69c9038865b11",
   "last": "2026-11-13"
  },
  "outlook-search-not-returning-all-results": {
@@ -3077,7 +3081,7 @@
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "9c2b79d337ef2333",
+  "h": "9226c6bc83ff8fe0",
   "last": "2026-11-13"
  },
  "portal": {
@@ -3522,7 +3526,7 @@
  },
  "sky-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "74bdbe30466cd1a2",
+  "h": "a6299c8756ca9e59",
   "last": "2026-11-13"
  },
  "slow-computer-repair": {
@@ -4124,7 +4128,7 @@
  },
  "windows-live-mail-not-working": {
   "first": "2026-10-12",
-  "h": "b0a8a99e28df92a6",
+  "h": "4a707869892aa85c",
   "last": "2026-11-13"
  },
  "windows-reinstall": {
