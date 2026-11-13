@@ -111,9 +111,35 @@ list($ok, $asked) = ty_send('offer.new@example.com', 'Test', 10, array('1'), $ts
 list($lk, $q) = rvq_open(); rvq_close($lk);
 t($asked === false && !isset($q['last'][sha1('offer.new@example.com')]), 'with the check-up offer: no review ask, no stamp in the queue (they can still be asked later)');
 $TY_ASK = false;
+
+// 13 Nov 2026 (later): the check-up offer goes WITH the invoice - our short welcome email (iw_*), straight after QuickBooks'
+$iwH = iw_body_html('Margaret', '4905/830');
+$iwT = iw_body('Margaret', '4905/830');
+list($ol, $ou) = ty_offer_lines();
+t(iw_subject() === 'Welcome to 365 Techies - a check-up for your computer', 'welcome: subject');
+foreach (array('html' => $iwH, 'text' => $iwT) as $k => $b) {
+    $flat = preg_replace('/\s+/', ' ', $b);
+    t(strpos($flat, $ol) !== false || strpos($flat, htmlspecialchars($ol, ENT_QUOTES)) !== false, "$k welcome: the check-up offer, word for word as the thank-you's");
+    t(strpos($b, 'XP99J1CFV8W876') !== false && strpos($b, 'Margaret') !== false && strpos($b, '4905/830') !== false && stripos($b, 'separate email') !== false,
+      "$k welcome: the Store link, their name, and that the invoice comes separately (by number)");
+    t(strpos($b, 'writereview') === false && stripos($b, 'review?') === false && stripos($b, 'Google review') === false && strpos($b, 'pcm-review.php?u=') === false,
+      "$k welcome: no review ask, ever (no offer beside one)");
+    t(stripos($b, 'if you') === false && stripos($b, 'free') === false && stripos($b, 'happy') === false, "$k welcome: no 'if you are happy' steering, no 'free'");
+    t(strpos($b, '01202') !== false && strpos($b, '07520') !== false && strpos($b, 'David') !== false && strpos($b, rv_linkedin_url()) !== false, "$k welcome: phone, text, signed, LinkedIn");
+}
+t(strpos($iwH, 'Get 365 PC Manager') !== false && substr_count($iwH, 'bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px') === 1, 'html welcome: its one button');
+t(strpos(iw_body('Margaret', ''), 'Your invoice is on its way') !== false, 'welcome with no invoice number still reads right');
+$iwCalls = array();
+$IW_TEST_SEND = function ($to, $name, $num) use (&$iwCalls) { $iwCalls[] = array($to, $name, $num); return true; };
+t(iw_send('m@example.com', 'Margaret', '4905/830') === true && $iwCalls === array(array('m@example.com', 'Margaret', '4905/830')), 'iw_send goes through the test stub (never a real server here)');
+unset($IW_TEST_SEND);
+t(iw_send('not an address', 'Margaret', '1') === false, 'welcome: a bad address is refused');
+list($lk, $q) = rvq_open(); rvq_close($lk);
+t(!isset($q['last'][sha1('m@example.com')]), 'welcome: the review queue is never touched');
 @unlink($RV_Q); @unlink($RV_Q . '.lock');
 
 if (!empty($argv[1])) {
+    file_put_contents($argv[1] . '/iw-welcome.html', $iwH);
     file_put_contents($argv[1] . '/ty-with-ask.html', $withAsk);
     file_put_contents($argv[1] . '/ty-no-ask.html', $noAsk);
     file_put_contents($argv[1] . '/ty-with-ask.txt', $txtAsk);

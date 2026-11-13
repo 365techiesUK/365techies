@@ -299,11 +299,21 @@ if ($action === 'pdf') {
     exit;
 }
 
+/* 13 Nov 2026: check = read only (the Approve & send panel's facts, nothing sent); welcome = yes/no for our welcome email
+   with the 365 PC Manager check-up offer, straight after QuickBooks' (absent = the default). Neither can name a person or
+   an address: those stay QuickBooks' own. */
 if ($action === 'send') {
     if ($id === '') fail('bad_id');
-    $r = invq_send($c, $id, $who);
+    if (!defined('RV_LIB')) define('RV_LIB', 1);
+    require_once __DIR__ . '/pcm-review.php';   // our sender (iw_send). Global scope (an if block, not a function), as for 'receipt'
+    $check = !empty($in['check']);
+    $welcome = array_key_exists('welcome', $in) ? !empty($in['welcome']) : null;
+    $r = invq_send($c, $id, $who, $check, $welcome);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
-    out(array('ok' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount']));
+    if ($check) out(array('ok' => true, 'check' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount'],
+                          'welcome' => !empty($r['welcome']), 'new' => !empty($r['new']), 'since' => $r['since'], 'service' => !empty($r['service']),
+                          'welcomed' => (int)$r['welcomed'], 'can_welcome' => !empty($r['can_welcome'])));
+    out(array('ok' => true, 'to' => $r['to'], 'number' => $r['number'], 'amount' => $r['amount'], 'welcome' => !empty($r['welcome']), 'welcome_failed' => !empty($r['welcome_failed'])));
 }
 
 /* 23 Oct 2026: sent but not paid (read only), and QuickBooks emailing one of those again (WRITE 2b - the same send,
@@ -343,7 +353,8 @@ if ($action === 'receipt') {
     $r = invq_receipt($c, $id, $invId, $who, $check, $offer);
     if (empty($r['ok'])) fail($r['error'], isset($r['why']) ? array('why' => $r['why']) : array());
     if ($check) out(array('ok' => true, 'check' => true, 'to' => $r['to'], 'name' => $r['name'], 'amount' => $r['amount'], 'numbers' => $r['numbers'],
-                          'offer' => !empty($r['offer']), 'new' => !empty($r['new']), 'since' => $r['since'], 'service' => !empty($r['service']), 'can_offer' => !empty($r['can_offer'])));
+                          'offer' => !empty($r['offer']), 'new' => !empty($r['new']), 'since' => $r['since'], 'service' => !empty($r['service']),
+                          'welcomed' => (int)$r['welcomed'], 'can_offer' => !empty($r['can_offer'])));
     out(array('ok' => true, 'to' => $r['to'], 'amount' => $r['amount'], 'numbers' => $r['numbers'], 'review' => !empty($r['review']), 'offer' => !empty($r['offer'])));
 }
 

@@ -786,9 +786,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; 2a93cd564b</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:var(--kced74a,#9fb5d3);opacity:.85;margin:.5rem 0 0">portal build 13 Nov 2026 &middot; eacc1abdb3</p><script>
 (function () {
-  var P365BUILD = '2a93cd564b';
+  var P365BUILD = 'eacc1abdb3';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7630,8 +7630,7 @@
       if (!c || !c.ok) { b.disabled = false; if (msg) msg.innerHTML = invqTyErr(c); return; }
       if (msg) msg.textContent = '';
       var nums = (c.numbers || []).length ? ' for invoice #' + c.numbers.join(', #') : '';
-      var why = (c.new ? 'a new customer (since ' + invqDate(c.since) + ')' : c.since ? 'a customer since ' + invqDate(c.since) : 'not sure how long they\u2019ve been with us')
-        + (c.service ? ' \u00b7 the job was a service' : ' \u00b7 no service on the invoice');
+      var why = c.welcomed ? 'they had it with their invoice, in our welcome email ' + invqAgo(c.welcomed) : invqWhyOffer(c);
       var html = '<div style="margin:.45rem 0 0;padding:.5rem .6rem;border:var(--k266257,1px dashed rgba(125,170,220,.45));border-radius:10px;font-size:.86rem;text-align:left">'
         + '<div>Our thank-you email to <strong>' + esc(c.to) + '</strong>: confirming ' + invqMoney(c.amount) + ' received' + esc(nums) + ', with QuickBooks\u2019 receipt attached, the job\u2019s 30 days\u2019 aftercare, help with anything else, and our LinkedIn.</div>'
         + (c.can_offer ? '<label style="display:flex;gap:.4rem;align-items:flex-start;margin:.45rem 0 0;cursor:pointer"><input class="invqtyoffer" type="checkbox"' + (c.offer ? ' checked' : '') + ' style="margin:.2rem 0 0;width:auto">'
@@ -7661,6 +7660,53 @@
           b.style.display = 'none';
           if (msg) msg.innerHTML = '<span style="color:var(--k54e085,#7ee0a2)">\u2713 Thank-you sent to ' + esc(j.to) + (j.offer ? ' (with the 365 PC Manager check-up offer)' : j.review ? ' (with a review ask)' : '') + '</span>';
         }).catch(function () { sb.disabled = false; pm.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+    }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
+  }
+  /* why the check-up offer is ticked or not: how long they've been with us, and whether the job was a service */
+  function invqWhyOffer(c) {
+    return (c.new ? 'a new customer (since ' + invqDate(c.since) + ')' : c.since ? 'a customer since ' + invqDate(c.since) : 'not sure how long they\u2019ve been with us')
+      + (c.service ? ' \u00b7 the job was a service' : ' \u00b7 no service on the invoice');
+  }
+  /* 13 Nov 2026 (owner: the check-up offer "is supposed to be added to ... when we send the invoice to customers"):
+     Approve & send opens a panel (it asks the server first, read only) in place of the confirm box: where QuickBooks
+     will email it, any warnings, the reminder to check the preview, and our welcome email with the 365 PC Manager
+     check-up offer - ticked for a new customer whose job wasn't a service, with the reason. QuickBooks' own email has one
+     wording for everyone, so the offer goes as our own short email straight after it, to the same address. The person
+     sending decides. Only job rows (.invqrow) carry Approve & send. */
+  function invqSend(b, msg, flags) {
+    var row = b.closest('.invqrow'); if (!row) return;
+    var open = row.querySelector('.invqsndpanel');
+    if (open) { open.parentNode.removeChild(open); b.disabled = false; if (msg) msg.textContent = ''; return; }   // a second press closes it
+    var id = b.getAttribute('data-id');
+    function body(extra) { var o = { action: 'send', stoken: S.stoken, machine: mid(), id: id }; for (var k in extra) o[k] = extra[k]; return o; }
+    b.disabled = true; if (msg) msg.textContent = 'Checking\u2026';
+    post(INVQ, body({ check: 1 })).then(function (c) {
+      if (!c || !c.ok) { b.disabled = false; if (msg) msg.innerHTML = '<span style="color:var(--kd26c6f,#ffb4a2)">' + invqErr(c) + '</span>'; return; }
+      if (msg) msg.textContent = '';
+      var why = c.welcomed ? 'they had one ' + invqAgo(c.welcomed) : invqWhyOffer(c);
+      var warn = (flags || []).map(function (f) { return '<div style="color:var(--kd26c6f,#ffb4a2);margin:.2rem 0 0">\u26a0 ' + esc(f.text) + '</div>'; }).join('');
+      var p = document.createElement('div'); p.className = 'invqsndpanel';
+      p.innerHTML = '<div style="margin:.45rem 0 0;padding:.5rem .6rem;border:var(--k266257,1px dashed rgba(125,170,220,.45));border-radius:10px;font-size:.86rem;text-align:left">'
+        + '<div>QuickBooks will email invoice ' + (c.number ? '<strong>#' + esc(c.number) + '</strong> ' : '') + 'for <strong>' + invqMoney(c.amount || 0) + '</strong> to <strong>' + esc(c.to) + '</strong> now.</div>'
+        + warn
+        + '<div class="quiet" style="margin:.2rem 0 0">Have you checked the email and the PDF (Preview the email)?</div>'
+        + (c.can_welcome ? '<label style="display:flex;gap:.4rem;align-items:flex-start;margin:.45rem 0 0;cursor:pointer"><input class="invqsndwel" type="checkbox"' + (c.welcome ? ' checked' : '') + ' style="margin:.2rem 0 0;width:auto">'
+          + '<span>Also send our welcome email: a check-up for their Windows computer with 365 PC Manager, included with the job <span class="quiet">\u00b7 ' + why + '</span></span></label>'
+          + '<div class="quiet" style="font-size:.8rem;margin:.25rem 0 0">It goes from us straight after the invoice, as its own short email (QuickBooks\u2019 invoice email is the same for everyone). It never asks for a review \u2014 their thank-you does that after they pay.</div>' : '')
+        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center"><button class="sm invqsndgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\u2705 Send the invoice</button>'
+        + '<button class="sm ghost invqsndcancel" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Cancel</button><span class="quiet invqsndmsg" style="font-size:.82rem"></span></div></div>';
+      row.appendChild(p);
+      var cb = p.querySelector('.invqsndwel'), go = p.querySelector('.invqsndgo'), pm = p.querySelector('.invqsndmsg');
+      p.querySelector('.invqsndcancel').onclick = function () { p.parentNode.removeChild(p); b.disabled = false; };
+      go.onclick = function () {
+        go.disabled = true; pm.textContent = 'Sending\u2026';
+        post(INVQ, body({ welcome: !!(cb && cb.checked) })).then(function (j) {
+          if (!j || !j.ok) { go.disabled = false; pm.innerHTML = '<span style="color:var(--kd26c6f,#ffb4a2)">' + invqErr(j) + '</span>'; return; }
+          row.innerHTML = '<span style="color:var(--k54e085,#7ee0a2)">\u2713 Sent to ' + esc(j.to) + ' \u2014 ' + invqMoney(j.amount) + (j.number ? ' (#' + esc(j.number) + ')' : '') + '. Noted in #daily-jobs-in-jobs-out.'
+            + (j.welcome ? ' Our welcome email with the check-up offer went too.' : '') + '</span>'
+            + (j.welcome_failed ? ' <span style="color:var(--kd26c6f,#ffb4a2)">The welcome email didn\u2019t go \u2014 tell them about the check-up by hand.</span>' : '');
+        }).catch(function () { go.disabled = false; pm.textContent = 'Couldn\u2019t reach the server.'; });
       };
     }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
   }
@@ -8090,6 +8136,7 @@
       if (!w || !b) return;
       w.style.display = open ? '' : 'none';
       b.textContent = open ? '\u2715 Close without changing' : '\u270f\ufe0f Change it';
+      var sp = row.querySelector('.invqsndpanel'); if (open && sp) { sp.parentNode.removeChild(sp); if (snd) snd.disabled = false; }   // 13 Nov 2026: an open send panel closes first
       if (snd) {
         if (open && !snd.disabled) { snd.disabled = true; snd.setAttribute('data-chg', '1'); }
         else if (!open && snd.getAttribute('data-chg')) { snd.disabled = false; snd.removeAttribute('data-chg'); }
@@ -8131,6 +8178,7 @@
       if (!f || !b) return;
       f.style.display = open ? '' : 'none';
       b.textContent = open ? '\u2715 Close without changing' : '\u2709\ufe0f Change email';
+      var sp = row.querySelector('.invqsndpanel'); if (open && sp) { sp.parentNode.removeChild(sp); if (snd) snd.disabled = false; }   // 13 Nov 2026: an open send panel closes first
       if (snd) {
         if (open && !snd.disabled) { snd.disabled = true; snd.setAttribute('data-em', '1'); }
         else if (!open && snd.getAttribute('data-em')) { snd.disabled = false; snd.removeAttribute('data-em'); }
@@ -8250,16 +8298,7 @@
     Array.prototype.forEach.call(box.querySelectorAll('.invqrow .invqresend'), function (b) { b.onclick = function () { invqResend(b, msgOf(b)); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqrow .invqthank'), function (b) { b.onclick = function () { invqThank(b, msgOf(b)); }; });
     Array.prototype.forEach.call(box.querySelectorAll('.invqsend'), function (b) {
-      b.onclick = function () {
-        var id = b.getAttribute('data-id'), x = invOf(id), msg = msgOf(b);
-        var warnTxt = (x.flags && x.flags.length) ? '\n\nWARNINGS:\n\u2022 ' + x.flags.map(function (f) { return f.text; }).join('\n\u2022 ') + '\n' : '';
-        if (!confirm('QuickBooks will email invoice ' + (x.number ? '#' + x.number : '') + ' for ' + invqMoney(x.total || 0) + ' to ' + x.email + ' now.' + warnTxt + '\nHave you checked the email and the PDF (Preview the email)?')) return;
-        b.disabled = true; if (msg) msg.textContent = 'Sending\u2026';
-        post(INVQ, { action: 'send', stoken: S.stoken, machine: mid(), id: id }).then(function (j) {
-          if (!j || !j.ok) { b.disabled = false; if (msg) msg.innerHTML = invqErr(j); return; }
-          var row = b.closest('.invqrow'); if (row) row.innerHTML = '<span style="color:var(--k54e085,#7ee0a2)">\u2713 Sent to ' + esc(j.to) + ' \u2014 ' + invqMoney(j.amount) + (j.number ? ' (#' + esc(j.number) + ')' : '') + '. Noted in #daily-jobs-in-jobs-out.</span>';
-        }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\u2019t reach the server.'; });
-      };
+      b.onclick = function () { invqSend(b, msgOf(b), invOf(b.getAttribute('data-id')).flags); };   // 13 Nov 2026: a panel, with the welcome email
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqhold, .invqunhold'), function (b) {
       b.onclick = function () {

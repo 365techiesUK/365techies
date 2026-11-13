@@ -531,8 +531,41 @@ $rcFn0 = strpos($SW, 'function invq_receipt('); $rcFn1 = $rcFn0 !== false ? strp
 $rcFn = ($rcFn0 !== false && $rcFn1 > $rcFn0) ? substr($SW, $rcFn0, $rcFn1 - $rcFn0) : '';
 ok($rcFn !== '' && strpos($rcFn, 'if ($check) return array(') !== false && strpos($rcFn, 'if ($check) return array(') < strpos($rcFn, 'ty_send(') && strpos($rcFn, 'if ($check) return array(') < strpos($rcFn, "'/payment/' . \$pid . '/pdf'"),
    'check returns before anything is fetched for sending or sent');
-ok(strpos($rcFn, "\$useOffer = \$canOffer && (\$offer === null ? \$od['offer'] : (bool)\$offer);") !== false && strpos($rcFn, "\$raw, \$useOffer);") !== false
+ok(strpos($rcFn, "\$useOffer = \$canOffer && (\$offer === null ? \$odOffer : (bool)\$offer);") !== false && strpos($rcFn, "\$raw, \$useOffer);") !== false
    && strpos($rcFn, "'offer' => \$useOffer") !== false, 'the choice (or the default) goes to the email and into the record');
+ok(strpos($rcFn, "\$welcomed = invq_welcomed_at(\$store['sent'], \$cid);") !== false && strpos($rcFn, "\$odOffer = \$od['offer'] && !\$welcomed;") !== false
+   && strpos($rcFn, "'offer' => (\$canOffer && \$odOffer)") !== false && strpos($rcFn, "'welcomed' => \$welcomed") !== false,
+   'a customer who had our welcome email with their invoice: the thank-you is not ticked for the offer again (so it can ask for a review), and the panel is told why');
+
+echo "-- 13 Nov 2026 (later): the check-up offer goes WITH the invoice - our welcome email, straight after QuickBooks'\n";
+$sentLog = array(array('id' => '1', 'cust' => '50', 'at' => 100, 'welcome' => true), array('id' => '2', 'cust' => '50', 'at' => 300, 'welcome' => true),
+                 array('id' => '3', 'cust' => '51', 'at' => 400, 'welcome' => false), array('id' => '4', 'at' => 500, 'welcome' => true), 'junk', array('id' => '5', 'cust' => 52, 'at' => 600, 'welcome' => 1));
+ok(invq_welcomed_at($sentLog, '50') === 300 && invq_welcomed_at($sentLog, '51') === 0 && invq_welcomed_at($sentLog, '52') === 600
+   && invq_welcomed_at($sentLog, '') === 0 && invq_welcomed_at($sentLog, '99') === 0 && invq_welcomed_at(null, '50') === 0 && invq_welcomed_at(array(), '50') === 0,
+   'welcomed: the latest welcome that went to this customer (a send without one, or with no customer, never counts)');
+$sd0 = strpos($SW, 'function invq_send('); $sd1 = $sd0 !== false ? strpos($SW, '/* ---- WRITE 2b', $sd0) : false;
+$sdFn = ($sd0 !== false && $sd1 > $sd0) ? substr($SW, $sd0, $sd1 - $sd0) : '';
+$sdChk = strpos($sdFn, 'if ($check) return array(');
+ok($sdFn !== '' && $sdChk !== false && $sdChk < strpos($sdFn, 'invq_qbo_send(') && $sdChk < strpos($sdFn, 'iw_send(') && $sdChk < strpos($sdFn, 'invq_store_locked(')
+   && strpos($sdFn, "if (invq_email_status(\$inv) === 'EmailSent')") < $sdChk && strpos($sdFn, "'error' => 'no_email'") < $sdChk,
+   'check: the same refusals as a send (already sent, nothing owed, no address), then returns before anything is sent or written');
+ok(strpos($sdFn, "\$useWelcome = \$canWelcome && (\$welcome === null ? (\$od['offer'] && !\$welcomed) : (bool)\$welcome);") !== false
+   && strpos($sdFn, "\$od = invq_offer_default(\$cust, array(\$inv));") !== false && strpos($sdFn, "\$welcomed = invq_welcomed_at(\$store['sent'], \$cid);") !== false
+   && strpos($sdFn, "'welcome' => (\$canWelcome && \$od['offer'] && !\$welcomed)") !== false,
+   'the welcome: ticked for a new customer whose job had no service and who hasn\'t had one; the person sending decides');
+$qs = strpos($sdFn, '$why = invq_qbo_send($c, $id, $to);'); $ret = strpos($sdFn, "return array('ok' => false, 'error' => 'send_failed'"); $iw = strpos($sdFn, '$wOk = (bool)iw_send($to, $first, $num);');
+ok($qs !== false && $ret > $qs && $iw > $ret && strpos($sdFn, 'if ($useWelcome) {') < $iw
+   && strpos($sdFn, "return array('ok' => true, 'to' => \$to, 'number' => \$num, 'amount' => \$amt, 'welcome' => (\$wOk === true), 'welcome_failed' => (\$wOk === false));") !== false,
+   'the invoice goes first; the welcome only after QuickBooks sent it, to the same address; a failed welcome never turns the invoice into a failure (it is reported)');
+ok(strpos($sdFn, "'cust' => \$cid, 'welcome' => (\$wOk === true)") !== false && strpos($sdFn, '$in[') === false && strpos($sdFn, ':warning: Our welcome email (the check-up offer) did NOT go') !== false,
+   'the send is recorded with the customer and whether the welcome went; Slack says if it didn\'t');
+$sdB0 = strpos($EP, "if (\$action === 'send')"); $sdB1 = $sdB0 !== false ? strpos($EP, "if (\$action === 'unpaid')", $sdB0) : false;
+$sdBlock = ($sdB0 !== false && $sdB1 > $sdB0) ? substr($EP, $sdB0, $sdB1 - $sdB0) : '';
+preg_match_all("/\\\$in\['([a-z_]+)'\]/", $sdBlock, $sdKeys);
+ok($sdBlock !== '' && array_values(array_unique($sdKeys[1])) === array('check', 'welcome') && strpos($sdBlock, 'invq_send($c, $id, $who, $check, $welcome)') !== false
+   && strpos($sdBlock, "\$welcome = array_key_exists('welcome', \$in) ? !empty(\$in['welcome']) : null;") !== false && strpos($sdBlock, "\$check = !empty(\$in['check']);") !== false
+   && strpos($sdBlock, "require_once __DIR__ . '/pcm-review.php';") < strpos($sdBlock, 'invq_send('),
+   'the send request names the invoice and two yes/nos (check = read only, welcome) - never a person or an address', json_encode(array_values(array_unique($sdKeys[1]))));
 ok(strpos($EP, "\$o['jobs'][\$ji]['invoice']['thanked'] = \$thankedInv[") !== false, 'a paid job row says whether its thank-you went (from the store, so a cached list is right too)');
 
 echo "-- 23 Oct 2026 (later still): told when anyone pays - a Slack line and a NEW mark\n";

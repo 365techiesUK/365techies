@@ -804,6 +804,16 @@ function invq_offer_default($cust, $invoices, $now = null) {
     return array('offer' => ($new && !$svc), 'new' => $new, 'since' => $since, 'service' => $svc);
 }
 
+/* 13 Nov 2026: when our welcome email (the check-up offer, sent with the invoice) last went to this QuickBooks customer -
+   from the sends we recorded (store 'sent': cust + welcome) - or 0 for never. */
+function invq_welcomed_at($sent, $cid) {
+    $cid = (string)$cid; $at = 0;
+    if ($cid === '') return 0;
+    foreach ((array)$sent as $s)
+        if (is_array($s) && !empty($s['welcome']) && (string)(isset($s['cust']) ? $s['cust'] : '') === $cid) $at = max($at, (int)(isset($s['at']) ? $s['at'] : 0));
+    return $at;
+}
+
 function invq_first_name($givenName, $displayName) {
     $g = trim((string)$givenName);
     if ($g !== '') return invq_str($g, 40);

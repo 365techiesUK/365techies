@@ -576,6 +576,56 @@ function ty_send($to, $name, $amt, $nums, $paidTs, $pdfName = '', $pdf = '', $of
     return array((bool)$ok, $ok && $ask);
 }
 
+/* ---- WELCOME email, with the invoice (13 Nov 2026, owner: the check-up offer "is supposed to be added to ... when we send
+   the invoice to customers"). QuickBooks' invoice email has ONE wording for every customer, so a NEW customer whose job had
+   no service (invq_offer_default) gets this short email from us straight after it: the portal's Approve & send
+   (pcm-invq.php action=send), ticked or not by the person sending. The offer is ty_offer_lines(), word for word. No review
+   ask, ever (no offer next to one), so the review queue is not touched: the thank-you after they pay asks as usual. */
+function iw_subject() { return 'Welcome to 365 Techies - a check-up for your computer'; }
+function iw_body($first, $num = '') {
+    list($ol, $ou) = ty_offer_lines();
+    return 'Hi ' . $first . ",\r\n\r\n"
+       . 'Thank you for choosing 365 Techies. Your invoice' . ($num !== '' ? ' ' . $num : '') . " is on its way to you in a separate email.\r\n\r\n"
+       . wordwrap($ol, 100, "\r\n") . "\r\n\r\n" . $ou . "\r\n\r\n"
+       . "To let us know, just reply to this email or call 01202 775566 (texts: 07520 615332).\r\n\r\n"
+       . "Thanks again,\r\n"
+       . "David & Steve\r\n"
+       . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+       . "01202 775566 - info@365techies.co.uk - https://365techies.co.uk\r\n"
+       . "What our customers say: https://365techies.co.uk/reviews/\r\n"
+       . "Tips and news on LinkedIn: " . rv_linkedin_url() . "\r\n";
+}
+function iw_body_html($first, $num = '') {
+    list($ol, $ou) = ty_offer_lines();
+    $tel = '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>';
+    return rv_html_shell(array(
+        'title' => 'Welcome to 365 Techies',
+        'eyebrow' => 'Welcome',
+        'heading' => 'Welcome to 365 Techies',
+        'preview' => 'Your job includes a check-up for your Windows computer.',
+        'blocks' => array(
+            rv_h_p('Hi ' . rv_h($first) . ','),
+            rv_h_p('Thank you for choosing 365 Techies. Your invoice' . ($num !== '' ? ' ' . rv_h($num) : '') . ' is on its way to you in a separate email.'),
+            rv_h_p(rv_h($ol)),
+            rv_h_cta('Get 365 PC Manager', $ou),
+            rv_h_note('To let us know, just reply to this email or call ' . $tel . ' (texts: 07520&nbsp;615332).'),
+            rv_h_p('<a href="https://365techies.co.uk/reviews/" style="color:#1266a8;font-weight:600;text-decoration:none;">See what our customers say</a>'
+                . ' &middot; <a href="' . rv_h(rv_linkedin_url()) . '" style="color:#1266a8;font-weight:600;text-decoration:none;">Tips and news on LinkedIn</a>'),
+        ),
+    ));
+}
+/** Send one welcome email with the invoice. $name = their first name (or their name); $num = the invoice number. -> bool
+ *  (iw_ = invoice welcome; wc_ further down is the portal's own welcome email.) */
+function iw_send($to, $name, $num = '') {
+    // the test suite's stub, so its live-path checks never reach a real mail server
+    if (isset($GLOBALS['IW_TEST_SEND']) && is_callable($GLOBALS['IW_TEST_SEND'])) return (bool)call_user_func($GLOBALS['IW_TEST_SEND'], $to, $name, $num);
+    $to = strtolower(trim((string)$to));
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+    $f = rv_first($name);
+    $num = preg_replace('/[^A-Za-z0-9\/-]/', '', (string)$num);
+    return (bool)rv_send_raw($to, iw_subject(), iw_body($f, $num), '', '', iw_body_html($f, $num));
+}
+
 // ---- "job done" email: sent when the booking is marked Completed (portal staff
 // action or SimplyBook admin, mirrored into bkmeta by pcm-bkpoll.php), or 3h after
 // the visit ends as a fallback for jobs nobody marks. The customer's one-stop

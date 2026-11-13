@@ -905,8 +905,14 @@ function invq_qbo_send($c, $id, $to) {
     return '';
 }
 /* Re-read at the moment of sending, never from a cached row; the address is the
-   one QuickBooks holds. Nothing in the request can choose where it goes. */
-function invq_send($c, $id, $who) {
+   one QuickBooks holds. Nothing in the request can choose where it goes.
+   13 Nov 2026 (owner: the 365 PC Manager check-up offer "is supposed to be added to ... when we send the invoice to
+   customers"): QuickBooks' invoice email has ONE wording for everyone, so for a new customer whose job had no service our
+   own short welcome email with the offer goes straight after it (iw_send in pcm-review.php, which the caller has loaded
+   at top level), to the same address. $check = read only, nothing sent: where it goes, and whether the welcome would be
+   ticked and why (invq_offer_default; not again for a customer who has had one). $welcome = the person's choice (null =
+   the default). The invoice never waits on the welcome: if the welcome fails, the invoice has still gone and we say so. */
+function invq_send($c, $id, $who, $check = false, $welcome = null) {
     if (!preg_match('/^\d+$/', (string)$id)) return array('ok' => false, 'error' => 'bad_id');
     $store = invq_store_read();
     $hourAgo = time() - 3600; $n = 0;
@@ -920,22 +926,43 @@ function invq_send($c, $id, $who) {
     if (invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0) <= 0) return array('ok' => false, 'error' => 'nothing_owed');
     $to = invq_send_address($c, $inv);
     if ($to === '') return array('ok' => false, 'error' => 'no_email');
+    $num = invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 30);
+    $amt = invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0);
+    // their QuickBooks customer, read once: how long they've been with us, and their first name for the welcome
+    $cust = null; $cid = invq_customer_id($inv);
+    if (preg_match('/^\d+$/', $cid)) {
+        $cr = invq_api($c, 'GET', '/customer/' . $cid);
+        if (qbo_lib_ok($cr) && !empty($cr['json']['Customer']['Id'])) $cust = $cr['json']['Customer'];
+    }
+    $canWelcome = function_exists('iw_send');
+    $od = invq_offer_default($cust, array($inv));
+    $welcomed = invq_welcomed_at($store['sent'], $cid);
+    if ($check) return array('ok' => true, 'check' => true, 'to' => $to, 'number' => $num, 'amount' => $amt,
+                             'welcome' => ($canWelcome && $od['offer'] && !$welcomed), 'new' => $od['new'], 'since' => $od['since'], 'service' => $od['service'],
+                             'welcomed' => $welcomed, 'can_welcome' => $canWelcome);
+    $useWelcome = $canWelcome && ($welcome === null ? ($od['offer'] && !$welcomed) : (bool)$welcome);
     $why = invq_qbo_send($c, $id, $to);
     if ($why !== '') {
         invq_log('send FAILED ' . $id . ' ' . $why . ' by ' . $who);
         return array('ok' => false, 'error' => 'send_failed', 'why' => $why);
     }
-    $num = invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 30);
-    $amt = invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0);
-    invq_store_locked(function ($d) use ($id, $num, $to, $who, $amt) {
-        $d['sent'][] = array('id' => (string)$id, 'num' => $num, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt);
+    $wOk = null;   // null = not asked for; true / false = it went / it didn't
+    if ($useWelcome) {
+        $first = $cust ? invq_first_name(isset($cust['GivenName']) ? $cust['GivenName'] : '', isset($cust['DisplayName']) ? $cust['DisplayName'] : '') : invq_customer_name($inv);
+        $wOk = (bool)iw_send($to, $first, $num);
+        if (!$wOk) invq_log('welcome email FAILED for invoice ' . $id . ($num !== '' ? ' #' . $num : '') . ' by ' . $who);
+    }
+    invq_store_locked(function ($d) use ($id, $num, $to, $who, $amt, $cid, $wOk) {
+        $d['sent'][] = array('id' => (string)$id, 'num' => $num, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt, 'cust' => $cid, 'welcome' => ($wOk === true));
         unset($d['held'][(string)$id]);
         $d['cache'] = null;
         return array('ok' => true, 'data' => $d);
     });
-    invq_log('sent ' . $id . ($num !== '' ? ' #' . $num : '') . ' ' . invq_money($amt) . ' to ' . $to . ' by ' . $who);
-    invq_slack(':outbox_tray: *Invoice sent* - ' . invq_customer_name($inv) . ', ' . invq_money($amt) . ($num !== '' ? ' (#' . $num . ')' : '') . ', approved by ' . $who . '.');
-    return array('ok' => true, 'to' => $to, 'number' => $num, 'amount' => $amt);
+    invq_log('sent ' . $id . ($num !== '' ? ' #' . $num : '') . ' ' . invq_money($amt) . ' to ' . $to . ' by ' . $who . ($wOk === true ? ', with our welcome email (the 365 PC Manager check-up offer)' : ''));
+    invq_slack(':outbox_tray: *Invoice sent* - ' . invq_customer_name($inv) . ', ' . invq_money($amt) . ($num !== '' ? ' (#' . $num . ')' : '') . ', approved by ' . $who
+        . ($wOk === true ? '. Our welcome email went too, offering their computer\'s check-up with 365 PC Manager - watch for them installing it.'
+           : ($wOk === false ? '. :warning: Our welcome email (the check-up offer) did NOT go - tell them by hand.' : '.')));
+    return array('ok' => true, 'to' => $to, 'number' => $num, 'amount' => $amt, 'welcome' => ($wOk === true), 'welcome_failed' => ($wOk === false));
 }
 
 /* ---- WRITE 2b (23 Oct 2026): QuickBooks emails a SENT, still-unpaid invoice once more ------------------------------
@@ -1050,9 +1077,13 @@ function invq_receipt($c, $payId, $invId, $who, $check = false, $offer = null) {
     $name = invq_str(isset($p['CustomerRef']['name']) ? $p['CustomerRef']['name'] : '', 80);
     $canOffer = function_exists('ty_send');   // QuickBooks' own receipt (the fallback) can't carry our words
     $od = invq_offer_default($cust, $paidInvs);
+    /* 13 Nov 2026: the offer now goes with the invoice (our welcome email, invq_send). A customer who has had it gets the
+       review ask here instead, by default - the offer and the ask are never in one email. */
+    $welcomed = invq_welcomed_at($store['sent'], $cid);
+    $odOffer = $od['offer'] && !$welcomed;
     if ($check) return array('ok' => true, 'check' => true, 'to' => $to, 'name' => $name, 'amount' => $amt, 'numbers' => $nums,
-                             'offer' => ($canOffer && $od['offer']), 'new' => $od['new'], 'since' => $od['since'], 'service' => $od['service'], 'can_offer' => $canOffer);
-    $useOffer = $canOffer && ($offer === null ? $od['offer'] : (bool)$offer);
+                             'offer' => ($canOffer && $odOffer), 'new' => $od['new'], 'since' => $od['since'], 'service' => $od['service'], 'welcomed' => $welcomed, 'can_offer' => $canOffer);
+    $useOffer = $canOffer && ($offer === null ? $odOffer : (bool)$offer);
     $asked = false; $pdfOk = false;
     if ($canOffer) {
         $first = $cust ? invq_first_name(isset($cust['GivenName']) ? $cust['GivenName'] : '', isset($cust['DisplayName']) ? $cust['DisplayName'] : '') : $name;
