@@ -1,7 +1,7 @@
 {
- "ver": "0.23.1",
- "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.23.1.exe",
- "sha256": "b96c107e9fbec9d138ea670cf11c56a51ca17e60b343555903b6f6412ab4c4c3",
- "size": 28221664,
- "notes": "New in 0.23: Bring in old emails opens the .ost files that Outlook 2013 and later keep, and Save a copy can make an Outlook data file (.pst), so an old .ost becomes a .pst that Outlook opens. Free, with no limit on how many emails. Help can show you where a button is, with a ring round it, and has 41 more pages and a one-page guide to print for each part. Albums can make a photo better (always as a copy), print photos, make copies for a photo frame and share an album with one link from your own OneDrive. Bring in old emails takes Outlook .msg files too. Signed by 365 Techies Ltd."
+ "ver": "0.24.0",
+ "url": "https://365techies.co.uk/downloads/t1/TechiesOneMail-Setup-0.24.0.exe",
+ "sha256": "fea02fc9b70dfa73df0c37a25f44b713bd56ee5e74ed0c6aef0132574be1b632",
+ "size": 28334208,
+ "notes": "New in 0.24: Techies One can scan. Scan a letter or a photo from your scanner, or from a Wi-Fi printer that scans, and keep it as a PDF or a picture, or copy the words out of it. Albums can trim a video to the bits you want, make a video smaller to send, copy the words out of a photo and get photos ready for Facebook. Calendar finds what is due to renew from your emails. Search everything looks in your emails, contacts, letters, calendar and photos together. Choose your own colour. Signed by 365 Techies Ltd."
 }

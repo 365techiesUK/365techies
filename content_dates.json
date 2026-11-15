@@ -705,6 +705,10 @@
   "h": "5bb0e8a6c0c6048d",
   "last": "2026-09-28"
  },
+ "copy-text-from-a-picture": {
+  "first": "2026-11-15",
+  "h": "41cd7dd0c929c00d"
+ },
  "cost-calculator": {
   "first": "2026-07-28",
   "h": "8bcf674fe2414320",
@@ -1689,8 +1693,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "e749a3f9b39504c1",
-  "last": "2026-11-10"
+  "h": "c1809c99be846843",
+  "last": "2026-11-15"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2297,6 +2301,10 @@
   "h": "b6d35013eebc05d8",
   "last": "2026-11-12"
  },
+ "make-a-video-smaller": {
+  "first": "2026-11-15",
+  "h": "25df2cda31ed374e"
+ },
  "make-windows-11-look-like-windows-10": {
   "first": "2026-10-27",
   "h": "cf0cea56147c823d",
@@ -2654,8 +2662,8 @@
  },
  "ost-to-pst-converter": {
   "first": "2026-11-10",
-  "h": "1d51275f26348aef",
-  "last": "2026-11-13"
+  "h": "ad0039a4b0d9257d",
+  "last": "2026-11-15"
  },
  "our-guarantees": {
   "first": "2026-07-28",
@@ -3675,8 +3683,8 @@
  },
  "techies-one-mail": {
   "first": "2026-10-10",
-  "h": "c73aa2dc1819cd07",
-  "last": "2026-11-12"
+  "h": "75ef36c288a93cdc",
+  "last": "2026-11-15"
  },
  "techies-one-mail-film": {
   "first": "2026-10-13",
@@ -3721,6 +3729,10 @@
   "first": "2026-07-28",
   "h": "66bfe3e856353512",
   "last": "2026-10-22"
+ },
+ "trim-a-video-on-windows": {
+  "first": "2026-11-15",
+  "h": "be84688841d9d926"
  },
  "two-onedrive-accounts-personal-and-work": {
   "first": "2026-09-05",

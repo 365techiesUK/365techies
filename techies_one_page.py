@@ -562,6 +562,10 @@ ALBUM_MORE = [
     ("Save these photos", "Photos in an email go into Pictures, in a folder named after the sender, in one press (never from an email the scam check doubts)."),
     ("Photos kept only online", "OneDrive photos that aren&rsquo;t on the PC show in date order once you say yes, and <strong>Keep this month on this PC</strong> brings a month down."),
     ("Find the extra copies", "Albums tells you when photos are on the PC more than once, and Space tidies them safely."),
+    # 0.24 (15 Nov 2026): each has its own step-by-step page (t1_024_pages_data.py)
+    ("Trim a video", "Keep only the bits of a video you want, marked on a strip of pictures. Your original is never changed. <a href=\"/trim-a-video-on-windows/\">Trim a video, step by step</a>."),
+    ("Make a video smaller", "A smaller copy that goes through WhatsApp or email, made on your own PC. <a href=\"/make-a-video-smaller/\">Make a video smaller, step by step</a>."),
+    ("Copy the words in a photo", "A photo of a letter, a recipe or a sign becomes text you can paste, read on your own PC by Windows&rsquo; own text reader. <a href=\"/copy-text-from-a-picture/\">Copy text from a picture, step by step</a>."),
 ]
 
 
@@ -942,6 +946,8 @@ def build():
                             "Bring in old emails from Outlook .pst files, Windows Live Mail, Windows Mail and Thunderbird",
                             "Backups of email, contacts and calendar to a USB stick or OneDrive",
                             "Albums: every photo on the PC, USB sticks and cloud folders in date order, with slideshows and short films",
+                            "Trim a video and make a video smaller to send, on your own PC",
+                            "Copy the text out of a picture (image to text) with Windows' own text reader",
                             "Looking back: On this day, trips, Christmas and birthdays through the years (only if you say yes)",
                             "Picasa's stars, captions and albums brought across; names and captions you type (no face recognition)",
                             "Keep safe: a second copy of every photo on a USB drive",
