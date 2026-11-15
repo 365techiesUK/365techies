@@ -23,6 +23,7 @@ The download link comes from downloads/t1/version.json.
 import json
 import os
 
+import yt_watch
 from new_pages_data import NEW_PAGES
 
 
@@ -48,6 +49,11 @@ _CALL = ('<p>Stuck, or would rather someone did it with you? Ring <strong>01202 
 _WHY = ('<p>We&rsquo;re an IT support company in Bournemouth, and this is one of the jobs customers ring us about. '
         'Techies One is signed by 365 Techies Ltd, is in the Microsoft Store, and has no adverts. See '
         '<a href="/techies-one-mail/">everything Techies One does</a>.</p>')
+
+
+def _short(video, label):
+    """The page's own Short, as a watch-on-YouTube button straight after the download paragraph."""
+    return '<p style="margin:.1rem 0 1.1rem">' + yt_watch.button(video, label, shape="tall") + '</p>'
 
 
 def _fig(name, w, h, alt, cap, wide=True):
@@ -96,7 +102,7 @@ NEW_PAGES.append({
                  '<p><strong>On Windows 11,</strong> the Snipping Tool can also copy text from what&rsquo;s on your screen. '
                  'Techies One does it for any photo in your Pictures, and works on Windows 10 as well.</p>'},
         {'eyebrow': '/02 &mdash; STEP BY STEP', 'h2': 'Copy the words out of a photo with Techies One',
-         'html': _GET +
+         'html': _GET + _short(yt_watch.T1_WORDS_SHORT, "Watch it in 22 seconds") +
                  '<p><strong>1. Get the picture onto the PC.</strong> A photo taken on your phone can be emailed to '
                  'yourself, or copied over with its cable. A screenshot is already there. Put it anywhere in your '
                  '<strong>Pictures</strong> folder.</p>'
@@ -212,7 +218,7 @@ NEW_PAGES.append({
                  'picture is a little softer, and it sends like any other. Or <strong>send a link</strong> to the full-size '
                  'video, which Techies One can also do from your own OneDrive with <strong>Share a link</strong>.</p>'},
         {'eyebrow': '/02 &mdash; STEP BY STEP', 'h2': 'Make a smaller copy with Techies One',
-         'html': _GET +
+         'html': _GET + _short(yt_watch.T1_SMALLER_SHORT, "Watch it in 21 seconds") +
                  '<p><strong>1. Open Albums and select the video,</strong> so it shows big. Albums is on the bar down the '
                  'left-hand side, and shows the photos and videos in your Pictures and Videos folders.</p>'
                  + _fig('t1-024-video-1-viewer', 1440, 900, 'A video open in Techies One Albums, with Trim and Make smaller '
@@ -316,7 +322,7 @@ NEW_PAGES.append({
                  '<p>If all you want is the good part of a video, on its own, you don&rsquo;t need any of that. Techies '
                  'One&rsquo;s trim is one screen: a strip of pictures from your video and two handles to drag.</p>'},
         {'eyebrow': '/02 &mdash; STEP BY STEP', 'h2': 'Trim a video with Techies One',
-         'html': _GET +
+         'html': _GET + _short(yt_watch.T1_TRIM_SHORT, "Watch it in 21 seconds") +
                  '<p><strong>1. Open Albums and select the video,</strong> so it shows big, then select '
                  '<strong>Trim&hellip;</strong> under it.</p>'
                  + _fig('t1-024-video-1-viewer', 1440, 900, 'A video open in Techies One Albums, with a Trim button under '

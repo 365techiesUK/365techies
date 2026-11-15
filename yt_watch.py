@@ -125,6 +125,13 @@ OSTPST_SHORT = ("P5F5x_YTm6s", 24, None, "Old Outlook OST File? Turn It Into a P
 # reels/shorts-redo-2026-10-26/t1planb/vo/lines.py).
 OUTAGE_SHORT = ("bOFdF5zFBVk", 28, None, "Outlook Down? Your Gmail Was Fine. Keep a Plan B")
 
+# 15 Nov 2026: the three Techies One 0.24 Shorts (reels/techies-one-024-shorts: the real program on made-up data, Lily's
+# voice), each as a button on its own how-to page (t1_024_pages_data.py). UNLISTED on YouTube (the owner listened and said
+# to put them on the pages; Public only on his word), which plays from a page like any other.
+T1_WORDS_SHORT = ("UxcPhfGi-7M", 22, None, "Copy the words out of a photo, free, on your own PC")
+T1_SMALLER_SHORT = ("0ywM2mvC8HM", 21, None, "Video too big to send? Make it smaller, free")
+T1_TRIM_SHORT = ("XnyYw2YEfbc", 21, None, "Trim a video on Windows: keep only the good bit")
+
 
 def length(secs):
     """'27-second' / '4-minute' style wording for a button."""
