@@ -529,5 +529,154 @@ def insert_box(slug, html):
     return html[:line] + _box(slug) + html[line:]
 
 
+# ---- 16 Nov 2026 (owner: "a really long page ... easier way to click between sections ... a progress monitor"):
+# a slim bar that sticks under the header once the reader is past the contents chips. It shows the current section,
+# a progress line, previous/next section buttons and a Contents panel (all 13 sections, ticked once read, with the
+# number of questions in each) holding a "Go to question" box (A7.17 -> #a7-17; a sub-question such as A1.10.3 goes
+# to the heading that covers it). Built from the page's own sections at run time, so it follows any edit. No script:
+# nothing shows and the contents chips still work. Colours come from the theme variables, so light and dark both work.
+NAV_HTML = r'''<div class="ceqnav" id="ceqnav" hidden>
+  <div class="ceqnav__in">
+    <button type="button" class="ceqnav__step" id="ceqnav-prev" aria-label="Previous section">&#8249;</button>
+    <button type="button" class="ceqnav__now" id="ceqnav-open" aria-expanded="false" aria-controls="ceqnav-panel">
+      <span class="ceqnav__count mono" id="ceqnav-count">01/13</span>
+      <span class="ceqnav__title" id="ceqnav-title">How the question set works</span>
+      <span class="ceqnav__more mono">Contents &#9662;</span>
+    </button>
+    <button type="button" class="ceqnav__step" id="ceqnav-next" aria-label="Next section">&#8250;</button>
+  </div>
+  <div class="ceqnav__track" aria-hidden="true"><span class="ceqnav__fill" id="ceqnav-fill"></span></div>
+  <div class="ceqnav__panel" id="ceqnav-panel" hidden>
+    <form class="ceqnav__find" id="ceqnav-find" role="search">
+      <label for="ceqnav-q">Go to question</label>
+      <input id="ceqnav-q" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="e.g. A7.17">
+      <button type="submit" class="button primary">Go</button>
+      <p class="ceqnav__msg" id="ceqnav-msg" role="status"></p>
+    </form>
+    <p class="ceqnav__read mono" id="ceqnav-read">0% read</p>
+    <ol class="ceqnav__list" id="ceqnav-list"></ol>
+    <button type="button" class="ceqnav__top" id="ceqnav-top">&#8593; Back to the top</button>
+  </div>
+</div>
+<style>
+section[id^="s"],h3[id]{scroll-margin-top:9.5rem}
+.ceqnav{position:fixed;left:0;right:0;top:76px;z-index:49;background:var(--bg-2);border-bottom:1px solid var(--line);box-shadow:var(--shadow-1);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.ceqnav[hidden]{display:none!important}
+.ceqnav__in{max-width:1120px;margin:0 auto;padding:.35rem 16px;display:flex;align-items:center;gap:.4rem}
+.ceqnav__step{flex:none;width:2.4rem;height:2.4rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:1.35rem;line-height:1;cursor:pointer}
+.ceqnav__step:disabled{opacity:.35;cursor:default}
+.ceqnav__now{flex:1;min-width:0;display:flex;align-items:center;gap:.6rem;padding:.45rem .8rem;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;text-align:left;font:inherit}
+.ceqnav__count{flex:none;color:var(--green);font-weight:700;font-size:.85rem}
+.ceqnav__title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.ceqnav__more{flex:none;color:var(--muted);font-size:.78rem;letter-spacing:.06em}
+.ceqnav__step:hover,.ceqnav__now:hover{border-color:var(--cyan)}
+.ceqnav button:focus-visible,.ceqnav input:focus-visible,.ceqnav a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.ceqnav__track{height:3px;background:var(--line)}
+.ceqnav__fill{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.ceqnav__panel{max-width:1120px;margin:0 auto;padding:.9rem 16px 1rem;max-height:min(70vh,640px);overflow:auto;overscroll-behavior:contain}
+.ceqnav__find{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:0 0 .6rem}
+.ceqnav__find label{flex-basis:100%;font-weight:700}
+.ceqnav__find input{flex:1 1 8rem;min-width:0;max-width:16rem;padding:.55rem .75rem;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);color:var(--ink);font:inherit}
+.ceqnav__find .button{padding:.55rem 1.1rem;min-height:0}
+.ceqnav__msg{flex-basis:100%;margin:0;color:var(--muted);font-size:.9rem;min-height:1.2em}
+.ceqnav__read{margin:0 0 .4rem;color:var(--muted);font-size:.8rem;letter-spacing:.06em}
+.ceqnav__list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.3rem .8rem}
+.ceqnav__list a{display:flex;gap:.55rem;align-items:baseline;padding:.45rem .55rem;border-radius:10px;color:var(--ink);text-decoration:none;line-height:1.35}
+.ceqnav__list a:hover{background:var(--line)}
+.ceqnav__list a[aria-current="true"]{background:var(--line);box-shadow:inset 3px 0 0 var(--green)}
+.ceqnav__tick{flex:none;width:1.1rem;color:var(--green);font-weight:700}
+.ceqnav__n{flex:none;color:var(--muted);font-size:.8rem}
+.ceqnav__q{display:block;color:var(--muted);font-size:.82rem}
+.ceqnav__top{margin-top:.7rem;border:0;background:none;color:var(--cyan);font:inherit;font-weight:600;cursor:pointer;padding:.3rem 0}
+.ceq-flash{animation:ceqflash 1.6s ease-out 1}
+@keyframes ceqflash{0%{background:rgba(43,217,74,.28)}100%{background:transparent}}
+@media (max-width:767px){.ceqnav__more{display:none}.ceqnav__in{padding:.3rem 10px}.ceqnav__now{padding:.4rem .6rem}.ceqnav__panel{max-height:62vh}}
+@media (prefers-reduced-motion:reduce){.ceq-flash{animation:none}}
+</style>
+<script>
+(function(){
+  var nav=document.getElementById('ceqnav'); if(!nav) return;
+  var secs=[].slice.call(document.querySelectorAll('section[id]')).filter(function(s){return /^s\d+$/.test(s.id)&&s.querySelector('h2');});
+  if(secs.length<4) return;
+  var hdr=document.querySelector('.site-header'), toc=document.querySelector('nav.toc');
+  var $=function(id){return document.getElementById(id);};
+  var list=$('ceqnav-list'), panel=$('ceqnav-panel'), open=$('ceqnav-open');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var total=secs.length, pad=function(n){return (n<10?'0':'')+n;};
+  var titles=secs.map(function(s){return s.querySelector('h2').textContent.replace(/\s*\(.*?\)\s*$/,'').trim();});
+  // every heading that names a question: its codes, so a sub-question finds the heading that covers it
+  var heads=[].slice.call(document.querySelectorAll('h3[id]')).map(function(h){
+    var m=h.textContent.match(/A\d+(?:\.\d+)+/g)||[];
+    return {el:h, codes:m.map(function(c){return c.slice(1).split('.').map(Number);})};
+  }).filter(function(h){return h.codes.length;});
+  var cmp=function(a,b){for(var i=0;i<Math.max(a.length,b.length);i++){var x=a[i]||0,y=b[i]||0;if(x!==y)return x-y;}return 0;};
+  var links=secs.map(function(s,i){
+    var li=document.createElement('li'), a=document.createElement('a'), n=s.querySelectorAll('h3[id^="a"]').length;
+    var r=(s.querySelector('h2').textContent.match(/\((A[^)]*)\)/)||[])[1];
+    a.href='#'+s.id;
+    a.innerHTML='<span class="ceqnav__tick" aria-hidden="true"></span><span class="ceqnav__n mono">'+pad(i+1)+'</span><span>'+titles[i]+
+      (n?'<span class="ceqnav__q">'+(r?r+' &middot; ':'')+n+(n===1?' question':' questions')+'</span>':'')+'</span>';
+    a.addEventListener('click',function(e){e.preventDefault();go(s);close();});
+    li.appendChild(a); list.appendChild(li); return a;
+  });
+  function top(){var b=hdr?hdr.getBoundingClientRect().bottom:0;return Math.max(0,b);}
+  function go(el,flash){
+    var y=el.getBoundingClientRect().top+window.pageYOffset-top()-nav.offsetHeight-12;
+    window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});
+    if(history.replaceState) history.replaceState(null,'','#'+el.id);
+    if(flash){el.classList.remove('ceq-flash');void el.offsetWidth;el.classList.add('ceq-flash');}
+    el.setAttribute('tabindex','-1'); setTimeout(function(){try{el.focus({preventScroll:true});}catch(_){}} ,reduce?0:450);
+  }
+  function close(){panel.hidden=true;open.setAttribute('aria-expanded','false');}
+  open.addEventListener('click',function(){var o=panel.hidden;panel.hidden=!o;open.setAttribute('aria-expanded',String(o));if(o){$('ceqnav-msg').textContent='';setTimeout(function(){$('ceqnav-q').focus();},30);}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!panel.hidden){close();open.focus();}});
+  document.addEventListener('click',function(e){if(!panel.hidden&&!nav.contains(e.target))close();});
+  $('ceqnav-prev').addEventListener('click',function(){if(cur>0)go(secs[cur-1]);});
+  $('ceqnav-next').addEventListener('click',function(){if(cur<total-1)go(secs[cur+1]);});
+  $('ceqnav-top').addEventListener('click',function(){close();window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});
+  $('ceqnav-find').addEventListener('submit',function(e){
+    e.preventDefault(); var msg=$('ceqnav-msg'), v=$('ceqnav-q').value.trim().toUpperCase().replace(/[\s,-]+/g,'.').replace(/^A?\.?/,'');
+    if(!/^\d+(\.\d+)*$/.test(v)){msg.textContent='Type a question number, such as A7.17.';return;}
+    var t=v.split('.').map(Number), best=null;
+    heads.forEach(function(h){var c=h.codes[0]; if(c[0]===t[0]&&cmp(c,t)<=0&&(!best||cmp(c,best.codes[0])>0))best=h;
+      h.codes.forEach(function(k){if(cmp(k,t)===0)best=h;});});
+    if(!best){msg.textContent='There is no question A'+v+'. The sections run from A1 to A8.';return;}
+    msg.textContent=''; close(); go(best.el,true);
+  });
+  var cur=-1, ticking=false;
+  function update(){
+    ticking=false;
+    var t=top(); nav.style.top=t+'px';
+    var show=toc?toc.getBoundingClientRect().bottom<t:window.pageYOffset>600;
+    var last=secs[total-1].getBoundingClientRect();
+    if(last.bottom<t+40) show=false;
+    if(nav.hidden===show){nav.hidden=!show; if(!show)close();}
+    var line=t+nav.offsetHeight+40, c=0;
+    for(var i=0;i<total;i++){if(secs[i].getBoundingClientRect().top<=line)c=i;}
+    // how far the reading line (just under the bar) has travelled from the first section's top to the last one's end
+    var p=Math.min(1,Math.max(0,(line-secs[0].getBoundingClientRect().top)/(last.bottom-secs[0].getBoundingClientRect().top)));
+    $('ceqnav-fill').style.width=(p*100).toFixed(1)+'%'; $('ceqnav-read').textContent=Math.round(p*100)+'% read';
+    if(c!==cur){
+      cur=c; $('ceqnav-count').textContent=pad(c+1)+'/'+pad(total); $('ceqnav-title').textContent=titles[c];
+      links.forEach(function(a,i){a.setAttribute('aria-current',i===c?'true':'false');a.firstChild.textContent=i<c?'✓':'';});
+      $('ceqnav-prev').disabled=c===0; $('ceqnav-next').disabled=c===total-1;
+    }
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(update);}}
+  window.addEventListener('scroll',onScroll,{passive:true}); window.addEventListener('resize',onScroll);
+  update();
+})();
+</script>
+'''
+
+
+def insert_nav(slug, html):
+    if slug != 'cyber-essentials-questions' or 'id="ceqnav"' in html:
+        return html
+    i = html.rfind('</body>')
+    return html[:i] + NAV_HTML + html[i:]
+
+
 def register(bp):
     bp.PAGE_FILTERS.append(insert_box)
+    bp.PAGE_FILTERS.append(insert_nav)
