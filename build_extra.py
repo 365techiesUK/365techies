@@ -24093,7 +24093,18 @@ def junara_v2(d, crumbs):
     head = _VL.independent_byline(head, _VL.INDEPENDENT_GUIDE)   # 1 Nov 2026: Netcraft / Edge, see virgin_launch.py
     # 25 Oct 2026 (owner: "free-year reminder"): for the many taking Junara's free year, under the facts table, whose
     # "Free period" row has just explained it. The 6 Oct first-screen measurements above are untouched.
-    return (head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html()
+    # 16 Nov 2026 (owner: "reorder the Junara page"): the FACTS first, then the two choices, then the reminder. Search
+    # Console, last 7 days against the 7 before: the page fell from 871 to 336 clicks and from position 5.1 to 6.0
+    # ("junara email cost" 3.8 -> 5.4), and the pages now above it (Junara's own, an IT firm's guide, MoneySavingExpert)
+    # all answer the question before anything else, where ours opened on the GBP 60 card. The owner was told this moves
+    # the offer, and its Text button, off a phone's first screen (the 6 Oct and 25 Oct measurements above no longer
+    # hold), and chose the ranking. To go back: choices, facts, reminder.
+    # ... and one line under the first screen that jumps to the two choices: on a phone the facts table is about 2,100 px
+    # tall, so without it the offer is three screens down (measured 16 Nov at 375 x 812: facts 489, choices 2,598).
+    jump = ('    <p style="max-width:880px;margin:.1rem auto .2rem;padding:0 1.25rem;text-align:center;font-size:.98rem">'
+            '<a href="#move-for-me" style="color:var(--cyan);text-decoration:underline;text-underline-offset:2px">'
+            'Rather move it to Gmail? Do it yourself free, or we do it for &pound;60 &darr;</a></p>')
+    return (head + "\n" + jump + "\n" + _VL.junara_facts_html() + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True)
             + "\n" + _VL.junara_reminder_box()), ""
 
 
