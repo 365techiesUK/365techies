@@ -55,7 +55,8 @@ NEW_PAGES.append({
     'lede': 'The Cyber Essentials self-assessment is a list of just over a hundred questions about your devices, accounts and '
             'settings. Most are easy once you know what the assessor wants to read. Here is every question in the current '
             '&ldquo;Danzell&rdquo; set, in plain English: what it asks, what to have ready, a sensible answer for a small '
-            'business, and the answers that fail you automatically.',
+            'business, and the answers that fail you automatically. Our free app, 365 PC Manager, answers most of the '
+            'computer questions for you.',
     'chips': ['All 107 questions', 'The 5 automatic fails', 'What to gather first'],
     'primaryCta': ['The automatic fails', '#s2'], 'secondaryCta': ['What to gather first', '#s3'],
     'ctaHead': 'Rather go through it with us?',
@@ -68,7 +69,8 @@ NEW_PAGES.append({
         ('How many questions', '107 numbered items in eight sections. The portal hides the ones that don&rsquo;t apply, so a small firm sees fewer.'),
         ('Automatic fails', 'Updates late (A6.4, A6.5), two-step sign-in missing on a cloud service (A7.16, A7.17), or a service wrongly listed as having none (A7.15).'),
         ('Who signs it', 'A director, owner or board member. Not your IT company.'),
-        ('Time allowed', 'Six months from purchase to finish, by IASME&rsquo;s checkout terms.'),
+        ('Free help for the PC questions', 'Our free app, 365 PC Manager, checks each Windows PC against the questions a computer can answer.'),
+        ('Time allowed','Six months from purchase to finish, by IASME&rsquo;s checkout terms.'),
     ],
     'sections': [
         {'eyebrow': '/01 &mdash; HOW IT WORKS', 'h2': 'How the question set works',
@@ -122,8 +124,32 @@ NEW_PAGES.append({
                  '<li><strong>Your browsers, antivirus, email program and office software</strong>, with version numbers.</li>'
                  '<li><strong>Who has administrator rights</strong> on each PC and each cloud service.</li>'
                  '</ol>'
-                 '<p>Our free app, <a href="/free-pc-health-check/">365 PC Manager</a>, shows most of the PC side: Windows '
-                 'version, programs, firewall, accounts, PIN length and whether this month&rsquo;s update went in.</p>'},
+                 '<h3 id="pc-manager">Let 365 PC Manager answer the computer questions</h3>'
+                 '<p>Most of the computer side of the question set can be read straight off each PC. Our free Windows app, '
+                 '<a href="/free-pc-health-check/">365 PC Manager</a>, does it for you: open it on each computer and go to '
+                 '<strong>Safety, Cyber Essentials readiness</strong>. Every check says <strong>ready</strong> or '
+                 '<strong>what to fix</strong>, in plain English, with a button to the right Windows setting. Fix what it '
+                 'flags, run it again, and you can answer these questions with confidence:</p>'
+                 '<ul>'
+                 '<li>Windows version and edition, and whether it still gets updates (Windows 10: whether it is in Extended Security Updates) <em>(helps with A2.6, A6.1)</em></li>'
+                 '<li>Windows Firewall on for private and public networks <em>(helps with A4.1, A4.1.1)</em></li>'
+                 '<li>Programs you don&rsquo;t need, and why each one isn&rsquo;t needed <em>(helps with A5.1)</em></li>'
+                 '<li>Spare accounts (Guest and the built-in Administrator) switched off <em>(helps with A5.2)</em></li>'
+                 '<li>PIN length (6 or more) and the lock after 10 wrong guesses <em>(helps with A5.10, A7.10)</em></li>'
+                 '<li>This month&rsquo;s Windows update installed within 14 days, automatic updates on, and updates waiting for a restart <em>(helps with A6.4, A6.4.1)</em></li>'
+                 '<li>Programs that need updating, and programs that no longer get fixes <em>(helps with A6.2, A6.5, A6.6)</em></li>'
+                 '<li>Whether you are signed in as an administrator, and how many administrator accounts there are <em>(helps with A7.6, A7.7, A7.8)</em></li>'
+                 '<li>Antivirus on and up to date, only one antivirus running, and harmful sites and downloads blocked (SmartScreen) <em>(helps with A6.2.2, A8.1, A8.2, A8.3)</em></li>'
+                 '</ul>'
+                 '<p>Switch on <strong>Stay ready all year round</strong> and it re-checks the PC every few hours, reminds you '
+                 'before each month&rsquo;s update deadline, and keeps a dated record you can save for your assessor or '
+                 'insurer.</p>'
+                 '<p><strong>What no PC can show</strong>, so you still check these yourself: the office router and its '
+                 'password (A4.2 to A4.11), two-step sign-in on your cloud accounts (A7.14 to A7.17), phones and tablets '
+                 '(A2.8, A8.4, A8.5), auto-run for USB sticks (A5.8), and your written processes for starters, leavers and '
+                 'admin rights (A7.1 to A7.5). The app gets the computers ready; it doesn&rsquo;t certify anything. Only an '
+                 'IASME certification body awards the certificate.</p>'
+                 '<p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a></p>'},
         {'eyebrow': '/04 &mdash; SECTION A1', 'h2': 'Your organisation (A1.1 to A1.16)',
          'html': '<p>Easy questions, but the certificate is printed from them, so get them exactly right.</p>' + qs(
              ('A1.1', 'Organisation name', 'Your legal name, as it should appear on the certificate. One legal entity, up '
@@ -421,6 +447,7 @@ NEW_PAGES.append({
     'howToSteps': [
         {'name': 'Read the question set first', 'text': 'Download IASME&rsquo;s free preparation booklet for the Danzell question set and read the NCSC requirements v3.3.'},
         {'name': 'Gather your lists', 'text': 'List every computer, phone, router and cloud service with makes and versions, and who has administrator rights.'},
+        {'name': 'Check each PC with 365 PC Manager', 'text': 'Run the free app&rsquo;s Cyber Essentials readiness page on every Windows PC and note what it flags.'},
         {'name': 'Fix what would fail', 'text': 'Turn on two-step sign-in everywhere, install updates, remove unused and unsupported software, and separate admin accounts.'},
         {'name': 'Answer in the portal', 'text': 'Describe what you actually do in a sentence or two for each question, rather than just answering yes.'},
         {'name': 'Sign and submit', 'text': 'A director checks the answers, signs the declaration and submits it to be marked.'},
@@ -449,6 +476,11 @@ NEW_PAGES.append({
               'declaration, and question A2.10 must name someone inside your organisation.</p>'},
         {'q': 'Is Windows 10 allowed for Cyber Essentials?', 'a': '<p>Only with Microsoft&rsquo;s Extended Security Updates '
               'in place. Without them, Windows 10 has been unsupported since 14 October 2025 and fails.</p>'},
+        {'q': 'Is there a free tool to check my PC for Cyber Essentials?', 'a': '<p>Yes. Our free Windows app, 365 PC '
+              'Manager, has a Cyber Essentials readiness page that checks the firewall, spare accounts, PIN length, the lock '
+              'after wrong guesses, programs not needed, the 14-day Windows update, automatic updates, unsupported programs, '
+              'administrator accounts and antivirus. It can&rsquo;t check your router, cloud accounts or phones, and it '
+              'doesn&rsquo;t certify anything.</p>'},
         {'q': 'How long do I have to finish the assessment?', 'a': '<p>IASME&rsquo;s terms give six months from purchase. '
               'After that the account is closed and the fee is not refunded.</p>'},
     ],
