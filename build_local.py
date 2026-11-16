@@ -754,7 +754,7 @@ def _ce_guide():
           <p>Our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>, checks a PC against the parts of Cyber Essentials one computer can show: the firewall, spare accounts, the lock after wrong guesses, PIN length, programs that shouldn&rsquo;t be there, whether this month&rsquo;s update went in within 14 days, automatic updates, old programs that no longer get fixes, administrator accounts and antivirus. Each one says <strong>ready</strong> or <strong>what to fix</strong>, in plain English, with the button that opens the right Windows setting.</p>
           <p>Switch on <strong>Stay ready all year round</strong> and it re-checks the PC every few hours, keeps a dated record you can save for your assessor or insurer, and reminds you a few days before each month&rsquo;s update deadline. Light or dark &mdash; it follows Windows.</p>
           <p class="ce-note">It shows what one PC can show &mdash; it doesn&rsquo;t certify anything. Your router, cloud accounts and phones need checking too, and only an IASME certification body can award the certificate.</p>
-          <p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a></p>
+          <p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a>@@STORE_BADGE@@</p>
         </div>
         <figure class="ce-shot" data-reveal>
           <img src="/images/ce-readiness-light-v47.webp" width="1012" height="736" alt="The Cyber Essentials readiness page in 365 PC Manager 36.7 (light colours) on our office PC: 2 things need attention before Cyber Essentials, October's Windows update out 13 October and due by 27 October - installed, the firewall ready, and secure set-up needing attention for the PIN length" loading="lazy" decoding="async">
@@ -804,7 +804,7 @@ def _ce_guide():
         <p class="ce-note" data-reveal>Fees as published by IASME in October 2026. The certificate lasts 12 months. Cyber Essentials Plus adds a hands-on technical check by the assessor and costs more. Getting your computers and accounts ready is quoted before we start, like all our work &mdash; and for business plan customers the year-round part is already included.</p>
       </div>
     </section>
-"""
+""".replace("@@STORE_BADGE@@", __import__("store_badges").badge("pcm"))   # 16 Nov 2026 (owner): Microsoft Store badge
 
 CUST_OFFERS = {
     "cyber-essentials": _ce_guide,   # 29 Oct 2026: the April 2026 rules guide, the free check, Cyber Essentials Ready, the fees

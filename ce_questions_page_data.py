@@ -14,6 +14,7 @@ traps it hit are the ones listed). No price invented for preparation work; fees 
 Never "compliant" or "certified by us": only an IASME certification body awards the certificate.
 """
 from new_pages_data import NEW_PAGES
+import store_badges as _store
 
 AF = ('<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;'
       'font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">'
@@ -149,7 +150,8 @@ NEW_PAGES.append({
                  '(A2.8, A8.4, A8.5), auto-run for USB sticks (A5.8), and your written processes for starters, leavers and '
                  'admin rights (A7.1 to A7.5). The app gets the computers ready; it doesn&rsquo;t certify anything. Only an '
                  'IASME certification body awards the certificate.</p>'
-                 '<p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a></p>'},
+                 '<p><a class="button primary" href="/free-pc-health-check/#download">Download 365 PC Manager free</a>'
+                 + _store.badge('pcm') + '</p>'},   # 16 Nov 2026 (owner): the Microsoft Store badge beside it
         {'eyebrow': '/04 &mdash; SECTION A1', 'h2': 'Your organisation (A1.1 to A1.16)',
          'html': '<p>Easy questions, but the certificate is printed from them, so get them exactly right.</p>' + qs(
              ('A1.1', 'Organisation name', 'Your legal name, as it should appear on the certificate. One legal entity, up '
