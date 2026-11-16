@@ -422,6 +422,8 @@ NAV_MENUS = [
         ("Sole Traders", "/it-support-for-sole-traders/"),
         ("Schools &amp; Education", "/it-support-for-education/"),
         ("IT Support by Industry", "/it-support-by-industry/"),
+        ("Cyber Essentials", "/cyber-essentials/"),   # 16 Nov 2026 (owner: "is it in the nav?")
+        ("Cyber Essentials Questions", "/cyber-essentials-questions/"),
         ("Business WiFi", "/business-wifi-installation/"),
         ("Broadband Emergency Plan", "/business-continuity-internet/"),
         ("Switching to Us", "/switching-it-provider/"),
