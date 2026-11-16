@@ -29,6 +29,8 @@ import ost_to_pst_page_data as _ostpst   # 10 Nov 2026: the free OST to PST box 
 _ostpst.register(techies_one_boxes.bp)
 import passkey_26h2_pages_data as _pk26   # 16 Nov 2026: a box to the passkey and 26H2 guides on 5 related pages (a page filter)
 _pk26.register(techies_one_boxes.bp)
+import ce_questions_page_data as _ceq   # 16 Nov 2026: a box to the Cyber Essentials questions guide on 2 related pages (a page filter)
+_ceq.register(techies_one_boxes.bp)
 import health_check_links   # links to /free-pc-health-check/ on busy pages with none in the article (30 Oct 2026)
 import pcm_problem_boxes   # 365 PC Manager boxes on 12 existing problem pages (13 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)

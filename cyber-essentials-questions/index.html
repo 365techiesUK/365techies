@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en-GB" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    // phone_click: a tap on any tel: link. Twelve phone leads a window were invisible to
+    // every source; this counts the ones that start from the site. It queues into
+    // dataLayer like every other call here - same consent gate, no extra Google contact.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a) return;
+      gtag('event', 'phone_click', { phone_number: (a.getAttribute('href') || '').replace('tel:', ''), link_text: (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40) });
+    }, true);
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>Cyber Essentials Questions Explained: How to Answer Each One</title>
+  <meta name="description" content="Every Cyber Essentials self-assessment question (Danzell, April 2026) in plain English: what it asks, what to have ready, and the answers that fail." />
+  <link rel="canonical" href="https://365techies.co.uk/cyber-essentials-questions/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#f4f7fb" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/cyber-essentials-questions/" />
+  <meta property="og:title" content="The Cyber Essentials questions, explained one by one" />
+  <meta property="og:description" content="Every Cyber Essentials self-assessment question (Danzell, April 2026) in plain English: what it asks, what to have ready, and the answers that fail." />
+  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Cyber Essentials questions, explained one by one" />
+  <meta name="twitter:description" content="Every Cyber Essentials self-assessment question (Danzell, April 2026) in plain English: what it asks, what to have ready, and the answers that fail." />
+  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/styles.min.css?v=124" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}/*LT*/html:where([data-theme="light"]).css-sos{background:#e7e9f2;color:#0e1d2f}/*TL*/
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}/*LT*/html:where([data-theme="light"]).css-sos a{color:#0a6293}/*TL*/
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=124&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/cyber-essentials-questions/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cyber Essentials Questions",
+          "item": "https://365techies.co.uk/cyber-essentials-questions/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/cyber-essentials-questions/#webpage",
+      "url": "https://365techies.co.uk/cyber-essentials-questions/",
+      "name": "Cyber Essentials Questions",
+      "description": "Every Cyber Essentials self-assessment question (Danzell, April 2026) in plain English: what it asks, what to have ready, and the answers that fail.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": {
+        "@id": "https://365techies.co.uk/#business"
+      },
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/cyber-essentials-questions/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/og-image.jpg"
+      },
+      "dateModified": "2026-11-16"
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://365techies.co.uk/cyber-essentials-questions/#howto",
+      "name": "How to answer the Cyber Essentials self-assessment",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Read the question set first",
+          "text": "Download IASME&rsquo;s free preparation booklet for the Danzell question set and read the NCSC requirements v3.3."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Gather your lists",
+          "text": "List every computer, phone, router and cloud service with makes and versions, and who has administrator rights."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Fix what would fail",
+          "text": "Turn on two-step sign-in everywhere, install updates, remove unused and unsupported software, and separate admin accounts."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Answer in the portal",
+          "text": "Describe what you actually do in a sentence or two for each question, rather than just answering yes."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Sign and submit",
+          "text": "A director checks the answers, signs the declaration and submits it to be marked."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/cyber-essentials-questions/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How many questions are in Cyber Essentials?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>The Danzell question set has 107 numbered items in eight sections. The portal hides the ones that don&rsquo;t apply to you, so a small business usually sees between 80 and 90.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Danzell question set?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>The current version of the Cyber Essentials self-assessment, used for assessments bought from 27 April 2026. It goes with the NCSC&rsquo;s Requirements for IT Infrastructure v3.3 and replaced the Willow question set.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which Cyber Essentials questions are an automatic fail?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>A6.4 and A6.5 (high-risk updates not installed within 14 days), A7.16 and A7.17 (two-step sign-in missing for administrators or users of a cloud service), and A7.15 if you list a service as having no two-step sign-in when it does.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I see the Cyber Essentials questions before I pay?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes. IASME publishes the full question set as a free preparation booklet, as a PDF or a spreadsheet.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to include home workers&rsquo; routers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>No. Routers in staff homes that your organisation didn&rsquo;t supply are left out. Home workers rely on the software firewall on their laptop, which must be on.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do staff-owned phones count for Cyber Essentials?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes, if they reach work email, files or apps. List them in A2.8 with make and system version, and they must still get updates.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does social media count as a cloud service?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Yes. Business accounts on LinkedIn, Facebook, X and similar must be listed in A2.9 and need two-step sign-in.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can my IT company fill in the Cyber Essentials questions for me?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>They can help you prepare and explain each question, but a director, owner or board member must check the answers and sign the declaration, and question A2.10 must name someone inside your organisation.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Windows 10 allowed for Cyber Essentials?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>Only with Microsoft&rsquo;s Extended Security Updates in place. Without them, Windows 10 has been unsupported since 14 October 2025 and fails.</p>"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long do I have to finish the assessment?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p>IASME&rsquo;s terms give six months from purchase. After that the account is closed and the fee is not refunded.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
+            <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+            <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+            <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/games/">Free Games &mdash; no adverts</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/services/">All Services &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Everyday support</span>
+              <a href="/remote-it-support/">Remote IT Support</a>
+              <a href="/computer-repairs/">Computer Repairs</a>
+              <a href="/preventative-maintenance/">Preventative Maintenance</a>
+              <a href="/cybersecurity-support/">Cybersecurity</a>
+              <a href="/backup-support/">Backup Support</a>
+              <a href="/printer-support/">Printer Support</a>
+              <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email &amp; Microsoft 365</span>
+              <a href="/email-support/">Email Support</a>
+              <a href="/microsoft-365-support/">Microsoft 365</a>
+              <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+              <a href="/email-migration/">Email Migration</a>
+              <span class="dropdown__label dropdown__label--sep">Computers</span>
+              <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+              <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Wi-Fi &amp; internet</span>
+              <a href="/wifi-support/">Wi-Fi Support</a>
+              <a href="/starlink-internet/">Starlink Internet</a>
+              <a href="/emergency-internet/">365 Emergency Internet</a>
+              <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+              <a href="/ai/">AI &amp; Automation</a>
+              <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+              <a href="/web-care/">365 Web Care</a>
+              <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+              <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/free-tools/">All Free Tools &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Games</span>
+              <a href="/games/">Free Games &mdash; no adverts</a>
+              <span class="dropdown__label dropdown__label--sep">Check your computer</span>
+              <a href="/computer-spec-checker/">PC Spec Checker</a>
+              <a href="/pc-benchmark/">PC Speed Test</a>
+              <a href="/how-to-check-laptop-battery-health/">Laptop Battery Health Check</a>
+              <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
+              <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+              <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
+              <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+              <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Internet &amp; signal</span>
+              <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+              <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+              <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+              <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+              <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+              <a href="/is-it-down/">Is It Down? Live Status</a>
+              <a href="/website-checker/">Website Speed Checker</a>
+              <span class="dropdown__label dropdown__label--sep">Documents</span>
+              <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+              <span class="dropdown__label dropdown__label--sep">New computer</span>
+              <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Stay safe online</span>
+              <a href="/email-security-checker/">Email Security Checker</a>
+              <a href="/password-breach-checker/">Password Breach Checker</a>
+              <a href="/link-safety-checker/">Link Safety Checker</a>
+              <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+              <a href="/online-safety-course/">Free Online Safety Course</a>
+              <span class="dropdown__label dropdown__label--sep">Email</span>
+              <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <span class="dropdown__label dropdown__label--sep">On the road</span>
+              <a href="/fuel-prices/">UK Fuel Prices</a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown nav-item--mega">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/contact/">Contact Us &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Help right now</span>
+              <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+              <a href="/remote-support/">Start Remote Support</a>
+              <a href="/emergency-it-help/">Emergency IT Help</a>
+              <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+              <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+              <a href="/book-service/">Book a Service</a>
+              <a href="/book-a-collection/">Book a Collection</a>
+              <a href="/quick-quote/">Quick Quote</a>
+              <a href="/pay/">Pay Us</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email changes</span>
+              <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+              <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+              <span class="dropdown__label dropdown__label--sep">Plans</span>
+              <a href="/monthly-it-support/">Monthly IT Support</a>
+              <a href="/plan-finder/">Plan Finder</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Fix it yourself</span>
+              <a href="/printer-support/">Printer Problems</a>
+              <a href="/outlook-problems/">Outlook Problems</a>
+              <a href="/onedrive-problems/">OneDrive Problems</a>
+              <a href="/windows-11-support/">Windows 11 Help</a>
+              <a href="/windows-11-26h2-update/">Windows 11 26H2 Update</a>
+              <a href="/what-is-a-passkey/">What Is a Passkey?</a>
+              <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+              <a href="/broadband-down/">Broadband Down?</a>
+              <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
+            </div>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
+          <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+          <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+          <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/games/">Free Games &mdash; no adverts</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/backup-support/">Backup Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+          <span class="dropdown__label dropdown__label--sep">Email &amp; Microsoft 365</span>
+          <a href="/email-support/">Email Support</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+          <a href="/email-migration/">Email Migration</a>
+          <span class="dropdown__label dropdown__label--sep">Computers</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Wi-Fi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Games</span>
+          <a href="/games/">Free Games &mdash; no adverts</a>
+          <span class="dropdown__label dropdown__label--sep">Check your computer</span>
+          <a href="/computer-spec-checker/">PC Spec Checker</a>
+          <a href="/pc-benchmark/">PC Speed Test</a>
+          <a href="/how-to-check-laptop-battery-health/">Laptop Battery Health Check</a>
+          <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
+          <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+          <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
+          <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+          <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+          <span class="dropdown__label dropdown__label--sep">Internet &amp; signal</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+          <a href="/is-it-down/">Is It Down? Live Status</a>
+          <a href="/website-checker/">Website Speed Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Documents</span>
+          <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+          <span class="dropdown__label dropdown__label--sep">New computer</span>
+          <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe online</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Email</span>
+          <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <span class="dropdown__label dropdown__label--sep">On the road</span>
+          <a href="/fuel-prices/">UK Fuel Prices</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Help right now</span>
+          <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Email changes</span>
+          <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+          <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+          <span class="dropdown__label dropdown__label--sep">Plans</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/printer-support/">Printer Problems</a>
+          <a href="/outlook-problems/">Outlook Problems</a>
+          <a href="/onedrive-problems/">OneDrive Problems</a>
+          <a href="/windows-11-support/">Windows 11 Help</a>
+          <a href="/windows-11-26h2-update/">Windows 11 26H2 Update</a>
+          <a href="/what-is-a-passkey/">What Is a Passkey?</a>
+          <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+          <a href="/broadband-down/">Broadband Down?</a>
+          <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Cyber Essentials Questions</span></nav>
+        <p class="eyebrow mono">THE DANZELL QUESTION SET, APRIL 2026</p>
+        <h1>Cyber Essentials questions, <em class="grad grad--green">explained one by one</em></h1>
+        <p class="lede">The Cyber Essentials self-assessment is a list of just over a hundred questions about your devices, accounts and settings. Most are easy once you know what the assessor wants to read. Here is every question in the current &ldquo;Danzell&rdquo; set, in plain English: what it asks, what to have ready, a sensible answer for a small business, and the answers that fail you automatically. Rated 4.9 on Google.</p>
+        <div class="page-hero__cta">
+          <a href="#s2" class="button primary button--lg">The automatic fails</a>
+          <a href="#s3" class="button secondary button--lg">What to gather first</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; All 107 questions</li><li>&#9679; The 5 automatic fails</li><li>&#9679; What to gather first</li></ul>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 16 November 2026</p>
+      </div>
+    </section>
+    <nav class="toc mono" aria-label="On this page" data-reveal><a href="#s1">01 &mdash; HOW IT WORKS</a><a href="#s2">02 &mdash; READ THIS FIRST</a><a href="#s3">03 &mdash; BEFORE YOU START</a><a href="#s4">04 &mdash; SECTION A1</a><a href="#s5">05 &mdash; SECTION A2</a><a href="#s6">06 &mdash; SECTION A3</a><a href="#s7">07 &mdash; SECTION A4</a><a href="#s8">08 &mdash; SECTION A5</a><a href="#s9">09 &mdash; SECTION A6</a><a href="#s10">10 &mdash; SECTION A7</a><a href="#s11">11 &mdash; SECTION A8</a><a href="#s12">12 &mdash; FROM OUR OWN JOBS</a><a href="#s13">13 &mdash; RATHER WE HELPED?</a></nav>
+    <section id="s1" class="section" aria-label="How the question set works">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">HOW IT WORKS</p>
+        <h2 class="section-title" data-title>How the question set works<span class="title-underline"></span></h2>
+<p>When you buy a Cyber Essentials assessment from IASME (or through a certification body) you get a login to an online portal. The questions come in eight sections: your organisation, scope, insurance, firewalls, secure configuration, security updates, user access and malware protection. You answer them, a director signs the declaration, and an independent assessor marks it.</p><p>The current set is called <strong>Danzell</strong>. It replaced &ldquo;Willow&rdquo; for any assessment bought from <strong>27 April 2026</strong>, and it goes with the NCSC&rsquo;s <em>Requirements for IT Infrastructure v3.3</em>. IASME publishes the whole set free as a preparation booklet, so you can read every question before you pay.</p><p><strong>Most questions want a short description, not a yes.</strong> The assessor is checking that what you describe meets the rule. &ldquo;Yes&rdquo; on its own often gets sent back. One or two sentences about what you actually do is the right length.</p><p>The portal shows only the questions that apply to you. A one-person consultancy we helped in November 2026 had 85 in its portal, because answers like &ldquo;no servers&rdquo; and &ldquo;no remote access to the router&rdquo; hide the follow-ups.</p>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="At a glance">
+      <div class="wrap" data-reveal>
+        <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><tbody>
+              <tr><th scope="row">What it is</th><td>The self-assessment for the UK government&rsquo;s Cyber Essentials certificate, answered online in IASME&rsquo;s portal.</td></tr>
+              <tr><th scope="row">Current version</th><td>&ldquo;Danzell&rdquo; (booklet version 16), for assessments bought from 27 April 2026.</td></tr>
+              <tr><th scope="row">How many questions</th><td>107 numbered items in eight sections. The portal hides the ones that don&rsquo;t apply, so a small firm sees fewer.</td></tr>
+              <tr><th scope="row">Automatic fails</th><td>Updates late (A6.4, A6.5), two-step sign-in missing on a cloud service (A7.16, A7.17), or a service wrongly listed as having none (A7.15).</td></tr>
+              <tr><th scope="row">Who signs it</th><td>A director, owner or board member. Not your IT company.</td></tr>
+              <tr><th scope="row">Time allowed</th><td>Six months from purchase to finish, by IASME&rsquo;s checkout terms.</td></tr>
+            </tbody></table></div>
+      </div>
+    </section>
+    <section id="s2" class="section section--alt" aria-label="The answers that fail you automatically">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">READ THIS FIRST</p>
+        <h2 class="section-title" data-title>The answers that fail you automatically<span class="title-underline"></span></h2>
+<p>Since April 2026 five answers end the assessment on their own, however well you answer the rest:</p><ul><li><strong>A6.4:</strong> critical and high-risk updates for Windows, macOS, phones, and your router or firewall firmware not installed within <strong>14 days</strong> of release.</li><li><strong>A6.5:</strong> the same 14 days for every program and app: browsers, Office, PDF readers, Zoom, and anything else installed.</li><li><strong>A7.16:</strong> two-step sign-in (MFA) missing on any <strong>administrator</strong> account of a cloud service that offers it.</li><li><strong>A7.17:</strong> MFA missing on any <strong>user</strong> account of a cloud service that offers it.</li><li><strong>A7.15:</strong> listing a cloud service as &ldquo;has no MFA&rdquo; when it does have it.</li></ul><p>The 14 days must hold <strong>all the time</strong>, not just on the day you submit. Microsoft&rsquo;s fixes come out on the second Tuesday of each month, so each month&rsquo;s are due two weeks later. Our <a href="/cyber-essentials/#requirements">Cyber Essentials page</a> works out this month&rsquo;s deadline for you.</p>
+      </div>
+    </section>
+    <section id="s3" class="section" aria-label="What to gather before you open the portal">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">BEFORE YOU START</p>
+        <h2 class="section-title" data-title>What to gather before you open the portal<span class="title-underline"></span></h2>
+<p>Half an hour collecting these saves most of the back and forth:</p><ol><li><strong>Company details:</strong> exact legal name, company number, registered address, and any other addresses you work from.</li><li><strong>Every computer:</strong> make, and the exact Windows edition and version (for example &ldquo;Windows 11 Pro 25H2&rdquo;: press Windows key + R, type <code>winver</code>). Macs: the macOS version. Include staff&rsquo;s own laptops if they use them for work.</li><li><strong>Every phone and tablet</strong> that gets work email or apps: make and system version. Staff-owned phones count too.</li><li><strong>The router or firewall</strong> at each office: make and model. Home routers are left out.</li><li><strong>Every cloud service</strong> you sign in to for work: Microsoft 365 or Google Workspace, accounting, banking portals, CRM, website hosting, domain registrar, file sharing, video calls, and your social media accounts.</li><li><strong>For each cloud service:</strong> is two-step sign-in on for every person, administrators included?</li><li><strong>Your browsers, antivirus, email program and office software</strong>, with version numbers.</li><li><strong>Who has administrator rights</strong> on each PC and each cloud service.</li></ol><p>Our free app, <a href="/free-pc-health-check/">365 PC Manager</a>, shows most of the PC side: Windows version, programs, firewall, accounts, PIN length and whether this month&rsquo;s update went in.</p>
+      </div>
+    </section>
+    <section id="s4" class="section section--alt" aria-label="Your organisation (A1.1 to A1.16)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A1</p>
+        <h2 class="section-title" data-title>Your organisation (A1.1 to A1.16)<span class="title-underline"></span></h2>
+<p>Easy questions, but the certificate is printed from them, so get them exactly right.</p><h3 id="a1-1">A1.1 Organisation name</h3><p><strong>What it asks:</strong> Your legal name, as it should appear on the certificate. One legal entity, up to 150 characters; you can add a trading name.</p><p><strong>A good answer:</strong> The name exactly as Companies House has it, for example &ldquo;Example Widgets Ltd t/a Example Print&rdquo;.</p><p><strong>Watch out:</strong> Other companies in the group go in A1.6.1, and can&rsquo;t be added after the certificate is issued.</p><h3 id="a1-2">A1.2 Type of organisation</h3><p><strong>What it asks:</strong> Limited company, LLP, sole trader, charity, partnership and so on.</p><p><strong>A good answer:</strong> Pick the one that matches your legal form.</p><h3 id="a1-3">A1.3 Number of employees</h3><p><strong>What it asks:</strong> Everyone who works for you, including volunteers, agency staff and contractors who can get at your data.</p><p><strong>A good answer:</strong> The real head count. It also sets your fee band.</p><p><strong>Watch out:</strong> Leaving out contractors with a company login is a common slip.</p><h3 id="a1-4">A1.4 Registration number</h3><p><strong>What it asks:</strong> Your company number, digits and letters only.</p><p><strong>A good answer:</strong> The Companies House number with no spaces. Sole traders and partnerships type &ldquo;none&rdquo;.</p><h3 id="a1-5">A1.5 and A1.5.1 Registered and operating addresses</h3><p><strong>What it asks:</strong> Your registered address, and any addresses you work from if different.</p><p><strong>A good answer:</strong> The registered office, then each office or unit you use. Staff home addresses are not included.</p><h3 id="a1-6">A1.6 and A1.6.1 More than one legal entity</h3><p><strong>What it asks:</strong> Whether other companies share this assessment, and their names, numbers and addresses.</p><p><strong>A good answer:</strong> Usually &ldquo;No&rdquo;. If yes, list each one: they must share the same network and the same director signing off.</p><h3 id="a1-7">A1.7 Main business</h3><p><strong>What it asks:</strong> Your sector, from a list.</p><p><strong>A good answer:</strong> The nearest match, or Other with a few words.</p><h3 id="a1-8">A1.8 Website</h3><p><strong>What it asks:</strong> Your website, or a Facebook or LinkedIn page if you have no site.</p><p><strong>A good answer:</strong> Your main web address.</p><h3 id="a1-9">A1.9 Renewal or first time</h3><p><strong>What it asks:</strong> Whether you have held Cyber Essentials before.</p><p><strong>A good answer:</strong> &ldquo;Renewal&rdquo; only if you held it before.</p><h3 id="a1-10">A1.10 to A1.10.5 Why you are applying</h3><p><strong>What it asks:</strong> Your two main reasons (a contract, a government contract, customers, your insurer, a regulator, a grant, or to improve security), then who asked for it.</p><p><strong>A good answer:</strong> The two real reasons, and the name of the customer, contract, grant body or regulator if one asked.</p><p><strong>Watch out:</strong> Leave out protectively marked bid numbers and any customer you are contracted to keep confidential.</p><h3 id="a1-11">A1.11 Read the requirements?</h3><p><strong>What it asks:</strong> Whether you have read the NCSC&rsquo;s <em>Requirements for IT Infrastructure v3.3</em>.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, after reading it. It is about 20 pages and answers most of the harder questions below.</p><h3 id="a1-12">A1.12 Spoken to an NCSC Cyber Advisor?</h3><p><strong>What it asks:</strong> Whether an NCSC-assured Cyber Advisor helped you.</p><p><strong>A good answer:</strong> &ldquo;No&rdquo; unless one did. Your ordinary IT company is not a Cyber Advisor unless the NCSC lists it.</p><h3 id="a1-13">A1.13 to A1.16 Contact and research questions</h3><p><strong>What it asks:</strong> Whether IASME can contact you after a breach or for research, where you heard about the scheme, and whether you use the NCSC&rsquo;s free Early Warning service.</p><p><strong>A good answer:</strong> Your choice; none of these affects the result. Early Warning is free and worth signing up to.</p>
+      </div>
+    </section>
+    <section id="s5" class="section" aria-label="Scope: what the certificate covers (A2.1 to A2.10)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A2</p>
+        <h2 class="section-title" data-title>Scope: what the certificate covers (A2.1 to A2.10)<span class="title-underline"></span></h2>
+<p>The scope is the list of everything the certificate covers. Most small firms should choose the <strong>whole organisation</strong>: it is simpler, and the free cyber insurance is designed around it. You can never leave out staff computers, phones or cloud services.</p><h3 id="a2-1">A2.1 Whole or part of the organisation</h3><p><strong>What it asks:</strong> Whether the assessment covers everything or only part.</p><p><strong>A good answer:</strong> &ldquo;Whole organisation&rdquo;.</p><p><strong>Watch out:</strong> Part (a &ldquo;sub-set&rdquo;) is only allowed when the left-out part is cut off by a firewall or VLAN. Leaving out a department because it is messy doesn&rsquo;t count.</p><h3 id="a2-2">A2.2 to A2.2.2 Describing a partial scope</h3><p><strong>What it asks:</strong> If you chose part, what is in, what is out, and how it is separated.</p><p><strong>A good answer:</strong> Skip if you chose whole organisation. Otherwise name the sub-set and how it is cut off, for example &ldquo;test network, separated by firewall&rdquo;.</p><p><strong>Watch out:</strong> Windows Firewall, security groups and software methods are not accepted as the dividing line.</p><h3 id="a2-3">A2.3 to A2.3.2 Networks at your locations</h3><p><strong>What it asks:</strong> Whether your networks are used at the addresses in A1.5.1, and whether each site has its own internet line.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo; and &ldquo;Yes&rdquo; for a single office with its own broadband. If sites link to each other, describe how.</p><h3 id="a2-4">A2.4 Networks in scope</h3><p><strong>What it asks:</strong> A list of your networks by name, place and purpose.</p><p><strong>A good answer:</strong> &ldquo;Office network at our Poole office, used by all staff&rdquo;. No IP addresses or technical detail.</p><h3 id="a2-4-1">A2.4.1 and A2.4.2 Home and remote workers</h3><p><strong>What it asks:</strong> How many staff work from home or on the move, and how they connect.</p><p><strong>A good answer:</strong> Anyone allowed to work away from the office at all counts. For example &ldquo;3; home broadband using their own routers, connecting to Microsoft 365 over the internet&rdquo;.</p><h3 id="a2-5">A2.5 Network equipment</h3><p><strong>What it asks:</strong> Make, model and number of each router or firewall in scope.</p><p><strong>A good answer:</strong> &ldquo;1 x BT Business Smart Hub 2&rdquo;, or whatever your office has. Home workers: say in the notes that they rely on Windows Firewall.</p><p><strong>Watch out:</strong> Never list home routers. Switches and Wi-Fi access points that don&rsquo;t route internet traffic are not needed.</p><h3 id="a2-5-1">A2.5.1 Equipment that separates a sub-set</h3><p><strong>What it asks:</strong> Partial scope only: the firewall or router that cuts the sub-set off.</p><p><strong>A good answer:</strong> Skip for whole organisation.</p><h3 id="a2-6">A2.6 Laptops and desktops</h3><p><strong>What it asks:</strong> How many, which make, and the exact operating system, edition and version, staff-owned ones included.</p><p><strong>A good answer:</strong> &ldquo;6 Dell laptops, Windows 11 Pro 25H2; 1 HP desktop, Windows 11 Pro 25H2&rdquo;.</p><p><strong>Watch out:</strong> The Windows edition and version are required. Windows 10 after 14 October 2025 only passes with Microsoft&rsquo;s paid Extended Security Updates.</p><h3 id="a2-6-1">A2.6.1 Thin clients</h3><p><strong>What it asks:</strong> Simple terminals used to reach virtual desktops.</p><p><strong>A good answer:</strong> &ldquo;None&rdquo; for almost every small firm.</p><h3 id="a2-7">A2.7 Servers</h3><p><strong>What it asks:</strong> Physical and virtual servers and their operating systems.</p><p><strong>A good answer:</strong> &ldquo;None&rdquo; if everything is in Microsoft 365 or Google. Otherwise, for example, &ldquo;1 x Windows Server 2022&rdquo;.</p><p><strong>Watch out:</strong> A Windows Server 2012 or older box fails on its own: it no longer gets fixes.</p><h3 id="a2-8">A2.8 Phones and tablets</h3><p><strong>What it asks:</strong> How many, which make, and the system version, for every phone or tablet that reaches work email or apps.</p><p><strong>A good answer:</strong> &ldquo;4 Samsung phones, Android 16; 2 iPhones, iOS 26&rdquo;.</p><p><strong>Watch out:</strong> Staff-owned phones with work email on them are in scope. A phone too old for updates fails.</p><h3 id="a2-9">A2.9 Cloud services</h3><p><strong>What it asks:</strong> Every online service you use for work that holds or handles your data.</p><p><strong>A good answer:</strong> A full list: Microsoft 365 or Google Workspace, your accounting software, banking, CRM, website hosting, domain registrar, file sharing, video calls, payment providers, and LinkedIn, Facebook and other social accounts.</p><p><strong>Watch out:</strong> Social media counts as a cloud service. Every service listed here needs two-step sign-in later (A7.14 to A7.17), so the list matters.</p><h3 id="a2-10">A2.10 Who is responsible for IT</h3><p><strong>What it asks:</strong> The name and role of the person in charge of your IT.</p><p><strong>A good answer:</strong> A director or staff member, for example &ldquo;Jane Smith, Operations Director&rdquo;.</p><p><strong>Watch out:</strong> It must be someone in your organisation. Your outsourced IT company can&rsquo;t be named here.</p>
+      </div>
+    </section>
+    <section id="s6" class="section section--alt" aria-label="The free cyber insurance (A3.1 to A3.3)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A3</p>
+        <h2 class="section-title" data-title>The free cyber insurance (A3.1 to A3.3)<span class="title-underline"></span></h2>
+<p>Organisations with a UK head office and a turnover under &pound;20 million can opt in to cyber insurance that comes with the certificate at no extra cost. These answers go to the insurance broker and don&rsquo;t affect your result.</p><h3 id="a3-1">A3.1 Eligible?</h3><p><strong>What it asks:</strong> Whether your head office is in the UK or Crown Dependencies and turnover is under &pound;20 million.</p><p><strong>A good answer:</strong> Yes or no, honestly.</p><h3 id="a3-2">A3.2 Opt in?</h3><p><strong>What it asks:</strong> Whether you want the included insurance.</p><p><strong>A good answer:</strong> Usually &ldquo;Yes&rdquo;: it costs nothing extra. Read what it covers on IASME&rsquo;s site.</p><h3 id="a3-3">A3.3 Email for the documents</h3><p><strong>What it asks:</strong> Where the broker sends the policy.</p><p><strong>A good answer:</strong> A shared address that will still work next year, such as accounts@ or office@.</p>
+      </div>
+    </section>
+    <section id="s7" class="section" aria-label="Firewalls (A4.1 to A4.11)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A4</p>
+        <h2 class="section-title" data-title>Firewalls (A4.1 to A4.11)<span class="title-underline"></span></h2>
+<p>A firewall sits between your devices and the internet. In an office that is the router or a separate firewall box, and every laptop and desktop also needs its own software firewall switched on (Windows Firewall counts). For a home worker on a router you don&rsquo;t supply, the laptop&rsquo;s firewall is the one that matters.</p><h3 id="a4-1">A4.1 Boundary firewalls</h3><p><strong>What it asks:</strong> Whether there is a firewall between your networks, devices and the internet.</p><p><strong>A good answer:</strong> &ldquo;Yes. The office router has its firewall on, and Windows Firewall is on every laptop.&rdquo;</p><h3 id="a4-1-1">A4.1.1 and A4.1.2 Software firewall on every computer</h3><p><strong>What it asks:</strong> Whether every computer and server has its own firewall on, even behind the office router.</p><p><strong>A good answer:</strong> &ldquo;Yes. Windows Firewall is on for every network type on all PCs.&rdquo;</p><p><strong>Watch out:</strong> Windows, macOS and common Linux all have one, so &ldquo;not available&rdquo; is almost never true.</p><h3 id="a4-2">A4.2 Router default password changed</h3><p><strong>What it asks:</strong> Whether the admin password the router or firewall came with has been changed.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, once you have changed it.</p><p><strong>Watch out:</strong> This includes routers that arrive with a unique password printed on a sticker. Home workers relying on Windows Firewall: this means their own sign-in password.</p><h3 id="a4-2-1">A4.2.1 How you change it</h3><p><strong>What it asks:</strong> A short description of how the firewall password is changed.</p><p><strong>A good answer:</strong> &ldquo;Our IT support signs in to the router&rsquo;s admin page from inside the office and changes it; the new password is kept in our password manager.&rdquo;</p><h3 id="a4-3">A4.3 Firewall password strength</h3><p><strong>What it asks:</strong> Which rule the admin password meets: MFA with 8+ characters, 8+ with common passwords blocked, 12+ characters, or passwordless.</p><p><strong>A good answer:</strong> Usually &ldquo;C: at least 12 characters&rdquo;. Make it long and random and keep it in a password manager.</p><h3 id="a4-4">A4.4 Changed if compromised</h3><p><strong>What it asks:</strong> Whether you change it straight away if you know or suspect it has leaked.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, and know how (A4.2.1).</p><h3 id="a4-5">A4.5 A process for managing the firewall</h3><p><strong>What it asks:</strong> Whether opening anything to the internet (&ldquo;opening a port&rdquo;) needs a reason.</p><p><strong>A good answer:</strong> &ldquo;Yes. Nothing is opened without a business reason agreed by a director.&rdquo;</p><h3 id="a4-6">A4.6 Rules reviewed in the last 12 months</h3><p><strong>What it asks:</strong> Whether you have checked the firewall rules this year, and how.</p><p><strong>A good answer:</strong> &ldquo;Yes, reviewed with our IT support on [date]. Any rule no longer needed is removed.&rdquo;</p><p><strong>Watch out:</strong> Do the review before you answer. Old rules from a departed system are what assessors worry about.</p><h3 id="a4-7">A4.7 Unauthenticated inbound connections</h3><p><strong>What it asks:</strong> Whether the firewall lets anything in from the internet without a login.</p><p><strong>A good answer:</strong> &ldquo;No&rdquo;. Most firewalls block inbound by default; check yours.</p><p><strong>Watch out:</strong> Old port forwards for a camera system or remote desktop are the usual culprits.</p><h3 id="a4-8">A4.8 Approving allowed inbound connections</h3><p><strong>What it asks:</strong> How any opening is approved and written down.</p><p><strong>A good answer:</strong> &ldquo;None are needed.&rdquo; Or, if you have one, what it is, why, and which director signed it off.</p><h3 id="a4-9">A4.9 to A4.11 Router settings reachable from the internet</h3><p><strong>What it asks:</strong> Whether the router&rsquo;s admin page can be reached from outside, and if so why and how it is protected.</p><p><strong>A good answer:</strong> &ldquo;No&rdquo; for most small firms. If yes, there must be a written reason and MFA, or a short list of allowed IP addresses with a strong password.</p><p><strong>Watch out:</strong> Some IT companies switch remote admin on and forget it. Ask yours.</p>
+      </div>
+    </section>
+    <section id="s8" class="section section--alt" aria-label="Secure configuration (A5.1 to A5.10)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A5</p>
+        <h2 class="section-title" data-title>Secure configuration (A5.1 to A5.10)<span class="title-underline"></span></h2>
+<p>New computers and services come with things switched on that you don&rsquo;t need: spare accounts, trial software, auto-run. This section asks you to tidy them up and lock devices properly.</p><h3 id="a5-1">A5.1 Unused software removed</h3><p><strong>What it asks:</strong> Whether software and services you don&rsquo;t use have been removed from every device and cloud service, and how.</p><p><strong>A good answer:</strong> &ldquo;Yes. Each PC is checked in Settings, Apps when it is set up and every six weeks; anything not used for work is removed.&rdquo;</p><p><strong>Watch out:</strong> Manufacturer extras and expired antivirus trials on new laptops count. Remove them before you answer.</p><h3 id="a5-2">A5.2 Only necessary accounts</h3><p><strong>What it asks:</strong> Whether every device and service has only the accounts actually in use.</p><p><strong>A good answer:</strong> &ldquo;Yes. Guest and spare accounts are disabled; leavers are removed the day they go.&rdquo;</p><h3 id="a5-3">A5.3 Default passwords changed</h3><p><strong>What it asks:</strong> Whether every account on every device has had its default password changed to one that meets the rules.</p><p><strong>A good answer:</strong> &ldquo;Yes. Every account has its own password of 12 or more characters, or a password with two-step sign-in.&rdquo;</p><h3 id="a5-4">A5.4 Services you host for others</h3><p><strong>What it asks:</strong> Whether you run anything that lets staff or customers reach private data over the internet: your own VPN, mail server or web app.</p><p><strong>A good answer:</strong> &ldquo;No&rdquo; if all you use is Microsoft 365 or Google and other people&rsquo;s cloud services.</p><p><strong>Watch out:</strong> If yes, A5.5 to A5.7 ask how you protect it.</p><h3 id="a5-5">A5.5 to A5.7 Protecting a service you host</h3><p><strong>What it asks:</strong> How people sign in to it, how passwords are changed if compromised, and how guessing is stopped.</p><p><strong>A good answer:</strong> MFA is the best answer. Without MFA: 12+ character passwords, or 8+ with common ones blocked, plus throttling or a lock after 10 wrong tries.</p><h3 id="a5-8">A5.8 Auto-run off</h3><p><strong>What it asks:</strong> Whether files on USB sticks or downloads can run without anyone choosing to.</p><p><strong>A good answer:</strong> &ldquo;Yes. AutoPlay is off, or set to ask every time.&rdquo; On Windows 11: Settings, Bluetooth &amp; devices, AutoPlay.</p><p><strong>Watch out:</strong> Asking each time is acceptable.</p><h3 id="a5-9">A5.9 Devices lock</h3><p><strong>What it asks:</strong> Whether a password, PIN or fingerprint is needed to use each device.</p><p><strong>A good answer:</strong> &ldquo;Yes. Every laptop and phone needs a PIN, password, fingerprint or face to unlock, and locks when left.&rdquo;</p><h3 id="a5-10">A5.10 How devices unlock</h3><p><strong>What it asks:</strong> What unlocks them, and what stops guessing.</p><p><strong>A good answer:</strong> &ldquo;Windows Hello fingerprint or a PIN of at least 6 digits; Windows locks after 10 wrong attempts. Phones: fingerprint or face with a 6-digit passcode.&rdquo;</p><p><strong>Watch out:</strong> A 4-digit PIN fails. A 6-digit PIN is only allowed when it just unlocks the device.</p>
+      </div>
+    </section>
+    <section id="s9" class="section" aria-label="Security updates (A6.1 to A6.7)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">SECTION A6</p>
+        <h2 class="section-title" data-title>Security updates (A6.1 to A6.7)<span class="title-underline"></span></h2>
+<p>The section with two automatic fails. Everything must still be getting fixes from its maker, everything must be licensed, and high-risk fixes must go in within 14 days.</p><h3 id="a6-1">A6.1 Supported operating systems</h3><p><strong>What it asks:</strong> Whether every device, router firmware included, still gets security fixes from its maker.</p><p><strong>A good answer:</strong> &ldquo;Yes. All PCs run Windows 11 25H2, phones are on current Android and iOS, and the router gets firmware updates.&rdquo;</p><p><strong>Watch out:</strong> Windows 10 without paid ESU fails, and so do older Windows 11 versions once support ends: <a href="/is-my-windows-still-supported/">check yours</a>.</p><h3 id="a6-2">A6.2 Supported software</h3><p><strong>What it asks:</strong> Whether every program, extension and framework still gets fixes.</p><p><strong>A good answer:</strong> &ldquo;Yes. Software is reviewed when PCs are serviced and anything unsupported is removed.&rdquo;</p><p><strong>Watch out:</strong> Old Office 2016, Java 8 and abandoned browser add-ons are typical fails.</p><h3 id="a6-2-1">A6.2.1 Browsers, with versions</h3><p><strong>What it asks:</strong> Each browser installed and its version.</p><p><strong>A good answer:</strong> &ldquo;Google Chrome 157, Microsoft Edge 157&rdquo;.</p><p><strong>Watch out:</strong> Fewer browsers means less to list and keep updated.</p><h3 id="a6-2-2">A6.2.2 Malware protection, with versions</h3><p><strong>What it asks:</strong> Each antivirus product and its version.</p><p><strong>A good answer:</strong> &ldquo;Microsoft Defender Antivirus (built into Windows 11)&rdquo;, or your paid product and version.</p><h3 id="a6-2-3">A6.2.3 Email programs, with versions</h3><p><strong>What it asks:</strong> Each email program on devices or servers.</p><p><strong>A good answer:</strong> &ldquo;Microsoft Outlook (Microsoft 365 Apps for business)&rdquo;, or &ldquo;Gmail in the browser&rdquo;.</p><p><strong>Watch out:</strong> Outlook 2016 and 2019 are out of support.</p><h3 id="a6-2-4">A6.2.4 Office software, with versions</h3><p><strong>What it asks:</strong> The programs you create documents with.</p><p><strong>A good answer:</strong> &ldquo;Microsoft 365 Apps for business&rdquo; or &ldquo;Google Workspace&rdquo;.</p><h3 id="a6-3">A6.3 and A6.3.1 Unlicensed or unsupported</h3><p><strong>What it asks:</strong> Whether anything is unlicensed or out of support, and if so, what.</p><p><strong>A good answer:</strong> &ldquo;No&rdquo;.</p><p><strong>Watch out:</strong> A home Microsoft 365 Family licence used for business is not licensed for business use, and nor is unactivated Windows. Free and open-source software is fine if you follow its licence.</p><h3 id="a6-4">A6.4 Operating system and firmware updates in 14 days<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">AUTOMATIC FAIL</span></h3><p><strong>What it asks:</strong> Whether every critical or high-risk fix for operating systems and router or firewall firmware goes in within 14 days of release, always.</p><p><strong>A good answer:</strong> &ldquo;Yes. Windows Update is automatic on every PC and checked monthly; the router updates its firmware automatically.&rdquo;</p><p><strong>Watch out:</strong> Only answer yes if it is true every month. Feature updates are not required, security fixes are.</p><h3 id="a6-4-1">A6.4.1 and A6.4.2 Automatic operating system updates</h3><p><strong>What it asks:</strong> Whether automatic updates are on, and how you meet 14 days where they are not.</p><p><strong>A good answer:</strong> &ldquo;Yes, automatic on all devices.&rdquo; If a server is updated by hand, say who does it and how often.</p><h3 id="a6-5">A6.5 Program and app updates in 14 days<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">AUTOMATIC FAIL</span></h3><p><strong>What it asks:</strong> The same 14 days for every application, extensions included.</p><p><strong>A good answer:</strong> &ldquo;Yes. Browsers, Microsoft 365 and phone apps update themselves; other programs are checked fortnightly.&rdquo;</p><p><strong>Watch out:</strong> Programs that never update themselves (PDF editors, old utilities) are what catch people out. Remove what you can.</p><h3 id="a6-5-1">A6.5.1 and A6.5.2 Automatic program updates</h3><p><strong>What it asks:</strong> Whether apps update automatically, and how the rest are kept within 14 days.</p><p><strong>A good answer:</strong> &ldquo;Yes, wherever the program offers it; the rest are checked every two weeks.&rdquo;</p><h3 id="a6-6">A6.6 Unsupported software removed</h3><p><strong>What it asks:</strong> Whether software that no longer gets fixes has been taken off.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, after removing it.</p><h3 id="a6-7">A6.7 Unsupported software you must keep</h3><p><strong>What it asks:</strong> If something old is essential, how it is cut off from the internet.</p><p><strong>A good answer:</strong> &ldquo;Not applicable: no unsupported software is used.&rdquo;</p><p><strong>Watch out:</strong> Kept but still online means you can&rsquo;t certify the whole organisation.</p>
+      </div>
+    </section>
+    <section id="s10" class="section section--alt" aria-label="User access and two-step sign-in (A7.1 to A7.17)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/10 &mdash; SECTION A7</p>
+        <h2 class="section-title" data-title>User access and two-step sign-in (A7.1 to A7.17)<span class="title-underline"></span></h2>
+<p>Who has accounts, who has administrator rights, how passwords are handled, and two-step sign-in on every cloud service. Two automatic fails live here.</p><h3 id="a7-1">A7.1 Approving new accounts</h3><p><strong>What it asks:</strong> How a new account is approved before it is created.</p><p><strong>A good answer:</strong> &ldquo;A director approves every new starter&rsquo;s accounts by email before IT creates them.&rdquo;</p><h3 id="a7-2">A7.2 Unique logins</h3><p><strong>What it asks:</strong> Whether every account needs its own login, with no sharing.</p><p><strong>A good answer:</strong> &ldquo;Yes. Everyone has their own accounts; nothing is shared.&rdquo;</p><p><strong>Watch out:</strong> A shared &ldquo;office@&rdquo; login that several people sign in to is a fail. Use a shared mailbox instead.</p><h3 id="a7-3">A7.3 Leavers</h3><p><strong>What it asks:</strong> How you remove or disable accounts when someone leaves.</p><p><strong>A good answer:</strong> &ldquo;On their last day a director disables their Microsoft 365 account, removes them from every service on our list, and changes any passwords they knew.&rdquo;</p><h3 id="a7-4">A7.4 Only the access people need</h3><p><strong>What it asks:</strong> How you make sure people only reach what their job needs.</p><p><strong>A good answer:</strong> &ldquo;Access to folders and systems is given by role and reviewed when someone changes job.&rdquo;</p><h3 id="a7-5">A7.5 Approving administrator access</h3><p><strong>What it asks:</strong> The process for giving someone admin rights.</p><p><strong>A good answer:</strong> &ldquo;Only a director can approve admin rights, and only for someone who needs them for IT work.&rdquo;</p><h3 id="a7-6">A7.6 Separate admin accounts</h3><p><strong>What it asks:</strong> How you make sure admin work is done in a separate account, on PCs and cloud services.</p><p><strong>A good answer:</strong> &ldquo;Everyone works in a standard account. Installing software needs a separate administrator account. Microsoft 365 admin is done from a separate admin login.&rdquo;</p><p><strong>Watch out:</strong> The most common fail we see on small firms: the everyday Windows account is an administrator. Fix it before you answer.</p><h3 id="a7-7">A7.7 No email or browsing as admin</h3><p><strong>What it asks:</strong> How you stop admin accounts being used for email and the web.</p><p><strong>A good answer:</strong> &ldquo;Admin accounts have no mailbox and are used only to install or change settings. Downloads are done in the standard account.&rdquo;</p><p><strong>Watch out:</strong> A written rule and staff awareness is acceptable; you don&rsquo;t need special software.</p><h3 id="a7-8">A7.8 and A7.9 Tracking and reviewing admins</h3><p><strong>What it asks:</strong> Whether you keep a list of who has admin rights and review it.</p><p><strong>A good answer:</strong> &ldquo;Yes. A list of admin accounts is kept and reviewed every quarter; rights no longer needed are removed.&rdquo;</p><h3 id="a7-10">A7.10 Stopping password guessing</h3><p><strong>What it asks:</strong> How password systems are protected from guessing.</p><p><strong>A good answer:</strong> &ldquo;Windows locks an account after 10 wrong attempts; our cloud services use MFA and limit sign-in attempts.&rdquo;</p><h3 id="a7-11">A7.11 Password quality controls</h3><p><strong>What it asks:</strong> Which technical rule controls password quality.</p><p><strong>A good answer:</strong> &ldquo;MFA on all cloud services; a minimum of 12 characters elsewhere.&rdquo;</p><h3 id="a7-12">A7.12 Helping people pick good passwords</h3><p><strong>What it asks:</strong> How you encourage unique, strong passwords.</p><p><strong>A good answer:</strong> &ldquo;Staff are told to use three random words or the password manager&rsquo;s generator, never to reuse a password, and we provide a password manager. We don&rsquo;t force regular changes or complexity rules.&rdquo;</p><p><strong>Watch out:</strong> Forcing a change every 90 days and symbol rules are now discouraged by the NCSC.</p><h3 id="a7-13">A7.13 When a password is compromised</h3><p><strong>What it asks:</strong> Whether you have a process to change it quickly.</p><p><strong>A good answer:</strong> &ldquo;Yes. Staff report it straight away; the password is changed and the account&rsquo;s sessions are signed out.&rdquo;</p><h3 id="a7-14">A7.14 Do all your cloud services offer MFA?</h3><p><strong>What it asks:</strong> Whether every service on your A2.9 list has two-step sign-in available.</p><p><strong>A good answer:</strong> Usually &ldquo;Yes&rdquo;: almost every service does. If one can link to Microsoft or Google sign-in for MFA, that counts and must be set up.</p><h3 id="a7-15">A7.15 Services with no MFA<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">AUTOMATIC FAIL</span></h3><p><strong>What it asks:</strong> The services that offer no two-step sign-in at all.</p><p><strong>A good answer:</strong> Only list a service after checking its security settings properly. IASME keeps a list of services and their MFA.</p><p><strong>Watch out:</strong> Listing a service that does offer MFA is an automatic fail.</p><h3 id="a7-16">A7.16 MFA on every administrator<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">AUTOMATIC FAIL</span></h3><p><strong>What it asks:</strong> Whether every administrator account on every cloud service uses MFA.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, once it is on for every admin account.</p><p><strong>Watch out:</strong> Check the hosting, domain registrar and social media logins too, not just Microsoft 365.</p><h3 id="a7-17">A7.17 MFA on every user<span style="display:inline-block;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.03em;background:rgba(229,72,77,.14);color:#e5484d;vertical-align:middle">AUTOMATIC FAIL</span></h3><p><strong>What it asks:</strong> Whether every user of every cloud service uses MFA.</p><p><strong>A good answer:</strong> &ldquo;Yes&rdquo;, once everyone has it on.</p><p><strong>Watch out:</strong> One member of staff without it on one service fails the whole assessment. Our <a href="/how-to-set-up-two-factor-authentication/">two-factor guide</a> shows how.</p>
+      </div>
+    </section>
+    <section id="s11" class="section" aria-label="Malware protection (A8.1 to A8.5)">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/11 &mdash; SECTION A8</p>
+        <h2 class="section-title" data-title>Malware protection (A8.1 to A8.5)<span class="title-underline"></span></h2>
+<p>Every device needs protection from malware. Windows and Mac computers use antivirus; phones and tablets are protected by only installing apps from the official store. Most firms answer both A and B.</p><h3 id="a8-1">A8.1 How devices are protected</h3><p><strong>What it asks:</strong> Which method you use: antivirus (A), installing only approved apps from a store (B), or something else.</p><p><strong>A good answer:</strong> &ldquo;A and B: antivirus on all computers, and phones install apps only from Google Play and the App Store.&rdquo;</p><h3 id="a8-2">A8.2 Antivirus kept up to date</h3><p><strong>What it asks:</strong> Whether the antivirus updates as its maker recommends and blocks malware it finds.</p><p><strong>A good answer:</strong> &ldquo;Yes. Microsoft Defender updates automatically and real-time protection is on.&rdquo;</p><p><strong>Watch out:</strong> Microsoft Defender is accepted. An expired trial of another product that has switched Defender off is not.</p><h3 id="a8-3">A8.3 Harmful websites blocked</h3><p><strong>What it asks:</strong> Whether the antivirus or browser warns about or blocks malicious websites.</p><p><strong>A good answer:</strong> &ldquo;Yes. Microsoft Defender SmartScreen is on in Windows and Edge, and Safe Browsing is on in Chrome.&rdquo;</p><h3 id="a8-4">A8.4 No unsigned apps</h3><p><strong>What it asks:</strong> For phones and tablets: whether people are stopped from installing unsigned apps.</p><p><strong>A good answer:</strong> &ldquo;Yes. No phone is rooted or jailbroken, and installing from unknown sources is off.&rdquo;</p><h3 id="a8-5">A8.5 A list of approved apps</h3><p><strong>What it asks:</strong> Whether you keep a list of approved apps and people only install those, staff-owned phones included.</p><p><strong>A good answer:</strong> &ldquo;Yes. Approved work apps are listed (Outlook, Teams, Authenticator, our accounts app); staff are told not to install others for work.&rdquo;</p><p><strong>Watch out:</strong> A written list and a clear rule are enough; device management software is optional.</p>
+      </div>
+    </section>
+    <section id="s12" class="section section--alt" aria-label="The mistakes we see most">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/12 &mdash; FROM OUR OWN JOBS</p>
+        <h2 class="section-title" data-title>The mistakes we see most<span class="title-underline"></span></h2>
+<p>From preparing small businesses for the April 2026 rules, including a one-person consultancy in November 2026:</p><ul><li><strong>The everyday account is an administrator</strong> (A7.6, A7.7). Almost every laptop bought in a shop is set up this way. Add a separate admin account and make your own a standard one.</li><li><strong>A 4-digit PIN</strong> (A5.10). Windows Hello allows it; Cyber Essentials needs 6.</li><li><strong>Manufacturer extras and expired antivirus trials</strong> left on new laptops (A5.1, A8.2).</li><li><strong>Two-step sign-in missing on one forgotten service</strong> (A7.16, A7.17): the domain registrar, the old website login, a social media account.</li><li><strong>Answering &ldquo;yes&rdquo; before the fix is done.</strong> The declaration says your answers are true now. Fix first, answer second.</li><li><strong>Updates waiting for a restart</strong> (A6.4). Installed but not restarted can mean not applied. Restart before you submit.</li></ul>
+      </div>
+    </section>
+    <section id="s13" class="section" aria-label="Getting ready with us">
+      <div class="wrap prose" data-reveal>
+        <p class="eyebrow mono">/13 &mdash; RATHER WE HELPED?</p>
+        <h2 class="section-title" data-title>Getting ready with us<span class="title-underline"></span></h2>
+<p>We prepare small businesses for Cyber Essentials: we check every PC with our free app, switch on two-step sign-in on your accounts, tidy up what would fail, and go through the question set with you. You type the answers and sign the declaration yourself, and an independent IASME certification body marks it. That independence is the point of the certificate.</p><p>Ring <strong>01202 775566</strong> or text 07520 615332, Monday to Friday, 9 to 5. Most of the work is done remotely, so we can help anywhere in the UK. We tell you the price before we start. See <a href="/cyber-essentials/">Cyber Essentials, ready all year</a> for the fees and what our business plans include.</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Related">
+      <div class="wrap">
+        <div class="related" data-reveal>
+          <p class="related__head">KEEP GOING</p>
+          <div class="related__links"><a href="/cyber-essentials/">Cyber Essentials, ready all year</a><a href="/cybersecurity-checklist/">cyber security checklist</a><a href="/how-to-set-up-two-factor-authentication/">how to set up two-factor authentication</a><a href="/is-my-windows-still-supported/">is my Windows still supported?</a><a href="/password-manager-setup/">password manager setup</a></div>
+        </div>
+      </div>
+    </section>
+    <p class="trust-line mono" data-reveal><span>FAMILY-RUN SINCE 1995</span> &middot; <span>&#9733; 4.9 ON GOOGLE</span> &middot; <span>200+ COMPUTERS UNDER OUR CARE</span> &middot; <span>NO FIX, NO FEE</span> &middot; <span>SAME-DAY REMOTE SUPPORT</span></p>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>How many questions are in Cyber Essentials?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>The Danzell question set has 107 numbered items in eight sections. The portal hides the ones that don&rsquo;t apply to you, so a small business usually sees between 80 and 90.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What is the Danzell question set?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>The current version of the Cyber Essentials self-assessment, used for assessments bought from 27 April 2026. It goes with the NCSC&rsquo;s Requirements for IT Infrastructure v3.3 and replaced the Willow question set.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Which Cyber Essentials questions are an automatic fail?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>A6.4 and A6.5 (high-risk updates not installed within 14 days), A7.16 and A7.17 (two-step sign-in missing for administrators or users of a cloud service), and A7.15 if you list a service as having no two-step sign-in when it does.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can I see the Cyber Essentials questions before I pay?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes. IASME publishes the full question set as a free preparation booklet, as a PDF or a spreadsheet.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Do I have to include home workers&rsquo; routers?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>No. Routers in staff homes that your organisation didn&rsquo;t supply are left out. Home workers rely on the software firewall on their laptop, which must be on.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Do staff-owned phones count for Cyber Essentials?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes, if they reach work email, files or apps. List them in A2.8 with make and system version, and they must still get updates.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Does social media count as a cloud service?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Yes. Business accounts on LinkedIn, Facebook, X and similar must be listed in A2.9 and need two-step sign-in.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can my IT company fill in the Cyber Essentials questions for me?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>They can help you prepare and explain each question, but a director, owner or board member must check the answers and sign the declaration, and question A2.10 must name someone inside your organisation.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Is Windows 10 allowed for Cyber Essentials?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>Only with Microsoft&rsquo;s Extended Security Updates in place. Without them, Windows 10 has been unsupported since 14 October 2025 and fails.</p></p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How long do I have to finish the assessment?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p><p>IASME&rsquo;s terms give six months from purchase. After that the account is closed and the fee is not refunded.</p></p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="cta-band" aria-label="Get started">
+      <div class="cta-band__inner">
+        <h2 data-title>Rather go through it with us?<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>We check your PCs and accounts, fix what would fail and go through the questions with you. You sign it, an independent assessor marks it. Call 01202 775566.</p>
+        <div class="hero-buttons hero-buttons--center" data-reveal>
+          <a href="#s2" class="button primary button--lg">The automatic fails</a>
+          <a href="#s3" class="button secondary button--lg">What to gather first</a>
+        </div>
+        <p class="cta__contact mono" data-reveal>01202 775566 &middot; help@365techies.co.uk &middot; MON&ndash;FRI 9AM&ndash;5PM</p>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <details class="footer-fold" open>
+      <summary class="footer-areas__head mono">AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+      </details>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" role="group" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 13l2 2 3-3 3 3 2-2M2 12l4-4 4 2 4-2 4 4M6 8V6h4M18 8V6h-4"/></svg>Microsoft Partner &middot; ID 5190646</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="13" rx="2"/><path d="M7 7h10M7 10.5h6"/><circle cx="17" cy="16" r="3"/><path d="M15.5 18.6 15 22l2-1.2 2 1.2-.5-3.4"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SUPPORT</summary>
+        <div class="footer-fold__body">
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Free tools links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">FREE TOOLS</summary>
+        <div class="footer-fold__body">
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">Free PC Health Check &mdash; 365 PC Manager</a>
+        <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
+        <a href="/techies-pdf/">Techies PDF &mdash; free PDF app</a>
+        <a href="/techies-move/">Techies Move &mdash; free PC move app</a>
+        <a href="/games/">Free Games &mdash; no adverts</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+        <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/fuel-prices/">UK Fuel Prices</a>
+        <a href="/pc-benchmark/">PC Speed Test</a>
+        <a href="/website-checker/">Website Speed Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+        <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+        <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Live Status</a>
+        <a href="/computer-spec-checker/">PC Spec Checker</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Services links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SERVICES</summary>
+        <div class="footer-fold__body">
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/ai/agents/">AI Agents</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Who we help links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">WHO WE HELP</summary>
+        <div class="footer-fold__body">
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+        </div>
+        </details>
+      </nav>
+      <nav aria-label="Company links">
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">COMPANY</summary>
+        <div class="footer-fold__body">
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+        </div>
+        </details>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+    <script>
+    /* Below 768px the areas list and the five link columns fold into accordions. They ship open, so with
+       no script (and to crawlers) every link is in plain view; this closes them on phones only. From 768px
+       up they stay open and each summary is inert: out of the tab order, a click on it does nothing, and
+       CSS draws it as the plain column heading it replaced, so the desktop footer is unchanged. */
+    (function () {
+      var f = document.currentScript.parentNode, m = matchMedia("(max-width: 767px)"),
+          d = f.querySelectorAll("details.footer-fold");
+      function fold() {
+        for (var i = 0; i < d.length; i++) {
+          d[i].open = !m.matches;
+          if (m.matches) d[i].firstElementChild.removeAttribute("tabindex");
+          else d[i].firstElementChild.setAttribute("tabindex", "-1");
+        }
+      }
+      fold();
+      if (m.addEventListener) m.addEventListener("change", fold); else if (m.addListener) m.addListener(fold);
+      f.addEventListener("click", function (e) {
+        if (!m.matches && e.target.closest && e.target.closest(".footer-fold > summary")) e.preventDefault();
+      });
+    })();
+    </script>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=28"></script>
+  <script src="/js/a11y.min.js?v=14" defer></script>
+  <script src="/js/forms.min.js?v=13" defer></script>
+  <script src="/js/search.min.js?v=654de821" defer></script>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true}).catch(function(){});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true}).catch(function(){});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(ev.defaultPrevented&&/\.exe([?#]|$)/i.test(h))return;if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm"+location.pathname);else if(/TechiesOneMail-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/t1"+location.pathname);else if(/TechiesPDF-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/tpdf"+location.pathname);else if(/TechiesMove-Setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/tmove"+location.pathname);else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});document.addEventListener("tt:send",function(e){var p=e&&e.detail&&e.detail.app;if(p==="pcm"||p==="t1"||p==="tpdf"||p==="tmove")tap("/~send/"+p+location.pathname);});document.addEventListener("tt:share",function(e){var w=e&&e.detail&&e.detail.how;if(/^(native|whatsapp|email|facebook|copy)$/.test(w||""))tap("/~share/"+w+location.pathname);});}catch(e){}})();</script>
+</body>
+</html>
