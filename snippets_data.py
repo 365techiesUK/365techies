@@ -399,10 +399,20 @@ SNIPPETS = {
         "desc": "Is it down, or is it just you? Live status for 30+ big services including WhatsApp, Microsoft 365, Gmail and PlayStation, plus a check of your own line.",
     },
     "custom-pc-builder": {
-        "desc": "Free custom PC builder. Set your budget and use, gaming, creative, office or CAD, and get an experienced builder's split of where the money should go.",
+        # 16 Nov 2026 (GSC 28 days): "budget pc build" 564 impressions at position 7.7, 0 clicks, under the title "How to
+        # Split a PC Build Budget", which reads like an essay, not the planner it is. The page is unchanged.
+        "title": "Budget PC Build Planner: Where to Spend Your Money",
+        "desc": "Planning a budget PC build? Set your budget and use, gaming, creative, office or CAD, and see an experienced builder's split of where the money should go.",
     },
 
     # ---- broadband / WiFi
+    "computer-asking-for-bitlocker-recovery-key": {
+        # 16 Nov 2026 (GSC 28 days): "bitlocker recovery key" 777 impressions at position 8.5, 2 clicks. The searcher wants
+        # to find the key, and the page already sends them to Microsoft's own page for it; the title only described the
+        # symptom ("Computer Asking for a BitLocker Recovery Key? What to Do").
+        "title": "BitLocker Recovery Key: Where to Find Yours, Step by Step",
+        "desc": "Computer asking for a BitLocker recovery key? Where to find yours in your Microsoft account, what to try if it is not there, and what not to do.",
+    },
     "how-to-choose-broadband": {
         "desc": "A plain-English guide to choosing broadband: FTTP full fibre, FTTC, 4G/5G and Starlink explained, and how much speed you really need at home.",
     },
@@ -942,8 +952,14 @@ SNIPPETS = {
         # 18 Oct 2026: Bing showed it 12,022 times in 3 months at pos 7.4 but only 0.98% clicked (Google 3.2% at the same
         # position); Bing's words are "my pc specs" (1,470 impressions, 4 clicks), "pc specs", "my computer specs". Keeps every
         # Google-earning phrase ("pc spec checker", "what are my specs", "check ... online") and adds "my PC specs".
-        "title": "PC Spec Checker: What Are My PC Specs? Check Free Online",
-        "desc": "See your PC specs in seconds, free with no download: operating system, graphics card, processor cores, memory, screen and battery, read live.",
+        # 16 Nov 2026 (GSC 28 days): queries with "how to check" showed this page 11,249 times at position 7.2 for 24 clicks
+        # (0.2%): "how to check my pc specs" 1,759 imps 1 click, "how to check pc specs" 1,594, "how to see my pc specs" 828,
+        # "how to check my laptop specs" 708. The page already has the how-to section ("How to check your PC specs") and
+        # the film; the title never said "how to". Keeps "PC spec checker", "my PC specs", "free" and "online"; "what are
+        # my specs" (12 clicks) stays in the H1 and the description. Was: "PC Spec Checker: What Are My PC Specs? Check
+        # Free Online". JUDGE ~7 Dec against 345 clicks a week; put the old title back if the page's total falls.
+        "title": "How to Check My PC Specs: Free PC Spec Checker Online",
+        "desc": "How to check your PC specs: this free checker shows what your specs are in seconds, with no download. Processor, graphics, memory, screen and battery.",
     },
     "outlook-wont-open-in-safe-mode": {
         "desc": "If classic Outlook will not open even in safe mode, the fault is past add-ins. Run Office Quick then Online Repair, make a new profile, then scanpst.",
