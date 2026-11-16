@@ -27,6 +27,8 @@ import tips_by_email        # /tips-by-email/ + the sign-up box under every arti
 import techies_one_boxes    # Techies One Mail box on the 9 email fix pages it genuinely helps (10 Oct 2026; a write_all page filter)
 import ost_to_pst_page_data as _ostpst   # 10 Nov 2026: the free OST to PST box on 4 Outlook data-file pages (a page filter)
 _ostpst.register(techies_one_boxes.bp)
+import passkey_26h2_pages_data as _pk26   # 16 Nov 2026: a box to the passkey and 26H2 guides on 5 related pages (a page filter)
+_pk26.register(techies_one_boxes.bp)
 import health_check_links   # links to /free-pc-health-check/ on busy pages with none in the article (30 Oct 2026)
 import pcm_problem_boxes   # 365 PC Manager boxes on 12 existing problem pages (13 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)

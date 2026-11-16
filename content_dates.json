@@ -187,18 +187,18 @@
  },
  "bournemouth": {
   "first": "2026-08-03",
-  "h": "869a3fb87d11913e",
-  "last": "2026-10-06"
+  "h": "734f1a435ff94b99",
+  "last": "2026-11-16"
  },
  "bournemouth/beach-parking": {
   "first": "2026-08-03",
-  "h": "c7a943f123fe9448",
-  "last": "2026-10-04"
+  "h": "4df14052880d74b1",
+  "last": "2026-11-16"
  },
  "bournemouth/fireworks": {
   "first": "2026-08-02",
-  "h": "a1fc60d4a24f4db7",
-  "last": "2026-10-04"
+  "h": "36b63bc651b92893",
+  "last": "2026-11-16"
  },
  "bournemouth/fuel-prices": {
   "first": "2026-10-04",
@@ -1525,8 +1525,8 @@
  },
  "how-to-recover-deleted-files": {
   "first": "2026-06-16",
-  "h": "f872357d814b5b4a",
-  "last": "2026-10-22"
+  "h": "676784eed257c283",
+  "last": "2026-11-16"
  },
  "how-to-scan-a-document": {
   "first": "2026-06-16",
@@ -1555,8 +1555,8 @@
  },
  "how-to-set-up-a-second-monitor": {
   "first": "2026-06-16",
-  "h": "4450d73ddadabc1c",
-  "last": "2026-10-22"
+  "h": "8e1ae1c3fbacd074",
+  "last": "2026-11-16"
  },
  "how-to-set-up-email-on-your-phone": {
   "first": "2026-06-16",
@@ -1565,8 +1565,8 @@
  },
  "how-to-set-up-two-factor-authentication": {
   "first": "2026-07-28",
-  "h": "72d910847d47fa25",
-  "last": "2026-09-28"
+  "h": "128a15736c89046e",
+  "last": "2026-11-16"
  },
  "how-to-sign-a-pdf": {
   "first": "2026-10-27",
@@ -1595,8 +1595,8 @@
  },
  "how-to-take-a-screenshot": {
   "first": "2026-06-16",
-  "h": "1c782e584af89cc4",
-  "last": "2026-10-22"
+  "h": "059635b56b4cc63b",
+  "last": "2026-11-16"
  },
  "how-to-transfer-files-to-a-new-computer": {
   "first": "2026-06-16",
@@ -1615,8 +1615,8 @@
  },
  "how-to-update-windows-safely": {
   "first": "2026-06-16",
-  "h": "05366a5f9b753bab",
-  "last": "2026-10-27"
+  "h": "74b7baf20baa430e",
+  "last": "2026-11-16"
  },
  "how-to-use-a-password-manager": {
   "first": "2026-06-16",
@@ -1680,8 +1680,8 @@
  },
  "is-my-windows-still-supported": {
   "first": "2026-10-11",
-  "h": "4f1ae05e78735108",
-  "last": "2026-11-13"
+  "h": "b52d504632b11c0c",
+  "last": "2026-11-16"
  },
  "is-outlook-down": {
   "first": "2026-11-13",
@@ -1695,8 +1695,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "c1809c99be846843",
-  "last": "2026-11-15"
+  "h": "7e3d78fdcde11ccd",
+  "last": "2026-11-16"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -1725,13 +1725,13 @@
  },
  "it-jargon-buster/cache": {
   "first": "2026-07-28",
-  "h": "ee150aa660140df9",
-  "last": "2026-10-22"
+  "h": "c9dc5735d6454f78",
+  "last": "2026-11-16"
  },
  "it-jargon-buster/cookies": {
   "first": "2026-07-28",
-  "h": "9b342b03c74eaa2d",
-  "last": "2026-10-22"
+  "h": "308abb807ebbbf22",
+  "last": "2026-11-16"
  },
  "it-jargon-buster/cpu": {
   "first": "2026-07-28",
@@ -1760,8 +1760,8 @@
  },
  "it-jargon-buster/ip-address": {
   "first": "2026-07-28",
-  "h": "e86201dd747b14f9",
-  "last": "2026-10-22"
+  "h": "e25e8e995db1651e",
+  "last": "2026-11-16"
  },
  "it-jargon-buster/malware": {
   "first": "2026-07-28",
@@ -2970,8 +2970,8 @@
  },
  "password-manager-setup": {
   "first": "2026-07-28",
-  "h": "87e176faf44a0b56",
-  "last": "2026-10-29"
+  "h": "4b7181eaa258c37c",
+  "last": "2026-11-16"
  },
  "password-strength-checker": {
   "first": "2026-07-28",
@@ -3097,8 +3097,8 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "1beb32c5e6541722",
-  "last": "2026-11-02"
+  "h": "54f8213793a7363b",
+  "last": "2026-11-16"
  },
  "pre-call-checklists": {
   "first": "2026-07-28",
@@ -3402,8 +3402,8 @@
  },
  "scam-pop-up-help-poole": {
   "first": "2026-07-28",
-  "h": "82a9875043dc4d76",
-  "last": "2026-10-22"
+  "h": "0c3a1f03a68950df",
+  "last": "2026-11-16"
  },
  "scam-recovery": {
   "first": "2026-09-05",
@@ -3932,6 +3932,10 @@
   "h": "db226b7d633e2ba1",
   "last": "2026-11-16"
  },
+ "what-is-a-passkey": {
+  "first": "2026-11-16",
+  "h": "1980bd6817eeba5e"
+ },
  "what-to-do-before-replacing-old-computer": {
   "first": "2026-06-16",
   "h": "43b58b2dd6652569",
@@ -4107,6 +4111,10 @@
   "h": "8f6bdfec77ab063a",
   "last": "2026-10-30"
  },
+ "windows-11-26h2-update": {
+  "first": "2026-11-16",
+  "h": "4eccc500e806cd77"
+ },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
   "h": "01e1b3690b830f35",
@@ -4154,8 +4162,8 @@
  },
  "windows-update-stuck": {
   "first": "2026-10-12",
-  "h": "a9620682c0f688bd",
-  "last": "2026-11-13"
+  "h": "7f8eccd9259fbd0e",
+  "last": "2026-11-16"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",

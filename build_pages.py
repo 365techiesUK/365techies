@@ -522,6 +522,8 @@ NAV_MENUS = [
             ("Outlook Problems", "/outlook-problems/"),
             ("OneDrive Problems", "/onedrive-problems/"),
             ("Windows 11 Help", "/windows-11-support/"),
+            ("Windows 11 26H2 Update", "/windows-11-26h2-update/"),   # 16 Nov 2026 (owner: "in our nav")
+            ("What Is a Passkey?", "/what-is-a-passkey/"),
             ("Slow Wi-Fi?", "/wifi-troubleshooting/"),
             ("Broadband Down?", "/broadband-down/"),
             ("All Guides &amp; Advice &#8594;", "/it-advice/"),

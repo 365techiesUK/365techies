@@ -25,6 +25,7 @@ from new_pages_data import NEW_PAGES
 import greenby_page_data   # /greenby-email-login/ (13 Oct 2026): appends to NEW_PAGES
 import ghost_backup_page_data   # /open-gho-file/ (3 Nov 2026): appends to NEW_PAGES
 import ost_to_pst_page_data   # /ost-to-pst-converter/ (10 Nov 2026): appends to NEW_PAGES
+import passkey_26h2_pages_data   # /what-is-a-passkey/ + /windows-11-26h2-update/ (16 Nov 2026): appends to NEW_PAGES
 import t1_024_pages_data   # copy text from a picture, make a video smaller, trim a video (15 Nov 2026): appends to NEW_PAGES
 import isp_email_pages_data   # TalkTalk/Everymail, Plusnet legacy brands/Greenby, leaving BT, closed ISP email (3 Nov 2026): appends to NEW_PAGES
 import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
