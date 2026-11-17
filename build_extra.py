@@ -31806,6 +31806,33 @@ def write_portal_page():
       w.innerHTML = h + (note ? '<div style="margin-top:.2rem;color:#7ee0a2;font-size:.85rem">' + esc(note) + '</div>' : '')
         + '<div style="margin-top:.15rem"><button class="sm ghost pcmre" style="margin:0;padding:.15rem .5rem;font-size:.75rem">Check again</button></div>';
       w.querySelector('.pcmre').onclick = function () { load(''); };
+      /* 17 Nov 2026 (owner, at a customer's PC): the activation key on the card itself - the same staffkey
+         call as the licence table's Key button, with the same opaque id staffpcmlic hands out, so finding a
+         customer no longer means a Ctrl+F through the table (sorted by last seen) to reach their key. */
+      Array.prototype.forEach.call(w.querySelectorAll('.pcmkb'), function (b) {
+        b.onclick = function () {
+          b.disabled = true;
+          post(BK, { action: 'staffkey', stoken: S.stoken, machine: mid(), cid: b.getAttribute('data-id') })
+            .then(function (r) {
+              if (!r || !r.ok || !r.key) { b.disabled = false; alert('Couldn\\u2019t fetch the key - try again.'); return; }
+              var sp = document.createElement('span'); sp.className = 'pcmkv'; sp.style.marginLeft = '.3rem';
+              sp.innerHTML = '<strong class="mono" style="color:var(--pwhite)">' + esc(r.key) + '</strong> ';
+              function copyBtn(label, text, cls) {
+                var c = document.createElement('button'); c.className = cls; c.textContent = label;
+                c.style.cssText = 'margin:0 .2rem 0 0;padding:.15rem .5rem;font-size:.75rem';
+                c.onclick = function () {
+                  navigator.clipboard.writeText(text).then(function () { c.textContent = '\\u2713 copied'; },
+                    function () { c.textContent = 'select it + Ctrl+C'; });
+                };
+                return c;
+              }
+              sp.appendChild(copyBtn('\\ud83d\\udccb key', r.key, 'sm'));
+              if (r.weblink) sp.appendChild(copyBtn('\\ud83d\\udccb link', r.weblink, 'sm ghost'));
+              b.parentNode.replaceChild(sp, b);
+            })
+            .catch(function () { b.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+        };
+      });
       Array.prototype.forEach.call(w.querySelectorAll('.pcmtf'), function (b) {
         b.onclick = function () {
           var to = b.getAttribute('data-to'), nm = b.getAttribute('data-nm'), was = b.textContent;
@@ -31837,6 +31864,7 @@ def write_portal_page():
             h += '<div style="margin:.1rem 0">' + lbl + '<span class="pill ' + (l.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span> '
               + '<span class="quiet">' + l.pcs + (l.pcs === 1 ? ' PC' : ' PCs') + (l.ver ? ' \\u00b7 v' + (l.vn || l.ver) : '') + (l.seen ? ' \\u00b7 seen ' + seenTxt(l.seen) : '')
               + (r.lic.length > 1 ? ' \\u00b7 ' + esc(l.name) + ' <span class="mono">' + esc(l.keymask) + '</span>' : '') + '</span>'
+              + ' <button class="sm ghost pcmkb" data-id="' + esc(l.id) + '" title="Show + copy their activation key" style="margin:0 0 0 .3rem;padding:.15rem .5rem;font-size:.75rem">\\ud83d\\udd11 Key</button>'
               + (l.tier === 'pro'
                   ? ' <button class="sm ghost pcmtf" data-id="' + esc(l.id) + '" data-to="free" data-nm="' + esc(l.name) + '" style="margin:0 0 0 .3rem;padding:.15rem .5rem;font-size:.75rem">\\u2192 Free</button>'
                   : ' <button class="sm pcmtf" data-id="' + esc(l.id) + '" data-to="pro" data-nm="' + esc(l.name) + '" style="margin:0 0 0 .3rem;padding:.3rem .75rem;font-size:.85rem">\\u2b50 Make Pro</button>')
