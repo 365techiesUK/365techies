@@ -223,7 +223,8 @@ NEW_PAGES.append({
                  '<li><strong>Use a password manager.</strong> It makes a different password for every account and '
                  'remembers them all. It also refuses to fill in your password on a fake website, which makes it one of '
                  'the best defences against phishing. See <a href="/how-to-use-a-password-manager/">how to use a '
-                 'password manager</a>. The ones built into Google, Microsoft Edge and Apple devices are fine.</li>'
+                 'password manager</a>. The ones built into Google, Microsoft Edge and Apple devices are fine. Rather we set one '
+                 'up for you and move your passwords into it? See <a href="/password-manager-setup/">password manager setup</a>.</li>'
                  '<li><strong>Keep every device updated, automatically.</strong> On Windows: Settings, then Windows '
                  'Update, and turn on <em>Get the latest updates as soon as they&rsquo;re available</em>. Your programs '
                  'need updating too: our free <a href="/free-pc-health-check/">365 PC Manager</a> lists the out-of-date '
@@ -515,7 +516,8 @@ CT_GUIDE_HTML = '''    <section class="section section--alt" aria-label="What a 
           <li><strong>Secure your email</strong> with a <a href="/what-is-a-passkey/">passkey</a>, or a unique password and
           <a href="/how-to-set-up-two-factor-authentication/">two-step sign-in</a>.</li>
           <li><strong>Use a <a href="/how-to-use-a-password-manager/">password manager</a></strong>, so one breach can&rsquo;t
-          open your other accounts. It also won&rsquo;t fill in your password on a fake site.</li>
+          open your other accounts. It also won&rsquo;t fill in your password on a fake site. Or
+          <a href="/password-manager-setup/">we&rsquo;ll set one up for you</a>.</li>
           <li><strong>Turn on automatic updates</strong> for Windows, your phone and every program. Our free
           <a href="/free-pc-health-check/">365 PC Manager</a> <a href="/update-all-your-programs/">updates all your programs
           with one button</a>.</li>
