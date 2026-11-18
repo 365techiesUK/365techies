@@ -299,9 +299,14 @@ if (!is_array($j)) {
 
 /* Server-side reachability probes: any HTTP response = the service answered.
    Code 0 stays amber, not red — we can't tell a target outage from a local blip. */
+$BANKS = ['santander', 'natwest', 'barclays', 'lloyds', 'halifax', 'hsbc', 'nationwide'];
 foreach ($PROBE as $k => $u) {
     $c = $code['p_' . $k];
-    if ($c === 0) put($svc, $k, 'warn', 'Didn\'t answer our monitoring server just now');
+    // Banks' bot shields sometimes stall a server request (HSBC did 2 sweeps in 3 on 18 Nov 2026 while
+    // the site was fine). No answer = "unknown", so the 30-min stale fallback below keeps the last real
+    // reading instead of flapping amber; the visitor's own browser check still shows a real outage.
+    if ($c === 0 && in_array($k, $BANKS, true)) put($svc, $k, 'unknown', '');
+    elseif ($c === 0) put($svc, $k, 'warn', 'Didn\'t answer our monitoring server just now');
     elseif ($c >= 500) put($svc, $k, 'warn', 'Responding with server errors (HTTP ' . $c . ')');
     else put($svc, $k, 'ok', '');
 }
