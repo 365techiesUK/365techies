@@ -17,6 +17,7 @@ import sys
 
 import build_pages as bp
 import pcm_feature_pages_data as pfp
+import yt_watch
 
 # key -> (picture, box heading, what it does); _CLIP = the 9-second clip that replaces the picture (none for Wi-Fi: no Wi-Fi screen)
 _CLIP = {'battery': 'battery', 'isitdown': 'isitdown', 'printers': 'printers', 'windows': 'windows', 'remote': 'remote',
@@ -62,6 +63,19 @@ _BOX = {
         '<p style="margin:0">Our free app&rsquo;s <strong>Storage &amp; space</strong> page shows how full every drive is, clears Windows&rsquo; '
         '<strong>temporary files</strong>, and finds your <strong>biggest files</strong>, with buttons to open each one or its folder. So after freeing up '
         'OneDrive you can see at once whether the C: drive has its room back, and what else is using it.</p>'),
+    # 18 Nov 2026 (owner: "if it mentions the 365 PC Manager ... the Microsoft Store download ... a picture ... a video"): the
+    # Be Ready / cyber attacks pages. Only what the app really does (the health-check table on /free-pc-health-check/ and
+    # /update-all-your-programs/): Windows Update arriving, Programs check (out-of-date programs updated with one button via
+    # winget, programs with no security fixes, two security programs at once), protection on, backup genuinely running,
+    # remote-control programs. Free month = only via a friend's Share (Give a friend a free month, 36.5), never "every download".
+    'beready': ('appupdates', 'Get your PC ready in one free app',
+        '<p style="margin:0">Our free app checks the computer side of the government&rsquo;s list for you: whether <strong>Windows updates</strong> are '
+        'arriving, which <strong>programs are out of date</strong> (and updates them with one button), programs that <strong>no longer get security '
+        'fixes</strong>, whether your <strong>protection is switched on</strong>, whether a <strong>backup is genuinely running</strong>, and any '
+        '<strong>remote-control programs</strong> a scammer may have left behind. Everything is explained in plain English, and nothing changes until '
+        'you press a button.</p>'
+        '<p style="margin:.6rem 0 0">Free to download and use, no sign-up. If a friend already has it, they can send you a free month of everything '
+        'from the app&rsquo;s Share button.</p>'),
     'remote': ('remote', 'Is anyone still connected to your PC?',
         '<p style="margin:0">Our free app&rsquo;s <strong>Remote access</strong> page says for certain whether a Remote Desktop, Quick Assist or Splashtop session is open '
         'right now, lists the remote-control programs on the PC and which are running, and reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected. '
@@ -119,6 +133,21 @@ PAGES = {
         'If someone was given remote access, or you&rsquo;re not sure, check whether anyone can still get in.'),
     'ive-been-scammed-what-to-do': ('remote', '// ONCE THE CALL HAS ENDED', 'Is anyone still connected to your PC?',
         'If a caller had you install AnyDesk, TeamViewer or Quick Assist, check that they can&rsquo;t still get in.'),
+    # 18 Nov 2026: the stay-safe pages (stay_safe_pages_data.py, breach_guide_data.py)
+    'be-ready-digital-checklist': ('beready', '// DO THE COMPUTER PART NOW', 'Check your PC in a few minutes, free',
+        'Updates, programs, protection and backups are the part of being ready that people put off. Now, before anything goes '
+        'wrong, is the time to do it, and our free Windows app does the checking for you.'),
+    'cyber-threats': ('beready', '// STEPS 3, 4 AND 5, CHECKED FOR YOU', 'See where your PC stands, free',
+        'Most attacks get in through something out of date. Our free Windows app shows what needs updating, what no longer gets '
+        'security fixes and whether your backup is really running, in plain English.'),
+    'data-breaches': ('remote', '// CLICKED A LINK, OR LET SOMEONE CONNECT?', 'Check your PC, free',
+        'A company&rsquo;s breach doesn&rsquo;t touch your PC. If you also clicked a scam link or let someone connect to your '
+        'computer, our free Windows app checks whether anyone can still get in.'),
+}
+
+# 18 Nov 2026: extra lines after the box (the 365 PC Manager full tour on YouTube, 5 minutes)
+_AFTER_BOX = {
+    'beready': lambda: '<p style="margin:1.1rem 0 0">' + yt_watch.button(yt_watch.PCM_TOUR, "Watch the 5-minute tour of 365 PC Manager") + '</p>',
 }
 
 
@@ -130,10 +159,11 @@ def _section(slug):
     if not setup:
         return ''
     box = pfp._app_box(pic, bhead, what, setup, clip=_CLIP.get(key, ''))
+    extra = _AFTER_BOX[key]() if key in _AFTER_BOX else ''
     return ('    <section class="section" aria-label="In our free app" id="in-the-app">\n      <div class="wrap" style="max-width:980px">\n'
             '        <p class="eyebrow mono">' + eyebrow + '</p>\n'
             '        <h2 class="section-title" data-title>' + head + '<span class="title-underline"></span></h2>\n'
-            '        <p>' + lead + '</p>\n        ' + box + '\n      </div>\n    </section>\n')
+            '        <p>' + lead + '</p>\n        ' + box + extra + '\n      </div>\n    </section>\n')
 
 
 def _section_end(html, start):
@@ -150,7 +180,9 @@ def _section_end(html, start):
 # belongs after the fix, before "When to let us do it for you", not between the guided steps and the explanation)
 AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7', 'printer-wont-connect-to-bt-smart-hub': 's5',
                  'printer-wont-connect-to-sky-router': 's5', 'printer-wont-connect-after-moving-house': 's5',
-                 'onedrive-taking-up-space': 's7'}   # 21 Oct: after "what's really using the space"
+                 'onedrive-taking-up-space': 's7',   # 21 Oct: after "what's really using the space"
+                 'be-ready-digital-checklist': 's4',   # 18 Nov: straight after "the government's cyber steps, done properly"
+                 'cyber-threats': 'what-is'}           # 18 Nov: after the guide (it holds the eight steps), before the threat cards
 
 
 def insert(slug, html):
