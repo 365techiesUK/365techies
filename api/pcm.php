@@ -1289,6 +1289,58 @@ if ($action === 'idea') {
     out(array('ok'=>true));   // stored = sent: the portal list has it even if Slack didn't answer
 }
 
+// 18 Nov 2026 (owner: "if an existing customer downloads the PC Manager and wants support ... we want it to be easy ... to sign
+// in"): "Ask us to link this PC" - a customer who knows neither a key nor their booking password sends a name and a phone
+// number or email. It goes to Slack and staff send that PC its activation link (portal: the customer -> Key -> link, opened ON
+// the PC). NOTHING is linked here: a name typed into an app proves nothing. Only an install that has checked in
+// (pcm-installs.json) or a key we know may ask; per install 3 a day, everyone 30 an hour (pcm-linkask.json, denied in .htaccess).
+if ($action === 'linkask') {
+    require_once __DIR__ . '/pcm-installs-lib.php';
+    if (strlen($machine) < 8) out(array('ok'=>false,'error'=>'unknown'));
+    $iid = substr(sha1('365inst|' . $machine), 0, 16);
+    $inst = @json_decode((string)@file_get_contents(inst_file()), true);
+    $ie = (is_array($inst) && isset($inst['m'][$iid]) && is_array($inst['m'][$iid])) ? $inst['m'][$iid] : null;
+    $known = $key !== '' && isset($db['customers'][$key]);
+    if (!$ie && !$known) out(array('ok'=>false,'error'=>'unknown'));
+    $who = pcm_txt($in['who'] ?? '', 60); $contact = pcm_txt($in['contact'] ?? '', 80); $pcName = pcm_txt($in['pc'] ?? '', 40);
+    if (strlen($who) < 2 || strlen($contact) < 5) out(array('ok'=>false,'error'=>'empty'));
+    $rf = isset($GLOBALS['PCM_LINKASK_FILE']) ? $GLOBALS['PCM_LINKASK_FILE'] : __DIR__ . '/pcm-linkask.json';
+    $now = time(); $day = gmdate('Ymd', $now); $hour = intdiv($now, 3600);
+    $fh = @fopen($rf, 'c+');
+    if ($fh) {
+        flock($fh, LOCK_EX);
+        $rd = json_decode((string)stream_get_contents($fh), true); if (!is_array($rd)) $rd = array();
+        $rate = (isset($rd['rate'][$day]) && is_array($rd['rate'][$day])) ? $rd['rate'][$day] : array();
+        $hn = (isset($rd['hr']['h']) && (int)$rd['hr']['h'] === $hour) ? (int)($rd['hr']['n'] ?? 0) : 0;
+        if ((int)($rate[$iid] ?? 0) >= 3 || $hn >= 30) { flock($fh, LOCK_UN); fclose($fh); out(array('ok'=>false,'error'=>'rate')); }
+        $rate[$iid] = (int)($rate[$iid] ?? 0) + 1;
+        $rd = array('rate'=>array($day=>$rate), 'hr'=>array('h'=>$hour, 'n'=>$hn + 1));   // only today's counts are kept
+        ftruncate($fh, 0); rewind($fh); fwrite($fh, json_encode($rd)); fflush($fh); flock($fh, LOCK_UN); fclose($fh);
+    }
+    $esc = function($s){ return str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), (string)$s); };
+    $state = $known ? 'linked to *' . $esc(pcm_txt($db['customers'][$key]['name'] ?? 'a customer record', 60)) . '* already (check it is the right record)'
+           : (strpos($key, 'UNLK-') === 0 ? 'on its free month' : 'not linked');
+    $txt = ":link: *PC Manager: a customer wants this PC linked*\n*" . $esc($who) . "* - " . $esc($contact)
+         . "\nPC \"" . $esc($pcName !== '' ? $pcName : '?') . "\" - " . $state . " - build " . (int)($in['ver'] ?? 0)
+         . "\nTo link it: portal -> find the customer -> :key: Key -> send them the link, and they open it on that PC.";
+    $SLACK_WEBHOOK = '';
+    if (file_exists($WEBHOOK)) { ob_start(); include $WEBHOOK; ob_end_clean(); }
+    if (empty($SLACK_WEBHOOK) && file_exists($WEBHOOK)) {
+        $rawWh = (string)@file_get_contents($WEBHOOK);
+        if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+    }
+    $sent = false;
+    if (!empty($SLACK_WEBHOOK) && empty($GLOBALS['PCM_LINKASK_NOSEND'])) {
+        $ch = curl_init($SLACK_WEBHOOK);
+        curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+            CURLOPT_HTTPHEADER=>array('Content-Type: application/json'),
+            CURLOPT_POSTFIELDS=>json_encode(array('text'=>$txt, 'unfurl_links'=>false))));
+        $resp = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+        $sent = $code >= 200 && $code < 300;
+    }
+    out(array('ok'=>$sent, 'error'=>$sent ? '' : 'send'));
+}
+
 if ($action === 'help') {
     // only registered machines can raise a help request (stops anonymous relay abuse)
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key','sent'=>false));
