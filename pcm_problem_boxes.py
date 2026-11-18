@@ -67,15 +67,16 @@ _BOX = {
     # Be Ready / cyber attacks pages. Only what the app really does (the health-check table on /free-pc-health-check/ and
     # /update-all-your-programs/): Windows Update arriving, Programs check (out-of-date programs updated with one button via
     # winget, programs with no security fixes, two security programs at once), protection on, backup genuinely running,
-    # remote-control programs. Free month = only via a friend's Share (Give a friend a free month, 36.5), never "every download".
+    # remote-control programs. 30 days of everything: every NEW install gets it by itself (api/pcm-plus-lib.php
+    # plus_trial_auto_uk since 13 Oct, plus_trial_auto_abroad since 18 Oct; one per PC, never linked/ours/on a plan) - owner, 18 Nov.
     'beready': ('appupdates', 'Get your PC ready in one free app',
         '<p style="margin:0">Our free app checks the computer side of the government&rsquo;s list for you: whether <strong>Windows updates</strong> are '
         'arriving, which <strong>programs are out of date</strong> (and updates them with one button), programs that <strong>no longer get security '
         'fixes</strong>, whether your <strong>protection is switched on</strong>, whether a <strong>backup is genuinely running</strong>, and any '
         '<strong>remote-control programs</strong> a scammer may have left behind. Everything is explained in plain English, and nothing changes until '
         'you press a button.</p>'
-        '<p style="margin:.6rem 0 0">Free to download and use, no sign-up. If a friend already has it, they can send you a free month of everything '
-        'from the app&rsquo;s Share button.</p>'),
+        '<p style="margin:.6rem 0 0"><strong>Free to download and use, with no sign-up, and every new install gets 30 days of everything free</strong>, '
+        'so you can try the full service and see what it finds before deciding anything.</p>'),
     'remote': ('remote', 'Is anyone still connected to your PC?',
         '<p style="margin:0">Our free app&rsquo;s <strong>Remote access</strong> page says for certain whether a Remote Desktop, Quick Assist or Splashtop session is open '
         'right now, lists the remote-control programs on the PC and which are running, and reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected. '
