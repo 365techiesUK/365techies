@@ -336,8 +336,9 @@ SNIPPETS = {
         "title": "Online Safety Hub: Stay Safe Online, in Plain English",
         "desc": "Staying safe online, made simple. Learn the common threats, test yourself, and pick up easy habits that keep you and your family safe.",
     },
+    "be-ready-digital-checklist": {"desc": "The government's Be Ready campaign asks homes to cope for 3 days without services. The tech side: phones, internet, power cuts, backups and cyber attacks."},   # 18 Nov 2026
     "cyber-threats": {
-        "desc": "Cyber threats explained in plain English: ransomware, phishing, online scams, malware, smishing, business email compromise and data breaches.",
+        "desc": "Cyber attacks in the UK, explained: what a cyber attack is, the latest attacks, how AI is changing them, and the eight steps that keep you safe.",   # 18 Nov 2026: hub rebuilt as "cyber attacks in the UK"
     },
     "how-to-choose-antivirus": {
         "desc": "A plain-English guide to choosing antivirus and online protection: what good security really includes, free versus paid, and whether you need a VPN.",
@@ -667,7 +668,7 @@ SNIPPETS = {
         "desc": "Independent Dell XPS repair across Bournemouth, Poole and Dorset. Swollen batteries, overheating, coil whine, screens and SSD upgrades, priced honestly.",
     },
     "disaster-recovery": {
-        "desc": "Disaster recovery and business continuity from 365 Techies: verified backups, ransomware rollback, rapid recovery, cloud failover and a written plan.",
+        "desc": "What a business continuity plan is, what to put in it, and a free printable template for small businesses. Plus tested backups and disaster recovery.",   # 18 Nov 2026: rebuilt around the business continuity plan + template
     },
     "downtime-cost-calculator": {
         "desc": "What could IT downtime be costing your business? Answer four quick questions for a friendly estimate based on your own numbers, not an industry average.",

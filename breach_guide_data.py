@@ -5,6 +5,10 @@ Why: Bing UK, 3 months to 15 Nov 2026: "have i been pwned" 11,091 exact (+ "have
 in order; the old page was a short template. Used by make_threat(extra_html=...) in build_extra.py.
 Claim limits: we are not connected with Have I Been Pwned; never promise compensation; a breach of a
 company does not mean your PC is infected.
+18 Nov 2026 (later): "Recent UK breaches" list ("asos hacked" = 14,948 Bing UK searches in the quarter). Only what each
+company said it lost: ASOS Oct 2026 (its statement, via Malwarebytes/BleepingComputer), Manchester Airports Group Aug 2026
+(as reported: 8.7M, emails/phones/registrations/postcodes, no payment data), Harrods Sep 2025 (430K records via a third
+party), Co-op 2025 (all 6.5M members), M&S 2025. Keep it dated; add the next big one the day it lands.
 """
 
 TITLE = "Found in a Data Breach? What to Do Next | 365 Techies"
@@ -58,6 +62,31 @@ GUIDE_HTML = '''    <section class="section" aria-label="What to do if you are i
             Have I Been Pwned&rsquo;s free &ldquo;Notify me&rdquo; service emails you if your address turns up in
             a future breach.</li>
           </ol>
+
+          <h3 id="recent">Recent UK breaches: were you affected?</h3>
+          <p>The big ones people are searching for, newest first, with what the company said was taken. If you&rsquo;re a
+          customer, the steps above apply, and step 5 (expect scams) matters most: criminals send fake &ldquo;you were
+          affected&rdquo; emails after every big breach. <small>(Updated 18 November 2026.)</small></p>
+          <ul>
+            <li><strong>ASOS (October 2026).</strong> A staff login was stolen by trickery and customers&rsquo; basic
+            personal information and contact details may have been accessed. ASOS said it doesn&rsquo;t believe card
+            details or passwords were affected. Watch for fake ASOS emails and texts about orders or refunds.</li>
+            <li><strong>Manchester Airports Group (August 2026).</strong> About 8.7 million customers of Manchester,
+            Stansted and East Midlands airports were told their email address, phone number, vehicle registration and
+            postcode were exposed. No payment details were held in that system, the company said. Expect fake parking
+            refund and booking messages.</li>
+            <li><strong>Harrods (September 2025).</strong> About 430,000 customer records, mostly names and contact
+            details, were taken from a company that worked for Harrods. No passwords or payment details, Harrods
+            said.</li>
+            <li><strong>Co-op (2025).</strong> The details of all 6.5 million members were taken: names, addresses and
+            contact details. No bank details or passwords.</li>
+            <li><strong>M&amp;S (2025).</strong> Names, contact details, dates of birth and order histories were taken.
+            No usable card details or passwords, M&amp;S said, though it asked customers to reset their password.</li>
+          </ul>
+          <p>Not on the list: the <a href="/is-outlook-down/">Microsoft 365 outage of 12&ndash;13 November 2026</a>, which
+          Microsoft said was not an attack. For the wider picture, see <a href="/cyber-threats/">cyber attacks in the UK:
+          what&rsquo;s happening</a>, and to be ready for the next one, our
+          <a href="/be-ready-digital-checklist/">Be Ready digital checklist</a>.</p>
 
           <h3 id="by-data">What was leaked, and what to do about it</h3>
           <ul>
@@ -134,6 +163,10 @@ FAQS = [
      "Sometimes. Under UK data protection law you can complain to the company and then to the Information "
      "Commissioner&rsquo;s Office, and you may be able to claim if you lost money or suffered distress. Be wary of "
      "firms that cold-call offering to claim for you."),
+    ("How do I find out if a company&rsquo;s breach affected me?",
+     "A company that loses personal data usually emails the people affected and posts a notice on its own website. Check "
+     "the website directly rather than trusting an email that says you were affected, because fake breach notices are "
+     "common. Have I Been Pwned also lists many large breaches once the data appears online."),
     ("What should I do after a breach?",
      "Secure your email first (new password, two-step sign-in), change the leaked password everywhere you used it, "
      "switch on two-step sign-in for banking and shopping accounts, and watch for scams that use your details."),

@@ -27,6 +27,7 @@ import ghost_backup_page_data   # /open-gho-file/ (3 Nov 2026): appends to NEW_P
 import ost_to_pst_page_data   # /ost-to-pst-converter/ (10 Nov 2026): appends to NEW_PAGES
 import passkey_26h2_pages_data   # /what-is-a-passkey/ + /windows-11-26h2-update/ (16 Nov 2026): appends to NEW_PAGES
 import ce_questions_page_data   # /cyber-essentials-questions/ (16 Nov 2026): appends to NEW_PAGES
+import stay_safe_pages_data as _ss   # /be-ready-digital-checklist/ (appends to NEW_PAGES) + the rebuilt /cyber-threats/ and /disaster-recovery/ (18 Nov 2026)
 import t1_024_pages_data   # copy text from a picture, make a video smaller, trim a video (15 Nov 2026): appends to NEW_PAGES
 import isp_email_pages_data   # TalkTalk/Everymail, Plusnet legacy brands/Greenby, leaving BT, closed ISP email (3 Nov 2026): appends to NEW_PAGES
 import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
@@ -17888,6 +17889,7 @@ info_page(
             <li><strong>Lock your devices</strong> with a PIN, password or biometrics. Set the screen to lock after a few minutes, turn on Find My Device, and encrypt any laptop that leaves the house.</li>
             <li><strong>Have someone to ask</strong> &mdash; a real person to check &lsquo;is this safe?&rsquo; before you act. Agree with family or staff that pausing to ask is always the right call, and never a nuisance.</li>
           </ol>
+          <p>Getting ready for power cuts and outages as well? The government&rsquo;s Be Ready campaign asks every home to manage for 3 days without essential services: our <a href="/be-ready-digital-checklist/">Be Ready digital checklist</a> covers the tech side, and <a href="/cyber-threats/">cyber attacks in the UK</a> explains what&rsquo;s happening now.</p>
           <h2>Want us to handle it for you?</h2>
           <p>Every step above is included and managed as part of our support plans &mdash; alongside <a href="/malwarebytes-premium/">Malwarebytes Premium</a>, monitoring and verified <a href="/backup-support/">backups</a>. See our <a href="/cybersecurity-support/">cybersecurity</a> page.</p>""",
   cta_args=("Let us secure you", "We&rsquo;ll handle every step, and the protection runs round the clock.",
@@ -18438,38 +18440,18 @@ _retired_page(
 )
 
 # ---- Disaster Recovery & Business Continuity
+# 18 Nov 2026: rebuilt around "business continuity plan" (Bing UK 1,823/qtr and rising, "... template" 262) with a free
+# printable template; the disaster-recovery service (the six cards) follows the guide. Content in stay_safe_pages_data.py.
 info_page(
-  slug="disaster-recovery", crumb_name="Disaster Recovery & Business Continuity", eyebrow="// DISASTER RECOVERY",
-  hero_cta1=('See business plans', '/business-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
-  h1='Disaster recovery &amp; <em class="grad grad--green">business continuity</em>',
-  lede="When the worst happens &mdash; ransomware, hardware failure, fire or flood &mdash; we get you back up and running fast. Disaster recovery and business continuity for homes and businesses across Dorset.",
-  desc="Disaster recovery and business continuity from 365 Techies — verified backups, ransomware rollback, rapid recovery, cloud failover and a practical continuity plan for businesses across Dorset.",
-  chips=["Back up fast","Tested &amp; ready","Business continuity"],
-  pre='''    <section class="section section--alt" aria-label="What it covers">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// IF THE WORST HAPPENS</p>
-          <h2 class="section-title section-title--center" data-title>Back up and running, fast<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <ul class="security-grid" data-stagger>
-''' + grid_cards([
-        ("Verified backups", "Automatic, off-site, regularly tested backups so your data is always recoverable."),
-        ("Ransomware rollback", "Versioned, protected backups let us roll back to before an attack."),
-        ("Rapid recovery", "We restore files, systems or whole setups quickly to minimise downtime."),
-        ("Cloud failover", "Keep working from the cloud while we rebuild your on-site systems."),
-        ("A continuity plan", "A simple, practical plan so everyone knows exactly what to do."),
-        ("Regular testing", "We test recovery so it actually works when it matters most."),
-      ]) + '''
-        </ul>
-      </div>
-    </section>''',
-  inner="""          <h2>Why it matters</h2>
-          <p>For a business, downtime and data loss aren&rsquo;t just inconvenient &mdash; they cost money, customers and reputation. Most disasters are survivable with the right preparation; without it, they can be fatal.</p>
-          <h2>What we do</h2>
-          <p>We put verified, off-site, ransomware-safe backups in place, build a clear recovery and business-continuity plan around your business, and &mdash; crucially &mdash; <strong>test it</strong> so you know it works. If disaster strikes, we act fast to restore your data and get you operational again.</p>
-          <h2>Who it&rsquo;s for</h2>
-          <p>Any business that can&rsquo;t afford to lose its data or stop trading &mdash; especially regulated sectors like <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants-dorset/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a> <a href="/it-support-for-sole-traders/">sole traders</a> and <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a>. It builds on our <a href="/backup-support/">backup &amp; recovery</a> and <a href="/cybersecurity-support/">cybersecurity</a> services.</p>""",
-  cta_args=("Be ready for anything", "Get verified backups and a tested recovery plan, so a disaster is a hiccup &mdash; not a catastrophe.",
+  slug="disaster-recovery", crumb_name=_ss.DR_CRUMB, eyebrow="// BUSINESS CONTINUITY &middot; FREE TEMPLATE",
+  hero_cta1=('Get the free template', '#template'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),
+  h1=_ss.DR_H1, lede=_ss.DR_LEDE, desc=_ss.DR_DESC, title=_ss.DR_TITLE, og_title=_ss.DR_OG,
+  chips=_ss.DR_CHIPS,
+  pre=_ss.DR_PRE,
+  inner=_ss.DR_INNER,
+  post=_ss.DR_TEMPLATE + "\n" + _ss.DR_HELP.replace("__CARDS__", grid_cards(_ss.DR_CARDS)),
+  faqs=_ss.DR_FAQS,
+  cta_args=("Be ready for anything", "Get tested backups and a continuity plan written around your business, so a disaster is a hiccup &mdash; not a catastrophe.",
             ("Get a Continuity Plan", "/contact/"), ("Backup & Recovery", "/backup-support/")),
 )
 
@@ -19093,34 +19075,39 @@ for t in THREATS:
     make_threat(**t)
 
 def cyber_threats_hub():
+    # 18 Nov 2026: rebuilt as "Cyber attacks in the UK: what's happening and how to stay safe" (stay_safe_pages_data.py:
+    # the dated latest list, what a cyber attack is, what it means for you, AI, the eight steps, how to check, FAQ).
+    # The eight threat cards stay: this is still the hub every threat page breadcrumbs to.
     slug = "cyber-threats"
-    desc = "Cyber threats explained in plain English by 365 Techies — ransomware, phishing, online scams, malware, smishing, business email compromise, data breaches and identity theft, and how to protect your home or business."
+    desc = _ss.CT_DESC
     cards = ""
     for t in THREATS:
         cards += (f'          <a class="post-card" href="/{t["slug"]}/"><p class="post-card__cat">Cyber Threat</p>'
                   f'<h3>{t["name"]}</h3><p>{t["lede"]}</p><span class="post-card__more">Learn how to stay safe &#8594;</span></a>\n')
     content = "\n".join([
-      hero(bc("Cyber Threats"), "// CYBER THREATS EXPLAINED",
-           'Cyber threats, <em class="grad grad--green">explained simply</em>',
-           "Understand the threats facing homes and businesses today &mdash; what they are, how to spot them, and exactly how to protect yourself. No jargon, just clear, practical advice from your local experts.",
-           cta1=("Get Protected", "/cybersecurity-support/"), cta2=("Free IT Health Check", "/free-it-health-check/"),
-           chips=["Plain English","Home &amp; business","Practical protection"]),
-      f'''    <section class="blog-section" aria-label="Cyber threats">
+      hero(bc("Cyber Threats"), "// CYBER ATTACKS &middot; UPDATED 18 NOV 2026", _ss.CT_H1, _ss.CT_LEDE,
+           cta1=("The eight steps", "#steps"), cta2=("Be Ready checklist", "/be-ready-digital-checklist/"),
+           chips=_ss.CT_CHIPS),
+      _ss.CT_LATEST_HTML,
+      _ss.CT_GUIDE_HTML,
+      f'''    <section class="blog-section" aria-label="Cyber threats explained" id="threats">
       <div class="wrap">
-        <div class="blog-cat-head" data-reveal><h2>Know the threats, stay protected</h2></div>
+        <div class="blog-cat-head" data-reveal><h2>Every threat, explained</h2></div>
         <div class="blog-grid" data-stagger>
 {cards}        </div>
       </div>
     </section>''',
+      faq_html(_ss.CT_FAQS),
       cta("Let us keep you protected",
           "We protect Dorset homes and businesses from every threat on this page &mdash; with layered security, Malwarebytes Premium and a real person to ask.",
           primary=("Explore Cybersecurity", "/cybersecurity-support/"), secondary=("Malwarebytes Premium", "/malwarebytes-premium/")),
     ])
     def schema(s, _desc=desc, _items=[{"@type":"ListItem","position":i+1,"name":t["name"],"url":SITE+"/"+t["slug"]+"/"} for i,t in enumerate(THREATS)]):
-        return graph([crumb(s, "Cyber Threats"), webpage(s, "Cyber Threats Explained", _desc, "CollectionPage"),
-                      {"@type": "ItemList", "@id": SITE + "/cyber-threats/#list", "itemListElement": _items}])
-    add(slug=slug, title="Cyber Threats Explained | Stay Safe Online | 365 Techies",
-        desc=desc, og_title="Cyber Threats Explained | 365 Techies", schema=schema, content=content)
+        return graph([crumb(s, "Cyber Threats"), webpage(s, "Cyber Attacks in the UK", _desc, "CollectionPage"),
+                      {"@type": "ItemList", "@id": SITE + "/cyber-threats/#list", "itemListElement": _items},
+                      faqpage(s, _ss.CT_FAQS)])
+    add(slug=slug, title=_ss.CT_TITLE,
+        desc=desc, og_title=_ss.CT_OG, schema=schema, content=content)
 cyber_threats_hub()
 
 # ============================================================ TOOL: PASSWORD STRENGTH CHECKER
@@ -20222,8 +20209,10 @@ def online_safety():
       ("Ransomware","Ransomware","What it is, and how to protect your files from being held to ransom.","/ransomware/"),
       ("Viruses","Malware &amp; viruses","How devices get infected &mdash; and how to stay clean.","/malware-and-viruses/"),
       ("Identity","Identity theft","How your identity gets stolen, and how to protect it.","/identity-theft/"),
+      ("Breaches","Found in a data breach?","What to do, in order, when a company loses your details.","/data-breaches/"),   # 18 Nov 2026
     ]
     actions=[
+      ("Be ready","Be Ready: the 3-day digital checklist","The government&rsquo;s Be Ready advice for power cuts, outages and cyber attacks, as simple steps you can print.","/be-ready-digital-checklist/","Get ready"),   # 18 Nov 2026
       ("Been scammed","Scam recovery &amp; a report for your bank","We clean the computer remotely and write up what we found, in plain English, for the bank.","/scam-recovery/","See the service"),
       ("Quiz","Spot the Scam","Can you tell a scam from the real thing? Take the 6-round quiz.","/spot-the-scam/","Take the quiz"),
       ("Tool","Password checker","Test your password and get a strong, memorable one &mdash; privately.","/password-strength-checker/","Check it"),
@@ -20245,7 +20234,7 @@ def online_safety():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// LEARN THE THREATS</p>
           <h2 class="section-title section-title--center" data-title>Know what to look out for<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>A quick, calm explanation of each &mdash; see them all on our <a href="/cyber-threats/">cyber threats</a> page.</p>
+          <p class="lede lede--center" data-reveal>A quick, calm explanation of each &mdash; and the latest attacks in the news on our <a href="/cyber-threats/">cyber attacks in the UK</a> page.</p>
         </div>
         <div class="blog-grid" data-stagger>
 {tcards}

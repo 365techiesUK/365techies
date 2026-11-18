@@ -73,6 +73,10 @@ NEW_PAGES.append({
                  '<p>In April 2026 the UK&rsquo;s <strong>National Cyber Security Centre</strong>, part of GCHQ, said it will '
                  'recommend passkeys wherever a service supports them, and two-step verification where it does not. That is '
                  'the strongest official backing passkeys have had in the UK.</p>'
+                 '<p>In late October 2026 the government&rsquo;s <strong>Be Ready</strong> campaign put the same advice on its '
+                 'cyber checklist for every household: use a passkey where available, and a strong, unique password with '
+                 'two-step verification where not. Our <a href="/be-ready-digital-checklist/">Be Ready digital checklist</a> '
+                 'covers the rest of that list.</p>'
                  '<p>So the prompt you are seeing is genuine, as long as it comes from the real website or app, in its own '
                  'settings. See the scam warning further down.</p>'},
         {'eyebrow': '/03 &mdash; IS IT SAFE?', 'h2': 'Is a passkey safer than a password?',

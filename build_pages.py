@@ -426,6 +426,7 @@ NAV_MENUS = [
         ("Cyber Essentials Questions", "/cyber-essentials-questions/"),
         ("Business WiFi", "/business-wifi-installation/"),
         ("Broadband Emergency Plan", "/business-continuity-internet/"),
+        ("Business Continuity Plan", "/disaster-recovery/"),   # 18 Nov 2026: free template
         ("Switching to Us", "/switching-it-provider/"),
     ])]]}),
     ("Services", "/services/", {"all": ("All Services", "/services/"), "cols": [
@@ -518,6 +519,11 @@ NAV_MENUS = [
         ]), ("Plans", [
             ("Monthly IT Support", "/monthly-it-support/"),
             ("Plan Finder", "/plan-finder/"),
+        ]), ("Stay safe &amp; be ready", [   # 18 Nov 2026 (owner: "really easy to get to and navigate")
+            ("Be Ready: 3-Day Digital Checklist", "/be-ready-digital-checklist/"),
+            ("Cyber Attacks in the UK", "/cyber-threats/"),
+            ("Found in a Data Breach?", "/data-breaches/"),
+            ("I Think I&rsquo;ve Been Hacked", "/i-think-ive-been-hacked/"),
         ])],
         [("Fix it yourself", [
             ("Printer Problems", "/printer-support/"),
@@ -702,7 +708,8 @@ HEADER = '''  <header class="site-header">
           <a href="/it-support-cost-guide/">IT Cost Guide</a>
           <a href="/it-jargon-buster/">IT Jargon Buster</a>
           <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
-          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/be-ready-digital-checklist/">Be Ready: 3-Day Digital Checklist</a>
+          <a href="/cyber-threats/">Cyber Attacks in the UK</a>
           <a href="/faqs/">FAQs</a>
           <a href="/system-status/">System Status</a>
           <a href="/privacy-policy/">Privacy Policy</a>
@@ -813,6 +820,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/emergency-it-help/">Emergency IT Help</a>
         <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
         <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/be-ready-digital-checklist/">Be Ready: 3-Day Checklist</a>
         <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
         <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
         <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>

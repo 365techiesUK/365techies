@@ -165,6 +165,11 @@
   "h": "368f9c0e4d913ada",
   "last": "2026-10-06"
  },
+ "be-ready-digital-checklist": {
+  "first": "2026-11-18",
+  "h": "447aa0092eb34f6d",
+  "last": "2026-11-18"
+ },
  "blue-screen-stop-codes": {
   "first": "2026-10-28",
   "h": "4045531de7fbd9f5",
@@ -762,13 +767,13 @@
  },
  "cyber-threats": {
   "first": "2026-07-28",
-  "h": "07a8fc98220caddf",
+  "h": "bc2a8581d549750b",
   "last": "2026-11-18"
  },
  "cybersecurity-checklist": {
   "first": "2026-07-28",
-  "h": "c531ce6e05bc364c",
-  "last": "2026-09-28"
+  "h": "efc16f8cd4acc635",
+  "last": "2026-11-18"
  },
  "cybersecurity-support": {
   "first": "2026-07-28",
@@ -777,7 +782,7 @@
  },
  "data-breaches": {
   "first": "2026-07-28",
-  "h": "bdb24d30b30b8223",
+  "h": "3e8726aa480b8ab4",
   "last": "2026-11-18"
  },
  "data-migration": {
@@ -1082,8 +1087,8 @@
  },
  "disaster-recovery": {
   "first": "2026-07-28",
-  "h": "6070cde2f302b06c",
-  "last": "2026-09-28"
+  "h": "63b7a0e6439ac07b",
+  "last": "2026-11-18"
  },
  "dns-lookup": {
   "first": "2026-07-28",
@@ -1690,8 +1695,8 @@
  },
  "is-outlook-down": {
   "first": "2026-11-13",
-  "h": "274d98b1a0498376",
-  "last": "2026-11-16"
+  "h": "1bb2ae53760604ec",
+  "last": "2026-11-18"
  },
  "is-someone-remotely-accessing-my-computer": {
   "first": "2026-10-11",
@@ -1700,7 +1705,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "a9844f4967e87e38",
+  "h": "15535dbf6da7b65d",
   "last": "2026-11-18"
  },
  "it-health-check-tool": {
@@ -2175,8 +2180,8 @@
  },
  "landline-switch-off-help": {
   "first": "2026-07-28",
-  "h": "e0328070537eb2d4",
-  "last": "2026-10-06"
+  "h": "83b8c4ba72380c3b",
+  "last": "2026-11-18"
  },
  "laptop-clicking-noise-wont-turn-on": {
   "first": "2026-07-28",
@@ -2640,8 +2645,8 @@
  },
  "online-safety": {
   "first": "2026-07-28",
-  "h": "bc0755865341ddea",
-  "last": "2026-09-26"
+  "h": "50924b47dca24aba",
+  "last": "2026-11-18"
  },
  "online-safety-course": {
   "first": "2026-07-28",
@@ -3939,7 +3944,8 @@
  },
  "what-is-a-passkey": {
   "first": "2026-11-16",
-  "h": "1980bd6817eeba5e"
+  "h": "1822b418e70dd339",
+  "last": "2026-11-18"
  },
  "what-to-do-before-replacing-old-computer": {
   "first": "2026-06-16",
@@ -4088,8 +4094,8 @@
  },
  "will-a-power-cut-damage-my-computer": {
   "first": "2026-07-28",
-  "h": "fd8af39e6c41099a",
-  "last": "2026-10-06"
+  "h": "4251cfb36355ff67",
+  "last": "2026-11-18"
  },
  "will-i-lose-files-upgrading-to-windows-11": {
   "first": "2026-07-28",

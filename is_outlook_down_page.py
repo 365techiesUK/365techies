@@ -7,6 +7,8 @@ feed /is-it-down/ reads, plus a reach test from the visitor's browser), then wha
 
 Facts checked 13 Nov 2026 and what is NOT claimed:
 - Microsoft said it found no malicious activity: never "hacked".
+- 18 Nov 2026: "Has Microsoft been hacked?" section + FAQ (Bing UK, the week of the outage: microsoft hacked 843, microsoft
+  cyber attack 736, has microsoft been hacked 555, ... today 220, outlook hacked 217). The answer is Microsoft's own: no.
 - Microsoft's support page: the new Outlook syncs Gmail and Yahoo accounts to the Microsoft Cloud.
 - Techies One Mail cannot reach an Outlook.com / Hotmail / Microsoft 365 mailbox while Microsoft is down. Said on the page.
 - Colours are tokens only, so the light and dark themes both hold.
@@ -121,6 +123,14 @@ INNER = '''
   <li><a href="/outlook-problems/">Every Outlook fix we&rsquo;ve written</a></li>
 </ul>
 
+<h2 id="hacked">Has Microsoft been hacked?</h2>
+<p><strong>No.</strong> Microsoft said the outage of 12 and 13 November 2026 had no malicious activity behind it: part of its servers was overwhelmed and stopped processing requests. Lots of people searched &ldquo;has Microsoft been hacked&rdquo; that week, which is understandable with so many cyber attacks in the news, but an outage and a hack look different.</p>
+<ul>
+  <li><strong>An outage</strong> hits everyone at once. Outlook, Teams or OneDrive stop for millions of people, nothing in your account changes, and it comes back by itself when Microsoft fixes it.</li>
+  <li><strong>Your own account being hacked</strong> looks like this: your password suddenly stops working, you get sign-in alerts from places you&rsquo;ve never been, there are sent emails you didn&rsquo;t write or new forwarding rules, or friends get odd messages from you. If that&rsquo;s you, follow <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a>.</li>
+</ul>
+<p><strong>Watch for scams that use the outage.</strong> After a big outage, fake &ldquo;Microsoft security alert&rdquo; emails ask people to &ldquo;verify&rdquo; their account. Never sign in through a link in an email like that: open Outlook, or type outlook.com into your browser yourself. For the bigger picture, see <a href="/cyber-threats/">cyber attacks in the UK: what&rsquo;s happening</a>.</p>
+
 <h2 id="nov-2026">The outage of 12 and 13 November 2026</h2>
 <p>On Thursday 12 November 2026, from around midday US Eastern time, Outlook, Teams, SharePoint, OneDrive and Copilot began failing for Microsoft 365 users around the world. Problems ran into Friday 13 November, at least 18 hours for some people, before Microsoft reported that email delivery was returning to normal.</p>
 <p>Microsoft&rsquo;s explanation was that the part of its servers that handles secure connections became overwhelmed and stopped processing requests. It said it had found no malicious activity behind the outage. It applied a configuration change and restarted the affected servers to recover.</p>
@@ -138,8 +148,10 @@ FAQS = [
      "Not if the fault is the Microsoft service. The phone app, the program on your PC and Outlook on the web all talk to the same servers. If only the program on your PC is broken, the phone app and the website will still work, which is a quick way to tell the two apart."),
     ("How long do Microsoft outages usually last?",
      "Most are over within a few hours. The outage that began on 12 November 2026 was unusually long, lasting at least 18 hours for some users before Microsoft reported that service was returning to normal."),
-    ("Was the November 2026 outage a hack?",
-     "Microsoft said it had found no malicious activity. Its explanation was that the part of its servers handling secure connections became overwhelmed and stopped processing requests."),
+    ("Has Microsoft been hacked?",
+     "No. Microsoft said the outage of 12 and 13 November 2026 had no malicious activity behind it. Its explanation was that the part of its servers handling secure connections became overwhelmed and stopped processing requests."),
+    ("How can I tell an outage from my account being hacked?",
+     "An outage stops the service for everyone and nothing in your account changes. Signs that your own account has been hacked are a password that suddenly stops working, sign-in alerts you didn&rsquo;t cause, sent emails you didn&rsquo;t write, new forwarding rules, or friends getting odd messages from you."),
 ]
 
 
