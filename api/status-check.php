@@ -63,6 +63,14 @@ $PROBE = [ // no official public feed exists — reachability from our monitorin
     'steam'    => 'https://store.steampowered.com/',
     'amazon'   => 'https://www.amazon.co.uk/',
     'bbc'      => 'https://www.bbc.co.uk/',
+    // UK banks (18 Nov 2026): website reachability only; the page links each bank's own status page
+    'santander'  => 'https://www.santander.co.uk/',
+    'natwest'    => 'https://www.natwest.com/',
+    'barclays'   => 'https://www.barclays.co.uk/',
+    'lloyds'     => 'https://www.lloydsbank.com/',
+    'halifax'    => 'https://www.halifax.co.uk/',
+    'hsbc'       => 'https://www.hsbc.co.uk/',
+    'nationwide' => 'https://www.nationwide.co.uk/',
 ];
 
 $bufs = [];

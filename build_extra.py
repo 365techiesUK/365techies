@@ -14055,6 +14055,7 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
               <button type="button" class="iid-cat" data-cat="net" aria-pressed="false">Internet &amp; Cloud</button>
               <button type="button" class="iid-cat" data-cat="fun" aria-pressed="false">Entertainment &amp; Gaming</button>
               <button type="button" class="iid-cat" data-cat="ai" aria-pressed="false">AI Assistants</button>
+              <button type="button" class="iid-cat" data-cat="bank" aria-pressed="false">UK Banks</button>
             </div>
             <div class="iid-tools">
               <input type="search" id="iid-search" placeholder="Search a service&hellip;" aria-label="Search services">
@@ -14141,7 +14142,8 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
         function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
         var KIND={live:['Official feed','A real status feed published by the service itself — we read it every couple of minutes.'],
                   signal:['Platform signal','Meta publishes status for its business systems only. Big consumer outages usually show up there too — but it is a signal, not an official consumer feed.'],
-                  probe:['Reachability','No official public status feed exists for this service, so we test whether it answers — from our monitoring server and from your browser.']};
+                  probe:['Reachability','No official public status feed exists for this service, so we test whether it answers — from our monitoring server and from your browser.'],
+                  bank:['Website check','Banks publish status pages for people to read, not live feeds. We test whether the bank’s website answers, from our server and from your browser. The app or online banking can still fail while the website answers, so check the bank’s own status page too.']};
         /* id, name, category, kind, host probed from YOUR browser, official status page, note */
         var SVC=[
           ['facebook','Facebook','social','signal','www.facebook.com','https://metastatus.com',''],
@@ -14174,13 +14176,21 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
           ['epic','Epic Games · Fortnite','fun','live','www.epicgames.com','https://status.epicgames.com',''],
           ['twitch','Twitch','fun','live','www.twitch.tv','https://status.twitch.com',''],
           ['chatgpt','ChatGPT (OpenAI)','ai','live','chatgpt.com','https://status.openai.com',''],
-          ['claude','Claude (Anthropic)','ai','live','www.anthropic.com','https://status.claude.com','']
+          ['claude','Claude (Anthropic)','ai','live','www.anthropic.com','https://status.claude.com',''],
+          /* UK banks (18 Nov 2026): website reachability + the bank's own status page (verified 18 Nov) */
+          ['santander','Santander','bank','bank','www.santander.co.uk','https://www.santander.co.uk/personal/support/customer-support/service-status','Website check only: the app can fail while the site answers'],
+          ['natwest','NatWest','bank','bank','www.natwest.com','https://www.natwest.com/service-status.html','Website check only: the app can fail while the site answers'],
+          ['barclays','Barclays','bank','bank','www.barclays.co.uk','https://status.uk.barclays/','Website check only: the app can fail while the site answers'],
+          ['lloyds','Lloyds Bank','bank','bank','www.lloydsbank.com','https://www.lloydsbank.com/help-guidance/service-status.html','Website check only: the app can fail while the site answers'],
+          ['halifax','Halifax','bank','bank','www.halifax.co.uk','https://www.halifax.co.uk/helpcentre/service-status.html','Website check only: the app can fail while the site answers'],
+          ['hsbc','HSBC UK','bank','bank','www.hsbc.co.uk','https://www.hsbc.co.uk/service-status/','Website check only: the app can fail while the site answers'],
+          ['nationwide','Nationwide','bank','bank','www.nationwide.co.uk','https://www.nationwide.co.uk/ways-to-bank/service-status','Website check only: the app can fail while the site answers']
         ];
         var state={}, grid=$('#iid-grid');
-        var SRVTXT={ok:{live:'No problems reported',signal:'No platform issues flagged',probe:'Responding normally'},
-                    warn:{live:'Issues reported',signal:'Platform issues flagged',probe:'Responding with errors'},
-                    down:{live:'Major problems reported',signal:'Platform problems flagged',probe:'Not responding'},
-                    unknown:{live:'Feed unavailable',signal:'Signal unavailable',probe:'Check unavailable'}};
+        var SRVTXT={ok:{live:'No problems reported',signal:'No platform issues flagged',probe:'Responding normally',bank:'Website responding'},
+                    warn:{live:'Issues reported',signal:'Platform issues flagged',probe:'Responding with errors',bank:'Website having problems'},
+                    down:{live:'Major problems reported',signal:'Platform problems flagged',probe:'Not responding',bank:'Website not responding'},
+                    unknown:{live:'Feed unavailable',signal:'Signal unavailable',probe:'Check unavailable',bank:'Check unavailable'}};
         SVC.forEach(function(sv){
           state[sv[0]]={srv:null,you:'pending'};
           var kb=KIND[sv[3]];
@@ -14190,7 +14200,7 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
               '<div class="iid-srv"><span class="iid-dot pending"></span><span class="iid-s-txt iid-skel">Checking&hellip;</span></div>'+
               '<div class="iid-you"><span class="iid-dot pending"></span><span class="iid-y-txt">From your connection&hellip;</span></div>'+
               (sv[6]?'<p class="iid-note">'+esc(sv[6])+'</p>':'')+
-              (sv[5]?'<div class="iid-links"><a href="'+sv[5]+'" target="_blank" rel="noopener">'+(sv[3]==='signal'?'Meta platform status':'Official status page')+' &#8599;</a></div>':'')+
+              (sv[5]?'<div class="iid-links"><a href="'+sv[5]+'" target="_blank" rel="noopener">'+(sv[3]==='signal'?'Meta platform status':sv[3]==='bank'?'The bank’s own service status':'Official status page')+' &#8599;</a></div>':'')+
             '</div>');
         });
         function card(id){return grid.querySelector('[data-id="'+id+'"]');}
@@ -14479,6 +14489,15 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
               <li><strong>Business email misbehaving is our bread and butter</strong> &mdash; <a href="/email-support/">email support</a> or call <a href="tel:+441202775566">01202 775566</a>.</li>
             </ol>
           </div></details>
+          <details class="iid-play"><summary>Banking app or online banking not working</summary><div>
+            <ol>
+              <li><strong>Check your bank&rsquo;s card in the live grid</strong> (filter &ldquo;UK Banks&rdquo;) and open its own service status page. Banks post app and online banking problems there first.</li>
+              <li><strong>Try the other way in.</strong> App down? Try online banking in a browser, or the other way round. Card payments and cash machines usually keep working during an app outage.</li>
+              <li><strong>Update the app and restart the phone.</strong> An out-of-date app is refused after a bank&rsquo;s update, which looks just like an outage.</li>
+              <li><strong>Beware &ldquo;help&rdquo; during an outage.</strong> Scammers send texts and make calls about &ldquo;problems with your account&rdquo; when a bank is in the news. Your bank will never ask you to move money to a safe account. If in doubt, hang up and ring <a href="tel:159"><strong>159</strong></a>, which connects you to your own bank.</li>
+              <li><strong>Worried your account was broken into</strong>, not just down? Ring the number on the back of your card. For your computer and email, see <a href="/i-think-ive-been-hacked/">I think I&rsquo;ve been hacked</a>.</li>
+            </ol>
+          </div></details>
           <details class="iid-play"><summary>Everything works but it&rsquo;s painfully slow</summary><div>
             <ol>
               <li><strong>Measure, don&rsquo;t guess:</strong> run our <a href="/broadband-speed-checker/">free speed test</a> &mdash; once on Wi&#8209;Fi near the router, once in the slow spot.</li>
@@ -14542,7 +14561,7 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
 
 def is_it_down():
     slug = "is-it-down"
-    desc = "Is it down, or is it just you? Live status for 30+ big services including Facebook, WhatsApp, Microsoft 365, Gmail and PlayStation, an instant check of your own connection, UK broadband provider status lines and honest what-to-do-next advice. Free from 365 Techies."
+    desc = "Is it down, or is it just you? Live status for 30+ big services including Facebook, WhatsApp, Microsoft 365, Gmail, PlayStation and the big UK banks, an instant check of your own connection, UK broadband provider status lines and honest what-to-do-next advice. Free from 365 Techies."
     faqs = [
       ("How can I tell if it&rsquo;s the service or my connection?",
        "Two signals together answer it. If the connection panel at the top says your connection is fine and a service&rsquo;s official feed shows problems &mdash; it&rsquo;s them. If several unrelated services fail from your connection while their feeds look healthy &mdash; it&rsquo;s you (or your router). The clincher: try the same site on your phone with Wi&#8209;Fi turned off. Works on mobile data? Your broadband is the problem."),
@@ -14554,13 +14573,15 @@ def is_it_down():
        "Your provider &mdash; the main UK status checkers and support numbers are listed on this page. Check for a power cut first (call 105, free) and restart the router properly. If the provider says the line is fine but your computer, Wi&#8209;Fi or network still misbehaves, that&rsquo;s exactly what we fix &mdash; call 01202 775566."),
       ("Does turning the router off and on again actually help?",
        "Genuinely, yes &mdash; it clears the router&rsquo;s memory and forces a fresh connection to your provider, which fixes a surprising share of faults. Do it properly: unplug the power, wait 30 seconds, plug back in, and give it up to 5 minutes to fully reconnect. Never press the recessed reset pin &mdash; that wipes your settings entirely."),
+      ("Is my bank down? (Santander, NatWest, Barclays, Lloyds and more)",
+       "Filter the grid to &ldquo;UK Banks&rdquo;. Each card checks whether the bank&rsquo;s website answers, from our server and from your connection, and links to the bank&rsquo;s own service status page. Banks don&rsquo;t publish live feeds, so the website check can&rsquo;t see an app-only fault: if the site answers but the app won&rsquo;t, the bank&rsquo;s status page is where they&rsquo;ll say so. Never act on a text or call about &ldquo;fixing&rdquo; your account during an outage; ring 159 to reach your own bank safely."),
       ("How live is this page?",
        "The official feeds are re-read every couple of minutes through our server (so the providers aren&rsquo;t hammered by every visitor), and the &lsquo;from your connection&rsquo; checks run live in your browser the moment you load or refresh the page. One honest caveat: a service can answer a reachability check yet still have a partial fault &mdash; that&rsquo;s why cards link to the official status pages too."),
     ]
     content = "\n".join([
       hero(bc("Is It Down?"), "// IS IT DOWN, OR IS IT JUST YOU?",
            'Is it down, or is it <em class="grad grad--cyan">just you?</em>',
-           "Live status for 30+ big services &mdash; Facebook, WhatsApp, Microsoft 365, Gmail, PlayStation and more &mdash; plus an instant test of your own connection, the main UK providers&rsquo; outage lines, and honest advice on what to do next.",
+           "Live status for 30+ big services &mdash; Facebook, WhatsApp, Microsoft 365, Gmail, PlayStation, the big UK banks and more &mdash; plus an instant test of your own connection, the main UK providers&rsquo; outage lines, and honest advice on what to do next.",
            cta1=("Check now &mdash; free", "#downtool"), cta2=("Broadband provider lines", "#iid-isps"),
            chips=["Live official feeds", "Tests YOUR connection", "UK provider numbers"]),
       ISITDOWN_TOOL,
@@ -18926,7 +18947,7 @@ def help_in_dorset_page():
 help_in_dorset_page()
 
 # ===================================================== CYBER THREATS EXPLAINED
-def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, faqs):
+def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, faqs, extra_html="", title=None):
     related = "\n".join(f'          <li><a href="/{t["slug"]}/">{t["name"]}</a></li>' for t in THREATS if t["slug"] != slug)
     content = "\n".join([
       hero(f'<a href="/">Home</a> <span>/</span> <a href="/cyber-threats/">Cyber Threats</a> <span>/</span> <span aria-current="page">{name}</span>',
@@ -18944,7 +18965,7 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
 {checklist(signs)}
         </ul>
       </div>
-    </section>''',
+    </section>''' + (("\n" + extra_html) if extra_html else ""),
       f'''    <section class="section section--alt" aria-label="How to protect yourself">
       <div class="wrap">
         <div class="section-head">
@@ -18991,9 +19012,10 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
                 {"@type": "ListItem", "position": 2, "name": "Cyber Threats", "item": SITE + "/cyber-threats/"},
                 {"@type": "ListItem", "position": 3, "name": _n, "item": SITE + "/" + slug + "/"}]},
             webpage(s, _n, _d), faqpage(s, _f)])
-    add(slug=slug, title=f"{name}: What It Is &amp; How to Stay Safe | 365 Techies",
+    add(slug=slug, title=title or f"{name}: What It Is &amp; How to Stay Safe | 365 Techies",
         desc=desc, og_title=f"{name} Explained | 365 Techies", schema=schema, content=content)
 
+import breach_guide_data as _breach   # /data-breaches/ guide (18 Nov 2026)
 THREATS = [
  dict(slug="ransomware", name="Ransomware",
    h1='<em class="grad grad--green">Ransomware</em> explained',
@@ -19050,14 +19072,13 @@ THREATS = [
    ifhit=[("Stop the payment","Contact your bank immediately to try to recall funds."),("Secure the mailbox","Reset passwords, enable MFA, remove rogue rules &mdash; we&rsquo;ll help."),("Review &amp; harden","We investigate, tighten security and brief your team.")],
    faqs=[("What is CEO fraud?","A type of BEC where a scammer impersonates a senior person to pressure staff into making an urgent payment or sharing details."),("How do we prevent BEC?","MFA on email, anti-spoofing filtering, a verify-by-phone rule for payments, and staff awareness &mdash; all of which we set up."),("We&rsquo;ve paid a fake invoice &mdash; what now?","Call your bank immediately to attempt recall, then contact us to secure the mailbox and investigate.")]),
  dict(slug="data-breaches", name="Data Breaches",
-   h1='<em class="grad grad--green">Data breaches</em> explained',
-   lede="When a company you use is breached, your details can end up for sale online. Here&rsquo;s what that means for you and how to limit the damage.",
-   desc="What is a data breach? A plain-English guide to how breaches happen, what it means when your details are leaked, and how to protect yourself. From 365 Techies.",
-   what_html="<p>A data breach is when personal information &mdash; emails, passwords, card details &mdash; is stolen from a company&rsquo;s systems. Those details often end up sold or dumped online, where criminals use them to break into other accounts.</p><p><strong>You can&rsquo;t stop a company being breached</strong>, but you can stop one leak turning into many.</p>",
-   signs=["A breach notification email","Logins you didn&rsquo;t make","Password-reset emails you didn&rsquo;t request","Spam or scams increasing","Cards used without you","Accounts locked unexpectedly"],
+   # 18 Nov 2026: reworked as the "found in a breach - now what?" guide (breach_guide_data.py)
+   title=_breach.TITLE, h1=_breach.H1, lede=_breach.LEDE, desc=_breach.DESC,
+   what_html=_breach.WHAT_HTML, extra_html=_breach.GUIDE_HTML,
+   signs=_breach.SIGNS,
    protect=[("Unique passwords","So one breach can&rsquo;t unlock your other accounts."),("Use a password manager","Strong, different passwords made easy."),("Turn on MFA","Stolen passwords become useless."),("Monitor your email","Check if your address appears in known breaches."),("Stay alert to scams","Breached data fuels targeted phishing."),("Get advice","We&rsquo;ll help you lock things down after a breach.")],
-   ifhit=[("Change that password","And any other account using the same one."),("Enable MFA","Add it everywhere that matters, starting with email."),("We help secure you","We&rsquo;ll review your accounts and set up proper protection.")],
-   faqs=[("How do I know if my data was breached?","You may get a notification, or notice odd account activity. We can advise on checking whether your email appears in known breaches."),("What should I do after a breach?","Change the affected password (and any duplicates), turn on MFA, and watch for targeted scams."),("Does a password manager help?","Hugely &mdash; unique passwords mean one breach can&rsquo;t cascade into your other accounts.")]),
+   ifhit=_breach.IFHIT,
+   faqs=_breach.FAQS),
  dict(slug="identity-theft", name="Identity Theft",
    h1='<em class="grad grad--green">Identity theft</em> explained',
    lede="Identity theft is when criminals use your personal details to impersonate you. Here&rsquo;s how it happens and how to protect yourself.",
