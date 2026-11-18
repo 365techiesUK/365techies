@@ -1251,7 +1251,12 @@ SNIPPETS = {
         "desc": "Set up your email on your phone in a few minutes: add the account, sign in, and check it sends and receives. Works for most email providers and phones.",
     },
     "how-to-spot-a-fake-website": {
-        "desc": "How to tell a fake shopping or login website from a real one: why the padlock proves nothing, the warning signs to check, and what to do if you have paid.",
+        "desc": "How to tell a fake shopping or login site from a real one: why the padlock proves nothing, the password manager check, and what to do next.",
+    },
+    "how-to-use-a-password-manager": {
+        # 18 Nov 2026 rework: Bing UK "what is a password manager" 7,474 exact/3 months; lead point = it won't fill on a fake site.
+        "title": "What Is a Password Manager? How to Use One Safely",
+        "desc": "What a password manager is, why it will not fill in on a fake website, whether the one in Chrome or Edge is enough, and how to set one up.",
     },
     "how-to-choose-a-laptop": {
         "desc": "Choosing a laptop or desktop in plain English: the five things that matter (processor, RAM, SSD, screen, battery), which type, and mistakes to avoid.",

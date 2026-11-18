@@ -34,7 +34,7 @@ GUIDE_HTML = '''    <section class="section" aria-label="What to do if you are i
           and it lists one or more breaches; a company emails to say it was attacked; or Chrome, Edge or an
           iPhone warns that a saved password &ldquo;was found in a data breach&rdquo;. The steps are the same.
           Do them in this order and you&rsquo;ve done what matters.</p>
-          <ol>
+          <ol style="list-style:decimal;padding-left:1.4rem;margin:0 0 1.4rem;display:grid;gap:.6rem;line-height:1.6">
             <li><strong>Find out what was taken.</strong> Have I Been Pwned lists the &ldquo;compromised data&rdquo;
             for each breach; a company&rsquo;s notice should say too. An email address alone is a nuisance.
             Passwords, dates of birth or card details need action. (The list below says what to do for each.)</li>
