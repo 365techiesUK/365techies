@@ -109,8 +109,13 @@ jobs:
           d="$RUNNER_TEMP/smoke"; mkdir -p "$d" && cd "$d"
           npm init -y
           npm i --no-audit --no-fund playwright@1.47.2
-          # --with-deps needs root for apt on the runner
-          sudo -E npx playwright install --with-deps chromium
+          # System libraries need root (apt); the browser itself must NOT go through sudo. 18 Nov 2026: the runner
+          # image's sudo began ignoring -E ("preserving the entire environment is not supported"), so HOME became
+          # /root, Chromium landed in /root/.cache/ms-playwright and the smoke test (running as runner) could not find
+          # it - deploy 44290243856 failed after a good upload and IndexNow was skipped.
+          sudo "$(command -v npx)" playwright install-deps chromium
+          npx playwright install chromium
+          test -d "$HOME/.cache/ms-playwright" && ls "$HOME/.cache/ms-playwright"
           echo "SMOKE_DIR=$d" >> "$GITHUB_ENV"
           echo "installed"
 
