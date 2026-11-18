@@ -21804,6 +21804,69 @@ def business_it_services(d):
 for _b in BIZ_SERVICES:
     business_it_services(_b)
 
+# The certificate, shared by every course (the safety flagship and the engine's runtime both splice it in at
+# __OSC_CERT_JS__, inside their own IIFE so it can reach `stage`). 18 Nov 2026 (a learner emailed: "the website kept
+# getting stuck and would not allow me to download it"): the old makeCert() fired a hidden download link inside a silent
+# try/catch - phones and in-app browsers (a link opened from Gmail or Facebook) did nothing at all; and the subline was
+# ONE fillText line at 22px, so 8 of 12 courses ran off both edges and 5 printed a literal "&mdash;" (canvas does not
+# decode entities). Now: entities decoded, long text shrunk or wrapped to fit, and the certificate is SHOWN on the page
+# with Save + Print buttons and a "press and hold" line - it can always be kept, whatever the browser does with downloads.
+_CERT_JS = r'''
+        function oscDec(s){ var t=document.createElement('textarea'); t.innerHTML=String(s==null?'':s); return t.value; }
+        function oscEsc(s){ return String(s).replace(/[&<>"]/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]; }); }
+        function oscFont(x,w,px,text,maxW,minPx){ var s=px; x.font=w+' '+s+'px Georgia'; while(s>minPx&&x.measureText(text).width>maxW){ s-=2; x.font=w+' '+s+'px Georgia'; } return s; }
+        function oscWrap(x,text,maxW){ var words=text.split(/\s+/), lines=[], cur=''; for(var i=0;i<words.length;i++){ if(!words[i]) continue; var t=cur?cur+' '+words[i]:words[i]; if(cur&&x.measureText(t).width>maxW){ lines.push(cur); cur=words[i]; } else { cur=t; } } if(cur) lines.push(cur); return lines; }
+        /* the same number of lines, but evenly filled - no lone word left on a line of its own */
+        function oscBalance(x,text,maxW){ var n=oscWrap(x,text,maxW).length; if(n<2) return oscWrap(x,text,maxW); var lo=0, hi=maxW; for(var k=0;k<14;k++){ var mid=(lo+hi)/2; if(oscWrap(x,text,mid).length<=n) hi=mid; else lo=mid; } return oscWrap(x,text,hi); }
+        function oscCert(o){
+          var out=stage.querySelector('#osc-cert-out'), inp=stage.querySelector('#osc-cn');
+          var name=String(o.name||'').replace(/\s+/g,' ').replace(/^ | $/g,'');
+          if(!name){ if(out) out.innerHTML='<p class="osc-cert-warn" role="alert">Pop your name in the box first, then press <strong>Get my certificate</strong>.</p>'; if(inp){ inp.setAttribute('aria-invalid','true'); inp.focus(); } return; }
+          if(inp) inp.removeAttribute('aria-invalid');
+          var course=oscDec(o.course), sub=oscDec(o.sub);
+          var c=document.createElement('canvas'); c.width=1200; c.height=849; var x=c.getContext('2d');
+          x.fillStyle='#0b1020'; x.fillRect(0,0,1200,849);
+          x.strokeStyle='#1d97e3'; x.lineWidth=6; x.strokeRect(34,34,1132,781);
+          x.strokeStyle='rgba(0,206,27,.5)'; x.lineWidth=2; x.strokeRect(52,52,1096,745);
+          x.textAlign='center';
+          x.fillStyle='#37c2c2'; x.font='700 30px Georgia'; x.fillText('CERTIFICATE OF COMPLETION', 600, 175);
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('This certifies that', 600, 270);
+          x.fillStyle='#ffffff'; oscFont(x,'700',62,name,980,30); x.fillText(name, 600, 355);
+          x.strokeStyle='rgba(255,255,255,.25)'; x.lineWidth=1; x.beginPath(); x.moveTo(360,385); x.lineTo(840,385); x.stroke();
+          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText(o.line, 600, 440);
+          x.fillStyle='#eaf0ff'; oscFont(x,'700',40,course,1000,24); x.fillText(course, 600, 500);
+          x.fillStyle='#9aa6c2'; var px=22, lines=[]; for(;;){ x.font='400 '+px+'px Georgia'; lines=oscBalance(x,sub,960); if(lines.length<=2||px<=18) break; px-=2; }
+          lines=lines.slice(0,3); for(var i=0;i<lines.length;i++) x.fillText(lines[i], 600, 545+i*(px+9));
+          x.fillStyle='#00ce1b'; x.font='700 26px Georgia'; x.fillText('365 Techies', 600, 660);
+          x.fillStyle='#9aa6c2'; x.font='400 20px Georgia'; x.fillText('Friendly, family-run IT support · Dorset · since 1995', 600, 692);
+          try{ var d=new Date(); x.fillText(d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), 600, 730); }catch(e){}
+          x.fillStyle='#5a6a86'; x.font='400 16px Georgia'; x.fillText(o.foot, 600, 785);
+          var url=''; try{ url=c.toDataURL('image/png'); }catch(e){}
+          if(!out) return;
+          if(!url){ out.innerHTML='<p class="osc-cert-warn" role="alert">Sorry &mdash; this browser couldn&rsquo;t make the picture. Try another browser, or <a href="/contact/">ask us</a> and we&rsquo;ll email your certificate.</p>'; return; }
+          out.innerHTML='<p class="osc-cert-ready" tabindex="-1">Here&rsquo;s your certificate</p>'+
+            '<img class="osc-cert-img" src="'+url+'" width="1200" height="849" alt="Your 365 Techies certificate of completion for '+oscEsc(course)+', made out to '+oscEsc(name)+'">'+
+            '<div class="osc-actions"><a class="osc-btn" id="osc-save" href="'+url+'" download="'+oscEsc(o.file)+'">Save my certificate</a><button class="osc-btn ghost" id="osc-print" type="button">Print it</button></div>'+
+            '<p class="osc-note">On a phone or tablet? Press and hold the certificate, then choose <strong>Save image</strong> (or <strong>Add to Photos</strong>).</p>';
+          out.querySelector('#osc-print').onclick=function(){ oscPrint(url); };
+          var rm=false; try{ rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+          try{ out.scrollIntoView({behavior:rm?'auto':'smooth',block:'start'}); }catch(e){}
+          var hd=out.querySelector('.osc-cert-ready'); try{ hd.focus({preventScroll:true}); }catch(e){}
+        }
+        function oscPrint(url){
+          try{
+            var f=document.createElement('iframe'); f.setAttribute('aria-hidden','true'); f.setAttribute('tabindex','-1');
+            f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+            document.body.appendChild(f);
+            var d=f.contentWindow.document; d.open();
+            d.write('<!doctype html><html><head><title>Certificate</title><style data-no-theme>@page{size:A4 landscape;margin:10mm}html,body{margin:0;background:#fff}img{display:block;width:100%;height:auto}</style></head><body><img src="'+url+'" alt=""></body></html>');
+            d.close();
+            var go=function(){ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ window.print(); } setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); }, 60000); };
+            var im=d.querySelector('img'); if(im&&!im.complete){ im.onload=go; } else { setTimeout(go,60); }
+          }catch(e){ window.print(); }
+        }
+'''
+
 COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety course" id="oscourse">
       <div class="wrap">
         <div class="osc" id="osc">
@@ -21867,6 +21930,13 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
       #oscourse .osc-nextcard-ico{font-size:1.5rem;flex:none}
       #oscourse .osc-nextcard-why{color:var(--muted,#9aa6c2);font-size:.9rem;line-height:1.45}
       #oscourse .osc-nextcard-go{margin-left:auto;color:#1d97e3;font-weight:700;flex:none}
+      #oscourse .osc-cert-out{margin-top:1.3rem;scroll-margin-top:96px}
+      #oscourse .osc-cert-out:empty{display:none}
+      #oscourse .osc-cert-ready{font-size:1.15rem;font-weight:700;margin:0 0 .8rem;outline:none}
+      #oscourse .osc-cert-img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line,rgba(125,170,220,.3));box-shadow:0 10px 30px rgba(0,0,0,.35);-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+      #oscourse a.osc-btn{display:inline-block;text-decoration:none}
+      #oscourse .osc-cert-warn{margin:.2rem 0 0;padding:.8rem 1rem;border-radius:12px;background:rgba(241,196,15,.1);border:1px solid rgba(241,196,15,.35);font-size:1rem;line-height:1.55}
+      #oscourse .osc-cert-warn a{color:var(--cyan,#37c2c2)}
       @media(prefers-reduced-motion:reduce){#oscourse .osc-stage,#oscourse .osc-fb{animation:none}#oscourse .osc-bar-fill{transition:none}}
       </style>
       <script>
@@ -21954,9 +22024,9 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
         function done(){
           state.phase='done'; stepEl.textContent='Well done!'; setBar();
           h('<div class="osc-card osc-cert"><div class="osc-cert-emoji">&#127881;</div><h2 class="osc-h">You did it!</h2><p class="osc-tag">You got '+state.score+' of '+MODULES.length+' checks right</p>'+
-            '<div class="osc-body" style="text-align:center"><p>You now know the scammer&rsquo;s tricks and how to beat them. The most important habit of all? <strong>Slow down</strong> &mdash; and never be afraid to hang up, delete, or ask someone you trust.</p><p>Pop your first name in for a certificate to keep or print:</p></div>'+
-            '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
-            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+
+            '<div class="osc-body" style="text-align:center"><p>You now know the scammer&rsquo;s tricks and how to beat them. The most important habit of all? <strong>Slow down</strong> &mdash; and never be afraid to hang up, delete, or ask someone you trust.</p><p>Pop your name in for a certificate to keep or print:</p></div>'+
+            '<label for="osc-cn" class="sr-only">Your name, for the certificate</label><input class="osc-name" id="osc-cn" type="text" maxlength="40" placeholder="Your name" autocomplete="name">'+
+            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div><div class="osc-cert-out" id="osc-cert-out" aria-live="polite"></div>'+
             '<div class="osc-next-courses"><p class="osc-tag" style="text-align:center;margin-top:1.4rem">What would you like to learn next?</p>'+
             '<a class="osc-nextcard" href="/online-banking-safely-course/"><span class="osc-nextcard-ico">&#127974;</span><span><strong>Online Banking, Safely</strong><br><span class="osc-nextcard-why">Use your new scam-spotting skills where they matter most.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
             '<a class="osc-nextcard" href="/online-shopping-safely-course/"><span class="osc-nextcard-ico">&#128722;</span><span><strong>Online Shopping, Safely</strong><br><span class="osc-nextcard-why">Buy online with the same care and confidence.</span></span><span class="osc-nextcard-go">&#8594;</span></a>'+
@@ -21968,29 +22038,16 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
           stage.scrollIntoView({behavior:'smooth',block:'nearest'});
         }
         function makeCert(name){
-          if(!name) name='';
-          var c=document.createElement('canvas'); c.width=1200; c.height=849; var x=c.getContext('2d');
-          x.fillStyle='#0b1020'; x.fillRect(0,0,1200,849);
-          x.strokeStyle='#1d97e3'; x.lineWidth=6; x.strokeRect(34,34,1132,781);
-          x.strokeStyle='rgba(0,206,27,.5)'; x.lineWidth=2; x.strokeRect(52,52,1096,745);
-          x.textAlign='center';
-          x.fillStyle='#37c2c2'; x.font='700 30px Georgia'; x.fillText('CERTIFICATE OF COMPLETION', 600, 175);
-          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('This certifies that', 600, 270);
-          x.fillStyle='#ffffff'; x.font='700 62px Georgia'; x.fillText(name||'(your name)', 600, 355);
-          x.strokeStyle='rgba(255,255,255,.25)'; x.lineWidth=1; x.beginPath(); x.moveTo(360,385); x.lineTo(840,385); x.stroke();
-          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('has completed the free online safety course', 600, 440);
-          x.fillStyle='#eaf0ff'; x.font='700 40px Georgia'; x.fillText('Staying Safe Online', 600, 500);
-          x.fillStyle='#9aa6c2'; x.font='400 22px Georgia'; x.fillText('Spotting scam emails, texts and calls · safe passwords · shopping & banking safely', 600, 545);
-          x.fillStyle='#00ce1b'; x.font='700 26px Georgia'; x.fillText('365 Techies', 600, 660);
-          x.fillStyle='#9aa6c2'; x.font='400 20px Georgia'; x.fillText('Friendly, family-run IT support · Dorset · since 1995', 600, 692);
-          try{ var d=new Date(); x.fillText(d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), 600, 730); }catch(e){}
-          x.fillStyle='#5a6a86'; x.font='400 16px Georgia'; x.fillText('A 365 Techies certificate of completion. Not a Microsoft or accredited qualification.', 600, 785);
-          try{ var a=document.createElement('a'); a.download='online-safety-certificate.png'; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+          oscCert({name:name, line:'has completed the free online safety course', course:'Staying Safe Online',
+            sub:'Spotting scam emails, texts and calls · safe passwords · shopping & banking safely',
+            foot:'A 365 Techies certificate of completion. Not a Microsoft or accredited qualification.', file:'online-safety-certificate.png'});
         }
+__OSC_CERT_JS__
         intro();
       })();
       </script>
     </section>'''
+COURSE_SAFETY = COURSE_SAFETY.replace('__OSC_CERT_JS__', _CERT_JS)
 
 def online_safety_course():
     slug = "online-safety-course"
@@ -22109,37 +22166,23 @@ _COURSE_RUNTIME = r'''
               '<p style="margin:.7rem 0 0;text-align:center"><a href="/free-courses/" style="color:var(--cyan,#37c2c2)">See all our free courses &#8594;</a></p></div>';
           }
           h('<div class="osc-card osc-cert"><div class="osc-cert-emoji">&#127881;</div><h2 class="osc-h">You did it!</h2><p class="osc-tag">You got '+state.score+' of '+MODULES.length+' checks right</p>'+
-            '<div class="osc-body" style="text-align:center">'+CFG.doneBlurb+'<p>Pop your first name in for a certificate to keep or print:</p></div>'+
-            '<input class="osc-name" id="osc-cn" type="text" maxlength="30" placeholder="Your first name" autocomplete="given-name">'+
-            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div>'+nx+
+            '<div class="osc-body" style="text-align:center">'+CFG.doneBlurb+'<p>Pop your name in for a certificate to keep or print:</p></div>'+
+            '<label for="osc-cn" class="sr-only">Your name, for the certificate</label><input class="osc-name" id="osc-cn" type="text" maxlength="40" placeholder="Your name" autocomplete="name">'+
+            '<div class="osc-actions"><button class="osc-btn" id="osc-cert-btn">Get my certificate &#8594;</button><button class="osc-btn ghost" id="osc-again">Take it again</button></div><div class="osc-cert-out" id="osc-cert-out" aria-live="polite"></div>'+nx+
             '<div class="osc-help"><p><strong>Would you like a friendly human to show you in person?</strong> We run patient, plain-English computer lessons at the Kinson Community Centre in Bournemouth &mdash; and we&rsquo;re on the phone Mon&ndash;Fri, 9&ndash;5.</p><a class="osc-btn" href="/contact/?topic=computer-lessons" style="display:inline-block;text-decoration:none">Ask about lessons</a></div></div>');
           stage.querySelector('#osc-again').onclick=function(){ state.m=0; state.score=0; lesson(); };
           stage.querySelector('#osc-cert-btn').onclick=function(){ makeCert((stage.querySelector('#osc-cn').value||'').trim()); };
           stage.scrollIntoView({behavior:'smooth',block:'nearest'});
         }
         function makeCert(name){
-          if(!name) name='';
-          var c=document.createElement('canvas'); c.width=1200; c.height=849; var x=c.getContext('2d');
-          x.fillStyle='#0b1020'; x.fillRect(0,0,1200,849);
-          x.strokeStyle='#1d97e3'; x.lineWidth=6; x.strokeRect(34,34,1132,781);
-          x.strokeStyle='rgba(0,206,27,.5)'; x.lineWidth=2; x.strokeRect(52,52,1096,745);
-          x.textAlign='center';
-          x.fillStyle='#37c2c2'; x.font='700 30px Georgia'; x.fillText('CERTIFICATE OF COMPLETION', 600, 175);
-          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('This certifies that', 600, 270);
-          x.fillStyle='#ffffff'; x.font='700 62px Georgia'; x.fillText(name||'(your name)', 600, 355);
-          x.strokeStyle='rgba(255,255,255,.25)'; x.lineWidth=1; x.beginPath(); x.moveTo(360,385); x.lineTo(840,385); x.stroke();
-          x.fillStyle='#9aa6c2'; x.font='400 26px Georgia'; x.fillText('has completed the free course', 600, 440);
-          x.fillStyle='#eaf0ff'; x.font='700 40px Georgia'; x.fillText(CFG.cert.courseName, 600, 500);
-          x.fillStyle='#9aa6c2'; x.font='400 22px Georgia'; x.fillText(CFG.cert.subline, 600, 545);
-          x.fillStyle='#00ce1b'; x.font='700 26px Georgia'; x.fillText('365 Techies', 600, 660);
-          x.fillStyle='#9aa6c2'; x.font='400 20px Georgia'; x.fillText('Friendly, family-run IT support · Dorset · since 1995', 600, 692);
-          try{ var d=new Date(); x.fillText(d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}), 600, 730); }catch(e){}
-          x.fillStyle='#5a6a86'; x.font='400 16px Georgia'; x.fillText('A 365 Techies certificate of completion. Not an accredited qualification.', 600, 785);
-          try{ var a=document.createElement('a'); a.download=CFG.cert.filename; a.href=c.toDataURL('image/png'); a.click(); }catch(e){}
+          oscCert({name:name, line:'has completed the free course', course:CFG.cert.courseName, sub:CFG.cert.subline,
+            foot:'A 365 Techies certificate of completion. Not an accredited qualification.', file:CFG.cert.filename});
         }
+__OSC_CERT_JS__
         intro();
       })();
 '''
+_COURSE_RUNTIME = _COURSE_RUNTIME.replace('__OSC_CERT_JS__', _CERT_JS)
 
 # Animated scene illustrations (course_scenes.py, drawn in the homepage live-view
 # style; validated). Empty dict if the file is missing - cards degrade gracefully.
@@ -22301,7 +22344,9 @@ def _course_checklist(c):
           'b.onclick=function(){var w=window.open("","_blank");if(!w)return;'
           'var items=' + items_json + ';var t=' + title_json + ';'
           'w.document.write("<html><head><title>"+t+" - checklist</title>'
-          '<style>body{font-family:Georgia,serif;color:#111;max-width:640px;margin:2rem auto;padding:0 1rem}'
+          # data-no-theme: light_theme.py would otherwise add light twins INSIDE this JS string - their double quotes
+          # (data-theme="light") ended the string, a syntax error that broke this Print button on every course (12 Nov - 18 Nov 2026)
+          '<style data-no-theme>body{font-family:Georgia,serif;color:#111;max-width:640px;margin:2rem auto;padding:0 1rem}'
           'h1{font-size:1.5rem}li{margin:.65rem 0;font-size:1.1rem;line-height:1.5}'
           'p.f{margin-top:2rem;color:#555;font-size:.9rem}</style></head><body>'
           '<h1>"+t+" &mdash; my one-page checklist</h1><ol>"+items.map(function(i){return "<li>"+i+"</li>";}).join("")+"</ol>'
