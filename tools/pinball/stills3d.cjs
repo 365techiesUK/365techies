@@ -34,8 +34,8 @@ async function launchB(o) {
 const ROOT = path.resolve(__dirname, '../..');
 
 const A = process.argv.slice(2), arg = (k, d) => { const i = A.indexOf('--' + k); return i >= 0 ? A[i + 1] : d; }, flag = (k) => A.includes('--' + k);
-const EMBER = flag('ember');
-const OUT = path.resolve(arg('out', EMBER ? 'D:/claude/retro-rebooted/pinball-ember' : 'D:/claude/retro-rebooted/pinball-m2a'));
+const EMBER = flag('ember'), LEVELS = flag('levels');
+const OUT = path.resolve(arg('out', LEVELS ? 'D:/claude/retro-rebooted/pinball-build/levels/stills' : EMBER ? 'D:/claude/retro-rebooted/pinball-ember' : 'D:/claude/retro-rebooted/pinball-m2a'));
 const FILLV = flag('fill'), PRE = FILLV ? 'fill-' : '';
 const TILTS = arg('tilts', FILLV ? '28' : '20,35,50').split(',').map(Number);
 const PORT = +arg('port', 8491), FOV = arg('fov', '');
@@ -56,6 +56,7 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const srv = await serve();
+  if (LEVELS) { try { await levels(); } finally { stop(srv); } return; }
   if (EMBER) { try { await ember(); } finally { stop(srv); } return; }
   const browser = await launchB({ headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), tilts: {} };
@@ -159,6 +160,88 @@ function stop(srv) { try { execFileSync('taskkill', ['/PID', String(srv.pid), '/
 })().catch((e) => { console.error(e); process.exit(1); });
 
 // ---------------------------------------------------------------- Ember Peak
+// --levels (wave 3, 5 Nov 2026): INTO THE VOLCANO and THE BIG ONE. Stills on a phone (1080 x 1920) and a desktop (1280 x 900):
+// still-chamber.png, still-multiball.png, still-plug.png (phone-/desktop-); draw calls per tier (medium, high) in surface play,
+// multiball and the chamber; the build time with every table (the surface and its levels) against the world3d.js before
+// this lane (--orig <path under games/pinball>, default _w3d-orig.js, if it is there); the hard cut timed; the flippers'
+// screen place on the surface and in the chamber (412 x 915 and 1280 x 900). Report: levels-report.json.
+async function levels() {
+  const browser = await launchB({ headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
+  const report = { when: new Date().toISOString() }, errors = [];
+  const t0 = Date.now(), log = (...a) => console.log('[' + Math.round((Date.now() - t0) / 1000) + 's]', ...a);
+  fs.mkdirSync(OUT, { recursive: true });
+  const mk = async (w, h) => {
+    const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+    page.on('pageerror', (e) => errors.push(String(e)));
+    page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errors.push(m.type() + ': ' + m.text()); });
+    await page.bringToFront();
+    try { const cdp = await page.context().newCDPSession(page); await cdp.send('Emulation.setFocusEmulationEnabled', { enabled: true }); } catch (e) {}
+    return page;
+  };
+  const open = async (page, q) => {
+    await page.goto('http://127.0.0.1:' + PORT + '/tools/pinball/stills3d.html?table=ember&' + q);
+    try { await page.waitForFunction(() => window.__ready === true, null, { timeout: +(process.env.READY_MS || 120000) }); }
+    catch (e) { console.error('page never got ready:', errors.join(' | ')); throw e; }
+  };
+  try {
+    const sizes = [['phone', 1080, 1920], ['desktop', 1280, 900]];
+    report.stills = {}; report.calls = {};
+    for (const [nm, w, h] of sizes) {
+      const page = await mk(w, h);
+      await open(page, 'cam=calm&frame=2&w=' + w + '&h=' + h);
+      if (nm === 'phone') { report.stats = await page.evaluate(() => window.__stats); log('build ms', report.stats.buildMs, '| built', JSON.stringify(report.stats.built), '| have', JSON.stringify(report.stats.have)); }
+      for (const k of ['chamber', 'multiball', 'plug']) {
+        const r = await page.evaluate((k) => S3.scene(k, 7, k === 'chamber' ? 900 : 700), k);
+        await page.locator('#frame').screenshot({ path: path.join(OUT, nm + '-still-' + k + '.png') });
+        const st = await page.evaluate(() => S3.world.stats());
+        report.stills[nm + '-' + k] = { scene: r, calls: st.calls, triangles: st.triangles };
+        if (nm === 'phone') { const d = await page.evaluate(() => S3.flatPng(3)); fs.writeFileSync(path.join(OUT, 'flat-' + k + '.png'), Buffer.from(d.split(',')[1], 'base64')); }   // the flat look of the same moment
+        log(nm, k, JSON.stringify(r), st.calls + ' draw calls');
+      }
+      await page.close();
+    }
+    // draw calls per tier, phone size, the camera running
+    const page = await mk(1080, 1920);
+    for (const tier of ['medium', 'high']) {
+      await open(page, 'cam=calm&frame=2&tier=' + tier);
+      report.calls[tier] = {};
+      for (const k of ['play', 'multiball', 'chamber']) {
+        await page.evaluate((k) => S3.scene(k === 'play' ? 'lively' : k, 11, 900), k);
+        report.calls[tier][k] = await page.evaluate((tier) => S3.bench(90, tier), tier);
+        log('tier', tier, k, JSON.stringify(report.calls[tier][k]));
+      }
+    }
+    // the hard cut and the flippers' place on screen
+    for (const [w, h] of [[412, 915], [1280, 900]]) {
+      const p2 = await mk(w, h);
+      await open(p2, 'cam=calm&frame=2&tier=medium&w=' + w + '&h=' + h);
+      const c = await p2.evaluate(() => S3.cut(7));
+      const fs1 = await p2.evaluate(() => { S3.scene('play', 7, 200); return S3.flipperScreen(); });
+      const fs2 = await p2.evaluate(() => { S3.scene('chamber', 7, 200); return S3.flipperScreen(); });
+      let worst = 0; fs1.forEach((q, i) => { worst = Math.max(worst, Math.abs(q[0] - fs2[i][0]), Math.abs(q[1] - fs2[i][1])); });
+      report['cut-' + w + 'x' + h] = Object.assign(c, { flippersSurface: fs1, flippersChamber: fs2, worstDiff: +worst.toFixed(4) });
+      log('cut ' + w + 'x' + h, JSON.stringify(c), 'flipper screen difference', worst.toFixed(4));
+      await p2.close();
+    }
+    // build time against the world3d.js before this lane (three loads each, the median)
+    const orig = arg('orig', '_w3d-orig.js');
+    if (fs.existsSync(path.join(ROOT, 'games', 'pinball', orig))) {
+      const bt = { now: [], before: [] };
+      for (let i = 0; i < 3; i++) {
+        await open(page, 'cam=calm&frame=2&tier=medium'); bt.now.push(await page.evaluate(() => window.__stats.buildMs));
+        await open(page, 'cam=calm&frame=2&tier=medium&w3d=../../games/pinball/' + orig); bt.before.push(await page.evaluate(() => window.__stats.buildMs));
+      }
+      const med = (a) => a.slice().sort((x, y) => x - y)[1];
+      report.build = { now: bt.now, before: bt.before, ratio: +(med(bt.now) / med(bt.before)).toFixed(2) };
+      log('build ms now', JSON.stringify(bt.now), 'before', JSON.stringify(bt.before), 'ratio', report.build.ratio);
+    }
+    report.errors = errors.slice(0, 30);
+    if (errors.length) console.log('page messages:', errors.slice(0, 10).join(' | '));
+    fs.writeFileSync(path.join(OUT, 'levels-report.json'), JSON.stringify(report, null, 1));
+    log('report in', path.join(OUT, 'levels-report.json'));
+  } finally { await browser.close(); }
+}
+
 async function ember() {
   const browser = await launchB({ headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-webgl'] });
   const report = { when: new Date().toISOString(), table: 'ember' };

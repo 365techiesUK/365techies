@@ -86,6 +86,13 @@ const THEMES = {
     bump: [{ c: '#ff7a1a', art: 'vent' }, { c: '#ffb21a', art: 'vent' }, { c: '#ff5a2a', art: 'vent' }],
     sling: ['#ff8a1a', '#ff8a1a'], slingArt: [null, null], ramp: 0xffc890, rampWall: '#ff9a2e', led: '#ffae3a',
     lava: '#ff6a1a', steam: '#f4f8ff', sea: '#29d3d6'
+  },
+  // THE MAGMA CHAMBER (wave 3, 5 Nov 2026): a level inside the volcano, in Ember Peak's cabinet - deep red rock, orange glow
+  chamber: {
+    world: 'cavern', exposure: 1.3, bloomT: 1.25, cabinet: 'lacquer', tone: THREE.ACESFilmicToneMapping,
+    bump: [{ c: '#ff5a1a', art: 'vent' }, { c: '#ff7a1a', art: 'vent' }, { c: '#ff4a2a', art: 'vent' }],
+    sling: ['#ff6a1a', '#ff6a1a'], slingArt: [null, null], ramp: 0xffc890, rampWall: '#ff7a2e', led: '#ff8a3a',
+    lava: '#ff5a10', steam: '#ffd8c0', sea: '#3a0a06'
   }
 };
 
@@ -975,6 +982,27 @@ function makeRoomEnv(renderer, floorTex, TW, TH) {   // the old table: a little 
   pm.dispose(); junk.forEach((j) => j.dispose());
   return rt;
 }
+function cavernCanvas(w, h) {   // THE MAGMA CHAMBER's cave round the cabinet (equirectangular): deep red rock, glowing seams below
+  const c = cv(w, h), g = c.getContext('2d'), r = rnd(91);
+  const grd = g.createLinearGradient(0, 0, 0, h);
+  grd.addColorStop(0, '#0c0405'); grd.addColorStop(0.45, '#2a0b07'); grd.addColorStop(0.62, '#4a1408'); grd.addColorStop(0.75, '#ff6a1a'); grd.addColorStop(0.8, '#5a1606'); grd.addColorStop(1, '#1a0604');
+  g.fillStyle = grd; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 260; i++) { const x = r() * w, y = r() * h * 0.7, s = 8 + r() * 60; g.fillStyle = 'rgba(' + (20 + r() * 40 | 0) + ',' + (4 + r() * 10 | 0) + ',4,' + (0.25 + r() * 0.4) + ')'; g.beginPath(); g.ellipse(x, y, s * 1.6, s, r() * 3, 0, 7); g.fill(); }
+  g.strokeStyle = 'rgba(255,120,30,0.55)'; g.lineWidth = Math.max(1, w / 900);
+  for (let i = 0; i < 40; i++) { let x = r() * w, y = h * (0.35 + r() * 0.35); g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 6; k++) { x += (r() - 0.5) * w * 0.03; y += r() * h * 0.03; g.lineTo(x, y); } g.stroke(); }
+  return c;
+}
+function crustCanvas(n) {   // a sealed crater's crust: cooled black rock with glowing cracks (round, for the pool's disc)
+  const c = cv(n, n), g = c.getContext('2d'), r = rnd(37), m = n / 2;
+  g.fillStyle = '#1a1214'; g.beginPath(); g.arc(m, m, m, 0, 7); g.fill();
+  for (let i = 0; i < 40; i++) { const a = r() * 7, d = r() * m * 0.85, s = n * (0.04 + r() * 0.08); g.fillStyle = 'rgba(' + (30 + r() * 30 | 0) + ',' + (24 + r() * 16 | 0) + ',' + (26 + r() * 16 | 0) + ',0.9)'; g.beginPath(); g.arc(m + Math.cos(a) * d, m + Math.sin(a) * d, s, 0, 7); g.fill(); }
+  g.strokeStyle = '#ff7a1a'; g.lineWidth = n / 70; g.shadowColor = '#ff5a10'; g.shadowBlur = n / 25;
+  for (let i = 0; i < 9; i++) { let a = r() * 7, d = m * 0.1; g.beginPath(); g.moveTo(m + Math.cos(a) * d, m + Math.sin(a) * d); for (let k = 0; k < 5; k++) { a += (r() - 0.5) * 0.7; d += m * 0.17; g.lineTo(m + Math.cos(a) * d, m + Math.sin(a) * d); } g.stroke(); }
+  return c;
+}
+// the arch's ends: a half circle, but a level's roof (wave 3) stops where it meets the side walls (x 6 and its right wall)
+function archA0(T) { if (!T.level) return Math.PI; const c = Math.max(-1, Math.min(1, (6 - T.arch.x) / T.arch.R)); return 2 * Math.PI - Math.acos(c); }
+function archA1(T) { if (!T.level) return 2 * Math.PI; const xr = T.shooter ? T.shooter.x0 : T.W - 26, c = Math.max(-1, Math.min(1, (xr - T.arch.x) / T.arch.R)); return 2 * Math.PI - Math.acos(c); }
 function makeSkyEnv(renderer, skyTex) {   // Ember Peak: the arcade room (was the sky and the sea till 30 Oct 2026)
   const pm = new THREE.PMREMGenerator(renderer);
   const rt = pm.fromEquirectangular(skyTex);
@@ -1032,7 +1060,8 @@ export function create(opts) {
   const NOPOST = { update() {} };   // (the spectacle's pass failed to build: nothing to update, and the flash stays whole)
 
   // ---------------------------------------------------------------- the table being shown (built from its data; rebuilt for another table)
-  let TB = null;
+  let TB = null, arcadeEnv = null;
+  const BUILT = {};   // every table built so far, kept (wave 3)
   const shared = [];
   const keepS = (x) => { shared.push(x); return x; };
   const shadowMat = keepS(new THREE.MeshBasicMaterial({ map: keepS(tex(blobCanvas(64, 0.62))), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
@@ -1100,7 +1129,7 @@ export function create(opts) {
   function buildTable(id) {
     const B = E.table ? E.table(id) : null;
     const T = B ? B.T : E.TABLE, tid = B ? B.id : 'orbit', TW = T.W, TH = T.H, MID = T.MID, BR = T.BALL || 7;
-    const TH_ = THEMES[tid] || THEMES.orbit, ISLAND = TH_.world === 'island';
+    const TH_ = THEMES[tid] || (T.level ? THEMES.chamber : THEMES.orbit), CAVE = TH_.world === 'cavern', ISLAND = TH_.world === 'island' || CAVE;   // (a level shares the island's look; CAVE marks what differs)
     HW = TW / 2; ZC = TH / 2;
     const RAMP = B ? B.RAMP : E.RAMP, rampAt = B ? B.rampAt : E.rampAt, BUMPERS = B ? B.BUMPERS : E.BUMPERS, POSTS = B ? B.POSTS : E.POSTS;
     const DROPS = B ? B.DROPS : E.DROPS, GATES = B ? B.GATES : E.GATES, inPocket = B ? B.inPocket : E.inPocket;
@@ -1111,7 +1140,7 @@ export function create(opts) {
     const ART_SCALE = opts.artScale || (PHONE ? 3 : 4);
     const parts = [];
     WALLS.forEach((w) => parts.push({ seg: [w[0], w[1], w[2], w[3]], r: w[4] + (w[6] === 'post' ? 0.3 : 0.6), h: w[6] === 'post' ? H.guide : cabinetSide(w) ? H.wood : H.rail }));
-    (function () { const A = T.arch, pts = []; for (let k = 0; k <= 48; k++) { const a = Math.PI + Math.PI * k / 48; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } for (let k = 0; k < 48; k++) parts.push({ seg: [pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1]], r: 2.2, h: H.arch }); })();
+    (function () { const A = T.arch, pts = [], a0 = archA0(T), a1 = archA1(T); for (let k = 0; k <= 48; k++) { const a = a0 + (a1 - a0) * k / 48; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } for (let k = 0; k < 48; k++) parts.push({ seg: [pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1]], r: 2.2, h: H.arch }); })();
     POSTS.forEach((p) => parts.push({ circle: [p.x, p.y, p.r + 0.4], h: H.post }));
     BUMPERS.forEach((Bm) => parts.push({ circle: [Bm.x, Bm.y, Bm.r + 1], h: ISLAND ? POP.top : H.bumpCap }));
     T.slings.forEach((s) => parts.push({ poly: offsetPoly([s.a, s.b, s.c], 3, 6), h: H.sling }));
@@ -1148,17 +1177,26 @@ export function create(opts) {
     // ---- the world beyond, and what the shiny things reflect
     let envRT, ballSky, skyTex = null, skyKey = '', world = null;
     if (ISLAND) {
-      const sc = islandSkyCanvas(PHONE ? 1024 : 2048, PHONE ? 512 : 1024), st = keep(tex(sc, { wrapS: true }));
-      st.mapping = THREE.EquirectangularReflectionMapping;
-      const ac = keep(tex(arcadeEnvCanvas(1024, 512), { wrapS: true })); ac.mapping = THREE.EquirectangularReflectionMapping;   // the chrome reflects the arcade, not the sky (30 Oct 2026)
-      envRT = makeSkyEnv(renderer, ac);
-      ballSky = ac;
-      world = buildIsland(st);
+      // the chrome reflects the arcade, not the sky (30 Oct 2026); made once and shared by every table (wave 3)
+      if (!arcadeEnv) { const ac = keepS(tex(arcadeEnvCanvas(1024, 512), { wrapS: true })); ac.mapping = THREE.EquirectangularReflectionMapping; arcadeEnv = { ac, envRT: keepS(makeSkyEnv(renderer, ac)) }; }
+      envRT = arcadeEnv.envRT;
+      ballSky = arcadeEnv.ac;
+      if (CAVE) world = buildCavern();
+      else { const sc = islandSkyCanvas(PHONE ? 1024 : 2048, PHONE ? 512 : 1024), st = keep(tex(sc, { wrapS: true })); st.mapping = THREE.EquirectangularReflectionMapping; world = buildIsland(st); }
     } else {
       envRT = makeRoomEnv(renderer, pfTex, TW, TH);
       ballSky = keep(tex(ballSkyCanvas())); ballSky.mapping = THREE.EquirectangularReflectionMapping;
     }
-    disposables.push(envRT);
+    if (!ISLAND) disposables.push(envRT);
+    function buildCavern() {   // THE MAGMA CHAMBER: the inside of the mountain round the cabinet (one dome, no sea)
+      const w = new THREE.Group(), ct = keep(tex(cavernCanvas(PHONE ? 1024 : 1536, PHONE ? 512 : 768), { wrapS: true }));
+      const skyMat = keep(new THREE.MeshBasicMaterial({ map: ct, side: THREE.BackSide, depthWrite: false, fog: false }));
+      const dome = new THREE.Mesh(keep(new THREE.SphereGeometry(4200, 24, 12)), skyMat); dome.renderOrder = -10; w.add(dome);
+      const seaMat = keep(new THREE.MeshBasicMaterial({ color: 0x1a0503 }));
+      const floorG = keep(new THREE.PlaneGeometry(9000, 9000)); floorG.rotateX(-Math.PI / 2);
+      const floor = new THREE.Mesh(floorG, seaMat); floor.position.y = -95; w.add(floor);
+      return { group: w, skyMat, seaMat, skirt: new THREE.Group() };
+    }
     function buildIsland(st) {   // the sky dome, the sea, the island's rock under the cabinet, islands far off
       const w = new THREE.Group();
       const skyGeo = keep(new THREE.SphereGeometry(4200, 32, 16)), skyMat = keep(new THREE.MeshBasicMaterial({ map: st, side: THREE.BackSide, depthWrite: false, fog: false }));
@@ -1216,7 +1254,7 @@ export function create(opts) {
       sweep(chrome, [[w[0], w[1]], [w[2], w[3]]], r, h);
       posts.push([w[0], w[1], h + 1.6, r + 0.5], [w[2], w[3], h + 1.6, r + 0.5]);
     });
-    (function () { const A = T.arch, pts = []; for (let k = 0; k <= 120; k++) { const a = Math.PI + Math.PI * k / 120; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } sweep(chrome, pts, A.r + 0.2, H.arch, { arc: 8 }); })();
+    (function () { const A = T.arch, pts = [], a0 = archA0(T), a1 = archA1(T); for (let k = 0; k <= 120; k++) { const a = a0 + (a1 - a0) * k / 120; pts.push([A.x + A.R * Math.cos(a), A.y + A.R * Math.sin(a)]); } sweep(chrome, pts, A.r + 0.2, H.arch, { arc: 8 }); })();
     sweep(chrome, [[7.2, -14], [7.2, TH]], 1.4, 2.6, { base: H.wood - 1 });
     sweep(chrome, [[264.8, -14], [264.8, TH]], 1.4, 2.6, { base: H.wood - 1 });
     if (ISLAND) { box(chrome, -6, 8.6, H.wood - 0.2, H.wood + 2.2, -18, TH + 24); box(chrome, 263.4, 278, H.wood - 0.2, H.wood + 2.2, -18, TH + 24); }   // metal side rails along the cabinet's top edges (30 Oct 2026, owner: "the full realism rebuild")
@@ -1514,7 +1552,7 @@ export function create(opts) {
     })();
 
     // ---- the plunger: a chrome rod, a rubber tip, a spring, the housing
-    const plunger = (function () {
+    const plunger = T.shooter && T.shooter.none ? null : (function () {
       const S = T.shooter, grp = new THREE.Group(); group.add(grp);
       const rodG = cylinder(1.3, 1.3, 40, 16); rodG.rotateX(Math.PI / 2); rodG.translate(0, 0, 20);
       const rod = R1(new THREE.Mesh(rodG, M.chrome)); grp.add(rod);
@@ -1545,7 +1583,7 @@ export function create(opts) {
         { pts: lobed(213, 334, 15, 9, 0.2), z: 22, art: 'palm', stand: [[223, 342], [223, 352], [202, 330]] },
         { pts: offsetPoly([[31, 215], [53, 215], [53, 229], [31, 229]], 2, 4), z: 31.5, art: 'drop', stand: [] },
         { pts: offsetPoly([[197, 215], [219, 215], [219, 229], [197, 229]], 2, 4), z: 31.5, art: 'drop', stand: [] }
-      ], S = 10, at = plasticsAtlas(PL, S), geos = [];
+      ].slice(0, CAVE ? 2 : 4).map((q) => (CAVE ? Object.assign({}, q, { art: 'flame' }) : q)), S = 10, at = plasticsAtlas(PL, S), geos = [];   // (the chamber: flames on both, no beach)
       PL.forEach((p, i) => {
         const b = at.cells[i], g = extrude(p.pts, p.z, 0.8, 0.25), P = g.attributes.position, uv = g.attributes.uv;
         for (let k = 0; k < P.count; k++) uv.setXY(k, (b.ox + (P.getX(k) + HW - b.x0) * S) / at.AW, 1 - (P.getZ(k) + ZC - b.y0) * S / at.AH);
@@ -1568,7 +1606,20 @@ export function create(opts) {
     const toys = {};
     // ---- the volcano: a cone of black rock that rises with the pressure (scaled up from a squat mound: the ball always
     // meets rock at the crater's collision radius), lava veins and the glowing mouth on its skin, a lava pool in the crater
-    if (T.volcano) {
+    if (T.volcano && CAVE) {
+      const V = T.volcano, HV = 9, grp = new THREE.Group(); grp.position.set(wx(V.x), 0, wz(V.y)); group.add(grp);
+      const R0 = V.r, prof = [[R0 + 6, 0], [R0 + 4, 2.4], [R0 + 1.6, 6.5], [R0 - 0.4, 8.6], [R0 - 2.4, 9], [R0 - 4, 7.6], [R0 - 5, 5.2]];
+      const cg = keep(new THREE.LatheGeometry(prof.map((q) => new THREE.Vector2(q[0], q[1])), 40));
+      { const P = cg.attributes.position; for (let k = 0; k < P.count; k++) { const x = P.getX(k), y = P.getY(k), z = P.getZ(k), rr = Math.hypot(x, z) || 1, n = (fbm3(x / 4, y / 4, z / 4, 3) - 0.5) * (y > 1 ? 2.4 : 0); P.setXYZ(k, x + x / rr * n, y, z + z / rr * n); } cg.computeVertexNormals(); }
+      const cc = coneCanvases(), ct = keep(tex(cc.col, { wrapS: true, aniso: ANISO })), cgt = keep(tex(cc.glo, { wrapS: true }));
+      const coneMat = keep(new THREE.MeshStandardMaterial({ map: ct, emissiveMap: cgt, emissive: new THREE.Color(TH_.lava), emissiveIntensity: 0.8, roughness: 0.8, metalness: 0, envMap: envRT.texture, envMapIntensity: 0.6 }));
+      const cone = RF(new THREE.Mesh(cg, coneMat)); grp.add(cone);
+      const poolG = keep(new THREE.CircleGeometry(R0 - 4, 32)); poolG.rotateX(-Math.PI / 2);
+      const poolMat = keep(new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff7a1a').multiplyScalar(3) }));
+      const pool = R1(new THREE.Mesh(poolG, poolMat)); pool.position.y = 5.4; cone.add(pool);
+      const lavaLight = RF(new THREE.PointLight(0xff6a1a, 0, 150, 2)); lavaLight.position.set(0, 20, 6); grp.add(lavaLight);
+      toys.volcano = { grp, cone, coneMat, poolMat, lavaLight, HV, POOL: 5.4, k: 1, fount: 0, lastCarry: 0, smokeAcc: 0, x: V.x, y: V.y, r: V.r, scoop: true };
+    } else if (T.volcano) {
       // one screen (29 Oct 2026): a proper cone standing up off the playfield even at rest - concave flanks from a wide
       // foot (a low flare inside the ball's reach: a ball touching the 22-unit collision circle clears it) up to a
       // crusted rim round a lava crater the ball can sit in
@@ -1604,6 +1655,9 @@ export function create(opts) {
       const poolG = keep(new THREE.CircleGeometry(V.r - 12.6, 32)); poolG.rotateX(-Math.PI / 2);
       const poolMat = keep(new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff7a1a').multiplyScalar(3) }));
       const pool = R1(new THREE.Mesh(poolG, poolMat)); pool.position.y = POOL + 0.2; cone.add(pool);
+      const crustG = keep(new THREE.CircleGeometry(V.r - 12.2, 32)); crustG.rotateX(-Math.PI / 2);
+      const crustMat = keep(new THREE.MeshStandardMaterial({ map: keep(tex(crustCanvas(128))), emissiveMap: null, color: 0xffffff, emissive: new THREE.Color('#ff5a10'), emissiveIntensity: 0, roughness: 0.9 }));
+      const crust = R1(new THREE.Mesh(crustG, crustMat)); crust.position.y = POOL + 0.9; crust.visible = false; cone.add(crust);
       // a collar of rubble on the playfield, where it rises out
       const r = rnd(55);
       const rockG = keep(new THREE.IcosahedronGeometry(1, 1)); { const P = rockG.attributes.position; for (let k = 0; k < P.count; k++) { const x = P.getX(k), y = P.getY(k), z = P.getZ(k), f = 0.72 + 0.5 * fbm3(x * 1.7 + 3, y * 1.7, z * 1.7, 2); P.setXYZ(k, x * f, y * f, z * f); } rockG.computeVertexNormals(); }   // lumpy boulders (30 Oct 2026)
@@ -1611,7 +1665,7 @@ export function create(opts) {
       { const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(); for (let k = 0; k < 30; k++) { const a = k / 30 * Math.PI * 2 + r() * 0.15, d = V.r + 6 + r() * 3.5, s = 1.2 + r() * 1.6; e.set(r() * 3, r() * 3, r() * 3); q.setFromEuler(e); m.compose(new THREE.Vector3(Math.sin(a) * d, s * 0.35, Math.cos(a) * d), q, new THREE.Vector3(s, s * 0.7, s)); rocks.setMatrixAt(k, m); } }
       grp.add(rocks);
       const lavaLight = RF(new THREE.PointLight(0xff6a1a, 0, 190, 2)); lavaLight.position.set(0, 64, 10); grp.add(lavaLight);
-      toys.volcano = { grp, cone, coneMat, poolMat, lavaLight, HV, POOL, k: 0.85, fount: 0, lastCarry: 0, smokeAcc: 0, x: V.x, y: V.y, r: V.r };
+      toys.volcano = { grp, cone, coneMat, poolMat, lavaLight, HV, POOL, k: 0.85, fount: 0, lastCarry: 0, smokeAcc: 0, x: V.x, y: V.y, r: V.r, crust, crustMat };
     }
     // ---- the steam geyser: a hot-spring vent (rock ring, turquoise pool) and its column of steam
     if (T.geyser) {
@@ -1624,7 +1678,13 @@ export function create(opts) {
     }
     // ---- the magma crabs: a shell with a glowing back, six legs in two segments, claws, eyes on stalks (all instanced
     // but the shells, which glow each on its own)
-    if (T.crabs && T.crabs.length) {
+    if (T.crabs && T.crabs.length && CAVE) {
+      const cs = T.crabs[0], sc = shellCanvases(), st = keep(tex(sc.col)), sg = keep(tex(sc.glo));
+      const mat = keep(new THREE.MeshStandardMaterial({ map: st, emissiveMap: sg, emissive: new THREE.Color('#ff6a10'), emissiveIntensity: 1.4, roughness: 0.5, metalness: 0, envMap: envRT.texture, envMapIntensity: 0.4 }));
+      const m = RF(new THREE.Mesh(keep(new THREE.IcosahedronGeometry(cs.r, 3)), mat)); group.add(m);
+      const shadow = new THREE.Mesh(shGeo, shadowMat); shadow.renderOrder = 1; group.add(shadow);
+      toys.core = { m, mat, shadow, r: cs.r, flash: 0, spin: 0 };
+    } else if (T.crabs && T.crabs.length) {
       const n = T.crabs.length, sc = shellCanvases(), st = keep(tex(sc.col)), sg = keep(tex(sc.glo));
       // a crab's carapace, not an egg (30 Oct 2026, owner: "the full realism rebuild"): a flat belly, a domed knobbly back, a
       // serrated rim with spikes, a notched brow at the front; the pincers two-fingered
@@ -1650,6 +1710,16 @@ export function create(opts) {
         const m = R1(new THREE.Mesh(shellG, mat)); group.add(m); shells.push({ m, mat, phase: i * 1.7, px: null, py: null, flash: 0 });
       }
       toys.crabs = { legs, claws, eyes, shadows, shells, n };
+    }
+    // ---- the OBSIDIAN PLUG (wave 3): a post of black volcanic glass between the flippers' tips, a glowing collar; it rises
+    // out of the playfield while W.plug.up and sinks back when it drops
+    if (T.plug) {
+      const Pg = T.plug, grp = new THREE.Group(); grp.position.set(wx(Pg.x), 0, wz(Pg.y)); group.add(grp);
+      const mat = keep(new THREE.MeshPhysicalMaterial({ color: 0x0c0a10, roughness: 0.08, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.04, emissive: new THREE.Color(TH_.lava || '#ff6a1a'), emissiveIntensity: 0.15, envMap: envRT.texture, envMapIntensity: 1.6 }));
+      const postG = keep(new THREE.CylinderGeometry(Pg.r * 0.8, Pg.r + 0.3, 13, 6, 1)); postG.translate(0, 6.5, 0);
+      const post = RF(new THREE.Mesh(postG, mat)); grp.add(post);
+      grp.visible = false;
+      toys.plug = { grp, mat, h: 0 };
     }
     // ---- the lava gates: dark steel panels with a glowing edge that rise to open the lava lanes; the lanes' lava
     if (T.lava) {
@@ -1760,11 +1830,17 @@ export function create(opts) {
         const l = list[i], id = l.id; let v = 0;
         if (dead) { o[i] = 0; continue; }
         if (title) { o[i] = 0.5 + 0.5 * Math.sin(t / 260 - (l.step || i) * 0.7); continue; }
-        if (/^press\d/.test(id)) { const k = +id.slice(5), p = V ? V.pressure : 0; v = p >= (k + 1) / 8 ? (p > 1 ? blink(140, k * 30) : 1) : (p >= k / 8 ? 0.35 : 0.06); }
+        if (/^press\d/.test(id)) { const k = +id.slice(5), p = V ? V.pressure / (W.press && W.press.level > 0 ? W.press.level : 1) : 0; v = p >= (k + 1) / 8 ? (p > 1 ? blink(140, k * 30) : 1) : (p >= k / 8 ? 0.35 : 0.06); }
         else if (/^lane\d/.test(id)) { const k = +id.slice(4); v = W.skillOpen && W.skill === k ? blink(160) : W.lanes && W.lanes[k] ? 1 : breathe(500, k * 300); }
-        else if (id === 'crater') v = V && V.busy ? 1 : V && V.pressure >= 1 ? blink(120) : blink(420) * 0.5 + 0.05;
-        else if (id === 'lavaL' || id === 'lavaR') v = Lv && Lv.open ? blink(110, id === 'lavaR' ? 110 : 0) : 0.05;
-        else if (id === 'ramp') v = lit.ramp > 0 ? 1 : W.comboT > 0 ? blink(120) : breathe(380);
+        else if (id === 'crater') v = V && V.busy ? 1 : (W.crater && W.crater.lit && W.crater.lit.length && !W.crater.sealed) || (V && V.ready) ? blink(120) : blink(420) * 0.5 + 0.05;
+        // THE MAGMA CHAMBER's inserts (art3d.js inserts('chamber'); W.descent on the level's world)
+        else if (/^vent\d/.test(id)) { const D = W.descent || {}, k = +id.slice(4); v = D.vents && D.vents[k] ? 1 : D.heat && D.heat[k] ? blink(260, k * 90) * (0.35 + 0.5 * D.heat[k] / (D.need || 1)) : breathe(420, k * 300); }
+        else if (id === 'core') { const D = W.descent || {}; v = D.cleared ? 0.3 : D.lit >= 3 ? blink(110) : breathe(600); }
+        else if (id === 'scoop') { const D = W.descent || {}; v = V && V.busy ? 1 : D.cleared ? blink(100) : breathe(500, 200); }
+        else if (id === 'cinder') v = Lv && Lv.gates && Lv.gates[0] && Lv.gates[0].h > 0.5 ? blink(130) : 0.05;
+        else if (/^clock\d/.test(id)) { const D = W.descent || {}, k = +id.slice(5), secs = D.clock != null ? D.clock / 60 : 0; v = secs > (k + 1) * 9 ? 1 : secs > k * 9 ? (secs < 10 ? blink(120) : 0.5) : 0.04; }
+        else if (id === 'lavaL' || id === 'lavaR') { const gi = id === 'lavaR' ? 1 : 0, gs = Lv && Lv.gates && Lv.gates[gi]; v = W.mb && W.mb.jp && W.mb.jp[id] ? blink(70, gi * 70) : gs ? (gs.h > 0.5 ? blink(110, gi * 110) : 0.05) : Lv && Lv.open ? blink(110, gi * 110) : 0.05; }   // (each lane by its own gate; JACKPOT lit in multiball: fast, wave 3)
+        else if (id === 'ramp') v = lit.ramp > 0 ? 1 : W.mb && W.mb.jp && W.mb.jp.ramp ? blink(70) : breathe(380);
         else if (id === 'orbitL') v = lit.orbitL > 0 ? 1 : W.comboT > 0 ? blink(120, 60) : breathe(420, 200);
         else if (id === 'orbitR') v = lit.orbitR > 0 ? 1 : W.comboT > 0 ? blink(120, 0) : breathe(420, 500);
         else if (id === 'kick') v = W.kickback ? 1 : 0.05;
@@ -1817,9 +1893,15 @@ export function create(opts) {
     };
   }
 
+  // every table is built once and kept (wave 3, INTO THE VOLCANO): the surface and its levels at load, so a cut to a level
+  // and back is an instant switch with no rebuild; the games room moves with the switch
   function useTable(id) {
-    if (TB) { if (TB.world) { scene.remove(TB.world.group); cab.remove(TB.world.skirt); } if (TB.room) { scene.remove(TB.room.group); TB.room.dispose(); } mover.remove(TB.group); TB.dispose(); }
-    TB = buildTable(id);
+    const key = E.table ? E.table(id).id : 'orbit';
+    let room = null;
+    if (TB) { if (TB.world) { scene.remove(TB.world.group); cab.remove(TB.world.skirt); } room = TB.room || null; TB.room = null; mover.remove(TB.group); }
+    TB = BUILT[key] || (BUILT[key] = buildTable(id));
+    TB.room = room;
+    HW = TB.TW / 2; ZC = TB.TH / 2;
     mover.add(TB.group);
     TB.group.add(glowPts.pts, puffPts.pts); pops.forEach((sp) => TB.group.add(sp)); balls.forEach((Bb) => { TB.group.add(Bb.m, Bb.s, Bb.s2); });
     mover.add(units);
@@ -2117,6 +2199,27 @@ export function create(opts) {
         if (mr() < dt * 20) emit('puff', V.x, V.y, topY + 10, (mr() - 0.5) * 30, (mr() - 0.5) * 30, 40 + mr() * 30, 3, 14 + mr() * 8, [0.25, 0.22, 0.22], 0.6, 0, 2.5);
       }
     }
+    if (V && V.crust) {   // a sealed crater (the boss's phase 1): the crust over the pool, its cracks glowing
+      const sealed = !!(W.crater && W.crater.sealed);
+      V.crust.visible = sealed; if (sealed) V.crustMat.emissiveIntensity = dark ? 0.1 : 0.5 + 0.3 * Math.sin(t / 380);
+    }
+    // the MAGMA CORE (a level's crab toy)
+    const Co = toys.core, Cz = Tz.crabs && Tz.crabs[0];
+    if (Co && Cz) {
+      const D = W.descent || {}, armed = D.lit >= (D.vents ? D.vents.length : 3) && !D.cleared, hitV = lit.crab ? lit.crab[0] || 0 : 0;
+      Co.flash = hitV > 0 ? 1 : Math.max(0, Co.flash - dt * 3); Co.spin += dt * (armed ? 2.4 : 0.7);
+      Co.m.position.set(wx(Cz.x), Co.r + 1 + Math.sin(t / 420) * 0.6, wz(Cz.y)); Co.m.rotation.set(Co.spin * 0.4, Co.spin, 0);
+      Co.mat.emissiveIntensity = dark ? 0.15 : D.cleared ? 0.5 : armed ? 1.6 + 0.9 * Math.sin(t / 110) + Co.flash * 3 : 0.9 + 0.2 * Math.sin(t / 500) + Co.flash * 2;
+      const k = Co.r * 3.2; Co.shadow.scale.set(k, 1, k * 1.1); Co.shadow.position.set(wx(Cz.x + SHX * 6), 0.3, wz(Cz.y + SHY * 6));
+    }
+    // the OBSIDIAN PLUG
+    const Pl = toys.plug;
+    if (Pl) {
+      const up = W.plug && W.plug.up ? 1 : 0;
+      Pl.h += (up - Pl.h) * (dt > 0 ? 1 - Math.exp(-dt / 0.06) : 1); if (Math.abs(up - Pl.h) < 1e-3) Pl.h = up;
+      Pl.grp.visible = Pl.h > 0.01; Pl.grp.position.y = -13 * (1 - Pl.h);
+      Pl.mat.emissiveIntensity = dark ? 0.05 : 0.15 + (lit.plug > 0 ? 2.5 : 0) + (W.plug && W.plug.up && W.plug.t < 180 ? (Math.floor(t / 120) % 2 ? 0.8 : 0) : 0);
+    }
     // the geyser
     const G = toys.geyser, Gs = Tz.geyser;
     if (G) {
@@ -2186,7 +2289,7 @@ export function create(opts) {
         g.panel.position.y = H.gate / 2 + h * 20;
         g.mat.emissiveIntensity = dark ? 0.05 : 0.3 + h * 1.2 + (lit.lava && lit.lava[i] > 0 ? 1.5 : 0);
       });
-      L.lanes.forEach((ln, i) => { const v = dark ? 0.12 : open ? 1.0 + 0.3 * Math.sin(t / 120 + i) : 0.38; ln.mat.color.setRGB(v, v, v); });
+      L.lanes.forEach((ln, i) => { const gh = Ls && Ls.gates[i] ? clamp(Ls.gates[i].h || 0, 0, 1) : open ? 1 : 0, v = dark ? 0.12 : 0.38 + gh * (0.62 + 0.3 * Math.sin(t / 120 + i)); ln.mat.color.setRGB(v, v, v); });   // (each lane by its own gate: one side at a time, wave 3)
     }
     void k60;
   }
@@ -2275,7 +2378,9 @@ export function create(opts) {
         if (TB.ISLAND) for (let k = 0; k < 6 * tier.motes + 1; k++) emit('puff', bp.x + (mr() - 0.5) * 6, bp.y + (mr() - 0.5) * 6, POP.top, (mr() - 0.5) * 20, (mr() - 0.5) * 20, 30 + mr() * 25, 1.2 + mr() * 0.6, 6 + mr() * 4, [0.55, 0.52, 0.5], 0.55, 0, 2);
       }
       bp.hit = v > 0 ? 1 : Math.max(0, bp.hit - dt * 7);
-      const idle = play ? (dark ? 0.15 : 0.75 + 0.25 * Math.sin(t / 300 + i * 2.1)) : 0.6 + 0.6 * Math.max(0, Math.sin(t / 240 - i * 2.1));
+      let idle = play ? (dark ? 0.15 : 0.75 + 0.25 * Math.sin(t / 300 + i * 2.1)) : 0.6 + 0.6 * Math.max(0, Math.sin(t / 240 - i * 2.1));
+      const Dv = W.descent && W.descent.level ? W.descent : null;
+      if (Dv && Dv.vents && i < Dv.vents.length) idle *= Dv.vents[i] ? 2.2 + 0.4 * Math.sin(t / 140 + i) : 0.35 + 0.5 * (Dv.heat ? Dv.heat[i] : 0) / (Dv.need || 1);   // (THE MAGMA CHAMBER's vents: lit, heating, cold)
       if (TB.pop) {   // (the island's instanced pop bumpers, 30 Oct 2026: the ring snaps down, the cap and the skirt glow in the bumper's colour)
         const P = TB.pop; _mm.makeTranslation(wx(bp.x), POP.ring - 4.2 * (v > 0 ? 1 : bp.hit), wz(bp.y)); P.rings.setMatrixAt(i, _mm);
         _tc.copy(bp.col).multiplyScalar(0.5 * idle + bp.hit * 2.6); P.caps.setColorAt(i, _tc); _tc.copy(bp.col).multiplyScalar(0.55 * idle + bp.hit * 5); P.skirts.setColorAt(i, _tc);
@@ -2301,8 +2406,10 @@ export function create(opts) {
     });
     if (TB.spinner) TB.spinner.rotation.x = -(W.spin ? W.spin.a : 0) * Math.PI * 2;
     const S = T.shooter, tipY = S.tip + (W.plunger ? W.plunger.pull : 0) * S.travel, P = TB.plunger;
-    P.tip.position.set(wx(S.cx), TB.BR, wz(tipY)); P.rod.position.set(wx(S.cx), TB.BR, wz(tipY));
-    P.spring.position.set(wx(S.cx), TB.BR, wz(tipY + 4.5)); P.spring.scale.set(1, 1, Math.max(1, TB.TH - 4 - tipY - 4.5));
+    if (P) {
+      P.tip.position.set(wx(S.cx), TB.BR, wz(tipY)); P.rod.position.set(wx(S.cx), TB.BR, wz(tipY));
+      P.spring.position.set(wx(S.cx), TB.BR, wz(tipY + 4.5)); P.spring.scale.set(1, 1, Math.max(1, TB.TH - 4 - tipY - 4.5));
+    }
     if (TB.ledMat) { const rl = lit.ramp > 0 ? 3.2 : W.comboT > 0 ? 1.6 + Math.sin(t / 60) * 0.8 : !play ? 1.2 + Math.sin(t / 200) * 0.6 : 1.0; TB.ledMat.color.set(TB.theme.led).multiplyScalar(dark ? 0.2 : rl); }
     updateToys(W, t, dt, play, dark);
     // balls
@@ -2435,21 +2542,26 @@ export function create(opts) {
 
   // ---------------------------------------------------------------- set up, compile, measure
   resize(opts.width || canvasEl.width || 360, opts.height || canvasEl.height || 640);
-  useTable(opts.table || (E.DEFAULT || 'orbit'));
+  {   // build the starting table and the levels below it now (each kept), so switching later costs nothing
+    const first = opts.table || (E.DEFAULT || 'orbit');
+    if (E.TABLES && opts.levels !== false) Object.keys(E.TABLES).forEach((k) => { const Tk = E.TABLES[k]; if (Tk && Tk.level && (Tk.surface || E.DEFAULT) === (E.table ? E.table(first).id : first) && !BUILT[k]) { useTable(k); renderer.compile(scene, camera); } });
+    useTable(first);
+  }
   { const fill = opts.fill !== false; setView({ fill, eye: fill && opts.tilt == null && opts.fov == null, tilt: opts.tilt != null ? opts.tilt : fill ? HOME_TILT : 35, fov: opts.fov || (fill ? FOV : 34) }); }
   renderer.compile(scene, camera);
   const buildMs = Math.round(performance.now() - t0);
 
   function stats() {
     return {
-      buildMs, artMs: TB.artMs, table: TB.id, calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, reflectCalls: refl.calls, reflectTriangles: refl.tris, art: TB.artSource,
+      buildMs, artMs: TB.artMs, table: TB.id, built: Object.keys(BUILT), calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, reflectCalls: refl.calls, reflectTriangles: refl.tris, art: TB.artSource,
       lamps: TB.lampsObj ? TB.lampsObj.list.length : 0, size: [Math.round(RW * PR), Math.round(RH * PR)], pixelRatio: PR, tier: tierName, auto: autoTier, tierChanges: perf.changes,
       view, cam: camSource, fx: !!window.PinFX, fxPoints: fxPts, motes: motes.length, pops: pops.filter((p) => p.visible).length, cpuMs: +cpuMs.toFixed(2),
       particles: !!particles, post: !!post, phone: PHONE, room: !!(TB.room && TB.room.group.visible), roomMs: TB.room ? TB.room.ms : null
     };
   }
   function dispose() {
-    if (TB) { if (TB.room) TB.room.dispose(); TB.dispose(); }
+    if (TB && TB.room) TB.room.dispose();
+    Object.keys(BUILT).forEach((k) => { try { BUILT[k].dispose(); } catch (e) {} });
     shared.forEach((d) => { try { d.dispose(); } catch (e) {} });
     composer.dispose && composer.dispose(); rt.dispose(); renderer.dispose();
   }
