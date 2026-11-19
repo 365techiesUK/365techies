@@ -354,6 +354,14 @@
       R.news.push({ big: 'THE VOLCANO · ' + PHASES[ph], small: ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'HIT THE CRATER BEFORE IT BLOWS', kind: 'boss' });
     } else if (dmg >= UNIT) R.news.push({ big: 'VOLCANO HIT', small: '-' + Math.round(dmg / UNIT) + (dmg < 2 * UNIT ? ' CHUNK' : ' CHUNKS'), kind: 'hit' });
   }
+  // for the page's test hook (PinRunPage.endRound): the round's mission done, or the volcano down, at once
+  function clear(R, W) {
+    if (R.phase !== 'play' || R.cleared || !W) return false;
+    if (R.bs) { var d0 = { craters: 0, lava: 0, bank: 0 }; R.bs.pc = -R.bs.max; boss(R, W, d0); }
+    else if (R.mission) { R.mission.done = true; stageClear(R, W); }
+    show(R, W);
+    return R.cleared;
+  }
   // a level below the surface (THE MAGMA CHAMBER): a chamber clear is one more ball, once a round
   function levelUpdate(R, W) {
     for (var i = 0; i < W.events.length; i++) if (W.events[i] === 'chamberclear' && !R.chamberBall) {
@@ -425,7 +433,7 @@
   }
 
   return {
-    newRun: newRun, startRound: startRound, update: update, offers: offers, pick: pick, status: status, summary: summary, daily: daily,
+    newRun: newRun, startRound: startRound, update: update, offers: offers, pick: pick, status: status, summary: summary, daily: daily, clear: clear,
     loadBest: loadBest, saveBest: saveBest, better: better, mod: mod, UNIT: UNIT, SAVE0: SAVE0, NEEDK: NEEDK, HPK: HPK, BALLS: BALLS, BALLS_MAX: BALLS_MAX, MISSIONS: MISSIONS, PHASES: PHASES, missionFor: missionFor,
     UPGRADES: UPGRADES, MUTATIONS: MUTATIONS, UP: UP, MU: MU, TARGET: TARGET, HP: HP, DMG: DMG, ROUNDS: ROUNDS, BOSS: BOSS, SPEEDK: SPEEDK
   };
