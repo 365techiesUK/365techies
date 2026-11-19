@@ -10,6 +10,10 @@
  * seen); the attract mode's flythrough and the director; the flat look draws Ember Peak and scrolls with the ball.
  * EMBER RUN (30 Oct 2026): the mode choice, the round line and banner, the pick card (rounds ended early through
  * PinRunPage.endRound), keys, clicks and taps, the boss, the run summary, Classic untouched, and a 360 px phone.
+ * WAVE 3 (5 Nov 2026, the page lane): pause over the pick card, 3 quick taps = 3 nudges, a swipe up nudges, no key hints
+ * on touch, Music and Voice remembered, TODAY'S ERUPTION and ?seed= links give the same run, Clear removes the run best,
+ * no 3D renders while paused / picking / behind How to play / on game over, and the phone end card (Play again high up,
+ * one tap to the next launch).
  *
  *   py -m http.server 8481 --bind 127.0.0.1   (from the repo root, in another window)
  *   node tools/pinball/page-controls-test.cjs [http://127.0.0.1:8481] [out folder for screenshots]
@@ -25,7 +29,7 @@ var fails = 0, passes = 0;
 function ok(cond, what) { if (cond) { passes++; console.log('  ok   ' + what); } else { fails++; console.log('  FAIL ' + what); } }
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
-async function open(browser, opts) {
+async function open(browser, opts, query) {
   var ctx = await browser.newContext(Object.assign({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) headless pinball-test' }, opts || {}));
   await ctx.route(/visitors-live|workers\.dev/, function (r) { return r.abort(); });   // never count a test as a visitor
   // count AudioContexts made, to see the cabinet's sound start after a press on the table
@@ -39,7 +43,9 @@ async function open(browser, opts) {
   page.on('console', function (m) { if (m.type() === 'error') errors.push('console: ' + m.text()); else if (m.type() === 'warning' && /PinCam|PinParticles|PinPost|failed/i.test(m.text())) errors.push('warning: ' + m.text()); });
   page.on('response', function (r) { if (r.status() >= 400) bad.push(r.status() + ' ' + r.url()); });
   page.on('requestfailed', function (r) { if (!/visitors-live|workers\.dev/.test(r.url())) bad.push('failed ' + r.url()); });
-  await page.goto(BASE + '/games/pinball/', { waitUntil: 'load' });
+  var cdp0 = await ctx.newCDPSession(page); await cdp0.send('Emulation.setFocusEmulationEnabled', { enabled: true });   // (rAF and timers keep their pace headless)
+  await page.goto(BASE + '/games/pinball/' + (query || ''), { waitUntil: 'load' });
+  await page.bringToFront();
   await page.waitForFunction(function () { return !!window.ARCADE365; });
   await sleep(400);
   return { ctx: ctx, page: page, errors: errors, bad: bad };
@@ -323,7 +329,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     var sm = await p.evaluate(function () {
       var o = document.getElementById('ov_over'), s = document.getElementById('oRun');
       return { mode: ARCADE365.mode, shown: !o.hidden, cls: o.classList.contains('runsum'), why: document.getElementById('oWhy').textContent, text: s.textContent, chips: s.querySelectorAll('.rs-chip').length, pips: s.querySelectorAll('.rs-pips i.ok').length,
-        best: (function () { try { return JSON.parse(localStorage.getItem('pinball365.emberRun.best')); } catch (e) { return null; } })(), tiles: getComputedStyle(o.querySelector('.ovbox > .tiles')).display, picking: PinRunPage.picking };
+        best: (function () { try { return JSON.parse(localStorage.getItem('pinball365.emberRun.best')); } catch (e) { return null; } })(), tiles: getComputedStyle(o.querySelector('#oMore > .tiles')).display, picking: PinRunPage.picking };
     });
     console.log('  ' + JSON.stringify(sm));
     ok(sm.mode === 'over' && sm.shown && sm.cls && !sm.picking && /round 4/.test(sm.why), 'the boss survives: run over, the game-over card (' + sm.why + ')');
@@ -432,6 +438,127 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     await m.ctx.close();
 
     // ------------------------------------------------------------ the sounds: every name through a recording kit
+    // ------------------------------------------------------------ WAVE 3: the page lane's cases
+    console.log('wave 3 page 1280 x 900');
+    var w3 = await open(browser, { viewport: { width: 1280, height: 900 } });
+    p = w3.page;
+    await p.evaluate(function () {   // count the nudges the engine makes (a plugin sees each step's events)
+      window.__nudges = 0;
+      PinEngine.plugin({ id: 'testnudge', init: function () {}, step: function (W) { for (var i = 0; i < W.events.length; i++) if (W.events[i] === 'nudge') window.__nudges++; } });
+    });
+    async function renders(pg, ms) {
+      var f = function () { return pg.evaluate(function () { var fr = null; try { fr = PinLook.world.debug.renderer.info.render.frame; } catch (e) {} return [fr, performance.now(), PinRender.drawn]; }); };
+      var a = await f(); await sleep(ms); var b = await f();
+      return { r: a[0] == null ? null : Math.round((b[0] - a[0]) / ((b[1] - a[1]) / 1000)), d: b[2] - a[2] };
+    }
+    var rnTitle = await renders(p, 1500);
+    await p.evaluate(function () { document.getElementById('bHelp').click(); }); await sleep(300);
+    var rnHelp = await renders(p, 1500);
+    var qs = await p.evaluate(function () { var q = document.querySelector('#dHelp .pinQuick'); return { cards: q ? q.querySelectorAll('.pq').length : 0, folded: !!document.querySelector('#dHelp details.pinGuide ol.how'), open: document.querySelector('#dHelp details.pinGuide').open }; });
+    await p.keyboard.press('Escape'); await sleep(200);
+    await p.evaluate(function () { if (window.PinRunPage && PinRunPage.run === null) {} document.getElementById('tPlay').click(); }); await sleep(1200);
+    var rnPlay = await renders(p, 1000);
+    // 3 quick taps between two steps = 3 nudges (the engine's input.upTap)
+    var nz = await p.evaluate(async function () {
+      var n0 = window.__nudges;
+      ['ArrowUp', 'ArrowUp', 'ArrowUp'].forEach(function (k) { document.dispatchEvent(new KeyboardEvent('keydown', { key: k, code: k, bubbles: true })); document.dispatchEvent(new KeyboardEvent('keyup', { key: k, code: k, bubbles: true })); });
+      await new Promise(function (r) { setTimeout(r, 300); });
+      return window.__nudges - n0;
+    });
+    ok(nz === 3, '3 quick taps of Up between two steps give 3 nudges (' + nz + ')');
+    await p.keyboard.press('p'); await sleep(300);
+    var rnPause = await renders(p, 1500);
+    await p.keyboard.press('p'); await sleep(200);
+    // pause over the pick card
+    await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(500);
+    var rnPick = await renders(p, 1500);
+    await p.keyboard.press('p'); await sleep(300);
+    var pz = await p.evaluate(function () { var c = document.getElementById('ov_pick'); return { mode: ARCADE365.mode, pick: getComputedStyle(c).display, paused: !document.getElementById('ov_paused').hidden, chose: PinRunPage.choose(PinRunPage.run.offer[0]), round: PinRunPage.run.round }; });
+    await p.keyboard.press('1'); await sleep(200);
+    var pz2 = await p.evaluate(function () { return { round: PinRunPage.run.round, picking: PinRunPage.picking }; });
+    ok(pz.mode === 'paused' && pz.paused && pz.pick === 'none' && !pz.chose && pz2.round === 1, 'pause over the pick card: the pause card shows, the pick card steps aside, a key or click picks nothing');
+    await p.keyboard.press('p'); await sleep(300);
+    var pz3 = await p.evaluate(function () { return { picking: PinRunPage.picking, pick: getComputedStyle(document.getElementById('ov_pick')).display }; });
+    ok(pz3.picking && pz3.pick !== 'none', 'carry on: the pick card is back');
+    await p.keyboard.press('1'); await sleep(400);
+    await p.evaluate(function () { PinRunPage.endRound(false); }); await sleep(1500);
+    var rnOver = await renders(p, 1500);
+    console.log('  renders a second: ' + JSON.stringify({ title: rnTitle, help: rnHelp, play: rnPlay, paused: rnPause, pick: rnPick, over: rnOver, quick: qs }));
+    ok(rnPause.r === 0 && rnPick.r === 0 && rnHelp.r === 0 && rnOver.r === 0 && rnPause.d === 0 && rnPick.d === 0 && rnOver.d === 0, 'no 3D renders while paused, on the pick card, behind How to play or on game over');
+    ok(rnPlay.d > 40 && rnTitle.d > 20 && rnTitle.d / 1.5 < 38, 'the table draws in play (' + rnPlay.d + ' frames a second) and the attract mode at about 30 (' + rnTitle.d + ')');
+    ok(qs.cards === 3 && qs.folded && !qs.open, 'How to play opens with a 3-picture quick start, the full guide folded under it');
+    var ec = await p.evaluate(function () { return { lines: document.getElementById('oLines').innerText, why: document.getElementById('oWhy').textContent, first: document.querySelector('#ov_over .ovbox').children[0].id, next: document.querySelector('#ov_over .ovbox > .oAgain #oPlay') !== null, sep: /,/.test(document.getElementById('oScore').textContent + document.getElementById('vScore').textContent) || +ARCADE365.world.score < 1000 }; });
+    ok(ec.next && /round 2/.test(ec.why) && /short of|HP left/.test(ec.lines) && /Next/.test(ec.lines), 'the end card: the result, PLAY AGAIN right under it, a near-miss line and a next goal (' + ec.why + ' | ' + ec.lines.replace(/\n+/g, ' / ') + ')');
+    // Enter starts the next run from the end card
+    await p.keyboard.press('Enter'); await sleep(400);
+    ok(await p.evaluate(function () { return ARCADE365.mode === 'play' && PinRunPage.run.round === 1; }), 'Enter on the end card plays again');
+    // TODAY'S ERUPTION twice: the same seed and the same first offer
+    var dy = [];
+    for (var di = 0; di < 2; di++) {
+      await p.evaluate(function () { ARCADE365.pause(); document.getElementById('tDaily').click(); }); await sleep(400);
+      await p.evaluate(function () { PinRunPage.endRound(true); }); await sleep(400);
+      dy.push(await p.evaluate(function () { return { seed: PinRunPage.run.seed, offer: PinRunPage.run.offer.join(), round: PinRunPage.run.round }; }));
+      await p.keyboard.press('1'); await sleep(200);
+    }
+    console.log('  ' + JSON.stringify(dy));
+    ok(dy[0].seed === dy[1].seed && dy[0].offer === dy[1].offer && dy[0].offer.length > 0, 'TODAY\'S ERUPTION opens the same run twice (seed ' + dy[0].seed + ', first offer ' + dy[0].offer + ')');
+    // Music and Voice: remembered under their own keys and in the settings
+    await p.evaluate(function () { ARCADE365.pause(); document.getElementById('bSet').click(); document.querySelector('#dSet [data-set="music"]').click(); document.querySelector('#dSet [data-set="voice"]').click(); });
+    await sleep(200);
+    var mv = await p.evaluate(function () { return { m: localStorage.getItem('pin365:music'), v: localStorage.getItem('pin365:voice'), saver: !!document.querySelector('#dSet [data-set="saver"]') }; });
+    // Clear my scores removes the run best (both keys)
+    await p.evaluate(function () { localStorage.setItem('pinball365.emberRun.best', '{"cleared":2,"score":5}'); localStorage.setItem('pin365:runbest', '{"cleared":2,"score":5}'); document.querySelector('#dSet [data-close]').click(); document.getElementById('bStats').click(); document.getElementById('sReset').click(); document.getElementById('rYes').click(); });
+    await sleep(200);
+    var clr = await p.evaluate(function () { return [localStorage.getItem('pinball365.emberRun.best'), localStorage.getItem('pin365:runbest')]; });
+    ok(clr[0] === null && clr[1] === null, 'Clear my scores removes the best run');
+    errs = realErrors(w3.errors);
+    ok(errs.length === 0, 'wave 3 page: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await w3.ctx.close();
+    var w3b = await open(browser, { viewport: { width: 1280, height: 900 } });
+    var mv2 = await w3b.page.evaluate(function () { return { m: document.querySelector('#dSet [data-set="music"]').getAttribute('aria-checked'), v: document.querySelector('#dSet [data-set="voice"]').getAttribute('aria-checked') }; });
+    ok(mv.m === '0' && mv.v === '0' && mv2.m === 'false' && mv2.v === 'false' && mv.saver, 'Music and Voice are remembered (pin365:music, pin365:voice) after a reload; Battery saver is in Settings');
+    await w3b.ctx.close();
+    // a ?seed= link: the same run in two fresh pages
+    var sd = [];
+    for (var si = 0; si < 2; si++) {
+      var sp = await open(browser, { viewport: { width: 1000, height: 800 } }, '?seed=424242');
+      await sp.page.evaluate(function () { document.getElementById('tPlay').click(); }); await sleep(500);
+      await sp.page.evaluate(function () { PinRunPage.endRound(true); }); await sleep(400);
+      sd.push(await sp.page.evaluate(function () { return { seed: PinRunPage.run.seed, offer: PinRunPage.run.offer.join(), wseed: ARCADE365.world.seed }; }));
+      errs = realErrors(sp.errors); if (errs.length) sd.push(errs.join(' | '));
+      await sp.ctx.close();
+    }
+    console.log('  ' + JSON.stringify(sd));
+    ok(sd.length === 2 && sd[0].seed === 424242 && sd[1].seed === 424242 && sd[0].offer === sd[1].offer, 'a ?seed= link opens that run (seed 424242, the same first offer twice)');
+    // the phone: no key hints, a swipe up nudges, the end card's Play again high up, one tap to the next launch
+    console.log('wave 3 phone 412 x 915, touch');
+    var w3p = await open(browser, { viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+    p = w3p.page;
+    var kh = await p.evaluate(function () { return [].filter.call(document.querySelectorAll('.k-keys'), function (e) { return e.getClientRects().length > 0; }).length; });
+    ok(kh === 0, 'touch: no keyboard hints on show');
+    await p.evaluate(function () { window.__nudges = 0; PinEngine.plugin({ id: 'testnudge', init: function () {}, step: function (W) { for (var i = 0; i < W.events.length; i++) if (W.events[i] === 'nudge') window.__nudges++; } }); document.getElementById('tPlay').click(); });
+    await sleep(500); await p.evaluate(function () { if (!ARCADE365.immersive) ARCADE365.full(true); }); await sleep(500);
+    var cdp3 = await w3p.ctx.newCDPSession(p);
+    var sbx = await p.locator('#screen').boundingBox(), sx = sbx.x + sbx.width * 0.3, sy = sbx.y + sbx.height * 0.7;
+    await cdp3.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: sx, y: sy, id: 7 }] });
+    for (var k = 1; k <= 4; k++) { await cdp3.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: sx, y: sy - 22 * k, id: 7 }] }); await sleep(20); }
+    await cdp3.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await sleep(250);
+    var sw = await p.evaluate(function () { return window.__nudges; });
+    ok(sw === 1, 'touch: a quick swipe up is one nudge (' + sw + ')');
+    var hudp = await p.evaluate(function () { var h = document.getElementById('runHud'); return [].filter.call(h.querySelectorAll('*'), function (e) { return e.childNodes.length && e.textContent.trim(); }).map(function (e) { return parseFloat(getComputedStyle(e).fontSize); }).reduce(function (a, b) { return Math.min(a, b); }, 99); });
+    ok(hudp >= 15, 'phone: the HUD\'s smallest text is at least 15 px (' + hudp + ')');
+    await p.evaluate(function () { PinRunPage.endRound(false); }); await sleep(1500);
+    var pe = await p.evaluate(function () { var r = document.getElementById('oPlay').getBoundingClientRect(); return { top: r.top, h: r.height, vh: innerHeight }; });
+    await p.screenshot({ path: path.join(OUT, 'w3-end-phone.png') });
+    ok(pe.top < pe.vh * 0.6 && pe.h >= 44, 'phone end card: the top of Play again at ' + Math.round(pe.top) + ' px, above 60% of ' + pe.vh);
+    var tt0 = Date.now(), pb = await p.locator('#oPlay').boundingBox();
+    await p.touchscreen.tap(pb.x + pb.width / 2, pb.y + pb.height / 2);
+    var tapOk = await p.waitForFunction(function () { return ARCADE365.mode === 'play'; }, null, { timeout: 3000 }).then(function () { return true; }, function () { return false; });
+    ok(tapOk && Date.now() - tt0 < 3000, 'phone: one tap from game over to the next launch (' + (Date.now() - tt0) + ' ms)');
+    errs = realErrors(w3p.errors);
+    ok(errs.length === 0, 'wave 3 phone: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
+    await w3p.ctx.close();
+
     console.log('sounds');
     var s = await open(browser, { viewport: { width: 800, height: 900 } });
     var snd = await s.page.evaluate(async function () {
