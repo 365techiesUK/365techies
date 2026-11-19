@@ -12,7 +12,7 @@
   <url><loc>https://365techies.co.uk/home-it-support-plans/</loc><lastmod>2026-10-29</lastmod></url>
   <url><loc>https://365techies.co.uk/business-it-support-plans/</loc><lastmod>2026-10-29</lastmod></url>
   <url><loc>https://365techies.co.uk/remote-it-support/</loc><lastmod>2026-11-12</lastmod></url>
-  <url><loc>https://365techies.co.uk/microsoft-365-support/</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://365techies.co.uk/microsoft-365-support/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://365techies.co.uk/cybersecurity-support/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://365techies.co.uk/computer-repairs/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/areas-covered/</loc><lastmod>2026-10-06</lastmod></url>
@@ -88,7 +88,7 @@
   <url><loc>https://365techies.co.uk/custom-pc-builds/</loc><lastmod>2026-10-06</lastmod></url>
   <url><loc>https://365techies.co.uk/preventative-maintenance/</loc><lastmod>2026-11-16</lastmod></url>
   <url><loc>https://365techies.co.uk/windows-11-support/</loc><lastmod>2026-11-03</lastmod></url>
-  <url><loc>https://365techies.co.uk/email-support/</loc><lastmod>2026-11-03</lastmod></url>
+  <url><loc>https://365techies.co.uk/email-support/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://365techies.co.uk/new-computer-setup/</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://365techies.co.uk/printer-support/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://365techies.co.uk/wifi-support/</loc><lastmod>2026-10-06</lastmod></url>
@@ -363,7 +363,7 @@
   <url><loc>https://365techies.co.uk/outlook-ost-file-corrupt/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/outlook-rules-not-working/</loc><lastmod>2026-11-16</lastmod></url>
   <url><loc>https://365techies.co.uk/outlook-signature-not-showing/</loc><lastmod>2026-11-12</lastmod></url>
-  <url><loc>https://365techies.co.uk/outlook-problems/</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://365techies.co.uk/outlook-problems/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://365techies.co.uk/outlook-calendar-not-syncing/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/outlook-out-of-office-not-working/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/outlook-calendar-appointments-disappearing/</loc><lastmod>2026-11-12</lastmod></url>
@@ -590,7 +590,7 @@
   <url><loc>https://365techies.co.uk/dell-docking-station-not-working/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/dell-g15-overheating/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/dell-killer-wifi-problems/</loc><lastmod>2026-11-12</lastmod></url>
-  <url><loc>https://365techies.co.uk/onedrive-problems/</loc><lastmod>2026-11-12</lastmod></url>
+  <url><loc>https://365techies.co.uk/onedrive-problems/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://365techies.co.uk/onedrive-moved-my-desktop-and-documents/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/files-missing-from-onedrive/</loc><lastmod>2026-11-12</lastmod></url>
   <url><loc>https://365techies.co.uk/onedrive-full-cant-send-email/</loc><lastmod>2026-11-16</lastmod></url>
@@ -718,6 +718,10 @@
   <url><loc>https://365techies.co.uk/reconnect-your-file-history-drive/</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://365techies.co.uk/restore-windows-7-backup-on-windows-11/</loc><lastmod>2026-11-13</lastmod></url>
   <url><loc>https://365techies.co.uk/macrium-reflect-free-ended/</loc><lastmod>2026-11-16</lastmod></url>
+  <url><loc>https://365techies.co.uk/recover-unsaved-word-document/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://365techies.co.uk/recover-deleted-emails-outlook/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://365techies.co.uk/hotmail-not-working/</loc><lastmod>2026-11-19</lastmod></url>
+  <url><loc>https://365techies.co.uk/microsoft-authenticator-new-phone/</loc><lastmod>2026-11-19</lastmod></url>
   <url><loc>https://365techies.co.uk/home-assistant-victron-cerbo-gx/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/cerbo-gx-not-connecting-to-vrm/</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://365techies.co.uk/join/</loc><lastmod>2026-10-29</lastmod></url>

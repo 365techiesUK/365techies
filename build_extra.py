@@ -180,6 +180,8 @@ SPECIALIST = [
      ("/outlook-cant-sign-in/", "Can&rsquo;t sign in to Outlook"),
      ("/outlook-not-syncing/", "Outlook is not syncing"),
      ("/outlook-contacts-missing/", "Outlook contacts have gone missing"),
+     ("/recover-deleted-emails-outlook/", "An email was deleted, or Deleted Items was emptied"),   # 19 Nov 2026
+     ("/hotmail-not-working/", "Hotmail (Outlook.com) has stopped working"),   # 19 Nov 2026
      ("/new-outlook-not-syncing/", "The new Outlook is not syncing"),
      ("/outlook-search-not-finding-old-emails/", "Search can&rsquo;t find older emails"),
      ("/outlook-wont-open-after-update/", "Outlook won&rsquo;t open after an update"),

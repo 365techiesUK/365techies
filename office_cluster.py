@@ -10,6 +10,8 @@ _OFFICE_CLUSTER = [
    ("download-classic-outlook", "Download classic Outlook", "Missing on a new PC? Microsoft&rsquo;s own download, step by step."),
    ("download-classic-outlook", "Download classic Outlook", "Missing on a new PC? Microsoft&rsquo;s own download, step by step."),
    ("recreate-outlook-profile-without-losing-emails", "Rebuild an Outlook profile", "Without losing a single email."),
+   ("recover-deleted-emails-outlook", "Recover deleted emails", "Even after emptying Deleted Items, and how long you have."),   # 19 Nov 2026
+   ("hotmail-not-working", "Hotmail not working", "Down, locked out, or shut out of an older Outlook."),   # 19 Nov 2026
    ("btinternet-email-wont-add-to-new-outlook", "BT email won&rsquo;t add", "The new Outlook and a BT Internet mailbox, step by step."),
    ("cant-send-btinternet-email-new-outlook", "BT email won&rsquo;t send", "Receives but will not send from the new Outlook."),
    ("sky-email-wont-add-to-new-outlook", "Sky email won&rsquo;t add", "Sky&rsquo;s Yahoo-run mailbox in the new Outlook."),
@@ -32,6 +34,7 @@ _OFFICE_CLUSTER = [
  ]),
  ("Word &amp; Excel", [
    ("microsoft-word-wont-open", "Word won&rsquo;t open", "From quick fixes to document recovery."),
+   ("recover-unsaved-word-document", "Recover an unsaved document", "Word or Excel closed without saving: every place to look."),   # 19 Nov 2026
    ("stop-word-saving-to-onedrive", "Stop Word saving to the cloud", "Make Save work the way you expect again."),
    ("excel-onedrive-sync-conflicts", "Excel sync conflicts", "&ldquo;We couldn&rsquo;t merge the changes&rdquo; &mdash; rescuing the edits you thought you lost."),
    ("excel-spreadsheet-rescue", "Excel spreadsheet rescue", "Broken, corrupt or built by someone who left &mdash; we&rsquo;ll get it working."),
@@ -41,6 +44,7 @@ _OFFICE_CLUSTER = [
    ("microsoft-office-unlicensed-product-error", "&ldquo;Unlicensed product&rdquo; error", "Why Office locks itself and the honest ways back."),
    ("how-to-use-microsoft-teams", "Teams, explained", "The plain-English starter for calls, chat and files."),
    ("how-to-secure-your-microsoft-365-account", "Secure your 365 account", "The checks that stop a hijack before it starts."),
+   ("microsoft-authenticator-new-phone", "Authenticator on a new phone", "Move it across without getting locked out."),   # 19 Nov 2026
  ]),
  ("Microsoft 365 for business", [
    ("microsoft-365-support", "Microsoft 365, managed", "Set up, migrated, secured and supported &mdash; priced per plan."),

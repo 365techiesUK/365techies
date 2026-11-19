@@ -1161,8 +1161,8 @@
  },
  "email-support": {
   "first": "2026-07-28",
-  "h": "0c20253279dfdc48",
-  "last": "2026-11-03"
+  "h": "f9d5acb7a69b3648",
+  "last": "2026-11-19"
  },
  "emails-on-computer-but-not-phone": {
   "first": "2026-07-28",
@@ -1398,6 +1398,11 @@
   "first": "2026-07-28",
   "h": "c4bb2be3f34a1278",
   "last": "2026-10-06"
+ },
+ "hotmail-not-working": {
+  "first": "2026-11-19",
+  "h": "680c490c733cfc34",
+  "last": "2026-11-19"
  },
  "how-long-do-dell-latitude-laptops-last": {
   "first": "2026-07-28",
@@ -1709,7 +1714,7 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "22b8b84b22ba707f",
+  "h": "4f8bd7176355934b",
   "last": "2026-11-19"
  },
  "it-health-check-tool": {
@@ -2394,13 +2399,18 @@
  },
  "microsoft-365-support": {
   "first": "2026-07-28",
-  "h": "aee0839014437011",
-  "last": "2026-11-12"
+  "h": "6d3c44d0acdd4ce1",
+  "last": "2026-11-19"
  },
  "microsoft-365-vs-google-workspace": {
   "first": "2026-07-28",
   "h": "1b17d4305f1716a9",
   "last": "2026-09-28"
+ },
+ "microsoft-authenticator-new-phone": {
+  "first": "2026-11-19",
+  "h": "a5e42958342c65ad",
+  "last": "2026-11-19"
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
@@ -2629,8 +2639,8 @@
  },
  "onedrive-problems": {
   "first": "2026-07-28",
-  "h": "0e4c8e222c98aecc",
-  "last": "2026-11-12"
+  "h": "a8d5bd0206fa93a8",
+  "last": "2026-11-19"
  },
  "onedrive-sharepoint-teams-explained": {
   "first": "2026-06-16",
@@ -2874,8 +2884,8 @@
  },
  "outlook-problems": {
   "first": "2026-07-28",
-  "h": "cabf51ca7a765fa6",
-  "last": "2026-11-12"
+  "h": "05728bc8fa6d4b30",
+  "last": "2026-11-19"
  },
  "outlook-pst-cannot-be-accessed": {
   "first": "2026-07-28",
@@ -3244,10 +3254,20 @@
   "h": "6dec3f7eb1cb795c",
   "last": "2026-11-13"
  },
+ "recover-deleted-emails-outlook": {
+  "first": "2026-11-19",
+  "h": "2562673d452404ae",
+  "last": "2026-11-19"
+ },
  "recover-photos-deceased-relatives-laptop": {
   "first": "2026-07-28",
   "h": "11697c3a3da787af",
   "last": "2026-10-06"
+ },
+ "recover-unsaved-word-document": {
+  "first": "2026-11-19",
+  "h": "b834850e58c7cd00",
+  "last": "2026-11-19"
  },
  "recreate-outlook-profile-without-losing-emails": {
   "first": "2026-07-28",

@@ -2847,6 +2847,367 @@ MACRIUM = {
 }
 
 
+# ============================================================ 35-38. Office and Outlook gaps (19 Nov 2026)
+# Owner, 19 Nov 2026: "do everything" after the GSC + Bing opportunity read (memory gsc-bing-read-2026-11-19). Bing keyword
+# research, 19 Aug-16 Nov 2026 (world | UK): "recover unsaved word document" 3.4K | 788, "recover unsaved excel file" 1.7K | 119,
+# "hotmail not working" 1.4K | 213, "recover deleted emails outlook" 545 | 159, "microsoft authenticator new phone" 460 | 77.
+# None had a page (sitemap checked). Bing's audience leans to our Outlook / Microsoft 365 pages, so these four fill gaps there.
+# Facts read on Microsoft Support, 19 Nov 2026:
+#   - "Recover your Microsoft 365 files" / "Recover your Word files and documents": Document Recovery opens by itself next time
+#     after Office closes unexpectedly; lists versions from the last save, AutoSave (OneDrive/SharePoint, subscribers) or
+#     AutoRecover; Close -> "Yes, I want to view these files later (safest option)".
+#   - "Recover an earlier version of an Office file": File > Info > Manage Document > Recover Unsaved Workbooks (Excel) /
+#     Presentations (PowerPoint); "(when I closed without saving)" versions under Manage; Restore / Compare.
+#   - "Recover and restore deleted items in Outlook": Deleted Items emptied after 30 days on Outlook.com, then recoverable 30
+#     days; "Recover items deleted from this folder" (Outlook.com, new Outlook); classic Outlook Home > "Recover Deleted Items
+#     From Server" > "Restore Selected Items" (online only); a Trash folder or no command = the account can't recover from the
+#     server; work accounts follow the organisation's policy.
+#   - "Back up / Restore one-time password codes in Microsoft Authenticator": personal + third-party codes backed up; work or
+#     school accounts NOT (account name only, sign in and register again; keep the old phone until done); same device type only
+#     (iPhone to iPhone, Android to Android); Android: menu > Settings > Cloud Backup + a Microsoft personal account (from January
+#     2027 Google One backup instead); iPhone: iCloud Drive, iCloud Keychain and iCloud Backup on, then install and open.
+#   - Outlook.com = "the current name for Microsoft's email service, which was formerly known as Hotmail"; problems page points to
+#     the Service Health Status site; Basic Authentication for Microsoft accounts ended 16 September 2024: Outlook 2007, 2010, 2013,
+#     2016 (MSI), 2019 (LTSC) and POP/IMAP set-ups can't use modern authentication with Outlook.com - add the account again with
+#     automatic set-up, or use an app that supports it (Thunderbird: OAuth2).
+# Not stated on any page read, so left out: storage sizes in GB. The AutoRecover default (every 10 minutes) and the UnsavedFiles
+# folder are long-standing Word Options facts, worded as "usually".
+
+WORDRECOVER = {
+    'slug': 'recover-unsaved-word-document',
+    'title': 'Recover an Unsaved Word Document (or Excel File)',
+    'metaDesc': 'Closed Word without saving, or the PC crashed? Where Word keeps unsaved and AutoRecover copies, how to open them, and the Excel version too.',
+    'ogTitle': 'Recover an unsaved Word document (or Excel file)',
+    'crumbName': 'Recover an Unsaved Word Document',
+    'eyebrow': '// CLOSED WORD WITHOUT SAVING?',
+    'h1': 'Recover an <em class="grad grad--cyan">unsaved</em> Word document',
+    'lede': 'You clicked Don&rsquo;t Save, the laptop went flat, or Word crashed mid-letter. Don&rsquo;t panic, and don&rsquo;t start typing it all again yet: Word keeps hidden copies as you work, and there are four places to look before you give up. The same steps work for Excel.',
+    'chips': ['Word and Excel', 'Microsoft 365 and Office 2021', 'Quickest place first'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with the first place to look', '#s1'],
+    'ctaHead': 'Still can&rsquo;t find it?',
+    'ctaSub': 'With your permission we connect to your Windows PC and search every place Word and Windows keep copies, while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('First', 'Open Word again: after a crash, Document Recovery appears on the left by itself.'),
+        ('Closed without saving', 'File, Info, Manage Document, Recover Unsaved Documents.'),
+        ('Saved before?', 'File, Info: look under Manage Document for &ldquo;when I closed without saving&rdquo;.'),
+        ('On OneDrive', 'File, Info, Version History shows every saved version.'),
+        ('Excel', 'The same place: Manage Workbook, Recover Unsaved Workbooks.'),
+        ('Next time', 'Turn on AutoSave, or AutoRecover every few minutes.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; AFTER A CRASH', 'h2': 'Open Word again and look for Document Recovery',
+         'html': '<p>If Word, Excel or the whole PC closed unexpectedly, Microsoft says <strong>Document Recovery</strong> opens by itself the next time you start the program. It&rsquo;s a pane down the left-hand side listing the files you had open.</p>'
+                 '<ol>'
+                 '<li><strong>Open Word</strong> (or Excel) as normal. Don&rsquo;t open a new blank document first.</li>'
+                 '<li>In the <strong>Document Recovery</strong> pane, look at the date and time under each file name. If there are several versions of the same file, the newest time usually has the most of your work.</li>'
+                 '<li>Click it to open it, check it&rsquo;s what you wanted, then <strong>File, Save As</strong> and save it somewhere you&rsquo;ll find it, such as Documents.</li>'
+                 '<li>When you close the pane, choose <strong>&ldquo;Yes, I want to view these files later&rdquo;</strong> if you&rsquo;re not sure. That keeps the recovered copies for another look.</li>'
+                 '</ol>'},
+        {'eyebrow': '/02 &mdash; CLOSED WITHOUT SAVING', 'h2': 'Clicked &ldquo;Don&rsquo;t Save&rdquo;? Recover Unsaved Documents',
+         'html': '<p>If you never saved the document at all, Word may still have kept a copy:</p>'
+                 '<ol>'
+                 '<li>Open Word and go to <strong>File</strong>, then <strong>Info</strong>.</li>'
+                 '<li>Click <strong>Manage Document</strong>, then <strong>Recover Unsaved Documents</strong>.</li>'
+                 '<li>A folder opens with any unsaved copies. Pick yours by its date and time, and click <strong>Open</strong>.</li>'
+                 '<li>In the bar across the top, click <strong>Save As</strong> and save it properly.</li>'
+                 '</ol>'
+                 '<p><strong>Excel:</strong> the same place is called <strong>Recover Unsaved Workbooks</strong> (File, Info, Manage Workbook). PowerPoint has Recover Unsaved Presentations.</p>'
+                 '<p>The folder these come from is usually <strong>C:\\Users\\<em>your name</em>\\AppData\\Local\\Microsoft\\Office\\UnsavedFiles</strong>. Copies there are cleared after a few days, so do this soon.</p>'},
+        {'eyebrow': '/03 &mdash; SAVED IT BEFORE?', 'h2': 'Saved it once, then lost the changes',
+         'html': '<ol>'
+                 '<li>Open the file you were working on.</li>'
+                 '<li>Go to <strong>File</strong>, then <strong>Info</strong>. Under <strong>Manage Document</strong> (Manage Workbook in Excel), look for a version labelled <strong>&ldquo;(when I closed without saving)&rdquo;</strong> or with a recent AutoRecover time.</li>'
+                 '<li>Open it. In the bar at the top, <strong>Restore</strong> puts it back over the saved file; in Word, <strong>Compare</strong> shows you the differences first.</li>'
+                 '</ol>'
+                 '<p><strong>File saved in OneDrive or SharePoint?</strong> Use <strong>File, Info, Version History</strong> instead: it lists every version AutoSave kept, and you can open any of them. The same list is in OneDrive online: right-click the file, Version history.</p>'
+                 '<p><strong>Saved on the PC and File History is on?</strong> Right-click the file in File Explorer, <strong>Properties</strong>, <strong>Previous Versions</strong>.</p>'},
+        {'eyebrow': '/04 &mdash; STILL MISSING', 'h2': 'Still missing? Three more places',
+         'html': '<ul>'
+                 '<li><strong>The Recycle Bin.</strong> If the file was deleted rather than unsaved, it&rsquo;s probably there: right-click it, Restore.</li>'
+                 '<li><strong>Search the whole PC for the name.</strong> Click Start and type a word from the file name, or in File Explorer search This PC. Files saved &ldquo;somewhere&rdquo; often turn up in Downloads or OneDrive.</li>'
+                 '<li><strong>Search for AutoRecover files.</strong> In File Explorer, search This PC for <strong>*.asd</strong>, the ending Word gives its AutoRecover copies. Open an .asd file from Word&rsquo;s File, Open, Browse, choosing All Files.</li>'
+                 '</ul>'
+                 '<p><strong>Important:</strong> while you&rsquo;re searching, don&rsquo;t install recovery programs or save big files on the same PC. New files can write over the space an old copy sits in. If it really matters, ring us before you try anything else. See also <a href="/how-to-recover-deleted-files/">how to recover deleted files</a> and <a href="/microsoft-word-wont-open/">Word won&rsquo;t open</a>.</p>'},
+        {'eyebrow': '/05 &mdash; NEXT TIME', 'h2': 'Make sure it can&rsquo;t happen again',
+         'html': '<ol>'
+                 '<li><strong>Save files in OneDrive and turn on AutoSave</strong> (the switch at the top left of Word) if you have Microsoft 365. Microsoft calls it the safest way to work: every change is saved as you type.</li>'
+                 '<li><strong>Or shorten AutoRecover:</strong> File, Options, Save. Tick <strong>Save AutoRecover information every</strong> and set it to 2 or 3 minutes (it&rsquo;s usually 10), and tick <strong>Keep the last AutoRecovered version if I close without saving</strong>.</li>'
+                 '<li><strong>Press Ctrl + S</strong> every few minutes. It&rsquo;s the oldest habit and still the best.</li>'
+                 '<li><strong>Back up the PC</strong>, so a lost or damaged file is never the only copy.</li>'
+                 '</ol>'},
+        {'eyebrow': '/06 &mdash; THE QUICK WAY', 'h2': 'Let our free app check your backup', 'html': '__APP_BOX_BACKUP__'},
+        {'eyebrow': '/07 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We look in every place Word, Excel and Windows keep copies, and if the file was deleted we can try <a href="/data-recovery/">data recovery</a>. If it isn&rsquo;t anywhere, we say so straight away.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Sources: Microsoft Support, <a href="https://support.microsoft.com/en-gb/office/collab-files/recover-your-microsoft-365-files" rel="noopener" target="_blank">Recover your Microsoft 365 files</a> and <a href="https://support.microsoft.com/en-gb/office/collab-files/recover-an-earlier-version-of-an-office-file" rel="noopener" target="_blank">Recover an earlier version of an Office file</a>. Read 19 November 2026.</p>'},
+    ],
+    'howToName': 'How to recover an unsaved Word document',
+    'howToSteps': [
+        {'name': 'Open Word again', 'text': 'After a crash, the Document Recovery pane opens on the left. Open the newest version and use Save As.'},
+        {'name': 'Recover Unsaved Documents', 'text': 'Go to File, Info, Manage Document, Recover Unsaved Documents, open the file and save it.'},
+        {'name': 'Check earlier versions', 'text': 'Open the file, go to File, Info and look under Manage Document for a version from when you closed without saving.'},
+        {'name': 'Check Version History', 'text': 'For a file in OneDrive, go to File, Info, Version History and open an earlier version.'},
+        {'name': 'Look in the Recycle Bin and search', 'text': 'Restore the file from the Recycle Bin, or search the PC for its name or for .asd files.'},
+    ],
+    'faqs': [
+        {'q': 'Can I recover a Word document I didn&rsquo;t save?', 'a': '<p>Often, yes. Go to File, Info, Manage Document, Recover Unsaved Documents. Word keeps unsaved copies for a few days, so look soon.</p>'},
+        {'q': 'Where does Word save unsaved documents?', 'a': '<p>Usually in C:\\Users\\your name\\AppData\\Local\\Microsoft\\Office\\UnsavedFiles. Recover Unsaved Documents opens that folder for you.</p>'},
+        {'q': 'How do I recover an unsaved Excel file?', 'a': '<p>File, Info, Manage Workbook, Recover Unsaved Workbooks. After a crash, open Excel again and use the Document Recovery pane.</p>'},
+        {'q': 'Why isn&rsquo;t my document in Document Recovery?', 'a': '<p>Document Recovery only lists files Word recovered after closing unexpectedly. If you clicked Don&rsquo;t Save, use Recover Unsaved Documents instead.</p>'},
+        {'q': 'How often does Word AutoRecover save?', 'a': '<p>Usually every 10 minutes. Change it in File, Options, Save; 2 or 3 minutes loses less work. AutoSave on OneDrive files saves continuously.</p>'},
+        {'q': 'Is AutoRecover the same as AutoSave?', 'a': '<p>No. AutoRecover keeps a rescue copy every few minutes. AutoSave, for files in OneDrive or SharePoint, saves the real file as you type.</p>'},
+        {'q': 'Can you get my document back for me?', 'a': '<p>We can look in every place it might be, remotely on your Windows PC. Remote help, usually &pound;60, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/microsoft-word-wont-open/">Word won&rsquo;t open</a>, <a href="/stop-word-saving-to-onedrive/">stop Word saving to OneDrive</a>, <a href="/excel-onedrive-sync-conflicts/">Excel sync conflicts</a>, <a href="/how-to-recover-deleted-files/">how to recover deleted files</a>, <a href="/onedrive-files-disappeared/">OneDrive files disappeared</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+}
+
+DELETEDMAIL = {
+    'slug': 'recover-deleted-emails-outlook',
+    'title': 'How to Recover Deleted Emails in Outlook and Hotmail',
+    'metaDesc': 'Deleted an email in Outlook, or emptied Deleted Items? How to get it back in Outlook.com, the new Outlook and classic Outlook, and how long you have.',
+    'ogTitle': 'Recover deleted emails in Outlook',
+    'crumbName': 'Recover Deleted Emails in Outlook',
+    'eyebrow': '// DELETED AN EMAIL BY MISTAKE?',
+    'h1': 'Recover <em class="grad grad--cyan">deleted emails</em> in Outlook',
+    'lede': 'An important email has gone: deleted by mistake, swept out with the rest, or the Deleted Items folder was emptied. With a Hotmail, Outlook.com or Microsoft 365 address there&rsquo;s a second safety net most people never see, and you usually have 30 days. Here&rsquo;s where to look, in each version of Outlook.',
+    'chips': ['Outlook.com and Hotmail', 'New and classic Outlook', 'Microsoft 365'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start with Deleted Items', '#s1'],
+    'ctaHead': 'Still can&rsquo;t find it?',
+    'ctaSub': 'With your permission we connect to your Windows PC and look in every place the email could be, while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('First', 'Look in Deleted Items, then Junk Email, and search the whole mailbox.'),
+        ('Emptied Deleted Items?', '&ldquo;Recover items deleted from this folder&rdquo;, at the top of Deleted Items.'),
+        ('Classic Outlook', 'Home tab: Recover Deleted Items From Server (you must be online).'),
+        ('How long', 'Outlook.com: 30 days in Deleted Items, then 30 more days to recover.'),
+        ('BT, Sky, Virgin', 'These accounts don&rsquo;t have the safety net: check the provider&rsquo;s webmail bin.'),
+        ('Important', 'Stop and ring us before you try recovery programs on the PC.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; THE QUICK CHECKS', 'h2': 'Check Deleted Items, Junk and search first',
+         'html': '<ol>'
+                 '<li><strong>Open the Deleted Items folder</strong> (some accounts call it Trash or Bin). Found it? Right-click it, <strong>Move</strong>, Inbox.</li>'
+                 '<li><strong>Check Junk Email.</strong> An email you think you deleted may have been filed as junk. Outlook.com keeps junk for 30 days.</li>'
+                 '<li><strong>Search all folders.</strong> Type a word from the subject or the sender&rsquo;s name in the search box, and make sure it&rsquo;s searching <strong>All folders</strong> or All mailboxes. Emails dragged by accident often turn up in Archive or another folder.</li>'
+                 '<li><strong>Check the rules.</strong> A rule can move or delete emails as they arrive: see <a href="/outlook-rules-not-working/">Outlook rules</a>.</li>'
+                 '</ol>'},
+        {'eyebrow': '/02 &mdash; EMPTIED THE BIN', 'h2': 'Emptied Deleted Items? Recover them from the server',
+         'html': '<p>On an <strong>Outlook.com, Hotmail, Live or Microsoft 365</strong> address, emails removed from Deleted Items go to a hidden <strong>Recoverable Items</strong> folder first. To get them back:</p>'
+                 '<h3>Outlook.com (Hotmail) in a browser, and the new Outlook</h3>'
+                 '<ol>'
+                 '<li>Click <strong>Deleted Items</strong>.</li>'
+                 '<li>At the top of the list, click <strong>Recover items deleted from this folder</strong>.</li>'
+                 '<li>Tick the emails you want and click <strong>Restore</strong>. They go back to Deleted Items; move them to the Inbox from there.</li>'
+                 '</ol>'
+                 '<h3>Classic Outlook (the older desktop Outlook)</h3>'
+                 '<ol>'
+                 '<li>Click <strong>Deleted Items</strong>, then on the <strong>Home</strong> tab click <strong>Recover Deleted Items From Server</strong>.</li>'
+                 '<li>Select the emails and choose <strong>Restore Selected Items</strong>, then OK.</li>'
+                 '</ol>'
+                 '<p>Outlook needs to be online for this. If you see a <strong>Trash</strong> folder instead of Deleted Items, or there&rsquo;s no Recover Deleted Items button, Microsoft says the account doesn&rsquo;t support recovering from the server: see the next section.</p>'},
+        {'eyebrow': '/03 &mdash; HOW LONG YOU HAVE', 'h2': 'How long deleted emails can be recovered',
+         'html': '<ul>'
+                 '<li><strong>Outlook.com and Hotmail:</strong> Microsoft empties Deleted Items automatically after <strong>30 days</strong>, and items removed from it are recoverable for another <strong>30 days</strong>.</li>'
+                 '<li><strong>Work and school Microsoft 365 accounts:</strong> it depends on the rules your organisation has set. Ask whoever runs your Microsoft 365, or us if that&rsquo;s us. If an email must never be lost, a <a href="/microsoft-365-backup-do-you-need-it/">Microsoft 365 backup</a> keeps it for longer.</li>'
+                 '<li><strong>Emptied by Outlook.com each time you sign out?</strong> Settings, Mail, Message handling: untick <strong>Empty my deleted items folder</strong> under When signing out.</li>'
+                 '</ul>'},
+        {'eyebrow': '/04 &mdash; BT, SKY, VIRGIN, GMAIL', 'h2': 'BT, Sky, Virgin Media or Gmail in Outlook',
+         'html': '<p>If your email address is from BT, Sky, TalkTalk, Virgin Media, Plusnet or Gmail, Outlook is only showing what&rsquo;s on that provider&rsquo;s server, and Microsoft&rsquo;s second safety net doesn&rsquo;t apply. Instead:</p>'
+                 '<ul>'
+                 '<li><strong>Sign in to the provider&rsquo;s own webmail</strong> and look in its Trash or Bin folder. Gmail keeps deleted emails in Bin for 30 days.</li>'
+                 '<li><strong>Check any other device</strong> that still has the email: an old laptop, tablet or phone that hasn&rsquo;t synced since.</li>'
+                 '<li><strong>Stop using Outlook on this PC and ring us.</strong> Outlook keeps a copy of your email in a file on the PC, and it reuses the space of deleted emails quickly. Every minute Outlook stays open makes recovery less likely. We have recovered emails from that file when nothing else could, but only when we got to it early.</li>'
+                 '</ul>'
+                 '<p>See also <a href="/emails-on-computer-but-not-phone/">emails on the computer but not the phone</a> and <a href="/outlook-search-not-finding-old-emails/">search can&rsquo;t find older emails</a>.</p>'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' If the email is gone from the server, we can look for it in the Outlook data file on your PC. Ring before you try recovery programs: installing them can write over what we would recover.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Source: Microsoft Support, <a href="https://support.microsoft.com/en-gb/office/recover-deleted-email-messages-in-outlook-com-cf06ab1b-ae0b-418c-a4d9-4e895f83ed50" rel="noopener" target="_blank">Recover and restore deleted items in Outlook</a>. Read 19 November 2026.</p>'},
+    ],
+    'howToName': 'How to recover deleted emails in Outlook',
+    'howToSteps': [
+        {'name': 'Check Deleted Items and Junk', 'text': 'Open Deleted Items and Junk Email, and search all folders for the subject or sender.'},
+        {'name': 'Recover from the server', 'text': 'In Deleted Items, click Recover items deleted from this folder (or Recover Deleted Items From Server in classic Outlook).'},
+        {'name': 'Restore the emails', 'text': 'Tick the emails you want, click Restore, then move them back to the Inbox.'},
+        {'name': 'Check the provider&rsquo;s webmail', 'text': 'For BT, Sky, Virgin Media or Gmail addresses, look in the Trash or Bin folder of the provider&rsquo;s own webmail.'},
+        {'name': 'Stop and ask for help', 'text': 'If it is still missing, close Outlook and get help before installing any recovery program.'},
+    ],
+    'faqs': [
+        {'q': 'Can I recover emails after emptying Deleted Items?', 'a': '<p>On Outlook.com, Hotmail and Microsoft 365, usually yes: open Deleted Items and click Recover items deleted from this folder.</p>'},
+        {'q': 'How long are deleted emails kept in Outlook.com?', 'a': '<p>30 days in Deleted Items, then Microsoft says they&rsquo;re recoverable for another 30 days.</p>'},
+        {'q': 'Why is there no Recover Deleted Items button?', 'a': '<p>The account doesn&rsquo;t support recovery from the server, usually because it&rsquo;s a BT, Sky, Virgin or other provider&rsquo;s address. Check that provider&rsquo;s webmail bin.</p>'},
+        {'q': 'Can I recover emails deleted more than 30 days ago?', 'a': '<p>Not from Outlook.com. Look on any other device that still has them, in a backup, or ask us to check the Outlook file on your PC.</p>'},
+        {'q': 'Does Shift + Delete delete emails for ever?', 'a': '<p>Not straight away on Microsoft accounts: they skip Deleted Items and go to the hidden Recoverable Items folder, so recover them the same way.</p>'},
+        {'q': 'Can you get my emails back?', 'a': '<p>Often, if we start early. With your permission we connect to your Windows PC and look. Remote help, usually &pound;60, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/outlook-problems/">Outlook problems and fixes</a>, <a href="/outlook-contacts-missing/">Outlook contacts missing</a>, <a href="/outlook-search-not-finding-old-emails/">search can&rsquo;t find older emails</a>, <a href="/hotmail-not-working/">Hotmail not working</a>, <a href="/microsoft-365-backup-do-you-need-it/">do you need a Microsoft 365 backup?</a> and <a href="/data-recovery/">data recovery</a>.</p>',
+}
+
+HOTMAIL = {
+    'slug': 'hotmail-not-working',
+    'title': 'Hotmail Not Working? How to Fix It (Outlook.com)',
+    'metaDesc': 'Hotmail not working, won&rsquo;t sign in, or stopped in an old email program? Check if Microsoft is down, then the fixes for sign-in, sending and old Outlook.',
+    'ogTitle': 'Hotmail not working? How to fix it',
+    'crumbName': 'Hotmail Not Working',
+    'eyebrow': '// HOTMAIL STOPPED WORKING?',
+    'h1': 'Hotmail <em class="grad grad--cyan">not working</em>? Here&rsquo;s the fix',
+    'lede': 'Hotmail still works: Microsoft just calls it <strong>Outlook.com</strong> now, and your @hotmail.co.uk or @hotmail.com address carries on as before. When it stops, it&rsquo;s nearly always one of four things: Microsoft having a problem, a sign-in check, a full mailbox, or an older email program Microsoft no longer lets in. Here&rsquo;s how to tell which, quickest check first.',
+    'chips': ['@hotmail, @live and @outlook addresses', 'Windows PCs', 'Quickest check first'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Is it Microsoft?', '#s1'],
+    'ctaHead': 'Still not working?',
+    'ctaSub': 'With your permission we connect to your Windows PC, find out why Hotmail stopped and get it working again while you watch. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Hotmail is Outlook.com', 'Same account, same address; sign in at outlook.com.'),
+        ('Is it Microsoft?', 'Check Microsoft&rsquo;s service status, or our live checker.'),
+        ('Works online but not in the program', 'Older Outlook (2016 and earlier) and POP/IMAP set-ups were shut out in 2024: add it again.'),
+        ('Can&rsquo;t sign in', 'Use Microsoft&rsquo;s own Forgot password page, never a number from a search advert.'),
+        ('Won&rsquo;t send', 'Check your Microsoft account security info, and that the storage isn&rsquo;t full.'),
+        ('Scam warning', 'Microsoft never rings you about Hotmail. Hang up.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; IS IT MICROSOFT?', 'h2': 'First: is Hotmail down for everyone?',
+         'html': '<ol>'
+                 '<li><strong>Try it in a web browser</strong> at <strong>outlook.com</strong>. If it works there, the problem is your email program or phone app: skip to section 3.</li>'
+                 '<li><strong>Check whether Microsoft has a problem.</strong> Our <a href="/is-outlook-down/">is Outlook down?</a> page checks for you, or see Microsoft&rsquo;s own service status page.</li>'
+                 '<li><strong>If Microsoft is down,</strong> there&rsquo;s nothing to fix on your PC: wait, and don&rsquo;t change your password or remove the account while it&rsquo;s down.</li>'
+                 '</ol>'},
+        {'eyebrow': '/02 &mdash; CAN&rsquo;T SIGN IN', 'h2': 'Can&rsquo;t sign in to Hotmail',
+         'html': '<ul>'
+                 '<li><strong>Check the address carefully:</strong> @hotmail.co.uk and @hotmail.com are different accounts, as are @live and @outlook.</li>'
+                 '<li><strong>Forgotten the password?</strong> Use <strong>Forgot password</strong> on Microsoft&rsquo;s own sign-in page. It sends a code to your recovery phone or email.</li>'
+                 '<li><strong>Asked for a code that goes to an old phone number?</strong> Microsoft&rsquo;s account recovery form is the way back in. It&rsquo;s slow, but it&rsquo;s the only real one.</li>'
+                 '<li><strong>Never ring a &ldquo;Hotmail support&rdquo; number from a search advert.</strong> Microsoft&rsquo;s real help is on its own website, and &ldquo;Hotmail helpline&rdquo; numbers in adverts are usually scammers. See <a href="/online-scams/">how online scams work</a>.</li>'
+                 '</ul>'
+                 '<p>More help: <a href="/outlook-cant-sign-in/">can&rsquo;t sign in to Outlook</a>, <a href="/outlook-keeps-asking-for-password/">Outlook keeps asking for the password</a>.</p>'},
+        {'eyebrow': '/03 &mdash; OLD PROGRAMS', 'h2': 'Works online, but not in Outlook or Windows Mail?',
+         'html': '<p>This is the one that catches most people. Since <strong>16 September 2024</strong>, Microsoft only lets programs sign in to Hotmail with its newer, safer sign-in (&ldquo;modern authentication&rdquo;). Microsoft lists what that left behind:</p>'
+                 '<ul>'
+                 '<li><strong>Outlook 2007, 2010, 2013, 2016 (bought outright) and 2019 (LTSC)</strong> can&rsquo;t connect to Hotmail any more.</li>'
+                 '<li><strong>Any program set up with POP or IMAP</strong> for Hotmail stops working, even a newer Outlook.</li>'
+                 '<li><strong>Windows Live Mail</strong> can&rsquo;t do it at all: see <a href="/windows-live-mail-not-working/">Windows Live Mail not working</a>.</li>'
+                 '</ul>'
+                 '<p><strong>The fix, in Microsoft 365&rsquo;s Outlook:</strong> remove the Hotmail account and add it again, typing only your address and password, so Outlook sets it up automatically. If that won&rsquo;t take, <a href="/recreate-outlook-profile-without-losing-emails/">make a new Outlook profile</a> first. In Thunderbird, set the sign-in method to <strong>OAuth2</strong>.</p>'
+                 '<p>Older Outlook with no Microsoft 365? The free Outlook in Windows 11, or your web browser, still works. See <a href="/download-classic-outlook/">download classic Outlook</a> if you have Microsoft 365.</p>'},
+        {'eyebrow': '/04 &mdash; WON&rsquo;T SEND OR RECEIVE', 'h2': 'Hotmail won&rsquo;t send or isn&rsquo;t getting new emails',
+         'html': '<ul>'
+                 '<li><strong>Can&rsquo;t send?</strong> Microsoft says this can be its account checks: sign in to your Microsoft account&rsquo;s <strong>security info</strong> page and confirm your phone or email.</li>'
+                 '<li><strong>Storage full?</strong> When your Microsoft storage is full, Hotmail can stop sending and receiving. Emails with big attachments use it up, and so do OneDrive photos. See <a href="/onedrive-full-cant-send-email/">OneDrive full and email bouncing</a>.</li>'
+                 '<li><strong>Emails not arriving?</strong> Look in Junk Email and Other (next to Focused), and check no rule is moving them: see <a href="/outlook-not-showing-new-emails/">new emails not arriving</a>.</li>'
+                 '<li><strong>An attachment refused?</strong> Big or unusual files can be blocked: share it as a OneDrive link instead.</li>'
+                 '</ul>'},
+        {'eyebrow': '/05 &mdash; ON A PHONE', 'h2': 'Hotmail not working on a phone',
+         'html': '<p>Microsoft&rsquo;s free <strong>Outlook app</strong> is the most reliable way to get Hotmail on a phone. On Android, see <a href="/outlook-app-asking-to-sign-in-android/">Outlook app keeps asking you to sign in</a> and <a href="/outlook-not-syncing-android/">Outlook not syncing on Android</a>.</p>'
+                 '<p><strong>We don&rsquo;t support iPhones or iPads:</strong> Apple doesn&rsquo;t allow our remote-support tool to take control of them. On an iPhone, Microsoft&rsquo;s Outlook help is the place to start.</p>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' We find out why Hotmail stopped, get it working in Outlook or the program you use, and check your account&rsquo;s recovery details are up to date so you can always get back in.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Hotmail and Outlook.com are Microsoft&rsquo;s; 365 Techies isn&rsquo;t connected with Microsoft. Sources: Microsoft Support, <a href="https://support.microsoft.com/en-gb/topic/8c95d913-d96b-4065-9171-e1fa44b03ff5" rel="noopener" target="_blank">Fixes or workarounds for recent issues on Outlook.com</a> and <a href="https://support.microsoft.com/en-gb/topic/c5d65390-9676-4763-b41f-d7986499a90d" rel="noopener" target="_blank">Modern Authentication for Outlook.com</a>. Read 19 November 2026.</p>'},
+    ],
+    'howToName': 'How to fix Hotmail not working',
+    'howToSteps': [
+        {'name': 'Try outlook.com in a browser', 'text': 'Sign in at outlook.com. If it works there, the problem is your email program or app.'},
+        {'name': 'Check Microsoft&rsquo;s status', 'text': 'Check whether Outlook.com is down for everyone before changing anything.'},
+        {'name': 'Sort the sign-in', 'text': 'Use Forgot password on Microsoft&rsquo;s own sign-in page, never a phone number from an advert.'},
+        {'name': 'Add the account again', 'text': 'In Outlook, remove the Hotmail account and add it again with automatic set-up, not POP or IMAP.'},
+        {'name': 'Check storage and security info', 'text': 'Make sure your Microsoft storage isn&rsquo;t full and your account security info is confirmed.'},
+    ],
+    'faqs': [
+        {'q': 'Does Hotmail still exist?', 'a': '<p>Yes. Microsoft renamed it Outlook.com, but @hotmail addresses still work. Sign in at outlook.com.</p>'},
+        {'q': 'Why has Hotmail stopped working in Outlook?', 'a': '<p>Usually because it was set up with POP or IMAP, or it&rsquo;s Outlook 2016 or older. Since September 2024 those can&rsquo;t sign in to Hotmail. Add the account again with automatic set-up.</p>'},
+        {'q': 'Is Hotmail down today?', 'a': '<p>Check our <a href="/is-outlook-down/">is Outlook down?</a> page or Microsoft&rsquo;s service status. If outlook.com works in a browser, it isn&rsquo;t down.</p>'},
+        {'q': 'Is there a Hotmail phone number?', 'a': '<p>Microsoft&rsquo;s real help for Hotmail is on its own website. &ldquo;Hotmail support&rdquo; numbers in search adverts are usually scammers: don&rsquo;t ring them.</p>'},
+        {'q': 'Why won&rsquo;t Hotmail send emails?', 'a': '<p>Microsoft says it can be an account check: confirm your security info. A full Microsoft storage allowance also stops sending.</p>'},
+        {'q': 'Can you fix my Hotmail?', 'a': '<p>Yes, on a Windows PC: with your permission we connect and sort it while you watch. Remote help, usually &pound;60, no fix, no fee.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/is-outlook-down/">is Outlook down?</a>, <a href="/outlook-problems/">Outlook problems and fixes</a>, <a href="/recover-deleted-emails-outlook/">recover deleted emails</a>, <a href="/how-to-secure-your-microsoft-365-account/">secure your Microsoft account</a> and <a href="/email-support/">email support</a>.</p>',
+}
+
+AUTHPHONE = {
+    'slug': 'microsoft-authenticator-new-phone',
+    'title': 'Move Microsoft Authenticator to a New Phone, Safely',
+    'metaDesc': 'New phone? Back up Microsoft Authenticator first, restore it on the new one, then sign in again to work accounts. Keep the old phone until you have.',
+    'ogTitle': 'Move Microsoft Authenticator to a new phone',
+    'crumbName': 'Microsoft Authenticator on a New Phone',
+    'eyebrow': '// GOT A NEW PHONE?',
+    'h1': 'Move <em class="grad grad--cyan">Microsoft Authenticator</em> to a new phone',
+    'lede': 'New phone for Christmas? Before you wipe, sell or trade in the old one, move Microsoft Authenticator across. Its codes are how you sign in to email, Microsoft 365 and often your bank or Facebook, and getting back in without them can take days. It takes ten minutes if you do it in the right order.',
+    'chips': ['Android and iPhone', 'Personal and work accounts', 'Old phone still in hand'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['Start on the old phone', '#s1'],
+    'ctaHead': 'Locked out after a new phone?',
+    'ctaSub': 'If it&rsquo;s a Microsoft 365 work account we look after, we can reset your sign-in method the same day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Golden rule', 'Keep the old phone, working, until everything signs in on the new one.'),
+        ('Step 1', 'On the old phone, turn on Cloud Backup in Authenticator&rsquo;s settings.'),
+        ('Step 2', 'Install Authenticator on the new phone and restore the backup.'),
+        ('Step 3', 'Work and school accounts don&rsquo;t restore: sign in to each again.'),
+        ('Same kind of phone', 'Backups only restore iPhone to iPhone, or Android to Android.'),
+        ('Lost the old phone?', 'Use each account&rsquo;s recovery, or ask your IT admin to reset it.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; ON THE OLD PHONE', 'h2': 'Back up Authenticator on the old phone',
+         'html': '<p><strong>On an Android phone:</strong></p>'
+                 '<ol>'
+                 '<li>Open <strong>Microsoft Authenticator</strong>, tap the menu, then <strong>Settings</strong>.</li>'
+                 '<li>Turn on <strong>Cloud Backup</strong> and choose the <strong>Microsoft personal account</strong> to keep it in (your Hotmail or Outlook.com address). Microsoft says that from January 2027 Android backups move to Google One instead.</li>'
+                 '<li>Tap <strong>OK</strong>.</li>'
+                 '</ol>'
+                 '<p><strong>On an iPhone:</strong> Authenticator backs up through iCloud. Turn on the backup in Authenticator&rsquo;s Settings, and make sure <strong>iCloud Drive, iCloud Keychain and iCloud Backup</strong> are on.</p>'
+                 '<p>&ldquo;Something went wrong&rdquo; when you turn backup on? Microsoft says it means you aren&rsquo;t signed in: turn the switch on again and choose Continue or Change account to sign in.</p>'},
+        {'eyebrow': '/02 &mdash; ON THE NEW PHONE', 'h2': 'Restore it on the new phone',
+         'html': '<ol>'
+                 '<li><strong>Install Microsoft Authenticator</strong> from the Play Store or App Store. Check the publisher is Microsoft Corporation.</li>'
+                 '<li>Open it and choose to <strong>restore from backup</strong>, signing in with the same account you backed up to (on an iPhone, the same iCloud account).</li>'
+                 '<li>Your codes and accounts appear. Any account showing <strong>Sign in to restore your account</strong> needs a tap on Sign in, your password, and a code to your email or phone.</li>'
+                 '</ol>'
+                 '<p><strong>Same kind of phone only:</strong> Microsoft says a backup made on an iPhone can&rsquo;t be restored on an Android phone, or the other way round. Switching sides? Add each account to the new phone by hand (section 4) while the old one still works.</p>'},
+        {'eyebrow': '/03 &mdash; WORK ACCOUNTS', 'h2': 'Work and school accounts: sign in to each again',
+         'html': '<p>The backup <strong>doesn&rsquo;t</strong> carry work or school accounts across: only their names come back. For each one:</p>'
+                 '<ol>'
+                 '<li>On a computer, sign in to your work account&rsquo;s <strong>Security info</strong> page (Microsoft&rsquo;s My Sign-ins). The old phone approves the sign-in.</li>'
+                 '<li>Click <strong>Add sign-in method</strong>, choose <strong>Microsoft Authenticator</strong>, and scan the QR code with the new phone.</li>'
+                 '<li>Test it: sign out and in again, approving on the new phone. Then delete the old phone from the list.</li>'
+                 '</ol>'
+                 '<p>Your workplace can block this step; if it does, the person who runs your Microsoft 365 resets it for you.</p>'},
+        {'eyebrow': '/04 &mdash; EVERYTHING ELSE', 'h2': 'Banks, Facebook and other codes',
+         'html': '<ul>'
+                 '<li><strong>Codes for Facebook, LinkedIn and other sites</strong> come back with the backup (the six-digit codes that change every 30 seconds).</li>'
+                 '<li><strong>Codes that didn&rsquo;t come back</strong> (or a phone switch from iPhone to Android): sign in to that site on a computer, open its security or two-step settings, turn the authenticator app off and on again, and scan the new QR code.</li>'
+                 '<li><strong>Bank apps</strong> usually have their own way to move to a new phone: follow the bank&rsquo;s app, not Authenticator.</li>'
+                 '<li><strong>Only then</strong> wipe or trade in the old phone.</li>'
+                 '</ul>'
+                 '<p>Setting this up for the first time? See <a href="/how-to-set-up-two-factor-authentication/">how to set up two-factor authentication</a>.</p>'},
+        {'eyebrow': '/05 &mdash; OLD PHONE GONE', 'h2': 'Lost the old phone, or already wiped it?',
+         'html': '<ul>'
+                 '<li><strong>Personal Microsoft account:</strong> sign in with another method you set up (a text or email code). If there&rsquo;s none, Microsoft&rsquo;s account recovery form is the way back in.</li>'
+                 '<li><strong>Work Microsoft 365 account:</strong> ask whoever runs your Microsoft 365 to reset your sign-in methods. If that&rsquo;s us, ring us.</li>'
+                 '<li><strong>Other sites:</strong> use the recovery codes you were given when you set up two-step sign-in, or that site&rsquo;s own account recovery.</li>'
+                 '</ul>'
+                 '<p><strong>Be wary of anyone who rings offering to help you back in.</strong> Microsoft and your bank won&rsquo;t ring you about it; scammers will. See <a href="/online-scams/">how online scams work</a>.</p>'
+                 '<p><strong>We don&rsquo;t support iPhones or iPads:</strong> Apple doesn&rsquo;t allow our remote-support tool to take control of them. The account side of a Microsoft 365 business we look after is different: we reset that from our end.</p>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _CALL.format(extra=' For Microsoft 365 businesses we look after, we reset a lost phone&rsquo;s sign-in the same day and help set up the new one.')
+                 + '<p style="font-size:.85rem;color:var(--muted)">Microsoft Authenticator is Microsoft&rsquo;s; 365 Techies isn&rsquo;t connected with Microsoft. Sources: Microsoft Support, <a href="https://support.microsoft.com/en-gb/authenticator/back-up-your-accounts-in-microsoft-authenticator" rel="noopener" target="_blank">Back up one-time password codes</a> and <a href="https://support.microsoft.com/en-gb/authenticator/restore-account-credentials-from-microsoft-authenticator" rel="noopener" target="_blank">Restore one-time password codes</a>. Read 19 November 2026.</p>'},
+    ],
+    'howToName': 'How to move Microsoft Authenticator to a new phone',
+    'howToSteps': [
+        {'name': 'Back up the old phone', 'text': 'In Authenticator, open Settings and turn on Cloud Backup (iCloud on an iPhone).'},
+        {'name': 'Install on the new phone', 'text': 'Install Microsoft Authenticator from Microsoft Corporation and restore from the backup.'},
+        {'name': 'Sign in where asked', 'text': 'Tap Sign in on any account that says Sign in to restore your account.'},
+        {'name': 'Re-add work accounts', 'text': 'On a computer, open your work account&rsquo;s Security info, add Microsoft Authenticator and scan the QR code.'},
+        {'name': 'Then retire the old phone', 'text': 'Only wipe or trade in the old phone once every account signs in on the new one.'},
+    ],
+    'faqs': [
+        {'q': 'How do I move Microsoft Authenticator to a new phone?', 'a': '<p>Turn on Cloud Backup in Authenticator&rsquo;s settings on the old phone, install it on the new phone and restore. Then sign in to work accounts again.</p>'},
+        {'q': 'Why didn&rsquo;t my work account transfer?', 'a': '<p>Microsoft doesn&rsquo;t back up work or school accounts. Add the new phone from your work account&rsquo;s Security info page.</p>'},
+        {'q': 'Can I move Authenticator from iPhone to Android?', 'a': '<p>Not with the backup: Microsoft says it only restores to the same kind of phone. Add each account to the new phone by hand.</p>'},
+        {'q': 'I lost my phone with Authenticator on it. What now?', 'a': '<p>Use another sign-in method or Microsoft&rsquo;s account recovery. For a work account, your Microsoft 365 administrator resets it.</p>'},
+        {'q': 'Should I wipe my old phone first?', 'a': '<p>No. Keep the old phone working until every account signs in on the new one.</p>'},
+        {'q': 'Can you help?', 'a': '<p>For a Microsoft 365 business we look after, yes: we reset sign-in methods the same day. We don&rsquo;t support iPhones directly.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-set-up-two-factor-authentication/">how to set up two-factor authentication</a>, <a href="/how-to-secure-your-microsoft-365-account/">secure your Microsoft 365 account</a>, <a href="/locked-out-microsoft-365-admin-account/">locked out of the Microsoft 365 admin account</a>, <a href="/how-to-use-a-password-manager/">how to use a password manager</a> and <a href="/microsoft-365-support/">Microsoft 365 support</a>.</p>',
+}
+
+
 def symptom_pages(setup_url):
     """The pages, with the 365 PC Manager boxes filled in (the same boxes and wording as the feature pages)."""
     import pcm_feature_pages_data as pfp
@@ -2920,7 +3281,7 @@ def symptom_pages(setup_url):
             '<strong>Nothing is deleted:</strong> &ldquo;Move the extra copies&rdquo; puts them in one folder for you to check, and <strong>Put them back</strong> undoes it. Photos only in OneDrive&rsquo;s cloud are skipped, and iTunes copies are only listed, to remove inside iTunes.</p>', setup_url),
     }
     out = []
-    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST, WIN7RESTORE, MACRIUM):
+    for d in (PRINTER, TOUCHPAD, ROTATE, CHARGING, UPDATES, PASSWORD, RESERVED, WIFI, CLIPBOARD, SECBOOT, PHONELINK, NTLWORLD, SPOTLIGHT, W11LIKE10, RESTORE, BSOD, DEFENDER, SAC, WINBACKUP, CCLEANER, HPSA, VANTAGE, W11CHECK, NOSOUND, CAMMIC, MEMINT, UPDATEALL, USBNR, DUPES, FILEHIST, WIN7RESTORE, MACRIUM, WORDRECOVER, DELETEDMAIL, HOTMAIL, AUTHPHONE):
         d = dict(d, sections=[dict(x) for x in d['sections']])
         for x in d['sections']:
             for k, v in boxes.items():
@@ -3052,6 +3413,24 @@ SYMPTOM_FLOWS = {
     FILEHIST['slug']: {'h2': 'Get File History backing up, step by step', 'ask': 'Does it back up now?',
                        'tip': 'Plug the drive in once a week, click Run now, and keep it unplugged in between.',
                        'h3s': 'Still saying reconnect after every step? That is a remote job.'},
+    # 19 Nov 2026: each step is another place to look, so "Not yet" moves on and "Yes" ends it
+    WORDRECOVER['slug']: {'h2': 'Find your document, most likely place first', 'ask': 'Have you found it?',
+                          'yes': 'Yes, found it', 'no': 'Not yet',
+                          'tip': 'Save it straight away with File, Save As, then turn on AutoSave.',
+                          'h3s': 'Still missing after every place? Ring us before you try recovery programs.'},
+    DELETEDMAIL['slug']: {'h2': 'Get the email back, step by step', 'ask': 'Have you found it?',
+                          'yes': 'Yes, found it', 'no': 'Not yet',
+                          'tip': 'Move it out of Deleted Items into the Inbox, or a folder of its own.',
+                          'h3s': 'Still missing? Close Outlook and ring us before anything else.'},
+    HOTMAIL['slug']: {'h2': 'Get Hotmail working, step by step', 'ask': 'Is Hotmail working now?',
+                      'tip': 'Check your account&rsquo;s recovery phone and email are up to date.',
+                      'h3s': 'Still not working after every step? That is a remote job.'},
+    AUTHPHONE['slug']: {'h2': 'Move it across, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+                        'last_yes': 'Done, all moved', 'ask': 'Done that step?',
+                        'lede': 'Work through it one step at a time, with both phones in front of you: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
+                        'h3f': 'All moved{mins}. Nice work.',
+                        'tip': 'Sign in to one account on each phone tomorrow too, before you part with the old one.',
+                        'h3s': 'Stuck at a step? Keep the old phone and ring us.'},
     DUPES['slug']: {'h2': 'Clear the copies, step by step', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
                     'last_yes': 'Done, all tidy', 'ask': 'Done that step?',
                     'lede': 'Work through it one step at a time: press <strong>Done</strong> when you have finished each step, or <strong>I am stuck here</strong> and we will take it from there. Nothing here leaves your device.',
