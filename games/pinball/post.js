@@ -146,7 +146,7 @@
     }
     U.uBall.value.set(opts.ball ? opts.ball.x : 0.5, opts.ball ? opts.ball.y : 0.5, opts.ball ? 1 : 0);
     var post = fx && fx.post || {}, fl = fx && fx.flash > 0 && !red ? Math.min(1, fx.flash) : 0, c = hexLin(fx && fx.flashColor);
-    U.uFlash.value.set(c[0], c[1], c[2], fl * 0.35);
+    U.uFlash.value.set(c[0], c[1], c[2], fl * 0.1);   // (wave 3, the grade cap: the flash's share over the whole picture 0.35 -> 0.1 - added in linear light, it lifted the dark table far more than it looked)
     U.uFringe.value = red ? 0 : Math.max(0, Math.min(1, +post.fringe || 0));
     U.uVignette.value = Math.max(0, Math.min(0.8, post.vignette == null ? VIG : +post.vignette));
     U.uWarm.value = Math.max(0, Math.min(0.8, +post.warm || 0));

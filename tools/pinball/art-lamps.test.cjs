@@ -219,7 +219,7 @@ function inPoly(P, x, y) { let c = false; for (let i = 0, j = P.length - 1; i < 
 
 test('Ember Peak: about 80-110 inserts, each complete and on the table, every shot and toy has its lamps', () => {
   assert.equal(LE.id, 'ember');
-  assert.ok(LE.list.length >= 80 && LE.list.length <= 130, 'count ' + LE.list.length);
+  assert.ok(LE.list.length >= 80 && LE.list.length <= 160, 'count ' + LE.list.length);
   const ids = new Set();
   for (const l of LE.list) {
     assert.ok(!ids.has(l.id), 'duplicate ' + l.id); ids.add(l.id);
@@ -288,19 +288,21 @@ test('Ember Peak level(): the pressure gauge, the crater, the lava lanes, the qu
   const maxOver = (ids, W2, t0, t1) => { let m = 0; for (let t = t0; t < t1; t += 23) { const u = LE.level(W2, t, 'play'); for (const i of ids) m = Math.max(m, u[i]); } return m; };
   // no pressure: nothing on the gauge lit (it may chase dimly)
   assert.ok(maxOver(G, W, 0, 4000) <= 0.5 && maxOver(ER, W, 0, 4000) <= 0.5, 'empty gauge');
-  // half: the first four ticks and E-R lit, the far end not
-  V.pressure = 0.5; v = LE.level(W, 0, 'play');
+  // half: the first four ticks and E-R lit, the far end not (wave 3: the gauge is sized to the eruption ladder's rung, W.press.level)
+  const RUNG = W.press.level;
+  V.pressure = 0.5 * RUNG; v = LE.level(W, 0, 'play');
   for (let k = 0; k < 4; k++) assert.equal(v[G[k]], 1, 'gauge' + k);
   assert.ok(maxOver(G.slice(5), W, 0, 4000) <= 0.5, 'gauge 5-8 unlit at half pressure');
   assert.equal(v[ER[0]], 1); assert.equal(v[ER[1]], 1); assert.ok(maxOver(ER.slice(3), W, 0, 4000) <= 0.5);
-  // full: the crater's shot and the summit ramp race, the gauge chases round
-  V.pressure = 1; V.ready = true;
-  assert.ok(maxOver([idxE('crater')], W, 0, 400) === 1 && maxOver([idxE('ramp')], W, 0, 400) === 1, 'crater and ramp lit at full pressure');
+  // full (ERUPT lit at the crater): the crater's shot races and its ERUPT insert blinks, the gauge chases round (wave 3: the
+  // ramp no longer lights at full pressure - the NEXT arrow points at the crater instead)
+  V.pressure = RUNG; V.ready = true; W.crater.lit = ['erupt'];
+  assert.ok(maxOver([idxE('crater')], W, 0, 400) === 1 && maxOver([idxE('cr.erupt')], W, 0, 400) === 1, 'crater and ERUPT lit at full pressure');
   assert.ok(Math.min(...G.map((i) => LE.level(W, 30, 'play')[i])) >= 0.6, 'full gauge: all on');
   // the crater holding the ball: the crater flashes, the gauge flickers
   V.busy = true; v = LE.level(W, 0, 'play');
   assert.ok(LE.chains.crater.every((i) => v[i] === 1), 'crater made: its lamps flash (on at t=0)');
-  V.busy = false; V.ready = false; V.pressure = 0;
+  V.busy = false; V.ready = false; V.pressure = 0; W.crater.lit = [];
   // lava lanes: closed, a dim ember glow that moves; open, a race up the lane
   const lava = LE.groups.lava;
   assert.ok(maxOver(lava, W, 0, 3000) <= 0.15, 'closed lava lanes glow dimly');
@@ -337,10 +339,13 @@ test('Ember Peak level(): the lamps never stand still, and the attract show move
 test('Ember Peak level(): whole-table shows for the big moments - they take the table over, settle, and never flash it more than 3 times a second', () => {
   const N = LE.list.length, FR = 1000 / 60;
   const trig = {
-    launch: (w) => { w.balls[0].launched = true; }, drops: (w) => { w.dropsDown = LE.groups.drops.length; }, loop: (w) => { w.stats.loops++; }, combo: (w) => { w.combo = 2; },
+    launch: (w) => { w.balls[0].launched = true; }, drops: (w) => { w.dropsDown = LE.groups.drops.length; }, loop: (w) => { w.stats.loops++; }, combo: (w) => { w.goals = { combo: { n: 2, t: 120 } }; },
     quake: (w) => { w.stats.quakes++; }, overload: (w) => { w.toys.quake.pending = true; }, ready: (w) => { w.toys.volcano.ready = true; w.toys.volcano.pressure = 1; },
     save: (w) => { w.stats.saves++; }, skill: (w) => { w.stats.skill++; }, lavashot: (w) => { w.stats.lava++; w.lit.lava = [0, 40]; }, extra: (w) => { w.total++; },
-    eruption: (w) => { w.stats.craters++; w.stats.eruptions++; w.toys.volcano.release = w.frame + 165; w.toys.volcano.busy = true; }
+    eruption: (w) => { w.stats.craters++; w.stats.eruptions++; w.toys.volcano.release = w.frame + 165; w.toys.volcano.busy = true; },
+    // wave 3: THE BIG ONE's moments
+    lock: (w) => { w.stats.locks++; }, plugsave: (w) => { w.stats.plugSaves++; }, jackpot: (w) => { w.stats.jackpots++; }, super: (w) => { w.stats.supers++; },
+    mball: (w) => { w.stats.multiballs++; }, dive: (w) => { w.dive.held = true; }
   };
   const runOf = (name) => {
     const w = E.newWorld(2, 0, 365, 'ember'), base = [], show = [];
@@ -364,7 +369,7 @@ test('Ember Peak level(): whole-table shows for the big moments - they take the 
     const fl = [];
     for (let i = 0; i < mean.length; i++) for (let j = 1; j <= 9 && i - j >= 0; j++) if (mean[i] - mean[i - j] >= 0.2 && (!fl.length || i - fl[fl.length - 1] > 9)) { fl.push(i); break; }
     let worst = 0; fl.forEach((a, i) => { let c = 0; for (let j = i; j < fl.length && fl[j] < a + 60; j++) c++; worst = Math.max(worst, c); });
-    assert.ok(worst <= 3, name + ': at most 3 whole-table flashes a second (' + worst + ')');
+    assert.ok(worst <= 2, name + ': at most 2 whole-table flashes a second (' + worst + ')');   // (wave 3: 2 a second, everywhere)
     assert.equal(JSON.stringify(runOf(name).show), JSON.stringify(r.show), name + ': the same world and clock light the same show (deterministic)');
   }
   // the ash cloud: after the lava pours, the table goes dark but for the volcano's own lamps (they pulse) and the lava's
@@ -384,4 +389,69 @@ test('Ember Peak level(): whole-table shows for the big moments - they take the 
   const us = Number(process.hrtime.bigint() - t0) / 1000 / 20000;
   assert.ok(us < 20, us.toFixed(2) + ' us a call during a show');
   console.log('Ember level() during a show: ' + us.toFixed(2) + ' us a call');
+});
+
+// ================================================================ wave 3 (5 Nov 2026): THE BIG ONE, the goals and the NEXT shot
+const SHOT_IDS = ['crater', 'ramp', 'orbitL', 'orbitR', 'lavaL', 'lavaR', 'drops', 'crabs', 'pops', 'geyser', 'lanes', 'loop'];
+const maxIn = (W, ids, t0 = 0, t1 = 3000) => { let m = 0; for (let t = t0; t < t1; t += 17) { const u = LE.level(W, t, 'play'); for (const i of ids) m = Math.max(m, u[i]); } return m; };
+const meanIn = (W, ids, t0 = 0, t1 = 3000) => { let s = 0, n = 0; for (let t = t0; t < t1; t += 17) { const u = LE.level(W, t, 'play'); for (const i of ids) { s += u[i]; n++; } } return s / n; };
+
+test('wave 3: the new inserts are there (crown, jackpots, plug, modes, boss, combo, tags, the crab arrow)', () => {
+  for (const id of ['cr.lock', 'cr.erupt', 'cr.super', 'cr.mode', 'cr.dive', 'jp.lavaL', 'jp.lavaR', 'jp.ramp', 'plug', 'mode0', 'mode1', 'mode2', 'mode3', 'boss0', 'boss1', 'boss2', 'combo0', 'combo4', 'tag0', 'tag3', 'crabs']) idxE(id);
+  assert.equal(LE.groups.crown.length, 5); assert.equal(LE.groups.jackpot.length, 3); assert.equal(LE.groups.modes.length, 4); assert.equal(LE.groups.combo.length, 5); assert.equal(LE.groups.boss.length, 3);
+  for (const id of SHOT_IDS) assert.ok(LE.next[id] && LE.next[id].length >= 1, 'NEXT lamps for ' + id);
+});
+
+test('wave 3: the NEXT arrow lights exactly the shot W.next names, for every shot id, and dims the other chases', () => {
+  for (const id of SHOT_IDS) {
+    const W = E.newWorld(2, 0, 365, 'ember'), mine = new Set(LE.next[id]); W.skillOpen = false;   // (the skill shot's own blink is a state, not a chase)
+    const before = meanIn(W, LE.next[id]);
+    W.next = { shot: id, text: 'NEXT', small: '', gauge: 0, clock: null };
+    const snap = JSON.stringify(W);
+    assert.ok(maxIn(W, LE.next[id]) >= 0.95, id + ': its lamps light up');
+    assert.ok(meanIn(W, LE.next[id]) > 1.8 * before, id + ': brighter than without NEXT (' + before.toFixed(2) + ' -> ' + meanIn(W, LE.next[id]).toFixed(2) + ')');
+    for (const o of SHOT_IDS) {
+      if (o === id) continue;
+      const others = LE.next[o].filter((i) => !mine.has(i));
+      if (others.length) assert.ok(maxIn(W, others) <= 0.45, id + ': the ' + o + ' lamps stay dim (' + maxIn(W, others).toFixed(2) + ')');
+    }
+    assert.equal(JSON.stringify(W), snap, 'level() must not change the world');
+  }
+  // the idle chases dim to 30% while a NEXT shot is named
+  const W = E.newWorld(2, 0, 365, 'ember'), ch = LE.chains.orbitR.filter((i) => i !== idxE('orbitR'));
+  const a = maxIn(W, ch); W.next = { shot: 'crater' }; const b = maxIn(W, ch);
+  assert.ok(b <= a * 0.35 + 0.01, 'other chases dim to 30% (' + a.toFixed(2) + ' -> ' + b.toFixed(2) + ')');
+  W.next = { shot: 'nonsense' }; assert.ok(maxIn(W, ch) >= a - 0.01, 'an unknown shot id changes nothing');
+});
+
+test('wave 3: the crater crown follows W.crater.lit (the first blinks hardest), the jackpots W.mb.jp, the plug W.plug', () => {
+  const W = E.newWorld(2, 0, 365, 'ember'), I = (id) => [idxE(id)];
+  assert.ok(maxIn(W, LE.groups.crown) <= 0.1 && maxIn(W, LE.groups.jackpot) <= 0.1 && maxIn(W, I('plug')) <= 0.15, 'all dim at the start');
+  W.crater.lit = ['erupt', 'lock'];
+  assert.equal(maxIn(W, I('cr.erupt')), 1); assert.ok(maxIn(W, I('cr.lock')) >= 0.8 && maxIn(W, I('cr.lock')) < 1, 'the second lit award pulses, not full');
+  assert.ok(maxIn(W, I('cr.dive')) <= 0.1, 'unlit awards stay dark');
+  assert.equal(maxIn(W, LE.chains.crater), 1, 'anything lit lights the crater shot');
+  W.crater.lit = []; W.lock.n = 1; assert.ok(Math.abs(maxIn(W, I('cr.lock')) - 0.7) < 0.01, 'a banked lock holds LOCK on');
+  W.mb = { on: true, balls: 2, jp: { lavaL: true, lavaR: false, ramp: true }, jpValue: 5e6, jpCount: 0, superLit: false };
+  assert.equal(maxIn(W, I('jp.lavaL')), 1); assert.equal(maxIn(W, I('jp.ramp')), 1); assert.ok(maxIn(W, I('jp.lavaR')) <= 0.1, 'a collected jackpot is dark');
+  assert.ok(maxIn(W, LE.groups.gauge) === 1, 'the gauge races in multiball');
+  W.plug.up = true; W.plug.t = 900; assert.equal(LE.level(W, 0, 'play')[idxE('plug')], 1, 'the plug up: PLUG on');
+  // a gauge sized to the rung: at the first rung (0.4) full, not at 40% of 1
+  const W2 = E.newWorld(2, 0, 365, 'ember'); W2.toys.volcano.pressure = W2.press.level; W2.toys.volcano.ready = true; W2.crater.lit = ['erupt'];
+  assert.ok(Math.min(...LE.groups.gauge.map((i) => LE.level(W2, 30, 'play')[i])) >= 0.6, 'at the rung the whole gauge is lit');
+});
+
+test('wave 3: modes, the boss phases, the combo ladder and the mutation tags read W.goals and W.mod.tags (any shape goals.js uses)', () => {
+  const W = E.newWorld(2, 0, 365, 'ember'), M = LE.groups.modes;
+  for (const mode of ['crabs', 'CRAB HUNT', 0, { id: 'crabs' }]) { W.goals = { mode, modesDone: 0 }; assert.equal(maxIn(W, [M[0]]), 1, 'mode ' + JSON.stringify(mode)); assert.ok(maxIn(W, [M[1]]) <= 0.1); }
+  W.goals = { mode: { name: 'HEAT WAVE' }, modesDone: 3 };
+  assert.equal(maxIn(W, [M[3]]), 1); assert.ok(maxIn(W, [M[0]]) >= 0.8 && maxIn(W, [M[2]]) >= 0.8, 'done modes stay on');
+  W.goals = { mode: null, modesDone: 1, modeLit: true }; assert.ok(maxIn(W, [M[1]]) >= 0.85 && maxIn(W, [M[2]]) <= 0.1, 'the next mode pulses while MODE is lit');
+  W.goals = { boss: { phase: 2 } }; const B = LE.groups.boss;
+  assert.ok(Math.abs(maxIn(W, [B[0]]) - 0.8) < 0.01 && maxIn(W, [B[1]]) === 1 && maxIn(W, [B[2]]) <= 0.1, 'boss phase 2');
+  const W3 = E.newWorld(2, 0, 365, 'ember'); W3.goals = { combo: { n: 3, t: 100 } }; const C = LE.groups.combo, v = LE.level(W3, 0, 'play');   // (a fresh world: no combo show starting)
+  assert.ok(v[C[0]] === 1 && v[C[2]] === 1 && v[C[3]] < 1 && v[C[4]] < 0.2, 'combo 3: three steps');
+  W.goals = { combo: { n: 3, t: 0 } }; assert.ok(maxIn(W, C) <= 0.1, 'a combo whose clock ran out is dark');
+  W.goals = null; W.mod = { tags: ['a', 'b'] }; const TG = LE.groups.tags;
+  assert.ok(maxIn(W, [TG[0]]) >= 0.7 && maxIn(W, [TG[1]]) >= 0.7 && maxIn(W, [TG[2]]) <= 0.1, 'two tags: two lenses');
 });

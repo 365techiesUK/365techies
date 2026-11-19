@@ -6,10 +6,11 @@
 const PW = process.env.PLAYWRIGHT || 'D:/claude/365-techies-website-launch-reel/node_modules/playwright-core';
 const { chromium } = require(PW);
 const out = process.argv[2] || 'fx-sheet.png', port = process.argv[3] || '8474', q = process.argv[4] || '';
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+const EDGE = process.env.PW_BROWSER || (require('fs').existsSync('C:/Program Files/Google/Chrome/Application/chrome.exe') ? 'C:/Program Files/Google/Chrome/Application/chrome.exe' : 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe');   // (Chrome: Edge 155 will not start headless here, 5 Nov 2026)
 (async () => {
   const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: [...require('./gpu2.cjs')(), '--use-angle=d3d11'] });
   const page = await browser.newPage({ viewport: { width: 1400, height: 1300 } });
+  await page.bringToFront(); await (await page.context().newCDPSession(page)).send('Emulation.setFocusEmulationEnabled', { enabled: true });   // (rAF keeps running headless)
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });

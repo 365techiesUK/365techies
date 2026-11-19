@@ -46,7 +46,7 @@
   if (!E) return null;
   var fmt = E.fmt, PI = Math.PI;
   var C = { pink: '#ff5cc8', cyan: '#3fe0ff', yellow: '#ffd84a', green: '#5cff6b', orange: '#ff9a2e', blue: '#59b4ff', white: '#ffffff', violet: '#b48cff',
-    lava: '#ff8a1e', ember: '#ffb02e', sea: '#2ee6d6', steam: '#e8f6ff', ash: '#6a6670', flood: '#ffe2a0', rock: '#6a6070', crab: '#ff7a3a' };
+    lava: '#ff8a1e', ember: '#ffb02e', amber: '#ffb347', gold: '#ffd84a', sea: '#2ee6d6', steam: '#e8f6ff', ash: '#6a6670', flood: '#ffe2a0', rock: '#6a6070', crab: '#ff7a3a' };
   var BUMPC = { orbit: [C.pink, C.cyan, C.yellow], ember: [C.orange, C.yellow, C.sea] };
   var DROPC = { orbit: [C.yellow, C.cyan, C.pink, C.cyan, C.yellow], ember: [C.violet, C.violet, C.violet, C.violet, C.violet] };
 
@@ -85,7 +85,7 @@
     // ---- Ember Peak's
     crater:   { pri: 5, ms: 900, look: 'ring', r: 64, sparks: 16, pop: 'big', gi: 0.75, shake: 0.3, color: C.lava },
     ash:      { pri: 8, ms: 2750, wide: true, look: 'ashes', base: 0.12, color: C.ash },            // (its ms is the crater's hold)
-    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.9, flashes: 2, shake: 1, sat: 0.3, vig: 0.12, color: C.flood },
+    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.25, shake: 1, sat: 0.12, vig: 0.12, color: C.amber, word: 'ERUPTION!' },   // (wave 3: one amber flash, was two of 0.9)
     erupt:    { pri: 5, ms: 1100, look: 'burst', sparks: 24, flash: 0.4, shake: 0.5, color: C.ember },   // a crater's release (not full)
     rail:     { pri: 3, ms: 1700, look: 'chase', sparks: 10, color: C.sea },
     railout:  { pri: 2, ms: 500, look: 'ring', r: 30, sparks: 10, color: C.yellow },
@@ -98,11 +98,41 @@
     quake:    { pri: 7, ms: 900, wide: true, look: 'flicker', gi: 0.55, color: C.ember },
     overload: { pri: 6, ms: 1500, wide: true, look: 'flicker', gi: 0.5, shake: 0.5, warm: 0.35, color: C.ember },
     pfull:    { pri: 6, ms: 1400, wide: true, look: 'sweepUp', gi: 0.6, flash: 0.35, surge: 0.15, sat: 0.2, warm: 0.3, color: C.yellow },
-    pwarn:    { pri: 4, ms: 900, look: 'ring', r: 70, color: C.orange }
+    pwarn:    { pri: 4, ms: 900, look: 'ring', r: 70, color: C.orange },
+    // ---- wave 3 (5 Nov 2026): THE BIG ONE, the goals, the levels and the boss (every flash <= 0.55, at most 2 a second)
+    combo2:   { pri: 5, ms: 1000, look: 'ring', r: 46, sparks: 22, pop: 'big', color: C.pink },   // (a combo of 2-3: local, no flash)
+    supercombo: { pri: 8, ms: 2000, wide: true, look: 'spiral', sparks: 50, pop: 'big', gi: 0.5, flash: 0.5, surge: 0.18, sat: 0.25, color: C.pink, word: 'SUPER COMBO' },
+    superjackpot: { pri: 9, ms: 2600, wide: true, look: 'spiral', sparks: 60, pop: 'big', gi: 0.4, flash: 0.55, shake: 0.8, surge: 0.2, sat: 0.25, vig: 0.2, color: C.gold, word: 'SUPER JACKPOT' },
+    mbstart:  { pri: 8, ms: 2000, wide: true, look: 'sweepUp', sparks: 40, gi: 0.6, surge: 0.15, sat: 0.2, warm: 0.3, color: C.amber, word: 'MULTIBALL' },
+    mbend:    { pri: 3, ms: 900, look: 'sweepDown', color: C.steam },
+    addaball: { pri: 6, ms: 1300, look: 'column', w: 40, sparks: 30, pop: 'big', color: C.sea, word: 'ADD A BALL' },
+    lock:     { pri: 6, ms: 1200, look: 'ring', r: 70, sparks: 30, flash: 0.35, pop: 'big', color: C.green, word: 'LOCKED' },
+    locklit:  { pri: 4, ms: 800, look: 'ring', r: 60, sparks: 12, color: C.green },
+    modelit:  { pri: 4, ms: 800, look: 'ring', r: 60, sparks: 12, color: C.violet },
+    divelit:  { pri: 4, ms: 800, look: 'ring', r: 60, sparks: 12, color: C.blue },
+    eruptlit: { pri: 4, ms: 800, look: 'ring', r: 60, sparks: 12, color: C.amber },
+    rumble:   { pri: 3, ms: 900, look: 'ring', r: 70, shake: 0.3, color: C.ember },
+    plugup:   { pri: 4, ms: 900, look: 'ring', r: 34, sparks: 20, color: C.violet },
+    plugdown: { pri: 3, ms: 700, look: 'ring', r: 30, color: C.rock },
+    plugsave: { pri: 7, ms: 1300, wide: true, look: 'sweepUp', sparks: 30, gi: 0.7, surge: 0.15, color: C.violet, word: 'PLUG SAVE' },
+    sealed:   { pri: 4, ms: 900, look: 'ring', r: 60, sparks: 10, color: C.steam },
+    unsealed: { pri: 5, ms: 900, look: 'ring', r: 60, sparks: 20, color: C.ember },
+    modestart:{ pri: 6, ms: 1500, wide: true, look: 'sides', sparks: 30, gi: 0.6, surge: 0.12, color: C.violet },
+    modedone: { pri: 7, ms: 1800, wide: true, look: 'rain', sparks: 40, flash: 0.4, gi: 0.5, surge: 0.2, sat: 0.2, color: C.green, word: 'MODE COMPLETE' },
+    modefail: { pri: 3, ms: 900, look: 'sweepDown', gi: 0.75, color: C.steam },
+    missiondone: { pri: 8, ms: 2000, wide: true, look: 'burst', sparks: 50, flash: 0.5, gi: 0.5, surge: 0.2, sat: 0.25, color: C.green, word: 'MISSION DONE' },
+    stageclear: { pri: 9, ms: 2600, wide: true, look: 'spiral', sparks: 60, flash: 0.55, gi: 0.45, surge: 0.2, sat: 0.28, vig: 0.15, color: C.gold, word: 'STAGE CLEAR' },
+    dive:     { pri: 8, ms: 1400, wide: true, look: 'dive', gi: 0.4, vig: 0.25, color: C.blue, word: 'DIVE!' },
+    ascend:   { pri: 8, ms: 1600, wide: true, look: 'sweepUp', sparks: 40, gi: 0.6, surge: 0.18, sat: 0.2, color: C.sea, word: 'ASCEND' },
+    chamberclear: { pri: 9, ms: 2400, wide: true, look: 'burst', sparks: 60, flash: 0.55, gi: 0.45, surge: 0.2, sat: 0.28, warm: 0.3, color: C.amber, word: 'CHAMBER CLEARED' },
+    lavarise: { pri: 8, ms: 1800, wide: true, look: 'flicker', gi: 0.55, warm: 0.45, shake: 0.4, color: C.lava, word: 'THE LAVA RISES' },
+    bosshit:  { pri: 6, ms: 900, look: 'ring', r: 70, sparks: 30, flash: 0.35, shake: 0.5, pop: 'big', color: C.ember },
+    bossphase:{ pri: 8, ms: 1800, wide: true, look: 'flicker', gi: 0.5, warm: 0.4, shake: 0.5, color: C.ember },
+    bossdown: { pri: 10, ms: 2800, wide: true, look: 'fountain', sparks: 60, flash: 0.55, shake: 1, sat: 0.25, vig: 0.15, color: C.amber, word: 'VOLCANO DEFEATED' }
   };
   // which shows a score is credited to first (the pop goes where the best of them happened)
   var RANK = { extra: 0, bumper: 1, spin: 1, sling: 1, inlane: 1, outlane: 1, lane: 2, drop: 3, eject: 1, orbit: 5, saucer: 6, drops: 6, ramp: 7, loop: 7, mult: 4, skill: 8, combo: 8, jackpot: 9,
-    rail: 2, crab: 4, geyser: 5, lava: 7, crater: 8 };
+    rail: 2, crab: 4, geyser: 5, lava: 7, crater: 8, combo2: 6, supercombo: 8, superjackpot: 10, lock: 8, addaball: 6, bosshit: 8, plugsave: 3 };
 
   // ------------------------------------------------------------------ particles, shockwaves and table movement, as data
   // bursts: [kind, n (medium tier), power, colour, z lift, where ('gates': at both lava gates), dir]; shock: a screen shockwave's power; move: a kick to the table
@@ -116,7 +146,7 @@
     drops:    { bursts: [['debris', 180, 1.3, C.rock], ['sparks', 80, 1.4, C.violet]], shock: 0.5, fringe: 0.3, move: { pitch: 0.7, dy: 1 } },
     crater:   { bursts: [['lava', 80, 0.8], ['steam', 40, 0.7, C.steam, 10]], shock: 0.4, trauma: 0.3, move: { pitch: 0.4, dy: 0.6 } },
     erupt:    { bursts: [['lava', 320, 1.2], ['steam', 80, 0.9, C.steam, 16], ['debris', 40, 1, C.rock], ['sparks', 60, 1.3, C.ember]], shock: 0.7, move: { pitch: 0.9, dy: 1.2 }, fringe: 0.45, trauma: 0.45 },
-    eruption: { bursts: [['lava', 1100, 1.7], ['lava', 300, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 220, 1.6, C.ember], ['sparks', 120, 1.8, C.yellow, 20], ['sparks', 80, 1.5, C.sea, 10], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 1, trauma: 1 },
+    eruption: { bursts: [['lava', 520, 1.7], ['lava', 160, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 150, 1.6, C.ember], ['sparks', 80, 1.8, C.yellow, 20], ['sparks', 80, 1.5, C.sea, 10], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 1, trauma: 1 },
     rail:     { bursts: [['sparks', 18, 0.9, C.yellow]] },
     railout:  { bursts: [['sparks', 12, 0.8, C.yellow]] },
     puff:     { bursts: [['steam', 40, 0.5, C.steam, 4]] },
@@ -136,7 +166,37 @@
     combo:    { bursts: [['sparks', 90, 1.4, C.pink], ['confetti', 60, 1.1]], shock: 0.5, fringe: 0.35 },
     jackpot:  { bursts: [['confetti', 220, 1.3], ['sparks', 90, 1.5, C.yellow]], shock: 0.8, shock2: 0.5, fringe: 0.5 },
     launch:   { bursts: [['steam', 24, 0.6, C.steam, 4], ['sparks', 24, 0.9, C.yellow, 4]] },
-    drain:    { bursts: [['ash', 30, 0.5, C.ash, 4]] }
+    drain:    { bursts: [['ash', 30, 0.5, C.ash, 4]] },
+    // ---- wave 3
+    combo2:   { bursts: [['sparks', 40, 1.2, C.pink]], shock: 0.25 },
+    supercombo: { bursts: [['confetti', 200, 1.3], ['sparks', 80, 1.4, C.pink]], shock: 0.6, fringe: 0.4 },
+    superjackpot: { bursts: [['confetti', 300, 1.4], ['sparks', 120, 1.6, C.gold, 10], ['lava', 200, 1.2]], shock: 0.9, shock2: 0.6, fringe: 0.5, trauma: 0.3, move: { pitch: 1, dy: 1.5 } },
+    mbstart:  { bursts: [['lava', 160, 1.1, null, 0, 'gates'], ['sparks', 60, 1.3, C.amber, 6]], shock: 0.6, fringe: 0.4, trauma: 0.35, move: { pitch: 0.8, dy: 1.2 } },
+    addaball: { bursts: [['steam', 160, 0.7, C.steam, 4, null, [0, 0, 2]], ['sparks', 50, 1.2, C.sea, 6]], shock: 0.45, move: { dy: 0.8 } },
+    lock:     { bursts: [['sparks', 70, 1.2, C.green, 10], ['steam', 40, 0.7, C.steam, 10]], shock: 0.4 },
+    locklit:  { bursts: [['sparks', 24, 0.9, C.green, 10]] },
+    modelit:  { bursts: [['sparks', 24, 0.9, C.violet, 10]] },
+    divelit:  { bursts: [['sparks', 24, 0.9, C.blue, 10]] },
+    eruptlit: { bursts: [['sparks', 30, 1, C.amber, 10], ['steam', 40, 0.8, C.steam, 12]] },
+    rumble:   { bursts: [['steam', 70, 0.9, C.steam, 14], ['ash', 30, 0.7, C.ash, 16]], trauma: 0.3 },
+    plugup:   { bursts: [['debris', 40, 0.9, C.rock], ['sparks', 30, 1, C.violet, 4]], shock: 0.25 },
+    plugdown: { bursts: [['debris', 24, 0.7, C.rock]] },
+    plugsave: { bursts: [['sparks', 60, 1.3, C.violet, 4], ['debris', 30, 1, C.rock]], shock: 0.45, fringe: 0.25 },
+    sealed:   { bursts: [['steam', 80, 0.8, C.steam, 10], ['debris', 30, 0.8, C.rock, 12]] },
+    unsealed: { bursts: [['lava', 100, 1, null, 10], ['debris', 50, 1, C.rock, 12]], shock: 0.4 },
+    modestart:{ bursts: [['sparks', 60, 1.2, C.violet, 6]], shock: 0.35 },
+    modedone: { bursts: [['confetti', 200, 1.2], ['sparks', 60, 1.3, C.green, 6]], shock: 0.5, fringe: 0.35 },
+    modefail: { bursts: [['steam', 40, 0.6, C.steam, 4]] },
+    mbend:    { bursts: [['steam', 50, 0.7, C.steam, 6]] },
+    missiondone: { bursts: [['confetti', 260, 1.3], ['sparks', 70, 1.4, C.green, 8]], shock: 0.6, fringe: 0.4 },
+    stageclear: { bursts: [['confetti', 360, 1.5], ['sparks', 100, 1.5, C.gold, 10], ['sparks', 60, 1.3, C.sea, 10]], shock: 0.8, shock2: 0.5, fringe: 0.5, trauma: 0.3 },
+    dive:     { bursts: [['ash', 60, 0.8, C.ash, 10], ['sparks', 40, 1, C.blue, 10]], shock: 0.5, trauma: 0.3, move: { pitch: -0.6, dy: -1 } },
+    ascend:   { bursts: [['sparks', 80, 1.3, C.sea, 6], ['steam', 60, 0.8, C.steam, 4]], shock: 0.5, fringe: 0.3 },
+    chamberclear: { bursts: [['confetti', 300, 1.4], ['lava', 200, 1.2], ['sparks', 80, 1.4, C.amber, 8]], shock: 0.8, shock2: 0.5, fringe: 0.5, trauma: 0.4 },
+    lavarise: { bursts: [['lava', 240, 1, null, 0], ['steam', 120, 1, C.steam, 10]], fringe: 0.3, trauma: 0.6 },
+    bosshit:  { bursts: [['debris', 80, 1.2, C.rock, 12], ['sparks', 60, 1.4, C.ember, 10], ['lava', 80, 0.9, null, 10]], shock: 0.6, fringe: 0.35, trauma: 0.35, move: { pitch: 0.6, dy: 0.8 } },
+    bossphase:{ bursts: [['lava', 160, 1.1, null, 10], ['ash', 80, 1, C.ash, 20]], shock: 0.6, fringe: 0.4, trauma: 0.6 },
+    bossdown: { bursts: [['lava', 900, 1.6], ['debris', 240, 1.5, C.rock], ['sparks', 200, 1.6, C.amber], ['confetti', 240, 1.4], ['steam', 140, 1.2, C.steam, 20]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 0.8, trauma: 1 }
   };
 
   // ------------------------------------------------------------------ where things are on each table (built once per table)
@@ -153,13 +213,15 @@
     var Bt = E.table ? E.table(id) : null, T = Bt ? Bt.T : E.TABLE, MID = T.MID;
     var BUMP = Bt ? Bt.BUMPERS : E.BUMPERS, D = Bt ? Bt.DROPS : E.DROPS, R = Bt ? Bt.RAMP : E.RAMP;
     var rampAt = Bt ? function (s) { return Bt.rampAt(s); } : function (s) { return E.rampAt(s); };
-    function sensor(sid) { var s = null; T.sensors.circles.forEach(function (c) { if (c[0] === sid) s = { x: c[1], y: c[2] }; }); return s; }
-    function line(sid) { var s = null; T.sensors.lines.forEach(function (c) { if (c[0] === sid) s = { x: (c[1] + c[3]) / 2, y: (c[2] + c[4]) / 2 }; }); return s; }
+    var SEN = T.sensors || {}, CIR = SEN.circles || [], LIN = SEN.lines || [];   // (a level may leave out the sensors, the shooter lane, the slings and the drops)
+    D = D || []; BUMP = BUMP || [];
+    function sensor(sid) { var s = null; CIR.forEach(function (c) { if (c[0] === sid) s = { x: c[1], y: c[2] }; }); return s || (/^(in|out)/.test(sid) ? { x: /R$/.test(sid) ? MID + 90 : MID - 90, y: T.H * 0.8 } : sid === 'kick' ? null : sid.indexOf('lane') === 0 ? { x: MID, y: T.H * 0.2 } : null); }
+    function line(sid) { var s = null; LIN.forEach(function (c) { if (c[0] === sid) s = { x: (c[1] + c[3]) / 2, y: (c[2] + c[4]) / 2 }; }); return s; }
     var X = { id: T.id || id, T: T, B: Bt, MID: MID, TH: T.H, TW: T.W, BUMP: BUMP, D: D, sensor: sensor, list: null };
     X.P = {
       spinL: line('spin') || { x: 18, y: T.H * 0.44 }, orbR: line('orbR') || { x: 232, y: T.H * 0.44 },
       lanes: [sensor('lane0'), sensor('lane1'), sensor('lane2')],
-      kick: sensor('kick') || { x: 16, y: T.H - 22 }, save: { x: MID, y: T.flippers[0].y + 8 }, mid: { x: MID, y: Math.round(T.H * 0.56) },
+      kick: sensor('kick') || { x: 16, y: T.H - 22 }, save: { x: MID, y: (T.flippers && T.flippers[0] ? T.flippers[0].y : T.H - 50) + 8 }, mid: { x: MID, y: Math.round(T.H * 0.56) },
       drain: { x: MID, y: Math.round(T.H * 0.67) },
       bank: D.length ? { x: (D[0].ax + D[D.length - 1].bx) / 2, y: (D[0].ay + D[D.length - 1].by) / 2 } : { x: MID, y: T.H / 2 },
       rampTop: R ? rampAt(R.L * 0.2) : { x: MID, y: T.H / 3, z: 0 }
@@ -168,11 +230,11 @@
     if (R) { var en = T.ramp.entry, rx = (en.x0 + en.x1) / 2; RP = [{ x: rx, y: en.y + 62 }, { x: rx, y: en.y }]; for (var s = 0; s <= R.L; s += 12) { var r = rampAt(s); RP.push({ x: r.x, y: r.y }); } }
     X.RAMP_PATH = RP;
     X.DROP_PATH = D.length ? [{ x: D[0].ax, y: D[0].ay }, { x: D[D.length - 1].bx, y: D[D.length - 1].by }] : [X.P.bank, X.P.bank];
-    var SH = T.shooter;
+    var SH = T.shooter || { cx: T.W - 14, tip: T.H - 30, x0: T.W - 26 };
     X.SHOOT_PATH = [{ x: SH.cx, y: SH.tip }, { x: SH.cx, y: 150 }, { x: SH.cx - 40, y: 60 }];
     X.SH = SH;
-    X.slingAt = function (side) { var sl = T.slings[side < 0 ? 0 : 1]; return { x: (sl.a[0] + sl.c[0]) / 2 + (side < 0 ? 4 : -4), y: (sl.a[1] + sl.c[1]) / 2 }; };
-    X.slingPath = function (side) { var sl = T.slings[side < 0 ? 0 : 1]; return [{ x: sl.a[0], y: sl.a[1] - 14 }, { x: sl.a[0], y: sl.a[1] }, { x: sl.c[0], y: sl.c[1] }, { x: sl.c[0] + (side < 0 ? 8 : -8), y: sl.c[1] + 18 }]; };
+    X.slingAt = function (side) { var sl = T.slings && T.slings[side < 0 ? 0 : 1]; if (!sl) return { x: MID + side * 60, y: T.H * 0.78 }; return { x: (sl.a[0] + sl.c[0]) / 2 + (side < 0 ? 4 : -4), y: (sl.a[1] + sl.c[1]) / 2 }; };
+    X.slingPath = function (side) { var sl = T.slings && T.slings[side < 0 ? 0 : 1]; if (!sl) { var q = X.slingAt(side); return [q, q]; } return [{ x: sl.a[0], y: sl.a[1] - 14 }, { x: sl.a[0], y: sl.a[1] }, { x: sl.c[0], y: sl.c[1] }, { x: sl.c[0] + (side < 0 ? 8 : -8), y: sl.c[1] + 18 }]; };
     // Ember Peak's toys
     if (T.volcano) X.volc = { x: T.volcano.x, y: T.volcano.y, z: 48 };   // the crater's pool (world3d.js: a 60-unit cone at 0.85, 29 Oct 2026)
     if (T.geyser) X.gey = { x: T.geyser.x, y: T.geyser.y, z: 4 };
@@ -188,13 +250,18 @@
       var e = sky.P[sky.P.length - 1]; X.railEnd = { x: e[0], y: e[1], z: 0 };
       X.RAIL_PATH = sky.P.filter(function (p) { return p[3] >= (sky.railAt || 0); }).map(function (p) { return { x: p[0], y: p[1] }; });
     }
+    if (T.plug) X.plug = { x: T.plug.x, y: T.plug.y, z: 4 };
     X.approach = Bt && Bt.storeys ? Bt.storeys.map(function (st) { return st.approach; }) : [T.H * 0.67];
     CTX[id] = X;
     return X;
   }
 
   // ------------------------------------------------------------------ the lamps (for the world's table)
-  function lampList() { if (!X) return []; if (!X.list || !X.list.length) X.list = lampsFor(X.id); return X.list; }
+  function lampList() {
+    if (!X) return [];
+    if (!X.list || !X.list.length) { X.list = lampsFor(X.id); X.RIVER = X.list.filter(function (l) { return l.group === 'river'; }).map(function (l) { return { x: l.x, y: l.y, id: l.id }; }); }
+    return X.list;
+  }
   var NONE = {};
   function ownShows() {   // the big moments the table's lamp set lights itself (PinLamps.forTable(id).shows): their lamps are left to it
     if (!X) return NONE;
@@ -302,6 +369,11 @@
       var ms = p * s.d.ms, per = 260 - 190 * p;
       return Math.floor(ms / per) % 2 ? 1 : 0.25;
     },
+    // a dive: rings closing in on the crater (the table drains into it)
+    dive: function (l, p, s) {
+      var dx = l.x - s.x, dy = l.y - s.y, d = Math.sqrt(dx * dx + dy * dy) / (s.TH * 0.9);
+      return Math.max(band(d, 1.1 - 1.3 * p, 0.12), 0.7 * band(d, 1.4 - 1.3 * p, 0.12)) * (p < 0.85 ? 1 : (1 - p) / 0.15);
+    },
     // the eruption: rings racing out from the crater, and the whole table glittering
     fountain: function (l, p, s) {
       var dx = l.x - s.x, dy = l.y - s.y, d = Math.sqrt(dx * dx + dy * dy) / (s.TH * 0.9), f = p * 2.2;
@@ -314,7 +386,7 @@
   // ------------------------------------------------------------------ the state
   var X = null;   // the world's table (ctxFor)
   var S = {
-    W: null, frame: 0, score: 0, clock: 0, last: -1, seed: 12345,
+    W: null, frame: 0, score: 0, clock: 0, last: -1, seed: 12345, seamAt: -1, seamI: 0, maxBall: -1, fountains: 0, jp: null,
     shows: [], flashAt: -1e9, flashQ: [], dipAt: -1e9, warnAt: -1e9, nudgeAt: -1e9,
     sh: { x: 0, y: 0, vx: 0, vy: 0 }, reducedAt: -1e9, reduced: false,
     // Ember Peak: the full eruption (ash, then flood), the rumble, the table's springs, the colour fringe, timed bursts
@@ -323,7 +395,8 @@
   };
   var state = { gi: 1, flash: 0, flashColor: C.white, shake: { x: 0, y: 0 }, pops: [], sparks: [], lamps: {}, base: 1,
     table: { pitch: 0, roll: 0, dy: 0, shake: 0 }, bursts: [], shocks: [], post: { fringe: 0, vignette: 0.18, warm: 0, sat: 1, ash: 0 }, reduced: false };
-  var MAXPOP = 8, MAXSPARK = 240, FLASH_GAP = 340, MAXBURST = 48, MAXSHOCK = 6;   // FLASH_GAP: never more than 3 whole-table flashes a second
+  var MAXPOP = 8, MAXSPARK = 240, FLASH_GAP = 510, MAXBURST = 48, MAXSHOCK = 6;   // FLASH_GAP: never more than 2 whole-table flashes a second (wave 3; was 3)
+  var FLASH_MAX = 0.55, GI_MAX = 1.2;   // wave 3, the grade cap: no whole-table flash over 0.55, the light never over 1.2
   var LIM = { pitch: 2, dy: 3, roll: 1 };
 
   function rnd() { S.seed = (S.seed * 1103515245 + 12345) & 0x7fffffff; return S.seed / 0x7fffffff; }
@@ -345,12 +418,14 @@
     for (var k in state.lamps) if (Object.prototype.hasOwnProperty.call(state.lamps, k)) delete state.lamps[k];   // (a new world may be a different table)
   }
   function adopt(W) {   // a new world (a new game, or the title screen's demo starting again in the same object)
-    clear(); S.W = W; S.frame = W ? W.frame : 0; S.score = W ? W.score : 0; state.gi = 1;
+    clear(); S.W = W; S.frame = W ? W.frame : 0; S.score = W ? W.score : 0; state.gi = 1; S.seamAt = -1; S.jp = null;
+    S.maxBall = -1; if (W && W.balls) for (var q = 0; q < W.balls.length; q++) S.maxBall = Math.max(S.maxBall, W.balls[q].id);
     X = ctxFor(W && W.tableId ? W.tableId : (E.DEFAULT || 'orbit'));
     X.list = null; X.own = null;   // (the lamp list is looked up again: lamps.js may have loaded since)
   }
 
   // ------------------------------------------------------------------ making things happen
+  function seams() { S.seamAt = S.clock; S.seamI = 0; }
   function startShow(name, at, extra) {
     var d = SHOWS[name]; if (!d || !X) return null;
     // a wide show only starts if nothing wide of a higher priority is running; it replaces lower or equal ones
@@ -379,7 +454,7 @@
   function flash(v, color) {
     if (reduced()) return false;
     if (S.clock - S.flashAt < FLASH_GAP) return false;
-    S.flashAt = S.clock; state.flash = Math.max(state.flash, Math.min(1, v));
+    S.flashAt = S.clock; state.flash = Math.max(state.flash, Math.min(FLASH_MAX, v));
     state.flashColor = safeColor(color);
     return true;
   }
@@ -462,6 +537,16 @@
     for (var i = 0; i < W.balls.length; i++) if (W.balls[i].m === 'free') return W.balls[i];
     return W.balls[0] || null;
   }
+  function jackpotAt(W, b) {   // which jackpot was just collected (lit before, lit no more), else where the ball is
+    var J = S.jp, M = W.mb, P = X.P, k;
+    if (J && X.laneTops) {
+      if (J.lavaL && !(M && M.jp && M.jp.lavaL)) k = X.laneTops[0];
+      else if (J.lavaR && !(M && M.jp && M.jp.lavaR)) k = X.laneTops[1];
+      else if (J.ramp && !(M && M.jp && M.jp.ramp)) k = P.rampTop;
+    }
+    if (k) return { x: k.x, y: k.y, z: (k.z || 0) + 10 };
+    return b ? { x: b.x, y: b.y, z: 10 } : { x: P.mid.x, y: P.mid.y, z: 10 };
+  }
   function where(W, e) {
     var name = typeof e === 'string' ? e : e && e.sfx, b = ballOf(W), at, color, key = '', ex = null, P = X.P, T = X.T, tid = X.id;
     switch (name) {
@@ -477,9 +562,13 @@
       case 'inlane': { var il = nearestOf([X.sensor('inL'), X.sensor('inR')], b); at = { x: il.x, y: il.y, z: 6 }; key = 'in'; break; }
       case 'outlane': { var ol = nearestOf([X.sensor('outL'), X.sensor('outR')], b); at = { x: ol.x, y: ol.y, z: 6 }; break; }
       case 'kickback': at = { x: P.kick.x, y: P.kick.y, z: 6 }; break;
-      case 'saucer': case 'jackpot': case 'eject': if (!T.saucer) return null; at = { x: T.saucer.x, y: T.saucer.y, z: 10 }; break;
+      case 'jackpot': if (!T.saucer) { at = jackpotAt(W, b); break; } at = { x: T.saucer.x, y: T.saucer.y, z: 10 }; break;
+      case 'saucer': case 'eject': if (!T.saucer) return null; at = { x: T.saucer.x, y: T.saucer.y, z: 10 }; break;
       case 'rampin': if (!X.RAMP_PATH.length) return null; at = { x: X.RAMP_PATH[1].x, y: X.RAMP_PATH[1].y, z: 4 }; ex = { path: X.RAMP_PATH.slice(0, 6), width: 18 }; break;
-      case 'ramp': case 'combo': at = { x: P.rampTop.x, y: P.rampTop.y, z: (P.rampTop.z || 0) + 14 }; ex = { path: X.RAMP_PATH, width: 20 }; break;
+      case 'combo': case 'supercombo':
+        if (X.volc || !X.RAMP_PATH.length) { at = b ? { x: b.x, y: b.y, z: 10 } : { x: P.mid.x, y: P.mid.y, z: 10 }; break; }   // (Ember: any two shots, at the ball)
+        at = { x: P.rampTop.x, y: P.rampTop.y, z: (P.rampTop.z || 0) + 14 }; ex = { path: X.RAMP_PATH, width: 20 }; break;
+      case 'ramp': at = { x: P.rampTop.x, y: P.rampTop.y, z: (P.rampTop.z || 0) + 14 }; ex = { path: X.RAMP_PATH, width: 20 }; break;
       case 'launch': at = { x: X.SH.cx, y: X.SH.tip - 10, z: 4 }; ex = { path: X.SHOOT_PATH, width: 22 }; break;
       case 'extra': at = { x: P.mid.x, y: P.mid.y, z: 20 }; break;
       case 'save': at = { x: P.save.x, y: P.save.y, z: 10 }; break;
@@ -497,6 +586,14 @@
       }
       case 'lavaopen': case 'lavaclose': if (!X.gates) return null; at = { x: X.MID, y: X.gates[0].y, z: 4 }; break;
       case 'quake': case 'quakeend': at = { x: X.MID, y: Math.round(X.TH * 0.22), z: 10 }; break;
+      // wave 3: the crater's own (the middle of the table on a table without a volcano)
+      case 'superjackpot': case 'lock': case 'locklit': case 'modelit': case 'divelit': case 'eruptlit': case 'rumble': case 'sealed': case 'unsealed':
+      case 'bosshit': case 'bossphase': case 'bossdown': case 'dive':
+        at = X.volc ? { x: X.volc.x, y: X.volc.y, z: X.volc.z } : { x: P.mid.x, y: Math.round(X.TH * 0.3), z: 12 }; break;
+      case 'mbstart': case 'mbend': case 'stageclear': case 'missiondone': case 'modestart': case 'modedone': case 'modefail': case 'ascend': case 'chamberclear': case 'lavarise':
+        at = { x: P.mid.x, y: P.mid.y, z: 14 }; break;
+      case 'addaball': at = X.gey ? { x: X.gey.x, y: X.gey.y, z: 4 } : { x: P.mid.x, y: P.mid.y, z: 10 }; break;
+      case 'plugup': case 'plugdown': case 'plugsave': { var pg = X.plug || P.save; at = { x: pg.x, y: pg.y - 6, z: 4 }; break; }
       default: return null;
     }
     return { name: name, at: at, color: color, key: key, ex: ex };
@@ -531,19 +628,22 @@
         S.full = true; S.ashAt = S.clock; S.ashEnd = S.clock + hold; S.ashEmit = 0;
         startShow('ash', w.at, { ms: hold });
       }
-      if (n === 'erupt' && S.full) { show = 'eruption'; S.full = false; S.ashEnd = Math.min(S.ashEnd, S.clock); S.floodAt = S.clock; }
+      if (n === 'erupt' && S.full) { show = 'eruption'; S.full = false; S.ashEnd = Math.min(S.ashEnd, S.clock); S.floodAt = S.clock; seams(); }
+      if (n === 'combo' && X.volc) show = (e && e.n >= 4) ? 'combo' : 'combo2';   // (Ember: combos are frequent; only a big one takes the table)
+      if (n === 'mbstart') seams();
       var d = SHOWS[show], col = w.color || d && d.color || C.white;
       w.at.color = col;
       if (d) {
         startShow(show, w.at, w.ex || (w.key ? { key: w.key } : null));
         if (d.sparks) sparks(reduced() ? Math.ceil(d.sparks / 2) : d.sparks, w.at.px != null ? w.at.px : w.at.x, w.at.y, w.at.z || 6, col, d.pri >= 5 ? 1.6 : 1);
-        var word = d.word === 'BALL SAVED' || d.word === 'EXTRA BALL' || d.word === 'KICKBACK' ? d.word : n === 'mult' ? 'BONUS X' + W.mult : show === 'eruption' ? 'ERUPTION!' : null;
-        if (word) pop(word, w.at.x, w.at.y - (d.pop ? 18 : 0), (w.at.z || 6) + (d.pop ? 22 : 6), col === C.flood ? C.yellow : col, true);   // (above the points, when there are some)
+        var word = d.word ? d.word : n === 'mult' ? 'BONUS X' + W.mult : n === 'combo' && e && e.n > 1 ? 'COMBO ' + e.n : n === 'jackpot' && X.volc ? 'JACKPOT' : null;
+        if (word) { var wp = pop(word, w.at.x, w.at.y - (d.pop ? 18 : 0), (w.at.z || 6) + (d.pop ? 22 : 6), col === C.flood || col === C.amber ? C.yellow : col, true); if (wp) wp.plate = true; }   // (above the points; wave 3: words on a dark plate)
       }
       fxAt(show, w.at, W);
       var rk = RANK[n];
       if (rk != null && rk > bestRank) { bestRank = rk; best = { w: w, d: d, col: col }; }
     }
+    S.jp = W.mb && W.mb.jp ? { lavaL: !!W.mb.jp.lavaL, lavaR: !!W.mb.jp.lavaR, ramp: !!W.mb.jp.ramp } : null;
     // the points this step won pop up where the best of it happened (not while the bonus counts up)
     if (delta > 0 && best && W.state === 'play') {
       var big = best.d && best.d.pop === 'big';
@@ -630,7 +730,7 @@
     var gi = 1, ashK = 0, floodK = 0;
     if (S.clock < S.ashEnd) ashK = smooth((S.clock - S.ashAt) / 1400);
     var fs = S.clock - S.floodAt;
-    if (fs >= 0 && fs < 1800) floodK = 1 - smooth(fs / 1800);
+    if (fs >= 0 && fs < 1800) floodK = smooth(fs / 300) * (1 - smooth(fs / 1800));   // (wave 3: the flood swells in over 0.3 s, not all at once)
     if (W && W.tilted) gi = 0;
     else if (mode === 'over' || (W && W.over)) gi = 0.35;
     else {
@@ -641,7 +741,8 @@
       gi = Math.min(gi, giShow);
       if (surge > 0 && since >= 1700) gi = Math.max(gi, 1 + surge);
       if (ashK > 0) gi = Math.min(gi, 1 - 0.85 * ashK);
-      if (floodK > 0) gi = Math.max(gi, 1 + 0.38 * floodK);
+      if (floodK > 0) gi = Math.max(gi, 1 + 0.15 * floodK);   // (the eruption's flood: amber, 1.15 - wave 3, the grade cap; it was 1.38)
+      gi = Math.min(GI_MAX, gi);
     }
     var gk = gi < state.gi ? 1 - Math.exp(-dt / 50) : floodK > 0.5 ? 1 - Math.exp(-dt / 25) : 1 - Math.exp(-dt / 220);
     state.gi += (gi - state.gi) * gk;
@@ -672,6 +773,23 @@
         var sd = rnd() < 0.5 ? -1 : 1, sp = X.slingAt(sd);
         sparks(1 + (pk > 0.6 ? 1 : 0), sp.x + (rnd() - 0.5) * 10, sp.y + (rnd() - 0.5) * 14, 3, C.ember, 0.3);
       }
+    }
+    // THE BIG ONE (wave 3): seams of light racing down the lava river from the cone, and a lava fountain from the cone
+    // for each ball it spits out into the multiball
+    lampList();
+    if (S.seamAt >= 0 && X.RIVER && X.RIVER.length) {
+      var sf = (S.clock - S.seamAt) / 55, R2 = X.RIVER;
+      while (S.seamI < R2.length && S.seamI <= sf) { var rp = R2[S.seamI]; burst('sparks', 5, rp.x, rp.y, 1, C.amber, 0.45); if (S.seamI % 2 === 0) burst('lava', 6, rp.x, rp.y, 1, null, 0.35); S.seamI++; }
+      for (i = 0; i < R2.length; i++) { var sv = Math.max(0, 1 - Math.abs(sf - i) / 3); if (sv > 0) state.lamps[R2[i].id] = Math.max(state.lamps[R2[i].id] || 0, sv); }
+      if (sf > R2.length + 6) S.seamAt = -1;
+    }
+    if (W && W.balls) {
+      var topId = 0; for (i = 0; i < W.balls.length; i++) if (W.balls[i].id > topId) topId = W.balls[i].id;
+      if (topId > S.maxBall && S.maxBall >= 0 && W.mb && W.mb.on && X.volc && W.state === 'play') {
+        burst('lava', 240, X.volc.x, X.volc.y, X.volc.z + 4, null, 1.3, [0, 0, 1.8]); burst('sparks', 50, X.volc.x, X.volc.y, X.volc.z + 8, C.amber, 1.3);
+        shock(X.volc.x, X.volc.y, X.volc.z, 0.4); S.fountains++;
+      }
+      S.maxBall = Math.max(S.maxBall, topId);
     }
     // the flash (and a second one, a third of a second later)
     for (i = S.flashQ.length - 1; i >= 0; i--) if (S.clock >= S.flashQ[i].at) { flash(S.flashQ[i].v, S.flashQ[i].c); S.flashQ.splice(i, 1); }
@@ -725,7 +843,7 @@
 
     // the final pass's grade: a brief colour fringe, the ash's vignette and grey, the lava's warmth
     S.fringe = Math.max(0, S.fringe - k * 6.5);
-    S.warm = Math.max(floodK * 0.6, ashK * 0.2, S.warm - k * 0.8);
+    S.warm = Math.max(floodK * 0.35, ashK * 0.2, S.warm - k * 0.8);   // (wave 3 grade cap: the flood's warmth 0.6 -> 0.35)
     S.satK = Math.max(0, S.satK - k * 0.35); S.vigK = Math.max(0, S.vigK - k * 0.3);
     var post = state.post;
     post.fringe = red ? 0 : S.fringe;
@@ -766,9 +884,10 @@
     reduce: null,   // null: follow the site's Reduce motion / the system setting; true or false to force it (tests)
     gpu: false,     // true once the renderer draws PinParticles: CPU sparks then go to state.bursts as 'sparks'
     quiet: null,    // (tests) a function (W) -> bool standing in for PinCam.quiet
-    reset: function () { adopt(null); S.clock = 0; S.last = -1; S.flashAt = -1e9; S.nudgeAt = -1e9; state.gi = 1; },
+    reset: function () { adopt(null); S.fountains = 0; S.clock = 0; S.last = -1; S.flashAt = -1e9; S.nudgeAt = -1e9; state.gi = 1; },
     show: function (name, x, y) { if (!X) X = ctxFor(E.DEFAULT || 'orbit'); return startShow(name, { x: x == null ? X.MID : x, y: y == null ? X.TH / 2 : y }); },   // start a show by name
-    debug: function () { return { clock: S.clock, shows: S.shows.map(function (s) { return s.name; }), flashAt: S.flashAt, quiet: S.quiet, trauma: S.trauma, table: X && X.id }; },
+    debug: function () { return { clock: S.clock, shows: S.shows.map(function (s) { return s.name; }), flashAt: S.flashAt, quiet: S.quiet, trauma: S.trauma, table: X && X.id, fountains: S.fountains, seam: S.seamAt >= 0 }; },
+    FLASH_GAP: FLASH_GAP, FLASH_MAX: FLASH_MAX, GI_MAX: GI_MAX,
     version: 2
   };
   return api;
