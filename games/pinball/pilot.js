@@ -60,7 +60,7 @@
   function aimOf(W) { var A = AIM[W.tableId] || tableOf(W).aim || AIM.orbit; return A[W.speed] || A[1] || A[2]; }   // (a new table brings its own: T.aim)
   // W.next.shot (goals.js) -> the aim key that makes it
   var NEXT = { crater: 'crater', ramp: 'ramp', orbitL: 'orbit', orbitR: 'orbit', loop: 'orbit', lavaL: 'lava', lavaR: 'lava', drops: 'drop', geyser: 'geyser', crabs: 'crab',
-    scoop: 'scoop', vents: 'vents', core: 'core', lane: 'lane' };
+    scoop: 'crater', vents: 'vents', core: 'crab', lane: 'lava' };   // (the chamber: reached() reports its toys' engine names; integrate, levels lane's request)
   function freeBalls(W, SH) { var n = 0; for (var i = 0; i < W.balls.length; i++) { var b = W.balls[i]; if (b.m === 'free' && b.x < SH.x0) n++; } return n; }
 
   // the pilot's memory for each world (a WeakMap where there is one); a new game in the same world object starts afresh

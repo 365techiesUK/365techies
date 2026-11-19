@@ -107,7 +107,8 @@ function windows(rows) {
 }
 
 var MAJOR = { orbit: ['orbit L', 'orbit R', 'RAMP made', 'drop target', 'HANGAR'],
-  ember: ['orbit L', 'orbit R', 'RAMP made', 'drop target', 'CRATER', 'lava L', 'lava R', 'crab'] };
+  ember: ['orbit L', 'orbit R', 'RAMP made', 'drop target', 'CRATER', 'lava L', 'lava R', 'crab'],
+  chamber: ['CRATER', 'crab', 'bumper', 'lava L'] };   // (the chamber: the scoop, the core, the vents and the cinder lane)
 function map(speed, detail, lit) {   // lit: something lit at the crater (its wider mouth)
   var cases = [], T = S.T, NAMES = ['LEFT ', 'RIGHT', 'SUMMIT LEFT ', 'SUMMIT RIGHT'];
   T.flippers.forEach(function (f, fi) {

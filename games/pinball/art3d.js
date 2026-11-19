@@ -1530,7 +1530,7 @@
       function rules(lines, x, y, size, col) { lines.forEach(function (s, i) { txt(g, s, x, y + (i - (lines.length - 1) / 2) * size * 1.25, size, 0, col, 'rgba(16,4,8,0.9)', 0.66); }); }
       plaque('LOOP', 62, 57, 3.2, -0.76, '#7ff6ea'); plaque('CRATER', 66, 168, 3, 0, '#ffb05a'); plaque('MAGMA CRAB', 186, 347, 2.4, 0, '#ff9a6a'); plaque('SKILL SHOT', 182, 48, 3, 0, '#9cff8a');
       rules(['SPELL E-R-U-P-T TO BLOW THE PEAK'], 125, 348.6, 2.4, '#ffd88a');
-      rules(['SHOOT HEAT RAMP', 'TO BUILD PRESSURE'], 98, 374, 2.5, '#fff0c8'); rules(['OBSIDIAN TARGETS', 'LIGHT KICKBACK'], 152, 374, 2.5, '#fff0c8');
+      rules(['SHOOT HEAT RAMP', 'TO BUILD PRESSURE'], 98, 374, 2.5, '#fff0c8'); rules(['OBSIDIAN TARGETS', 'RAISE THE PLUG'], 152, 374, 2.5, '#fff0c8');
     });
     step('inserts', function () {
       unitT(g, S); inserts('ember').forEach(function (l) { insertUnlit(g, l, 'rgba(255,214,120,0.7)'); });   // a gold ring on Ember Peak (30 Oct 2026)

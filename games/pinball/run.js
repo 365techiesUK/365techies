@@ -208,6 +208,7 @@
   }
   // THE goal for goals.js (W.next) and the HUD
   function show(R, W) {
+    if (W.goals) W.goals.boss = R.bs && !R.cleared ? { phase: R.bs.phase } : null;   // (the lamps' boss-phase inserts read it; integrate, show lane's request)
     var G = goals(); if (!G) return;
     var m = R.mission, B = R.bs, def = null;
     if (B && !R.cleared) {

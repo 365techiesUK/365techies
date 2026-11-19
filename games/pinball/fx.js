@@ -508,6 +508,7 @@
     if (f.trauma && !reduced()) S.trauma = Math.min(1, Math.max(S.trauma, f.trauma));
   }
   function pop(text, x, y, z, color, big, key) {
+    if (typeof text === 'number' && text >= 1000000) return null;   // (a score of 1M or more is shown on the dot-matrix display by the page instead; wave 3 de-clutter)
     if (typeof text === 'number') {   // quick repeats in the same place (a spinner, a bumper rattle) add up in one pop - and so
       // do points scored close together by different parts (the lead, 15 Oct 2026: pops were piling up on each other at the hangar)
       for (var i = state.pops.length - 1; i >= 0; i--) {

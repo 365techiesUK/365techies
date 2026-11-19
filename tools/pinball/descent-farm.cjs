@@ -5,6 +5,9 @@
  * moment the ball is free after the held start; on the surface: from the cut back up).
  *
  *   node tools/pinball/descent-farm.cjs [bot=all|pilot|messy|lag] [dives=100] [speed=2] [--json]
+ *   node tools/pinball/descent-farm.cjs <bot> [games=60] [speed=1] --e2e   (integrate: END TO END - goals.js loaded, DIVE
+ *        never forced: whole Classic games, and how many of them reach the chamber; acceptance: a casual player (messy)
+ *        reaches it in at least 50% of Classic Gentle games)
  * Bots as flow.cjs: pilot (the tidy demo pilot), lag (the pilot 0-2 frames late each ball, the odd fumble), messy
  * (messybot.cjs, the casual player). Acceptance (07-PLAN 6.3 levels, 200 dives): 0 drains within 2 s of either cut;
  * median stay 25-45 s; casual players clear 25-50% of dives, the pilot 60-85%. Run it through heavy.cjs. */
@@ -15,7 +18,9 @@ const Pilot = require('../../games/pinball/pilot.js');
 const Messy = require('./messybot.cjs');
 
 const args = process.argv.slice(2).filter((a) => a[0] !== '-');
-const which = args[0] || 'all', N = +(args[1] || 100), speed = +(args[2] || 2), JSONOUT = process.argv.includes('--json');
+const E2E = process.argv.includes('--e2e');
+if (E2E) require('../../games/pinball/goals.js');   // (the modes light DIVE in Classic)
+const which = args[0] || 'all', N = +(args[1] || (E2E ? 60 : 100)), speed = +(args[2] || (E2E ? 1 : 2)), JSONOUT = process.argv.includes('--json');
 const name = (e) => (typeof e === 'string' ? e : e && e.sfx);
 
 function lagBot(seed) {   // (flow.cjs's)
@@ -35,8 +40,8 @@ function pct(a, p) { if (!a.length) return 0; const s = a.slice().sort((x, y) =>
 
 function farm(kind) {
   const trips = [], early = { down: 0, downFree: 0, saved: 0, up: 0, at: [] };
-  let games = 0, surfaceSecs = 0, frames = 0;
-  while (trips.length < N && games < 400) {
+  let games = 0, surfaceSecs = 0, frames = 0, reached = 0, modesDone = 0;
+  while (E2E ? games < N : trips.length < N && games < 400) {
     const seed = 3000 + games * 13;
     const S = E.newWorld(speed, null, seed, 'ember');
     const D = PD.create(E, { speed, seed });
@@ -44,9 +49,9 @@ function farm(kind) {
     const botFor = (A) => bots[A.tableId] || (bots[A.tableId] = kind === 'messy' ? Messy.create(seed + (A.tableId === 'ember' ? 0 : 77)) : kind === 'lag' ? lagBot(seed) : (w) => Pilot.input(w));
     let cur = null, upF = -1;
     D.update(S);
-    for (let f = 0; f < 60 * 60 * 30 && !S.over && trips.length < N; f++) {
+    for (let f = 0; f < 60 * 60 * 30 && !S.over && (E2E || trips.length < N); f++) {
       const below = D.active(S) !== S;
-      if (!below && S.state === 'play' && !S.mb && !S.crater.dive && !S.dive.held && S.feed <= 0) E.api.craterLit(S, 'dive', true);
+      if (!E2E && !below && S.state === 'play' && !S.mb && !S.crater.dive && !S.dive.held && S.feed <= 0) E.api.craterLit(S, 'dive', true);
       const A = D.active(S);
       E.step(A, botFor(A)(A));
       frames++;
@@ -70,6 +75,8 @@ function farm(kind) {
         cur = null; upF = f;
       }
     }
+    if (S.descent && S.descent.dives > 0) reached++;
+    if (S.goals) modesDone += S.goals.modesDone || 0;
     games++;
   }
   const secs = trips.map((t) => t.secs), cleared = trips.filter((t) => t.cleared).length, how = {};
@@ -78,7 +85,8 @@ function farm(kind) {
     bot: kind, speed, dives: trips.length, games, cleared, clearRate: trips.length ? cleared / trips.length : 0, how,
     stay: { median: median(secs), p10: pct(secs, 0.1), p90: pct(secs, 0.9) },
     clearAt: median(trips.filter((t) => t.clearAt != null).map((t) => t.clearAt)),
-    score: median(trips.map((t) => t.score)), early, surfaceSecs: Math.round(surfaceSecs), gameMinutes: Math.round(frames / 3600)
+    score: median(trips.map((t) => t.score)), early, surfaceSecs: Math.round(surfaceSecs), gameMinutes: Math.round(frames / 3600),
+    e2e: E2E ? { games, reached, reachRate: games ? reached / games : 0, modesDone: games ? modesDone / games : 0, divesPerGame: games ? trips.length / games : 0 } : null
   };
 }
 
@@ -92,5 +100,7 @@ else out.forEach((r) => {
     + ' | ends ' + JSON.stringify(r.how) + ' | median trip score ' + E.fmt(r.score)
     + ' | drains within 2 s: of the cut down ' + r.early.down + ', of the ball free below ' + r.early.downFree + ' (+' + r.early.saved + ' saved), of the cut up ' + r.early.up
     + (r.early.at.length ? ' ' + JSON.stringify(r.early.at.slice(0, 10)) : ''));
+  if (r.e2e) console.log('  END TO END: ' + r.e2e.reached + ' of ' + r.e2e.games + ' games reached the chamber (' + (100 * r.e2e.reachRate).toFixed(0) + '%), '
+    + r.e2e.divesPerGame.toFixed(2) + ' dives a game, ' + r.e2e.modesDone.toFixed(2) + ' modes done a game');
 });
 if (!JSONOUT) console.log('took ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');

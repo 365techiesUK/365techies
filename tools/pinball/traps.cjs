@@ -24,7 +24,7 @@ function oneBall(i, secs, trace) {
   var ang = r() * Math.PI * 2, v = r() * r() * 1500;
   var b = S.place(W, x, y, Math.cos(ang) * v, Math.sin(ang) * v);
   if (i % 7 === 6 && W.toys.quake) W.toys.quake.pending = true;   // some balls get a quake as soon as it may come
-  if (i % 6 === 5 && W.press) E.api.multiball(W, 3, { save: 0 });   // and some start a 3-ball multiball (two more fed from the shooter lane)
+  if (i % 6 === 5 && W.press && !S.T.level) E.api.multiball(W, 3, { save: 0 });   // (never on a level: it has no multiball)   // and some start a 3-ball multiball (two more fed from the shooter lane)
   var out = { i: i, speed: speed, start: [x, y, b.vx, b.vy], traps: [], searches: 0, drained: null, steps: 0, scored: 0, leads: [], touches: 0 };
   var seen = {};
   function log(type, ball, what) {
@@ -167,6 +167,15 @@ var CORNERS = {
     'left inlane floor -> flipper': [66, 416], 'right inlane floor -> flipper': [184, 416], 'left inlane guide top': [46, 304], 'right inlane guide top': [204, 304],
     'left sling top': [49, 336], 'right sling top': [201, 336], 'left sling foot': [72, 396], 'right sling foot': [178, 396],
     'the plug (up with the targets down)': [125, 440]
+  },
+  chamber: {   // (THE MAGMA CHAMBER, from the levels lane's chcorners.cjs)
+    'lane wall top': [50, 210], 'lane wall foot': [50, 240], 'lane gate, left end': [12, 240], 'lane gate, right end': [44, 240],
+    'inside the lane': [26, 222], 'lane top under the dome': [20, 208], 'dome meets the left wall': [14, 204], 'dome meets the right wall': [236, 204],
+    'under the scoop': [140, 216], 'scoop, left side': [120, 196], 'scoop, right side': [160, 196], 'dome top': [125, 170],
+    'core path, left end': [82, 252], 'core path, right end': [114, 252], 'vent 1': [184, 222], 'vent 2': [210, 262], 'vent 3': [172, 278],
+    'between vent 2 and the wall': [230, 262], 'left foot gate': [20, 283], 'right foot gate': [230, 283],
+    'left outlane/inlane post': [27, 338], 'right outlane/inlane post': [223, 338], 'left inlane floor -> flipper': [66, 416], 'right inlane floor -> flipper': [184, 416],
+    'left inlane guide top': [46, 304], 'right inlane guide top': [204, 304], 'left sling top': [49, 336], 'right sling top': [201, 336], 'left sling foot': [72, 396], 'right sling foot': [178, 396]
   }
 };
 function corners() {

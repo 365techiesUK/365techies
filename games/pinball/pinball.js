@@ -373,8 +373,10 @@
     '<b>Steam geyser</b> (just below the volcano): a slow ball is caught, it puffs, then flings the ball up into the fumaroles: ' + fmt(PT.geyser) + '.',
     '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the lava-lit triangles above the flippers): ' + fmt(PT.sling) + '.',
     '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game; on Gentle at the start of every ball, and again by knocking down all three obsidian targets.',
+  ].concat(window.PinGoals ? ['<b>Island modes</b> (Classic): when <b>MODE</b> is lit at the crater, shoot it to start one of four: CRAB HUNT, OBSIDIAN QUARRY, ORBIT STORM and HEAT WAVE. The NEXT line shows the shot and the clock: 30 seconds (40 on Gentle). Make the shots in time for ' + fmt(5000000) + ' times the modes done so far, and <b>DIVE</b> lights. Run out of time and nothing is lost.'] : [],
+  window.PinDescent ? ['<b>Into the volcano:</b> when <b>DIVE</b> is lit (after a mode in Classic, or after STAGE CLEAR in Ember Run), shoot the crater to drop into <b>THE MAGMA CHAMBER</b>. Light the three <b>vents</b> (the bumpers; the cinder lane lights the next one), then break the <b>magma core</b>: CHAMBER CLEARED (' + fmt(10000000) + ' in Classic, one more ball in Ember Run), and <b>ASCEND</b> lights at the scoop. The lava clock (55, 45 or 40 seconds) brings the ball back up when it runs out: no ball is ever lost down there. There is no DIVE during a multiball.'] : [], [
     '<b>Inlanes</b> (beside the flippers): ' + fmt(PT.inlane) + '. <b>Outlanes</b> (the outside lanes, down to the drain): ' + fmt(PT.outlane) + ', a small comfort.'
-  ], ENDS)) : [
+  ]), ENDS)) : [
     '<b>The aim:</b> you are the hero defending a planet from the invaders of 365 Invaders. Keep the ball in play and score all you can &mdash; ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.'
   ].concat(CONTROLS, [
     '<b>Skill shot:</b> as each ball goes in, one of the three top lanes flashes. Roll through that one before the ball touches anything else for <b>' + fmt(PTS.skill) + '</b>.',
@@ -537,9 +539,11 @@
       if (n.kind === 'mutation' || n.kind === 'over' || n.kind === 'won' || RUN.phase !== 'play') continue;   // (the pick and summary cards say these)
       if (n.kind === 'win' || n.kind === 'stageclear') RS.flash = performance.now();
       var sub = n.small || '', m = RUN.mutNext;
-      if (n.kind === 'round' || n.kind === 'boss' || n.kind === 'stageclear') {
-        var mut = (n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1 ? 'MUTATION: ' + m.name : '';
-        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (RUN.target && !(RUN.mission || PR.status(RUN, W).mission) ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, n.kind === 'round' ? mut : mut || sub.split('|')[0], n.kind);
+      if (n.kind === 'round' || n.kind === 'boss' || n.kind === 'stageclear' || n.kind === 'win') {
+        // (integrate: the round's banner says its mission, run.js's small line; the mutation only on the round's first banner)
+        var first = (n.kind === 'round' || n.kind === 'boss') && RS.mutR !== RUN.round; if (first) RS.mutR = RUN.round;
+        var mut = first && m && RUN.round > 1 ? 'MUTATION: ' + m.name : '', legacyT = n.kind === 'round' && RUN.target && !(RUN.mission || PR.status(RUN, W).mission);
+        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (legacyT ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, [legacyT ? '' : sub.split('|')[0], mut].filter(Boolean).join('|'), n.kind === 'win' ? 'stageclear' : n.kind);
       } else W.dmd = { big: n.big, small: n.small || '', t: 150, n: 0 };
     }
     N.length = 0;
@@ -631,7 +635,7 @@
     letGo(); var a = A3(); if (a) a.input.left = a.input.right = a.input.fire = a.input.up = a.input.down = false;
     var L = RUN.log[RUN.log.length - 1] || {}, m = RUN.mutNext, nx = RUN.round + 1, boss = PR.BOSS && PR.BOSS[nx];
     PICK.querySelector('.rp-h').textContent = L.boss ? 'VOLCANO DEFEATED' : 'ROUND ' + L.round + ' CLEARED';
-    PICK.querySelector('.rp-s').textContent = 'You scored ' + fmt(L.score || 0) + (L.boss ? '' : ' (target ' + fmt(L.target || 0) + ')') + ' · next: ' + (boss ? 'BOSS ROUND ' + nx : 'round ' + nx) + ' of ' + RUN.rounds;
+    PICK.querySelector('.rp-s').textContent = 'You scored ' + fmt(L.score || 0) + (L.star ? ' · STAR' : '') + ' · next: ' + (boss ? 'BOSS ROUND ' + nx : 'round ' + nx) + ' of ' + RUN.rounds;
     PICK.querySelector('.rp-m').innerHTML = m ? '<small>TABLE MUTATION</small><b>' + esc(m.name) + '</b><span>' + esc(m.text) + '</span>' : '';
     PICK.querySelector('.rp-cards').innerHTML = (RUN.offer || []).map(function (id, i) {
       var u = PR.UP[id], have = RUN.ups[id] || 0;
@@ -677,14 +681,14 @@
   }
   // THE END CARD (wave 3, #19): the result is the heading (overText); under PLAY AGAIN one true near-miss line and one
   // next goal; everything else folded under "Details". run.js's own summary lines (nearMiss, next) when it has them.
-  function txt(v) { return v == null ? '' : typeof v === 'string' ? v : v.text ? String(v.text) : ''; }
+  function txt(v) { return v == null ? '' : Array.isArray(v) ? txt(v[0]) : typeof v === 'string' ? v : v.text ? String(v.text) : ''; }
   function endLines(S) {
     var el = document.getElementById('oLines'); if (!el) return;
     var near = '', next = '';
     if (S) {   // Ember Run
       near = txt(S.nearMiss); next = txt(S.next);
       var L = S.rounds && S.rounds[S.rounds.length - 1];
-      if (!near && L && !L.hit && !S.won) {
+      if (!near && !Array.isArray(S.nearMiss) && L && !L.hit && !S.won) {   // (an older run.js only: the run lane's list holds true near misses only)
         if (L.boss && L.hpMax && L.hp > 0) near = 'THE VOLCANO had ' + Math.ceil(L.hp) + ' of ' + L.hpMax + ' HP left.';
         else if (L.target && L.score < L.target) near = fmt(L.target - L.score) + ' short of round ' + L.round + '\u2019s target.';
       }
@@ -717,7 +721,7 @@
       return NW;
     },
     step: stepGame,
-    hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { var st = PR.status(RUN, W); h.wave = RUN.round; h.lives = st && st.balls != null ? st.balls : h.lives + (RUN.wind || 0); } return h; },
+    hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { var st = PR.status(RUN, W); h.wave = RUN.round; if (st && st.balls != null) h.lives = st.balls; } return h; },
     waveLabel: function (W) { return W && W.run ? 'Round' : 'Ball'; },
     // the Hall of Fame's check on a pinball score (api/games-hof.php, $ARCADE['pinball']): the invitation shows only for a
     // score the server will take. KEEP IN STEP WITH THE PHP (rate, base) - these two numbers are the only copy here.
@@ -929,7 +933,7 @@
     status: function () { var a = A3(); return RUN && a && a.world ? PR.status(RUN, a.world) : null; },
     endRound: function (hit) {
       var a = A3(), W = a && a.world; if (!RUN || !W || !W.run || RUN.phase !== 'play') return false;
-      if (RUN.boss) { if (hit) { RUN.hp = 0; RUN.hit = true; } } else W.score = hit ? Math.max(W.score, RUN.start + RUN.target) : RUN.start;
+      if (hit) { if (typeof PR.clear === 'function') PR.clear(RUN, W); else if (RUN.boss) { RUN.hp = 0; RUN.hit = true; } else W.score = Math.max(W.score, RUN.start + RUN.target); }
       W.over = true; W.state = 'over'; return true;
     } };
   window.PinRender = { get drawn() { return RD.drawn; }, get skipped() { return RD.skipped; }, wake: wake };

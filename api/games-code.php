@@ -25,7 +25,7 @@ $GC_DIR = __DIR__ . '/games-code-store';
 $GC_MAX = 64 * 1024;            // one player's progress is a few KB; this is a ceiling, not a target
 $GC_ABC = '3479ACDEFGHJKMNPQRTUVWXY';   // no 0/O, 1/I/L, 2/Z, 5/S, 6/B, 8 - easy to read back and type
 // the games' own storage: every key under these prefixes travels, except a game in progress (:game)
-$GC_KEYS = '/^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/';
+$GC_KEYS = '/^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|pin365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/';
 
 function gc_out($a, $code = 200) { http_response_code($code); echo json_encode($a); exit; }
 function gc_norm($c) { $c = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string)$c)); return strlen($c) === 8 ? $c : ''; }

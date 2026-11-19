@@ -542,9 +542,15 @@ function plasticCanvas(col, art, x0, y0, x1, y1, poly) {   // a slingshot plasti
   g.beginPath(); poly.forEach((p, i) => { const r = P(p); i ? g.lineTo(r[0], r[1]) : g.moveTo(r[0], r[1]); }); g.closePath(); g.stroke(); g.restore();
   return c;
 }
-function popCanvas(text, col) {   // a score pop-up: bold, outlined, crisp
+function popCanvas(text, col, plate) {   // a score pop-up: bold, outlined, crisp; a word pop (plate) sits on a dark plate with a thin gold edge
   const fs = 72, c0 = cv(8, 8), g0 = c0.getContext('2d'); g0.font = '900 ' + fs + 'px "Arial Black", Arial, sans-serif';
-  const w = Math.ceil(g0.measureText(text).width + 28), h = fs + 28, c = cv(w, h), g = c.getContext('2d');
+  const w = Math.ceil(g0.measureText(text).width + (plate ? 64 : 28)), h = fs + (plate ? 44 : 28), c = cv(w, h), g = c.getContext('2d');
+  if (plate) {
+    const r = 22, x0 = 3, y0 = 3, x1 = w - 3, y1 = h - 3;
+    g.beginPath(); g.moveTo(x0 + r, y0); g.lineTo(x1 - r, y0); g.quadraticCurveTo(x1, y0, x1, y0 + r); g.lineTo(x1, y1 - r); g.quadraticCurveTo(x1, y1, x1 - r, y1);
+    g.lineTo(x0 + r, y1); g.quadraticCurveTo(x0, y1, x0, y1 - r); g.lineTo(x0, y0 + r); g.quadraticCurveTo(x0, y0, x0 + r, y0); g.closePath();
+    g.fillStyle = 'rgba(10,4,24,0.85)'; g.fill(); g.strokeStyle = '#d9a83a'; g.lineWidth = 3; g.stroke();
+  }
   g.font = g0.font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
   g.strokeStyle = '#0a0418'; g.lineWidth = 12; g.strokeText(text, w / 2, h / 2 + 3);
   g.fillStyle = col; g.fillText(text, w / 2, h / 2 + 3);
@@ -1096,10 +1102,10 @@ export function create(opts) {
     const mat = keepS(new THREE.SpriteMaterial({ transparent: true, depthTest: false, depthWrite: false }));
     const sp = new THREE.Sprite(mat); sp.visible = false; sp.renderOrder = 20; pops.push(sp);
   }
-  function popTexture(text, col) {
-    const k = text + '|' + col; let e = popTex.get(k);
+  function popTexture(text, col, plate) {
+    const k = text + '|' + col + (plate ? '|p' : ''); let e = popTex.get(k);
     if (e) { popTex.delete(k); popTex.set(k, e); return e; }
-    const c = popCanvas(text, col); e = { t: tex(c, { aniso: ANISO }), aspect: c.width / c.height };
+    const c = popCanvas(text, col, plate); e = { t: tex(c, { aniso: ANISO }), aspect: c.width / c.height };
     popTex.set(k, e);
     if (popTex.size > 40) { const old = popTex.keys().next().value; popTex.get(old).t.dispose(); popTex.delete(old); }
     return e;
@@ -2140,7 +2146,7 @@ export function create(opts) {
     let pi = 0;
     if (st && st.pops) for (let i = 0; i < st.pops.length && pi < POP_N; i++) {
       const p = st.pops[i]; if (!p || p.text == null || p.text === '' || (p.a != null && p.a <= 0.01)) continue;
-      const sp = pops[pi++], e = popTexture(String(p.text), p.color || '#ffd84a');
+      const sp = pops[pi++], e = popTexture(String(p.text), p.color || '#ffd84a', !!p.plate);
       if (sp.material.map !== e.t) { if (!sp.material.map) sp.material.needsUpdate = true; sp.material.map = e.t; }
       sp.material.opacity = p.a == null ? 1 : clamp(p.a, 0, 1);
       const hh = 13 * (p.s == null ? 1 : p.s);

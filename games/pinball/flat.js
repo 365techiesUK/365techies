@@ -703,7 +703,7 @@
       else put(big, F5, 1, 4, 4);
       key = 'm' + big + '|' + small + '|' + Math.min(99, reveal);
     } else {
-      put('BALL ' + W.ball, F3, 1, 2, 4, 'l', 2);
+      put(W.run && W.runRound ? 'ROUND ' + W.runRound : 'BALL ' + W.ball, F3, 1, 2, 4, 'l', 2);   // (Ember Run: ROUND, never BALL)
       if (W.mult > 1) put('X' + W.mult, F3, 1, 9, 4, 'l', 2);
       var sc = fmt(W.score), wide = measure(F5, sc, 2) <= DW - 30;
       if (wide) put(sc, F5, 2, 1, 4, 'c', 81); else put(sc, F5, 1, 4, 4, 'c', 81);

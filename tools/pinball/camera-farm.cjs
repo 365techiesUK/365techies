@@ -34,6 +34,7 @@ const CAM = isMainThread ? (process.argv.find((a) => a.startsWith('--cam=')) || 
 if (CAM) { const Mod = require('module'), CP = path.resolve(CAM), EP = path.join(ROOT, 'games', 'pinball', 'engine.js'), r0 = Mod._resolveFilename; Mod._resolveFilename = function (req, par, ...rest) { return req === './engine.js' && par && par.filename === CP ? EP : r0.call(this, req, par, ...rest); }; }   // an older camera.js kept outside the tree still steps this engine
 const C = require(CAM ? path.resolve(CAM) : path.join(ROOT, 'games', 'pinball', 'camera.js'));
 const Messy = require('./messybot.cjs');
+require(path.join(ROOT, 'games', 'pinball', 'goals.js'));   // goals.js (W.next, combos, modes) steps inside E.step, as in the game (integrate)
 require(path.join(ROOT, 'games', 'pinball', 'descent.js'));   // the levels' engine plugin (wave 3), as in the game
 
 function args() {

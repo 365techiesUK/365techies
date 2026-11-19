@@ -306,7 +306,15 @@
       WK.onerror = function () { WK = null; WK_BAD = true; };
       // the engine's plugins (goals.js, descent.js: wave 3) step inside E.step, so the look-ahead loads them too
       var E = getE(), pu = [];
-      try { (E && E.pluginUrls ? E.pluginUrls() : []).forEach(function (u) { pu.push(new G.URL(u, G.document.baseURI).href); }); } catch (e) { pu = []; }
+      // each plugin from the page's own script tag when there is one, so the worker gets the same ?v= as the game
+      try {
+        var tags = G.document.getElementsByTagName('script');
+        (E && E.pluginUrls ? E.pluginUrls() : []).forEach(function (u) {
+          var href = new G.URL(u, G.document.baseURI).href, base = href.replace(/[?#].*$/, '');
+          for (var k = 0; k < tags.length; k++) { var s = tags[k].src || ''; if (s && s.replace(/[?#].*$/, '') === base) { href = s; break; } }
+          pu.push(href);
+        });
+      } catch (e) { pu = []; }
       WK.postMessage({ type: 'init', urls: urls.concat(pu).concat([SRC]) });
     } catch (e) { WK = null; }
     return WK;
