@@ -265,6 +265,29 @@
     }
     crisp(g, STRIP, dw, Math.ceil(dh * STRIP / 480) + 1);   // the dot-matrix display (a row over the 3D's top edge: no gap)
   }
+  // ---------------------------------------------------------------- render only when needed (wave 3, #26)
+  // The cabinet calls draw() every screen frame. The table is drawn again only when something can have changed: never
+  // while paused, on the pick card, behind a sheet or on the game-over card (one frame when that starts, so the picture
+  // underneath is current, and again if the screen changes size); the attract mode at 30 frames a second, then a still
+  // after 60 s with nobody touching anything (a key or a press wakes it); Battery saver: 30 a second in play and the 3D
+  // look's low tier. Pinball only: the cabinet itself is unchanged.
+  var RD = { last: 0, key: '', title0: 0, sheet: false, sheetN: 0, drawn: 0, skipped: 0, tier: '' };
+  function sheetOpen() {   // a sheet or dialog on top (ours, the Hall of Fame, Looks, Keep, Share): checked every 10th frame
+    if (++RD.sheetN % 10 === 0) RD.sheet = [].some.call(document.querySelectorAll('[aria-modal="true"]'), function (d) { return d.getClientRects().length > 0; });
+    return RD.sheet;
+  }
+  function wake() { RD.title0 = performance.now(); }
+  ['pointerdown', 'keydown'].forEach(function (n) { document.addEventListener(n, wake, true); });
+  function needDraw(mode, info) {
+    var now = performance.now(), saver = !!(info.set && info.set.saver), sc = screenEl || document.getElementById('screen');
+    var quiet = mode === 'paused' || mode === 'over' || (PICK && !PICK.hidden) || sheetOpen();
+    var still = mode === 'title' && RD.title0 && now - RD.title0 > 60000;
+    var key = (quiet ? 'q' + mode + (PICK && !PICK.hidden ? 'p' : '') : still ? 's' : 'r') + '|' + (sc ? sc.width + 'x' + sc.height : '') + '|' + (info.set && info.set.look);
+    if (key !== RD.key) { RD.key = key; RD.last = now; return true; }   // (the frame that starts a quiet spell, a resize, a look change)
+    if (quiet || still) return false;
+    if ((mode === 'title' || saver) && now - RD.last < 30) return false;   // (30 a second, give or take the screen's beat)
+    RD.last = now; return true;
+  }
   function setLook(v) {   // R: flat <-> 3D at once, saved as the Settings sheet would
     var s = G3.set; if (!s) return;
     s.look = v;
@@ -602,13 +625,18 @@
     settings: [
       { key: 'look', type: 'seg', label: 'Look', small: G3.failed ? 'This browser can only show the flat table' : 'The 3D table or the flat one (R)', options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' },
       PR && EMBER ? { key: 'game', type: 'seg', label: 'Mode', small: 'Ember Run: 8 rounds, an upgrade after each, a volcano boss. Classic: the game as it always was', options: [['run', 'Ember Run'], ['classic', 'Classic']], def: 'run' } : null,
+      { key: 'saver', type: 'switch', label: 'Battery saver', small: 'A lighter picture at 30 frames a second: cooler and longer-lasting on a phone', def: false },
       { key: 'cam', type: 'seg', label: 'Camera', small: 'Calm follows the ball now and then; Arcade more, with slow motion; Classic never moves', options: [['arcade', 'Arcade'], ['classic', 'Classic'], ['calm', 'Calm']], def: REDUCED ? 'classic' : 'calm' }
     ].filter(Boolean),
     hires: function (set) { G3.set = set; return want3d(set); },
     draw: function (g, W, t, mode, info) {
       // the title screen: the table plays itself behind the card (demo.js); it may step the title world itself (at the
       // camera director's pace, and not at all during a flythrough)
-      if (window.PinDemo) {
+      if (mode === 'title' && !RD.title0) wake();
+      if (mode !== 'title') RD.title0 = 0;
+      var go = needDraw(mode, info);
+      if (go) RD.drawn++; else RD.skipped++;
+      if (window.PinDemo && go) {
         var dts = G3.shot && mode === 'title' && performance.now() - G3.shotT < 250 && typeof G3.shot.timeScale === 'number' ? G3.shot.timeScale : 1;
         try { mode = PinDemo.frame(W, t, mode, dts) || mode; } catch (e) {}
       }
@@ -616,6 +644,9 @@
       if (mode === 'over' && !RS.ended) { RS.ended = true; if (!(W && W.run && RUN)) endLines(null); } else if (mode !== 'over') RS.ended = false;
       runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
       if (mode !== 'title') W = active(W);   // INTO THE VOLCANO: draw the level the ball is on
+      if (!go) return;   // (nothing has changed that the picture shows: the last frame stays on the screen)
+      var tier = info.set && info.set.saver ? 'low' : 'auto';
+      if (G3.world && tier !== RD.tier) { RD.tier = tier; try { G3.world.setTier(tier); } catch (e) {} }
       if (info.dw && want3d(info.set)) return draw3d(g, W, t, mode, info);
       hide3d();
       if (window.PinFlat && typeof PinFlat.draw === 'function') return PinFlat.draw(g, W, t, mode, info);
@@ -756,6 +787,7 @@
       if (RUN.boss) { if (hit) { RUN.hp = 0; RUN.hit = true; } } else W.score = hit ? Math.max(W.score, RUN.start + RUN.target) : RUN.start;
       W.over = true; W.state = 'over'; return true;
     } };
+  window.PinRender = { get drawn() { return RD.drawn; }, get skipped() { return RD.skipped; }, wake: wake };
   window.PinLevels = { get desc() { return DESC; }, active: function () { var a = A3(); return a && a.world ? active(a.world) : null; }, status: depth, cut: hardCut };
   window.PinControls = { sideOf: sideOf, waiting: waiting, letGo: letGo, held: function () { return { pointers: held, left: keysL, right: keysR }; } };
 })();
