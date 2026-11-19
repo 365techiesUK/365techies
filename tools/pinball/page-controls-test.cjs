@@ -281,12 +281,12 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     await p.click('#tPlay'); await sleep(900);
     var r1 = await p.evaluate(function () {
       var W = ARCADE365.world, R = PinRunPage.run, hud = document.getElementById('runHud'), ban = document.getElementById('runBan');
-      return { mode: ARCADE365.mode, run: !!W.run, mod: !!W.mod, total: W.total, round: R && R.round, phase: R && R.phase, hud: !hud.hidden && hud.textContent, ban: ban.textContent, pe: getComputedStyle(hud).pointerEvents + ',' + getComputedStyle(ban).pointerEvents, ball: document.getElementById('vWave').textContent };
+      return { mode: ARCADE365.mode, run: !!W.run, mod: !!W.mod, total: W.total, pool: PinRun.BALLS ? PinRun.BALLS[W.speed] : 1, round: R && R.round, phase: R && R.phase, hud: !hud.hidden && hud.textContent, ban: ban.textContent, pe: getComputedStyle(hud).pointerEvents + ',' + getComputedStyle(ban).pointerEvents, ball: document.getElementById('vWave').textContent };
     });
     console.log('  ' + JSON.stringify(r1));
-    ok(r1.mode === 'play' && r1.run && r1.mod && r1.total === 1 && r1.round === 1 && r1.phase === 'play', 'Play starts an Ember Run: round 1, one ball, the run\'s table knobs (W.mod)');
-    ok(/ROUND 1\/8/.test(r1.hud) && /TARGET/.test(r1.hud), 'the round line and target bar show (' + r1.hud + ')');
-    ok(/ROUND 1 . TARGET/.test(r1.ban), 'the round banner shows (' + r1.ban + ')');
+    ok(r1.mode === 'play' && r1.run && r1.mod && r1.total === r1.pool && r1.pool > 0 && r1.round === 1 && r1.phase === 'play', 'Play starts an Ember Run: round 1, the speed\'s pool of ' + r1.pool + ' balls, the run\'s table knobs (W.mod)');
+    ok(/ROUND 1\/8/.test(r1.hud) && /NEXT/.test(r1.hud), 'the round line and the NEXT line (the mission) show (' + r1.hud + ')');
+    ok(/ROUND 1/.test(r1.ban) && /HEAT RAMP/.test(r1.ban) && !/TARGET/.test(r1.ban), 'the round banner shows the round\'s mission (' + r1.ban + ')');
     ok(r1.pe === 'none,none', 'the round line and banner never take a press (the flippers\' screen stays free)');
     await p.screenshot({ path: path.join(OUT, 'run-round1-desktop.png') });
     // the round's end (forced): the pick card, the table waiting
@@ -345,11 +345,11 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
       ARCADE365.begin(); await new Promise(function (r) { setTimeout(r, 700); });
       var W = ARCADE365.world, E = PinEngine, F = E.newWorld(W.speed, null, 5);
       return { mode: ARCADE365.mode, run: PinRunPage.run, wrun: !!W.run, mod: W.mod === undefined, total: W.total, balls: E.SPEEDS[W.speed].balls, keys: Object.keys(W).sort().join() === Object.keys(F).sort().join(),
-        hud: document.getElementById('runHud').hidden, end: PinRunPage.endRound(true), saved: (JSON.parse(localStorage.getItem('pin365:settings') || '{}') || {}).game, ball: document.getElementById('vWave').textContent };
+        hud: !/ROUND/.test(document.getElementById('runHud').textContent), end: PinRunPage.endRound(true), saved: (JSON.parse(localStorage.getItem('pin365:settings') || '{}') || {}).game, ball: document.getElementById('vWave').textContent };
     });
     console.log('  ' + JSON.stringify(cl));
     ok(cl.mode === 'play' && cl.run === null && !cl.wrun && cl.mod && cl.total === cl.balls && cl.keys, 'CLASSIC: a plain world (no run, no W.mod, all ' + cl.balls + ' balls, the same fields as the engine\'s own)');
-    ok(cl.hud && cl.end === false && cl.saved === 'classic' && cl.ball === '1', 'CLASSIC: no round line, nothing to end early, and the choice is saved');
+    ok(cl.hud && cl.end === false && cl.saved === 'classic' && cl.ball === '1', 'CLASSIC: no round line (the NEXT line and depth meter only), nothing to end early, and the choice is saved');
     errs = realErrors(er.errors);
     ok(errs.length === 0, 'ember run: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
     await er.ctx.close();
@@ -488,7 +488,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     ok(rnPlay.d > 40 && rnTitle.d > 20 && rnTitle.d / 1.5 < 38, 'the table draws in play (' + rnPlay.d + ' frames a second) and the attract mode at about 30 (' + rnTitle.d + ')');
     ok(qs.cards === 3 && qs.folded && !qs.open, 'How to play opens with a 3-picture quick start, the full guide folded under it');
     var ec = await p.evaluate(function () { return { lines: document.getElementById('oLines').innerText, why: document.getElementById('oWhy').textContent, first: document.querySelector('#ov_over .ovbox').children[0].id, next: document.querySelector('#ov_over .ovbox > .oAgain #oPlay') !== null, sep: /,/.test(document.getElementById('oScore').textContent + document.getElementById('vScore').textContent) || +ARCADE365.world.score < 1000 }; });
-    ok(ec.next && /round 2/.test(ec.why) && /short of|HP left/.test(ec.lines) && /Next/.test(ec.lines), 'the end card: the result, PLAY AGAIN right under it, a near-miss line and a next goal (' + ec.why + ' | ' + ec.lines.replace(/\n+/g, ' / ') + ')');
+    ok(ec.next && /round 2/.test(ec.why) && /Next/.test(ec.lines) && !/\(0 of /.test(ec.lines), 'the end card: the result, PLAY AGAIN right under it, a next goal, and a near-miss line only for a true near miss (' + ec.why + ' | ' + ec.lines.replace(/\n+/g, ' / ') + ')');
     // Enter starts the next run from the end card
     await p.keyboard.press('Enter'); await sleep(400);
     ok(await p.evaluate(function () { return ARCADE365.mode === 'play' && PinRunPage.run.round === 1; }), 'Enter on the end card plays again');
@@ -513,8 +513,8 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     ok(clr[0] === null && clr[1] === null, 'Clear my scores removes the best run');
     errs = realErrors(w3.errors);
     ok(errs.length === 0, 'wave 3 page: no errors in the console' + (errs.length ? ': ' + errs.join(' | ') : ''));
-    await w3.ctx.close();
-    var w3b = await open(browser, { viewport: { width: 1280, height: 900 } });
+    var st3 = await w3.ctx.storageState(); await w3.ctx.close();   // (the reload keeps this page's storage)
+    var w3b = await open(browser, { viewport: { width: 1280, height: 900 }, storageState: st3 });
     var mv2 = await w3b.page.evaluate(function () { return { m: document.querySelector('#dSet [data-set="music"]').getAttribute('aria-checked'), v: document.querySelector('#dSet [data-set="voice"]').getAttribute('aria-checked') }; });
     ok(mv.m === '0' && mv.v === '0' && mv2.m === 'false' && mv2.v === 'false' && mv.saver, 'Music and Voice are remembered (pin365:music, pin365:voice) after a reload; Battery saver is in Settings');
     await w3b.ctx.close();

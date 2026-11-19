@@ -57,7 +57,7 @@ for (let g = 0; g < G; g++) {
       if (W.balls.length) {
         acc.frames++;
         const b = W.balls.reduce((a, c) => (c.y > a.y ? c : a));
-        if (b.m === 'held' || b.m === 'ramp') acc.outPlay++;
+        if ((b.m === 'held' && !b.dive) || b.m === 'ramp') acc.outPlay++;   // (a DIVE-held ball is in THE MAGMA CHAMBER on that same step in the game: integrate)
         else if (b.x > 244) { /* shooter lane */ }
         else if (E.nearRaisedFlipper(W, b) && Math.abs(b.vx) + Math.abs(b.vy) < 60) acc.ctrl++;
         else if (b.y < 324) acc.upper++; else acc.lower++;

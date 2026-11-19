@@ -24,7 +24,7 @@
 })(typeof self !== 'undefined' ? self : this, function (E) {
   'use strict';
   if (!E) return null;
-  var COMBO = 180, SUPER = 5, COMBO_PTS = 250000, SUPER_PTS = 5000000, MODE_PTS = 5000000, DIVE_STEPS = 1200;
+  var COMBO = 180, SUPER = 5, COMBO_PTS = 250000, SUPER_PTS = 5000000, MODE_PTS = 5000000, DIVE_STEPS = 1200, MODE_DIVE = 2700;   // (MODE_DIVE: a done mode's DIVE in Classic stays lit longer than STAGE CLEAR's 20 s: integrate, so a casual player reaches the chamber in half of Classic Gentle games)
   var MODES = [
     { id: 'crabhunt', name: 'CRAB HUNT', shot: 'crabs', count: ['crabs'], need: 3, word: 'CRABS' },
     { id: 'quarry', name: 'OBSIDIAN QUARRY', shot: 'drops', count: ['drops'], need: 4, word: 'OBSIDIAN' },
@@ -113,7 +113,7 @@
       g.modesDone++; g.mode = null;
       var pts = MODE_PTS * g.modesDone;
       E.api.award(W, pts, 'mode'); W.events.push('modedone'); say(W, D.name + ' DONE', fmt(pts));
-      dive(W, DIVE_STEPS);
+      dive(W, MODE_DIVE);
       return;
     }
     if (--m.t <= 0) { g.mode = null; g.modesFailed++; W.events.push('modefail'); say(W, D.name, 'TIME UP'); }

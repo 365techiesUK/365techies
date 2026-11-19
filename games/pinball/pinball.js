@@ -413,7 +413,7 @@
     if (W.run && RUN) runStep(W, Wa);   // EMBER RUN: the mission, the boss, the round's end (on the active world)
     // the effects (fx.js) and the voice see this step's events before the cabinet plays their sounds and clears them
     if (window.PinFX && Wa.events.length) { try { PinFX.events(Wa, Wa.events); } catch (e) {} }
-    if (window.PinVoice && typeof PinVoice.events === 'function' && Wa.events.length) { try { PinVoice.events(Wa, Wa.events); } catch (e) {} }
+    if (window.PinVoice && typeof PinVoice.events === 'function') { try { PinVoice.events(Wa, Wa.events); } catch (e) {} }   // (every step, events or none: a held callout plays when its turn comes; show lane's contract)
     buzz(Wa, Wa.events);
     if (Wa !== W && Wa.events.length) { for (var i = 0; i < Wa.events.length; i++) W.events.push(Wa.events[i]); Wa.events.length = 0; }   // (the cabinet plays the surface's list)
     dmdTidy(W, Wa);
@@ -686,7 +686,7 @@
     var el = document.getElementById('oLines'); if (!el) return;
     var near = '', next = '';
     if (S) {   // Ember Run
-      near = txt(S.nearMiss); next = txt(S.next);
+      near = txt(S.nearMiss); next = txt(S.next); if (next && !/^next/i.test(next)) next = 'Next: ' + next.charAt(0).toLowerCase() + next.slice(1) + (/[.!]$/.test(next) ? '' : '.');
       var L = S.rounds && S.rounds[S.rounds.length - 1];
       if (!near && !Array.isArray(S.nearMiss) && L && !L.hit && !S.won) {   // (an older run.js only: the run lane's list holds true near misses only)
         if (L.boss && L.hpMax && L.hp > 0) near = 'THE VOLCANO had ' + Math.ceil(L.hp) + ' of ' + L.hpMax + ' HP left.';
@@ -725,7 +725,7 @@
     waveLabel: function (W) { return W && W.run ? 'Round' : 'Ball'; },
     // the Hall of Fame's check on a pinball score (api/games-hof.php, $ARCADE['pinball']): the invitation shows only for a
     // score the server will take. KEEP IN STEP WITH THE PHP (rate, base) - these two numbers are the only copy here.
-    hofCap: { rate: 20000, base: 300000 },
+    hofCap: { rate: 25000000, base: 50000000 },   // (re-measured on the merged wave 3 build, 19 Nov 2026: tools/pinball/hof-cap.cjs 306/306 with 2x headroom)
     // Clear my scores (wave 3, #29): the best run too, under both its keys
     onClear: function () { try { localStorage.removeItem(OLDBEST); localStorage.removeItem(NEWBEST); } catch (e) {} },
     num: fmt,   // EMBER RUN: the round in the Ball chip

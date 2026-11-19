@@ -273,6 +273,7 @@
     }
     if (R.bs && !R.cleared) boss(R, W, d);
     // the DIVE after STAGE CLEAR (20 s; without goals.js the run keeps the lamp itself)
+    if (R.diveT > 0 && d.craters > 0 && W.crater.took === 'dive') R.diveT = 0;   // DIVE taken: the NEXT line stops saying DIVE IS LIT (integrate)
     if (R.diveT > 0 && play && !W.mb) { if (--R.diveT === 0 && !goals()) E.api.craterLit(W, 'dive', false); }
     // THE BALL POOL: while a ball is in play the world serves exactly the balls left (a chamber clear may have added one)
     if (play) W.total = W.ball - 1 + Math.max(1, R.balls);
@@ -418,7 +419,7 @@
     var cleared = R.log.filter(function (l) { return l.hit; }).length, last = R.log[R.log.length - 1] || null, near = [], next = '';
     if (last && !last.hit) {   // honest near misses only: one short of the mission, or the volcano a chunk or two from down
       if (last.boss && last.hpMax && last.hp <= 2) near.push('The volcano had ' + last.hp + (last.hp === 1 ? ' chunk' : ' chunks') + ' left');
-      if (!last.boss && last.mission && last.need - last.got === 1 && last.step === MISSIONS[last.mission].steps.length - 1) near.push('One short: ' + MISSIONS[last.mission].text + ' (' + last.got + ' of ' + last.need + ')');
+      if (!last.boss && last.mission && last.got >= 1 && last.need - last.got === 1 && last.step === MISSIONS[last.mission].steps.length - 1) near.push('One short: ' + MISSIONS[last.mission].text + ' (' + last.got + ' of ' + last.need + ')');
       next = last.boss ? (last.phase <= 1 ? 'Clear the obsidian targets to crack the volcano, then shoot the crater' : last.phase === 2 ? 'Shoot the lava lane whose gate is open' : 'Hit the crater before the pressure fills')
         : last.mission === 'ramp2' ? 'The heat ramp is the lane in the middle: hold a flipper up to catch the ball, then shoot'
         : last.mission === 'obsidian' ? 'Knock down all three obsidian targets: the plug rises between the flippers too'
