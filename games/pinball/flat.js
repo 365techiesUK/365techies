@@ -850,12 +850,16 @@
     ember: { sky: ['#4fb6f0', '#a6e4ff'], rock: ['#3b302b', '#211a17'], sand: '#d8b46e', sea: ['#3ad6cf', '#1aa3bf'], bands: [120, 340, 470],
       steel: '#f1ede6', steel2: '#8b8f96', rubber: '#ff6a2a', cab: '#120d0b', lane: '#1e130f', lava: '#ff7a1a', lava2: '#ffd04a', glow: 'rgba(255,122,26,0.35)',
       insert: '#ffb21e', insOff: '#5a3a1a', bump: '#4a3c35', crab: '#ff5a1f', obs: '#20182a', obs2: '#8c6ad8', word: 'WAKE THE VOLCANO' },
+    // THE MAGMA CHAMBER (wave 3, 5 Nov 2026): a level inside the volcano - deep red rock, the cavern wall above the dome
+    chamber: { sky: ['#1a0606', '#3a0c08'], rock: ['#5a1a0e', '#2a0a06'], sand: '#6a2010', sea: ['#4a1208', '#2a0806'], bands: [150, 330, 470],
+      steel: '#f1ede6', steel2: '#8b8f96', rubber: '#ff6a2a', cab: '#160606', lane: '#1e0a08', lava: '#ff6a1a', lava2: '#ffd04a', glow: 'rgba(255,100,20,0.4)',
+      insert: '#ffb21e', insOff: '#4a1a0e', bump: '#3a1e1a', crab: '#ff7a1f', obs: '#20182a', obs2: '#8c6ad8', word: 'THE MAGMA CHAMBER' },
     any: { sky: ['#20305a', '#2c4a7a'], rock: ['#28304a', '#1a2036'], sand: '#3a4a6a', sea: ['#2a3a64', '#1c2850'], bands: [120, 340, 470],
       steel: '#e8ecf4', steel2: '#7c8496', rubber: '#e0204e', cab: '#0b0d16', lane: '#11152a', lava: '#ff7a1a', lava2: '#ffd04a', glow: 'rgba(255,200,80,0.3)',
       insert: '#ffd84a', insOff: '#3a3a50', bump: '#3c4466', crab: '#ff5a1f', obs: '#20182a', obs2: '#8c6ad8', word: 'PLAY THE TABLE' }
   };
   function theme(id) { return THEMES[id] || THEMES.any; }
-  var AL = { id: '', under: null, over: null, view: -1, lastT: -1, W: null };
+  var AL = { id: '', under: null, over: null, view: -1, lastT: -1, W: null, cache: {} };   // (cache: every table's layers, kept - wave 3)
   function canvas(w, h) { var c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
   function strokePath(x, P, w, col) { x.lineWidth = w; x.strokeStyle = col; x.beginPath(); P.forEach(function (p, i) { if (i) x.lineTo(p[0], p[1]); else x.moveTo(p[0], p[1]); }); x.stroke(); }
   function buildAny(id) {
@@ -883,8 +887,8 @@
     });
     // the cabinet round the arch and beside the field
     x.fillStyle = th.cab; x.beginPath(); x.rect(0, 0, Wd, A.y); x.moveTo(A.x + A.R, A.y); x.arc(A.x, A.y, A.R, 0, Math.PI, true); x.closePath(); x.fill('evenodd');
-    // the shooter lane
-    var SH = T.shooter; x.fillStyle = th.lane; x.fillRect(SH.x0, A.y, SH.x1 - SH.x0, Hd - A.y);
+    // the shooter lane (a level may have none: its strip is rock)
+    var SH = T.shooter; x.fillStyle = SH.none ? th.cab : th.lane; x.fillRect(SH.x0, SH.none ? 0 : A.y, SH.x1 - SH.x0 + (SH.none ? 4 : 0), Hd - (SH.none ? 0 : A.y));
     // the walls, posts, the arch and the one-way gates
     x.lineCap = 'round'; x.lineJoin = 'round';
     B.WALLS.forEach(function (s) {
@@ -893,7 +897,9 @@
       x.lineWidth = 2 * s.r + 0.8; x.strokeStyle = s.kind === 'post' ? th.rubber : th.steel; x.beginPath(); x.moveTo(s.ax, s.ay); x.lineTo(s.bx, s.by); x.stroke();
     });
     B.POSTS.forEach(function (p) { x.fillStyle = th.rubber; x.beginPath(); x.arc(p.x, p.y, p.r + 0.6, 0, 6.2832); x.fill(); });
-    x.lineWidth = 2 * A.r + 1; x.strokeStyle = th.steel; x.beginPath(); x.arc(A.x, A.y, A.R - 0.5, Math.PI, 2 * Math.PI); x.stroke();
+    var a0 = Math.PI, a1 = 2 * Math.PI;   // (a level's roof stops at its side walls, wave 3)
+    if (T.level) { a0 = 2 * Math.PI - Math.acos(Math.max(-1, Math.min(1, (6 - A.x) / A.R))); a1 = 2 * Math.PI - Math.acos(Math.max(-1, Math.min(1, (SH.x0 - A.x) / A.R))); }
+    x.lineWidth = 2 * A.r + 1; x.strokeStyle = th.steel; x.beginPath(); x.arc(A.x, A.y, A.R - 0.5, a0, a1); x.stroke();
     B.GATES.forEach(function (s) { x.lineWidth = 1.5; x.strokeStyle = th.steel2; x.beginPath(); x.moveTo(s.ax, s.ay); x.lineTo(s.bx, s.by); x.stroke(); });
     // over the ball: the ramp (a clear lane with rails) and the wire rail
     var o = canvas(Wd, Hd), y = o.getContext('2d');
@@ -925,7 +931,7 @@
   function drawAny(g, W, t, mode, info) {
     E = window.PinEngine;
     var id = W.tableId;
-    if (AL.id !== id) { var L2 = buildAny(id); AL.id = id; AL.under = L2.under; AL.over = L2.over; AL.T = L2.T; AL.B = L2.B; AL.th = L2.th; AL.view = -1; }
+    if (AL.id !== id) { var L2 = AL.cache[id] || (AL.cache[id] = buildAny(id)); AL.id = id; AL.under = L2.under; AL.over = L2.over; AL.T = L2.T; AL.B = L2.B; AL.th = L2.th; AL.view = -1; }
     var T = AL.T, B = AL.B, th = AL.th, lit = W.lit || {}, play = mode !== 'title', dark = W.tilted || W.over, i;
     // the view: follow the lowest ball, smoothly; snap on a new world
     var fit = T.H > TH && T.H <= TH * 1.12 ? TH / T.H : 1;
@@ -950,11 +956,13 @@
       dot(Ls[1], Ls[2] + 14, 3.5, on ? th.insert : th.insOff);
     }
     if (SC.kick) dot(SC.kick[1], SC.kick[2] + 12, 3, (play ? W.kickback && !dark : bl(600)) ? '#ff4a4a' : th.insOff);
-    if (B.RAMP && B.RAMP.entry) { var en = B.RAMP.entry, ron = play && !dark && (lit.ramp > 0 ? bl(80) : W.comboT > 0 && bl(180)); g.fillStyle = ron ? th.insert : th.insOff; g.beginPath(); g.moveTo((en.x0 + en.x1) / 2, en.y + 8); g.lineTo(en.x0 + 4, en.y + 18); g.lineTo(en.x1 - 4, en.y + 18); g.closePath(); g.fill(); }
+    if (B.RAMP && B.RAMP.entry) { var en = B.RAMP.entry, ron = play && !dark && (lit.ramp > 0 ? bl(80) : W.mb && W.mb.jp && W.mb.jp.ramp ? bl(90) : W.comboT > 0 && bl(180)); g.fillStyle = ron ? th.insert : th.insOff; g.beginPath(); g.moveTo((en.x0 + en.x1) / 2, en.y + 8); g.lineTo(en.x0 + 4, en.y + 18); g.lineTo(en.x1 - 4, en.y + 18); g.closePath(); g.fill(); }
     // the bumpers (fumaroles on Ember Peak): a vent that flares when hit
+    var Dv = W.descent && W.descent.level ? W.descent : null;   // (THE MAGMA CHAMBER: its vents cold, heating, lit)
     B.BUMPERS.forEach(function (Bm, k) {
-      var hot = lit.bump && lit.bump[k] > 0;
-      dot(Bm.x, Bm.y, Bm.r, th.bump); dot(Bm.x, Bm.y, Bm.r - 3, hot ? th.lava2 : dark ? '#2a2220' : th.lava);
+      var hot = lit.bump && lit.bump[k] > 0, vlit = Dv && Dv.vents ? Dv.vents[k] : true, heat = Dv && Dv.heat ? Dv.heat[k] / (Dv.need || 1) : 1;
+      dot(Bm.x, Bm.y, Bm.r, th.bump); dot(Bm.x, Bm.y, Bm.r - 3, hot ? th.lava2 : dark ? '#2a2220' : vlit ? th.lava : heat > 0 ? (bl(220) ? th.lava : '#7a2a0a') : '#5a1a0a');
+      if (Dv && vlit && !dark) { g.lineWidth = 2; g.strokeStyle = bl(160) ? th.lava2 : th.lava; g.beginPath(); g.arc(Bm.x, Bm.y, Bm.r + 2.5, 0, 6.2832); g.stroke(); }
       dot(Bm.x, Bm.y, Bm.r * 0.35, hot ? '#ffffff' : th.lava2);
       g.lineWidth = 1.5; g.strokeStyle = th.steel; g.beginPath(); g.arc(Bm.x, Bm.y, Bm.r - 0.5, 0, 6.2832); g.stroke();
     });
@@ -992,23 +1000,47 @@
       dot(Vd.x + 2, Vd.y + 3, Vd.r + 2, 'rgba(0,0,0,0.45)');
       var cg = g.createRadialGradient(Vd.x - 6, Vd.y - 6, 2, Vd.x, Vd.y, Vd.r); cg.addColorStop(0, '#6a5850'); cg.addColorStop(1, th.rock[1]);
       g.fillStyle = cg; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r, 0, 6.2832); g.fill();
-      dot(Vd.x, Vd.y + 3, Vd.r * 0.55, pr >= 1 || Vs.busy ? (bl(120) || fl > 0.5 ? th.lava2 : th.lava) : pr > 0.5 ? th.lava : '#7a2a0a');
-      g.lineWidth = 3; g.strokeStyle = Vs.red ? '#ff2a2a' : th.lava2; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r + 4, -Math.PI / 2, -Math.PI / 2 + 6.2832 * Math.min(1, pr / 1.5)); g.stroke();
+      var lvl = W.press && W.press.level > 0 ? W.press.level : 1, ascend = T.level && W.crater && W.crater.boss;
+      dot(Vd.x, Vd.y + 3, Vd.r * 0.55, pr >= lvl || Vs.busy || ascend ? (bl(120) || fl > 0.5 ? th.lava2 : th.lava) : pr > lvl * 0.5 ? th.lava : '#7a2a0a');
+      if (W.crater && W.crater.sealed) {   // the sealed crater: a crust of cooled rock over the lava, its cracks glowing
+        dot(Vd.x, Vd.y + 3, Vd.r * 0.6, '#1e1618'); g.lineWidth = 1; g.strokeStyle = bl(400) ? th.lava : '#7a2a0a';
+        for (i = 0; i < 4; i++) { var ca = i * 1.6 + 0.3; g.beginPath(); g.moveTo(Vd.x, Vd.y + 3); g.lineTo(Vd.x + Math.cos(ca) * Vd.r * 0.55, Vd.y + 3 + Math.sin(ca) * Vd.r * 0.55); g.stroke(); }
+      }
+      if (!T.level) { g.lineWidth = 3; g.strokeStyle = Vs.red ? '#ff2a2a' : th.lava2; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r + 4, -Math.PI / 2, -Math.PI / 2 + 6.2832 * Math.min(1, pr / lvl)); g.stroke(); }   // (the gauge: full at the eruption it is building to, wave 3)
+      else if (ascend && bl(150)) { g.lineWidth = 2.5; g.strokeStyle = th.lava2; g.beginPath(); g.arc(Vd.x, Vd.y, Vd.r + 4, 0, 6.2832); g.stroke(); }
+    }
+    // the OBSIDIAN PLUG (wave 3): a black glass post between the flippers while it is up
+    if (T.plug && W.plug && W.plug.up) {
+      var Pg = T.plug, pw = W.plug.t < 180 && !bl(120);
+      dot(Pg.x, Pg.y, Pg.r + 2.5, pw ? 'rgba(0,0,0,0)' : th.glow); dot(Pg.x, Pg.y, Pg.r, '#0c0a10');
+      g.lineWidth = 1.2; g.strokeStyle = lit.plug > 0 ? '#ffffff' : th.lava; g.beginPath(); g.arc(Pg.x, Pg.y, Pg.r, 0, 6.2832); g.stroke();
     }
     // the crabs: little orange crabs walking (stunned: blinking)
     (toys.crabs || []).forEach(function (c, k) {
       var r0 = (T.crabs[k] && T.crabs[k].r) || 7, hot = lit.crab && lit.crab[k] > 0;
+      if (T.level) {   // a level's crab toy is THE MAGMA CORE: a ball of magma, pulsing once the vents are lit
+        var armed = Dv && Dv.lit >= (Dv.vents ? Dv.vents.length : 3) && !Dv.cleared;
+        dot(c.x + 2, c.y + 3, r0, 'rgba(0,0,0,0.4)'); dot(c.x, c.y, r0, Dv && Dv.cleared ? '#5a2a1a' : '#a8300c');
+        dot(c.x, c.y, r0 - 2.5, hot ? '#ffffff' : armed ? (bl(110) ? th.lava2 : th.lava) : th.lava); dot(c.x - 2, c.y - 2, r0 * 0.3, th.lava2);
+        return;
+      }
       if (c.stun > 0 && !bl(100)) return;
       g.strokeStyle = th.crab; g.lineWidth = 1.5;
       for (var lg = -1; lg <= 1; lg += 2) { var kx = Math.sin(t / 90 + k) * 1.5; g.beginPath(); g.moveTo(c.x + lg * 3, c.y + 2); g.lineTo(c.x + lg * (r0 + 2), c.y + 4 + kx); g.moveTo(c.x + lg * 3, c.y - 1); g.lineTo(c.x + lg * (r0 + 2), c.y - 3 - kx); g.stroke(); }
       dot(c.x, c.y, r0 - 1, hot ? '#ffffff' : th.crab);
       dot(c.x - 2.5, c.y - 3, 1.3, '#000'); dot(c.x + 2.5, c.y - 3, 1.3, '#000');
     });
-    // the plunger
+    // the plunger (none on a level)
     var SH = T.shooter, Pl = W.plunger || { pull: 0 }, tip = SH.tip + Pl.pull * SH.travel;
-    g.fillStyle = th.steel2; g.fillRect(SH.cx - 1, tip + 3, 3, T.H - tip);
-    g.fillStyle = '#ff4a4a'; g.fillRect(SH.cx - 6, tip, 13, 3);
-    for (i = 0; i < 6; i++) { g.fillStyle = Pl.pull > i / 6 + 0.01 ? ['#2fd04a', '#7fe03a', '#d8e030', '#ffb21e', '#ff6a2a', '#ff2a3a'][i] : '#1d1512'; g.fillRect(SH.cx - 4, SH.tip - 22 - i * 6, 8, 3); }
+    if (!SH.none) {
+      g.fillStyle = th.steel2; g.fillRect(SH.cx - 1, tip + 3, 3, T.H - tip);
+      g.fillStyle = '#ff4a4a'; g.fillRect(SH.cx - 6, tip, 13, 3);
+      for (i = 0; i < 6; i++) { g.fillStyle = Pl.pull > i / 6 + 0.01 ? ['#2fd04a', '#7fe03a', '#d8e030', '#ffb21e', '#ff6a2a', '#ff2a3a'][i] : '#1d1512'; g.fillRect(SH.cx - 4, SH.tip - 22 - i * 6, 8, 3); }
+    } else if (Dv && Dv.clock != null && !Dv.rose) {   // a level's lava clock, down the rock strip where a shooter lane would be
+      var cf = Math.max(0, Math.min(1, Dv.clock / (((T.clock && T.clock[W.speed]) || 45) * 60))), ch = 220;
+      g.fillStyle = '#2a0a06'; g.fillRect(250, T.H - 30 - ch, 8, ch);
+      g.fillStyle = cf < 0.2 && bl(150) ? th.lava2 : th.lava; g.fillRect(250, T.H - 30 - ch * cf, 8, ch * cf);
+    }
     // the flippers
     (W.flippers || []).forEach(function (f) {
       flipperPath(g, f); g.fillStyle = th.steel; g.fill(); g.lineWidth = 1.5; g.strokeStyle = th.rubber; g.stroke();
@@ -1025,8 +1057,8 @@
     up.forEach(function (b) { var z = b.z || 0; dot(b.x + z * 0.2, b.y + z * 0.28, BRd, 'rgba(0,0,0,0.35)'); });
     g.drawImage(AL.over, 0, 0);
     up.forEach(function (b) { ball(b.x, b.y, BRd + Math.min(4, (b.z || 0) / 13)); });
-    // tilted or over: the table dims
-    if (dark && play) { g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(-20, vy, T.W + 40, Math.max(TH, T.H)); }
+    // tilted or over: the table dims (THE LAVA RISES: it glows red)
+    if (dark && play) { g.fillStyle = Dv && Dv.rose ? 'rgba(255,60,10,0.3)' : 'rgba(0,0,0,0.35)'; g.fillRect(-20, vy, T.W + 40, Math.max(TH, T.H)); }
     g.restore();
     // the scroll position, as a slim bar down the right edge (the table is taller than the screen)
     if (maxTop > 0) { var bh = Math.round(TH * TH / T.H); g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(TW - 2, OY + Math.round(vy / T.H * TH), 2, bh); }
