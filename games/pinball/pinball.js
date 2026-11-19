@@ -88,12 +88,18 @@
     // meanwhile is a flipper only)
     var pulling = false;
     for (var id in held) if (Object.prototype.hasOwnProperty.call(held, id) && held[id].pull) pulling = true;
-    var h = held[e.pointerId] = { side: sideOf(e.clientX, r), pull: !pulling && waiting(a.world) };
+    var h = held[e.pointerId] = { side: sideOf(e.clientX, r), pull: !pulling && waiting(a.world), y0: e.clientY, t0: performance.now(), touch: e.pointerType !== 'mouse', sw: false };
     try { stageEl.setPointerCapture(e.pointerId); } catch (er) {}
     apply();
     // a press can be over before the game's next step (a very quick tap): latched until the game has seen it
     if (h.pull) a.input.ppTap = true;
     if (h.side < 0) a.input.plTap = true; else a.input.prTap = true;
+  }
+  // a finger swiped up fast (40 CSS px in a third of a second) is a nudge, once a press; its flipper rising is harmless
+  function onMove(e) {
+    var h = held[e.pointerId];
+    if (!h || !h.touch || h.sw || performance.now() - h.t0 > 340 || h.y0 - e.clientY < 40) return;
+    h.sw = true; nudgeTap();
   }
   function onUp(e) {
     if (!Object.prototype.hasOwnProperty.call(held, e.pointerId)) return;
@@ -123,6 +129,14 @@
     (s < 0 ? keysL : keysR)[e.code || e.key] = true;
     apply(); e.preventDefault();   // (and / never opens the browser's quick find)
   });
+  // the nudge (wave 3, 5 Nov 2026): every press of Up or W is counted, so 3 short taps between two steps are 3 nudges
+  // (the engine's input.upTap; the engine itself takes at most 3 a step). A swipe up on a touch screen counts as one.
+  var upTaps = 0;
+  function nudgeTap() { var a = A3(); if (a && a.mode === 'play' && !(PICK && !PICK.hidden)) upTaps++; }
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    if ((k === 'arrowup' || k === 'w') && !e.repeat && !busy(e)) nudgeTap();
+  }, true);
   document.addEventListener('keyup', function (e) {
     if (!keySide(e)) return;
     var c = e.code || e.key;
@@ -273,7 +287,7 @@
   var CONTROLS = [
     '<b>Launch:</b> hold <b>Space</b> or <b>&darr;</b> (or the Launch button) to pull the plunger back, and let go to fire. The longer you hold, the harder the shot; a quick tap gives a medium one. With a mouse or a finger: while the ball waits in the lane at the bottom right, press anywhere on the game screen, hold, and let go.',
     '<b>Flip:</b> the <b>&larr;</b> and <b>&rarr;</b> arrow keys work the left and right flippers &mdash; or <b>A</b> and <b>D</b>, <b>Z</b> and <b>M</b>, or the left and right <b>Shift</b> keys. With a mouse or a finger, press the left or right half of the game screen (two fingers at once are fine). Hold a flipper up to catch the ball and take aim; hit it near the tip to send it further across.',
-    '<b>Nudge:</b> <b>&uarr;</b> or <b>W</b> gives the table a shove to rescue a ball. Too many close together and the screen warns you (DANGER) &mdash; then <b>TILT</b>: the flippers go dead and that ball&rsquo;s bonus is lost.'
+    '<b>Nudge:</b> <b>&uarr;</b> or <b>W</b> gives the table a shove to rescue a ball (every tap counts; on a touch screen, swipe a finger up quickly). Too many close together and the screen warns you (DANGER) &mdash; then <b>TILT</b>: the flippers go dead and that ball&rsquo;s bonus is lost.'
   ];
   var ENDS = [
     '<b>Ball save:</b> for the first ' + SP[1].save + ' seconds of each ball on Gentle (' + SP[2].save + ' on Classic, ' + SP[3].save + ' on Fast), a ball that drains comes straight back: <b>BALL SAVED</b>.',
@@ -281,22 +295,22 @@
     '<b>Extra balls</b> at ' + extraList(1) + '; ' + extraList(2) + '; ' + extraList(3) + '.',
     '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is a flatter, slower table with ' + SP[1].balls + ' balls and the longest ball save; Classic is ' + SP[2].balls + ' balls; Fast is a steeper, quicker table for experts. <b>Look</b> &mdash; the 3D table or the flat one (<b>R</b>). <b>Camera</b> &mdash; Calm leans in on the ball now and then and dives into the crater the first time; Arcade does it more often, with more zoom and slow motion; Classic keeps the whole table in view and never moves (chosen for you if your device asks for less motion). The camera never moves in the last half second before the ball can reach a flipper. <b>P</b> pauses, and the game pauses itself if you click away to another window.'
   ];
-  var HELP = EMBER ? (window.PinRun ? ['<b>Ember Run</b> (the title card, or Settings &gt; Mode): up to 8 rounds, one ball each, each with a <b>target</b> score. Miss it and the run is over; make it and pick <b>1 of 3 upgrades</b> (keys 1 2 3, or tap one) &mdash; and the table <b>mutates</b>. Rounds 4 and 8 are boss rounds: knock out <b>THE VOLCANO</b>&rsquo;s HP with crater shots, full eruptions, lava lanes and the heat ramp. <b>Classic</b> is the whole game for a high score.'] : []).concat([
+  var HELP = EMBER ? (window.PinRun ? ['<b>Ember Run</b> (the title card, or Settings &gt; Mode): up to 8 rounds. Each round has one <b>mission</b>, shown on the <b>NEXT</b> line under the display, with an arrow on the shot it needs. The balls last the whole run: ' + SP[1].name + ' 3, ' + SP[2].name + ' 2, ' + SP[3].name + ' 1. A ball lost before the mission is done costs one; the mission&rsquo;s progress is kept. Mission done: <b>STAGE CLEAR</b>, then pick <b>1 of 3 upgrades</b> (keys 1 2 3, or tap one) and the table <b>mutates</b>. Rounds 4 and 8: <b>THE VOLCANO</b> fights back in three phases. <b>TODAY&rsquo;S ERUPTION</b> is the same run for everyone today. <b>Classic</b> is the whole game for a high score.'] : []).concat([
     '<b>The aim:</b> Ember Peak is a volcano island waking up. Build up the pressure, shoot the ball into the crater and set off the full eruption &mdash; and score all you can. ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.',
     '<b>The island:</b> the <b>volcano</b> stands at the top left, the <b>fumaroles</b> and the top lanes at the top right, and the shore with your two flippers at the bottom.'
   ].concat(CONTROLS, [
     '<b>Skill shot:</b> as each ball goes in, one of the three top lanes flashes. Roll through that one before the ball touches anything else for <b>' + fmt(PT.skill) + '</b>.',
     '<b>Top lanes:</b> ' + fmt(PT.lane) + ' a lane. Light all three to raise the bonus multiplier (up to 5 times). The flippers move the lit lanes along, so you can line up the one you need.',
-    '<b>Heat ramp</b> (the lane just right of the middle): ' + fmt(PT.ramp) + '. It climbs over the fumaroles and brings the ball back down to the right flipper. Too slow and the ball rolls back down. Make it again within four seconds for a <b>COMBO</b>: double, then up to five times.',
+    '<b>Heat ramp</b> (the lane just right of the middle): ' + fmt(PT.ramp) + '. It climbs over the fumaroles and brings the ball back down to the right flipper, slowly enough to catch: hold the flipper up. Too slow and the ball rolls back down.' + (window.PinGoals ? ' Any two big shots (the crater, the ramp, an orbit, a lava lane, the loop or the obsidian) within three seconds make a <b>COMBO</b>; five is a SUPER COMBO.' : ''),
     '<b>Orbits:</b> the long lanes up each side, ' + fmt(PT.orbit) + '. Up one and round and up again within four seconds is a <b>LOOP</b>: ' + fmt(PT.loop) + '. The spinner in the left orbit: ' + fmt(PT.spin) + ' a turn.',
-    '<b>Obsidian targets</b> (the three black stones right of the middle, beside the heat ramp): ' + fmt(PT.drop) + ' each. Knock down all three for ' + fmt(PT.drops) + ' and to light the kickback; they come back up two seconds later.',
-    '<b>Pressure:</b> nearly every shot builds the volcano&rsquo;s pressure &mdash; the cone rises and the rumble under the table grows. When it is full the display says <b>ERUPT NOW</b>.',
+    '<b>Obsidian targets</b> (the three black stones right of the middle, beside the heat ramp): ' + fmt(PT.drop) + ' each. Knock down all three for ' + fmt(PT.drops) + ' and the <b>OBSIDIAN PLUG</b> rises between the flippers for ' + Math.round(((TB && TB.T.plug && TB.T.plug.time) || 1200) / 60) + ' seconds: it saves one ball that falls down the middle. In Classic it also lights <b>MODE</b> at the crater. They come back up two seconds later.',
+    '<b>Pressure:</b> nearly every shot builds the volcano&rsquo;s pressure &mdash; the cone rises and the rumble under the table grows. The first eruption needs only a little; each one after needs more. Half way up, <b>LOCK</b> lights at the crater: a crater shot banks a ball for the next multiball. At the top the display says <b>ERUPT NOW</b>.',
     '<b>The crater:</b> best from the right flipper, shoot the ball firmly into the volcano&rsquo;s mouth: ' + fmt(PT.crater) + ', plus up to ' + fmt(PT.pressure) + ' more for the pressure inside. The volcano holds the ball for a moment, then fires it into the sky and down the <b>wire rail</b> into the left inlane (' + fmt(PT.rail) + ').',
-    '<b>The full eruption:</b> shoot the crater at full pressure for <b>' + fmt(PT.eruption) + '</b> more. The lava gates rise and the two <b>lava lanes</b> (inside the orbits, one each side) open for 20 seconds: ' + fmt(PT.lava) + ' a lane.',
-    '<b>The quake:</b> keep building pressure without erupting and the volcano overloads &mdash; <b>QUAKE COMING</b>: the island shakes and tips the ball sideways for a moment, the kickback goes off and the pressure drops back. The quake waits until no ball is close to a flipper.',
+    '<b>THE BIG ONE:</b> shoot the crater with ERUPT lit for <b>' + fmt(PT.eruption) + '</b> more, and the volcano erupts into a <b>multiball</b>: 2 balls, or 3 with a lock banked, with a ball save. <b>JACKPOT</b> is lit on both lava lanes and the heat ramp: ' + fmt(PT.jackpot || 5000000) + ', and ' + fmt(PT.jackpotUp || 1000000) + ' more for each one after. Three jackpots light the <b>SUPER JACKPOT</b> at the crater. The steam geyser adds one more ball, once. The multiball ends when one ball is left.',
+    '<b>The quake:</b> keep building pressure well past ERUPT without shooting the crater and the volcano overloads &mdash; <b>QUAKE COMING</b>: the island shakes and tips the ball sideways for a moment, the obsidian plug drops and the pressure falls back. The quake waits until no ball is close to a flipper.',
     '<b>Steam geyser</b> (just below the volcano): a slow ball is caught, it puffs, then flings the ball up into the fumaroles: ' + fmt(PT.geyser) + '.',
     '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the lava-lit triangles above the flippers): ' + fmt(PT.sling) + '.',
-    '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game (on Gentle, at the start of every ball), and again by knocking down all three obsidian targets.',
+    '<b>Kickback:</b> when its light is on, a ball falling down the left outlane is fired straight back up. It is lit at the start of a game; on Gentle at the start of every ball, and again by knocking down all three obsidian targets.',
     '<b>Inlanes</b> (beside the flippers): ' + fmt(PT.inlane) + '. <b>Outlanes</b> (the outside lanes, down to the drain): ' + fmt(PT.outlane) + ', a small comfort.'
   ], ENDS)) : [
     '<b>The aim:</b> you are the hero defending a planet from the invaders of 365 Invaders. Keep the ball in play and score all you can &mdash; ' + SP[1].balls + ' balls on Gentle, ' + SP[2].balls + ' on Classic and Fast.'
@@ -326,8 +340,9 @@
     } else G3.slow = 0;
     var pp = input.pp, pl = input.pl, pr = input.pr;
     if (input.ppTap) input.pp = true; if (input.plTap) input.pl = true; if (input.prTap) input.pr = true;
+    input.upTap = upTaps > 0 ? upTaps : undefined; upTaps = 0;
     E.step(W, input);
-    input.pp = pp; input.pl = pl; input.pr = pr; input.ppTap = input.plTap = input.prTap = false;
+    input.pp = pp; input.pl = pl; input.pr = pr; input.ppTap = input.plTap = input.prTap = false; input.upTap = undefined;
     if (W.run && RUN) runStep(W);   // EMBER RUN: the target, the boss, the round's end
     // the effects (fx.js) see this step's events before the cabinet plays their sounds and clears them
     if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} }
@@ -511,6 +526,7 @@
   // (capture: this runs before the cabinet's own screen press, and stops it when the press is a flipper's)
   stageEl.addEventListener('pointerdown', onDown, true);
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (n) { window.addEventListener(n, onUp, true); });
+  window.addEventListener('pointermove', onMove, true);
   // the two Flip buttons read the same, so say which is which
   [['left', 'Left flipper'], ['fire', 'Launch the ball (hold, then let go)'], ['right', 'Right flipper']].forEach(function (p) {
     var b = document.querySelector('#pad [data-pad="' + p[0] + '"]'); if (b) b.setAttribute('aria-label', p[1]);
