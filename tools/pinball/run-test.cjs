@@ -128,11 +128,11 @@ const G = require('../../games/pinball/goals.js');   // (from here on the goals 
   const fast = Run.newRun(31, 2), Wf = Run.startRound(fast); Wf.frame = 60 * 20; const f0 = Wf.score; bump(fast, Wf); bump(fast, Wf);
   const slow = Run.newRun(31, 2), Ws = Run.startRound(slow); Ws.frame = 60 * 400; const s0 = Ws.score; bump(slow, Ws); bump(slow, Ws);
   ok(fast.cleared && slow.cleared && Wf.score - f0 > Ws.score - s0 && Ws.score - s0 > 0, 'STAGE CLEAR: faster pays more, slow still clears (' + E.fmt(Wf.score - f0) + ' vs ' + E.fmt(Ws.score - s0) + ')');
-  const R = Run.newRun(32, 2); R.round = 4; R.mission = null; const W = Run.startRound(R); R.mission = { id: 'lockerupt', text: 'LOCK, THEN ERUPT', k: 0, got: 0, need: 1, done: false };
+  const R = Run.newRun(32, 2); R.round = 4; R.mission = null; const W = Run.startRound(R); R.mission = { id: 'lockerupt', text: 'A LOCK AND AN ERUPTION', k: 0, got: 0, need: 1, done: false, early: {} };
   W.stats.eruptions++; Run.update(R, W);
-  ok(!R.cleared && R.mission.k === 0, 'LOCK, THEN ERUPT: an eruption first does not count');
-  W.stats.locks++; Run.update(R, W); W.stats.eruptions++; Run.update(R, W);
-  ok(R.cleared, 'a lock, then an eruption: done');
+  ok(!R.cleared && R.mission.k === 0, 'A LOCK AND AN ERUPTION: an eruption alone is not enough');
+  W.stats.locks++; Run.update(R, W);
+  ok(R.cleared, 'an eruption first and then a lock: done (either order)');
   const R2 = Run.newRun(33, 2), W2 = Run.startRound(R2); W2.score += R2.star.target; Run.update(R2, W2);
   ok(R2.star.got && !R2.cleared, 'the star is optional: reaching the old target does not clear the round');
   const st = Run.status(R2, W2);

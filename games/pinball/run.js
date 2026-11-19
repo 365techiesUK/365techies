@@ -42,7 +42,8 @@
   var DMG = { crater: 3, lava: 1, countdown: 2, points: 3000000 };   // chunks: a SEALED crater hit, the lit lava lane, a COUNTDOWN crater hit; points a chunk
   var UNIT = 10, NEEDK = { 1: 0.5, 2: 1, 3: 1 }, HPK = { 1: 0.5, 2: 1, 3: 1 }, UNSEAL = { 1: 1800, 2: 1200, 3: 1200 }, PTSK = { 1: 0.5, 2: 1, 3: 1 };   // (Gentle: a chunk every 1.5M)   // Gentle: half the mission counts (at least 1), a smaller volcano   // each chunk is 10 units, so points chip in a unit every 300,000 and the HP bar moves often
   var PHASES = ['', 'SEALED', 'MAGMA FLOW', 'COUNTDOWN'];
-  var SAVE0 = { 1: 20, 2: 0, 3: 0 };   // extra seconds of ball save on every ball of a Gentle run (tuned to the casual bot)
+  var SAVE0 = { 1: 20, 2: 0, 3: 0 };
+  var INTEREST_MAX = 20000000;   // INTEREST: at most 20M a stack a round (it compounded a pilot's billions into a 35B run)   // extra seconds of ball save on every ball of a Gentle run (tuned to the casual bot)
   var COUNTDOWN = { 1: 32, 2: 25, 3: 25 }, DIVE_STEPS = 1200, CLEAR = { base: 2000000, fast: 8000000, secs: 150 };
   // the missions: steps of [what to count, how many] (a W.stats key, or 'bank' for the full obsidian bank)
   var MISSIONS = {
@@ -52,7 +53,7 @@
     jackpot2: { text: '2 JACKPOTS', steps: [['jackpots', 2]] },
     crab5: { text: '5 MAGMA CRABS', steps: [['crabs', 5]] },
     loop: { text: 'MAKE A LOOP', steps: [['loops', 1]] },
-    lockerupt: { text: 'LOCK, THEN ERUPT', steps: [['locks', 1], ['eruptions', 1]] },
+    lockerupt: { text: 'A LOCK AND AN ERUPTION', steps: [['locks', 1], ['eruptions', 1]] },   // (either order: a later step keeps what came first)
     lava3: { text: '3 LAVA LANES', steps: [['lava', 3]] }
   };
   var TEACH = ['obsidian', 'erupt'], HARD = ['jackpot2', 'crab5', 'loop', 'lockerupt'], HARD1 = ['jackpot2', 'crab5', 'erupt'];   // (Gentle: the casual bot's shots - no loop, lock-then-erupt or lava lanes)
@@ -74,7 +75,7 @@
     { id: 'lanes', name: 'LUCKY LANES', text: 'Two skill lanes start lit on every ball', max: 1 },
     { id: 'twin', name: 'TWIN BALL', text: 'Every multiball gets one more ball', max: 1 },
     { id: 'wind', name: 'SECOND WIND', text: 'One more ball for the run', max: 3 },
-    { id: 'interest', name: 'INTEREST', text: '+10% of your banked score after each round', max: 3 },
+    { id: 'interest', name: 'INTEREST', text: '+10% of your banked score after each round (up to 20M)', max: 3 },
     { id: 'forge', name: 'BONUS FORGE', text: 'Every ball starts with the bonus at x2 (stacks)', max: 3 },
     { id: 'tamer', name: 'VOLCANO TAMER', text: '+1 boss chunk every crater hit; eruptions score x2', max: 2 }
   ];
@@ -187,7 +188,7 @@
       R.news.push({ big: 'THE VOLCANO WAKES', small: 'ROUND ' + r + ' - CRACK THE SEAL: CLEAR THE OBSIDIAN', kind: 'boss' });
     } else {
       var id = missionFor(R, r), M = MISSIONS[id];
-      R.mission = { id: id, text: mtext(R, id), k: 0, got: 0, need: need(R, M.steps[0][1]), done: false };
+      R.mission = { id: id, text: mtext(R, id), k: 0, got: 0, need: need(R, M.steps[0][1]), done: false, early: {} };
       R.news.push({ big: 'ROUND ' + r, small: M.text, kind: 'round' });
     }
     show(R, W);
@@ -253,12 +254,18 @@
     // the mission: progress is kept across balls
     var m = R.mission;
     if (m && !m.done && play) {
+      var steps = MISSIONS[m.id].steps;
+      for (var si = m.k + 1; si < steps.length; si++) { var ek = steps[si][0]; if (d[ek] > 0) { m.early = m.early || {}; m.early[ek] = (m.early[ek] || 0) + d[ek]; } }
       for (var guard = 0; guard < 4 && !m.done; guard++) {
         var st = MISSIONS[m.id].steps[m.k], got = d[st[0]] || 0;
         if (got <= 0) break;
         d[st[0]] = 0; m.got = Math.min(m.need, m.got + got);
         if (m.got >= m.need) {
-          if (m.k + 1 < MISSIONS[m.id].steps.length) { m.k++; m.got = 0; m.need = need(R, MISSIONS[m.id].steps[m.k][1]); }
+          if (m.k + 1 < MISSIONS[m.id].steps.length) {
+            m.k++; m.need = need(R, MISSIONS[m.id].steps[m.k][1]);
+            var key = MISSIONS[m.id].steps[m.k][0]; m.got = Math.min(m.need, (m.early && m.early[key]) || 0); d[key] = 0;
+            if (m.got >= m.need && m.k + 1 >= MISSIONS[m.id].steps.length) { m.done = true; stageClear(R, W); }
+          }
           else { m.done = true; stageClear(R, W); }
         }
       }
@@ -292,7 +299,7 @@
     if (!R.cleared) { R.phase = 'over'; R.news.push({ big: 'RUN OVER', small: 'ROUND ' + R.round, kind: 'over' }); return R.phase; }
     if (R.round >= R.rounds) { R.won = true; R.phase = 'won'; R.cause = 'won'; R.news.push({ big: 'RUN WON', small: E.fmt(R.banked), kind: 'won' }); return R.phase; }
     var it = n(R, 'interest');
-    if (it) { var gain = Math.round(R.banked * 0.1 * it / 10) * 10; R.banked += gain; R.news.push({ big: 'INTEREST', small: '+' + E.fmt(gain), kind: 'up' }); }
+    if (it) { var gain = Math.min(INTEREST_MAX * it, Math.round(R.banked * 0.1 * it / 10) * 10); R.banked += gain; R.news.push({ big: 'INTEREST', small: '+' + E.fmt(gain), kind: 'up' }); }
     R.offer = offers(R);
     var mt = mutate(R); R.mutNext = mt;
     R.news.push({ big: mt.name, small: mt.text, kind: 'mutation' });
