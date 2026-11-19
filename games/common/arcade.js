@@ -8,6 +8,8 @@
  * The game's def supplies: id, store, title, width, height (the game's own pixels), speeds {options, def}, newWorld(speed),
  * step(world, input), draw(g, world, t), hud(world) -> {score, lives, wave}, sound(name, kit, event), help (list), and
  * optionally titleText, keysText, touchText, legend [{rows, colour, text}], overText(world).
+ * Opt-in (wave 3, 365 Pinball Hero; a game without them is exactly as before): num(n) -> the score as shown (thousands
+ * separators), waveLabel(world) -> the word on the bar's wave chip and the game-over tile (Round in a run).
  * The game reports what happened by pushing onto world.events: a sound name, {sfx, ...} or {say: 'words'};
  * world.over = true ends the game. */
 (function () {
@@ -213,10 +215,13 @@
       if (W.over) gameOver();
     }
     var lastHud = '';
+    function num(n) { return D.num ? D.num(n) : n; }
+    function waveLabel() { return D.waveLabel ? D.waveLabel(W) || WORDC : WORDC; }
     function hud() {
-      var h = D.hud(W), b = (ST.best[skey(W)] || {}).score || 0, key = h.score + '|' + h.lives + '|' + h.wave + '|' + b;
+      var h = D.hud(W), b = (ST.best[skey(W)] || {}).score || 0, wl = D.waveLabel ? waveLabel() : '', key = h.score + '|' + h.lives + '|' + h.wave + '|' + b + '|' + wl;
       if (key === lastHud) return; lastHud = key;
-      $('vScore').textContent = h.score; $('vBest').textContent = Math.max(b, h.score); $('vLives').textContent = h.lives; $('vWave').textContent = h.wave;
+      $('vScore').textContent = num(h.score); $('vBest').textContent = num(Math.max(b, h.score)); $('vLives').textContent = h.lives; $('vWave').textContent = h.wave;
+      if (wl && $('vWave').previousSibling) $('vWave').previousSibling.textContent = wl;
     }
 
     // ------------------------------------------------------------ game states
@@ -267,7 +272,8 @@
       $('oTro').innerHTML = won365.length ? Looks.wonHtml(won365) : ''; $('oTro').hidden = !won365.length;
       if (window.Keep) Keep.sync();   // Keep my scores (keep.js): the saved copy follows every game
       setPauseBtn(); $('bPause').disabled = true;
-      $('oScore').textContent = h.score; $('oWave').textContent = h.wave; $('oBest').textContent = b.score;
+      $('oScore').textContent = num(h.score); $('oWave').textContent = h.wave; $('oBest').textContent = num(b.score);
+      if (D.waveLabel && $('oWave').nextSibling) $('oWave').nextSibling.textContent = waveLabel();
       $('oWhy').textContent = D.overText ? D.overText(W) : 'Game over';
       $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       showOverlay('over'); lastHud = ''; hud();
@@ -480,13 +486,13 @@
     // the game-over card: the numbers count up (with arcade ticks), and a new high score gets the works
     function countUp(el, to, tick) {
       var n = +to;
-      if (calm || !(n >= 2)) { el.textContent = to; return; }
+      if (calm || !(n >= 2)) { el.textContent = tick ? num(to) : to; return; }
       to = n;
       var t0 = 0, dur = Math.min(1500, 500 + to * 0.05), lastStep = -1;
       function f(now) {
         if (!t0) t0 = now;
         var e = Math.min(1, (now - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - e, 3))), stepN = Math.floor(e * 14);
-        el.textContent = v;
+        el.textContent = tick ? num(v) : v;
         if (tick && SET.sound && stepN !== lastStep) { lastStep = stepN; KIT.tone(700 + 900 * e, 0.03, 0.02, { type: 'square' }); }
         if (e < 1) requestAnimationFrame(f); else { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
       }

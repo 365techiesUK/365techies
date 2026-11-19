@@ -351,6 +351,16 @@
     if (window.PinFX && Wa.events.length) { try { PinFX.events(Wa, Wa.events); } catch (e) {} }
     if (window.PinVoice && typeof PinVoice.events === 'function' && Wa.events.length) { try { PinVoice.events(Wa, Wa.events); } catch (e) {} }
     if (Wa !== W && Wa.events.length) { for (var i = 0; i < Wa.events.length; i++) W.events.push(Wa.events[i]); Wa.events.length = 0; }   // (the cabinet plays the surface's list)
+    dmdTidy(W, Wa);
+  }
+  // the dot-matrix display (wave 3, #9): ROUND, never BALL, in a run; a single score of 1,000,000 or more is shown there
+  // (fx.js keeps its floating pops for the smaller ones) unless the display is already saying something
+  var lastScore = -1, lastWa = null;
+  function dmdTidy(W, Wa) {
+    if (W.run && RUN && W.dmd && /^BALL \d+$/.test(String(W.dmd.big))) W.dmd.big = 'ROUND ' + RUN.round;
+    var sc = Wa.score || 0;
+    if (Wa === lastWa && lastScore >= 0 && sc - lastScore >= 1e6 && !Wa.dmd && Wa.state === 'play') Wa.dmd = { big: '+' + fmt(sc - lastScore), small: '', t: 75, n: 0 };
+    lastScore = sc; lastWa = Wa;
   }
 
   // ---------------------------------------------------------------- INTO THE VOLCANO (descent.js, window.PinDescent; wave 3)
@@ -402,17 +412,19 @@
       setTimeout(showPick, 0);
     } else if (ph === 'over' || ph === 'won') setTimeout(showSummary, 0);   // (after the cabinet has shown its card)
   }
-  function runNews(W) {   // run.js's announcements: the dot-matrix display and a banner over the table
+  function runNews(W) {   // run.js's announcements: ONE place each (wave 3, #9): a round or boss start and STAGE CLEAR as
+    // a banner over the table for 1.2 s at most; everything else on the dot-matrix display only
     var N = RUN.news; if (!N.length) return;
     for (var i = 0; i < N.length; i++) {
       var n = N[i];
       if (n.kind === 'hit') { RS.hitT = performance.now(); continue; }   // the HP bar shakes; the display stays on the game
       if (n.kind === 'mutation' || n.kind === 'over' || n.kind === 'won' || RUN.phase !== 'play') continue;   // (the pick and summary cards say these)
-      W.dmd = { big: n.big, small: n.small || '', t: 180, n: 0 };
-      if (n.kind === 'win') RS.flash = performance.now();
+      if (n.kind === 'win' || n.kind === 'stageclear') RS.flash = performance.now();
       var sub = n.small || '', m = RUN.mutNext;
-      if ((n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1) sub += '|MUTATION: ' + m.name + ' — ' + m.text;
-      banner(n.kind === 'round' ? 'ROUND ' + RUN.round + ' · TARGET ' + fmt(RUN.target) : n.big, n.kind === 'round' ? (sub.split('|')[1] || '') : sub, n.kind);
+      if (n.kind === 'round' || n.kind === 'boss' || n.kind === 'stageclear') {
+        if ((n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1) sub = 'MUTATION: ' + m.name;
+        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (RUN.target && !(RUN.mission || PR.status(RUN, W).mission) ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, n.kind === 'round' ? sub.replace(/^[^|]*\|/, '') : sub.split('|')[0], n.kind);
+      } else W.dmd = { big: n.big, small: n.small || '', t: 150, n: 0 };
     }
     N.length = 0;
   }
@@ -423,20 +435,60 @@
     void BAN.offsetWidth; BAN.className = 'rb-' + kind + ' rb-go';   // (restarts the animation)
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function runHud(W, mode) {   // the round line and the target bar (or THE VOLCANO's HP), under the display; never takes a press
+  // numbers on the HUD the short way: 950,000 / 1.6M / 12M / 2.4B (everywhere else, thousands separators: fmt)
+  function short(n) {
+    n = +n || 0; var a = Math.abs(n), u = a >= 1e9 ? [1e9, 'B'] : a >= 1e6 ? [1e6, 'M'] : null;
+    if (!u) return fmt(Math.round(n));
+    var v = n / u[0], t = Math.abs(v) < 10 ? (Math.floor(v * 10) / 10).toFixed(1) : String(Math.floor(v));
+    return t.replace(/\.0$/, '') + u[1];
+  }
+  function clock(sec) { sec = Math.max(0, Math.ceil(+sec || 0)); return Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2); }
+  var DEPTHS = ['SURFACE', 'MAGMA CHAMBER'];
+  // THE HUD (wave 3, #9), under the display, never taking a press: in Ember Run the round, the balls left and the mission
+  // clock; THE VOLCANO's HP in a boss round; then ONE NEXT line (W.next, goals.js or descent.js) with a 5-segment gauge;
+  // and with descent.js the depth meter (SURFACE, MAGMA CHAMBER, a dim ? below) with the lava clock below the surface.
+  // Classic shows the NEXT line and the depth meter. Old run.js (no mission, no W.next): the target bar, as before.
+  function runHud(Ws, mode) {
     if (!HUD) return;
-    var on = !!(W && W.run && RUN && !W.demo && (mode === 'play' || mode === 'paused') && RUN.phase === 'play');
+    var W = Ws && !Ws.demo ? active(Ws) : Ws, run = !!(Ws && Ws.run && RUN && !Ws.demo && RUN.phase === 'play');
+    var nx = W && W.next && W.next.text ? W.next : null, dp = depth();
+    var on = !!(Ws && !Ws.demo && (mode === 'play' || mode === 'paused') && (run || nx || dp));
     if (HUD.hidden === on) HUD.hidden = !on;
     if (PICK && !PICK.hidden && (mode === 'title' || mode === 'over' || !RUN || RUN.phase !== 'pick')) PICK.hidden = true;
     var w = screenEl ? screenEl.clientWidth : 0;
     if (w && w !== RS.pu) { RS.pu = w; screenEl.parentNode.style.setProperty('--pu', (w / 270).toFixed(3) + 'px'); }   // one game pixel, for the overlays' type
     if (!on) return;
-    var s = PR.status(RUN, W), now = performance.now(), fl = now - RS.flash < 1400, sh = now - RS.hitT < 400;
-    var key = [s.round, s.boss, Math.round(s.progress * 400), s.hp, s.hit, s.roundScore, fl, sh].join('|');
+    var s = run ? PR.status(RUN, Ws) : null, now = performance.now(), fl = now - RS.flash < 1400, sh = now - RS.hitT < 400;
+    var B = s && s.boss, bo = B && typeof B === 'object' ? B : null, boss = !!B;
+    var balls = s && s.balls != null ? s.balls : (E.hud(Ws).lives), bmax = s && s.ballsMax != null ? s.ballsMax : Math.max(balls, 1);
+    var gauge = nx && typeof nx.gauge === 'number' ? Math.max(0, Math.min(5, Math.round(nx.gauge * 5))) : -1;
+    var clk = nx && typeof nx.clock === 'number' && isFinite(nx.clock) ? nx.clock : null;
+    var legacy = run && !nx && !(s && s.mission);
+    var key = [run && s.round, boss, bo ? bo.chunks + '/' + bo.chunksMax + bo.phase : s && Math.ceil(s.hp || 0), balls, bmax, nx && nx.text, nx && nx.small, gauge, clk == null ? '' : Math.ceil(clk),
+      legacy ? Math.round(s.progress * 400) + '|' + s.roundScore + '|' + s.hit : '', dp ? dp.depth + '|' + (dp.clock == null ? '' : Math.ceil(dp.clock)) + '|' + dp.cleared : '', fl, sh].join('|');
     if (key === RS.key) return; RS.key = key;
-    HUD.className = (s.boss ? 'boss' : '') + (s.hit ? ' hit' : '') + (fl ? ' flash' : '') + (sh ? ' shake' : '');
-    HUD.innerHTML = '<div class="rh-l"><b>' + (s.boss ? 'THE VOLCANO' : 'ROUND ' + s.round + '/' + s.rounds) + '</b><span>' + (s.boss ? 'BOSS · ROUND ' + s.round + '/' + s.rounds : s.hit ? 'TARGET REACHED' : 'TARGET ' + fmt(s.target)) + '</span></div>'
-      + '<div class="rh-bar"><i style="width:' + (s.boss ? (s.hpMax ? 100 * s.hp / s.hpMax : 0) : 100 * s.progress).toFixed(2) + '%"></i><em>' + (s.boss ? 'HP ' + Math.ceil(s.hp) + ' / ' + s.hpMax : fmt(s.roundScore) + ' / ' + fmt(s.target)) + '</em></div>';
+    HUD.className = (boss ? 'boss' : '') + (legacy && s.hit ? ' hit' : '') + (fl ? ' flash' : '') + (sh ? ' shake' : '') + (run ? '' : ' classic');
+    var h = '';
+    if (run) {
+      var pips = ''; for (var k = 0; k < Math.min(5, Math.max(bmax, balls)); k++) pips += '<i class="' + (k < balls ? 'on' : '') + '"></i>';
+      h += '<div class="rh-l"><b>' + (boss ? 'THE VOLCANO' : 'ROUND ' + s.round + '/' + s.rounds) + '</b>'
+        + '<span class="rh-balls" aria-label="' + balls + (balls === 1 ? ' ball' : ' balls') + ' left">' + pips + '</span>'
+        + (clk != null ? '<span class="rh-clk">' + clock(clk) + '</span>' : boss ? '<span>ROUND ' + s.round + '/' + s.rounds + '</span>' : legacy ? '<span>' + (s.hit ? 'TARGET REACHED' : 'TARGET ' + short(s.target)) + '</span>' : '') + '</div>';
+      if (boss) {
+        var cm = bo ? bo.chunksMax : s.hpMax, cv = bo ? bo.chunks : Math.ceil(s.hp);
+        h += '<div class="rh-bar"><i style="width:' + (cm ? 100 * cv / cm : 0).toFixed(2) + '%"></i><em>' + (bo && bo.phaseName ? esc(bo.phaseName) + ' · ' : '') + 'HP ' + cv + ' / ' + cm + '</em></div>';
+      } else if (legacy) h += '<div class="rh-bar"><i style="width:' + (100 * s.progress).toFixed(2) + '%"></i><em>' + short(s.roundScore) + ' / ' + short(s.target) + '</em></div>';
+    }
+    if (nx) {
+      var seg = ''; if (gauge >= 0) { for (var g = 0; g < 5; g++) seg += '<u class="' + (g < gauge ? 'on' : '') + '"></u>'; }
+      h += '<div class="rh-next"><span class="rh-nt"><b>NEXT</b> ' + esc(nx.text) + (nx.small ? ' <small>' + esc(nx.small) + '</small>' : '') + '</span>' + (seg ? '<span class="rh-g" aria-hidden="true">' + seg + '</span>' : '') + (!run && clk != null ? '<span class="rh-clk">' + clock(clk) + '</span>' : '') + '</div>';
+    }
+    if (dp) {
+      var at = Math.max(0, Math.min(DEPTHS.length - 1, dp.depth | 0));
+      h += '<div class="rh-depth">' + DEPTHS.map(function (d, i) { return '<span class="' + (i === at ? 'at' : i < at ? 'up' : '') + '">' + (i === at && dp.name ? esc(String(dp.name).toUpperCase()) : d) + '</span>'; }).join('<i>›</i>')
+        + '<i>›</i><span class="q">?</span>' + (dp.clock != null && at > 0 ? '<span class="rh-lava">LAVA ' + clock(dp.clock) + '</span>' : '') + '</div>';
+    }
+    HUD.innerHTML = h;
   }
   // the upgrades' little pictures (40 x 40, drawn in the card's colour)
   var ICONS = {
@@ -503,10 +555,14 @@
       if (!runOn(set)) { RUN = null; NW = E.newWorld(speed, set, seed); }
       else { RUN = PR.newRun(seed, speed); NW = runWorld(RUN); }
       makeDesc(NW, speed, seed);
+      lastScore = -1; lastWa = null;
+      if (NW && NW.run && NW.dmd && /^BALL /.test(String(NW.dmd.big))) NW.dmd = null;   // (the round's banner says it)
       return NW;
     },
     step: stepGame,
-    hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { h.wave = RUN.round; h.lives += RUN.wind; } return h; },   // EMBER RUN: the round in the Ball chip
+    hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { var st = PR.status(RUN, W); h.wave = RUN.round; h.lives = st && st.balls != null ? st.balls : h.lives + (RUN.wind || 0); } return h; },
+    waveLabel: function (W) { return W && W.run ? 'Round' : 'Ball'; },
+    num: fmt,   // EMBER RUN: the round in the Ball chip
     // EMBER RUN keeps its own best scores (r1-r3), as Invaders keeps its two styles apart
     statKey: function (W) { return (W && W.run ? 'r' : 'v') + W.speed; },
     statKeyFor: function (set, speed) { return (runOn(set) ? 'r' : 'v') + speed; },
@@ -579,9 +635,9 @@
   });
 
   // EMBER RUN's overlays (30 Oct 2026): the round line and bar, the banner, the pick card, the summary on the game-over card
-  if (PR && EMBER) (function () {
+  if (EMBER) (function () {
     var st = document.createElement('style'), wrap = document.getElementById('screenwrap');
-    st.textContent = '#runHud{position:absolute;left:5%;right:5%;top:7.6%;z-index:2;pointer-events:none;font:700 max(11px,calc(var(--pu,1px)*8.5))/1.1 Archivo,sans-serif;letter-spacing:.06em;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}'
+    st.textContent = '#runHud{position:absolute;left:4%;right:4%;top:7.6%;z-index:2;pointer-events:none;font:700 max(15px,calc(var(--pu,1px)*8.5))/1.15 Archivo,sans-serif;letter-spacing:.06em;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}'
       + '#runHud[hidden],#runBan[hidden]{display:none}#runHud .rh-l{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px}#runHud .rh-l b{color:#ffb347}#runHud .rh-l span{opacity:.92}'
       + '#runHud .rh-bar{position:relative;height:max(13px,calc(var(--pu,1px)*11));border-radius:99px;background:rgba(20,6,2,.78);border:1px solid rgba(255,140,50,.55);overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,.6)}'
       + '#runHud .rh-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ff3d00,#ff8a1a 70%,#ffc04a);transition:width .25s}'
@@ -590,10 +646,15 @@
       + '#runHud.flash .rh-bar{animation:rhFlash .35s 4 alternate}@keyframes rhFlash{to{box-shadow:0 0 22px #ffd84a,0 0 4px #fff;border-color:#fff}}'
       + '#runHud.boss .rh-l b{color:#ff5a3c}#runHud.boss .rh-bar{border-color:#ff5a3c}#runHud.boss .rh-bar i{background:linear-gradient(90deg,#8a0d00,#e0261b 60%,#ff6a3c)}'
       + '#runHud.shake .rh-bar{animation:rhShake .1s 4}@keyframes rhShake{50%{transform:translateX(3px)}}'
+      + '#runHud .rh-balls{display:inline-flex;gap:3px;margin-left:auto}#runHud .rh-balls i{width:.62em;height:.62em;border-radius:50%;border:2px solid rgba(255,216,74,.6)}#runHud .rh-balls i.on{background:radial-gradient(circle at 35% 30%,#fff,#ffd84a 45%,#c47a10)}'
+      + '#runHud .rh-clk{font-variant-numeric:tabular-nums;color:#fff;margin-left:8px}'
+      + '#runHud .rh-next{display:flex;align-items:center;gap:8px;margin-top:4px;padding:3px 8px;border-radius:9px;background:rgba(14,5,2,.72);border:1px solid rgba(255,140,50,.45)}#runHud .rh-nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}'
+      + '#runHud .rh-nt b{color:#ffb347;margin-right:4px}#runHud .rh-nt small{font-size:1em;font-weight:600;color:#ffd9b0}#runHud .rh-g{display:inline-flex;gap:2px;flex:none}#runHud .rh-g u{width:.7em;height:.55em;border-radius:2px;background:rgba(255,255,255,.18)}#runHud .rh-g u.on{background:#ff9a2a;box-shadow:0 0 5px #ff7a1a}'
+      + '#runHud .rh-depth{display:flex;align-items:baseline;gap:5px;margin-top:4px;color:rgba(255,233,201,.55)}#runHud .rh-depth .at{color:#ffd84a}#runHud .rh-depth .q{opacity:.5}#runHud .rh-depth i{font-style:normal;opacity:.6}#runHud .rh-lava{margin-left:auto;color:#ff6a3c;font-variant-numeric:tabular-nums}'
       + '#runBan{position:absolute;left:4%;right:4%;top:24%;z-index:2;pointer-events:none;text-align:center;opacity:0}#runBan b{display:block;font:600 max(22px,calc(var(--pu,1px)*21))/1.05 "Clash Display",Archivo,sans-serif;letter-spacing:.03em;color:#ffd84a;text-shadow:0 0 14px rgba(255,106,26,.9),0 2px 3px #000}'
       + '#runBan small{display:block;margin-top:6px;font:700 max(12px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
-      + '#runBan.rb-go{animation:rbGo 2.8s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.25)}10%{opacity:1;transform:scale(1)}78%{opacity:1}100%{opacity:0}}'
-      + '@media (prefers-reduced-motion:reduce){#runBan.rb-go{animation:rbFade 2.8s linear forwards}@keyframes rbFade{0%,80%{opacity:1}100%{opacity:0}}#runHud.flash .rh-bar,#runHud.shake .rh-bar{animation:none}}'
+      + '#runBan.rb-go{animation:rbGo 1.2s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0}}'
+      + '@media (prefers-reduced-motion:reduce){#runBan.rb-go{animation:rbFade 1.2s linear forwards}@keyframes rbFade{0%,75%{opacity:1}100%{opacity:0}}#runHud.flash .rh-bar,#runHud.shake .rh-bar{animation:none}}'
       + '#ov_pick .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35);background:rgba(18,6,2,.92)}#ov_pick .rp-h{color:#ffd84a}#ov_pick .rp-s{color:#ffd9b0;font-size:14px;margin:4px 0 8px}'
       + '#ov_pick .rp-m{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:rgba(255,60,0,.13);border:1px dashed rgba(255,120,40,.6);text-align:left;font-size:13.5px;line-height:1.3}#ov_pick .rp-m:empty{display:none}'
       + '#ov_pick .rp-m small{display:block;font:700 11px Archivo,sans-serif;letter-spacing:.1em;color:#ff8a3a}#ov_pick .rp-m b{color:#ffb347;margin-right:6px}'
