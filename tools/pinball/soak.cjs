@@ -65,8 +65,9 @@ function log() { const s = ((Date.now() - T0) / 1000).toFixed(0).padStart(5) + '
     if (window.HallOfFame) { HallOfFame.run = () => null; }
   });
   const st = () => page.evaluate(() => {
-    const A = ARCADE365, W = A.world, RP = window.PinRunPage, R = RP && RP.run;
-    return { mode: A.mode, frame: W && W.frame, state: W && W.state, score: W && W.score, picking: !!(RP && RP.picking), phase: R && R.phase, round: R && R.round, offer: R && R.offer ? R.offer.slice() : null, run: !!(W && W.run) };
+    const A = ARCADE365, W = A.world, RP = window.PinRunPage, R = RP && RP.run, L = window.PinLevels, Wa = L && W ? L.active() || W : W;
+    // (integrate: the frame of the world being played - the surface waits while the ball is in THE MAGMA CHAMBER)
+    return { mode: A.mode, frame: Wa ? Wa.tableId + ':' + Wa.frame : null, depth: Wa && W && Wa !== W ? 1 : 0, state: W && W.state, score: W && W.score, picking: !!(RP && RP.picking), phase: R && R.phase, round: R && R.round, offer: R && R.offer ? R.offer.slice() : null, run: !!(W && W.run) };
   });
   const heap = async () => { const m = await page.evaluate(() => performance.memory ? performance.memory.usedJSHeapSize : null); return m ? +(m / 1048576).toFixed(1) : null; };
   const fails = [];
@@ -121,9 +122,9 @@ function log() { const s = ((Date.now() - T0) / 1000).toFixed(0).padStart(5) + '
   if (Q.still.length) fails.push(Q.still.length + ' stuck balls: ' + JSON.stringify(Q.still.slice(0, 3)));
   if (Q.nan || Q.lost) fails.push('NaN ' + Q.nan + ', lost ' + Q.lost);
   if (growth > 0.25) fails.push('heap grew ' + Math.round(growth * 100) + '% (' + h0 + ' -> ' + h1 + ' MB)');
-  const sum = { mode: MODE, phone: PHONE, playMin: +(playMs / 60000).toFixed(1), steps: Q.steps, games, picks, drains: Q.drains, heapMB: heaps, heapGrowth: +(growth * 100).toFixed(1) + '%', errors: errors.slice(0, 10), still: Q.still, fails };
+  const sum = { mode: MODE, phone: PHONE, playMin: +(playMs / 60000).toFixed(1), steps: Q.steps, games, picks, drains: Q.drains, dives: Q.ev.dive || 0, ascends: Q.ev.ascend || 0, chamberClears: Q.ev.chamberclear || 0, lavaRises: Q.ev.lavarise || 0, heapMB: heaps, heapGrowth: +(growth * 100).toFixed(1) + '%', errors: errors.slice(0, 10), still: Q.still, fails };
   fs.writeFileSync(path.join(OUT, 'soak.json'), JSON.stringify(sum, null, 1));
-  log('DONE', JSON.stringify({ playMin: sum.playMin, games, picks, errors: errors.length, stuck: Q.still.length, softlocks: fails.filter((f) => /softlock/.test(f)).length, heapGrowth: sum.heapGrowth }));
+  log('DONE', JSON.stringify({ playMin: sum.playMin, games, picks, dives: sum.dives, ascends: sum.ascends, errors: errors.length, stuck: Q.still.length, softlocks: fails.filter((f) => /softlock/.test(f)).length, heapGrowth: sum.heapGrowth }));
   fails.forEach((f) => log('FAIL', f));
   await browser.close();
   process.exit(fails.length ? 1 : 0);
