@@ -286,7 +286,7 @@ function missing(list) {   // the spectacle add-ons may not be written yet: said
     console.log('  ' + JSON.stringify(r1));
     ok(r1.mode === 'play' && r1.run && r1.mod && r1.total === r1.pool && r1.pool > 0 && r1.round === 1 && r1.phase === 'play', 'Play starts an Ember Run: round 1, the speed\'s pool of ' + r1.pool + ' balls, the run\'s table knobs (W.mod)');
     ok(/ROUND 1\/8/.test(r1.hud) && /NEXT/.test(r1.hud), 'the round line and the NEXT line (the mission) show (' + r1.hud + ')');
-    ok(/ROUND 1/.test(r1.ban) && /HEAT RAMP/.test(r1.ban) && !/TARGET/.test(r1.ban), 'the round banner shows the round\'s mission (' + r1.ban + ')');
+    ok(/ROUND 1/.test(r1.ban) && !/TARGET/.test(r1.ban) && /NEXT/.test(r1.hud), 'the round banner shows (ROUND 1, never TARGET; the mission is on the NEXT line) - the round\'s mission (' + r1.ban + ')');
     ok(r1.pe === 'none,none', 'the round line and banner never take a press (the flippers\' screen stays free)');
     await p.screenshot({ path: path.join(OUT, 'run-round1-desktop.png') });
     // the round's end (forced): the pick card, the table waiting

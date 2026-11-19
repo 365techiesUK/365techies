@@ -540,10 +540,11 @@
       if (n.kind === 'win' || n.kind === 'stageclear') RS.flash = performance.now();
       var sub = n.small || '', m = RUN.mutNext;
       if (n.kind === 'round' || n.kind === 'boss' || n.kind === 'stageclear' || n.kind === 'win') {
-        // (integrate: the round's banner says its mission, run.js's small line; the mutation only on the round's first banner)
+        // (integrate: a round's banner says ROUND n and, on its first banner, the mutation - never TARGET; the mission is on
+        // the NEXT line already, and the same words twice at once is clutter: text-audit.cjs)
         var first = (n.kind === 'round' || n.kind === 'boss') && RS.mutR !== RUN.round; if (first) RS.mutR = RUN.round;
         var mut = first && m && RUN.round > 1 ? 'MUTATION: ' + m.name : '', legacyT = n.kind === 'round' && RUN.target && !(RUN.mission || PR.status(RUN, W).mission);
-        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (legacyT ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, [legacyT ? '' : sub.split('|')[0], mut].filter(Boolean).join('|'), n.kind === 'win' ? 'stageclear' : n.kind);
+        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (legacyT ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, [n.kind === 'round' ? '' : sub.split('|')[0], mut].filter(Boolean).join('|'), n.kind === 'win' ? 'stageclear' : n.kind);
       } else W.dmd = { big: n.big, small: n.small || '', t: 150, n: 0 };
     }
     N.length = 0;

@@ -108,7 +108,10 @@ async function classic(browser) {
   if (!modeDone || !(done.goals.diveLit || done.lit.indexOf('dive') >= 0)) { R.forced.push('classic: DIVE lit by PinGoals.dive (mode ' + (modeDone ? 'done, DIVE not lit' : 'not done') + ')'); await api(page, 'if (window.PinGoals) PinGoals.dive(W, 1200); else E.api.craterLit(W, "dive", true);'); }
   // DIVE -> the chamber
   let down = await waitFor(page, (x) => x.depth === 1, 40000, 300);
-  if (!down) { R.forced.push('classic: DIVE relit once'); await waitFor(page, (x) => x.state === 'play' && !x.mb, 15000); await api(page, 'if (window.PinGoals) PinGoals.dive(W, 1200);'); down = await waitFor(page, (x) => x.depth === 1, 40000, 300); }
+  for (let tries = 0; tries < 2 && !down; tries++) {   // (DIVE is dark during a multiball, and ERUPT, LOCK and MODE come first at the crater)
+    R.forced.push('classic: DIVE relit'); await waitFor(page, (x) => x.state === 'play' && !x.mb && x.free === 1, 90000);
+    await api(page, 'if (window.PinGoals) PinGoals.dive(W, 2700);'); down = await waitFor(page, (x) => x.depth === 1, 60000, 300);
+  }
   step('Classic: DIVE takes the ball into THE MAGMA CHAMBER', down, down && { table: down.tableA, next: down.next, hud: down.hud.slice(0, 120) });
   if (down) {
     await sleep(2500); await still(page, 'chamber');
@@ -117,7 +120,7 @@ async function classic(browser) {
     step('Classic: back up from the chamber', up, up && up.last);
   }
   // THE BIG ONE: the pressure at the top, the pilot shoots ERUPT
-  await waitFor(page, (x) => x.state === 'play' && x.free === 1 && !x.mb && x.depth === 0, 30000);
+  await waitFor(page, (x) => x.state === 'play' && x.free === 1 && !x.mb && x.depth === 0, 90000);
   const mb0 = (await S(page)).ev.mbstart || 0;
   let mb = null;
   for (let tries = 0; tries < 2 && !mb; tries++) {
@@ -148,7 +151,7 @@ async function ember(browser) {
     else if (!down) break;
   }
   step('Ember Run: the dive after STAGE CLEAR', down, down && { round: down.run && down.run.round, next: down.next, balls: down.run && down.run.balls });
-  if (down) { const up = await waitFor(page, (x) => x.depth === 0, 80000, 500); step('Ember Run: back up from the chamber', up, up && { last: up.last, balls: up.run && up.run.balls, next: up.next }); }
+  if (down) { await calls(page, 'chamber', 2500); const up = await waitFor(page, (x) => x.depth === 0, 80000, 500); step('Ember Run: back up from the chamber', up, up && { last: up.last, balls: up.run && up.run.balls, next: up.next }); }
   await api(page, 'PinRunPage.endRound(true);');
   const pk = await waitFor(page, (x) => x.picking, 4000, 200);
   step('Ember Run: the pick card after the round', pk, pk && pk.run);

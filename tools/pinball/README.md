@@ -25,6 +25,31 @@ Run everything from the repository root. **Every tool works on Ember Peak unless
 The engine has one hook for these tools: if a world has `W.onSub` set, it is called after every physics substep. The
 game never sets it (and `E.clone` leaves it behind).
 
+## Wave 3 (19 Nov 2026): the merged build and its checks
+
+The game now loads, in this order: `table.js`, `tables/ember.js`, `tables/chamber.js` (THE MAGMA CHAMBER, a level
+below the surface), `engine.js`, then the engine plugins `goals.js` (W.next, combos, island modes) and `descent.js`
+(INTO THE VOLCANO: the dive, the chamber, the trip back up). camera.js hands both plugins to the forecast worker, so
+the look-ahead steps exactly like the game. `music.js` and `voice.js` load before `pinball.js`. Tools that play
+whole games should load the plugins as the game does (camera-farm, hof-cap and descent-farm --e2e do; for flow.cjs
+use `node -r <repo>/games/pinball/goals.js tools/pinball/flow.cjs ...`). Run every farm and browser tool through
+`node tools/pinball/heavy.cjs <label> <command> ...` (two shared slots); browser tools need a local server
+(`py -m http.server <port> --bind 127.0.0.1` from the repository root) and take its URL.
+
+| Check | Command | Acceptance |
+|---|---|---|
+| Unit tests | `node --test games/pinball/engine.test.mjs` (also `goals.test.mjs`, `descent.test.mjs`); `node tools/pinball/run-test.cjs --no-farm` | all pass |
+| Node suites | `camera-test.cjs`, `art-lamps.test.cjs`, `fx-test.cjs`, `music-test.cjs`, `voice-test.cjs`, `sound-ladder.cjs` | all pass |
+| Traps | `traps.cjs 3000 20 8`, `traps.cjs --table=chamber 3000 20 8`, `traps.cjs --corners [--table=chamber]` | 0 stuck, 0 searches, nothing at rest |
+| Camera | `camera-farm.cjs --balls=150 --mode=<calm/arcade/classic> --mb=1` and `--table=chamber` | 0 violations, 0 push-ins in multiball |
+| Flow | `flow.cjs messy 40 1`, `flow.cjs pilot 25 2` (with goals.js, see above) | core bands (CORE-AS-BUILT) |
+| Ember Run | `run-casual.cjs messy 150 1`; `run-test.cjs --runs 120` (pilot) | run lane's bands |
+| Levels | `descent-farm.cjs all 100 2` (DIVE forced lit); `descent-farm.cjs messy 60 1 --e2e` (whole Classic games, goals.js, DIVE never forced) | 0 drains within 2 s of a cut; e2e: a casual player reaches the chamber in at least 50% of Classic Gentle games |
+| Hall of Fame | `hof-cap.cjs` (reads rate and base from api/games-hof.php; pinball.js def.hofCap must carry the same two numbers) | 100% with 2x headroom |
+| The page | `page-controls-test.cjs <url> [shots]`, `text-audit.cjs <url>`, `arcade-smoke.cjs <url>` | all pass |
+| End to end | `e2e-play.cjs <phone/desktop> <url> [out]`: Classic (a mode, DIVE, the chamber, back up, THE BIG ONE) and Ember Run (a mission, STAGE CLEAR, the dive, the pick card, the boss, the victory multiball, the end card); medium tier draw calls; the owner's stills | every step ok, 0 errors, medium at most 135 calls |
+| Soak | `soak.cjs run 15 <url> [out]`, `soak.cjs classic 10 phone <url> [out]` | 0 errors |
+
 ## Ember Peak on 29 Oct 2026: one screen (Classic unless said)
 
 - 270 x 470 (was 270 x 680 with two storeys): the owner's call, so the home view is full size on a phone. One storey
