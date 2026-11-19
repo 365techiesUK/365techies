@@ -127,7 +127,9 @@ test('a small arcade farm keeps the guarantee and moves', () => {
   assert.strictEqual(out.earlyFlips.bad - out.earlyFlips.badAfterCut, 0, 'early presses within the 0.1 s arcade promises');
   assert.strictEqual(out.decidedSaved, 0, 'decided drains');
   assert.ok(out.emergenciesPer100Balls < 2.5, 'cuts (150 balls is a small sample: the 600-ball farm holds them under 1): ' + out.emergenciesPer100Balls);
-  assert.ok(out.pushInsPerMin >= 8 && parseFloat(out.away) >= 27, 'arcade moves: ' + out.pushInsPerMin + ' push-ins a minute, away ' + out.away);
+  // (away 27% -> 22%, wave 3: THE BIG ONE's multiball is now about 19% of play, and every mode stays home in it)
+  assert.ok(out.pushInsPerMin >= 8 && parseFloat(out.away) >= 22, 'arcade moves: ' + out.pushInsPerMin + ' push-ins a minute, away ' + out.away);
+  assert.strictEqual(out.pushInsWhileMulti, 0, 'no push-ins while more than one ball is in play');
   assert.ok(out.camSpeed.p99 <= 2.5 && parseFloat(out.camSpeed.over2) < 1, 'and steadily (30 Oct 2026): ' + JSON.stringify(out.camSpeed));
 });
 
@@ -137,4 +139,52 @@ test('a small farm keeps the guarantee (the full proof: camera-farm.cjs)', () =>
   assert.strictEqual(out.liveFlips.bad - out.liveFlips.badAfterCut, 0, 'live flips');
   assert.strictEqual(out.decidedSaved, 0, 'decided drains');
   assert.ok(out.pass, JSON.stringify(out.bad));
+});
+
+// ------------------------------------------------------------ wave 3 (5 Nov 2026): INTO THE VOLCANO and multiball
+require(path.join(ROOT, 'games', 'pinball', 'descent.js'));
+test('a level takes its surface\'s home: the flippers at the same place on screen (412 x 915 and 1280 x 900)', () => {
+  assert.ok(E.TABLES.chamber, 'tables/chamber.js is registered');
+  const T = E.table('ember').T;
+  for (const m of ['calm', 'arcade', 'classic']) for (const a of [412 / 915, 1280 / 900]) {
+    const he = C.home(a, 'ember', m), hc = C.home(a, 'chamber', m);
+    T.flippers.forEach((f) => {
+      const tip = [f.x + Math.cos(f.rest) * f.len, f.y + Math.sin(f.rest) * f.len];
+      for (const q of [[f.x, f.y], tip]) {
+        const pe = C.project(he, a, q[0], q[1], 0), pc = C.project(hc, a, q[0], q[1], 0);
+        assert.ok(Math.abs(pe[0] - pc[0]) < 0.03 && Math.abs(pe[1] - pc[1]) < 0.03, m + ' ' + a.toFixed(2) + ': flipper point ' + q + ' at ' + pe + ' vs ' + pc);
+      }
+    });
+  }
+});
+test('a change of table is a hard cut: the new home on that very frame, no in-between', () => {
+  C.configure({ forecaster: 'sync', latency: 0 }); C.setMode('calm'); C.reset();
+  const a = 0.5, S = E.newWorld(2, null, 3, 'ember'), L = E.newWorld(2, null, 4, 'chamber');
+  let t = 0, shot = null;
+  for (let i = 0; i < 90; i++) { E.step(S, {}); S.events.length = 0; shot = C.update(S, t += 1000 / 60, 'play', a); }
+  assert.ok(!shot.tableCut);
+  E.step(L, {}); L.events.length = 0;
+  shot = C.update(L, t += 1000 / 60, 'play', a);
+  const h = C.home(a, 'chamber');
+  assert.strictEqual(shot.tableCut, true, 'the shot says so');
+  assert.ok(Math.abs(shot.cx - h.cx) < 1e-9 && Math.abs(shot.cy - h.cy) < 1e-9 && Math.abs(shot.span - h.span) < 1e-9 && Math.abs(shot.tilt - h.tilt) < 1e-9, 'home at once');
+  E.step(S, {}); S.events.length = 0;
+  shot = C.update(S, t += 1000 / 60, 'play', a);
+  assert.strictEqual(shot.tableCut, true, 'and back up');
+  assert.ok(C.stats().tableCuts >= 2);
+});
+test('no push-ins while more than one ball is in play (calm stays home in multiball)', () => {
+  for (const m of ['calm', 'arcade']) {
+    C.configure({ forecaster: 'sync', latency: 2 }); C.setMode(m); C.reset();
+    const W = E.newWorld(2, null, 17, 'ember'), bot = Messy.create(17);
+    let t = 0, multi = 0, away = 0, lastMb = -1e9;
+    for (let i = 0; i < 60 * 90 && !W.over; i++) {
+      if (W.state === 'play' && !W.mb && W.feed <= 0 && W.balls.length === 1 && W.balls[0].m === 'free' && W.balls[0].x < 240 && W.frame - lastMb > 600) { E.api.multiball(W, 3, {}); lastMb = W.frame; }
+      E.step(W, bot(W)); W.events.length = 0;
+      const shot = C.update(W, t += 1000 / 60, 'play', 0.5);
+      if (W.balls.length + Math.max(0, W.feed) > 1) { multi++; if (shot.state !== 'home' && shot.state !== 'back') away++; }
+    }
+    assert.ok(multi > 600, m + ': multiball was played (' + multi + ' frames)');
+    assert.strictEqual(away, 0, m + ': ' + away + ' frames away from home with more than one ball in play');
+  }
 });

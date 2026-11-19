@@ -27,6 +27,7 @@
 <div id="frame"><canvas id="dmd"></canvas><canvas id="gl"></canvas></div>
 <script src="../../games/pinball/table.js"></script>
 <script src="../../games/pinball/tables/ember.js"></script>
+<script src="../../games/pinball/tables/chamber.js"></script>
 <script src="../../games/pinball/engine.js"></script>
 <script src="../../games/pinball/flat.js"></script>
 <script type="module">
@@ -46,11 +47,12 @@
   have.lamps = await optional(P + 'lamps.js'); have.art = await optional(P + 'art3d.js');
   if (Q.get('fx') !== '0') have.fx = await optional(P + 'fx.js');
   have.pilot = await optional(P + 'pilot.js');
+  have.descent = await optional(P + 'descent.js');   // wave 3: the levels' plugin (THE MAGMA CHAMBER's goal, clock and W.next)
   have.cam = await optional(P + 'camera.js');   // home too: world3d's home is camera.js's home in that mode (&home=calm|arcade|classic, default calm; 30 Oct 2026)
   if (Q.get('particles') !== '0') have.particles = await optional(P + 'particles.js');
   if (Q.get('post') !== '0') have.post = await optional(P + 'post.js');
   if (window.PinCam) { try { PinCam.configure({ forecaster: 'sync' }); if (PinCam.setMode) PinCam.setMode(CAM === 'home' ? (/^(calm|arcade|classic)$/.test(Q.get('home') || '') ? Q.get('home') : 'calm') : CAM === 'arcade' || CAM === 'calm' || CAM === 'classic' ? CAM : 'arcade'); } catch (e) {} }
-  const { create } = await import('../../games/pinball/world3d.js?' + Date.now());
+  const { create } = await import((Q.get('w3d') || '../../games/pinball/world3d.js') + '?' + Date.now());   // (w3d: another copy, to compare build times)
 
   // ---------------------------------------------------------------- the bots
   function lcg(seed) { let s = (seed | 0) || 1; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
@@ -218,7 +220,42 @@
   }
   function gpu() { const g2 = world.debug.renderer.getContext(), e = g2.getExtension('WEBGL_debug_renderer_info'); return e ? g2.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'unknown'; }
 
-  window.S3 = { get W() { return W; }, world, reset, step, render, advance, goTo, clipFrame, findMoment, samplePositions, visibility, checkHidden, bench, gpu, have,
+  // ---------------------------------------------------------------- wave 3 scenes: multiball, the plug, THE MAGMA CHAMBER
+  // scene(kind, seed, frames): a fresh world played `frames` steps by the bot, then set up (multiball: 3 balls in play;
+  // plug: the OBSIDIAN PLUG up; chamber: a visit to the level, the vents part lit), the camera warmed, then drawn
+  function scene(kind, seed, frames) {
+    seed = seed || 7; frames = frames || 600;
+    if (kind === 'chamber') {
+      W = E.newWorld(speed, {}, seed, 'chamber'); drive = bot(seed); frame = 0;
+      if (window.PinCam && PinCam.reset) PinCam.reset();
+    } else reset(seed);
+    while (frame < frames && !W.over) { step(); if (window.PinCam && CAM !== 'home') PinCam.update(W, tOf(frame), mode, aspect()); }
+    if (kind === 'multiball') { E.api.multiball(W, 3, { save: 30 }); for (let i = 0; i < 260 && !W.over; i++) { step(); if (i > 200) render(); } }
+    if (kind === 'plug') { E.api.plug(W, 99999); for (let i = 0; i < 40; i++) { step(); render(); } }
+    for (let i = 0; i < 30 && !W.over; i++) { step(); render(); }
+    render();
+    return { table: W.tableId, balls: W.balls.length, plug: !!(W.plug && W.plug.up), frame, descent: W.descent && W.descent.level ? { lit: W.descent.lit, clock: W.descent.clock } : null };
+  }
+  // the hard cut: draw the surface, then the chamber's first frame (timed: the switch must cost nothing), then back
+  function cut(seed) {
+    reset(seed || 7); for (let i = 0; i < 120; i++) step(); render(); render();
+    const S = W, C = E.newWorld(speed, {}, (seed || 7) + 1, 'chamber');
+    const t0 = performance.now(); W = C; render(); const down = performance.now() - t0;
+    const shotDown = window.PinCam && PinCam.info ? PinCam.info().state : null;
+    for (let i = 0; i < 30; i++) { E.step(C, drive(C)); C.events.length = 0; render(); }
+    const t1 = performance.now(); W = S; render(); const up = performance.now() - t1;
+    return { downMs: +down.toFixed(1), upMs: +up.toFixed(1), stateDown: shotDown, built: world.stats().built };
+  }
+  // where the flippers are on screen (0..1 across and down the picture) for this world's table, through the 3D camera
+  function flipperScreen() {
+    const cam = world.debug.camera, T = E.table(W.tableId).T, out = [];
+    T.flippers.forEach((f) => { [[f.x, f.y], [f.x + Math.cos(f.rest) * f.len, f.y + Math.sin(f.rest) * f.len]].forEach((q) => { const v = world.debug.toWorld(q[0], q[1], 0).project(cam); out.push([+(0.5 + v.x / 2).toFixed(4), +(0.5 - v.y / 2).toFixed(4)]); }); });
+    return out;
+  }
+  function flatPng(k) {   // the flat look's whole 270 x 480 picture (the page shows only its DMD strip), blown up k times with square pixels
+    k = k || 3; const c = document.createElement('canvas'); c.width = 270 * k; c.height = 480 * k; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(flat, 0, 0, c.width, c.height); return c.toDataURL('image/png');
+  }
+  window.S3 = { get W() { return W; }, world, reset, step, render, advance, goTo, clipFrame, findMoment, samplePositions, visibility, checkHidden, bench, gpu, have, scene, cut, flipperScreen, flatPng,
     setView: (v) => { world.setView(v); render(); }, setCam: (c) => { world.setCam(c); render(); }, get frame() { return frame; } };
   goTo(num('frame', 900));
   window.__stats = Object.assign(world.stats(), { have, bot: BOT });

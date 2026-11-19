@@ -70,7 +70,13 @@
  * and clear of a lit kickback; slow motion 0.35 for 0.6 s); bonus (arcade's drift through the bonus count, home half a
  * second before the next ball); back (the move home); director (attract and replays: free). Multiball and a tilt stay
  * home, and so does the bonus count but in arcade. Slow motion only in holds, the rail ride, a decided drain and the
- * director, and never once a ball is under 0.75 s from an approach line. */
+ * director, and never once a ball is under 0.75 s from an approach line.
+ *
+ * WAVE 3 (5 Nov 2026): INTO THE VOLCANO - a change of table (descent.js's cut down to a level and back) is a HARD CUT
+ * to the new table's home, with no in-between frame (the shot says tableCut: true that frame; stats().tableCuts). A level
+ * (T.level) takes its surface's home exactly (T.surface, else the default table): the same flippers at the same place
+ * and size on screen. No push-ins while more than one ball is in play (calm stays home in multiball; a ball waiting to
+ * be fed counts). The forecast worker also loads the engine's plugins (E.pluginUrls(), resolved against the page). */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(function () { return require('./engine.js'); }, null);
   else root.PinCam = factory(function () { return root.PinEngine; }, root);
@@ -171,7 +177,11 @@
   }
   function bottomStorey(T) { var b = 0; T.storeys.forEach(function (s, i) { if (s.y1 > T.storeys[b].y1) b = i; }); return b; }
   function homeFor(id, aspect, mode) {
-    var E = getE(), T = E.table(id).T, ey = eyeOf(aspect, mode), key = T.id + '@' + aspect.toFixed(4) + '/' + ey[0].toFixed(3) + '/' + ey[1].toFixed(3);
+    var E = getE(), T0 = E.table(id).T;
+    // a level below the surface (wave 3) is drawn in its surface's frame with the same flippers: it takes the surface's
+    // home exactly, so the flippers sit at the same place and size on screen (the cavern wall fills the room above it)
+    if (T0.level) { var sid = T0.surface && E.TABLES[T0.surface] ? T0.surface : E.DEFAULT; if (sid !== T0.id && !E.table(sid).T.level) return homeFor(sid, aspect, mode); }
+    var T = T0, ey = eyeOf(aspect, mode), key = T.id + '@' + aspect.toFixed(4) + '/' + ey[0].toFixed(3) + '/' + ey[1].toFixed(3);
     if (HOMES[key]) return HOMES[key];
     var pts = [];
     boxes(id).forEach(function (bx) { pts = pts.concat(bx.pts); });
@@ -294,7 +304,10 @@
       WK = new G.Worker(SRC.replace(/camera\.js(\?[^#]*)?(#.*)?$/, 'forecast-worker.js$1'));
       WK.onmessage = function (e) { var d = e.data; if (d && d.r && d.id >= latest) { latest = d.id; take(d.r, d.key); } };
       WK.onerror = function () { WK = null; WK_BAD = true; };
-      WK.postMessage({ type: 'init', urls: urls.concat([SRC]) });
+      // the engine's plugins (goals.js, descent.js: wave 3) step inside E.step, so the look-ahead loads them too
+      var E = getE(), pu = [];
+      try { (E && E.pluginUrls ? E.pluginUrls() : []).forEach(function (u) { pu.push(new G.URL(u, G.document.baseURI).href); }); } catch (e) { pu = []; }
+      WK.postMessage({ type: 'init', urls: urls.concat(pu).concat([SRC]) });
     } catch (e) { WK = null; }
     return WK;
   }
@@ -420,7 +433,9 @@
     var E = getE();
     if (aspect && Math.abs(aspect - ASPECT) > 1e-4) { ASPECT = aspect; if (S.pose) { S.pose = copyShot(homeFor(W.tableId, ASPECT, MODE)); S.state = 'home'; still(); } }
     if (S.pose && S.mode && S.mode !== MODE) { S.pose = copyShot(homeFor(W.tableId, ASPECT, MODE)); S.state = 'home'; still(); }   // a new mode may have a new lens: start from its home (30 Oct 2026)
-    if (W !== S.W || W.frame < S.frame) { reset(); S.W = W; }
+    // a new world: start again from its home - a HARD CUT when the table changes (INTO THE VOLCANO: no in-between frame)
+    var tableCut = false;
+    if (W !== S.W || W.frame < S.frame) { tableCut = !!(S.W && S.W.tableId !== W.tableId); reset(); S.W = W; if (tableCut) STATS.tableCuts = (STATS.tableCuts || 0) + 1; }
     S.mode = MODE;
     var T = E.table(W.tableId).T, H = homeFor(W.tableId, ASPECT, MODE), M = MODES[MODE], BACK = backOf(M), NEEDM = needOf(M), EARLY = Math.round(earlyOf(M) * 60), LOOK = M.look || 30;
     var dt = S.t == null ? 0 : Math.max(0, Math.min(0.1, (t - S.t) / 1000));
@@ -431,6 +446,7 @@
     S.tokens = Math.min(2, S.tokens + dt * M.perMin / 60);
     sense(W);
     var A = S.A, known = S.Aknown, lone = W.balls.length === 1, b = W.balls[0], V = W.toys && W.toys.volcano;
+    var single = lone && !(W.feed > 0);   // (wave 3: no push-ins while more than one ball is in play, a ball waiting to be fed included)
     var director = (mode === 'title' || DIRECTOR) && MODE !== 'classic';   // classic (and reduce motion) never roams, even in attract
     var playing = W.state === 'play' && !W.over && !W.tilted && W.balls.length > 0;
     if (b && b.x > T.shooter.x0 && b.vy < -200 && S.fired !== b.id + ':' + W.ball) { S.lastFire = W.frame; S.fired = b.id + ':' + W.ball; }
@@ -447,7 +463,7 @@
     var want = 'home', goal = H, w = 6, slow = 1, scripted = false;
     if (director && b) {
       want = 'director'; goal = shotAt(b.x, b.y + 30, 1.7, T); goal.tilt = Math.max(40, H.tilt + 6); goal.yaw = 9 * Math.sin(t / 4000); w = 3.5;
-    } else if (playing && lone) {
+    } else if (playing && single) {
       var inLane = b.m === 'free' && b.x > T.shooter.x0, crater = V && V.busy && V.ball === b.id && M.dive !== 'none';
       if (crater) {
         scripted = true;
@@ -570,7 +586,7 @@
     var nx = -1;
     if (FC && FC.min >= 0) Object.keys(FC.arrive).forEach(function (k) { if (FC.arrive[k] === FC.min) nx = FC.storey[k]; });
     return { cx: S.pose.cx, cy: S.pose.cy, span: S.pose.span, tilt: S.pose.tilt, yaw: S.pose.yaw || 0, fov: S.pose.fov || FOV, timeScale: S.ts,
-      state: S.state, zoom: zoomOf(S.pose), A: known ? A : -1, next: nx, cut: cut, emergency: cut ? 'rule' : emergency };
+      state: S.state, zoom: zoomOf(S.pose), A: known ? A : -1, next: nx, cut: cut, emergency: cut ? 'rule' : emergency, tableCut: tableCut };
   }
   function bonusLeft(W) {   // steps until the bonus count ends and the next ball comes (the engine's bonusStep, read only)
     var stepAmt = Math.max(100, Math.ceil((W.bonusAdd || 0) / 50 / 100) * 100), n = Math.ceil(Math.max(0, (W.bonusAdd || 0) - (W.bonusShow || 0)) / stepAmt);
