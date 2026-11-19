@@ -56,7 +56,7 @@
   (document.head || document.documentElement).appendChild(st);
 
   // ---- My code (owner, 6 Oct 2026): progress to another phone or browser - a code to type in, no sign-in
-  var CODE_API = '/api/games-code.php', CODE_RX = /^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/;
+  var CODE_API = '/api/games-code.php', CODE_RX = /^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|pin365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/;
   var CODE_LOCAL = { 'games365:code': 1, 'games365:app': 1 };   // this phone's own: never sent, never replaced
   function myCode() { try { return localStorage.getItem('games365:code') || ''; } catch (e) { return ''; } }
   function codeKeys() { var o = []; try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && CODE_RX.test(k) && !/:game$/.test(k) && !CODE_LOCAL[k]) o.push(k); } } catch (e) {} return o; }

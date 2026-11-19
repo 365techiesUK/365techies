@@ -304,7 +304,7 @@
     box.innerHTML = '<div class="hf-res"><p style="margin:0">Checking your ' + (body.mode === 'sprint' ? 'sprint' : body.mode === 'score' ? 'score' : 'win') + ' and sending it to the Hall of Fame&hellip;</p></div>';
     call(Object.assign({ action: 'submit', ini: p.ini, town: p.town }, body)).then(function (j) {
       if (!j || !j.ok) {
-        var why = { ini: 'Those initials can’t be used - choose others.', town: 'Choose your town first.', rate: 'That’s plenty for today - try again tomorrow!', offline: 'No internet connection - your win is still saved on this computer.', day: 'That ' + dealWord() + ' is from another day.', replay: 'That game couldn’t be checked, so it wasn’t added.', run: 'That game couldn’t be checked (was the internet off when it started?), so it wasn’t added.', 'not-won': 'That game couldn’t be checked, so it wasn’t added.', time: 'That time couldn’t be checked, so it wasn’t added.' }[j && j.error] || 'The Hall of Fame didn’t answer - try again later.';
+        var why = { ini: 'Those initials can’t be used - choose others.', town: 'Choose your town first.', rate: 'That’s plenty for today - try again tomorrow!', offline: 'No internet connection - your win is still saved on this computer.', day: 'That ' + dealWord() + ' is from another day.', replay: 'That game couldn’t be checked, so it wasn’t added.', run: 'That game couldn’t be checked (was the internet off when it started?), so it wasn’t added.', 'not-won': 'That game couldn’t be checked, so it wasn’t added.', time: body.mode === 'score' && box.hofCapped ? 'The Hall of Fame couldn’t check this game, so it isn’t on the board - that’s our checker, not you. It’s saved in My scores.' : 'That time couldn’t be checked, so it wasn’t added.' }[j && j.error] || 'The Hall of Fame didn’t answer - try again later.';
         box.innerHTML = '<div class="hf-res"><p style="margin:0">' + esc(why) + '</p>' + (j && (j.error === 'ini' || j.error === 'town') ? '<div class="hf-row2"><button class="hf-btn gold" type="button" id="hfFix">Change my initials</button></div>' : '') + '</div>';
         if ($('hfFix')) $('hfFix').onclick = function () { try { var pl = load(); pl.ini = ''; save(pl); } catch (e) {} result(box, body); };
         return;
@@ -331,6 +331,13 @@
   window.HallOfFame = {
     init: function (cfg) { for (var k in cfg) C[k] = cfg[k]; },
     open: open, join: join, isOpen: function () { return !!openEl; },
+    // the server's check on an arcade score (api/games-hof.php, action submit), made here first so a game can leave out
+    // the invitation for a score the server would turn away (wave 3: 365 Pinball Hero passes its own rate and base)
+    fits: function (cap, score, wave, secs) {
+      score = +score || 0; wave = +wave || 0; secs = +secs || 0;
+      if (score < 1 || wave < 1 || secs < 3 || secs > 6 * 3600) return false;
+      return score <= cap.rate * secs + cap.base && wave <= Math.floor(secs / 2) + 5;
+    },
     daily: function (box, r) { result(box, { mode: 'daily', day: r.day, lv: r.lv, secs: r.secs, log: r.log }); },
     sprint: function (box, r) { result(box, { mode: 'sprint', day: r.day, lv: 1, secs: r.secs, log: r.log, cards: r.cards }); },
     // the arcade games: a ticket when a game starts, the score at game over (the ticket may still be on its way)
@@ -338,6 +345,7 @@
     // today's top score at a speed, for the title screen: the row, false if no one has scored yet, null if it didn't load
     top: function (lv) { return call({ action: 'board', board: 'today', lv: lv }).then(function (j) { return j && j.ok ? (j.rows[0] || false) : null; }); },
     score: function (box, r) {
+      box.hofCapped = !!r.capped;   // (opt-in: only a game that checks its score first - hofCap, 365 Pinball Hero - gets its own 'time' wording)
       Promise.resolve(r.run).then(function (run) { result(box, { mode: 'score', lv: r.lv, score: r.score, wave: r.wave, secs: r.secs, run: run || '' }); });
     }
   };

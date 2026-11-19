@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>365 Pinball Hero - flat look preview</title>
+<!-- 15 Oct 2026: a test bench for games/pinball/flat.js (the flat 8-bit look), never deployed. It runs the real engine
+     with a simple auto-flipper so balls move, and draws at 4x with square pixels. ?scale=2 for a smaller view,
+     ?still=1 to stop the clock (the screenshot script drives it through window.bench). Keys: Z / left arrow and
+     M / right arrow flip, Space pulls the plunger, A toggles the auto-flipper. -->
+<style>
+  html, body { margin: 0; background: #111; color: #ccc; font: 13px system-ui, sans-serif; }
+  #wrap { display: flex; gap: 16px; padding: 12px; align-items: flex-start; }
+  canvas#view { image-rendering: pixelated; image-rendering: crisp-edges; display: block; background: #000; }
+  #info { white-space: pre; font: 12px ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="view"></canvas><div id="info"></div></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/flat.js"></script>
+<script>
+(function () {
+  'use strict';
+  var Q = new URLSearchParams(location.search), SCALE = +(Q.get('scale') || 4), STILL = Q.get('still') === '1';
+  var E = window.PinEngine, GW = 270, GH = 480;
+  var buf = document.createElement('canvas'); buf.width = GW; buf.height = GH;
+  var g = buf.getContext('2d'), view = document.getElementById('view'), vg = view.getContext('2d');
+  view.width = GW * SCALE; view.height = GH * SCALE;
+  var W = E.newWorld(+(Q.get('speed') || 1), {}, +(Q.get('seed') || 365));
+  var mode = Q.get('mode') || 'play', auto = true, keys = {}, pullT = 0, t0 = performance.now(), simT = 0;
+  var costs = [];
+
+  // the auto-flipper: flip a side when a ball is coming down near its flipper; pull and fire the plunger
+  function autoInput(W) {
+    var inp = { left: false, right: false, fire: false };
+    W.balls.forEach(function (b) {
+      if (b.m !== 'free' || b.y < 352 || b.x > 244) return;
+      if (b.x < E.TABLE.MID + 4 && b.x > 60) inp.left = true;
+      if (b.x > E.TABLE.MID - 4 && b.x < 190) inp.right = true;
+    });
+    var inLane = W.balls.some(function (b) { return b.x > 244 && b.y > 400 && Math.abs(b.vy) < 30; });
+    if (inLane) { pullT++; inp.fire = pullT < 40; if (pullT > 46) pullT = 0; } else pullT = 0;
+    return inp;
+  }
+  function input() {
+    var a = auto ? autoInput(W) : {};
+    return { left: a.left || keys.left, right: a.right || keys.right, fire: a.fire || keys.fire };
+  }
+  function step(n) { for (var i = 0; i < (n || 1); i++) { E.step(W, input()); W.events.length = 0; simT += 1000 / 60; } }
+  function render(t) {
+    var c0 = performance.now();
+    g.save(); window.PinFlat.draw(g, W, t, mode, { best: 123450, set: {} }); g.restore();
+    costs.push(performance.now() - c0); if (costs.length > 240) costs.shift();
+    vg.imageSmoothingEnabled = false; vg.drawImage(buf, 0, 0, view.width, view.height);
+  }
+  function stats() {
+    var s = costs.slice().sort(function (a, b) { return a - b; });
+    return { n: s.length, mean: s.reduce(function (a, b) { return a + b; }, 0) / (s.length || 1), p50: s[Math.floor(s.length / 2)] || 0, p95: s[Math.floor(s.length * 0.95)] || 0, max: s[s.length - 1] || 0 };
+  }
+  var last = 0, acc = 0;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (STILL) return;
+    if (!last) last = now;
+    acc += Math.min(250, now - last); last = now;
+    while (acc >= 1000 / 60) { if (mode === 'play' && !W.over) step(1); acc -= 1000 / 60; }
+    if (W.over && mode === 'play') { mode = 'over'; }
+    render(now - t0);
+    var s = stats();
+    document.getElementById('info').textContent = 'mode ' + mode + '\nscore ' + W.score + '\nball ' + W.ball + '/' + W.total + '\nballs ' + W.balls.map(function (b) { return b.m + ' ' + b.x.toFixed(0) + ',' + b.y.toFixed(0); }).join('; ') +
+      '\nauto ' + auto + '\n\ndraw ms: mean ' + s.mean.toFixed(3) + '  p95 ' + s.p95.toFixed(3) + '  max ' + s.max.toFixed(2);
+  }
+  requestAnimationFrame(frame);
+  var KEYS = { arrowleft: 'left', z: 'left', arrowright: 'right', m: 'right', ' ': 'fire' };
+  addEventListener('keydown', function (e) { var k = KEYS[e.key.toLowerCase()]; if (k) { keys[k] = true; e.preventDefault(); } if (e.key.toLowerCase() === 'a') auto = !auto; });
+  addEventListener('keyup', function (e) { var k = KEYS[e.key.toLowerCase()]; if (k) keys[k] = false; });
+
+  // for the screenshot script
+  window.bench = {
+    get W() { return W; }, set W(w) { W = w; }, E: E,
+    setMode: function (m) { mode = m; }, step: step, render: render, stats: stats, costs: costs,
+    newWorld: function (speed, seed) { W = E.newWorld(speed || 1, {}, seed || 365); return W; },
+    setAuto: function (v) { auto = v; }
+  };
+})();
+</script>
+</body>
+</html>

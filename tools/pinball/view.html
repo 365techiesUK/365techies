@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- 365 Pinball Hero - a geometry viewer for the sim tools (15 Oct 2026). Never deployed. Draws the table exactly as the
+     engine sees it (walls, posts, bumpers, gates, drop targets, flippers up and down, the ramp path, sensors), at 3x, and
+     lays over it whatever the last tool run wrote to overlay.js (trap spots, shot paths). Open it from disk or take a
+     headless Edge screenshot: msedge --headless=new --screenshot=out.png --window-size=830,1360 file:///.../view.html -->
+<html><head><meta charset="utf-8"><title>Pinball table viewer</title>
+<style>body{margin:0;background:#111}canvas{display:block}</style></head><body>
+<canvas id="c"></canvas>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script>window.OVERLAY = null;</script>
+<script src="overlay.js"></script>
+<script>
+(function () {
+  var E = window.PinEngine, T = E.TABLE, S = 3, c = document.getElementById('c'), x = c.getContext('2d');
+  c.width = T.W * S + 20; c.height = T.H * S + 20;
+  x.fillStyle = '#111'; x.fillRect(0, 0, c.width, c.height);
+  x.translate(10, 10); x.scale(S, S); x.lineCap = 'round';
+  function cap(ax, ay, bx, by, r, col) { x.strokeStyle = col; x.lineWidth = r * 2; x.beginPath(); x.moveTo(ax, ay); x.lineTo(bx, by); x.stroke(); }
+  function circ(cx, cy, r, col, fill) { x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); if (fill) { x.fillStyle = col; x.fill(); } else { x.strokeStyle = col; x.lineWidth = 0.6; x.stroke(); } }
+  x.strokeStyle = '#333'; x.lineWidth = 0.3; for (var g = 0; g <= T.H; g += 10) { x.beginPath(); x.moveTo(0, g); x.lineTo(T.W, g); x.stroke(); }
+  for (g = 0; g <= T.W; g += 10) { x.beginPath(); x.moveTo(g, 0); x.lineTo(g, T.H); x.stroke(); }
+  x.fillStyle = '#555'; x.font = '4px monospace'; for (g = 0; g <= T.H; g += 50) x.fillText(g, 1, g - 1); for (g = 50; g <= T.W; g += 50) x.fillText(g, g + 1, 5);
+  // ramp path
+  var P = T.ramp.path; x.strokeStyle = 'rgba(80,160,255,0.35)'; x.lineWidth = T.ramp.width; x.beginPath(); x.moveTo(P[0][0], P[0][1]);
+  for (var i = 1; i < P.length; i++) x.lineTo(P[i][0], P[i][1]); x.stroke();
+  x.strokeStyle = '#48f'; x.lineWidth = 0.5; x.beginPath(); x.moveTo(T.ramp.entry.x0, T.ramp.entry.y); x.lineTo(T.ramp.entry.x1, T.ramp.entry.y); x.stroke();
+  // pocket
+  x.fillStyle = 'rgba(255,200,0,0.12)'; x.beginPath(); T.pocket.forEach(function (p, k) { k ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]); }); x.closePath(); x.fill();
+  // arch
+  x.strokeStyle = '#aaa'; x.lineWidth = T.arch.r * 2; x.beginPath(); x.arc(T.arch.x, T.arch.y, T.arch.R, Math.PI, 2 * Math.PI); x.stroke();
+  E.WALLS.forEach(function (w) { cap(w.ax, w.ay, w.bx, w.by, w.r, w.kind === 'sling' ? '#f80' : w.kind === 'rubber' ? '#c60' : w.kind === 'post' ? '#ccc' : '#9ab'); });
+  T.posts.forEach(function (p) { circ(p[0], p[1], p[2], '#fc6', true); });
+  T.bumpers.forEach(function (b) { circ(b[0], b[1], b[2], '#c3f', true); });
+  E.GATES.forEach(function (g) { cap(g.ax, g.ay, g.bx, g.by, g.r, '#0f0'); cap((g.ax + g.bx) / 2, (g.ay + g.by) / 2, (g.ax + g.bx) / 2 + g.nx * 5, (g.ay + g.by) / 2 + g.ny * 5, 0.3, '#0f0'); });
+  E.DROPS.forEach(function (d) { cap(d.ax, d.ay, d.bx, d.by, d.r, '#f33'); });
+  circ(T.saucer.x, T.saucer.y, T.saucer.catchR, '#ff0');
+  T.flippers.forEach(function (f) {
+    [f.rest, f.up].forEach(function (a, k) {
+      var tx = f.x + Math.cos(a) * f.len, ty = f.y + Math.sin(a) * f.len;
+      x.fillStyle = k ? 'rgba(80,255,120,0.5)' : 'rgba(255,255,255,0.6)'; x.beginPath();
+      var nx = -Math.sin(a), ny = Math.cos(a);
+      x.arc(f.x, f.y, f.r0, 0, 7); x.fill(); x.beginPath(); x.arc(tx, ty, f.r1, 0, 7); x.fill();
+      x.beginPath(); x.moveTo(f.x + nx * f.r0, f.y + ny * f.r0); x.lineTo(tx + nx * f.r1, ty + ny * f.r1); x.lineTo(tx - nx * f.r1, ty - ny * f.r1); x.lineTo(f.x - nx * f.r0, f.y - ny * f.r0); x.fill();
+    });
+  });
+  T.sensors.circles.forEach(function (s) { circ(s[1], s[2], s[3], '#0cf'); });
+  T.sensors.lines.forEach(function (s) { cap(s[1], s[2], s[3], s[4], 0.4, '#0cf'); });
+  var sh = T.shooter; cap(sh.x0 + 3, sh.tip, sh.x1 - 3, sh.tip, 1, '#888');
+  circ(sh.cx, sh.tip - T.BALL, T.BALL, '#ddd');
+  // overlay: {dots:[[x,y,col,r]], paths:[{pts:[[x,y]...], col}], text:[[x,y,str,col]]}
+  var O = window.OVERLAY;
+  if (O) {
+    (O.paths || []).forEach(function (p) { x.strokeStyle = p.col || 'rgba(255,255,0,0.5)'; x.lineWidth = p.w || 0.6; x.beginPath(); p.pts.forEach(function (q, k) { k ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1]); }); x.stroke(); });
+    (O.dots || []).forEach(function (d) { circ(d[0], d[1], d[3] || 1.5, d[2] || '#f00', true); });
+    x.font = '5px monospace'; (O.text || []).forEach(function (t) { x.fillStyle = t[3] || '#fff'; x.fillText(t[2], t[0], t[1]); });
+  }
+})();
+</script></body></html>

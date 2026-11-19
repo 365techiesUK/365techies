@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>365 Pinball Hero - playfield art preview</title>
+<!-- 15 Oct 2026: a test bench for games/pinball/art3d.js (the printed playfield for the 3D look) and lamps.js (the
+     inserts), never deployed. Shows the painted playfield with its lamps composited the simple way (each lit sprite laid
+     over its insert at the lamp's level), a phone-sized copy, a rough tilted view, and every insert unlit and lit.
+     ?view=full|phone|tilt|lamps|all  ?state=off|on|play|attract  ?t=<ms>  ?scale=<px per unit, 4>  ?run=1 (animate).
+     The screenshot script (art-shots.cjs) drives it through window.bench. -->
+<style>
+  html, body { margin: 0; background: #101014; color: #ccc; font: 13px system-ui, sans-serif; }
+  .row { display: flex; gap: 18px; padding: 12px; align-items: flex-start; flex-wrap: wrap; }
+  canvas { display: block; }
+  #full { width: 540px; }
+  #phone { width: 390px; }
+  #tiltwrap { width: 420px; height: 700px; perspective: 900px; perspective-origin: 50% 0%; overflow: hidden; background: #000; }
+  #tilt { width: 420px; transform-origin: 50% 100%; transform: rotateX(42deg) translateY(-40px); }
+  #lamps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 12px; max-width: 1100px; }
+  #lamps figure { margin: 0; background: #000; padding: 4px; text-align: center; font: 10px ui-monospace, monospace; }
+  #lamps canvas { margin: 0 auto; }
+  #info { white-space: pre; font: 12px ui-monospace, monospace; padding: 0 12px; }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<div class="row"><canvas id="full"></canvas><canvas id="phone"></canvas><div id="tiltwrap"><canvas id="tilt"></canvas></div></div>
+<div id="lamps"></div>
+<div id="info"></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/lamps.js"></script>
+<script src="../../games/pinball/art3d.js"></script>
+<script>
+(function () {
+  'use strict';
+  var Q = new URLSearchParams(location.search), S = +(Q.get('scale') || 4), view = Q.get('view') || 'all';
+  var E = window.PinEngine, LA = window.PinLamps, ART = window.PinArt;
+  var t0 = performance.now(), art = ART.paint({ scale: S }), paintMs = performance.now() - t0;
+  var t1 = performance.now(), again = ART.paint({ scale: S }), cachedMs = performance.now() - t1;
+  var t2 = performance.now(), sprites = LA.list.map(function (l) { return ART.lampSprite(l, S); }), spriteMs = performance.now() - t2;
+  var W = E.newWorld(2, {}, 365), levels = new Float32Array(LA.list.length);
+  var comp = document.createElement('canvas'); comp.width = art.color.width; comp.height = art.color.height;
+  var cg = comp.getContext('2d');
+
+  function playState(W) {   // a busy moment: lanes, the skill shot, targets down, the hangar lit, a combo, a loop waiting
+    W.lanes = [true, false, true]; W.skillOpen = true; W.skill = 1;
+    W.drops = [false, false, true, false, true]; W.lit.drop = [0, 0, 0, 12, 0];
+    W.saucerLit = true; W.comboT = 100; W.combo = 2; W.orbitFrom = 'L'; W.orbitT = 100; W.kickback = true;
+    W.saveT = 400; W.mult = 3; W.lit.bump = [5, 0, 0]; W.lit.lane = [0, 0, 0];
+  }
+  function setLevels(state, t) {
+    if (state === 'off') { levels.fill(0); return; }
+    if (state === 'on') { levels.fill(1); return; }
+    if (state === 'attract') { LA.level(W, t, 'title', levels); return; }
+    W = E.newWorld(2, {}, 365); playState(W); LA.level(W, t, 'play', levels);
+  }
+  function composite() {
+    cg.globalCompositeOperation = 'source-over'; cg.globalAlpha = 1;
+    cg.drawImage(art.color, 0, 0);
+    LA.list.forEach(function (l, i) {
+      var v = levels[i], sp = sprites[i];
+      if (v <= 0.01) return;
+      cg.globalAlpha = Math.min(1, v); cg.drawImage(sp, l.x * S - sp.width / 2, l.y * S - sp.height / 2);
+    });
+    cg.globalCompositeOperation = 'lighter';
+    LA.list.forEach(function (l, i) {   // a little extra bloom, as the renderer's glow pass would add
+      var v = levels[i], sp = sprites[i];
+      if (v <= 0.01) return;
+      cg.globalAlpha = 0.35 * v; cg.drawImage(sp, l.x * S - sp.width / 2, l.y * S - sp.height / 2);
+    });
+    cg.globalCompositeOperation = 'source-over'; cg.globalAlpha = 1;
+  }
+  function show(id, w) {
+    var c = document.getElementById(id), g = c.getContext('2d'), h = Math.round(w * comp.height / comp.width);
+    c.width = w; c.height = h; g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+    g.drawImage(comp, 0, 0, w, h);
+  }
+  function render(state, t) {
+    var c0 = performance.now();
+    setLevels(state, t || 0); composite();
+    show('full', comp.width); show('phone', 390 * (window.devicePixelRatio || 1)); show('tilt', 840);
+    return performance.now() - c0;
+  }
+  function lampGrid() {
+    var box = document.getElementById('lamps'), K = 6;
+    if (ART.plastic) ['slingL', 'slingR'].forEach(function (k) {   // the sling plastics, on the playfield and on black
+      var pc = ART.plastic(k, K), f = document.createElement('figure'), a = document.createElement('canvas'), b = document.createElement('canvas');
+      [a, b].forEach(function (c) { c.width = pc.width; c.height = pc.height; });
+      a.getContext('2d').drawImage(art.color, pc.x0 * S, pc.y0 * S, pc.qw * S, pc.qh * S, 0, 0, a.width, a.height);
+      a.getContext('2d').drawImage(pc, 0, 0); b.getContext('2d').drawImage(pc, 0, 0);
+      var cap = document.createElement('div'); cap.textContent = k;
+      f.appendChild(a); f.appendChild(b); f.appendChild(cap); box.appendChild(f);
+    });
+    LA.list.forEach(function (l, i) {
+      var sp = ART.lampSprite(l, K), f = document.createElement('figure');
+      var a = document.createElement('canvas'), b = document.createElement('canvas');
+      [a, b].forEach(function (c) { c.width = sp.width; c.height = sp.height; });
+      // unlit: crop the painted playfield round the insert (scaled up)
+      var ag = a.getContext('2d'); ag.imageSmoothingEnabled = true;
+      var qw = sp.qw, qh = sp.qh;
+      ag.drawImage(art.color, (l.x - qw / 2) * S, (l.y - qh / 2) * S, qw * S, qh * S, 0, 0, a.width, a.height);
+      var bg = b.getContext('2d'); bg.drawImage(a, 0, 0); bg.drawImage(sp, 0, 0);
+      var cap = document.createElement('div'); cap.textContent = l.id;
+      f.appendChild(a); f.appendChild(b); f.appendChild(cap); box.appendChild(f);
+    });
+  }
+  if (view !== 'all') {
+    ['full', 'phone', 'tiltwrap'].forEach(function (id) { if (id.indexOf(view) !== 0) document.getElementById(id).classList.add('hide'); });
+    if (view !== 'lamps') document.getElementById('lamps').classList.add('hide');
+    else document.querySelector('.row').classList.add('hide');
+  }
+  if (view === 'all' || view === 'lamps') lampGrid();
+  var state = Q.get('state') || 'play', drawMs = render(state, +(Q.get('t') || 3000));
+  var info = 'paint (first): ' + paintMs.toFixed(1) + ' ms (inside ' + art.total + ')  [' + Object.keys(art.ms).map(function (k) { return k + ' ' + art.ms[k]; }).join(', ') + ']\n' +
+    'paint (cached): ' + cachedMs.toFixed(2) + ' ms   ' + LA.list.length + ' lamp sprites: ' + spriteMs.toFixed(1) + ' ms\n' +
+    'canvas ' + art.color.width + ' x ' + art.color.height + ', glow ' + art.glow.width + ' x ' + art.glow.height + '; composite + 3 copies ' + drawMs.toFixed(1) + ' ms';
+  document.getElementById('info').textContent = info;
+  window.bench = { art: art, paintMs: paintMs, spriteMs: spriteMs, render: render, info: info, levels: levels, LA: LA, ready: true };
+  if (Q.get('run') === '1') { (function loop(t) { render(state, t); requestAnimationFrame(loop); })(0); }
+})();
+</script>
+</body>
+</html>

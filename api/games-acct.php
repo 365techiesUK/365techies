@@ -25,7 +25,7 @@ header('X-Robots-Tag: noindex, nofollow');
 $GA_DIR = __DIR__ . '/games-acct-store';
 $GA_MAX = 64 * 1024;
 // the games' own storage (the same list as games-code.php): every key under these prefixes, except a game in progress
-$GA_KEYS = '/^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/';
+$GA_KEYS = '/^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|pin365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/';
 
 function ga_out($a, $code = 200) { http_response_code($code); echo json_encode($a); exit; }
 function ga_clean($data) {

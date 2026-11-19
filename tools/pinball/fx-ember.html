@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ember Peak effects bench</title>
+<!-- 16 Oct 2026, the next-gen spectacle: a test bench for games/pinball/fx.js, particles.js, post.js and lamps.js on Ember
+     Peak, never deployed. A plain stand-in table (rock, sea, a cone for the volcano, the walls as lines, the real lamps)
+     so the effects can be judged on their own: the ash cloud, the eruption, the geyser, debris and confetti, drawn with
+     the real GPU particles and the one combined final pass, at a phone-shaped size, on a pretend 60 fps clock.
+     ?tier=medium|high|low  ?w=390&h=844&dpr=2  Opened by tools/pinball/fx-ember-shots.cjs. -->
+<style>
+  html, body { margin: 0; background: #0b0b12; color: #ddd; font: 12px system-ui, sans-serif; }
+  #sheet { display: grid; grid-template-columns: repeat(4, auto); gap: 6px; padding: 6px; width: max-content; }
+  figure { margin: 0; } figcaption { padding: 2px 0 0; font: 11px ui-monospace, monospace; color: #9fb; }
+  canvas { display: block; }
+  #gl { position: absolute; left: -9999px; top: 0; }
+</style>
+<script type="importmap">{ "imports": { "three": "../../games/common/vendor/three-r185/three.module.min.js" } }</script>
+</head>
+<body>
+<div id="sheet"></div>
+<canvas id="gl"></canvas>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/tables/ember.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/lamps.js"></script>
+<script src="../../games/pinball/fx.js"></script>
+<script src="../../games/pinball/particles.js"></script>
+<script src="../../games/pinball/post.js"></script>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from '../../games/common/vendor/three-r185/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from '../../games/common/vendor/three-r185/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from '../../games/common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
+
+const Q = new URLSearchParams(location.search), TIER = Q.get('tier') || 'medium';
+const VW = +(Q.get('w') || 390), VH = +(Q.get('h') || 844), DPR = Math.min(2, +(Q.get('dpr') || 2));
+const E = window.PinEngine, FX = window.PinFX, PP = window.PinParticles, PO = window.PinPost, Lm = window.PinLamps;
+const B = E.table('ember'), T = B.T, CX = T.W / 2, CY = T.H / 2;
+const wx = (x) => x - CX, wz = (y) => y - CY;
+FX.reduce = false; FX.gpu = true;
+
+// ------------------------------------------------------------------ renderer, scene, camera (portrait phone shape)
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true });
+renderer.setPixelRatio(DPR); renderer.setSize(VW, VH, false);
+renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.0;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#7cc8ff');
+const camera = new THREE.PerspectiveCamera(38, VW / VH, 5, 4000);
+camera.position.set(0, 930, 380); camera.lookAt(0, 0, 25);
+const table = new THREE.Group(); scene.add(table);
+
+// the sea round the island, the rock playfield (walls drawn on it), the volcano cone
+const sea = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.MeshStandardMaterial({ color: '#19c9c0', roughness: 0.35 }));
+sea.rotation.x = -Math.PI / 2; sea.position.y = -14; scene.add(sea);
+const S = 3, pc = document.createElement('canvas'); pc.width = T.W * S; pc.height = T.H * S;
+{
+  const g = pc.getContext('2d');
+  const gr = g.createLinearGradient(0, 0, 0, pc.height); gr.addColorStop(0, '#3a3540'); gr.addColorStop(1, '#2a262e'); g.fillStyle = gr; g.fillRect(0, 0, pc.width, pc.height);
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(${90 + Math.random() * 40},${80 + Math.random() * 30},${90 + Math.random() * 30},0.18)`; g.beginPath(); g.arc(Math.random() * pc.width, Math.random() * pc.height, 2 + Math.random() * 10, 0, 7); g.fill(); }
+  g.strokeStyle = '#ff7a1a'; g.globalAlpha = 0.35; g.lineWidth = 3;   // glowing seams of lava in the rock
+  for (let i = 0; i < 14; i++) { g.beginPath(); let x = Math.random() * pc.width, y = Math.random() * pc.height; g.moveTo(x, y); for (let k = 0; k < 6; k++) { x += (Math.random() - 0.5) * 120; y += Math.random() * 60; g.lineTo(x, y); } g.stroke(); }
+  g.globalAlpha = 1; g.strokeStyle = '#cfd6e0'; g.lineCap = 'round';
+  B.WALLS.forEach((w) => { if (w.kind === 'apron') return; g.lineWidth = (w.r * 2 + 1) * S; g.beginPath(); g.moveTo(w.ax * S, w.ay * S); g.lineTo(w.bx * S, w.by * S); g.stroke(); });
+  g.beginPath(); g.lineWidth = 4 * S; g.arc(T.arch.x * S, T.arch.y * S, T.arch.R * S, Math.PI, 2 * Math.PI); g.stroke();
+}
+const ptex = new THREE.CanvasTexture(pc); ptex.colorSpace = THREE.SRGBColorSpace; ptex.anisotropy = 4;
+const playMat = new THREE.MeshStandardMaterial({ map: ptex, roughness: 0.8 });
+const play = new THREE.Mesh(new THREE.PlaneGeometry(T.W, T.H), playMat); play.rotation.x = -Math.PI / 2; table.add(play);
+const rockMat = new THREE.MeshStandardMaterial({ color: '#1d1a20', roughness: 0.9, flatShading: true });
+const V = T.volcano, cone = new THREE.Mesh(new THREE.CylinderGeometry(10, V.r + 10, 34, 9, 1, true), rockMat);
+cone.position.set(wx(V.x), 17, wz(V.y)); table.add(cone);
+const lavaTop = new THREE.Mesh(new THREE.CircleGeometry(10, 16), new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff8a1e').multiplyScalar(3) }));
+lavaTop.rotation.x = -Math.PI / 2; lavaTop.position.set(wx(V.x), 34.2, wz(V.y)); table.add(lavaTop);
+B.BUMPERS.forEach((b) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(b.r, b.r + 2, 14, 16), new THREE.MeshStandardMaterial({ color: '#2a2a30', emissive: '#ff9a2e', emissiveIntensity: 0.5 })); m.position.set(wx(b.x), 7, wz(b.y)); table.add(m); });
+T.flippers.forEach((f) => { const m = new THREE.Mesh(new THREE.BoxGeometry(f.len, 8, 6), new THREE.MeshStandardMaterial({ color: '#f4f4f4' })); m.geometry.translate(f.len / 2, 0, 0); m.position.set(wx(f.x), 4, wz(f.y)); m.rotation.y = -f.rest; table.add(m); });
+const ball = new THREE.Mesh(new THREE.SphereGeometry(T.BALL, 24, 16), new THREE.MeshStandardMaterial({ color: '#e8eef4', metalness: 0.6, roughness: 0.15 }));
+table.add(ball);
+// the lamps: glowing points, brightness from PinLamps.level + PinFX.state.lamps
+const LE = Lm.forTable('ember'), N = LE.list.length;
+const lp = new Float32Array(N * 3), lc = new Float32Array(N * 3), lgeo = new THREE.BufferGeometry();
+LE.list.forEach((l, i) => { lp[i * 3] = wx(l.x); lp[i * 3 + 1] = 0.6; lp[i * 3 + 2] = wz(l.y); });
+lgeo.setAttribute('position', new THREE.BufferAttribute(lp, 3)); lgeo.setAttribute('color', new THREE.BufferAttribute(lc, 3));
+const lamps = new THREE.Points(lgeo, new THREE.PointsMaterial({ size: 9, vertexColors: true, sizeAttenuation: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+table.add(lamps);
+const hemi = new THREE.HemisphereLight('#eaf4ff', '#403040', 1.4); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#fff4e0', 2.2); sun.position.set(-200, 600, 300); scene.add(sun);
+
+// the passes: the scene, the glow, then the one final pass (instead of OutputPass)
+const rt = new THREE.WebGLRenderTarget(16, 16, { type: THREE.HalfFloatType, samples: 4 });
+const composer = new EffectComposer(renderer, rt); composer.setPixelRatio(DPR); composer.setSize(VW, VH);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(VW * DPR / 2, VH * DPR / 2), 0.62, 0.3, 1.6); composer.addPass(bloom);
+const post = PO.pass(THREE, renderer, { tier: TIER }); composer.addPass(post);
+PP.attach(THREE, scene, table, TIER, { origin: [CX, CY] });
+const tmpV = new THREE.Vector3();
+function project(x, y, z) { tmpV.set(wx(x), z, wz(y)); table.localToWorld(tmpV); tmpV.project(camera); return tmpV.z > 1 ? null : { x: (tmpV.x + 1) / 2, y: (tmpV.y + 1) / 2 }; }
+
+// ------------------------------------------------------------------ one frame, on the pretend clock
+const W = E.newWorld(2, 0, 9, 'ember');
+FX.quiet = () => quietFlag;   // (the camera's forecast is not here: the bench says when the table is quiet)
+let quietFlag = true, clock = 0;
+const lampOut = new Float32Array(N), col = new THREE.Color();
+function frame(dtMs) {
+  clock += dtMs; W.frame += Math.round(dtMs * 60 / 1000);
+  const st = FX.update(W, clock, 'play');
+  PP.update(dtMs / 1000, st);
+  const b = W.balls[0];
+  ball.position.set(wx(b.x), T.BALL + (b.z || 0), wz(b.y)); ball.visible = b.m !== 'held';
+  PO.update(clock, st, { project, ball: project(b.x, b.y, T.BALL) });
+  // table movement and shake
+  table.rotation.x = st.table.pitch * Math.PI / 180; table.rotation.z = -st.table.roll * Math.PI / 180; table.position.y = st.table.dy;
+  camera.position.set(st.shake.x * 1.2, 930, 380 + st.shake.y * 1.2);
+  // the light
+  const gi = Math.max(0, Math.min(1.5, st.gi));
+  hemi.intensity = 1.4 * (0.25 + 0.75 * gi); sun.intensity = 2.2 * (0.2 + 0.8 * gi);
+  scene.background.set('#7cc8ff').multiplyScalar(0.25 + 0.75 * Math.min(gi, 1.3)).lerp(new THREE.Color('#4a4650'), st.post.ash * 0.6);
+  LE.level(W, clock, 'play', lampOut);
+  LE.list.forEach((l, i) => { const v = Math.min(1, lampOut[i] * st.base + (st.lamps[l.id] || 0)); col.set(l.color).multiplyScalar(0.15 + 2.6 * v); lc[i * 3] = col.r; lc[i * 3 + 1] = col.g; lc[i * 3 + 2] = col.b; });
+  lgeo.attributes.color.needsUpdate = true;
+  composer.render();
+  return st;
+}
+const sheet = document.getElementById('sheet'), shots = [];
+function still(name) {
+  const c = document.createElement('canvas'); c.width = Math.round(VW * 0.8); c.height = Math.round(VH * 0.8);
+  c.getContext('2d').drawImage(canvas, 0, 0, c.width, c.height);
+  const f = document.createElement('figure'), cap = document.createElement('figcaption');
+  cap.textContent = name + '  gi ' + FX.state.gi.toFixed(2) + '  pitch ' + FX.state.table.pitch.toFixed(2) + '  dy ' + FX.state.table.dy.toFixed(2) + '  live ' + PP.stats().live;
+  f.appendChild(c); f.appendChild(cap); sheet.appendChild(f);
+  // the reds: the share of strongly red pixels and the mean colour (a lava frame must never read as a red screen)
+  const g2 = document.createElement('canvas'); g2.width = 96; g2.height = 208; const x2 = g2.getContext('2d'); x2.drawImage(canvas, 0, 0, 96, 208);
+  const d = x2.getImageData(0, 0, 96, 208).data; let r = 0, g = 0, bl = 0, redPx = 0;
+  for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; bl += d[i + 2]; if (d[i] > 150 && d[i + 1] < 90 && d[i + 2] < 90) redPx++; }
+  const n = d.length / 4;
+  shots.push({ name, mean: [r / n, g / n, bl / n].map((v) => Math.round(v)), redShare: +(redPx / n).toFixed(3), gi: +FX.state.gi.toFixed(2), live: PP.stats().live });
+}
+function run(ms) { let st; for (let t = 0; t < ms; t += 1000 / 60) st = frame(1000 / 60); return st; }
+
+// ------------------------------------------------------------------ the script
+const Vt = W.toys.volcano, b0 = W.balls[0];
+b0.m = 'free'; b0.x = 125; b0.y = 260;
+run(300);
+still('1 calm');
+// the full eruption: the crater takes the ball with full pressure
+b0.m = 'held'; b0.at = 'crater'; b0.x = V.x; b0.y = V.y; Vt.busy = true; Vt.release = W.frame + 165; Vt.land = Vt.release + 205; Vt.pressure = 0;
+FX.events(W, ['crater', 'lavaopen']); W.toys.lava.open = true;
+run(1600);
+still('2 ash cloud (1.6 s)');
+run(1150);
+b0.m = 'ramp'; b0.carry = 'sky'; b0.ct = 0; b0.at = null; Vt.busy = false; b0.z = 20;
+FX.events(W, ['erupt']);
+run(120);
+still('3 eruption +0.12 s');
+// the timing at the eruption's peak (desktop GPU: a guide only, never a phone number)
+const gl = renderer.getContext(), px = new Uint8Array(4); let tot = 0, nT = 0;
+for (let i = 0; i < 24; i++) { const a = performance.now(); frame(1000 / 60); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px); tot += performance.now() - a; nT++; }
+const peakMs = tot / nT;
+still('4 eruption +0.52 s');
+run(900);
+still('5 eruption +1.4 s');
+run(1500);
+// the geyser, an obsidian target, a skill shot, a crab
+b0.m = 'free'; b0.x = 125; b0.y = 120;
+FX.events(W, ['geyser', { sfx: 'drop', i: 2 }, 'skill', { sfx: 'crab', i: 2 }]);
+run(330);
+still('6 geyser, debris, confetti');
+window.done = { tier: TIER, peakMs: +peakMs.toFixed(2), shots, stats: PP.stats(), size: [VW * DPR, VH * DPR] };
+</script>
+</body>
+</html>

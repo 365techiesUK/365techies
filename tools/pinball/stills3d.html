@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>365 Pinball Hero - 3D stills bench</title>
+<!-- 15 Oct 2026 (milestone 2a); 16 Oct 2026 (NG fast track: any table, the camera director, tiers). A bench for
+     games/pinball/world3d.js, never deployed. It plays the real engine with a bot (PinPilot, the game's own demo pilot,
+     when it is there; else a simple seeded auto-flipper), so a seed and a frame are always the same moment, and draws
+     the 3D table under a strip with the flat look's dot-matrix display (its top 34 rows, square pixels), so a picture
+     looks exactly like the phone screen.
+     Query: ?table=ember|orbit &cam=home|calm|arcade|classic (home: the still home, camera.js's home in the &home= mode
+     (calm by default); the others: camera.js
+     in that mode, if it is on the page) &tier=high|medium|low &seed=7 &frame=900 &speed=2 &w=1080 &h=1920
+     &mode=title (the attract show) &fill=1 (the old table's close framing) &tilt= &fov= &bot=pilot|simple
+     &fx=0 &particles=0 &post=0 (leave those add-ons out).
+     tools/pinball/stills3d.cjs drives it through window.S3. window.__ready is true once the first frame is on screen. -->
+<script type="importmap">{ "imports": { "three": "../../games/common/vendor/three-r185/three.module.min.js" } }</script>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #frame { position: relative; background: #000; }
+  #dmd, #gl { display: block; }
+  #dmd { image-rendering: pixelated; image-rendering: crisp-edges; }
+</style>
+</head>
+<body>
+<div id="frame"><canvas id="dmd"></canvas><canvas id="gl"></canvas></div>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/tables/ember.js"></script>
+<script src="../../games/pinball/tables/chamber.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/flat.js"></script>
+<script type="module">
+  const Q = new URLSearchParams(location.search), num = (k, d) => (Q.has(k) ? +Q.get(k) : d);
+  const FW = num('w', 1080), FH = num('h', 1920), STRIP = Math.round(FW * 136 / 1080);
+  const E = window.PinEngine, TABLE = Q.get('table') || 'orbit', CAM = Q.get('cam') || 'home';
+  const frameEl = document.getElementById('frame'), dmd = document.getElementById('dmd'), gl = document.getElementById('gl');
+  frameEl.style.width = FW + 'px'; frameEl.style.height = FH + 'px';
+  dmd.width = FW; dmd.height = STRIP; dmd.style.width = FW + 'px'; dmd.style.height = STRIP + 'px';
+  gl.style.width = FW + 'px'; gl.style.height = (FH - STRIP) + 'px';
+  const flat = document.createElement('canvas'); flat.width = 270; flat.height = 480;
+  const fg = flat.getContext('2d'), dg = dmd.getContext('2d');
+
+  // the other lanes' files, if they are there (the 3D look and the game work without them)
+  function optional(src) { return new Promise((res) => { const s = document.createElement('script'); s.src = src; s.onload = () => res(true); s.onerror = () => res(false); document.head.appendChild(s); }); }
+  const have = {}, P = '../../games/pinball/';
+  have.lamps = await optional(P + 'lamps.js'); have.art = await optional(P + 'art3d.js');
+  if (Q.get('fx') !== '0') have.fx = await optional(P + 'fx.js');
+  have.pilot = await optional(P + 'pilot.js');
+  have.descent = await optional(P + 'descent.js');   // wave 3: the levels' plugin (THE MAGMA CHAMBER's goal, clock and W.next)
+  have.cam = await optional(P + 'camera.js');   // home too: world3d's home is camera.js's home in that mode (&home=calm|arcade|classic, default calm; 30 Oct 2026)
+  if (Q.get('particles') !== '0') have.particles = await optional(P + 'particles.js');
+  if (Q.get('post') !== '0') have.post = await optional(P + 'post.js');
+  if (window.PinCam) { try { PinCam.configure({ forecaster: 'sync' }); if (PinCam.setMode) PinCam.setMode(CAM === 'home' ? (/^(calm|arcade|classic)$/.test(Q.get('home') || '') ? Q.get('home') : 'calm') : CAM === 'arcade' || CAM === 'calm' || CAM === 'classic' ? CAM : 'arcade'); } catch (e) {} }
+  const { create } = await import((Q.get('w3d') || '../../games/pinball/world3d.js') + '?' + Date.now());   // (w3d: another copy, to compare build times)
+
+  // ---------------------------------------------------------------- the bots
+  function lcg(seed) { let s = (seed | 0) || 1; return () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }; }
+  function simpleBot(seed) {   // the old seeded auto-flipper, for any number of flippers (each button works its side)
+    const r = lcg(seed), hold = [0, 0], wait = [-1, -1], cradle = [0, 0]; let plunge = -1;
+    return function (W) {
+      const T = E.table(W.tableId).T, inp = { left: false, right: false, fire: false };
+      for (let side = 0; side < 2; side++) {
+        let near = null;
+        for (const f of W.flippers) {
+          if ((f.side < 0 ? 0 : 1) !== side) continue;
+          for (const b of W.balls) {
+            if (b.m !== 'free' || b.x > T.shooter.x0) continue;
+            const dx = b.x - f.x, dy = b.y - f.y;
+            if (dx * f.side > 6 || dx * -f.side > f.len + 14 || dy < -45 || dy > 30) continue;
+            near = b; break;
+          }
+          if (near) break;
+        }
+        const key = side ? 'right' : 'left';
+        if (hold[side] > 0) { hold[side]--; inp[key] = true; continue; }
+        if (cradle[side] > 0) { cradle[side]--; inp[key] = true; continue; }
+        if (near && wait[side] < 0 && near.vy > -40) wait[side] = Math.floor(r() * 6);
+        if (wait[side] >= 0 && wait[side]-- === 0) {
+          if (r() < 0.12) cradle[side] = 40 + Math.floor(r() * 120); else hold[side] = 6 + Math.floor(r() * 14);
+          inp[key] = true; wait[side] = -1;
+        }
+      }
+      const inLane = W.balls.some((b) => b.m === 'free' && b.x > T.shooter.x0 && b.y > T.shooter.tip - 40 && Math.abs(b.vy) < 30);
+      if (inLane) { if (plunge < 0) plunge = 1 + Math.floor(r() * 60); if (plunge-- > 0) inp.fire = true; } else plunge = -1;
+      return inp;
+    };
+  }
+  const BOT = Q.get('bot') || (window.PinPilot ? 'pilot' : 'simple');
+  const bot = (seed) => (BOT === 'pilot' && window.PinPilot ? (W) => PinPilot.input(W) : simpleBot(seed));
+
+  // ---------------------------------------------------------------- the game, the picture
+  const speed = num('speed', 2), mode = Q.get('mode') || 'play';
+  let W = null, drive = null, frame = 0, tNow = 0, acc = 0;
+  const FILLV = Q.get('fill') === '1' || TABLE !== 'orbit';
+  const world = create({ canvas: gl, width: FW, height: FH - STRIP, pixelRatio: 1, preserve: true, fill: FILLV, table: TABLE,
+    tier: Q.get('tier') || 'high', cam: CAM === 'home' ? 'home' : undefined, particles: Q.get('particles') !== '0', post: Q.get('post') !== '0',
+    tilt: Q.has('tilt') ? num('tilt') : FILLV ? undefined : 35, fov: Q.has('fov') ? num('fov') : FILLV ? undefined : 34,
+    reflect: Q.get('reflect') !== '0', samples: Q.has('samples') ? num('samples') : undefined, bloom: Q.has('bloom') ? +Q.get('bloom') : undefined, threshold: Q.has('thr') ? +Q.get('thr') : undefined });
+  const newWorld = (seed) => E.newWorld(speed, {}, seed, TABLE);
+  function reset(seed) { W = newWorld(seed); drive = bot(seed); frame = 0; tNow = 0; acc = 0; if (mode === 'title') W.demo = true; if (window.PinCam && PinCam.reset) PinCam.reset(); if (window.PinFX && PinFX.reset) PinFX.reset(); }
+  function step() { E.step(W, drive(W)); if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} } W.events.length = 0; frame++; }
+  const tOf = (f) => f * 1000 / 60;
+  function render(t) {
+    world.draw(W, t == null ? tOf(frame) : t, mode, { best: 0 });
+    window.PinFlat.draw(fg, W, t == null ? tOf(frame) : t, mode, { best: 0 });
+    dg.imageSmoothingEnabled = false; dg.clearRect(0, 0, FW, STRIP); dg.drawImage(flat, 0, 0, 270, 34, 0, 0, FW, STRIP);
+  }
+  function advance(n, drawEach) { for (let i = 0; i < n; i++) { step(); if (drawEach) render(); } if (!drawEach) render(); }
+  const aspect = () => FW / (FH - STRIP);
+  function goTo(f, warm, seed) {   // the moment f: the camera director follows every frame, the last `warm` frames drawn (bulb fades, smoothing)
+    warm = warm == null ? 40 : warm;
+    reset(seed != null ? seed : num('seed', 7));
+    while (frame < f - warm) { step(); if (window.PinCam && CAM !== 'home') PinCam.update(W, tOf(frame), mode, aspect()); }
+    while (frame < f) { step(); render(); }
+    render();
+  }
+  // a clip frame at 30 a second: the game runs at the camera's own time scale (its slow motion), the clock at real time
+  function clipFrame() {
+    let ts = 1; try { if (window.PinCam && CAM !== 'home') ts = clamp(+PinCam.info().ts || 1, 0.1, 1); } catch (e) {}
+    acc += 2 * ts; while (acc >= 1) { step(); acc -= 1; }
+    tNow = (tNow || tOf(frame)) + 1000 / 30;
+    render(tNow);
+    return { frame, ts, cam: world.stats().cam, state: window.PinCam && PinCam.info ? PinCam.info().state : 'home' };
+  }
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+  // ---------------------------------------------------------------- moments: a lively one, the crater's hold, the wire rail
+  function scan(seeds, frames, pick) {
+    let best = null;
+    for (let seed = 1; seed <= seeds; seed++) {
+      const Wd = newWorld(seed), dr = bot(seed);
+      for (let f = 1; f <= frames && !Wd.over; f++) {
+        E.step(Wd, dr(Wd)); Wd.events.length = 0;
+        const sc = pick(Wd, f); if (sc != null && (!best || sc > best.score)) best = { seed, frame: f, score: sc };
+        if (best && best.score >= 1e6) return best;
+      }
+    }
+    return best;
+  }
+  function findMoment(kind, o) {
+    o = Object.assign({ seeds: 30, frames: 9000 }, o || {});
+    const Bt = E.table(TABLE), T = Bt.T, SUB = E.SUB;
+    if (kind === 'crater') return scan(o.seeds, o.frames, (Wd, f) => { const b = Wd.balls.find((q) => q.m === 'held' && q.at === 'crater'); const V = Wd.toys.volcano; return b && V && V.hold === 70 && f > 400 ? 1e6 : null; });
+    if (kind === 'rail') return scan(o.seeds, o.frames, (Wd, f) => { const b = Wd.balls.find((q) => q.carry); if (!b) return null; const st = b.ct / SUB; return st >= 150 && st < 151 && f > 400 ? 1e6 : null; });
+    if (kind === 'craterclip') return scan(o.seeds, o.frames, (Wd, f) => { const b = Wd.balls.find((q) => q.m === 'held' && q.at === 'crater'); const V = Wd.toys.volcano; return b && V && V.hold === T.volcano.hold - 1 && f > 420 && Wd.balls.length === 1 ? 1e6 : null; });
+    // lively: the ball in play high up the table, lamps lit, no ball in the shooter lane
+    return scan(o.seeds, Math.min(o.frames, 5400), (Wd, f) => {
+      const b = Wd.balls[0]; if (!b || Wd.state !== 'play' || f < 600 || b.x > T.shooter.x0) return null;
+      const live = Wd.lanes.filter(Boolean).length + (Wd.mult - 1) + (Wd.comboT > 0 ? 1 : 0) + (Wd.dropsDown || 0) * 0.4 + (Wd.toys.volcano ? Wd.toys.volcano.pressure * 2 : 0);
+      return b.y > 250 && b.y < 470 && b.m === 'free' ? live : null;
+    });
+  }
+
+  // ---------------------------------------------------------------- is the ball ever hidden? (rays from the camera to the ball's middle and top)
+  function samplePositions(seeds, frames) {
+    const seen = new Map();
+    for (let seed = 1; seed <= seeds; seed++) {
+      const Wd = newWorld(seed * 31), dr = bot(seed * 31);
+      for (let f = 0; f < frames && !Wd.over; f++) {
+        E.step(Wd, dr(Wd)); Wd.events.length = 0;
+        for (const b of Wd.balls) {
+          const z = b.m === 'ramp' ? b.z || 0 : 0, k = Math.round(b.x / 3) + ',' + Math.round(b.y / 3) + ',' + Math.round(z / 6) + (b.at || '');
+          if (!seen.has(k)) seen.set(k, { x: b.x, y: b.y, m: b.m, z: b.z || 0, at: b.at || null, carry: b.carry || null });
+        }
+      }
+    }
+    return [...seen.values()];
+  }
+  function visibility(pts) {
+    const D = world.debug, THREE = D.THREE, cam = D.camera, occ = D.occluders(), ray = new THREE.Raycaster(), dir = new THREE.Vector3();
+    const hiddenBy = (x, y, h) => {
+      const v = D.toWorld(x, y, h); dir.copy(v).sub(cam.position); const dist = dir.length(); dir.normalize();
+      ray.set(cam.position, dir); ray.far = dist - 0.8;
+      const hit = ray.intersectObjects(occ, false)[0];
+      return hit ? (hit.object.name || hit.object.geometry.type || hit.object.type) : null;
+    };
+    const out = [], T = E.table(TABLE).T;
+    for (const p of pts) {
+      const c = D.ballZ(p) + T.BALL, a = hiddenBy(p.x, p.y, c), b = hiddenBy(p.x, p.y, c + 5.5);
+      if (a && b) out.push({ x: Math.round(p.x), y: Math.round(p.y), z: Math.round(c), by: b, storey: storeyOf(p) });
+    }
+    return out;
+  }
+  function storeyOf(p) { const T = E.table(TABLE).T; if (!T.storeys) return 'table'; const s = T.storeys.find((q) => p.y >= q.y0 && p.y < q.y1 && p.x >= q.x0 - 30) || T.storeys[0]; return s.id; }
+  // the framings to check: world3d's whole-table home, and camera.js's home when it is on the page
+  function framings() {
+    const out = { whole: 'home' };
+    if (window.PinCam && PinCam.home && PinCam.frame) { try { PinCam.setAspect && PinCam.setAspect(aspect()); out.camHome = PinCam.frame(PinCam.home(aspect()), aspect()); } catch (e) {} }
+    return out;
+  }
+  function checkHidden(pts) {
+    const res = {}, F = framings();
+    for (const k in F) {
+      world.setCam(F[k]); render();
+      const hid = visibility(pts), by = {};
+      pts.forEach((p) => { const s = storeyOf(p); by[s] = by[s] || { places: 0, hidden: 0 }; by[s].places++; });
+      hid.forEach((h) => { by[h.storey].hidden++; });
+      res[k] = { byStorey: by, hidden: hid.slice(0, 30) };
+    }
+    world.setCam(null);
+    return res;
+  }
+
+  // ---------------------------------------------------------------- frame time per tier (draw + wait for the GPU)
+  function bench(n, tier) {
+    if (tier) world.setTier(tier);
+    const g2 = world.debug.renderer.getContext(), px = new Uint8Array(4), times = [];
+    for (let i = 0; i < 20; i++) { step(); render(); }
+    for (let i = 0; i < n; i++) {
+      step();
+      const t0 = performance.now();
+      world.draw(W, tOf(frame), mode, {});
+      g2.readPixels(0, 0, 1, 1, g2.RGBA, g2.UNSIGNED_BYTE, px);
+      times.push(performance.now() - t0);
+    }
+    times.sort((a, b) => a - b);
+    const avg = times.reduce((s, x) => s + x, 0) / n, st = world.stats();
+    return { tier: st.tier, pr: st.pixelRatio, size: st.size, avg: +avg.toFixed(2), p50: +times[n >> 1].toFixed(2), p95: +times[Math.floor(n * 0.95)].toFixed(2), calls: st.calls, tris: st.triangles, reflectCalls: st.reflectCalls, reflectTris: st.reflectTriangles, motes: st.motes };
+  }
+  function gpu() { const g2 = world.debug.renderer.getContext(), e = g2.getExtension('WEBGL_debug_renderer_info'); return e ? g2.getParameter(e.UNMASKED_RENDERER_WEBGL) : 'unknown'; }
+
+  // ---------------------------------------------------------------- wave 3 scenes: multiball, the plug, THE MAGMA CHAMBER
+  // scene(kind, seed, frames): a fresh world played `frames` steps by the bot, then set up (multiball: 3 balls in play;
+  // plug: the OBSIDIAN PLUG up; chamber: a visit to the level, the vents part lit), the camera warmed, then drawn
+  function scene(kind, seed, frames) {
+    seed = seed || 7; frames = frames || 600;
+    if (kind === 'chamber') {
+      W = E.newWorld(speed, {}, seed, 'chamber'); drive = bot(seed); frame = 0;
+      if (window.PinCam && PinCam.reset) PinCam.reset();
+    } else reset(seed);
+    while (frame < frames && !W.over) { step(); if (window.PinCam && CAM !== 'home') PinCam.update(W, tOf(frame), mode, aspect()); }
+    if (kind === 'multiball') { E.api.multiball(W, 3, { save: 30 }); for (let i = 0; i < 260 && !W.over; i++) { step(); if (i > 200) render(); } }
+    if (kind === 'plug') { E.api.plug(W, 99999); for (let i = 0; i < 40; i++) { step(); render(); } }
+    for (let i = 0; i < 30 && !W.over; i++) { step(); render(); }
+    render();
+    return { table: W.tableId, balls: W.balls.length, plug: !!(W.plug && W.plug.up), frame, descent: W.descent && W.descent.level ? { lit: W.descent.lit, clock: W.descent.clock } : null };
+  }
+  // the hard cut: draw the surface, then the chamber's first frame (timed: the switch must cost nothing), then back
+  function cut(seed) {
+    reset(seed || 7); for (let i = 0; i < 120; i++) step(); render(); render();
+    const S = W, C = E.newWorld(speed, {}, (seed || 7) + 1, 'chamber');
+    const t0 = performance.now(); W = C; render(); const down = performance.now() - t0;
+    const shotDown = window.PinCam && PinCam.info ? PinCam.info().state : null;
+    for (let i = 0; i < 30; i++) { E.step(C, drive(C)); C.events.length = 0; render(); }
+    const t1 = performance.now(); W = S; render(); const up = performance.now() - t1;
+    return { downMs: +down.toFixed(1), upMs: +up.toFixed(1), stateDown: shotDown, built: world.stats().built };
+  }
+  // where the flippers are on screen (0..1 across and down the picture) for this world's table, through the 3D camera
+  function flipperScreen() {
+    const cam = world.debug.camera, T = E.table(W.tableId).T, out = [];
+    T.flippers.forEach((f) => { [[f.x, f.y], [f.x + Math.cos(f.rest) * f.len, f.y + Math.sin(f.rest) * f.len]].forEach((q) => { const v = world.debug.toWorld(q[0], q[1], 0).project(cam); out.push([+(0.5 + v.x / 2).toFixed(4), +(0.5 - v.y / 2).toFixed(4)]); }); });
+    return out;
+  }
+  function flatPng(k) {   // the flat look's whole 270 x 480 picture (the page shows only its DMD strip), blown up k times with square pixels
+    k = k || 3; const c = document.createElement('canvas'); c.width = 270 * k; c.height = 480 * k; const x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(flat, 0, 0, c.width, c.height); return c.toDataURL('image/png');
+  }
+  window.S3 = { get W() { return W; }, world, reset, step, render, advance, goTo, clipFrame, findMoment, samplePositions, visibility, checkHidden, bench, gpu, have, scene, cut, flipperScreen, flatPng,
+    setView: (v) => { world.setView(v); render(); }, setCam: (c) => { world.setCam(c); render(); }, get frame() { return frame; } };
+  goTo(num('frame', 900));
+  window.__stats = Object.assign(world.stats(), { have, bot: BOT });
+  window.__ready = true;
+</script>
+</body>
+</html>
