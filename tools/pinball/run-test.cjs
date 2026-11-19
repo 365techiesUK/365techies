@@ -88,7 +88,7 @@ console.log('EMBER RUN unit tests');
 })();
 const G = require('../../games/pinball/goals.js');   // (from here on the goals plugin is registered, as in the page)
 (function () {   // the pool of balls
-  ok(Run.newRun(1, 1).balls === 3 && Run.newRun(1, 2).balls === 2 && Run.newRun(1, 3).balls === 1, 'the pool: Gentle 3, Classic 2, Fast 1');
+  ok(Run.newRun(1, 1).balls === 4 && Run.newRun(1, 2).balls === 2 && Run.newRun(1, 3).balls === 1, 'the pool: Gentle 4, Classic 2, Fast 1');
   const R = Run.newRun(21, 2), W = Run.startRound(R);
   W.stats.ramps++; Run.update(R, W);
   ok(R.mission.id === 'ramp2' && R.mission.got === 1, 'round 1: HEAT RAMP X2, one counted');

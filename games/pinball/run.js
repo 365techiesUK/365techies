@@ -1,6 +1,6 @@
 /* 365 Pinball Hero - EMBER RUN, the run-based mode (30 Oct 2026, owner: "still looks like a revamped Microsoft Pinball
  * ... exactly the same gameplay" - so change how it PLAYS; wave 3, 5 Nov 2026: the build plan's section 4). A run is up
- * to 8 rounds on Ember Peak with ONE POOL OF BALLS for the whole run (Gentle 3, Classic 2, Fast 1; SECOND WIND and a
+ * to 8 rounds on Ember Peak with ONE POOL OF BALLS for the whole run (Gentle 4, Classic 2, Fast 1; SECOND WIND and a
  * chamber clear add one, 5 at most):
  *  - each round has a MISSION, THE goal, with an arrow on its shot (goals.js shows it as W.next): rounds 1-3 teach the
  *    table (the heat ramp, the obsidian, an eruption), rounds 5-7 are harder, all from the run's seed. A drain before the
@@ -60,7 +60,7 @@
   var WORD = { ramps: 'HEAT RAMPS', bank: 'OBSIDIAN BANKS', eruptions: 'ERUPTIONS', jackpots: 'JACKPOTS', crabs: 'CRABS', loops: 'LOOPS', locks: 'LOCKS', lava: 'LAVA LANES' };
   var SPEEDK = { 1: 0.8, 2: 1, 3: 1.15 };   // Gentle is slower (fewer points a minute), Fast quicker
   var BEST_KEY = 'pinball365.emberRun.best';
-  var BALLS = { 1: 3, 2: 2, 3: 1 }, BALLS_MAX = 5;   // the run's pool of balls by speed (SECOND WIND and a chamber clear add one; 5 at most)
+  var BALLS = { 1: 4, 2: 2, 3: 1 }, BALLS_MAX = 5;   // the run's pool of balls by speed (SECOND WIND and a chamber clear add one; 5 at most)
 
   // ------------------------------------------------------------ the upgrades: id, name, one line, how many can stack
   // (wave 3, the deck retune: every card changes play or is clearly worth its slot; multipliers add up, x10 at most)
