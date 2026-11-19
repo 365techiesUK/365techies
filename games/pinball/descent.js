@@ -184,6 +184,9 @@
   function create(E2, opt) {
     if (E2 && E2 !== E) { E = E2; }
     if (E && E.plugin) E.plugin(PLUGIN);
+    // (fix pass: without THE MAGMA CHAMBER's table - tables/chamber.js not loaded - there is no level to go down to: no
+    // descent at all, so the page leaves DESC null and the engine lets a held DIVE ball go)
+    if (!E || !E.TABLES || !E.TABLES[LEVELS[1].id] || !E.table(LEVELS[1].id).T.level) return null;
     opt = opt || {};
     var D = { S: null };
     function surf(W) {
@@ -197,6 +200,7 @@
       var Ds = S.descent, n = Ds.dives;
       var C = E.newWorld(S.speed || opt.speed || 2, 0, mix(S.seed, n + 1, opt.seed | 0), LEVELS[1].id);
       C.score = S.score; C.ball = S.ball; C.total = S.total; C.extraAt = S.extraAt.slice(); C.demo = !!S.demo;
+      if (S.run) { C.run = S.run; C.runRound = S.runRound; }   // (fix pass: Ember Run's display says ROUND n below too)
       if (S.mod) C.mod = copy(S.mod);
       if (!C.descent) init(C);
       C.descent.dive = n + 1; C.descent.score0 = S.score;

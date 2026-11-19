@@ -747,10 +747,11 @@
       var PL = W.plug;
       out[PLUG] = lit.plug > 0 ? blinkF(t, 60) : PL && PL.up ? (PL.t < 180 ? blinkF(t, 140) : 1) : 0.03 + 0.08 * breatheF(t, 2000, 0.3);
       // the island modes: done ones on, the running one blinking, the next one (MODE lit at the crater) pulsing
-      var md = G ? modeIndex(G.mode) : -1, done = G ? G.modesDone : 0, nxt = -1;
-      if (G && (G.modeLit || C.mode) && md < 0) nxt = (typeof done === 'number' ? done : done && done.length ? done.length : 0) % 4;
+      // (fix pass: goals.js moves on by G.modeIdx, which counts the modes that ran out of time too, and keeps G.done[i])
+      var md = G ? modeIndex(G.mode) : -1, done = G ? G.modesDone : 0, nxt = -1, dA = G && G.done && G.done.length === 4 && typeof G.done[0] === 'boolean' ? G.done : null;
+      if (G && (G.modeLit || C.mode) && md < 0) nxt = typeof G.modeIdx === 'number' ? G.modeIdx % 4 : (typeof done === 'number' ? done : done && done.length ? done.length : 0) % 4;
       for (k = 0; k < MODES.length; k++) {
-        var dn = typeof done === 'number' ? k < done : done && typeof done.indexOf === 'function' ? done.some(function (d) { return modeIndex(d) === k; }) : false;
+        var dn = dA ? dA[k] : typeof done === 'number' ? k < done : done && typeof done.indexOf === 'function' ? done.some(function (d) { return modeIndex(d) === k; }) : false;
         out[MODES[k]] = k === md ? (blinkF(t, 160) ? 1 : 0.3) : k === nxt ? 0.3 + 0.6 * breatheF(t, 800, 0) : dn ? 0.85 : 0.03 + 0.05 * breatheF(t, 2400, k * 0.25);
       }
       // the boss's phases: the current peak blinks, the ones beaten stay on

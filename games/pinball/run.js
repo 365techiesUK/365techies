@@ -179,13 +179,13 @@
     R.hit = false; R.offer = null; R.phase = 'play'; R.cleared = false; R.endBall = 0; R.chamberBall = false; R.diveT = 0;
     R.lostHere = 0; R.clearSecs = null;
     R.seen = { craters: 0, eruptions: 0, lava: 0, ramps: 0, multiballs: 0, jackpots: 0, crabs: 0, loops: 0, locks: 0, dd: 0, drops0: 0 };
-    R.star = R.boss ? null : { target: R.target, got: false };
+    R.star = R.boss ? null : { target: R.target, got: false }; R.clearPts = 0;
     R.mission = null; R.bs = null; R.hp = R.hpMax = 0; R.dmg = 0;
     if (R.boss) {
       R.bs = { phase: 1, max: Math.round(HP[r] * HPK[R.speed]) * UNIT, dealt: 0, pc: 0, unsealT: 0, gateT: 0, side: 1, hitF: [], ballDmg: [], ballD: 0 };
       R.hp = R.hpMax = R.bs.max / UNIT;
       E.api.seal(W, true); E.api.craterLit(W, 'boss', true);
-      R.news.push({ big: 'THE VOLCANO WAKES', small: 'ROUND ' + r + ' - CRACK THE SEAL: CLEAR THE OBSIDIAN', kind: 'boss' });
+      R.news.push({ big: 'THE VOLCANO WAKES', small: 'ROUND ' + r + ' · IT FIGHTS BACK', kind: 'boss' });
     } else {
       var id = missionFor(R, r), M = MISSIONS[id];
       R.mission = { id: id, text: mtext(R, id), k: 0, got: 0, need: need(R, M.steps[0][1]), done: false, early: {} };
@@ -213,14 +213,14 @@
     var m = R.mission, B = R.bs, def = null;
     if (B && !R.cleared) {
       var ph = B.phase, sealed = W.crater.sealed;
-      def = { id: 'boss', text: 'THE VOLCANO · ' + PHASES[ph], got: Math.floor(B.dealt / UNIT), need: B.max / UNIT, clock: ph === 1 && B.unsealT ? Math.ceil(B.unsealT / 60) : null,
-        small: ph === 1 ? (sealed ? 'CLEAR THE OBSIDIAN TO CRACK IT' : 'SHOOT THE CRATER') : ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'SHOOT THE CRATER BEFORE IT BLOWS',
+      def = { id: 'boss', text: ph === 1 ? (sealed ? 'CLEAR THE OBSIDIAN' : 'SHOOT THE CRATER') : ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'SHOOT THE CRATER', got: Math.floor(B.dealt / UNIT), need: B.max / UNIT, clock: ph === 1 && B.unsealT ? Math.ceil(B.unsealT / 60) : null,
+        small: ph === 1 ? (sealed ? 'TO CRACK THE SEAL' : 'BEFORE IT SEALS AGAIN') : ph === 2 ? 'HITS THE VOLCANO' : 'BEFORE IT BLOWS',   // (fix pass: the instruction first; the HUD's other rows already say THE VOLCANO and the phase)
         shot: ph === 1 ? (sealed ? 'drops' : 'crater') : ph === 2 ? (B.side > 0 ? 'lavaR' : 'lavaL') : 'crater' };
     } else if (m && !m.done) {
       var steps = MISSIONS[m.id].steps, st = steps[m.k];
-      def = { id: m.id, text: m.text, small: (steps.length > 1 ? (m.k + 1) + '/' + steps.length + ' · ' : '') + m.got + ' OF ' + m.need + ' ' + WORD[st[0]], shot: shotFor(W, st[0]), got: m.got, need: m.need };
+      def = { id: m.id, text: m.text, small: steps.length > 1 ? (m.k + 1) + '/' + steps.length + ' · ' + m.got + ' OF ' + m.need + ' ' + WORD[st[0]] : m.got + ' OF ' + m.need, shot: shotFor(W, st[0]), got: m.got, need: m.need };
     } else if (R.cleared && R.diveT > 0) {
-      def = { id: 'dive', text: 'STAGE CLEAR', small: 'DIVE IS LIT · SHOOT THE CRATER', shot: 'crater', gauge: 1, clock: Math.ceil(R.diveT / 60) };
+      def = { id: 'dive', text: 'DIVE IS LIT', small: 'SHOOT THE CRATER', shot: 'crater', gauge: 1, clock: Math.ceil(R.diveT / 60) };
     }
     var cur = W.goals && W.goals.mission;
     if (!def ? cur : !cur || cur.text !== def.text || cur.small !== def.small || cur.got !== def.got || cur.shot !== def.shot || cur.clock !== def.clock) G.mission(W, def);
@@ -251,7 +251,7 @@
     if (d.multiballs > 0 && n(R, 'twin') && W.mb) { E.api.addBall(W); R.news.push({ big: 'TWIN BALL', small: 'ONE MORE BALL', kind: 'up' }); }
     var mine = W.score - R.start;
     // the optional star
-    if (R.star && !R.star.got && mine >= R.star.target) { R.star.got = true; R.news.push({ big: 'STAR', small: E.fmt(R.star.target) + ' IN THE ROUND', kind: 'star' }); }
+    if (R.star && !R.star.got && mine - (R.clearPts || 0) >= R.star.target) { R.star.got = true; R.news.push({ big: 'STAR', small: E.fmt(R.star.target) + ' IN THE ROUND', kind: 'star' }); }
     // the mission: progress is kept across balls
     var m = R.mission;
     if (m && !m.done && play) {
@@ -274,7 +274,8 @@
     if (R.bs && !R.cleared) boss(R, W, d);
     // the DIVE after STAGE CLEAR (20 s; without goals.js the run keeps the lamp itself)
     if (R.diveT > 0 && d.craters > 0 && W.crater.took === 'dive') R.diveT = 0;   // DIVE taken: the NEXT line stops saying DIVE IS LIT (integrate)
-    if (R.diveT > 0 && play && !W.mb) { if (--R.diveT === 0 && !goals()) E.api.craterLit(W, 'dive', false); }
+    var cl = W.crater.lit;   // (fix pass: the DIVE clock waits while another crater award comes first, as goals.js's does)
+    if (R.diveT > 0 && play && !W.mb && (!cl || !cl.length || cl[0] === 'dive')) { if (--R.diveT === 0 && !goals()) E.api.craterLit(W, 'dive', false); }
     // THE BALL POOL: while a ball is in play the world serves exactly the balls left (a chamber clear may have added one)
     if (play) W.total = W.ball - 1 + Math.max(1, R.balls);
     // a ball has ended: after the round's goal it costs nothing and the round ends; before it, it costs a ball
@@ -311,13 +312,13 @@
   // STAGE CLEAR: the time bonus (faster pays more, never less than the base), a held moment, then DIVE for 20 s
   function stageClear(R, W) {
     var secs = W.frame / 60, f = Math.max(0, 1 - secs / CLEAR.secs), pts = Math.round((CLEAR.base + CLEAR.fast * f) * (1 + 0.25 * (R.round - 1)) / 100000) * 100000;
-    R.cleared = R.hit = true; R.clearSecs = Math.round(secs * 10) / 10;
+    R.cleared = R.hit = true; R.clearSecs = Math.round(secs * 10) / 10; R.clearPts = pts;
     E.api.award(W, pts, 'clear');
     W.events.push('missiondone', 'stageclear');
     E.api.hitstop(W, 30);   // (only when every ball is held or carried)
     R.diveT = DIVE_STEPS;
     var G = goals(); if (G && G.dive) G.dive(W, DIVE_STEPS); else E.api.craterLit(W, 'dive', true);
-    R.news.push({ big: 'STAGE CLEAR', small: '+' + E.fmt(pts) + ' TIME BONUS · DIVE IS LIT', kind: 'win' });
+    R.news.push({ big: 'STAGE CLEAR', small: '+' + E.fmt(pts) + ' TIME BONUS', kind: 'win' });
   }
   // THE VOLCANO: three phases, HP in chunks; every 3M scored in the round is a chunk too
   function boss(R, W, d) {
@@ -327,7 +328,7 @@
     var pc = Math.floor((W.score - R.start) * UNIT / (DMG.points * PTSK[R.speed]));
     if (pc > B.pc) { dmg += pc - B.pc; B.pc = pc; }
     if (B.phase === 1) {
-      if (d.bank) { E.api.seal(W, false); B.unsealT = UNSEAL[R.speed]; R.news.push({ big: 'THE SEAL CRACKS', small: 'SHOOT THE CRATER', kind: 'boss' }); }
+      if (d.bank) { E.api.seal(W, false); B.unsealT = UNSEAL[R.speed]; R.news.push({ big: 'THE SEAL CRACKS', small: 'THE CRATER IS OPEN', kind: 'boss' }); }
       if (B.unsealT > 0 && --B.unsealT === 0) E.api.seal(W, true);
       if (took) dmg += (DMG.crater + tame) * UNIT * fx;
     } else if (B.phase === 2) {
@@ -360,7 +361,7 @@
         W.mod.crab = R.crab0; E.api.craterLit(W, 'boss', true); E.api.gates(W, 0, 0);
         W.mod.pressRate = W.press.level / COUNTDOWN[R.speed]; if (V) V.pressure = 0;
       }
-      R.news.push({ big: 'THE VOLCANO · ' + PHASES[ph], small: ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'HIT THE CRATER BEFORE IT BLOWS', kind: 'boss' });
+      R.news.push({ big: 'THE VOLCANO · ' + PHASES[ph], small: ph === 2 ? 'THE LAVA GATES OPEN' : 'IT IS ABOUT TO BLOW', kind: 'boss' });
     } else if (dmg >= UNIT) R.news.push({ big: 'VOLCANO HIT', small: '-' + Math.round(dmg / UNIT) + (dmg < 2 * UNIT ? ' CHUNK' : ' CHUNKS'), kind: 'hit' });
   }
   // for the page's test hook (PinRunPage.endRound): the round's mission done, or the volcano down, at once

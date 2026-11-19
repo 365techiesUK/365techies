@@ -587,15 +587,17 @@
     var balls = s && s.balls != null ? s.balls : (E.hud(Ws).lives), bmax = s && s.ballsMax != null ? s.ballsMax : Math.max(balls, 1);
     var gauge = nx && typeof nx.gauge === 'number' ? Math.max(0, Math.min(5, Math.round(nx.gauge * 5))) : -1;
     var clk = nx && typeof nx.clock === 'number' && isFinite(nx.clock) ? nx.clock : null;
+    if (clk != null && dp && dp.clock != null && (dp.depth | 0) > 0) clk = null;   // (fix pass: below, the depth row's LAVA clock is the one copy)
+    var won = !!(run && s.cleared && !boss);
     var legacy = run && !nx && !(s && s.mission);
-    var key = [run && s.round, boss, bo ? bo.chunks + '/' + bo.chunksMax + bo.phase : s && Math.ceil(s.hp || 0), balls, bmax, nx && nx.text, nx && nx.small, gauge, clk == null ? '' : Math.ceil(clk),
+    var key = [run && s.round, won, boss, bo ? bo.chunks + '/' + bo.chunksMax + bo.phase : s && Math.ceil(s.hp || 0), balls, bmax, nx && nx.text, nx && nx.small, gauge, clk == null ? '' : Math.ceil(clk),
       legacy ? Math.round(s.progress * 400) + '|' + s.roundScore + '|' + s.hit : '', dp ? dp.depth + '|' + (dp.clock == null ? '' : Math.ceil(dp.clock)) + '|' + dp.cleared : '', fl, sh].join('|');
     if (key === RS.key) return; RS.key = key;
     HUD.className = (boss ? 'boss' : '') + (legacy && s.hit ? ' hit' : '') + (fl ? ' flash' : '') + (sh ? ' shake' : '') + (run ? '' : ' classic');
     var h = '';
     if (run) {
       var pips = ''; for (var k = 0; k < Math.min(5, Math.max(bmax, balls)); k++) pips += '<i class="' + (k < balls ? 'on' : '') + '"></i>';
-      h += '<div class="rh-l"><b>' + (boss ? 'THE VOLCANO' : 'ROUND ' + s.round + '/' + s.rounds) + '</b>'
+      h += '<div class="rh-l"><b>' + (boss ? 'THE VOLCANO' : 'ROUND ' + s.round + '/' + s.rounds + (won ? ' ✓ CLEARED' : '')) + '</b>'
         + '<span class="rh-balls" aria-label="' + balls + (balls === 1 ? ' ball' : ' balls') + ' left">' + pips + '</span>'
         + (clk != null ? '<span class="rh-clk">' + clock(clk) + '</span>' : boss ? '<span>ROUND ' + s.round + '/' + s.rounds + '</span>' : legacy ? '<span>' + (s.hit ? 'TARGET REACHED' : 'TARGET ' + short(s.target)) + '</span>' : '') + '</div>';
       if (boss) {
@@ -828,9 +830,9 @@
       + '#runHud.shake .rh-bar{animation:rhShake .1s 4}@keyframes rhShake{50%{transform:translateX(3px)}}'
       + '#runHud .rh-balls{display:inline-flex;gap:3px;margin-left:auto}#runHud .rh-balls i{width:.62em;height:.62em;border-radius:50%;border:2px solid rgba(255,216,74,.6)}#runHud .rh-balls i.on{background:radial-gradient(circle at 35% 30%,#fff,#ffd84a 45%,#c47a10)}'
       + '#runHud .rh-clk{font-variant-numeric:tabular-nums;color:#fff;margin-left:8px}'
-      + '#runHud .rh-next{display:flex;align-items:center;gap:8px;margin-top:4px;padding:3px 8px;border-radius:9px;background:rgba(14,5,2,.72);border:1px solid rgba(255,140,50,.45)}#runHud .rh-nt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}'
+      + '#runHud .rh-next{display:flex;align-items:center;gap:8px;margin-top:4px;padding:3px 8px;border-radius:9px;background:rgba(14,5,2,.72);border:1px solid rgba(255,140,50,.45)}#runHud .rh-nt{flex:1;min-width:0;white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;color:#fff}'
       + '#runHud .rh-nt b{color:#ffb347;margin-right:4px}#runHud .rh-nt small{font-size:1em;font-weight:600;color:#ffd9b0}#runHud .rh-g{display:inline-flex;gap:2px;flex:none}#runHud .rh-g u{width:.7em;height:.55em;border-radius:2px;background:rgba(255,255,255,.18)}#runHud .rh-g u.on{background:#ff9a2a;box-shadow:0 0 5px #ff7a1a}'
-      + '#runHud .rh-depth{display:flex;align-items:baseline;gap:5px;margin-top:4px;color:rgba(255,233,201,.55)}#runHud .rh-depth .at{color:#ffd84a}#runHud .rh-depth .q{opacity:.5}#runHud .rh-depth i{font-style:normal;opacity:.6}#runHud .rh-lava{margin-left:auto;color:#ff6a3c;font-variant-numeric:tabular-nums}'
+      + '#runHud .rh-depth{display:flex;align-items:baseline;gap:5px;margin-top:4px;padding:2px 8px;border-radius:9px;background:rgba(14,5,2,.72);color:rgba(255,233,201,.62)}#runHud .rh-depth .at{color:#ffd84a}#runHud .rh-depth .q{opacity:.5}#runHud .rh-depth i{font-style:normal;opacity:.6}#runHud .rh-lava{margin-left:auto;color:#ff6a3c;font-variant-numeric:tabular-nums}'
       + '#runBan{position:absolute;left:4%;right:4%;top:24%;z-index:2;pointer-events:none;text-align:center;opacity:0}#runBan b{display:block;font:600 max(22px,calc(var(--pu,1px)*21))/1.05 "Clash Display",Archivo,sans-serif;letter-spacing:.03em;color:#ffd84a;text-shadow:0 0 14px rgba(255,106,26,.9),0 2px 3px #000}'
       + '#runBan small{display:block;margin-top:6px;font:700 max(15px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
       + '#runBan.rb-go{animation:rbGo 1.2s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0}}'

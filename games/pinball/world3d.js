@@ -1840,7 +1840,7 @@ export function create(opts) {
         else if (/^lane\d/.test(id)) { const k = +id.slice(4); v = W.skillOpen && W.skill === k ? blink(160) : W.lanes && W.lanes[k] ? 1 : breathe(500, k * 300); }
         else if (id === 'crater') v = V && V.busy ? 1 : (W.crater && W.crater.lit && W.crater.lit.length && !W.crater.sealed) || (V && V.ready) ? blink(120) : blink(420) * 0.5 + 0.05;
         // THE MAGMA CHAMBER's inserts (art3d.js inserts('chamber'); W.descent on the level's world)
-        else if (/^vent\d/.test(id)) { const D = W.descent || {}, k = +id.slice(4); v = D.vents && D.vents[k] ? 1 : D.heat && D.heat[k] ? blink(260, k * 90) * (0.35 + 0.5 * D.heat[k] / (D.need || 1)) : breathe(420, k * 300); }
+        else if (/^vent\d/.test(id)) { const D = W.descent || {}, k = +id.slice(4); v = D.vents && D.vents[k] ? 1 : D.heat && D.heat[k] ? blink(260, k * 90) * (0.35 + 0.5 * D.heat[k] / (D.need || 1)) : W.next && W.next.shot === 'vents' ? 0.1 + 0.75 * blink(380, k * 127) : breathe(420, k * 300); }   // (fix pass: the cold vents pulse while NEXT says LIGHT THE VENTS)
         else if (id === 'core') { const D = W.descent || {}; v = D.cleared ? 0.3 : D.lit >= 3 ? blink(110) : breathe(600); }
         else if (id === 'scoop') { const D = W.descent || {}; v = V && V.busy ? 1 : D.cleared ? blink(100) : breathe(500, 200); }
         else if (id === 'cinder') v = Lv && Lv.gates && Lv.gates[0] && Lv.gates[0].h > 0.5 ? blink(130) : 0.05;

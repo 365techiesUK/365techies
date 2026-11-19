@@ -98,7 +98,7 @@ const G = require('../../games/pinball/goals.js');   // (from here on the goals 
   ok(W.ball === 2 && W.state === 'play', 'the next ball comes');
   const s0 = W.score; W.stats.ramps++; Run.update(R, W);
   ok(R.cleared && R.mission.done && W.score > s0 && R.news.some((x) => x.big === 'STAGE CLEAR'), 'the mission done: STAGE CLEAR with a time bonus');
-  ok(W.crater.dive && W.next && W.next.text === 'STAGE CLEAR' && W.next.shot === 'crater', 'DIVE lit at the crater; THE goal says so');
+  ok(W.crater.dive && W.next && W.next.text === 'DIVE IS LIT' && W.next.shot === 'crater', 'DIVE lit at the crater; THE goal says so');
   W.balls.length = 0; W.feed = 0; E.step(W, {}); Run.update(R, W);
   ok(R.balls === 1 && W.total === W.ball, 'a drain after STAGE CLEAR costs nothing and ends the round');
   let ph = R.phase; for (let i = 0; i < 400 && ph === 'play'; i++) { E.step(W, {}); ph = Run.update(R, W); }
@@ -140,7 +140,7 @@ const G = require('../../games/pinball/goals.js');   // (from here on the goals 
 })();
 (function () {   // THE VOLCANO
   const R = Run.newRun(3, 2); R.round = 3; const W = Run.startRound(R);
-  ok(R.boss && R.round === 4 && R.bs.max === 10 * Run.UNIT && W.crater.sealed && W.crater.boss && W.next.text === 'THE VOLCANO · SEALED' && W.next.shot === 'drops', 'round 4: THE VOLCANO, 10 chunks, SEALED, the arrow on the obsidian');
+  ok(R.boss && R.round === 4 && R.bs.max === 10 * Run.UNIT && W.crater.sealed && W.crater.boss && W.next.text === 'CLEAR THE OBSIDIAN' && W.next.shot === 'drops', 'round 4: THE VOLCANO, 10 chunks, SEALED, the arrow on the obsidian');
   W.dropsDown = 3; Run.update(R, W);
   ok(!W.crater.sealed && R.bs.unsealT >= 1199, 'the obsidian bank cracks the seal for 20 s');
   W.stats.craters++; W.crater.took = 'boss'; Run.update(R, W);

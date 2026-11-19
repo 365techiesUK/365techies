@@ -447,6 +447,9 @@ test('wave 3: modes, the boss phases, the combo ladder and the mutation tags rea
   W.goals = { mode: { name: 'HEAT WAVE' }, modesDone: 3 };
   assert.equal(maxIn(W, [M[3]]), 1); assert.ok(maxIn(W, [M[0]]) >= 0.8 && maxIn(W, [M[2]]) >= 0.8, 'done modes stay on');
   W.goals = { mode: null, modesDone: 1, modeLit: true }; assert.ok(maxIn(W, [M[1]]) >= 0.85 && maxIn(W, [M[2]]) <= 0.1, 'the next mode pulses while MODE is lit');
+  // (fix pass) goals.js's real shape after CRAB HUNT ran out of time and OBSIDIAN QUARRY was done: modeIdx 2, done[1]
+  W.goals = { mode: null, modesDone: 1, modeIdx: 2, done: [false, true, false, false], modeLit: true };
+  assert.ok(maxIn(W, [M[2]]) >= 0.85 && maxIn(W, [M[1]]) >= 0.8 && maxIn(W, [M[0]]) <= 0.1, 'after a failed mode: QUARRY done, ORBIT STORM next, CRAB HUNT dark');
   W.goals = { boss: { phase: 2 } }; const B = LE.groups.boss;
   assert.ok(Math.abs(maxIn(W, [B[0]]) - 0.8) < 0.01 && maxIn(W, [B[1]]) === 1 && maxIn(W, [B[2]]) <= 0.1, 'boss phase 2');
   const W3 = E.newWorld(2, 0, 365, 'ember'); W3.goals = { combo: { n: 3, t: 100 } }; const C = LE.groups.combo, v = LE.level(W3, 0, 'play');   // (a fresh world: no combo show starting)

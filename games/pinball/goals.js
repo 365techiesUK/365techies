@@ -40,7 +40,7 @@
   function surface(W) { var T = tableOf(W); return !T.level && !!T.volcano; }
   function snap(W) { var s = {}; for (var i = 0; i < STATS.length; i++) s[STATS[i]] = W.stats[STATS[i]] || 0; return s; }
   function fresh(W) {
-    return { mode: null, modeLit: false, modesDone: 0, modeIdx: 0, modesStarted: 0, modesFailed: 0, mission: null, combo: { n: 0, t: 0 },
+    return { mode: null, modeLit: false, modesDone: 0, done: [false, false, false, false], modeIdx: 0, modesStarted: 0, modesFailed: 0, mission: null, combo: { n: 0, t: 0 },
       combos: 0, superCombos: 0, bestCombo: 0, diveLit: false, diveT: 0, diveOwn: false, banks: 0, shots: [], s: snap(W), dd: W.dropsDown || 0 };
   }
   function init(W) {
@@ -83,7 +83,9 @@
     if (W.state !== 'play') { g.combo.n = 0; g.combo.t = 0; }
     modes(W, g, d);
     if (d.craters > 0 && W.crater.took === 'dive') { g.diveLit = false; g.diveT = 0; }   // taken
-    if (g.diveLit && g.diveT > 0 && play && !W.mb && --g.diveT === 0) g.diveLit = false;
+    // (fix pass: a lit DIVE's clock waits while another crater award comes first, so its time is never spent unseen)
+    var cl = W.crater.lit, diveFirst = !cl || !cl.length || cl[0] === 'dive';
+    if (g.diveLit && g.diveT > 0 && play && !W.mb && diveFirst && --g.diveT === 0) g.diveLit = false;
     diveLamp(W, g);
     W.next = nextOf(W);
   }
@@ -110,7 +112,7 @@
     var D = MODES[m.i];
     for (var i = 0; i < D.count.length; i++) m.got += Math.max(0, d[D.count[i]] || 0);
     if (m.got >= m.need) {
-      g.modesDone++; g.mode = null;
+      g.modesDone++; g.mode = null; if (g.done) g.done[m.i] = true;   // (fix pass: which modes are done, for the lamps)
       var pts = MODE_PTS * g.modesDone;
       E.api.award(W, pts, 'mode'); W.events.push('modedone'); say(W, D.name + ' DONE', fmt(pts));
       dive(W, MODE_DIVE);
@@ -136,6 +138,7 @@
   function nextOf(W) {
     var g = W.goals, V = W.toys.volcano, C = W.crater, M = W.mb, T = tableOf(W), mi = g && g.mission;
     if (mi && mi.text) return { shot: mi.shot || null, text: mi.text, small: mi.small || '', gauge: mi.need ? Math.min(1, (mi.got || 0) / mi.need) : (mi.gauge || 0), clock: mi.clock != null ? mi.clock : null };
+    if (V && V.mbStart > 0) return { shot: 'crater', text: 'THE BIG ONE', small: 'MULTIBALL COMING', gauge: 1, clock: null };   // (fix pass: the eruption show, before the multiball)
     if (M) {
       if (M.superLit) return { shot: 'crater', text: 'SUPER JACKPOT', small: 'CRATER · ' + fmt(3 * M.jpValue), gauge: 1, clock: null };
       var order = [['ramp', 'ramp'], ['lavaL', 'lavaL'], ['lavaR', 'lavaR']];

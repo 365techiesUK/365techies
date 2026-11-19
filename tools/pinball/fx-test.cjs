@@ -285,8 +285,7 @@ function hasKind(st, kind, min) { return st.bursts.some(function (b) { return b.
   ok(fr > 0.5, 'a colour-fringe spike (' + fr.toFixed(2) + ')');
   ok(flashC && !red(flashC), 'the eruption flash is not red (' + flashC + ')');
   ok(flashHi > 0.2 && flashHi <= 0.55 && flashN === 1, 'one eruption flash, at most 0.55 (' + flashN + ' at ' + flashHi.toFixed(2) + ')');
-  ok(plated, 'the ERUPTION! words are on a dark plate');
-  ok(words.indexOf('ERUPTION!') >= 0, 'an ERUPTION! pop');
+  ok(!plated && words.indexOf('ERUPTION!') < 0, 'no ERUPTION! word pop: the display says FULL ERUPTION, one copy (fix pass, review B2)');
   st = frameRun(W, t0 + 60 * FRAME, 150);
   ok(st.gi <= 1.02 && st.post.fringe === 0, 'and it settles (GI ' + st.gi.toFixed(2) + ')');
   // the ball nears a flipper: the table settles to level at once

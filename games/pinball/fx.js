@@ -85,7 +85,7 @@
     // ---- Ember Peak's
     crater:   { pri: 5, ms: 900, look: 'ring', r: 64, sparks: 16, pop: 'big', gi: 0.75, shake: 0.3, color: C.lava },
     ash:      { pri: 8, ms: 2750, wide: true, look: 'ashes', base: 0.12, color: C.ash },            // (its ms is the crater's hold)
-    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.25, shake: 1, sat: 0.12, vig: 0.12, color: C.amber, word: 'ERUPTION!' },   // (wave 3: one amber flash, was two of 0.9)
+    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.25, shake: 1, sat: 0.12, vig: 0.12, color: C.amber },   // (fix pass: no word plate - the display says FULL ERUPTION)   // (wave 3: one amber flash, was two of 0.9)
     erupt:    { pri: 5, ms: 1100, look: 'burst', sparks: 24, flash: 0.4, shake: 0.5, color: C.ember },   // a crater's release (not full)
     rail:     { pri: 3, ms: 1700, look: 'chase', sparks: 10, color: C.sea },
     railout:  { pri: 2, ms: 500, look: 'ring', r: 30, sparks: 10, color: C.yellow },
@@ -103,7 +103,8 @@
     combo2:   { pri: 5, ms: 1000, look: 'ring', r: 46, sparks: 22, pop: 'big', color: C.pink },   // (a combo of 2-3: local, no flash)
     supercombo: { pri: 8, ms: 2000, wide: true, look: 'spiral', sparks: 50, pop: 'big', gi: 0.5, flash: 0.5, surge: 0.18, sat: 0.25, color: C.pink, word: 'SUPER COMBO' },
     superjackpot: { pri: 9, ms: 2600, wide: true, look: 'spiral', sparks: 60, pop: 'big', gi: 0.4, flash: 0.55, shake: 0.8, surge: 0.2, sat: 0.25, vig: 0.2, color: C.gold, word: 'SUPER JACKPOT' },
-    mbstart:  { pri: 8, ms: 2000, wide: true, look: 'sweepUp', sparks: 40, gi: 0.6, surge: 0.15, sat: 0.2, warm: 0.3, color: C.amber, word: 'MULTIBALL' },
+    mbstart:  { pri: 8, ms: 2000, wide: true, look: 'sweepUp', sparks: 40, gi: 0.6, surge: 0.15, sat: 0.2, warm: 0.3, color: C.amber },   // (fix pass: no word plate - the display says MULTIBALL)
+    mbsoft:   { pri: 8, ms: 2000, wide: true, look: 'sweepUp', sparks: 20, gi: 0.85, color: C.amber },   // (fix pass: THE BIG ONE's multiball, right after the eruption's show - no second surge, warmth or seams on top of it)
     mbend:    { pri: 3, ms: 900, look: 'sweepDown', color: C.steam },
     addaball: { pri: 6, ms: 1300, look: 'column', w: 40, sparks: 30, pop: 'big', color: C.sea, word: 'ADD A BALL' },
     lock:     { pri: 6, ms: 1200, look: 'ring', r: 70, sparks: 30, flash: 0.35, pop: 'big', color: C.green, word: 'LOCKED' },
@@ -120,15 +121,15 @@
     modestart:{ pri: 6, ms: 1500, wide: true, look: 'sides', sparks: 30, gi: 0.6, surge: 0.12, color: C.violet },
     modedone: { pri: 7, ms: 1800, wide: true, look: 'rain', sparks: 40, flash: 0.4, gi: 0.5, surge: 0.2, sat: 0.2, color: C.green, word: 'MODE COMPLETE' },
     modefail: { pri: 3, ms: 900, look: 'sweepDown', gi: 0.75, color: C.steam },
-    missiondone: { pri: 8, ms: 2000, wide: true, look: 'burst', sparks: 50, flash: 0.5, gi: 0.5, surge: 0.2, sat: 0.25, color: C.green, word: 'MISSION DONE' },
-    stageclear: { pri: 9, ms: 2600, wide: true, look: 'spiral', sparks: 60, flash: 0.55, gi: 0.45, surge: 0.2, sat: 0.28, vig: 0.15, color: C.gold, word: 'STAGE CLEAR' },
+    missiondone: { pri: 8, ms: 2000, wide: true, look: 'burst', sparks: 50, flash: 0.5, gi: 0.5, surge: 0.2, sat: 0.25, color: C.green },   // (fix pass: no word plate - the banner says STAGE CLEAR)
+    stageclear: { pri: 9, ms: 2600, wide: true, look: 'spiral', sparks: 60, flash: 0.55, gi: 0.45, surge: 0.2, sat: 0.28, vig: 0.15, color: C.gold },   // (fix pass: no word plate - the banner says it)
     dive:     { pri: 8, ms: 1400, wide: true, look: 'dive', gi: 0.4, vig: 0.25, color: C.blue, word: 'DIVE!' },
     ascend:   { pri: 8, ms: 1600, wide: true, look: 'sweepUp', sparks: 40, gi: 0.6, surge: 0.18, sat: 0.2, color: C.sea, word: 'ASCEND' },
     chamberclear: { pri: 9, ms: 2400, wide: true, look: 'burst', sparks: 60, flash: 0.55, gi: 0.45, surge: 0.2, sat: 0.28, warm: 0.3, color: C.amber, word: 'CHAMBER CLEARED' },
     lavarise: { pri: 8, ms: 1800, wide: true, look: 'flicker', gi: 0.55, warm: 0.45, shake: 0.4, color: C.lava, word: 'THE LAVA RISES' },
     bosshit:  { pri: 6, ms: 900, look: 'ring', r: 70, sparks: 30, flash: 0.35, shake: 0.5, pop: 'big', color: C.ember },
     bossphase:{ pri: 8, ms: 1800, wide: true, look: 'flicker', gi: 0.5, warm: 0.4, shake: 0.5, color: C.ember },
-    bossdown: { pri: 10, ms: 2800, wide: true, look: 'fountain', sparks: 60, flash: 0.55, shake: 1, sat: 0.25, vig: 0.15, color: C.amber, word: 'VOLCANO DEFEATED' }
+    bossdown: { pri: 10, ms: 2800, wide: true, look: 'fountain', sparks: 60, flash: 0.55, shake: 1, sat: 0.25, vig: 0.15, color: C.amber }   // (fix pass: no word plate - the banner says it)
   };
   // which shows a score is credited to first (the pop goes where the best of them happened)
   var RANK = { extra: 0, bumper: 1, spin: 1, sling: 1, inlane: 1, outlane: 1, lane: 2, drop: 3, eject: 1, orbit: 5, saucer: 6, drops: 6, ramp: 7, loop: 7, mult: 4, skill: 8, combo: 8, jackpot: 9,
@@ -631,7 +632,7 @@
       }
       if (n === 'erupt' && S.full) { show = 'eruption'; S.full = false; S.ashEnd = Math.min(S.ashEnd, S.clock); S.floodAt = S.clock; seams(); }
       if (n === 'combo' && X.volc) show = (e && e.n >= 4) ? 'combo' : 'combo2';   // (Ember: combos are frequent; only a big one takes the table)
-      if (n === 'mbstart') seams();
+      if (n === 'mbstart') { if (S.clock - S.floodAt < 4000) show = 'mbsoft'; else seams(); }
       var d = SHOWS[show], col = w.color || d && d.color || C.white;
       w.at.color = col;
       if (d) {
