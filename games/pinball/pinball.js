@@ -281,9 +281,9 @@
     if (mu !== AUD.music && window.PinMusic && typeof PinMusic.enable === 'function') { AUD.music = mu; try { PinMusic.enable(mu); } catch (e) {} }
     if (vo !== AUD.voice && window.PinVoice && typeof PinVoice.enable === 'function') { AUD.voice = vo; try { PinVoice.enable(vo); } catch (e) {} }
   }
-  document.addEventListener('click', function (e) {   // (after the cabinet's own handler has flipped and saved the switch)
+  document.addEventListener('click', function (e) {   // the switches, once the cabinet has flipped and saved them
     var b = e.target && e.target.closest && e.target.closest('[data-set="music"],[data-set="voice"],[data-set="sound"]'); if (!b || !G3.set) return;
-    lsSet('pin365:music', !!G3.set.music); lsSet('pin365:voice', !!G3.set.voice); audioSet(G3.set);
+    setTimeout(function () { lsSet('pin365:music', !!G3.set.music); lsSet('pin365:voice', !!G3.set.voice); audioSet(G3.set); }, 0);   // (this listener runs before the cabinet's own)
   });
   var BUZZ = { flip: 10, bumper: 25, sling: 25, plugsave: 60, quake: 60, tilt: 120 };
   function buzz(W, list) {
@@ -368,7 +368,7 @@
     '<b>Obsidian targets</b> (the three black stones right of the middle, beside the heat ramp): ' + fmt(PT.drop) + ' each. Knock down all three for ' + fmt(PT.drops) + ' and the <b>OBSIDIAN PLUG</b> rises between the flippers for ' + Math.round(((TB && TB.T.plug && TB.T.plug.time) || 1200) / 60) + ' seconds: it saves one ball that falls down the middle. In Classic it also lights <b>MODE</b> at the crater. They come back up two seconds later.',
     '<b>Pressure:</b> nearly every shot builds the volcano&rsquo;s pressure &mdash; the cone rises and the rumble under the table grows. The first eruption needs only a little; each one after needs more. Half way up, <b>LOCK</b> lights at the crater: a crater shot banks a ball for the next multiball. At the top the display says <b>ERUPT NOW</b>.',
     '<b>The crater:</b> best from the right flipper, shoot the ball firmly into the volcano&rsquo;s mouth: ' + fmt(PT.crater) + ', plus up to ' + fmt(PT.pressure) + ' more for the pressure inside. The volcano holds the ball for a moment, then fires it into the sky and down the <b>wire rail</b> into the left inlane (' + fmt(PT.rail) + ').',
-    '<b>THE BIG ONE:</b> shoot the crater with ERUPT lit for <b>' + fmt(PT.eruption) + '</b> more, and the volcano erupts into a <b>multiball</b>: 2 balls, or 3 with a lock banked, with a ball save. <b>JACKPOT</b> is lit on both lava lanes and the heat ramp: ' + fmt(PT.jackpot || 5000000) + ', and ' + fmt(PT.jackpotUp || 1000000) + ' more for each one after. Three jackpots light the <b>SUPER JACKPOT</b> at the crater. The steam geyser adds one more ball, once. The multiball ends when one ball is left.',
+    '<b>The eruption multiball:</b> shoot the crater with ERUPT lit for <b>' + fmt(PT.eruption) + '</b> more, and the volcano erupts into a <b>multiball</b>: 2 balls, or 3 with a lock banked, with a ball save. <b>JACKPOT</b> is lit on both lava lanes and the heat ramp: ' + fmt(PT.jackpot || 5000000) + ', and ' + fmt(PT.jackpotUp || 1000000) + ' more for each one after. Three jackpots light the <b>SUPER JACKPOT</b> at the crater. The steam geyser adds one more ball, once. The multiball ends when one ball is left.',
     '<b>The quake:</b> keep building pressure well past ERUPT without shooting the crater and the volcano overloads &mdash; <b>QUAKE COMING</b>: the island shakes and tips the ball sideways for a moment, the obsidian plug drops and the pressure falls back. The quake waits until no ball is close to a flipper.',
     '<b>Steam geyser</b> (just below the volcano): a slow ball is caught, it puffs, then flings the ball up into the fumaroles: ' + fmt(PT.geyser) + '.',
     '<b>Fumaroles</b> (the pop bumpers under the top lanes): ' + fmt(PT.bumper) + ' a hit. <b>Magma crabs</b> walk about the island: ' + fmt(PT.crab) + ' for a hit, and the crab stops for a moment. <b>Slingshots</b> (the lava-lit triangles above the flippers): ' + fmt(PT.sling) + '.',
@@ -393,6 +393,7 @@
   // steps the engine: the shares add up (0.35, 0.7, 1.05: a step ...), so the engine itself is stepped exactly as ever.
   // A step that is skipped leaves the quick-tap latches set, so the next real step still sees the tap.
   function stepGame(W, input) {
+    WANT = null;
     if (W.run && RUN && RUN.phase !== 'play') return;   // EMBER RUN: the table waits while the upgrade is picked
     var ts = timeScale(A3() ? A3().mode : 'play');
     if (ts < 1) {
@@ -460,6 +461,59 @@
   // engine sets W.over; runStep clears it again when the run goes on (the cabinet's game-over card waits for the run's
   // end) and the table waits (stepGame) while the player picks 1 of 3 upgrades on the pick card. Run over or won: the
   // cabinet's own game-over card, with the run's summary in place of its tiles. PinRun missing: Classic only.
+  // TODAY'S ERUPTION and seed links (wave 3, #27): ?seed=N opens that run, ?day=YYYY-MM-DD that day's; the title card's
+  // TODAY'S ERUPTION button plays today's. The seed of a day is PinRun.daily(date) (the run lane's), or our own hash of
+  // the date with an older run.js. Nothing else changes: the same speed setting, the same rules, no streak to lose.
+  var Q = (function () { var o = {}; try { location.search.replace(/^\?/, '').split('&').forEach(function (kv) { var p = kv.split('='); if (p[0]) o[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); }); } catch (e) {} return o; })();
+  function dayKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function daySeed(d) {
+    if (window.PinRun && typeof PinRun.daily === 'function') { try { var v = PinRun.daily(d); if (v) return v; } catch (e) {} }
+    var k = dayKey(d), h = 2166136261; for (var i = 0; i < k.length; i++) { h ^= k.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h % 2147483646 + 1;
+  }
+  var WANT = null;   // the next run's seed: { seed, daily, day } (a link, or the TODAY'S ERUPTION button)
+  (function () {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(Q.day || '');
+    if (m) { var d = new Date(+m[1], +m[2] - 1, +m[3]); WANT = { seed: daySeed(d), daily: true, day: dayKey(d) }; }
+    else if (/^\d{1,10}$/.test(Q.seed || '') && +Q.seed > 0) WANT = { seed: +Q.seed % 2147483647 || 1, daily: false };
+  })();
+  var LAST = null;   // the run just played: { seed, daily, day }, for the share text
+  // the best run's key (wave 3, #29): pin365:runbest, so Keep my scores carries it and Clear removes it. run.js still
+  // keeps it under its old key; the two are kept in step here until run.js moves.
+  var OLDBEST = 'pinball365.emberRun.best', NEWBEST = 'pin365:runbest';
+  function bestSync(dir) {   // 'in': old -> new where new is missing (and new -> old where old is missing); 'out': old -> new
+    try {
+      var o = localStorage.getItem(OLDBEST), n = localStorage.getItem(NEWBEST);
+      if (o && (dir === 'out' || !n)) localStorage.setItem(NEWBEST, o);
+      else if (n && !o) localStorage.setItem(OLDBEST, n);
+    } catch (e) {}
+  }
+  bestSync('in');
+  // ?log=1 (wave 3, #31): the owner's playtest card - each game on this device is noted (when, mode, speed, score, how
+  // far, how long, eruptions, multiballs, jackpots) under pin365log (no colon: Keep my scores never sends it). Nothing
+  // leaves the device; the card can copy the list to the clipboard and clear it.
+  var LOG = Q.log === '1', LOGKEY = 'pin365log';
+  function logRead() { try { var v = JSON.parse(localStorage.getItem(LOGKEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function logAdd(W) {
+    if (!LOG || !W) return;
+    var st = W.stats || {}, L = logRead(), S = W.run && RUN ? PR.summary(RUN) : null, a = A3();
+    L.push({ at: new Date().toISOString().slice(0, 16).replace('T', ' '), mode: W.run ? (LAST && LAST.daily ? 'daily' : 'run') : 'classic', speed: W.speed, score: W.score,
+      reached: S ? S.reached : W.ball, won: S ? !!S.won : false, cause: S && S.cause ? txt(S.cause) : '', secs: Math.round((W.frame || 0) / 60),
+      eruptions: st.eruptions || 0, multiballs: st.multiballs || 0, jackpots: st.jackpots || 0, plugSaves: st.plugSaves || 0, seed: LAST ? LAST.seed : null, touch: COARSE, look: G3.set && G3.set.look });
+    try { localStorage.setItem(LOGKEY, JSON.stringify(L.slice(-60))); } catch (e) {}
+    logCard();
+  }
+  function logCard() {
+    var L = logRead();
+    [].forEach.call(document.querySelectorAll('.pinLog'), function (el) {
+      el.innerHTML = '<p class="pl-h">PLAYTEST LOG <small>(this device only: nothing is sent)</small></p>'
+        + (L.length ? '<ol>' + L.slice(-8).reverse().map(function (g) { return '<li>' + esc(g.at.slice(5)) + ' · ' + esc(g.mode) + ' ' + ['', 'G', 'C', 'F'][g.speed] + ' · ' + esc(fmt(g.score)) + ' · ' + (g.mode === 'classic' ? 'ball ' : 'round ') + g.reached + ' · ' + g.secs + ' s' + (g.multiballs ? ' · ' + g.multiballs + ' MB' : '') + '</li>'; }).join('') + '</ol>' : '<p>No games yet.</p>')
+        + '<div class="row"><button class="btn wide pl-copy" type="button">Copy all (' + L.length + ')</button><button class="btn wide pl-clear" type="button">Clear</button></div>';
+      var cp = el.querySelector('.pl-copy');
+      cp.onclick = function () { try { navigator.clipboard.writeText(JSON.stringify(logRead(), null, 1)).then(function () { cp.textContent = 'Copied'; }); } catch (e) {} };
+      el.querySelector('.pl-clear').onclick = function () { try { localStorage.removeItem(LOGKEY); } catch (e) {} logCard(); };
+    });
+  }
   var PR = window.PinRun, RUN = null, RS = { sel: 0, key: '', flash: 0, hitT: 0, pu: 0 }, HUD = null, BAN = null, PICK = null, OSUM = null, OVER = null;
   function runOn(set) { return !!(PR && EMBER && !(set && set.game === 'classic')); }
   function runWorld(R) { var W = PR.startRound(R); if (W) W.run = true; return W; }
@@ -608,7 +662,18 @@
       + (S.mutations.length ? '<p class="rs-mu">Mutations: ' + esc(S.mutations.join(', ')) + '</p>' : '')
       + '<p class="rs-best">' + (nb ? '<b>NEW BEST RUN!</b>' : B ? 'Best run: ' + (B.won ? 'won' : 'round ' + B.reached) + ' · ' + fmt(B.score) : '') + '</p>';
     OVER.classList.add('runsum'); if (BAN) BAN.className = '';
+    bestSync('out');
     endLines(S);
+    var sh = document.getElementById('oShareRun'); if (sh) sh.hidden = !window.GameSocial;
+  }
+  // the share text of a run (wave 3, #27): one square a round, the score and a link that opens the same run
+  function shareRun() {
+    if (!RUN || !window.GameSocial) return;
+    var S = PR.summary(RUN), sq = '';
+    for (var r = 1; r <= RUN.rounds; r++) { var l = S.rounds[r - 1]; sq += l ? (l.hit ? (PR.BOSS && PR.BOSS[r] ? '\uD83C\uDF0B' : '\uD83D\uDFE7') : '\uD83D\uDFE5') : '\u2B1B'; }
+    var day = LAST && LAST.daily, d = new Date();
+    GameSocial.share({ text: (day ? 'TODAY\u2019S ERUPTION ' + (LAST.day || dayKey(d)) : 'EMBER RUN') + ' \u00B7 365 Pinball Hero\n' + sq + ' ' + fmt(S.score) + (S.won ? ' \u00B7 the volcano is tamed!' : '') + '\nPlay the same run, free, no adverts:',
+      query: day ? '?day=' + (LAST.day || dayKey(d)) : '?seed=' + (LAST ? LAST.seed : RUN.seed) });
   }
   // THE END CARD (wave 3, #19): the result is the heading (overText); under PLAY AGAIN one true near-miss line and one
   // next goal; everything else folded under "Details". run.js's own summary lines (nearMiss, next) when it has them.
@@ -628,7 +693,7 @@
       var a = A3(), W = a && a.world, best = +(String(document.getElementById('oBest').textContent).replace(/\D/g, '')) || 0;
       if (W && best > W.score) near = fmt(best - W.score) + ' short of your best.';
       var st = (W && W.stats) || {};
-      next = !st.eruptions ? 'Next: fill the pressure and shoot the crater when it says ERUPT NOW.' : !st.multiballs ? 'Next: set off THE BIG ONE multiball.' : !st.jackpots ? 'Next: a JACKPOT during the multiball.' : !st.supers ? 'Next: three jackpots light the SUPER JACKPOT.' : 'Next: beat your best.';
+      next = !st.eruptions ? 'Next: fill the pressure and shoot the crater when it says ERUPT NOW.' : !st.multiballs ? 'Next: set off the eruption multiball.' : !st.jackpots ? 'Next: a JACKPOT during the multiball.' : !st.supers ? 'Next: three jackpots light the SUPER JACKPOT.' : 'Next: beat your best.';
     }
     el.innerHTML = (near ? '<p class="ol-near">' + esc(near) + '</p>' : '') + (next ? '<p class="ol-next">' + esc(next) + '</p>' : '');
   }
@@ -638,10 +703,14 @@
     speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
     newWorld: function (speed, set) {   // a different game every time; EMBER RUN: a new run, its first round
       G3.slow = 0; RS.key = ''; if (PICK) PICK.hidden = true; if (OVER) OVER.classList.remove('runsum');
-      var seed = (Date.now() % 2147483646) + 1;
+      var seed = (Date.now() % 2147483646) + 1, w = WANT;   // (WANT is let go at the first step played: the title's own worlds come through here too)
       var NW;
-      if (!runOn(set)) { RUN = null; NW = E.newWorld(speed, set, seed); }
-      else { RUN = PR.newRun(seed, speed); NW = runWorld(RUN); }
+      if (!runOn(set)) { RUN = null; LAST = null; NW = E.newWorld(speed, set, seed); }
+      else {
+        if (w) seed = w.seed;
+        LAST = { seed: seed, daily: !!(w && w.daily), day: w && w.day };
+        RUN = PR.newRun(seed, speed, { daily: LAST.daily }); NW = runWorld(RUN);
+      }
       makeDesc(NW, speed, seed);
       lastScore = -1; lastWa = null;
       if (NW && NW.run && NW.dmd && /^BALL /.test(String(NW.dmd.big))) NW.dmd = null;   // (the round's banner says it)
@@ -653,6 +722,8 @@
     // the Hall of Fame's check on a pinball score (api/games-hof.php, $ARCADE['pinball']): the invitation shows only for a
     // score the server will take. KEEP IN STEP WITH THE PHP (rate, base) - these two numbers are the only copy here.
     hofCap: { rate: 20000, base: 300000 },
+    // Clear my scores (wave 3, #29): the best run too, under both its keys
+    onClear: function () { try { localStorage.removeItem(OLDBEST); localStorage.removeItem(NEWBEST); } catch (e) {} },
     num: fmt,   // EMBER RUN: the round in the Ball chip
     // EMBER RUN keeps its own best scores (r1-r3), as Invaders keeps its two styles apart
     statKey: function (W) { return (W && W.run ? 'r' : 'v') + W.speed; },
@@ -683,7 +754,7 @@
         try { mode = PinDemo.frame(W, t, mode, dts) || mode; } catch (e) {}
       }
       if (mode !== 'play') letGo();   // paused, game over: nothing stays held
-      if (mode === 'over' && !RS.ended) { RS.ended = true; if (!(W && W.run && RUN)) endLines(null); } else if (mode !== 'over') RS.ended = false;
+      if (mode === 'over' && !RS.ended) { RS.ended = true; if (!(W && W.run && RUN)) endLines(null); logAdd(W); } else if (mode !== 'over') RS.ended = false;
       runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
       if (mode !== 'title') W = active(W);   // INTO THE VOLCANO: draw the level the ball is on
       music(W, mode);
@@ -743,9 +814,9 @@
     var st = document.createElement('style'), wrap = document.getElementById('screenwrap');
     st.textContent = '#runHud{position:absolute;left:4%;right:4%;top:7.6%;z-index:2;pointer-events:none;font:700 max(15px,calc(var(--pu,1px)*8.5))/1.15 Archivo,sans-serif;letter-spacing:.06em;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}'
       + '#runHud[hidden],#runBan[hidden]{display:none}#runHud .rh-l{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px}#runHud .rh-l b{color:#ffb347}#runHud .rh-l span{opacity:.92}'
-      + '#runHud .rh-bar{position:relative;height:max(13px,calc(var(--pu,1px)*11));border-radius:99px;background:rgba(20,6,2,.78);border:1px solid rgba(255,140,50,.55);overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,.6)}'
+      + '#runHud .rh-bar{position:relative;height:max(19px,calc(var(--pu,1px)*11));border-radius:99px;background:rgba(20,6,2,.78);border:1px solid rgba(255,140,50,.55);overflow:hidden;box-shadow:0 0 10px rgba(0,0,0,.6)}'
       + '#runHud .rh-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ff3d00,#ff8a1a 70%,#ffc04a);transition:width .25s}'
-      + '#runHud .rh-bar em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:.92em;color:#fff;text-shadow:0 1px 2px #000}'
+      + '#runHud .rh-bar em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-size:1em;color:#fff;text-shadow:0 1px 2px #000}'
       + '#runHud.hit .rh-bar{border-color:#ffd84a}#runHud.hit .rh-bar i{background:linear-gradient(90deg,#ffb000,#ffe066)}#runHud.hit .rh-l span{color:#ffd84a}'
       + '#runHud.flash .rh-bar{animation:rhFlash .35s 4 alternate}@keyframes rhFlash{to{box-shadow:0 0 22px #ffd84a,0 0 4px #fff;border-color:#fff}}'
       + '#runHud.boss .rh-l b{color:#ff5a3c}#runHud.boss .rh-bar{border-color:#ff5a3c}#runHud.boss .rh-bar i{background:linear-gradient(90deg,#8a0d00,#e0261b 60%,#ff6a3c)}'
@@ -769,6 +840,12 @@
       + '.rp-ic svg,.rs-chip svg{width:44px;height:44px;fill:none;stroke:#ff9a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.rp-card.sel .rp-ic svg{stroke:#ffd84a}'
       + '.rp-t b{display:block;font:700 16px/1.15 Archivo,sans-serif;letter-spacing:.04em;color:#ffd84a}.rp-t b i{font-style:normal;color:#7fe8ff;font-size:13px}.rp-t small{display:block;margin-top:3px;font:500 13.5px/1.3 Archivo,sans-serif;color:#ffe9c9}'
       + '#oRun{display:none}#oRun .rs-tiles{grid-template-columns:1fr 1fr}#ov_over.runsum #oRun{display:block}#ov_over.runsum .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35)}#ov_over.runsum #oMore>.tiles{display:none}'
+      + '#tDaily{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin:8px 0 2px;border-color:#ff8a2a;color:#ffd84a}#tDaily small{font:600 13px Archivo,sans-serif;color:#ffd9b0}#oShareRun{width:100%;margin:4px 0}'
+      + '.pinQuick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}.pinQuick .pq{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:10px 6px;border-radius:12px;background:rgba(255,106,26,.1);border:1px solid rgba(255,140,50,.4)}'
+      + '.pinQuick svg{width:56px;height:56px;fill:none;stroke:#ff9a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.pinQuick svg .f{fill:#ffd84a;stroke:#ffd84a}.pinQuick b{font:700 16px Archivo,sans-serif;color:#ffd84a}.pinQuick small{font:500 15px/1.3 Archivo,sans-serif}'
+      + '.pinGuide>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font:700 16px Archivo,sans-serif;color:#ffb347}@media (max-width:420px){.pinQuick{grid-template-columns:1fr}.pinQuick .pq{flex-direction:row;text-align:left}.pinQuick svg{width:44px;height:44px;flex:none}}'
+      + 'body.touchy #pad button,body.touchy .tb,body.touchy .imx{min-height:44px;min-width:44px}'
+      + '.pinLog{margin:10px 0 0;padding:8px 10px;border-radius:10px;border:1px dashed #7fe8ff;text-align:left;font:500 13px/1.35 Archivo,sans-serif;color:#cfe9ff}.pinLog .pl-h{margin:0 0 4px;font-weight:700;color:#7fe8ff}.pinLog ol{margin:0 0 6px;padding-left:18px}'
       + '#ov_over .oAgain{margin:10px 0 6px}#ov_over .oAgain #oPlay{width:100%;min-height:62px;font-size:23px;letter-spacing:.04em}#ov_over .oAgain #oStep{width:100%;margin-top:8px}'
       + '#oLines p{margin:6px 0;font:700 16px/1.3 Archivo,sans-serif}#oLines .ol-near{color:#ffd9b0}#oLines .ol-next{color:#ffd84a}'
       + '#oMore{margin-top:8px;text-align:left}#oMore>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:center;font:700 15px Archivo,sans-serif;color:#a9b7d6;list-style:none}#oMore>summary::-webkit-details-marker{display:none}#oMore>summary::after{content:" \\25BE";margin-left:6px}#oMore[open]>summary::after{content:" \\25B4"}#oMore .row{justify-content:center}'
@@ -782,7 +859,7 @@
     HUD = document.createElement('div'); HUD.id = 'runHud'; HUD.hidden = true; HUD.setAttribute('aria-hidden', 'true');
     BAN = document.createElement('div'); BAN.id = 'runBan'; BAN.setAttribute('role', 'status'); BAN.setAttribute('aria-live', 'polite');
     PICK = document.createElement('div'); PICK.className = 'ov'; PICK.id = 'ov_pick'; PICK.hidden = true;
-    PICK.innerHTML = '<div class="ovbox" role="dialog" aria-label="Choose an upgrade"><h2 class="rp-h">ROUND CLEARED</h2><p class="rp-s"></p><div class="rp-m"></div><p class="rp-q">CHOOSE AN UPGRADE</p><div class="rp-cards"></div><p class="soft">Keys 1, 2, 3 &middot; or the arrows and Enter</p></div>';
+    PICK.innerHTML = '<div class="ovbox" role="dialog" aria-label="Choose an upgrade"><h2 class="rp-h">ROUND CLEARED</h2><p class="rp-s"></p><div class="rp-m"></div><p class="rp-q">CHOOSE AN UPGRADE</p><div class="rp-cards"></div><p class="soft k-keys">Keys 1, 2, 3 &middot; or the arrows and Enter</p></div>';
     wrap.appendChild(HUD); wrap.appendChild(BAN); wrap.appendChild(PICK);
     OVER = document.getElementById('ov_over');
     var why = document.getElementById('oWhy');
@@ -800,7 +877,32 @@
       ['.tiles', '#oBadges', '#oTro'].forEach(function (q) { var n = box.querySelector(':scope > ' + q); if (n) det.appendChild(n); });
       if (row) det.appendChild(row);
       box.appendChild(det);
+      var shr = document.createElement('button'); shr.type = 'button'; shr.className = 'btn wide'; shr.id = 'oShareRun'; shr.hidden = true; shr.textContent = 'Share this run';
+      shr.onclick = shareRun; lines.parentNode.insertBefore(shr, lines.nextSibling);
     })();
+    // TODAY'S ERUPTION on the title card (Ember Run only)
+    if (PR) (function () {
+      var trow = document.querySelector('#ov_title .trow'); if (!trow) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn big daily'; b.id = 'tDaily';
+      b.innerHTML = '&#127755; TODAY&rsquo;S ERUPTION<small>the same run for everyone today</small>';
+      b.onclick = function () {
+        var s = G3.set; if (s && s.game === 'classic') { var rb = document.querySelector('[data-opt="game"][data-val="run"]'); if (rb) rb.click(); }
+        var d = new Date(); WANT = { seed: daySeed(d), daily: true, day: dayKey(d) }; A3().begin();
+      };
+      trow.parentNode.insertBefore(b, trow.nextSibling);
+    })();
+    // the quick start (wave 3, #30): three picture cards on top of How to play; the full guide folded under them
+    (function () {
+      var sh = document.querySelector('#dHelp .sheet'), ol = sh && sh.querySelector('ol.how'); if (!ol) return;
+      var svg = function (b) { return '<svg viewBox="0 0 64 64" aria-hidden="true">' + b + '</svg>'; };
+      var q = document.createElement('div'); q.className = 'pinQuick';
+      q.innerHTML = '<div class="pq"><span>' + svg('<rect x="6" y="8" width="52" height="48" rx="6"/><path d="M32 8v48" stroke-dasharray="4 4"/><path d="M14 44l12-6M50 44l-12-6"/><circle cx="20" cy="26" r="5" class="f"/><circle cx="44" cy="26" r="5" class="f"/>') + '</span><b>Flip</b><small class="k-touch">Tap the left or right half of the screen.</small><small class="k-keys">&larr; and &rarr; (or Z and M).</small></div>'
+        + '<div class="pq"><span>' + svg('<path d="M44 6v40"/><path d="M36 38l8 10 8-10"/><circle cx="44" cy="54" r="5" class="f"/><path d="M14 20h14M14 30h10M14 40h6"/>') + '</span><b>Launch</b><small class="k-touch">Hold a finger down, then let go.</small><small class="k-keys">Hold Space, then let go.</small></div>'
+        + '<div class="pq"><span>' + svg('<path d="M32 6l14 22H38v26H26V28h-8z" class="f"/>') + '</span><b>Shoot the arrow</b><small>The glowing arrow and the NEXT line show the shot to make.</small></div>';
+      var det = document.createElement('details'); det.className = 'pinGuide'; det.innerHTML = '<summary>The full guide</summary>';
+      ol.parentNode.insertBefore(q, ol); ol.parentNode.insertBefore(det, ol); det.appendChild(ol);
+    })();
+    if (LOG) { ['#ov_title .ovbox', '#ov_over .ovbox'].forEach(function (q) { var bx = document.querySelector(q); if (bx) { var lg = document.createElement('div'); lg.className = 'pinLog'; bx.appendChild(lg); } }); logCard(); }
     PICK.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-pick]'); if (b) choose(b.getAttribute('data-pick')); });
     // keys on the pick card: 1 2 3, or the arrows and Enter (before the cabinet's own keys, which would flip the frozen table)
     window.addEventListener('keydown', function (e) {

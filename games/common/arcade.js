@@ -11,7 +11,7 @@
  * Opt-in (wave 3, 365 Pinball Hero; a game without them is exactly as before): num(n) -> the score as shown (thousands
  * separators), waveLabel(world) -> the word on the bar's wave chip and the game-over tile (Round in a run),
  * hofCap {rate, base} -> the server's own check (api/games-hof.php) made before the Hall of Fame invitation, so it only
- * shows for a score the server will take.
+ * shows for a score the server will take, onClear() -> called after Clear my scores (a game's own extra keys).
  * The game reports what happened by pushing onto world.events: a sound name, {sfx, ...} or {say: 'words'};
  * world.over = true ends the game. */
 (function () {
@@ -652,7 +652,7 @@
       GameSocial.share({ text: 'I scored ' + Number(h.score).toLocaleString('en-GB') + ' on ' + D.title + ' (' + WORD + ' ' + h.wave + ') – can you beat it? Free, no adverts:' });
     };
     $('sReset').onclick = function () { openD('dReset'); };
-    $('rYes').onclick = function () { ST = blank(); save('stats', ST); closeSheets(); say('Your scores have been cleared'); lastHud = ''; if (W) hud(); };
+    $('rYes').onclick = function () { ST = blank(); save('stats', ST); if (D.onClear) { try { D.onClear(); } catch (e) {} } closeSheets(); say('Your scores have been cleared'); lastHud = ''; if (W) hud(); };
     function toggleFull() { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} }
     // ------------------------------------------------------------ full screen on a phone (11 Oct 2026; owner, playing on his phone:
     // "I just want it to be full screen ... you don't need the left and right and the fire button"). Play takes the game
