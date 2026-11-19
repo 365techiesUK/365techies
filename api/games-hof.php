@@ -68,8 +68,11 @@ $HOF_ARCADE = array(
     // (365 Coast Run, 5 Oct: a driver that gets round scores ~2,000-2,700 a second, plus up to ~450,000 at each goal; the third round on is capped)
     'coastrun' => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 8000, 'base' => 500000, 'word' => 'stage'),
     // (30 Oct 2026, owner: "change how it plays": EMBER RUN keeps its own boards r1-r3; an unknown lv falls back to v1, which would mix runs into Classic Gentle)
-    // (365 Pinball Hero, 15 Oct: PROVISIONAL - generous until the playtest farm measures a good player's points a second in milestone 3)
-    'pinball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast', 'r1' => 'Ember Run · Gentle', 'r2' => 'Ember Run · Classic', 'r3' => 'Ember Run · Fast'), 'rate' => 20000, 'base' => 300000, 'word' => 'ball'),
+    // (365 Pinball Hero, wave 3, 5 Nov 2026: measured by tools/pinball/hof-cap.cjs - whole Classic games and EMBER RUN runs by
+    // the pilot, the lagged pilot and the casual bot at all three speeds; THE BIG ONE multiball, the NEXT arrow and the
+    // goals made the best game ~5.3M pts/s and the best run ~12.4M (a long victory multiball), so the rate is over 2x that
+    // and the base covers a big start - a score 10x the best bot's is still refused)
+    'pinball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast', 'r1' => 'Ember Run · Gentle', 'r2' => 'Ember Run · Classic', 'r3' => 'Ember Run · Fast'), 'rate' => 25000000, 'base' => 50000000, 'word' => 'ball'),
 );
 $HOF_RUNS = __DIR__ . '/games-hof-runs.json';
 $HOF_RUNLOCK = __DIR__ . '/games-hof-runs.lock';
