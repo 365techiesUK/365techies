@@ -15,7 +15,14 @@
  * the fumaroles' pops (Ember Peak's pop bumpers) and obsidian clinks. The cabinet passes the world as a fourth argument
  * (sound(name, kit, event, world)), so each table gets its own sounds and stereo places.
  * The ball touches walls and rubbers many times a second, and the spinner can turn 50 times a second, so those are
- * scaled by how hard the ball hit and limited to a few a second: they add life without ever clattering. */
+ * scaled by how hard the ball hit and limited to a few a second: they add life without ever clattering.
+ *
+ * Wave 3 (5 Nov 2026), THE BIG ONE: a loudness ladder players can learn by ear - the shots (orbit, loop, heat ramp, lava
+ * lane) sum to 0.30-0.50, about twice the flipper (0.18-0.20), and the spinner's tick is 0.015 at most; each shot chained
+ * onto the last (W.goals.combo from goals.js, else within 3 s) plays its reward note one step higher up a pentatonic scale
+ * (8 steps, back to the bottom on a drain or a gap); and a sting for every new event (the eruption ladder, the multiball,
+ * the jackpots, the plug, combos, modes and missions, the levels and the boss). Big moments also ask the music
+ * (music.js, window.PinMusic) for a bar-quantised stinger and a 6 dB duck, and the frame hook hands the music its kit. */
 (function (root) {
   'use strict';
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
@@ -56,6 +63,27 @@
     });
   }
   var tickN = 0, spinN = 0, drainT = 0;
+  // the chain: each major shot chained onto the last plays its reward note one pentatonic step higher (C major
+  // pentatonic over two octaves); goals.js's combo count when there is one, else within 3 s of the last shot
+  var PENTA = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51], CH = { n: -1, at: 0 };
+  function chainStep(W) {
+    var G = W && W.goals && W.goals.combo, t = now(), k;
+    if (G && typeof G.n === 'number' && G.t > 0 && G.n > 0) k = G.n - 1;
+    else k = CH.n >= 0 && t - CH.at < 3000 ? CH.n + 1 : 0;
+    CH.n = Math.min(PENTA.length - 1, Math.max(0, k)); CH.at = t;
+    return CH.n;
+  }
+  function reward(S, W, pan) {   // the shot's reward note at the chain's step (0.09 in all)
+    var k = chainStep(W), f = PENTA[k];
+    S.tone(f, 0.16, 0.06, { type: 'triangle', when: 0.12, pan: pan || 0, verb: 0.3, chain: k });
+    S.tone(f * 1.5, 0.12, 0.03, { type: 'sine', when: 0.12, pan: pan || 0 });
+    return k;
+  }
+  function thump(S, pan) { S.tone(110, 0.14, 0.1, { type: 'sine', to: 55, pan: pan || 0 }); }   // the weight under a shot (0.1)
+  function music(kind, duck) {   // a stinger on the next bar and a duck, when the music is there
+    var M = root.PinMusic; if (!M) return;
+    try { if (kind && M.sting) M.sting(kind); if (duck && M.duck) M.duck(duck); } catch (e) {}
+  }
   function drainSound(S) {
     S.tone(330, 0.7, 0.055, { type: 'triangle', to: 55 });
     S.tone(165, 0.7, 0.025, { type: 'square', to: 40, when: 0.05 });
@@ -118,6 +146,7 @@
         S.tone(140, 0.4, 0.09, { type: 'sawtooth', to: 900, pan: PAN.volcano, verb: 0.15 });
         S.tone(95, 0.3, 0.2, { type: 'sine', to: 40, pan: PAN.volcano });
         if (big) {
+          music('erupt', 4);
           S.tone(90, 1.4, 0.32, { type: 'sine', to: 26, attack: 0.005 });
           S.tone(45, 1.6, 0.18, { type: 'sine', to: 22, when: 0.05 });
           S.noise(1.5, 0.3, 2400, { type: 'lowpass', to: 60, verb: 0.35 });
@@ -158,10 +187,11 @@
         S.tone(330, 0.1, 0.04, { type: 'triangle', to: 660, when: 0.12, pan: p });
         return true;
       }
-      case 'lava': {   // a lava lane made: a sizzle and a fanfare
-        S.noise(0.5, 0.1, 6000, { type: 'highpass', to: 2500, verb: 0.2 });
-        notes(S, [392, 523, 659, 784, 1047], 0.09, 0.05, 0.065, { verb: 0.3 });
-        [784, 1047, 1319].forEach(function (f) { S.tone(f, 0.6, 0.028, { type: 'triangle', when: 0.33, verb: 0.45 }); });
+      case 'lava': {   // a lava lane made: a sizzle and a fanfare (0.445 with its reward note)
+        S.noise(0.5, 0.08, 6000, { type: 'highpass', to: 2500, verb: 0.2 });
+        notes(S, [392, 523, 659, 784, 1047], 0.09, 0.04, 0.065, { verb: 0.3 });
+        [784, 1047, 1319].forEach(function (f) { S.tone(f, 0.6, 0.025, { type: 'triangle', when: 0.33, verb: 0.45 }); });
+        reward(S, W);
         return true;
       }
       case 'quake': {   // the quake: the ground rumbles and rocks rattle
@@ -189,11 +219,83 @@
         S.noise(0.8, 0.12, 200, { type: 'lowpass', to: 50, when: 0.1 });
         return true;
       }
-      case 'ramp': {   // the heat ramp made: a climbing whoosh and a bright two-note call
-        S.tone(220, 0.35, 0.035, { type: 'sawtooth', to: 1400, verb: 0.3 });
+      case 'ramp': {   // the heat ramp made: a climbing whoosh and a bright two-note call (0.38 with its thump and reward note)
+        S.tone(220, 0.35, 0.04, { type: 'sawtooth', to: 1400, verb: 0.3 });
         S.noise(0.3, 0.06, 1200, { type: 'bandpass', q: 1, to: 5000, verb: 0.2 });
         S.tone(1319, 0.22, 0.05, { type: 'triangle', when: 0.3, verb: 0.35 });
-        S.tone(1976, 0.3, 0.035, { type: 'triangle', when: 0.38, verb: 0.35 });
+        S.tone(1976, 0.3, 0.04, { type: 'triangle', when: 0.38, verb: 0.35 });
+        thump(S); reward(S, W);
+        return true;
+      }
+      // ---------------------------------------------------------------- wave 3: THE BIG ONE
+      case 'rumble': {   // the volcano rumbles at 75%: a deep groan
+        S.tone(42, 1.2, 0.2, { type: 'sine', to: 34 }); S.noise(1.1, 0.12, 180, { type: 'lowpass', to: 60 });
+        S.tone(84, 0.9, 0.05, { type: 'sawtooth', to: 70, when: 0.15 });
+        return true;
+      }
+      case 'locklit': {   // LOCK lit: two bright rising notes
+        notes(S, [659, 988], 0.12, 0.05, 0.1, { type: 'triangle', verb: 0.3, pan: PAN.volcano });
+        return true;
+      }
+      case 'lock': {   // a lock banked: a clank and a chord
+        S.noise(0.08, 0.2, 2400, { to: 400, pan: PAN.volcano }); S.tone(220, 0.1, 0.12, { type: 'square', to: 110, pan: PAN.volcano });
+        [523, 659, 784].forEach(function (f) { S.tone(f, 0.5, 0.035, { type: 'triangle', when: 0.1, verb: 0.4 }); });
+        music('lock', 0);
+        return true;
+      }
+      case 'eruptlit': return true;   // (the pressure 'full' call plays for it, in the same step)
+      case 'mbstart': {   // the multiball under way: a fanfare over a drum roll
+        for (i = 0; i < 8; i++) S.noise(0.06, 0.09 + i * 0.01, 900, { type: 'bandpass', q: 1.5, to: 300, when: i * 0.06 });
+        notes(S, [392, 523, 659, 784, 1047, 1319], 0.12, 0.05, 0.08, { when: 0.48, verb: 0.35 });
+        music('multiball', 3);
+        return true;
+      }
+      case 'mbend': {   // the multiball over: a falling run
+        notes(S, [784, 659, 523, 392], 0.14, 0.035, 0.1, { type: 'triangle', verb: 0.3 });
+        return true;
+      }
+      case 'jackpot': {   // a jackpot: a bell, a fanfare and a ringing chord
+        S.tone(2093, 0.9, 0.05, { type: 'sine', verb: 0.5 }); S.tone(3136, 0.6, 0.02, { type: 'sine', when: 0.01 });
+        notes(S, [523, 659, 784, 1047, 1319], 0.1, 0.05, 0.07, { when: 0.08, verb: 0.3 });
+        [1047, 1319, 1568].forEach(function (f) { S.tone(f, 0.8, 0.03, { type: 'triangle', when: 0.45, verb: 0.5 }); });
+        reward(S, W);
+        music('jackpot', 2);
+        return true;
+      }
+      case 'superjackpot': {   // the super jackpot: the knocker, two fanfares an octave apart, a long chord
+        S.noise(0.12, 0.3, 500, { to: 60 }); S.tone(80, 0.2, 0.25, { type: 'sine', to: 40 });
+        notes(S, [523, 659, 784, 1047], 0.1, 0.05, 0.07, { when: 0.1, verb: 0.3 });
+        notes(S, [1047, 1319, 1568, 2093], 0.1, 0.045, 0.07, { when: 0.4, verb: 0.35 });
+        [523, 784, 1047, 1568].forEach(function (f) { S.tone(f, 1.4, 0.03, { type: 'triangle', when: 0.7, verb: 0.55 }); });
+        music('super', 3);
+        return true;
+      }
+      case 'addaball': {   // add a ball: the geyser's blast and a bright call
+        S.noise(0.5, 0.15, 7000, { type: 'bandpass', q: 0.7, to: 1300, pan: PAN.geyser });
+        notes(S, [784, 1047, 1568], 0.1, 0.05, 0.08, { when: 0.1, verb: 0.35 });
+        return true;
+      }
+      case 'plugup': {   // the obsidian plug rises between the flippers: a grinding rise and a ring
+        S.tone(70, 0.4, 0.12, { type: 'sawtooth', to: 140 }); S.noise(0.35, 0.08, 600, { type: 'bandpass', q: 2, to: 1500 });
+        S.tone(1760, 0.4, 0.03, { type: 'triangle', when: 0.35, verb: 0.35 });
+        return true;
+      }
+      case 'plugdown': {   // the plug sinks
+        S.tone(140, 0.4, 0.1, { type: 'sawtooth', to: 60 }); S.noise(0.3, 0.06, 900, { type: 'bandpass', q: 2, to: 300 });
+        return true;
+      }
+      case 'plugsave': {   // the plug kicks a ball back up: a stone thud and a cheer of notes
+        S.tone(90, 0.14, 0.24, { type: 'sine', to: 45 }); S.noise(0.08, 0.2, 2000, { to: 300 });
+        notes(S, [659, 880, 1175], 0.09, 0.045, 0.07, { when: 0.08, verb: 0.3 });
+        return true;
+      }
+      case 'sealed': {   // the boss seals the crater: a heavy slam and a low hiss
+        S.tone(60, 0.5, 0.25, { type: 'sine', to: 30, pan: PAN.volcano }); S.noise(0.6, 0.1, 400, { type: 'lowpass', to: 80, pan: PAN.volcano });
+        return true;
+      }
+      case 'unsealed': {   // cracked open: rock breaking and a rising call
+        for (i = 0; i < 5; i++) S.noise(0.05, 0.1, 2400 + i * 300, { type: 'bandpass', q: 2, to: 700, when: i * 0.05, pan: PAN.volcano });
+        notes(S, [392, 523, 784], 0.1, 0.045, 0.08, { when: 0.25, verb: 0.3 });
         return true;
       }
     }
@@ -227,6 +329,7 @@
   }
   function frame(W, S, mode, set) {
     if (!S) return;
+    var Mu = root.PinMusic; if (Mu && Mu.attach) { try { Mu.attach(S, set); } catch (e) {} }   // (wave 3: the music plays through the cabinet's kit)
     var want = rumbleWant(W, mode, set);
     if (!RUM) {
       if (want <= 0 || !S.ctx) return;
@@ -253,8 +356,8 @@
       // ---------------------------------------------------------------- the machine
       case 'flip': {   // the flipper's coil: a hard clack and a short thunk, on its own side
         p = ((e && e.side) || 0) * 0.55;
-        S.noise(0.045, 0.22, 2600, { type: 'bandpass', q: 1.3, to: 900, pan: p });
-        S.tone(150, 0.07, 0.07, { type: 'triangle', to: 70, pan: p });
+        S.noise(0.045, 0.14, 2600, { type: 'bandpass', q: 1.3, to: 900, pan: p });   // (wave 3 ladder: 0.19 in all, was 0.29)
+        S.tone(150, 0.07, 0.05, { type: 'triangle', to: 70, pan: p });
         break;
       }
       case 'launch': {   // the plunger: a harder pull is a bigger thump and a longer whoosh up the lane
@@ -310,7 +413,7 @@
       case 'spin': {   // the comet spinner ticking round (at most 35 ticks a second)
         if (!ready('spin', 28)) break;
         spinN++;
-        S.tone(spinN & 1 ? 2400 : 2150, 0.014, 0.022, { type: 'square', pan: PAN.spin });
+        S.tone(spinN & 1 ? 2400 : 2150, 0.014, 0.014, { type: 'square', pan: PAN.spin });   // (wave 3 ladder: 0.014, was 0.022)
         break;
       }
       case 'eject': {   // the hangar kicks the ball back out
@@ -349,7 +452,8 @@
         S.tone(2093, 0.3, 0.035, { type: 'triangle', when: 0.38, verb: 0.35 });
         break;
       }
-      case 'combo': {   // the ramp again, quickly: the warp and a run of notes, higher and longer the bigger the combo
+      case 'combo': {   // a combo (goals.js: any two major shots in 3 s; the old table: the ramp again): the warp and a run of
+        // notes, higher and longer the bigger the combo
         k = clamp((e && e.n) || 2, 2, 5);
         var base = 523 * Math.pow(2, (k - 2) * 3 / 12);
         S.tone(300 + 100 * k, 0.3, 0.035, { type: 'sawtooth', to: 1800 + 300 * k, verb: 0.3 });
@@ -379,15 +483,91 @@
         S.noise(0.5, 0.06, 400, { type: 'bandpass', q: 1, to: 3000, when: 0.3, verb: 0.2 });
         break;
       }
-      case 'orbit': {   // round an orbit: a sweep
-        S.tone(400, 0.3, 0.035, { type: 'triangle', to: 1400 });
-        S.noise(0.3, 0.05, 800, { type: 'bandpass', q: 2, to: 4000 });
+      case 'orbit': {   // round an orbit: a sweep, a thump and the reward note (0.39 in all, wave 3; was 0.085)
+        S.tone(400, 0.3, 0.12, { type: 'triangle', to: 1400 });
+        S.noise(0.3, 0.08, 800, { type: 'bandpass', q: 2, to: 4000 });
+        thump(S); reward(S, W);
         break;
       }
-      case 'loop': {   // up one orbit and round the other: two sweeps, across from side to side
-        S.tone(300, 0.25, 0.035, { type: 'sawtooth', to: 1200, pan: -0.7 });
-        S.tone(600, 0.3, 0.035, { type: 'sawtooth', to: 2400, pan: 0.7, when: 0.18, verb: 0.25 });
-        S.tone(2093, 0.3, 0.035, { type: 'triangle', when: 0.45, verb: 0.35 });
+      case 'loop': {   // up one orbit and round the other: two sweeps, across from side to side (0.39, was 0.105)
+        S.tone(300, 0.25, 0.07, { type: 'sawtooth', to: 1200, pan: -0.7 });
+        S.tone(600, 0.3, 0.07, { type: 'sawtooth', to: 2400, pan: 0.7, when: 0.18, verb: 0.25 });
+        S.tone(2093, 0.3, 0.05, { type: 'triangle', when: 0.45, verb: 0.35 });
+        thump(S); reward(S, W);
+        break;
+      }
+      // ---------------------------------------------------------------- wave 3: combos, modes, missions, levels, the boss
+      case 'supercombo': {   // a SUPER COMBO: the whole scale up and a ringing top
+        notes(S, PENTA, 0.07, 0.04, 0.045, { verb: 0.3 });
+        [1047, 1319, 1568, 2093].forEach(function (f) { S.tone(f, 0.9, 0.025, { type: 'triangle', when: 0.38, verb: 0.5 }); });
+        music('combo', 2);
+        break;
+      }
+      case 'modelit': case 'divelit': {   // MODE or DIVE lit at the crater: a call from the volcano
+        notes(S, name === 'divelit' ? [988, 784, 659] : [659, 784, 988], 0.1, 0.045, 0.09, { type: 'triangle', verb: 0.35, pan: PAN.volcano });
+        break;
+      }
+      case 'modestart': {   // a mode begins: a short march
+        notes(S, [392, 392, 523, 659], 0.1, 0.05, 0.11, { verb: 0.25 });
+        S.noise(0.1, 0.12, 900, { type: 'bandpass', q: 1.5, to: 300, when: 0.33 });
+        music('mode', 0);
+        break;
+      }
+      case 'modedone': case 'missiondone': {   // done: a bright fanfare
+        notes(S, [523, 659, 784, 1047, 1319], 0.1, 0.05, 0.075, { verb: 0.3 });
+        [1047, 1319, 1568].forEach(function (f) { S.tone(f, 0.7, 0.03, { type: 'triangle', when: 0.38, verb: 0.45 }); });
+        music('done', 2);
+        break;
+      }
+      case 'modefail': {   // time up: two soft falling notes (never a scold)
+        notes(S, [523, 392], 0.2, 0.03, 0.18, { type: 'triangle', verb: 0.3 });
+        break;
+      }
+      case 'stageclear': {   // STAGE CLEAR: the knocker and a full fanfare
+        S.noise(0.12, 0.28, 500, { to: 60 }); S.tone(80, 0.15, 0.2, { type: 'sine', to: 40 });
+        notes(S, [523, 659, 784, 1047, 784, 1047, 1319, 1568], 0.1, 0.05, 0.085, { when: 0.12, verb: 0.3 });
+        [523, 784, 1047, 1568].forEach(function (f) { S.tone(f, 1.2, 0.028, { type: 'triangle', when: 0.8, verb: 0.55 }); });
+        music('clear', 3);
+        break;
+      }
+      case 'dive': {   // DIVE: a long fall into the volcano
+        S.tone(1400, 0.9, 0.06, { type: 'triangle', to: 90, verb: 0.4 }); S.noise(0.9, 0.12, 4000, { type: 'bandpass', q: 0.8, to: 200 });
+        S.tone(60, 0.6, 0.2, { type: 'sine', to: 30, when: 0.6 });
+        music('dive', 2);
+        break;
+      }
+      case 'ascend': {   // back up: a rising whoosh and a bright call
+        S.tone(120, 0.8, 0.06, { type: 'sawtooth', to: 1600, verb: 0.3 }); S.noise(0.8, 0.1, 300, { type: 'bandpass', q: 1, to: 6000 });
+        notes(S, [784, 1047, 1319], 0.1, 0.045, 0.08, { when: 0.7, verb: 0.35 });
+        break;
+      }
+      case 'chamberclear': {   // the chamber cleared: a deep boom and a fanfare
+        S.tone(70, 1, 0.25, { type: 'sine', to: 30 });
+        notes(S, [392, 523, 659, 784, 1047, 1319], 0.1, 0.05, 0.08, { when: 0.15, verb: 0.35 });
+        music('clear', 3);
+        break;
+      }
+      case 'lavarise': {   // THE LAVA RISES: a swelling roar and a falling warning
+        S.noise(1.6, 0.18, 200, { type: 'lowpass', to: 900 }); S.tone(55, 1.5, 0.15, { type: 'sawtooth', to: 40 });
+        notes(S, [880, 659, 523], 0.18, 0.04, 0.2, { type: 'square', when: 0.3 });
+        break;
+      }
+      case 'bosshit': {   // a hit on the volcano: a crack and a thud
+        S.noise(0.1, 0.22, 3200, { to: 400 }); S.tone(75, 0.3, 0.24, { type: 'sine', to: 35 });
+        S.tone(330, 0.15, 0.05, { type: 'square', to: 660, when: 0.05 });
+        break;
+      }
+      case 'bossphase': {   // the boss changes: a groan and three low stabs
+        S.tone(48, 1, 0.2, { type: 'sawtooth', to: 36 });
+        notes(S, [147, 139, 131], 0.2, 0.06, 0.22, { type: 'square', when: 0.2 });
+        music('boss', 2);
+        break;
+      }
+      case 'bossdown': {   // VOLCANO DEFEATED: the eruption's boom and the victory fanfare
+        S.tone(90, 1.4, 0.3, { type: 'sine', to: 26, attack: 0.005 }); S.noise(1.5, 0.25, 2400, { type: 'lowpass', to: 60, verb: 0.35 });
+        notes(S, [523, 659, 784, 1047, 1319, 1568, 2093], 0.12, 0.05, 0.09, { when: 0.4, verb: 0.4 });
+        [523, 784, 1047, 1568].forEach(function (f) { S.tone(f, 1.6, 0.03, { type: 'triangle', when: 1.05, verb: 0.55 }); });
+        music('victory', 4);
         break;
       }
       case 'skill': {   // the skill shot: a fanfare
@@ -443,6 +623,7 @@
       case 'drain': {   // the ball is gone - unless ball save brings it straight back ('save' comes in the same step, so
         // the sound waits for the rest of the step's events before it plays)
         if (drainT) clearTimeout(drainT);
+        CH.n = -1;   // (the chain starts again from the bottom)
         drainT = setTimeout(function () { drainT = 0; drainSound(S); }, 0);
         break;
       }
@@ -470,5 +651,5 @@
     }
   }
 
-  root.PinSound = { sound: sound, frame: frame, want: rumbleWant, get rumble() { return RUM ? RUM.level : 0; } };
+  root.PinSound = { sound: sound, frame: frame, want: rumbleWant, get rumble() { return RUM ? RUM.level : 0; }, PENTA: PENTA, chain: function () { return CH.n; }, resetChain: function () { CH.n = -1; CH.at = 0; } };
 })(typeof self !== 'undefined' ? self : this);
