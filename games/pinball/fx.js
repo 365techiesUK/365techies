@@ -638,7 +638,7 @@
       if (d) {
         startShow(show, w.at, w.ex || (w.key ? { key: w.key } : null));
         if (d.sparks) sparks(reduced() ? Math.ceil(d.sparks / 2) : d.sparks, w.at.px != null ? w.at.px : w.at.x, w.at.y, w.at.z || 6, col, d.pri >= 5 ? 1.6 : 1);
-        var word = d.word ? d.word : n === 'mult' ? 'BONUS X' + W.mult : n === 'combo' && e && e.n > 1 ? 'COMBO ' + e.n : n === 'jackpot' && X.volc ? 'JACKPOT' : null;
+        var word = d.word ? d.word : n === 'combo' && e && e.n > 1 ? 'COMBO ' + e.n : n === 'jackpot' && X.volc ? 'JACKPOT' : null;
         if (word) { var wp = pop(word, w.at.x, w.at.y - (d.pop ? 18 : 0), (w.at.z || 6) + (d.pop ? 22 : 6), col === C.flood || col === C.amber ? C.yellow : col, true); if (wp) wp.plate = true; }   // (above the points; wave 3: words on a dark plate)
       }
       fxAt(show, w.at, W);
