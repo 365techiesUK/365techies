@@ -8,8 +8,9 @@
  *    within 3.0 s. The clock stops while a ball is held, carried or on the ramp. Combo n pays n x 250,000 and pushes
  *    { sfx: 'combo', n }; the fifth is a SUPER COMBO, 5,000,000 and 'supercombo'.
  *  - ISLAND MODES (Classic only: W.mod.noModes turns them off): the obsidian bank lights MODE at the crater (the
- *    engine), and the crater starts the next of four in turn - CRAB HUNT (crabs x4), OBSIDIAN QUARRY (obsidian x5),
- *    ORBIT STORM (the lava gates open; orbits, loops or lava lanes x4), HEAT WAVE (heat ramp x3). Each lasts 30 s
+ *    engine), and the crater starts the next of four in turn - CRAB HUNT (crabs x3), OBSIDIAN QUARRY (obsidian x4),
+ *    ORBIT STORM (the lava gates open; orbits, loops or lava lanes x3), HEAT WAVE (heat ramp x2; one fewer each than the
+ *    plan's numbers, tuned to the casual bot). Each lasts 30 s
  *    (Gentle 40 s) and stacks with multiball; done = 5,000,000 x the modes done so far and DIVE lights; run out = nothing
  *    lost. Events 'modestart', 'modedone', 'modefail'.
  *  - DIVE (PinGoals.dive(W, steps)): lit at the crater for a while, never during a multiball (it waits, unlit, until only
@@ -25,10 +26,10 @@
   if (!E) return null;
   var COMBO = 180, SUPER = 5, COMBO_PTS = 250000, SUPER_PTS = 5000000, MODE_PTS = 5000000, DIVE_STEPS = 1200;
   var MODES = [
-    { id: 'crabhunt', name: 'CRAB HUNT', shot: 'crabs', count: ['crabs'], need: 4, word: 'CRABS' },
-    { id: 'quarry', name: 'OBSIDIAN QUARRY', shot: 'drops', count: ['drops'], need: 5, word: 'OBSIDIAN' },
-    { id: 'storm', name: 'ORBIT STORM', shot: 'orbitL', count: ['orbits', 'loops', 'lava'], need: 4, word: 'ORBITS', gates: true },
-    { id: 'heatwave', name: 'HEAT WAVE', shot: 'ramp', count: ['ramps'], need: 3, word: 'HEAT RAMPS' }
+    { id: 'crabhunt', name: 'CRAB HUNT', shot: 'crabs', count: ['crabs'], need: 3, word: 'CRABS' },
+    { id: 'quarry', name: 'OBSIDIAN QUARRY', shot: 'drops', count: ['drops'], need: 4, word: 'OBSIDIAN' },
+    { id: 'storm', name: 'ORBIT STORM', shot: 'orbitL', count: ['orbits', 'loops', 'lava'], need: 3, word: 'ORBITS', gates: true },
+    { id: 'heatwave', name: 'HEAT WAVE', shot: 'ramp', count: ['ramps'], need: 2, word: 'HEAT RAMPS' }
   ];
   var NAMES = { crater: 'CRATER', ramp: 'HEAT RAMP', orbitL: 'LEFT ORBIT', orbitR: 'RIGHT ORBIT', lavaL: 'LEFT LAVA LANE', lavaR: 'RIGHT LAVA LANE',
     drops: 'OBSIDIAN', crabs: 'MAGMA CRABS', pops: 'FUMAROLES', geyser: 'GEYSER', lanes: 'TOP LANES', loop: 'LOOP' };

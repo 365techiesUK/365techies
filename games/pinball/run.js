@@ -40,7 +40,9 @@
   var TARGET = [0, 8000000, 12000000, 16000000, 0, 25000000, 32000000, 40000000, 0];
   var HP = { 4: 10, 8: 14 };   // THE VOLCANO's HP in chunks in each boss round
   var DMG = { crater: 3, lava: 1, countdown: 2, points: 3000000 };   // chunks: a SEALED crater hit, the lit lava lane, a COUNTDOWN crater hit; points a chunk
+  var UNIT = 10, NEEDK = { 1: 0.5, 2: 1, 3: 1 }, HPK = { 1: 0.5, 2: 1, 3: 1 }, UNSEAL = { 1: 1800, 2: 1200, 3: 1200 }, PTSK = { 1: 0.5, 2: 1, 3: 1 };   // (Gentle: a chunk every 1.5M)   // Gentle: half the mission counts (at least 1), a smaller volcano   // each chunk is 10 units, so points chip in a unit every 300,000 and the HP bar moves often
   var PHASES = ['', 'SEALED', 'MAGMA FLOW', 'COUNTDOWN'];
+  var SAVE0 = { 1: 20, 2: 0, 3: 0 };   // extra seconds of ball save on every ball of a Gentle run (tuned to the casual bot)
   var COUNTDOWN = { 1: 32, 2: 25, 3: 25 }, DIVE_STEPS = 1200, CLEAR = { base: 2000000, fast: 8000000, secs: 150 };
   // the missions: steps of [what to count, how many] (a W.stats key, or 'bank' for the full obsidian bank)
   var MISSIONS = {
@@ -53,37 +55,39 @@
     lockerupt: { text: 'LOCK, THEN ERUPT', steps: [['locks', 1], ['eruptions', 1]] },
     lava3: { text: '3 LAVA LANES', steps: [['lava', 3]] }
   };
-  var TEACH = ['obsidian', 'erupt'], HARD = ['jackpot2', 'crab5', 'loop', 'lockerupt', 'lava3'];
+  var TEACH = ['obsidian', 'erupt'], HARD = ['jackpot2', 'crab5', 'loop', 'lockerupt'], HARD1 = ['jackpot2', 'crab5', 'erupt'];   // (Gentle: the casual bot's shots - no loop, lock-then-erupt or lava lanes)
   var WORD = { ramps: 'HEAT RAMPS', bank: 'OBSIDIAN BANKS', eruptions: 'ERUPTIONS', jackpots: 'JACKPOTS', crabs: 'CRABS', loops: 'LOOPS', locks: 'LOCKS', lava: 'LAVA LANES' };
   var SPEEDK = { 1: 0.8, 2: 1, 3: 1.15 };   // Gentle is slower (fewer points a minute), Fast quicker
   var BEST_KEY = 'pinball365.emberRun.best';
   var BALLS = { 1: 3, 2: 2, 3: 1 }, BALLS_MAX = 5;   // the run's pool of balls by speed (SECOND WIND and a chamber clear add one; 5 at most)
 
   // ------------------------------------------------------------ the upgrades: id, name, one line, how many can stack
+  // (wave 3, the deck retune: every card changes play or is clearly worth its slot; multipliers add up, x10 at most)
   var UPGRADES = [
-    { id: 'fire', name: 'FIRE BALL', text: 'Obsidian targets score x3', max: 3 },
-    { id: 'pump', name: 'MAGMA PUMP', text: '+50% volcano pressure from every shot', max: 2 },
+    { id: 'fire', name: 'FIRE BALL', text: 'A full obsidian bank doubles your next crater shot (and boss hit)', max: 1 },
+    { id: 'pump', name: 'MAGMA PUMP', text: '+50% volcano pressure, and an overload never quakes', max: 2 },
     { id: 'gold', name: 'GOLD RAMP', text: 'Heat ramp scores x3', max: 3 },
     { id: 'crab', name: 'CRAB WRANGLER', text: 'Crabs score x5 and walk slower', max: 2 },
     { id: 'lavakick', name: 'MAGMA PLUG', text: 'Every ball starts with the obsidian plug up for 15 s', max: 1 },
-    { id: 'net', name: 'SAFETY NET', text: '+6 seconds of ball save every round', max: 3 },
-    { id: 'bumper', name: 'BUMPER BLAST', text: 'Fumaroles score x4', max: 3 },
-    { id: 'lanes', name: 'LUCKY LANES', text: 'Two skill lanes start lit every round', max: 1 },
+    { id: 'net', name: 'SAFETY NET', text: 'Every crater shot gives 6 s of ball save', max: 2 },
+    { id: 'bumper', name: 'BUMPER BLAST', text: 'Every fumarole pop is worth 100,000', max: 1 },
+    { id: 'lanes', name: 'LUCKY LANES', text: 'Two skill lanes start lit on every ball', max: 1 },
     { id: 'twin', name: 'TWIN BALL', text: 'Every multiball gets one more ball', max: 1 },
     { id: 'wind', name: 'SECOND WIND', text: 'One more ball for the run', max: 3 },
     { id: 'interest', name: 'INTEREST', text: '+10% of your banked score after each round', max: 3 },
-    { id: 'forge', name: 'BONUS FORGE', text: 'End-of-ball bonus starts at x2 (stacks)', max: 3 },
-    { id: 'tamer', name: 'VOLCANO TAMER', text: 'Boss damage +50%; full eruptions score x2', max: 2 }
+    { id: 'forge', name: 'BONUS FORGE', text: 'Every ball starts with the bonus at x2 (stacks)', max: 3 },
+    { id: 'tamer', name: 'VOLCANO TAMER', text: '+1 boss chunk every crater hit; eruptions score x2', max: 2 }
   ];
-  // ------------------------------------------------------------ the mutations, one after each round
+  // ------------------------------------------------------------ the mutations, one after each round: each one you can
+  // see on the table (W.mod.tags names them for the lamps)
   var MUTATIONS = [
     { id: 'skitter', name: 'SKITTISH CRABS', text: 'The crabs walk 60% faster' },
-    { id: 'flow', name: 'LONG FLOW', text: 'Lava gates stay open 50% longer' },
-    { id: 'hyper', name: 'HYPER GEYSER', text: 'The geyser recharges 3x faster' },
-    { id: 'deadkick', name: 'DEAD KICKBACK', text: 'No kickback next round' },
+    { id: 'quakes', name: 'AFTERSHOCKS', text: 'A quake shakes the table every 45 seconds' },
+    { id: 'lavaopen', name: 'MOLTEN LANES', text: 'Both lava gates open for 15 s on every ball' },
+    { id: 'heat', name: 'BUILDING HEAT', text: 'The volcano fills itself, slowly' },
     { id: 'crust', name: 'COOLING CRUST', text: 'Volcano pressure slowly leaks away' },
     { id: 'thin', name: 'THIN MAGMA', text: '-20% volcano pressure from every shot' },
-    { id: 'fuse', name: 'SHORT FUSE', text: '-3 seconds of ball save' },
+    { id: 'crusted', name: 'CRUSTED CRATER', text: 'Each ball starts with the crater sealed until an obsidian target falls' },
     { id: 'hotcrab', name: 'HOT CRABS', text: 'Crabs score x2' }
   ];
   var UP = {}, MU = {};
@@ -114,31 +118,29 @@
     };
   }
   function n(R, id) { return R.ups[id] || 0; }
+  function mu(R, id) { return R.muts.indexOf(id) >= 0; }
   function target(R, r) { return BOSS[r] ? 0 : Math.round(TARGET[r] * SPEEDK[R.speed] / 100000) * 100000; }
   // the engine's knobs for this round, from the upgrades taken and the mutations so far
   function mod(R) {
-    var M = { x: {}, press: 1, crab: 1, lava: 1, gey: 1, save: 0, noKick: R.deadKick, decay: 0 };
-    function x(k, f) { M.x[k] = (M.x[k] || 1) * f; }
+    var M = { x: {}, press: 1, crab: 1, lava: 1, gey: 1, save: SAVE0[R.speed] || 0, noKick: R.deadKick, decay: 0 };
+    function x(k, f) { M.x[k] = Math.min(10, (M.x[k] || 1) + (f - 1)); }   // stacking adds up, x10 at most
     var i;
-    for (i = 0; i < n(R, 'fire'); i++) x('drop', 3);
-    for (i = 0; i < n(R, 'pump'); i++) M.press *= 1.5;
+    M.press = 1 + 0.5 * n(R, 'pump');
     for (i = 0; i < n(R, 'gold'); i++) x('ramp', 3);
     for (i = 0; i < n(R, 'crab'); i++) { x('crab', 5); M.crab *= 0.6; }
-    M.save += 6 * n(R, 'net');
-    for (i = 0; i < n(R, 'bumper'); i++) x('bumper', 4);
+    if (n(R, 'bumper')) x('bumper', 20);
     for (i = 0; i < n(R, 'tamer'); i++) x('erupt', 2);
+    M.tags = R.muts.slice();
+    M.pressRate = R.muts.indexOf('heat') >= 0 ? 0.006 : 0;
     // wave 3 (the engine carries these onto every new ball; the skill shot pays 0.3x in runs; no island modes in runs)
     M.mult0 = Math.min(5, 1 + n(R, 'forge'));
     if (n(R, 'lanes') && R.lanesOff != null) M.lanes0 = [R.lanesOff !== 0, R.lanesOff !== 1, R.lanesOff !== 2];
-    x('skill', 0.3);
+    M.x.skill = 0.3;
     M.noModes = true;
     R.muts.forEach(function (id) {
       if (id === 'skitter') M.crab *= 1.6;
-      else if (id === 'flow') M.lava *= 1.5;
-      else if (id === 'hyper') M.gey /= 3;
       else if (id === 'crust') M.decay += 0.0005;   // a share of full pressure a step: full leaks away in about 33 s
       else if (id === 'thin') M.press *= 0.8;
-      else if (id === 'fuse') M.save -= 3;
       else if (id === 'hotcrab') x('crab', 2);
     });
     return M;
@@ -153,9 +155,14 @@
   function missionFor(R, r) {   // rounds 1-3 teach (round 1 is always the heat ramp), rounds 5-7 are harder
     if (r === 1) return 'ramp2';
     if (r <= 3) { var k = Math.floor(rnd({ rs: mix(R.seed, 977) }) * 2); return r === 2 ? TEACH[k] : TEACH[1 - k]; }
-    var h = HARD.slice(), out = [], s2 = { rs: mix(R.seed, 991) };   // one order for rounds 5-7, so they never repeat
+    var h = (R.speed === 1 ? HARD1 : HARD).slice(), out = [], s2 = { rs: mix(R.seed, 991) };   // one order for rounds 5-7, so they never repeat
     while (h.length) out.push(h.splice(Math.floor(rnd(s2) * h.length), 1)[0]);
     return out[(r - 5) % out.length];
+  }
+  function need(R, k) { return Math.max(1, Math.round(k * NEEDK[R.speed])); }
+  function mtext(R, id) {   // the mission's words, with the count this speed asks for
+    var M = MISSIONS[id], st = M.steps[0];
+    return M.steps.length === 1 && need(R, st[1]) !== st[1] ? M.text.replace(String(st[1]), String(need(R, st[1]))).replace('1 JACKPOTS', 'A JACKPOT') : M.text;
   }
   function startRound(R) {
     if (R.phase === 'over' || R.phase === 'won') return null;
@@ -166,21 +173,21 @@
     if (R.deadKick) W.kickback = false;
     W.mult = W.mod.mult0;
     if (W.mod.lanes0) W.lanes = W.mod.lanes0.slice();
-    R.plugBall = 0; R.crab0 = W.mod.crab;
+    R.plugBall = 0; R.crab0 = W.mod.crab; R.press0 = W.mod.pressRate || 0; R.fire = false; R.fireHit = false; R.crust = false;
     R.start = R.banked; R.boss = !!BOSS[r]; R.target = target(R, r);
     R.hit = false; R.offer = null; R.phase = 'play'; R.cleared = false; R.endBall = 0; R.chamberBall = false; R.diveT = 0;
     R.lostHere = 0; R.clearSecs = null;
-    R.seen = { craters: 0, eruptions: 0, lava: 0, ramps: 0, multiballs: 0, jackpots: 0, crabs: 0, loops: 0, locks: 0, dd: 0 };
+    R.seen = { craters: 0, eruptions: 0, lava: 0, ramps: 0, multiballs: 0, jackpots: 0, crabs: 0, loops: 0, locks: 0, dd: 0, drops0: 0 };
     R.star = R.boss ? null : { target: R.target, got: false };
     R.mission = null; R.bs = null; R.hp = R.hpMax = 0; R.dmg = 0;
     if (R.boss) {
-      R.bs = { phase: 1, max: HP[r], dealt: 0, pc: 0, unsealT: 0, gateT: 0, side: 1, hitF: [], ballDmg: [], ballD: 0 };
-      R.hp = R.hpMax = HP[r];
+      R.bs = { phase: 1, max: Math.round(HP[r] * HPK[R.speed]) * UNIT, dealt: 0, pc: 0, unsealT: 0, gateT: 0, side: 1, hitF: [], ballDmg: [], ballD: 0 };
+      R.hp = R.hpMax = R.bs.max / UNIT;
       E.api.seal(W, true); E.api.craterLit(W, 'boss', true);
       R.news.push({ big: 'THE VOLCANO WAKES', small: 'ROUND ' + r + ' - CRACK THE SEAL: CLEAR THE OBSIDIAN', kind: 'boss' });
     } else {
       var id = missionFor(R, r), M = MISSIONS[id];
-      R.mission = { id: id, text: M.text, k: 0, got: 0, need: M.steps[0][1], done: false };
+      R.mission = { id: id, text: mtext(R, id), k: 0, got: 0, need: need(R, M.steps[0][1]), done: false };
       R.news.push({ big: 'ROUND ' + r, small: M.text, kind: 'round' });
     }
     show(R, W);
@@ -204,7 +211,7 @@
     var m = R.mission, B = R.bs, def = null;
     if (B && !R.cleared) {
       var ph = B.phase, sealed = W.crater.sealed;
-      def = { id: 'boss', text: 'THE VOLCANO · ' + PHASES[ph], got: B.dealt, need: B.max, clock: ph === 1 && B.unsealT ? Math.ceil(B.unsealT / 60) : null,
+      def = { id: 'boss', text: 'THE VOLCANO · ' + PHASES[ph], got: Math.floor(B.dealt / UNIT), need: B.max / UNIT, clock: ph === 1 && B.unsealT ? Math.ceil(B.unsealT / 60) : null,
         small: ph === 1 ? (sealed ? 'CLEAR THE OBSIDIAN TO CRACK IT' : 'SHOOT THE CRATER') : ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'SHOOT THE CRATER BEFORE IT BLOWS',
         shot: ph === 1 ? (sealed ? 'drops' : 'crater') : ph === 2 ? (B.side > 0 ? 'lavaR' : 'lavaL') : 'crater' };
     } else if (m && !m.done) {
@@ -224,7 +231,21 @@
     ['craters', 'eruptions', 'lava', 'ramps', 'multiballs', 'jackpots', 'crabs', 'loops', 'locks'].forEach(function (key) { d[key] = (S[key] || 0) - sn[key]; sn[key] = S[key] || 0; });
     d.bank = nd && W.dropsDown === nd && sn.dd < nd ? 1 : 0; sn.dd = W.dropsDown || 0;
     var play = W.state === 'play';
-    if (n(R, 'lavakick') && play && R.plugBall !== W.ball) { R.plugBall = W.ball; E.api.plug(W, 900); }   // MAGMA PLUG: every ball starts with the plug up
+    if (play && R.plugBall !== W.ball) {   // a new ball: MAGMA PLUG, MOLTEN LANES, CRUSTED CRATER
+      R.plugBall = W.ball;
+      if (n(R, 'lavakick')) E.api.plug(W, 900);
+      if (mu(R, 'lavaopen')) E.api.gates(W, 0, 900);
+      if (mu(R, 'crusted') && !R.bs) { E.api.seal(W, true); R.crust = true; }
+    }
+    if (R.crust && (S.drops > sn.drops0 || !play)) { R.crust = false; if (!R.bs) E.api.seal(W, false); }
+    sn.drops0 = S.drops;
+    if (mu(R, 'quakes') && play && W.frame % 2700 === 0) E.api.quake(W);   // AFTERSHOCKS
+    if (n(R, 'net') && d.craters > 0) E.api.save(W, 6 * n(R, 'net'));   // SAFETY NET
+    if (n(R, 'pump') && W.toys.volcano) { var Vp = W.toys.volcano, lim = W.press.level + 0.25; if (Vp.pressure > lim) Vp.pressure = lim; }   // MAGMA PUMP: never up to the overload
+    if (n(R, 'fire')) {   // FIRE BALL: a full bank doubles the next crater shot (and boss hit)
+      if (d.craters > 0 && R.fire) { R.fire = false; W.mod.x.crater = R.x0c; W.mod.x.erupt = R.x0e; }
+      if (d.bank && !R.fire) { R.fire = true; R.x0c = W.mod.x.crater; R.x0e = W.mod.x.erupt; W.mod.x.crater = 2 * (R.x0c || 1); W.mod.x.erupt = 2 * (R.x0e || 1); R.news.push({ big: 'FIRE BALL', small: 'NEXT CRATER SHOT X2', kind: 'up' }); }
+    }
     if (d.multiballs > 0 && n(R, 'twin') && W.mb) { E.api.addBall(W); R.news.push({ big: 'TWIN BALL', small: 'ONE MORE BALL', kind: 'up' }); }
     var mine = W.score - R.start;
     // the optional star
@@ -237,7 +258,7 @@
         if (got <= 0) break;
         d[st[0]] = 0; m.got = Math.min(m.need, m.got + got);
         if (m.got >= m.need) {
-          if (m.k + 1 < MISSIONS[m.id].steps.length) { m.k++; m.got = 0; m.need = MISSIONS[m.id].steps[m.k][1]; }
+          if (m.k + 1 < MISSIONS[m.id].steps.length) { m.k++; m.got = 0; m.need = need(R, MISSIONS[m.id].steps[m.k][1]); }
           else { m.done = true; stageClear(R, W); }
         }
       }
@@ -264,7 +285,8 @@
     R.hit = R.cleared;
     R.log.push({ round: R.round, score: W.score - R.start, target: R.target, star: !!(R.star && R.star.got), boss: R.boss, hp: R.hp, hpMax: R.hpMax, dmg: R.dmg,
       phase: R.bs ? R.bs.phase : 0, mission: R.mission ? R.mission.id : null, got: R.mission ? R.mission.got : 0, need: R.mission ? R.mission.need : 0,
-      step: R.mission ? R.mission.k : 0, secs: R.clearSecs, lost: R.lostHere, frames: W.frame, hit: R.hit });
+      step: R.mission ? R.mission.k : 0, secs: R.clearSecs, lost: R.lostHere, frames: W.frame, hit: R.hit,
+      hits: R.bs ? R.bs.hitF.slice() : null, ballDmg: R.bs ? R.bs.ballDmg.slice() : null });
     R.banked = W.score;
     R.deadKick = false;
     if (!R.cleared) { R.phase = 'over'; R.news.push({ big: 'RUN OVER', small: 'ROUND ' + R.round, kind: 'over' }); return R.phase; }
@@ -272,8 +294,8 @@
     var it = n(R, 'interest');
     if (it) { var gain = Math.round(R.banked * 0.1 * it / 10) * 10; R.banked += gain; R.news.push({ big: 'INTEREST', small: '+' + E.fmt(gain), kind: 'up' }); }
     R.offer = offers(R);
-    var mu = mutate(R); R.mutNext = mu;
-    R.news.push({ big: mu.name, small: mu.text, kind: 'mutation' });
+    var mt = mutate(R); R.mutNext = mt;
+    R.news.push({ big: mt.name, small: mt.text, kind: 'mutation' });
     R.phase = 'pick';
     return R.phase;
   }
@@ -290,28 +312,30 @@
   }
   // THE VOLCANO: three phases, HP in chunks; every 3M scored in the round is a chunk too
   function boss(R, W, d) {
-    var B = R.bs, V = W.toys.volcano, dmg = 0, took = d.craters > 0 && W.crater.took === 'boss', tame = n(R, 'tamer');
-    var pc = Math.floor((W.score - R.start) / DMG.points);
+    var B = R.bs, V = W.toys.volcano, dmg = 0, took = d.craters > 0 && W.crater.took === 'boss', tame = n(R, 'tamer'), fx = took && R.fireHit ? 2 : 1;
+    if (took) R.fireHit = false;
+    if (d.bank && n(R, 'fire')) R.fireHit = true;
+    var pc = Math.floor((W.score - R.start) * UNIT / (DMG.points * PTSK[R.speed]));
     if (pc > B.pc) { dmg += pc - B.pc; B.pc = pc; }
     if (B.phase === 1) {
-      if (d.bank) { E.api.seal(W, false); B.unsealT = 1200; R.news.push({ big: 'THE SEAL CRACKS', small: 'SHOOT THE CRATER', kind: 'boss' }); }
+      if (d.bank) { E.api.seal(W, false); B.unsealT = UNSEAL[R.speed]; R.news.push({ big: 'THE SEAL CRACKS', small: 'SHOOT THE CRATER', kind: 'boss' }); }
       if (B.unsealT > 0 && --B.unsealT === 0) E.api.seal(W, true);
-      if (took) dmg += DMG.crater + tame;
+      if (took) dmg += (DMG.crater + tame) * UNIT * fx;
     } else if (B.phase === 2) {
       if (--B.gateT <= 0) { B.side = -B.side; E.api.gates(W, -B.side, 0); E.api.gates(W, B.side, 480); B.gateT = 480; }
-      dmg += d.lava;
+      dmg += d.lava * DMG.lava * UNIT;
     } else if (B.phase === 3) {
-      if (took) { dmg += DMG.countdown + tame; if (V) V.pressure = 0; }
+      if (took) { dmg += (DMG.countdown + tame) * UNIT * fx; if (V) V.pressure = 0; }
       else if (V && V.pressure >= W.press.level) { E.api.quake(W); V.pressure = 0; R.news.push({ big: 'THE VOLCANO BLOWS', small: 'IT FILLS AGAIN', kind: 'boss' }); }
     }
     if (dmg <= 0) return;
     dmg = Math.min(dmg, B.max - B.dealt);
-    B.dealt += dmg; B.ballD += dmg; R.dmg = B.dealt; R.hp = B.max - B.dealt;
+    B.dealt += dmg; B.ballD += dmg; R.dmg = B.dealt; R.hp = Math.ceil((B.max - B.dealt) / UNIT);
     if (B.hitF.length < 60) B.hitF.push(W.frame);
     W.events.push('bosshit');
     if (B.dealt >= B.max) {   // the kill
       R.cleared = R.hit = true; R.clearSecs = Math.round(W.frame / 6) / 10;
-      E.api.seal(W, false); E.api.craterLit(W, 'boss', false); W.mod.pressRate = 0; W.mod.crab = R.crab0;
+      E.api.seal(W, false); E.api.craterLit(W, 'boss', false); W.mod.pressRate = R.press0; W.mod.crab = R.crab0;
       W.events.push('bossdown');
       E.api.multiball(W, 3, { save: 20, victory: true });
       R.news.push({ big: 'VOLCANO DEFEATED', small: 'VICTORY MULTIBALL', kind: 'win' });
@@ -328,7 +352,7 @@
         W.mod.pressRate = W.press.level / COUNTDOWN[R.speed]; if (V) V.pressure = 0;
       }
       R.news.push({ big: 'THE VOLCANO · ' + PHASES[ph], small: ph === 2 ? 'SHOOT THE LIT LAVA LANE' : 'HIT THE CRATER BEFORE IT BLOWS', kind: 'boss' });
-    } else R.news.push({ big: 'VOLCANO HIT', small: '-' + dmg + (dmg === 1 ? ' CHUNK' : ' CHUNKS'), kind: 'hit' });
+    } else if (dmg >= UNIT) R.news.push({ big: 'VOLCANO HIT', small: '-' + Math.round(dmg / UNIT) + (dmg < 2 * UNIT ? ' CHUNK' : ' CHUNKS'), kind: 'hit' });
   }
   // a level below the surface (THE MAGMA CHAMBER): a chamber clear is one more ball, once a round
   function levelUpdate(R, W) {
@@ -368,7 +392,7 @@
       hp: R.hp, hpMax: R.hpMax, hit: R.hit, wind: R.wind, phase: R.phase, balls: R.balls, ballsMax: R.ballsMax, cleared: R.cleared,
       mission: m ? { id: m.id, text: m.text, got: m.got, need: m.need, step: m.k, steps: MISSIONS[m.id].steps.length, done: m.done, t: R.clearSecs } : null,
       star: R.star ? { target: R.star.target, got: R.star.got } : null,
-      boss: B ? { chunks: B.max - B.dealt, chunksMax: B.max, phase: B.phase, phaseName: PHASES[B.phase], sealed: !!(W && W.crater && W.crater.sealed) } : null,
+      boss: B ? { chunks: Math.ceil((B.max - B.dealt) / UNIT), chunksMax: B.max / UNIT, units: B.max - B.dealt, unitsMax: B.max, phase: B.phase, phaseName: PHASES[B.phase], sealed: !!(W && W.crater && W.crater.sealed) } : null,
       dive: R.diveT > 0 ? Math.ceil(R.diveT / 60) : 0, daily: R.daily,
       mutations: R.muts.map(function (id) { return MU[id]; }), upgrades: R.taken.map(function (id) { return UP[id]; }),
       next: R.mutNext
@@ -402,7 +426,7 @@
 
   return {
     newRun: newRun, startRound: startRound, update: update, offers: offers, pick: pick, status: status, summary: summary, daily: daily,
-    loadBest: loadBest, saveBest: saveBest, better: better, mod: mod, BALLS: BALLS, BALLS_MAX: BALLS_MAX, MISSIONS: MISSIONS, PHASES: PHASES, missionFor: missionFor,
+    loadBest: loadBest, saveBest: saveBest, better: better, mod: mod, UNIT: UNIT, SAVE0: SAVE0, NEEDK: NEEDK, HPK: HPK, BALLS: BALLS, BALLS_MAX: BALLS_MAX, MISSIONS: MISSIONS, PHASES: PHASES, missionFor: missionFor,
     UPGRADES: UPGRADES, MUTATIONS: MUTATIONS, UP: UP, MU: MU, TARGET: TARGET, HP: HP, DMG: DMG, ROUNDS: ROUNDS, BOSS: BOSS, SPEEDK: SPEEDK
   };
 });

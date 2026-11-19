@@ -45,7 +45,7 @@ console.log('EMBER RUN unit tests');
   ok(new Set(a.R.muts).size === 7, 'seven rounds, seven different mutations');
   const ms = a.seen.map((s) => s.split(':')[0]);
   ok(ms[0] === 'ramp2' && new Set([ms[1], ms[2]]).size === 2 && [ms[1], ms[2]].every((m) => m === 'obsidian' || m === 'erupt') && ms[3] === 'boss'
-    && new Set(ms.slice(4)).size === 3 && ms.slice(4).every((m) => ['jackpot2', 'crab5', 'loop', 'lockerupt', 'lava3'].includes(m)), 'missions: rounds 1-3 teach (round 1 the heat ramp), round 4 the boss, rounds 5-7 three different harder ones', ms.join(' '));
+    && new Set(ms.slice(4)).size === 3 && ms.slice(4).every((m) => ['jackpot2', 'crab5', 'loop', 'lockerupt'].includes(m)), 'missions: rounds 1-3 teach (round 1 the heat ramp), round 4 the boss, rounds 5-7 three different harder ones', ms.join(' '));
   ok(Run.UPGRADES.length >= 12 && Run.UPGRADES.every((u) => u.id && u.name && u.text && u.max >= 1), Run.UPGRADES.length + ' upgrades, each with an id, name, line and stack limit');
   ok(Run.MUTATIONS.every((m) => m.id && m.name && m.text), Run.MUTATIONS.length + ' mutations, each with an id, name and line');
   const R = Run.newRun(5, 2); Run.startRound(R);
@@ -54,10 +54,12 @@ console.log('EMBER RUN unit tests');
   ok(!/Math\.(random|sin|cos|pow)|\bDate\b|setTimeout|setInterval/.test(src), 'run.js has no Math.random, Date, sin/cos/pow or timers');
 })();
 (function () {   // upgrades stack into the engine's knobs
-  const R = Run.newRun(1, 2); R.ups = { gold: 2, pump: 1, crab: 1, net: 2, bumper: 1, fire: 1, tamer: 1 }; R.muts = ['skitter', 'thin', 'fuse', 'hotcrab', 'crust'];
+  const R = Run.newRun(1, 2); R.ups = { gold: 2, pump: 1, crab: 1, net: 2, bumper: 1, fire: 1, tamer: 1 }; R.muts = ['skitter', 'thin', 'heat', 'hotcrab', 'crust'];
   const M = Run.mod(R);
-  ok(M.x.ramp === 9 && M.x.drop === 3 && M.x.bumper === 4 && M.x.erupt === 2 && M.x.crab === 10 && M.x.skill === 0.3 && M.noModes === true, 'score multipliers stack; the skill shot pays 0.3x; no island modes', JSON.stringify(M.x));
-  ok(Math.abs(M.press - 1.2) < 1e-9 && Math.abs(M.crab - 0.96) < 1e-9 && M.save === 9 && M.decay > 0, 'pressure, crab speed, ball save, leak', JSON.stringify(M));
+  ok(M.x.ramp === 5 && M.x.bumper === 10 && M.x.erupt === 2 && M.x.crab === 6 && M.x.skill === 0.3 && M.noModes === true, 'score multipliers add up (x10 at most); the skill shot pays 0.3x; no island modes', JSON.stringify(M.x));
+  ok(Math.abs(M.press - 1.2) < 1e-9 && Math.abs(M.crab - 0.96) < 1e-9 && M.save === 0 && M.decay > 0 && M.pressRate > 0 && M.tags.join() === R.muts.join(), 'pressure, crab speed, leak, BUILDING HEAT, the mutation tags', JSON.stringify(M));
+  const Rg = Run.newRun(1, 1); Run.startRound(Rg);
+  ok(Run.mod(Rg).save === Run.SAVE0[1] && Rg.mission.need === 1 && Rg.mission.text === 'HEAT RAMP X1', 'Gentle: more ball save, half the mission counts', Rg.mission.text);
   R.ups = { forge: 2, lanes: 1 }; R.muts = ['deadkick']; R.deadKick = true;
   const W = Run.startRound(R);
   ok(W.mult === 3 && W.mod.mult0 === 3 && W.lanes.filter(Boolean).length === 2 && W.mod.lanes0.filter(Boolean).length === 2 && W.kickback === false && W.mod.noKick && W.total === Run.BALLS[2] && W.extraAt.length === 0,
@@ -138,25 +140,25 @@ const G = require('../../games/pinball/goals.js');   // (from here on the goals 
 })();
 (function () {   // THE VOLCANO
   const R = Run.newRun(3, 2); R.round = 3; const W = Run.startRound(R);
-  ok(R.boss && R.round === 4 && R.bs.max === 10 && W.crater.sealed && W.crater.boss && W.next.text === 'THE VOLCANO · SEALED' && W.next.shot === 'drops', 'round 4: THE VOLCANO, 10 chunks, SEALED, the arrow on the obsidian');
+  ok(R.boss && R.round === 4 && R.bs.max === 10 * Run.UNIT && W.crater.sealed && W.crater.boss && W.next.text === 'THE VOLCANO · SEALED' && W.next.shot === 'drops', 'round 4: THE VOLCANO, 10 chunks, SEALED, the arrow on the obsidian');
   W.dropsDown = 3; Run.update(R, W);
   ok(!W.crater.sealed && R.bs.unsealT >= 1199, 'the obsidian bank cracks the seal for 20 s');
   W.stats.craters++; W.crater.took = 'boss'; Run.update(R, W);
-  ok(R.bs.dealt === 3 && R.bs.phase === 2 && !W.crater.boss && W.toys.lava.gates.some((g) => g.t > 0) && Math.abs(W.mod.crab - R.crab0 * 1.6) < 1e-9, 'a crater hit = 3 chunks: MAGMA FLOW, one gate open, the crabs 1.6x', JSON.stringify(R.bs));
+  ok(R.bs.dealt === 3 * Run.UNIT && R.bs.phase === 2 && !W.crater.boss && W.toys.lava.gates.some((g) => g.t > 0) && Math.abs(W.mod.crab - R.crab0 * 1.6) < 1e-9, 'a crater hit = 3 chunks: MAGMA FLOW, one gate open, the crabs 1.6x', JSON.stringify(R.bs));
   const side = R.bs.side; for (let i = 0; i < 481; i++) Run.update(R, W);
   ok(R.bs.side === -side, 'the open gate swaps every 8 s');
   W.stats.lava += 4; Run.update(R, W);
-  ok(R.bs.dealt === 7 && R.bs.phase === 3 && W.crater.boss && W.mod.pressRate > 0, 'lava lanes = 1 chunk each: COUNTDOWN, the pressure fills itself');
+  ok(R.bs.dealt === 7 * Run.UNIT && R.bs.phase === 3 && W.crater.boss && W.mod.pressRate > 0, 'lava lanes = 1 chunk each: COUNTDOWN, the pressure fills itself');
   W.toys.volcano.pressure = W.press.level; Run.update(R, W);
-  ok(W.toys.volcano.pressure === 0 && W.toys.quake.pending && R.bs.dealt === 7, 'at full: a quake, and it fills again');
+  ok(W.toys.volcano.pressure === 0 && W.toys.quake.pending && R.bs.dealt === 7 * Run.UNIT, 'at full: a quake, and it fills again');
   W.stats.craters++; W.crater.took = 'boss'; Run.update(R, W);
-  ok(R.bs.dealt === 9, 'a crater hit before it is full = 2 chunks');
+  ok(R.bs.dealt === 9 * Run.UNIT, 'a crater hit before it is full = 2 chunks');
   const sc = W.score; W.score = R.start + 3 * Run.DMG.points; Run.update(R, W); W.score = Math.max(W.score, sc);
-  ok(R.cleared && R.bs.dealt === 10 && W.mb && W.mb.victory && W.mb.balls >= 3 && W.saveT >= 60 * 19, 'points chip in; the kill: VOLCANO DEFEATED and a 3-ball victory multiball with 20 s save');
+  ok(R.cleared && R.bs.dealt === 10 * Run.UNIT && W.mb && W.mb.victory && W.mb.balls >= 3 && W.saveT >= 60 * 19, 'points chip in; the kill: VOLCANO DEFEATED and a 3-ball victory multiball with 20 s save');
   W.balls.length = 0; W.feed = 0; let ph = 'play'; for (let i = 0; i < 400 && ph === 'play'; i++) { E.step(W, {}); ph = Run.update(R, W); }
   ok(ph === 'pick' && R.balls === 2, 'no ball lost after the kill: on to the pick');
   const R8 = Run.newRun(3, 2); R8.round = 7; R8.ups.tamer = 1; const W8 = Run.startRound(R8); W8.dropsDown = 3; Run.update(R8, W8); W8.stats.craters++; W8.crater.took = 'boss'; Run.update(R8, W8);
-  ok(R8.bs.max === 14 && R8.bs.dealt === 4, 'round 8: 14 chunks; VOLCANO TAMER: +1 chunk a crater hit');
+  ok(R8.bs.max === 14 * Run.UNIT && R8.bs.dealt === 4 * Run.UNIT, 'round 8: 14 chunks; VOLCANO TAMER: +1 chunk a crater hit');
   W8.score += 14 * Run.DMG.points; Run.update(R8, W8); W8.over = true;
   ok(Run.update(R8, W8) === 'won' && Run.summary(R8).won && Run.summary(R8).cause === 'won', 'round 8 boss beaten: RUN WON');
   const R2 = Run.newRun(3, 2); R2.round = 3; const W2 = Run.startRound(R2); R2.balls = 1; W2.total = 1; W2.score += 9 * Run.DMG.points; Run.update(R2, W2); W2.over = true;
