@@ -117,7 +117,7 @@
       ['outL', 16, 392 + DY, 8], ['outR', mx(16), 392 + DY, 8],
       ['kick', 16, 424 + DY, 8]
     ],
-    lines: [['lavaL', 8, 222, 48, 222]]
+    lines: [['lavaL', 8, 231, 48, 231]]
   };
 
   // ------------------------------------------------------------ the rules' numbers (descent.js reads chamber and ascend)
