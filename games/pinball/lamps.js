@@ -697,8 +697,8 @@
           return checker(i, e, 85) * fadeEnd(p, 0.85) + (k === 3 ? 0.4 : 0);
         }
         case 13:  /* eruption */ {   // white-hot, rings racing out of the crater with glitter, the colours rolling, a chase, a settle
-          if (e < 260) return 1 - 0.3 * (e / 260);
-          if (p < 0.55) return Math.max(rings3(DV[i], (e - 260) / (SH.ms * 0.55 - 260) * 1.7, 0.11), hashF(i, Math.floor(e / 60)) > 0.7 ? 0.8 : 0, k === 1 ? 0.9 : 0);
+          if (e < 260) return k === 1 ? 1 : k === 2 ? 0.6 : 0.3 * (1 - e / 260);   // (wave 3: the volcano and the lava white-hot, not every lamp - the grade cap)
+          if (p < 0.55) return Math.max(rings3(DV[i], (e - 260) / (SH.ms * 0.55 - 260) * 1.7, 0.11), hashF(i, Math.floor(e / 60)) > 0.7 ? 0.5 : 0, k === 1 ? 0.75 : 0);
           if (p < 0.78) return Math.max(colourWave(i, (p - 0.55) / 0.23), k ? 0.6 : 0);
           return Math.max(checker(i, e, 80) * fadeEnd(p, 0.84), k === 2 ? 0.5 * (1 - p) * 4 : 0);
         }

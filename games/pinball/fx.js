@@ -85,7 +85,7 @@
     // ---- Ember Peak's
     crater:   { pri: 5, ms: 900, look: 'ring', r: 64, sparks: 16, pop: 'big', gi: 0.75, shake: 0.3, color: C.lava },
     ash:      { pri: 8, ms: 2750, wide: true, look: 'ashes', base: 0.12, color: C.ash },            // (its ms is the crater's hold)
-    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.55, shake: 1, sat: 0.18, vig: 0.12, color: C.amber, word: 'ERUPTION!' },   // (wave 3: one amber flash, was two of 0.9)
+    eruption: { pri: 9, ms: 2600, wide: true, look: 'fountain', sparks: 50, flash: 0.25, shake: 1, sat: 0.12, vig: 0.12, color: C.amber, word: 'ERUPTION!' },   // (wave 3: one amber flash, was two of 0.9)
     erupt:    { pri: 5, ms: 1100, look: 'burst', sparks: 24, flash: 0.4, shake: 0.5, color: C.ember },   // a crater's release (not full)
     rail:     { pri: 3, ms: 1700, look: 'chase', sparks: 10, color: C.sea },
     railout:  { pri: 2, ms: 500, look: 'ring', r: 30, sparks: 10, color: C.yellow },
@@ -146,7 +146,7 @@
     drops:    { bursts: [['debris', 180, 1.3, C.rock], ['sparks', 80, 1.4, C.violet]], shock: 0.5, fringe: 0.3, move: { pitch: 0.7, dy: 1 } },
     crater:   { bursts: [['lava', 80, 0.8], ['steam', 40, 0.7, C.steam, 10]], shock: 0.4, trauma: 0.3, move: { pitch: 0.4, dy: 0.6 } },
     erupt:    { bursts: [['lava', 320, 1.2], ['steam', 80, 0.9, C.steam, 16], ['debris', 40, 1, C.rock], ['sparks', 60, 1.3, C.ember]], shock: 0.7, move: { pitch: 0.9, dy: 1.2 }, fringe: 0.45, trauma: 0.45 },
-    eruption: { bursts: [['lava', 1100, 1.7], ['lava', 300, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 220, 1.6, C.ember], ['sparks', 120, 1.8, C.yellow, 20], ['sparks', 80, 1.5, C.sea, 10], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 1, trauma: 1 },
+    eruption: { bursts: [['lava', 520, 1.7], ['lava', 160, 0.6, null, 30, null, [0, 0, 1.6]], ['debris', 260, 1.5, C.rock], ['sparks', 150, 1.6, C.ember], ['sparks', 80, 1.8, C.yellow, 20], ['sparks', 80, 1.5, C.sea, 10], ['steam', 160, 1.2, C.steam, 20], ['ash', 120, 1.2, C.ash, 30]], shock: 1, shock2: 0.7, move: { pitch: 2, dy: 3 }, fringe: 1, trauma: 1 },
     rail:     { bursts: [['sparks', 18, 0.9, C.yellow]] },
     railout:  { bursts: [['sparks', 12, 0.8, C.yellow]] },
     puff:     { bursts: [['steam', 40, 0.5, C.steam, 4]] },
@@ -730,7 +730,7 @@
     var gi = 1, ashK = 0, floodK = 0;
     if (S.clock < S.ashEnd) ashK = smooth((S.clock - S.ashAt) / 1400);
     var fs = S.clock - S.floodAt;
-    if (fs >= 0 && fs < 1800) floodK = 1 - smooth(fs / 1800);
+    if (fs >= 0 && fs < 1800) floodK = smooth(fs / 300) * (1 - smooth(fs / 1800));   // (wave 3: the flood swells in over 0.3 s, not all at once)
     if (W && W.tilted) gi = 0;
     else if (mode === 'over' || (W && W.over)) gi = 0.35;
     else {
@@ -741,7 +741,7 @@
       gi = Math.min(gi, giShow);
       if (surge > 0 && since >= 1700) gi = Math.max(gi, 1 + surge);
       if (ashK > 0) gi = Math.min(gi, 1 - 0.85 * ashK);
-      if (floodK > 0) gi = Math.max(gi, 1 + 0.2 * floodK);   // (the eruption's flood: amber, at most 1.2 - wave 3; it was 1.38)
+      if (floodK > 0) gi = Math.max(gi, 1 + 0.15 * floodK);   // (the eruption's flood: amber, 1.15 - wave 3, the grade cap; it was 1.38)
       gi = Math.min(GI_MAX, gi);
     }
     var gk = gi < state.gi ? 1 - Math.exp(-dt / 50) : floodK > 0.5 ? 1 - Math.exp(-dt / 25) : 1 - Math.exp(-dt / 220);
@@ -843,7 +843,7 @@
 
     // the final pass's grade: a brief colour fringe, the ash's vignette and grey, the lava's warmth
     S.fringe = Math.max(0, S.fringe - k * 6.5);
-    S.warm = Math.max(floodK * 0.6, ashK * 0.2, S.warm - k * 0.8);
+    S.warm = Math.max(floodK * 0.35, ashK * 0.2, S.warm - k * 0.8);   // (wave 3 grade cap: the flood's warmth 0.6 -> 0.35)
     S.satK = Math.max(0, S.satK - k * 0.35); S.vigK = Math.max(0, S.vigK - k * 0.3);
     var post = state.post;
     post.fringe = red ? 0 : S.fringe;

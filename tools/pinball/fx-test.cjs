@@ -273,18 +273,18 @@ function hasKind(st, kind, min) { return st.bursts.some(function (b) { return b.
     giHi = Math.max(giHi, st.gi); pitchHi = Math.max(pitchHi, st.table.pitch); fr = Math.max(fr, st.post.fringe);
     shocks += st.shocks.length; st.shocks.length = 0;
     st.bursts.forEach(function (q) { if (q.kind === 'lava') lava += q.n; if (q.kind === 'debris') debris += q.n; }); st.bursts.length = 0;
-    if (st.flash > 0.3) flashC = st.flashColor;
+    if (st.flash > 0.2) flashC = st.flashColor;
     if (st.flash > lastF + 0.05) flashN++; lastF = st.flash; flashHi = Math.max(flashHi, st.flash);
     st.pops.forEach(function (p) { if (p.text === 'ERUPTION!' && p.plate) plated = true; });
     st.pops.forEach(function (p) { if (p.word && words.indexOf(p.text) < 0) words.push(p.text); });
   }
-  ok(giHi >= 1.15 && giHi <= 1.2, 'the eruption floods the table with light, at most 1.2 (GI ' + giHi.toFixed(2) + ')');   // (wave 3 grade cap: was > 1.25)
-  ok(lava >= 1000 && debris >= 200, 'a lava fountain and rock debris (' + lava + ' lava, ' + debris + ' debris)');
+  ok(giHi >= 1.1 && giHi <= 1.2, 'the eruption floods the table with light, at most 1.2 (GI ' + giHi.toFixed(2) + ')');   // (wave 3 grade cap: was > 1.25)
+  ok(lava >= 600 && debris >= 200, 'a lava fountain and rock debris (' + lava + ' lava, ' + debris + ' debris)');
   ok(shocks >= 2, 'two shockwaves (' + shocks + ')');
   ok(pitchHi > 1 && pitchHi <= 2, 'the table bucks (pitch ' + pitchHi.toFixed(2) + ' degrees)');
   ok(fr > 0.5, 'a colour-fringe spike (' + fr.toFixed(2) + ')');
   ok(flashC && !red(flashC), 'the eruption flash is not red (' + flashC + ')');
-  ok(flashHi > 0.3 && flashHi <= 0.55 && flashN === 1, 'one eruption flash, at most 0.55 (' + flashN + ' at ' + flashHi.toFixed(2) + ')');
+  ok(flashHi > 0.2 && flashHi <= 0.55 && flashN === 1, 'one eruption flash, at most 0.55 (' + flashN + ' at ' + flashHi.toFixed(2) + ')');
   ok(plated, 'the ERUPTION! words are on a dark plate');
   ok(words.indexOf('ERUPTION!') >= 0, 'an ERUPTION! pop');
   st = frameRun(W, t0 + 60 * FRAME, 150);
