@@ -265,6 +265,44 @@
     }
     crisp(g, STRIP, dw, Math.ceil(dh * STRIP / 480) + 1);   // the dot-matrix display (a row over the 3D's top edge: no gap)
   }
+  // ---------------------------------------------------------------- Music, Voice and Vibration (wave 3)
+  // Settings switches, each also kept under its own key (pin365:music, pin365:voice: the show lane's contract) and handed
+  // to PinMusic.enable / PinVoice.enable when those are on the page. Vibration only where the phone can (Android:
+  // navigator.vibrate) and off by default when the device asks for reduced motion: short buzzes on flips (10 ms), pops
+  // and slings (25 ms), a ball saved by the plug or a quake (60 ms) and a pattern when the multiball starts.
+  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : v === '1'; } catch (e) { return d; } }
+  function lsSet(k, on) { try { localStorage.setItem(k, on ? '1' : '0'); } catch (e) {} }
+  var CAN_BUZZ = !!(navigator.vibrate && /Android/i.test(navigator.userAgent || ''));
+  var AUD = { music: null, voice: null };
+  function audioSet(set) {   // hand the switches to the show lane's players when they change (and once at the start)
+    if (!set) return;
+    if (!AUD.saved) { AUD.saved = true; lsSet('pin365:music', !!set.music); lsSet('pin365:voice', !!set.voice); }
+    var mu = !!(set.music && set.sound !== false), vo = !!(set.voice && set.sound !== false);
+    if (mu !== AUD.music && window.PinMusic && typeof PinMusic.enable === 'function') { AUD.music = mu; try { PinMusic.enable(mu); } catch (e) {} }
+    if (vo !== AUD.voice && window.PinVoice && typeof PinVoice.enable === 'function') { AUD.voice = vo; try { PinVoice.enable(vo); } catch (e) {} }
+  }
+  document.addEventListener('click', function (e) {   // (after the cabinet's own handler has flipped and saved the switch)
+    var b = e.target && e.target.closest && e.target.closest('[data-set="music"],[data-set="voice"],[data-set="sound"]'); if (!b || !G3.set) return;
+    lsSet('pin365:music', !!G3.set.music); lsSet('pin365:voice', !!G3.set.voice); audioSet(G3.set);
+  });
+  var BUZZ = { flip: 10, bumper: 25, sling: 25, plugsave: 60, quake: 60, tilt: 120 };
+  function buzz(W, list) {
+    if (!CAN_BUZZ || !G3.set || !G3.set.buzz || !list.length) return;
+    var ms = 0, pat = null;
+    for (var i = 0; i < list.length; i++) {
+      var e = list[i], n = typeof e === 'string' ? e : e && e.sfx;
+      if (n === 'mbstart' || n === 'superjackpot') pat = [60, 50, 60, 50, 140];
+      else if (BUZZ[n] > ms) ms = BUZZ[n];
+    }
+    try { if (pat) navigator.vibrate(pat); else if (ms) navigator.vibrate(ms); } catch (er) {}
+  }
+  function music(W, mode) {   // once a frame (the show lane's contract)
+    var set = G3.set; audioSet(set);
+    if (!window.PinMusic || typeof PinMusic.update !== 'function' || !W) return;
+    var dp = depth();
+    try { PinMusic.update(W, { boss: !!(W.run && RUN && RUN.boss), depth: dp ? dp.depth | 0 : 0, paused: mode !== 'play' || !!(PICK && !PICK.hidden), mode: mode }); } catch (e) {}
+  }
+
   // ---------------------------------------------------------------- render only when needed (wave 3, #26)
   // The cabinet calls draw() every screen frame. The table is drawn again only when something can have changed: never
   // while paused, on the pick card, behind a sheet or on the game-over card (one frame when that starts, so the picture
@@ -373,6 +411,7 @@
     // the effects (fx.js) and the voice see this step's events before the cabinet plays their sounds and clears them
     if (window.PinFX && Wa.events.length) { try { PinFX.events(Wa, Wa.events); } catch (e) {} }
     if (window.PinVoice && typeof PinVoice.events === 'function' && Wa.events.length) { try { PinVoice.events(Wa, Wa.events); } catch (e) {} }
+    buzz(Wa, Wa.events);
     if (Wa !== W && Wa.events.length) { for (var i = 0; i < Wa.events.length; i++) W.events.push(Wa.events[i]); Wa.events.length = 0; }   // (the cabinet plays the surface's list)
     dmdTidy(W, Wa);
   }
@@ -625,6 +664,9 @@
     settings: [
       { key: 'look', type: 'seg', label: 'Look', small: G3.failed ? 'This browser can only show the flat table' : 'The 3D table or the flat one (R)', options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' },
       PR && EMBER ? { key: 'game', type: 'seg', label: 'Mode', small: 'Ember Run: 8 rounds, an upgrade after each, a volcano boss. Classic: the game as it always was', options: [['run', 'Ember Run'], ['classic', 'Classic']], def: 'run' } : null,
+      { key: 'music', type: 'switch', label: 'Music', small: 'Music that follows the game: louder as the volcano wakes', def: lsGet('pin365:music', true) },
+      { key: 'voice', type: 'switch', label: 'Voice', small: 'A voice calls the big moments (your device\u2019s own speech)', def: lsGet('pin365:voice', true) },
+      CAN_BUZZ ? { key: 'buzz', type: 'switch', label: 'Vibration', small: 'Short buzzes on flips, bumpers and the big moments', def: !REDUCED } : null,
       { key: 'saver', type: 'switch', label: 'Battery saver', small: 'A lighter picture at 30 frames a second: cooler and longer-lasting on a phone', def: false },
       { key: 'cam', type: 'seg', label: 'Camera', small: 'Calm follows the ball now and then; Arcade more, with slow motion; Classic never moves', options: [['arcade', 'Arcade'], ['classic', 'Classic'], ['calm', 'Calm']], def: REDUCED ? 'classic' : 'calm' }
     ].filter(Boolean),
@@ -644,6 +686,7 @@
       if (mode === 'over' && !RS.ended) { RS.ended = true; if (!(W && W.run && RUN)) endLines(null); } else if (mode !== 'over') RS.ended = false;
       runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
       if (mode !== 'title') W = active(W);   // INTO THE VOLCANO: draw the level the ball is on
+      music(W, mode);
       if (!go) return;   // (nothing has changed that the picture shows: the last frame stays on the screen)
       var tier = info.set && info.set.saver ? 'low' : 'auto';
       if (G3.world && tier !== RD.tier) { RD.tier = tier; try { G3.world.setTier(tier); } catch (e) {} }
