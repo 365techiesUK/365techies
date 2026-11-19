@@ -455,6 +455,9 @@
     var on = !!(Ws && !Ws.demo && (mode === 'play' || mode === 'paused') && (run || nx || dp));
     if (HUD.hidden === on) HUD.hidden = !on;
     if (PICK && !PICK.hidden && (mode === 'title' || mode === 'over' || !RUN || RUN.phase !== 'pick')) PICK.hidden = true;
+    // paused over the pick card (wave 3, #18): the cabinet's pause card shows, the pick card steps aside and takes no
+    // click or key until the game carries on
+    if (PICK) { var pz = mode === 'paused'; if (PICK.classList.contains('pz') !== pz) { PICK.classList.toggle('pz', pz); if (!pz && !PICK.hidden) markSel(true); } }
     var w = screenEl ? screenEl.clientWidth : 0;
     if (w && w !== RS.pu) { RS.pu = w; screenEl.parentNode.style.setProperty('--pu', (w / 270).toFixed(3) + 'px'); }   // one game pixel, for the overlays' type
     if (!on) return;
@@ -526,7 +529,7 @@
     if (focus && c[RS.sel]) try { c[RS.sel].focus({ preventScroll: true }); } catch (e) {}
   }
   function choose(id) {   // -> true if the upgrade was taken and the next round is on the table
-    var a = A3(); if (!RUN || RUN.phase !== 'pick' || !a || !a.world || !PR.pick(RUN, id)) return false;
+    var a = A3(); if (!RUN || RUN.phase !== 'pick' || !a || !a.world || a.mode !== 'play' || !PR.pick(RUN, id)) return false;
     var N = runWorld(RUN); if (!N) return false;
     swapWorld(a.world, N); G3.slow = 0; RS.key = ''; PICK.hidden = true; letGo();
     makeDesc(a.world, a.world.speed, (RUN.seed || 1) * 31 + RUN.round);
@@ -655,7 +658,7 @@
       + '#runBan small{display:block;margin-top:6px;font:700 max(12px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
       + '#runBan.rb-go{animation:rbGo 1.2s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0}}'
       + '@media (prefers-reduced-motion:reduce){#runBan.rb-go{animation:rbFade 1.2s linear forwards}@keyframes rbFade{0%,75%{opacity:1}100%{opacity:0}}#runHud.flash .rh-bar,#runHud.shake .rh-bar{animation:none}}'
-      + '#ov_pick .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35);background:rgba(18,6,2,.92)}#ov_pick .rp-h{color:#ffd84a}#ov_pick .rp-s{color:#ffd9b0;font-size:14px;margin:4px 0 8px}'
+      + '#ov_pick.pz{display:none}#ov_pick .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35);background:rgba(18,6,2,.92)}#ov_pick .rp-h{color:#ffd84a}#ov_pick .rp-s{color:#ffd9b0;font-size:14px;margin:4px 0 8px}'
       + '#ov_pick .rp-m{margin:0 0 10px;padding:7px 10px;border-radius:10px;background:rgba(255,60,0,.13);border:1px dashed rgba(255,120,40,.6);text-align:left;font-size:13.5px;line-height:1.3}#ov_pick .rp-m:empty{display:none}'
       + '#ov_pick .rp-m small{display:block;font:700 11px Archivo,sans-serif;letter-spacing:.1em;color:#ff8a3a}#ov_pick .rp-m b{color:#ffb347;margin-right:6px}'
       + '#ov_pick .rp-q{margin:0 0 6px;font:700 13px Archivo,sans-serif;letter-spacing:.12em;color:#ffb347}#ov_pick .rp-cards{display:grid;gap:9px}'
