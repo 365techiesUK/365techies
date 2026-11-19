@@ -338,7 +338,7 @@
   // ------------------------------------------------------------ the director's state
   var ASPECT = 0.55, MODE = 'calm', DIRECTOR = false;
   var STATS, S;
-  function freshStats() { return { frames: 0, away: 0, zoomed: 0, pushIns: 0, cuts: 0, emergencies: 0, short: 0, checked: 0, mismatch: 0, asks: 0, steps: 0, states: {}, slow: 0 }; }
+  function freshStats() { return { frames: 0, away: 0, zoomed: 0, pushIns: 0, cuts: 0, mbCuts: 0, emergencies: 0, short: 0, checked: 0, mismatch: 0, asks: 0, steps: 0, states: {}, slow: 0 }; }
   STATS = freshStats();
   function fresh() {
     return { W: null, frame: -1, t: null, state: 'home', pose: null, vel: { cx: 0, cy: 0, span: 0, tilt: 0, yaw: 0 }, from: null,
@@ -554,9 +554,12 @@
       if (want === 'home' && away && A - SETTLE < left) cut = true;
     }
 
+    // (fix pass, review B5: more than one ball in play, or one waiting to be fed, with the picture still pushed in from the
+    // crater's close-up - THE BIG ONE - is a cut straight home, so the plunger lane and the fed balls are never off screen)
+    var mbCut = !cut && !director && playing && !single && away && want === 'home';
     // ---- move
-    if (cut) {
-      S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; S.held = false; STATS.cuts++; S.cutFrame = W.frame; S.stillAt = W.frame;
+    if (cut || mbCut) {
+      S.pose = copyShot(H); still(); S.state = 'home'; S.homeAt = t; S.held = false; if (cut) STATS.cuts++; else STATS.mbCuts++; S.cutFrame = W.frame; S.stillAt = W.frame;
     } else if (want === 'home') {
       if (!away) { S.held = false; if (S.state !== 'home') { S.state = 'home'; S.homeAt = t; } if (S.stillAt == null) S.stillAt = W.frame; S.pose = copyShot(H); still(); }
       else {

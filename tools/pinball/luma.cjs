@@ -71,6 +71,11 @@ async function luma(browser, name, view) {
   ok(got, name + ': an eruption on the demo (the pilot sank the full crater)');
   const er = [];
   if (got) for (let k = 0; k < 4; k++) { er.push(await lumOf(page, path.join(OUT, name + '-erupt' + k + '.png'))); await sleep(k ? 180 : 20); }
+  // (fix pass, review B3) THE BIG ONE's multiball starts as the eruption's show ends: its first frames count too
+  let gotMb = false;
+  if (got) try { await page.waitForFunction(() => { const W = window.ARCADE365 && ARCADE365.world; return !!(W && W.mb); }, null, { timeout: 15000, polling: 16 }); gotMb = true; } catch (e) { gotMb = false; }
+  if (gotMb) { await sleep(200); er.push(await lumOf(page, path.join(OUT, name + '-mb0.png'))); await sleep(300); er.push(await lumOf(page, path.join(OUT, name + '-mb1.png'))); }
+  if (got) ok(gotMb, name + ': THE BIG ONE multiball started after the eruption (its first frames are sampled too)');
   const bm = base.reduce((s, v) => s + v.mean, 0) / base.length, worst = er.reduce((m, v) => Math.max(m, v.mean), 0), white = er.reduce((m, v) => Math.max(m, v.white), 0);
   console.log('  baseline ' + base.map((v) => v.mean + '/' + v.white + '%').join(' ') + ' | eruption ' + er.map((v) => v.mean + '/' + v.white + '%').join(' '));
   if (got) {

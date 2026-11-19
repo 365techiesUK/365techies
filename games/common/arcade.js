@@ -281,7 +281,7 @@
       showOverlay('over'); lastHud = ''; hud();
       celebrateOver(h, prevBest);
       var hsecs = Math.round(played / 60);
-      if (runP && h.score > 0 && (!D.hofCap || (window.HallOfFame.fits ? HallOfFame.fits(D.hofCap, h.score, h.wave, hsecs) : true))) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: hsecs, run: runP });
+      if (runP && h.score > 0 && (!D.hofCap || (window.HallOfFame.fits ? HallOfFame.fits(D.hofCap, h.score, h.wave, hsecs) : true))) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: hsecs, run: runP, capped: !!D.hofCap });
       else $('oHof').hidden = true;
       setTimeout(function () { if (mode === 'over') try { $('oPlay').focus({ preventScroll: true }); } catch (e) {} }, 600);
     }
