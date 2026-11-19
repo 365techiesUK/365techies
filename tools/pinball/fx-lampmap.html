@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<title>Ember Peak lamp map</title>
+<!-- 5 Nov 2026 (wave 3, show lane): Ember Peak's painted playfield (art3d.js, which prints every insert in PinLamps.list as
+     unlit glass) at 3x, with the lamps outlined (?lit=1 lights them all) and the ids of ?ids=a,b,c labelled, so new inserts
+     can be placed on clear art. Never deployed. Opened by tools/pinball/fx-aim.cjs-style shots (fx-lampmap.cjs). -->
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="../../games/pinball/table.js"></script>
+<script src="../../games/pinball/tables/ember.js"></script>
+<script src="../../games/pinball/engine.js"></script>
+<script src="../../games/pinball/lamps.js"></script>
+<script src="../../games/pinball/art3d.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), S = +q.get('s') || 3, L = PinLamps.forTable('ember');
+  var art = PinArt.paint({ table: 'ember', scale: S }), c = document.getElementById('c'), g = c.getContext('2d');
+  c.width = art.color.width; c.height = art.color.height; g.drawImage(art.color, 0, 0);
+  var mark = (q.get('ids') || '').split(',').filter(Boolean), grid = q.get('grid');
+  if (grid) { g.strokeStyle = 'rgba(255,255,255,0.25)'; g.fillStyle = '#fff'; g.font = '10px monospace'; for (var x = 0; x < 270; x += 10) { g.beginPath(); g.moveTo(x * S, 0); g.lineTo(x * S, c.height); g.stroke(); if (x % 50 === 0) g.fillText(x, x * S + 2, 10); } for (var y = 0; y < 480; y += 10) { g.beginPath(); g.moveTo(0, y * S); g.lineTo(c.width, y * S); g.stroke(); if (y % 50 === 0) g.fillText(y, 2, y * S - 2); } }
+  if (q.get('lit')) L.list.forEach(function (l) { var sp = PinArt.lampSprite(l, S); if (!sp) return; g.save(); g.globalCompositeOperation = 'lighter'; g.translate(l.x * S, l.y * S); if (!sp.rotated) g.rotate(l.rot || 0); g.drawImage(sp, -(sp.cx != null ? sp.cx : sp.width / 2), -(sp.cy != null ? sp.cy : sp.height / 2)); g.restore(); });
+  L.list.forEach(function (l) {
+    if (!mark.some(function (m) { return l.id.indexOf(m) === 0 || l.group === m; })) return;
+    g.save(); g.translate(l.x * S, l.y * S); g.rotate(l.rot || 0); g.strokeStyle = '#0ff'; g.lineWidth = 1; g.strokeRect(-l.w * S / 2, -l.h * S / 2, l.w * S, l.h * S); g.restore();
+    g.fillStyle = '#0ff'; g.font = '9px monospace'; g.fillText(l.id, l.x * S + l.w * S / 2 + 2, l.y * S);
+  });
+  window.done = { n: L.list.length, w: c.width, h: c.height };
+})();
+</script>
+</body>
+</html>

@@ -338,6 +338,8 @@
       lane: '#ffd84a', skill: '#5cff6b', loop: '#2ee6d6', orbit: '#2ee6d6', ramp: '#ffb02e', obsidian: '#b48cff',
       crater: '#ff8a1e', geyser: '#e8f6ff', lava: '#ff7a1a', inlane: '#ffd84a', kick: '#ff4a3a', save: '#ff3b4a', mult: '#ff9a2e',
       erupt: '#ffb02e', bump: ['#ff9a2e', '#ffd84a', '#2ee6d6'],
+      lock: '#5cff6b', eruptC: '#ffb02e', super: '#fff0a0', modeC: '#b48cff', dive: '#3fb8ff', jackpot: '#ffd84a', plug: '#c9a0ff',
+      crab: '#ff7a3a', boss: ['#ff9a2e', '#ff6a1e', '#ff4a2a'], combo: ['#ffd84a', '#ffb02e', '#ff8ad8', '#ff5cc8', '#fff0a0'], tags: ['#5cff6b', '#3fe0ff', '#b48cff', '#ffd84a'],
       gauge: ['#ffe45a', '#ffd84a', '#ffcb3a', '#ffbb30', '#ffab28', '#ff9a22', '#ff8a1e', '#ff7a1a', '#ff6a16']
     };
     var list = [], tags = [], chains = {};
@@ -500,6 +502,35 @@
         add({ id: 'ring' + i + '.' + k, group: 'rings', shape: 'circle', x: x, y: y, w: 4, h: 4, rot: 0, color: COL.bump[i], b: i });
       }
     });
+    // ---------------------------------------------------------------- THE BIG ONE and the goals (5 Nov 2026, wave 3): the
+    // crater's awards in a crown over its far rim (lit in W.crater.lit's priority order, the one the crater takes next
+    // brightest), a JACKPOT at each multiball jackpot shot, the PLUG between the flippers, the four island MODES and the
+    // boss's three phases and the COMBO ladder on the shore, the run's mutation tags in the sky, and an arrow at the
+    // reachable magma crab (so every NEXT shot has its own lamps). Placed before the river, which steps round them.
+    var CR = [['lock', 'LOCK', COL.lock, 218], ['erupt', 'ERUPT', COL.eruptC, 244], ['super', 'SUPER', COL.super, 270], ['mode', 'MODE', COL.modeC, 296], ['dive', 'DIVE', COL.dive, 322]];
+    CR.forEach(function (c) {
+      var a = c[3] * PI / 180, r = V.r + 15;
+      add({ id: 'cr.' + c[0], group: 'crown', shape: 'rect', text: c[1], x: V.x + Math.cos(a) * r, y: V.y + Math.sin(a) * r, w: 12.5, h: 5.6, rot: a + PI / 2, color: c[2], award: c[0] });
+    });
+    // (each jackpot beside its shot: below each lava lane's mouth, and up the heat ramp's lane)
+    add({ id: 'jp.lavaL', group: 'jackpot', shape: 'rect', text: 'JACKPOT', x: lx + 3, y: 238, w: 17, h: 5.4, rot: 0, color: COL.jackpot, jp: 'lavaL' });
+    add({ id: 'jp.lavaR', group: 'jackpot', shape: 'rect', text: 'JACKPOT', x: mx(lx) - 3, y: 238, w: 17, h: 5.4, rot: 0, color: COL.jackpot, jp: 'lavaR' });
+    add({ id: 'jp.ramp', group: 'jackpot', shape: 'rect', text: 'JACKPOT', x: rx, y: en.y - 21, w: 17, h: 5.4, rot: -PI / 2, color: COL.jackpot, jp: 'ramp' });
+    var PG = T.plug || { x: M, y: F.y + 22 };
+    add({ id: 'plug', group: 'plug', shape: 'oval', text: 'PLUG', x: M, y: F.y - 17, w: 12, h: 6.4, rot: 0, color: COL.plug });
+    // the shore: the four island modes in a row (in the order the crater starts them), the boss's phases (three peaks
+    // growing) and the combo ladder (five steps, the fifth the SUPER COMBO) on either side of the river
+    var MD = [['CRABS', COL.crab], ['QUARRY', COL.obsidian], ['STORM', COL.orbit], ['HEAT', COL.ramp]], mY = 391.5;
+    MD.forEach(function (m, k) { add({ id: 'mode' + k, group: 'modes', shape: 'rect', text: m[0], x: [88, 105.5, 144.5, 162][k], y: mY, w: 15.5, h: 6.4, rot: 0, color: m[1], step: k }); });
+    [0, 1, 2].forEach(function (k) { add({ id: 'boss' + k, group: 'boss', shape: 'triangle', x: 89 + k * 9.5, y: 358.5 - k * 0.5, w: 6 + k, h: 5.5 + k, rot: 0, color: COL.boss[k], step: k }); });
+    [0, 1, 2, 3, 4].forEach(function (k) { add({ id: 'combo' + k, group: 'combo', shape: k === 4 ? 'oval' : 'circle', x: 139 + k * 6.6, y: 358, w: k === 4 ? 6.4 : 4.6, h: k === 4 ? 6.4 : 4.6, rot: 0, color: COL.combo[k], step: k }); });
+    tag('COMBO', 152.2, 352.6, 0, 2.6, '#ffc8f0');
+    // the mutation tags (Ember Run's W.mod.tags, in order): four small lenses in the sky over the summit
+    [0, 1, 2, 3].forEach(function (k) { add({ id: 'tag' + k, group: 'tags', shape: 'oval', x: 113 + k * 10, y: 27, w: 7, h: 5.2, rot: 0, color: COL.tags[k], step: k }); });
+    // the reachable magma crab (the lower walk): an arrow pointing up at it
+    var CB = T.crabs && T.crabs[1];
+    if (CB) { var cbx = CB.path[0][0] - 15, cby = CB.path[0][1] + CB.r + 10, cbm = (CB.path[0][0] + CB.path[1][0]) / 2; add({ id: 'crabs', group: 'crabs', shape: 'arrow', x: cbx, y: cby, w: 9, h: 12, rot: rotOfF(cbm - cbx, CB.path[0][1] - cby), color: COL.crab }); chains.crabs = [list.length - 1]; }   // (left of the explorer, pointing up at the walk)
+
     // ---------------------------------------------------------------- the lava river (29 Oct 2026, owner: "more lamps"):
     // bubbles of lava along the printed river (the same line as art3d.js river()), every 12 units from the volcano's foot
     // to the drain, wherever they clear the other lamps, the toys and the walls. In play the lava flows down them.
@@ -529,6 +560,32 @@
     var SLING = [[], []];
     (groups.slings || []).forEach(function (i) { SLING[list[i].side].push(i); });
     var SHOTS = ['crater', 'ramp', 'orbitL', 'orbitR', 'obsidian', 'geyser', 'lavaL', 'lavaR'];
+    // THE NEXT SHOT (5 Nov 2026, wave 3): W.next.shot (goals.js) names one shot; its lamps race in and its arrow pulses,
+    // and every other shot's idle chase dims to 30%. Each shot id of CONTRACT v1 has its own lamps here.
+    var NEXTSET = {
+      crater: chains.crater.concat(groups.crown), ramp: chains.ramp.concat([byId['jp.ramp']]), orbitL: chains.orbitL, orbitR: chains.orbitR,
+      lavaL: chains.lavaL.concat([byId['jp.lavaL']]), lavaR: chains.lavaR.concat([byId['jp.lavaR']]), drops: chains.obsidian.concat(groups.drops),
+      crabs: chains.crabs || [], pops: (groups.bumpers || []).concat(groups.rings || []), geyser: chains.geyser, lanes: groups.lanes.concat(groups.skill), loop: LOOP
+    };
+    var NEXTARROW = { crater: byId.crater, ramp: byId.ramp, orbitL: byId.orbitL, orbitR: byId.orbitR, lavaL: byId.lavaL, lavaR: byId.lavaR, drops: byId.obsidian, crabs: byId.crabs, geyser: byId.geyser };
+    var CROWN = groups.crown, JPS = groups.jackpot, MODES = groups.modes, BOSS = groups.boss, COMBO = groups.combo, TAGS = groups.tags, PLUG = byId.plug;
+    var DIM = 1;   // the idle chases' scale this frame: 0.3 while a NEXT shot is named
+    function nextOf(W) { var n = W && W.next; return n && typeof n.shot === 'string' && NEXTSET[n.shot] ? n.shot : null; }
+    // which island mode an id names (goals.js may use a name, a number or an object: all are understood)
+    var MODEKEYS = [/crab/i, /quarr|obsid/i, /storm|orbit/i, /heat|wave|ramp/i];
+    function modeIndex(m) {
+      if (m == null || m === false) return -1;
+      if (typeof m === 'number') return m >= 0 && m < 4 ? m | 0 : -1;
+      if (typeof m === 'object') return modeIndex(m.id != null ? m.id : m.name != null ? m.name : m.i != null ? m.i : m.index);
+      for (var q = 0; q < 4; q++) if (MODEKEYS[q].test(String(m))) return q;
+      return -1;
+    }
+    function bossPhase(W) {   // 1-3 while the boss is up (goals.js's W.goals.boss or W.goals.mission.boss), else 0
+      var G = W.goals, b = G && (G.boss || (G.mission && G.mission.boss));
+      var ph = b ? (typeof b === 'number' ? b : b.phase) : 0;
+      if (!(ph > 0) && W.crater && W.crater.boss) ph = W.crater.sealed ? 1 : 2;
+      return ph > 0 ? Math.min(3, ph | 0) : 0;
+    }
 
     // ---------------------------------------------------------------- the big moments' light shows (29 Oct 2026, owner: "push it
     // further", "bigger light shows"): short whole-table shows, choreographed from where each lamp sits (worked out once
@@ -550,9 +607,11 @@
     var SHOWDEF = {
       launch: [1400, 3, 0.55], drops: [1000, 4, 0.6], loop: [1000, 4, 0.6], combo: [1300, 5, 0.7], crater: [1000, 5, 0.5], quake: [900, 6, 0.5],
       overload: [1300, 6, 0.85], ready: [1400, 6, 0.75], save: [1500, 7, 0.8], skill: [1700, 7, 0.85], lavashot: [1900, 7, 0.85], lavaopen: [950, 8, 0.85],
-      extra: [2400, 9, 0.92], eruption: [2500, 10, 0.92]
+      extra: [2400, 9, 0.92], eruption: [2500, 10, 0.92],
+      // wave 3 (5 Nov 2026): THE BIG ONE's moments, read from the world's counters like the rest
+      lock: [1200, 5, 0.6], plugsave: [1100, 6, 0.7], jackpot: [1600, 8, 0.85], super: [2200, 9, 0.92], mball: [1800, 9, 0.85], dive: [1400, 8, 0.85]
     };
-    Object.keys(SHOWDEF).forEach(function (nm) { SHOWDEF[nm][3] = ['launch', 'drops', 'loop', 'combo', 'crater', 'quake', 'overload', 'ready', 'save', 'skill', 'lavashot', 'lavaopen', 'extra', 'eruption'].indexOf(nm); });   // (showLamp switches on a number: quicker than on the name)
+    Object.keys(SHOWDEF).forEach(function (nm) { SHOWDEF[nm][3] = ['launch', 'drops', 'loop', 'combo', 'crater', 'quake', 'overload', 'ready', 'save', 'skill', 'lavashot', 'lavaopen', 'extra', 'eruption', 'lock', 'plugsave', 'jackpot', 'super', 'mball', 'dive'].indexOf(nm); });   // (showLamp switches on a number: quicker than on the name)
     function bandF(d, f, w) { var e = d - f; if (e < 0) e = -e; return e < w ? 1 - e / w : 0; }
     function rings3(d, f, w) { return Math.max(bandF(d, f, w), 0.8 * bandF(d, f - 0.32, w), 0.6 * bandF(d, f - 0.64, w)); }
     function colourWave(i, q) { return bandF(HB[i] * 0.9 + PY[i] * 1.6, q * 6.2 - 0.8, 0.85); }   // the colours in turn (gold, orange, teal, violet, the rest), rolling down the table
@@ -566,7 +625,7 @@
       var st = W.stats || {}, tq = W.toys || {}, lid = 0, bs = W.balls || [];
       for (var q = 0; q < bs.length; q++) if (bs[q].launched && bs[q].id > lid) lid = bs[q].id;
       return { er: st.eruptions || 0, cr: st.craters || 0, sv: st.saves || 0, sk: st.skill || 0, qk: st.quakes || 0, lv: st.lava || 0, lp: st.loops || 0, tot: W.total || 0,
-        cb: W.combo || 0, dd: W.dropsDown || 0, rd: !!(tq.volcano && tq.volcano.ready), pend: !!(tq.quake && tq.quake.pending), lid: Math.max(lid, SH.s ? SH.s.lid : 0) };
+        cb: W.goals && W.goals.combo ? W.goals.combo.n | 0 : 0, dd: W.dropsDown || 0, lk: st.locks || 0, ps: st.plugSaves || 0, jp: st.jackpots || 0, su: st.supers || 0, mb: st.multiballs || 0, dv: !!(W.dive && W.dive.held), rd: !!(tq.volcano && tq.volcano.ready), pend: !!(tq.quake && tq.quake.pending), lid: Math.max(lid, SH.s ? SH.s.lid : 0) };
     }
     function startShow(name, t, x, y, side) {
       var d = SHOWDEF[name];
@@ -592,6 +651,12 @@
       if (n.lv > o.lv) { var sd = W.lit && W.lit.lava && W.lit.lava[1] > W.lit.lava[0] ? 1 : 0; startShow('lavashot', t, LANETOP[sd].x, LANETOP[sd].y, sd); }
       if (n.cr > o.cr && Vw) { SH.rel = Vw.release; SH.full = n.er > o.er; if (SH.full) { SH.ashT0 = t; startShow('lavaopen', t); } }
       if (n.tot > o.tot) startShow('extra', t);
+      if (n.lk > o.lk) startShow('lock', t);
+      if (n.ps > o.ps) startShow('plugsave', t);
+      if (n.jp > o.jp) startShow('jackpot', t);
+      if (n.su > o.su) startShow('super', t);
+      if (n.mb > o.mb) startShow('mball', t);
+      if (n.dv && !o.dv) startShow('dive', t);
       if (SH.rel >= 0 && W.frame >= SH.rel) { startShow(SH.full ? 'eruption' : 'crater', t); SH.rel = -1; SH.full = false; }
     }
     // how a show lights lamp i at p (0..1 through it), e ms in
@@ -603,7 +668,7 @@
           if (p > 0.4) v = Math.max(v, bandF(DV[i], 1.05 - 1.2 * (p - 0.4) / 0.6, 0.12), k === 1 && p > 0.8 ? checker(i, e, 70) : 0);
           return v;
         case 1:  /* drops */ return rings3(DB[i], p * 1.5, 0.12) * fadeEnd(p, 0.7) + (HB[i] === 3 ? 0.5 * checker(i, e, 80) * (1 - p) : 0);
-        case 2:  /* loop */ { var q = (p * 2) % 1, x = q < 0.5 ? q * 2 : 2 - q * 2; return bandF(PX[i], -0.1 + 1.2 * x, 0.18) * (HB[i] === 2 ? 1 : 0.8) + (HB[i] === 2 ? 0.25 * checker(i, e, 90) : 0); }
+        case 2:  /* loop */ { var q = p, x = q < 0.5 ? q * 2 : 2 - q * 2; return bandF(PX[i], -0.1 + 1.2 * x, 0.18) * (HB[i] === 2 ? 1 : 0.8) + (HB[i] === 2 ? 0.25 * checker(i, e, 90) : 0); }
         case 3:  /* combo */ { var a = AV[i] * 3 - p * 3.5; a -= Math.floor(a); return Math.max(bandF(a, 0.5, 0.26), 0.7 * bandF(DV[i], (p * 2.2) % 1.1, 0.1)) * fadeEnd(p, 0.85); }
         case 4:  /* crater */ return Math.max(rings3(DV[i], p * 1.4, 0.13), k === 1 ? 1 - p : 0) * fadeEnd(p, 0.6);
         case 5:  /* quake */ return Math.max(bandF(PX[i], 0.5 + 0.6 * Math.sin(p * PI * 3), 0.16), k === 1 ? checker(i, e, 60) : 0) * fadeEnd(p, 0.8);
@@ -637,9 +702,82 @@
           if (p < 0.78) return Math.max(colourWave(i, (p - 0.55) / 0.23), k ? 0.6 : 0);
           return Math.max(checker(i, e, 80) * fadeEnd(p, 0.84), k === 2 ? 0.5 * (1 - p) * 4 : 0);
         }
+        case 14:  /* lock */ return Math.max(rings3(DV[i], p * 1.3, 0.12), KIND[i] === 1 ? 0.8 : 0) * fadeEnd(p, 0.7);
+        case 15:  /* plugsave */   // a wave up from the plug between the flippers
+          return Math.max(bandF(1 - PY[i], -0.1 + 1.25 * p, 0.2), KIND[i] === 3 ? checker(i, e, 110) : 0) * fadeEnd(p, 0.8);
+        case 16:  /* jackpot */ {   // gold rings out of the crater, then the gold lamps chase and settle
+          if (p < 0.55) return Math.max(rings3(DV[i], p * 2.2, 0.12), HB[i] === 0 ? 0.5 * checker(i, e, 90) : 0);
+          return (HB[i] === 0 || HB[i] === 1 ? checker(i, e, 90) : 0.3 * checker(i + 1, e, 90)) * fadeEnd(p, 0.75);
+        }
+        case 17:  /* super */ {   // a spiral round the volcano, the colours rolling, a gold chase
+          var sa = AV[i] * 3 - p * 4; sa -= Math.floor(sa);
+          if (p < 0.5) return Math.max(bandF(sa, 0.5, 0.25), rings3(DV[i], p * 2.4, 0.11), k === 1 ? 1 : 0);
+          if (p < 0.78) return Math.max(colourWave(i, (p - 0.5) / 0.28), k === 1 ? 0.8 : 0);
+          return checker(i, e, 85) * fadeEnd(p, 0.84);
+        }
+        case 18:  /* mball */ {   // the multiball under way: both sides racing up the table, the lava lanes hottest
+          var sx2 = PX[i] < 0.5 ? PX[i] : 1 - PX[i];
+          return Math.max(bandF(1 - PY[i], (p * 2) % 1 * 1.3 - 0.15, 0.16) * (sx2 < 0.3 ? 1 : 0.7), k === 2 ? 0.6 * checker(i, e, 90) : 0) * fadeEnd(p, 0.85);
+        }
+        case 19:  /* dive */   // the table drains into the crater: rings closing in on it, then dark
+          return Math.max(bandF(DV[i], 1.1 - 1.3 * p, 0.14), k === 1 ? 1 - p * 0.5 : 0) * fadeEnd(p, 0.8);
       }
       return v;
     }
+    // the wave 3 inserts (THE BIG ONE, the goals) and the NEXT shot
+    function waveThree(W, t, out, lit, V, NX, CL, MB, G, CB) {
+      var k, i, C = W.crater || {};
+      // the crown: every lit award pulses; the one the crater takes next (CL[0]) blinks hard; sealed, all dark but a slow
+      // warning; the award just taken (C.took) holds on while the crater has the ball
+      for (k = 0; k < CROWN.length; k++) {
+        var aw = list[CROWN[k]].award, at = CL.indexOf(aw);
+        if (V && V.busy && C.took === aw) out[CROWN[k]] = 1;
+        else if (C.sealed) out[CROWN[k]] = aw === 'super' ? 0 : 0.04 + 0.12 * breatheF(t, 1600, k * 0.1);
+        else if (at === 0) out[CROWN[k]] = blinkF(t, 120) ? 1 : 0.35;
+        else if (at > 0) out[CROWN[k]] = 0.45 + 0.4 * breatheF(t, 700, k * 0.13);
+        else if (aw === 'lock' && W.lock && W.lock.n > 0) out[CROWN[k]] = 0.7;   // a lock banked
+        else out[CROWN[k]] = 0.02 + 0.06 * breatheF(t, 2200, k * 0.2);
+      }
+      // the jackpots: lit ones blink; one just collected (lit no more, W.lit.jackpot running) flashes; no multiball, dark
+      for (k = 0; k < JPS.length; k++) {
+        var key = list[JPS[k]].jp, on = MB && MB.jp && MB.jp[key];
+        out[JPS[k]] = on ? (blinkF(t + k * 70, 150) ? 1 : 0.3) : MB && lit.jackpot > 0 ? blinkF(t, 60) : MB ? 0.08 : 0.02 + 0.04 * breatheF(t, 2600, k * 0.3);
+      }
+      // the plug: up, on (blinking in its last 3 s); a save just made, flashing; down, a dim glow
+      var PL = W.plug;
+      out[PLUG] = lit.plug > 0 ? blinkF(t, 60) : PL && PL.up ? (PL.t < 180 ? blinkF(t, 140) : 1) : 0.03 + 0.08 * breatheF(t, 2000, 0.3);
+      // the island modes: done ones on, the running one blinking, the next one (MODE lit at the crater) pulsing
+      var md = G ? modeIndex(G.mode) : -1, done = G ? G.modesDone : 0, nxt = -1;
+      if (G && (G.modeLit || C.mode) && md < 0) nxt = (typeof done === 'number' ? done : done && done.length ? done.length : 0) % 4;
+      for (k = 0; k < MODES.length; k++) {
+        var dn = typeof done === 'number' ? k < done : done && typeof done.indexOf === 'function' ? done.some(function (d) { return modeIndex(d) === k; }) : false;
+        out[MODES[k]] = k === md ? (blinkF(t, 160) ? 1 : 0.3) : k === nxt ? 0.3 + 0.6 * breatheF(t, 800, 0) : dn ? 0.85 : 0.03 + 0.05 * breatheF(t, 2400, k * 0.25);
+      }
+      // the boss's phases: the current peak blinks, the ones beaten stay on
+      var bp = bossPhase(W);
+      for (k = 0; k < BOSS.length; k++) out[BOSS[k]] = !bp ? 0.02 + 0.05 * breatheF(t, 2800, k * 0.3) : k + 1 < bp ? 0.8 : k + 1 === bp ? (blinkF(t, 220) ? 1 : 0.35) : 0.06;
+      // the combo ladder: one step for each shot chained while its clock runs, the next step pulsing; a SUPER COMBO, all
+      var cn = CB && CB.t > 0 ? CB.n | 0 : 0;
+      for (k = 0; k < COMBO.length; k++) out[COMBO[k]] = cn >= 5 ? blinkF(t + k * 40, 90) : k < cn ? 1 : k === cn && cn > 0 ? 0.25 + 0.5 * breatheF(t, 400, 0) : 0.02 + 0.05 * breatheF(t, 1900, k * 0.15);
+      // the mutation tags: one lens for each, in order
+      var tg = W.mod && W.mod.tags && W.mod.tags.length ? W.mod.tags.length : 0;
+      for (k = 0; k < TAGS.length; k++) out[TAGS[k]] = k < tg ? 0.7 + 0.3 * breatheF(t, 1500, k * 0.25) : 0.015 + 0.05 * breatheF(t, 3000, k * 0.25);
+      // the magma crab: racing while CRAB HUNT runs
+      if (chains.crabs) out[chains.crabs[0]] = md === 0 ? blinkF(t, 140) : 0.03 + 0.25 * DIM * breatheF(t, 1300, 0);
+      // THE NEXT SHOT: its lamps race in (far end first) and its arrow pulses, over everything else
+      if (NX) {
+        var ns = NEXTSET[NX], na = NEXTARROW[NX];
+        if (na != null && chains[NX === 'drops' ? 'obsidian' : NX]) {
+          var ch = chains[NX === 'drops' ? 'obsidian' : NX], tmp = NXT || (NXT = new Float32Array(N));
+          for (i = 0; i < ch.length; i++) tmp[ch[i]] = 0;
+          cometF(tmp, ch, t, 75, 1, 0.35);
+          for (i = 0; i < ch.length; i++) out[ch[i]] = Math.max(out[ch[i]], tmp[ch[i]]);
+          out[na] = Math.max(out[na], 0.5 + 0.5 * breatheF(t, 560, 0));
+          for (i = 0; i < ns.length; i++) if (ch.indexOf(ns[i]) < 0) out[ns[i]] = Math.max(out[ns[i]], 0.3 + 0.5 * breatheF(t, 560, 0));
+        } else for (i = 0; i < ns.length; i++) out[ns[i]] = Math.max(out[ns[i]], 0.35 + 0.65 * breatheF(t, 560, (i % 4) * 0.25));
+      }
+    }
+    var NXT = null;
     function shows(W, t, out) {
       watch(W, t);
       var Vw = W.toys && W.toys.volcano, i;
@@ -670,14 +808,15 @@
         if (count) for (k = 0; k < 3 && k < count && k < ai; k++) out[ch[ai - 1 - k]] = 1;   // a combo holds lamps on: p0 first
         return;
       }
-      cometF(out, ch, t, 190, IDLE, 0.02);
+      cometF(out, ch, t, 190, IDLE * DIM, 0.02 * DIM);
     }
     // the pressure (the gauge round the volcano, E-R-U-P-T on the shore): lit up to the pressure, the next one pulsing,
     // the rest a slow dim chase in towards it. Full: a chase round all of it. Over full: everything blinks (erupt now!).
     // The crater holding the ball (an eruption on its way): a fierce flicker.
-    function pressure(out, ids, t, V, full) {
+    function pressure(out, ids, t, V, full, mb) {   // full: the eruption the pressure builds to (W.press.level); mb: W.mb
       var n = ids.length, k;
       if (!V) { for (k = 0; k < n; k++) out[ids[k]] = 0.03 + 0.1 * breatheF(t, 2400, k * 0.1); return; }
+      if (mb && mb.on && !V.busy) { cometF(out, ids, t, 70, 1, 0.3); return; }   // the eruption multiball: a race round it all
       if (V.busy) { for (k = 0; k < n; k++) out[ids[k]] = hashF(ids[k], Math.floor(t / 50)) > 0.35 ? 1 : 0.35; return; }
       if (V.red) { for (k = 0; k < n; k++) out[ids[k]] = (blinkF(t, 90) + k) % 2 ? 1 : 0.2; return; }
       if (V.ready) { cometF(out, ids, t, 60, 1, 0.6); return; }
@@ -721,7 +860,9 @@
       if (mode === 'title') { attract(out, t); return out; }
       for (i = 0; i < N; i++) out[i] = 0;
       if (!W || mode === 'over' || W.over || W.tilted) return out;
-      var lit = W.lit || {}, toys = W.toys || {}, V = toys.volcano, full = T.pressure ? T.pressure.full : 1;
+      var lit = W.lit || {}, toys = W.toys || {}, V = toys.volcano, full = W.press && W.press.level > 0 ? W.press.level : T.pressure ? T.pressure.full : 1;
+      var NX = nextOf(W), CL = (W.crater && W.crater.lit) || [], MB = W.mb || null, GO = W.goals || null, CB = GO && GO.combo ? GO.combo : null;
+      DIM = NX ? 0.3 : 1;
       // the skill lanes and the skill shot
       for (i = 0; i < 3; i++) {
         var ln = byId['lane' + i];
@@ -737,9 +878,12 @@
       shotLamps(out, 'orbitR', t, lit.orbitR > 0 ? 'made' : loop ? 'lit' : 'idle');
       if (lit.orbitL > 0 || lit.orbitR > 0) for (k = 0; k < LOOP.length; k++) out[LOOP[k]] = blinkF(t, 70);
       else if (loop) cometF(out, LOOP, t, 70, 1, 0.12, W.orbitFrom === 'R');
-      else cometF(out, LOOP, t, 260, IDLE, 0.02, (Math.floor(t / 1560) & 1) === 1);
+      else cometF(out, LOOP, t, 260, IDLE * DIM, 0.02 * DIM, (Math.floor(t / 1560) & 1) === 1);
       // the heat ramp: lit while a combo runs, and while the crater is ready to erupt
-      shotLamps(out, 'ramp', t, lit.ramp > 0 ? 'made' : W.comboT > 0 || (V && (V.ready || V.red)) ? 'lit' : 'idle', W.comboT > 0 ? W.combo : 0);
+      // the heat ramp: lit while its multiball jackpot is (the old ramp combo is gone: goals.js scores combos; a running
+      // combo holds its lamps on, one for each shot chained)
+      var comboOn = CB && CB.t > 0 && CB.n > 0;
+      shotLamps(out, 'ramp', t, lit.ramp > 0 ? 'made' : MB && MB.jp && MB.jp.ramp ? 'lit' : 'idle', comboOn ? CB.n : 0);
       // the obsidian targets: down ones lit, a just-hit one flashing, a dim chase along the ones still up
       var dpos = Math.floor(t / 230) % 7, ndn = 0;
       for (i = 0; i < NDROP; i++) {
@@ -748,21 +892,22 @@
         else if (W.drops && !W.drops[i]) { out[dl] = 1; ndn++; }
         else out[dl] = dpos === i ? 0.25 : 0.03;
       }
-      shotLamps(out, 'obsidian', t, lit.kick > 60 ? 'made' : ndn >= 3 ? 'lit' : 'idle');
+      shotLamps(out, 'obsidian', t, lit.kick > 60 || lit.plug > 0 ? 'made' : ndn >= 3 ? 'lit' : 'idle');
       // the volcano: the crater's shot, the gauge, E-R-U-P-T
-      shotLamps(out, 'crater', t, V && V.busy ? 'made' : V && (V.ready || V.red) ? 'lit' : 'idle');
-      pressure(out, GAUGE, t, V, full);
-      pressure(out, ERUPT, t, V, full);
+      shotLamps(out, 'crater', t, V && V.busy ? 'made' : CL.length && !(W.crater && W.crater.sealed) ? 'lit' : 'idle');
+      pressure(out, GAUGE, t, V, full, MB);
+      pressure(out, ERUPT, t, V, full, MB);
       // the geyser: puffing (the warning) blinks; cooling down it refills one lamp at a time; ready, a dim chase up it
       var G = toys.geyser, gch = chains.geyser;
       if (G && G.st === 'puff') for (k = 0; k < gch.length; k++) out[gch[k]] = blinkF(t, 60);
       else if (G && G.st === 'cool') { var cf = 1 - G.t / T.geyser.cool; for (k = 0; k < gch.length; k++) out[gch[k]] = cf > (k + 1) / (gch.length + 1) ? 0.22 : 0.02 + 0.04 * breatheF(t, 900, k * 0.2); }
-      else cometF(out, gch, t, 210, IDLE, 0.03);
+      else cometF(out, gch, t, 210, IDLE * DIM, 0.03 * DIM);
       // the lava lanes: closed, they glow like embers (a dim flicker); open, a race up each lane (brighter as the gate rises)
       var Lv = toys.lava;
       ['lavaL', 'lavaR'].forEach(function (id, s) {
         var ch = chains[id], gt = Lv && Lv.gates[s];
         if (lit.lava && lit.lava[s] > 0) { for (k = 0; k < ch.length; k++) out[ch[k]] = blinkF(t, 60); return; }
+        if (W.mb && W.mb.jp && W.mb.jp[id]) { cometF(out, ch, t + s * 90, 50, 1, 0.3); return; }   // its jackpot lit: racing
         if (Lv && Lv.open) {
           cometF(out, ch, t + s * 90, 55, 1, 0.25);
           var hk = 0.4 + 0.6 * (gt ? gt.h : 1);
@@ -774,7 +919,7 @@
       // the inlanes: blinking while a ramp combo runs, else a slow drip down to the flippers
       for (k = 0; k < 4; k++) {
         var st = list[INL[k]].step;
-        out[INL[k]] = W.comboT > 0 ? blinkF(t + st * 120, 120) : (Math.floor(t / 420) % 3 === st ? 0.25 : 0.02);
+        out[INL[k]] = comboOn ? blinkF(t + st * 120, 120) : (Math.floor(t / 420) % 3 === st ? 0.25 : 0.02);
       }
       // the kickback (off, and warning, while a quake is coming), the ball save
       var Q = toys.quake;
@@ -810,13 +955,14 @@
       }
       // a quake: the whole table shudders (each lamp drops out at random, fast)
       if (Q && Q.t > 0) { var qt = Math.floor(t / 40); for (i = 0; i < N; i++) if (hashF(i, qt) < 0.45) out[i] *= 0.2; }
+      waveThree(W, t, out, lit, V, NX, CL, MB, GO, CB);
       // the big moments' shows, over everything (29 Oct 2026)
       shows(W, t, out);
       return out;
     }
     // shows: the big moments this set lights itself (fx.js leaves the lamps of its own whole-table shows of these names alone)
-    var OWN = { eruption: 1, erupt: 1, lavaopen: 1, extra: 1, save: 1, skill: 1, combo: 1, loop: 1, drops: 1, quake: 1, overload: 1, pfull: 1 };
-    return { id: 'ember', list: list, tags: tags, chains: chains, level: level, byId: byId, groups: groups, colors: COL, shows: OWN, showNow: function () { return SH.name && SH.W ? { name: SH.name, t0: SH.t0, ms: SH.ms } : null; } };
+    var OWN = { eruption: 1, erupt: 1, lavaopen: 1, extra: 1, save: 1, skill: 1, combo: 1, loop: 1, drops: 1, quake: 1, overload: 1, pfull: 1, lock: 1, plugsave: 1, jackpot: 1, superjackpot: 1, mbstart: 1, dive: 1 };
+    return { id: 'ember', list: list, tags: tags, chains: chains, level: level, byId: byId, groups: groups, colors: COL, shows: OWN, next: NEXTSET, showNow: function () { return SH.name && SH.W ? { name: SH.name, t0: SH.t0, ms: SH.ms } : null; } };
   }
 
   // ================================================================ the sets, one per table, made when first asked for
