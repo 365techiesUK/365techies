@@ -197,7 +197,7 @@
   // ---------------------------------------------------------------- the painting
   function paint(opts) {
     opts = opts || {};
-    if (opts.table && opts.table !== 'orbit') return opts.table === 'ember' ? paintEmber(opts.scale || 4) : null;
+    if (opts.table && opts.table !== 'orbit') return opts.table === 'ember' ? paintEmber(opts.scale || 4) : opts.table === 'chamber' ? paintChamber(opts.scale || 4) : null;
     var S = opts.scale || 4, key = String(S);
     if (cache[key]) return cache[key];
     var ms = {}, t0 = now();
@@ -940,13 +940,14 @@
   // geyser's hot spring) down the middle of the lower field to the lagoon at the drain. world3d.js lays a flowing sheet
   // of lava along the same line.
   function river(table) {
-    if (table !== 'ember') return null;
+    if (table !== 'ember') return null;   // (THE MAGMA CHAMBER has no river: its glow is in the rock)
     return [[92, 142, 7], [86, 160, 8], [79, 182, 9], [75, 204, 10], [78, 226, 10], [88, 248, 11], [102, 270, 12], [113, 292, 12],
       [119, 316, 13], [122, 342, 13], [124, 366, 14], [125, 388, 15], [125, 410, 16]];
   }
   function emberB() { return E.table && E.TABLES && E.TABLES.ember ? E.table('ember') : null; }
   function emberT() { var B = emberB(); return B ? B.T : null; }
   function inserts(table) {
+    if (table === 'chamber') return chamberInserts();
     if (table !== 'ember') return table === 'orbit' || !table ? LAT('orbit').list : [];
     var own = LA.forTable ? LA.forTable('ember') : null;
     if (own && own.list && own.list.length) return own.list;
@@ -992,10 +993,130 @@
   }
 
   function emberTagsOf(t) {
+    if (t === 'chamber') { chamberInserts(); return chamberTags || []; }
     if (t !== 'ember') return LAT('orbit').tags || [];
     var own = LA.forTable ? LA.forTable('ember') : null;
     if (own && own.list && own.list.length) return own.tags || [];
     inserts('ember'); return emberTags || [];
+  }
+  // ---------------------------------------------------------------- THE MAGMA CHAMBER (wave 3, 5 Nov 2026): a level inside the
+  // volcano. Deep red rock, glowing magma seams, the cavern wall above the domed roof, Ember Peak's lower lanes printed in
+  // its colours, and its own inserts (lit from W.descent by world3d.js): three VENT rings, the CORE, the SCOOP's ASCEND
+  // arrow, the CINDER LANE arrow, five LAVA CLOCK pips, the kickback and the ball save. Procedural, our own, no images.
+  var chamberCache = {}, chamberList = null, chamberTags = null;
+  function chamberT() { return E.table && E.TABLES && E.TABLES.chamber ? E.table('chamber').T : null; }
+  function chamberInserts() {
+    if (chamberList) return chamberList;
+    var CT = chamberT(); if (!CT) return [];
+    var L = [], V = CT.volcano, c = CT.crabs[0], MI = CT.MID, F0 = CT.flippers[0];
+    function add(o) { o.i = L.length; L.push(o); return o; }
+    CT.bumpers.forEach(function (b, i) { add({ id: 'vent' + i, group: 'vents', shape: 'circle', x: b[0] - 17, y: b[1] + 13, w: 7, h: 7, rot: 0, color: '#ff6a1a', step: i }); });
+    add({ id: 'core', group: 'core', shape: 'circle', x: (c.path[0][0] + c.path[1][0]) / 2, y: c.path[0][1] + 24, w: 10, h: 10, rot: 0, color: '#ffb02a' });
+    add({ id: 'scoop', group: 'scoop', shape: 'arrow', x: V.x, y: V.y + V.r + 22, w: 12, h: 18, rot: 0, color: '#ffd84a' });
+    var gt = CT.lava.gates[0];
+    add({ id: 'cinder', group: 'lane', shape: 'arrow', x: (gt[0] + gt[2]) / 2, y: gt[1] + 18, w: 10, h: 15, rot: -0.35, color: '#ff4a1a' });
+    for (var k = 0; k < 5; k++) add({ id: 'clock' + k, group: 'clock', shape: 'rect', x: MI - 24 + k * 12, y: 372, w: 8, h: 4.5, rot: 0, color: k < 2 ? '#ff3a1a' : '#ff9a2e', step: k });
+    add({ id: 'kick', group: 'kick', shape: 'arrow', x: 16, y: 430, w: 9, h: 14, rot: 0, color: '#ff4a3a' });
+    add({ id: 'save', group: 'save', shape: 'rect', x: MI, y: F0.y + 8, w: 27, h: 13, rot: 0, color: '#ff3b4a', text: 'SHOOT|AGAIN' });
+    chamberTags = [
+      { text: 'VENTS', x: 196, y: 300, rot: 0, size: 4.2, color: '#ffb02a' },
+      { text: 'CORE', x: L[3].x, y: L[3].y + 12, rot: 0, size: 3.8, color: '#ffd27a' },
+      { text: 'ASCEND', x: V.x, y: V.y + V.r + 38, rot: 0, size: 4, color: '#ffd84a' },
+      { text: 'CINDER', x: 18, y: 270, rot: -Math.PI / 2, size: 3.4, color: '#ffb02a' },
+      { text: 'LAVA CLOCK', x: MI, y: 382, rot: 0, size: 3.2, color: '#ff8a5a' },
+      { text: 'KICKBACK', x: 16, y: 400, rot: -Math.PI / 2, size: 3.2, color: '#ff7a5a' }
+    ];
+    chamberList = L;
+    return L;
+  }
+  function paintChamber(S) {
+    var key = String(S);
+    if (chamberCache[key]) return chamberCache[key];
+    var CT = chamberT(); if (!CT) return null;
+    var W0 = CT.W, H0 = CT.H, MI = CT.MID, AR = CT.arch, V = CT.volcano, t0 = now(), ms = {};
+    var C = canvas(W0 * S, H0 * S), g = C.getContext('2d'), GS = S / 2, GC = canvas(W0 * GS, H0 * GS), gg = GC.getContext('2d');
+    gg.fillStyle = '#000'; gg.fillRect(0, 0, GC.width, GC.height);
+    var r = rng(4021);
+    function step(name, fn) { var c0 = now(); g.save(); gg.save(); fn(); g.restore(); gg.restore(); ms[name] = Math.round((now() - c0) * 10) / 10; }
+    function poly(c, P) { c.beginPath(); P.forEach(function (q, i) { if (i) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); c.closePath(); }
+    function inside(c) { c.beginPath(); c.moveTo(6, H0 + 2); c.lineTo(6, 198); c.arc(AR.x, AR.y, AR.R, Math.PI + 0.698, 2 * Math.PI - 0.698); c.lineTo(244, H0 + 2); c.closePath(); }
+    step('rock', function () {   // the floor of the chamber: deep red rock, value noise worked out small and scaled up
+      var n = canvas(W0 / 2, H0 / 2), ng = n.getContext('2d'), id = ng.createImageData(n.width, n.height), d = id.data;
+      for (var y = 0; y < n.height; y++) for (var x = 0; x < n.width; x++) {
+        var v = fbm(x / 22, y / 22, 4, 11), cr = Math.abs(fbm(x / 9 + 40, y / 9, 3, 12) - 0.5), k = (y * n.width + x) * 4, hot = clamp((0.05 - cr) / 0.05, 0, 1) * 0.5;
+        d[k] = 70 + v * 70 + hot * 150; d[k + 1] = 16 + v * 22 + hot * 60; d[k + 2] = 12 + v * 14; d[k + 3] = 255;
+      }
+      ng.putImageData(id, 0, 0);
+      g.imageSmoothingEnabled = true; g.drawImage(n, 0, 0, C.width, C.height);
+      unitT(g, S);
+      var gr = g.createRadialGradient(MI, 300, 20, MI, 300, 260); gr.addColorStop(0, 'rgba(255,90,20,0.22)'); gr.addColorStop(1, 'rgba(0,0,0,0.35)');
+      g.fillStyle = gr; g.fillRect(0, 0, W0, H0);
+    });
+    step('seams', function () {   // glowing magma seams through the rock (on the glow map too, so they shine when the lights dim)
+      unitT(g, S); unitT(gg, GS);
+      for (var i = 0; i < 26; i++) {
+        var x = 10 + r() * 230, y = 190 + r() * 260, P = [[x, y]];
+        for (var k = 0; k < 7; k++) { x += (r() - 0.5) * 26; y += (r() - 0.3) * 18; P.push([x, y]); }
+        var w = 0.5 + r() * 1.1;
+        [g, gg].forEach(function (c, gl) {
+          c.save(); c.lineCap = 'round'; c.lineJoin = 'round'; c.shadowColor = '#ff5a10'; c.shadowBlur = (gl ? GS : S) * 3;
+          c.strokeStyle = gl ? 'rgba(255,110,30,0.8)' : 'rgba(255,140,40,0.9)'; c.lineWidth = w;
+          c.beginPath(); P.forEach(function (q, j) { if (j) c.lineTo(q[0], q[1]); else c.moveTo(q[0], q[1]); }); c.stroke(); c.restore();
+        });
+      }
+    });
+    step('lanes', function () {   // printed panels: the CINDER LANE, the inlanes and outlanes, the core's track, pools under the vents
+      unitT(g, S); unitT(gg, GS);
+      var gt = CT.lava.gates[0];
+      g.save(); poly(g, [[7, 200], [gt[2] - 1, 200], [gt[2] - 1, gt[1]], [7, gt[1]]]); var lg = g.createLinearGradient(0, 200, 0, gt[1]); lg.addColorStop(0, 'rgba(40,6,4,0.85)'); lg.addColorStop(1, 'rgba(120,24,8,0.85)'); g.fillStyle = lg; g.fill();
+      g.strokeStyle = 'rgba(255,150,60,0.9)'; g.lineWidth = 0.8; g.stroke(); g.restore();
+      [[[8, 340], [26, 342], [26, 404], [8, 416]], [[242, 340], [224, 342], [224, 404], [242, 416]], [[29, 344], [46, 308], [74, 420], [29, 404]], [[221, 344], [204, 308], [176, 420], [221, 404]]].forEach(function (P, i) {
+        g.save(); poly(g, P); g.fillStyle = i < 2 ? 'rgba(90,10,8,0.55)' : 'rgba(150,60,10,0.4)'; g.fill(); g.restore();
+      });
+      var c = CT.crabs[0], a = c.path[0], b = c.path[1];
+      [g, gg].forEach(function (cx, gl) { cx.save(); cx.lineCap = 'round'; cx.shadowColor = '#ffb02a'; cx.shadowBlur = (gl ? GS : S) * 4; cx.strokeStyle = 'rgba(255,170,60,0.75)'; cx.lineWidth = 2.2; cx.beginPath(); cx.moveTo(a[0], a[1]); cx.lineTo(b[0], b[1]); cx.stroke(); cx.restore(); });
+      CT.bumpers.forEach(function (bm) { var rg = g.createRadialGradient(bm[0], bm[1], bm[2], bm[0], bm[1], bm[2] + 16); rg.addColorStop(0, 'rgba(255,120,30,0.55)'); rg.addColorStop(1, 'rgba(255,60,10,0)'); g.fillStyle = rg; g.beginPath(); g.arc(bm[0], bm[1], bm[2] + 16, 0, 7); g.fill(); });
+      var sg = g.createRadialGradient(V.x, V.y, V.r, V.x, V.y, V.r + 26); sg.addColorStop(0, 'rgba(255,200,80,0.6)'); sg.addColorStop(1, 'rgba(255,100,20,0)'); g.fillStyle = sg; g.beginPath(); g.arc(V.x, V.y, V.r + 26, 0, 7); g.fill();
+    });
+    step('guides', function () {   // under every wall a printed band with a hot rim
+      unitT(g, S);
+      CT.walls.forEach(function (w) {
+        if (w[6] === 'apron') return;
+        g.save(); g.lineCap = 'round'; g.strokeStyle = 'rgba(20,4,4,0.85)'; g.lineWidth = (w[4] + 2.6) * 2; g.beginPath(); g.moveTo(w[0], w[1]); g.lineTo(w[2], w[3]); g.stroke();
+        g.strokeStyle = 'rgba(255,120,40,0.55)'; g.lineWidth = 0.6; g.stroke(); g.restore();
+      });
+    });
+    step('inserts', function () { unitT(g, S); chamberInserts().forEach(function (l) { insertUnlit(g, l); }); });
+    step('words', function () {
+      unitT(g, S);
+      chamberTags.forEach(function (t) {
+        g.save(); g.translate(t.x, t.y); g.rotate(t.rot); g.font = '900 ' + t.size + 'px ' + FONT; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.lineWidth = t.size * 0.3; g.strokeStyle = 'rgba(20,4,2,0.9)'; g.strokeText(t.text, 0, 0); g.fillStyle = t.color; g.fillText(t.text, 0, 0); g.restore();
+      });
+      g.save(); g.font = 'italic 900 9px ' + FONT; g.textAlign = 'center'; g.fillStyle = 'rgba(0,0,0,0.5)'; g.fillText('MAGMA CHAMBER', MI + 0.6, 322.8);
+      var gd = g.createLinearGradient(0, 314, 0, 322); gd.addColorStop(0, '#fff3c4'); gd.addColorStop(0.55, '#ffb02a'); gd.addColorStop(1, '#ff6a1a'); g.fillStyle = gd; g.fillText('MAGMA CHAMBER', MI, 322); g.restore();
+    });
+    step('apron', function () {   // the apron (black enamel, a gold edge) and the depth on it
+      unitT(g, S);
+      var F = CT.flippers[0], tipY = F.y + Math.sin(F.rest) * F.len + 7;
+      var left = [[27, 407], [76, 426], [F.x + 2, F.y + 8], [MI - 21, tipY + 3], [MI - 15, tipY + 6], [MI - 15, H0 + 2], [25, H0 + 2]];
+      [left, left.map(function (q) { return [2 * MI - q[0], q[1]]; })].forEach(function (P, side) {
+        g.save(); poly(g, P); g.fillStyle = '#140a0c'; g.fill(); g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,214,120,0.95)'; g.stroke(); g.restore();
+        g.save(); g.font = 'italic 900 7px ' + FONT; g.textAlign = 'center'; g.fillStyle = '#ffc23a'; g.fillText(side ? 'DEPTH 1' : '365', side ? 2 * MI - 52 : 52, H0 - 5); g.restore();
+      });
+    });
+    step('wall', function () {   // the cavern wall above the domed roof and the rock right of the chamber: darker, rougher, lit from below
+      unitT(g, S);
+      g.save(); g.beginPath(); g.rect(0, 0, W0, H0); inside(g); g.clip('evenodd');
+      var wg = g.createLinearGradient(0, 0, 0, 230); wg.addColorStop(0, '#120506'); wg.addColorStop(0.75, '#3a0c08'); wg.addColorStop(1, '#6a1a0a'); g.fillStyle = wg; g.fillRect(0, 0, W0, H0);
+      for (var i = 0; i < 140; i++) { var x = r() * W0, y = r() * 210, s2 = 3 + r() * 14; g.fillStyle = 'rgba(' + (40 + r() * 50 | 0) + ',' + (10 + r() * 14 | 0) + ',' + (8 + r() * 8 | 0) + ',0.7)'; g.beginPath(); g.ellipse(x, y, s2 * 1.4, s2, r() * 3, 0, 7); g.fill(); }
+      g.fillStyle = 'rgba(16,4,4,0.75)'; g.fillRect(244, 0, W0 - 244, H0);
+      g.restore();
+      g.save(); inside(g); g.lineWidth = 1.2; g.strokeStyle = 'rgba(255,150,60,0.7)'; g.stroke(); g.restore();
+    });
+    var out = { color: C, glow: GC, scale: S, ms: ms, total: Math.round((now() - t0) * 10) / 10, table: 'chamber' };
+    chamberCache[key] = out;
+    return out;
   }
   function paintEmber(S) {
     var key = String(S);
