@@ -4,7 +4,7 @@
  * A level (T.level): reached by a hard cut from Ember Peak's DIVE hold, never a place to lose a ball. descent.js runs
  * it (the goal, the lava clock, the way back up); the engine steps it like any table. Same units as Ember Peak, and THE
  * SAME FRAME: the lower block (flippers, slings, inlanes, outlanes, the foot gates) is copied from tables/ember.js at
- * the same coordinates, so the flippers feel, time and sit on screen exactly as on the surface (the camera relies on
+ * the same coordinates (and the kickback in the left outlane, lit once a visit), so the flippers feel, time and sit on screen exactly as on the surface (the camera relies on
  * it). The chamber is one storey, about 238 wide and 300 tall (y 160-470); above its domed roof is the cavern wall.
  *
  * Above the flippers, built only from the existing toy kit:
@@ -103,7 +103,7 @@
 
   // ------------------------------------------------------------ the MAGMA CORE: a moving post (the crab toy), left of the middle
   var crabs = [
-    { path: [[82, 252], [114, 252]], r: 8, e: 0.4, speed: 18, pause: 40, u0: 0.5, stun: 90 }
+    { path: [[80, 252], [110, 252]], r: 10, e: 0.4, speed: 18, pause: 40, u0: 0.5, stun: 90 }
   ];
 
   // ------------------------------------------------------------ the CINDER LANE's lava gate [ax, ay, bx, by, r, a point on
@@ -114,7 +114,8 @@
   var sensors = {
     circles: [
       ['inL', 38, 342 + DY, 8], ['inR', mx(38), 342 + DY, 8],
-      ['outL', 16, 392 + DY, 8], ['outR', mx(16), 392 + DY, 8]
+      ['outL', 16, 392 + DY, 8], ['outR', mx(16), 392 + DY, 8],
+      ['kick', 16, 424 + DY, 8]
     ],
     lines: [['lavaL', 8, 222, 48, 222]]
   };
@@ -125,8 +126,11 @@
     lava: 1000000, rail: 50000, chamber: 10000000, ascend: 5000000, vent: 250000
   };
   var names = { scoop: 'MAGMA SCOOP', vents: 'VENTS', core: 'MAGMA CORE', lane: 'CINDER LANE' };
-  // the lava clock (seconds, by speed: Gentle, Classic, Fast) and how long the lane's gate opens
+  // the lava clock (seconds, by speed: Gentle, Classic, Fast), the ball save from the end of the held start (seconds),
+  // the hits that light a vent and that break the core once the vents are lit, and how long the lane's gate opens (steps)
   var clock = { 1: 55, 2: 45, 3: 40 };
+  var save = { 1: 20, 2: 18, 3: 12 };
+  var ventHits = 2, coreHits = 2;
   var laneOpen = { start: 720, vent: 480 };
 
   // pilot aim (pilot.js's AIM shape): for each speed, the steps from letting a cradled ball go to the flip that makes
@@ -143,7 +147,7 @@
     walls: walls, posts: posts, arch: arch, bumpers: bumpers, slings: slings, flippers: flippers, storeys: storeys,
     shooter: shooter, gates: gates, sensors: sensors, serve: serve, aim: aim,
     volcano: volcano, carries: carries, crabs: crabs, lava: lava,
-    points: points, names: names, clock: clock, laneOpen: laneOpen, bonusScale: 50,
+    points: points, names: names, clock: clock, save: save, ventHits: ventHits, coreHits: coreHits, laneOpen: laneOpen, bonusScale: 50, surface: 'ember',
     // the closed spaces no ball can reach (the sim tools' free spot check): the rock strip right of the chamber and the
     // two pockets behind the dome's cut-off corners
     voids: [[[244, 0], [270, 0], [270, 470], [244, 470]], [[6, 190], [6, 216], [34, 190], [36, 176], [20, 184]],

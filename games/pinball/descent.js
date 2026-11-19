@@ -5,8 +5,10 @@
  * DIVE hold; this file then cuts to THE MAGMA CHAMBER (tables/chamber.js), a one-screen level with the same flippers in
  * the same place. Down there:
  *  - a held start: the ball drops on to the wire rail, is held 1 s (T.serve), then rolls into the left inlane;
- *  - the goal: light the three VENTS (pop bumpers; the CINDER LANE behind its lava gate lights the next one), then hit
- *    the MAGMA CORE = CHAMBER CLEARED ('chamberclear': 10,000,000 in Classic; Ember Run gives a ball instead - run.js
+ *  - the end of the held start brings a ball save (T.save: 20 / 18 / 12 s); the left outlane's kickback is lit at the
+ *    start and again by every vent that lights (not under W.mod.noKick) - a saved ball comes in on the rail again;
+ *  - the goal: light the three VENTS (pop bumpers, T.ventHits hits each; the CINDER LANE behind its lava gate lights
+ *    the next one), then break the MAGMA CORE (T.coreHits hits) = CHAMBER CLEARED ('chamberclear': 10,000,000 in Classic; Ember Run gives a ball instead - run.js
  *    sees the event). The scoop then lights ASCEND (the crater's 'boss' lamp, which pushes no event): sinking it pays
  *    the ASCEND award ('ascend') and is the trip home;
  *  - the lava clock: 55 / 45 / 40 s (Gentle / Classic / Fast; T.clock) from the end of the held start. At zero THE
@@ -27,9 +29,10 @@
  * The engine plugin 'descent' (registered when this file loads; url 'descent.js' so the forecast worker loads it too):
  *   on the surface W.descent = { dives, clears, below, last }: below is the level's whole world while the ball is down
  *   there (plain data inside the surface world, so E.clone copies the lot); on a level W.descent = { level, dive,
- *   vents: [3], lit, cleared, asc, rose, clock (steps left), opened } and W.next = { shot, text, small, gauge, clock }
- *   (shots 'vents', 'core', 'scoop'). New events (besides the contract's 'chamberclear', 'ascend', 'lavarise'):
- *   { sfx: 'vent', i, n } when a vent lights.
+ *   vents: [3] (lit), heat: [3] (hits so far), need (hits to light one: T.ventHits), lit, cleared, asc, rose, clock
+ *   (steps left), opened, saved, core (hits on the lit core), coreNeed (T.coreHits) } and W.next = { shot, text, small, gauge, clock } (shots 'vents', 'core', 'scoop').
+ *   New events (besides the contract's 'chamberclear', 'ascend', 'lavarise'): { sfx: 'ventheat', i, h } when a vent
+ *   is hit, { sfx: 'vent', i, n } when it lights and { sfx: 'corecrack', n } for a lit core's hit that does not break it.
  * Deterministic: integer steps only, no Math.random, Date, sin, cos or pow. Plain ES5. In node:
  * require('./descent.js') (it loads engine.js itself). */
 (function (root, factory) {
@@ -58,8 +61,14 @@
   function surfaceState() { return { dives: 0, clears: 0, below: null, last: null }; }
   function levelState(W) {
     var T = tableOf(W), secs = (T.clock && T.clock[W.speed]) || 45;
-    return { level: T.level, dive: 0, vents: [false, false, false], lit: 0, cleared: false, asc: false, rose: false,
-      clock: secs * 60, opened: false, score0: 0 };
+    return { level: T.level, dive: 0, vents: [false, false, false], heat: [0, 0, 0], need: T.ventHits || 1, core: 0, coreNeed: T.coreHits || 1, lit: 0, cleared: false,
+      asc: false, rose: false, clock: secs * 60, opened: false, saved: false, score0: 0 };
+  }
+  function vary(W) {   // each visit starts a little differently: where the core is on its walk, from the level's seed
+    var c = W.toys && W.toys.crabs && W.toys.crabs[0], d = tableOf(W).crabs && tableOf(W).crabs[0];
+    if (!c || !d) return;
+    var u = ((W.seed >>> 3) % 997) / 996, a = d.path[0], b = d.path[1];
+    c.u = u; c.x = a[0] + (b[0] - a[0]) * u; c.y = a[1] + (b[1] - a[1]) * u; c.dir = (W.seed >>> 1) & 1 ? 1 : -1;
   }
   // balls in play besides one in the DIVE hold (and balls waiting to be fed)
   function others(W) {
@@ -76,7 +85,9 @@
   }
 
   // ---------------------------------------------------------------- the plugin
-  function init(W) { W.descent = isLevel(W) ? levelState(W) : surfaceState(); }
+  function init(W) {
+    if (isLevel(W)) { W.descent = levelState(W); vary(W); } else W.descent = surfaceState();
+  }
   function step(W) {
     if (!W.descent) init(W);   // (a world made before this plugin was registered)
     if (W.descent.level) levelStep(W); else surfaceStep(W);
@@ -102,15 +113,20 @@
       else if (nm === 'lava') lane(W);
       else if (nm === 'crater' && W.crater.took === 'boss') { ascend(W); break; }
     }
-    // the lava clock runs once the held start is over
-    if (!D.asc && !D.rose && servedYet(W) && D.clock > 0 && --D.clock === 0) rise(W);
+    // the held start over: the ball save starts, and the lava clock runs
+    var inPlay = servedYet(W);
+    if (inPlay && !D.saved) { D.saved = true; if (T.save && T.save[W.speed]) E.api.save(W, T.save[W.speed]); }
+    if (!D.asc && !D.rose && inPlay && D.clock > 0 && --D.clock === 0) rise(W);
     W.next = nextOf(W);
   }
-  function vent(W, i) {
+  function vent(W, i, full) {   // a hit heats a vent; enough hits (or the lane: full) light it
     var D = W.descent, T = tableOf(W), LO = T.laneOpen || { vent: 480 };
     if (D.cleared || D.rose || i == null || i < 0 || i >= D.vents.length || D.vents[i]) return;
+    D.heat[i] = full ? D.need : D.heat[i] + 1;
+    if (D.heat[i] < D.need) { W.events.push({ sfx: 'ventheat', i: i, h: D.heat[i] }); return; }
     D.vents[i] = true; D.lit++;
     E.api.award(W, pts(W, 'vent', 250000), 'vent');
+    if (!(W.mod && W.mod.noKick) && !W.kickback) { W.kickback = true; W.lit.kick = 90; }   // each vent lit relights the kickback
     W.events.push({ sfx: 'vent', i: i, n: D.lit });
     if (D.lit < D.vents.length) {
       E.api.gates(W, -1, LO.vent);
@@ -120,13 +136,14 @@
   function lane(W) {   // the CINDER LANE lights the next vent
     var D = W.descent;
     if (D.cleared || D.rose) return;
-    for (var i = 0; i < D.vents.length; i++) if (!D.vents[i]) { vent(W, i); return; }
+    for (var i = 0; i < D.vents.length; i++) if (!D.vents[i]) { vent(W, i, true); return; }
   }
   function core(W) {
     var D = W.descent;
     if (D.rose) return;
     if (D.cleared) { msg(W, 'MAGMA CORE', 'SHOOT THE SCOOP', 80); return; }
     if (D.lit < D.vents.length) { msg(W, 'MAGMA CORE', 'LIGHT THE VENTS FIRST', 90); return; }
+    if (++D.core < D.coreNeed) { W.events.push({ sfx: 'corecrack', n: D.core }); msg(W, 'CORE CRACKED', 'HIT IT AGAIN', 120); return; }
     D.cleared = true;
     W.events.push('chamberclear');
     var big = pts(W, 'chamber', 10000000);
@@ -156,7 +173,7 @@
     var D = W.descent, secs = Math.ceil(D.clock / 60);
     if (D.rose) return { shot: null, text: 'THE LAVA RISES', small: 'BACK TO THE SURFACE', gauge: 0, clock: 0 };
     if (D.cleared) return { shot: 'scoop', text: 'ASCEND', small: 'SHOOT THE MAGMA SCOOP', gauge: 1, clock: secs };
-    if (D.lit >= D.vents.length) return { shot: 'core', text: 'HIT THE MAGMA CORE', small: 'CLEAR THE CHAMBER', gauge: 1, clock: secs };
+    if (D.lit >= D.vents.length) return { shot: 'core', text: D.core ? 'HIT THE CORE AGAIN' : 'HIT THE MAGMA CORE', small: 'CLEAR THE CHAMBER', gauge: 1, clock: secs };
     var left = D.vents.length - D.lit;
     return { shot: 'vents', text: 'LIGHT THE VENTS', small: left + ' MORE · THEN THE CORE', gauge: D.lit / D.vents.length, clock: secs };
   }

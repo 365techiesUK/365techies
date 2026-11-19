@@ -183,10 +183,22 @@ test('the chamber goal: three vents, the core, then ASCEND through the scoop', (
   C.toys.crabs[0].stun = 0;
   hit(C.toys.crabs[0].x, C.toys.crabs[0].y, T.crabs[0].r + 7);
   assert.equal(C.descent.cleared, false);
-  T.bumpers.forEach((bm) => hit(bm[0], bm[1], bm[2] + 7));
+  assert.equal(T.ventHits, 2, 'two hits light a vent');
+  T.bumpers.forEach((bm, i) => {
+    hit(bm[0], bm[1], bm[2] + 7);
+    assert.ok(C.descent.heat[i] >= 1, 'a hit heats vent ' + i);
+    for (let k = 0; k < 4 && !C.descent.vents[i]; k++) hit(bm[0], bm[1], bm[2] + 7);
+  });
   assert.equal(C.descent.lit, 3, 'three vents lit');
+  assert.ok(seen.ventheat >= 1 && seen.vent === 3, "'ventheat' and three 'vent' events");
   assert.equal(C.next.shot, 'core');
   const before = C.score;
+  assert.equal(T.coreHits, 2, 'two hits break the lit core');
+  C.toys.crabs[0].stun = 0;
+  hit(C.toys.crabs[0].x, C.toys.crabs[0].y, T.crabs[0].r + 7);
+  assert.equal(C.descent.cleared, false, 'one hit cracks it');
+  assert.equal(seen.corecrack, 1);
+  assert.equal(C.next.text, 'HIT THE CORE AGAIN');
   C.toys.crabs[0].stun = 0;
   hit(C.toys.crabs[0].x, C.toys.crabs[0].y, T.crabs[0].r + 7);
   assert.equal(C.descent.cleared, true, 'CHAMBER CLEARED');
@@ -215,10 +227,13 @@ test('Ember Run: a clear pays no 10,000,000 (run.js gives the ball) and multipli
   const C = D.active(S), T = E.table('chamber').T;
   for (let i = 0; i < 200 && !C.balls.every((b) => b.m === 'free'); i++) { E.step(C, {}); C.events.length = 0; }
   const s0 = C.score;
-  shoot(C, T.bumpers[0][0], T.bumpers[0][1], 0, 1, T.bumpers[0][2] + 15, 700);
-  for (let i = 0; i < 4; i++) { E.step(C, {}); C.events.length = 0; }
+  for (let k = 0; k < 6 && !C.descent.vents[0]; k++) {
+    shoot(C, T.bumpers[0][0], T.bumpers[0][1], 0, 1, T.bumpers[0][2] + 15, 700);
+    for (let i = 0; i < 4; i++) { E.step(C, {}); C.events.length = 0; }
+  }
+  assert.ok(C.descent.vents[0], 'vent 0 lit');
   assert.ok(C.score - s0 >= 2 * T.points.vent, 'W.mod.x.vent doubles the vent award');
-  C.descent.lit = 3; C.descent.vents = [true, true, true];
+  C.descent.lit = 3; C.descent.vents = [true, true, true]; C.descent.core = C.descent.coreNeed - 1;
   C.toys.crabs[0].stun = 0;
   const s1 = C.score;
   shoot(C, C.toys.crabs[0].x, C.toys.crabs[0].y, 0, 1, T.crabs[0].r + 15, 700);

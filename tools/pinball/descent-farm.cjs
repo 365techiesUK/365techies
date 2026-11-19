@@ -34,7 +34,7 @@ function median(a) { if (!a.length) return 0; const s = a.slice().sort((x, y) =>
 function pct(a, p) { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(s.length * p))]; }
 
 function farm(kind) {
-  const trips = [], early = { down: 0, downFree: 0, up: 0, at: [] };
+  const trips = [], early = { down: 0, downFree: 0, saved: 0, up: 0, at: [] };
   let games = 0, surfaceSecs = 0, frames = 0;
   while (trips.length < N && games < 400) {
     const seed = 3000 + games * 13;
@@ -54,9 +54,10 @@ function farm(kind) {
       const ev = A.events.map(name);
       if (below && cur) {
         if (cur.free < 0 && A.balls.length && A.balls.every((b) => b.m === 'free')) cur.free = A.frame;
-        if (ev.includes('drain')) {
-          if (A.frame < 120) { early.down++; early.at.push('down+' + A.frame); }
-          if (cur.free >= 0 && A.frame - cur.free < 120) { early.downFree++; early.at.push('free+' + (A.frame - cur.free)); }
+        if (ev.includes('drain')) {   // (a drain the ball save catches is counted apart: it comes straight back in on the rail)
+          const saved = ev.includes('save');
+          if (A.frame < 120 && !saved) { early.down++; early.at.push('down+' + A.frame); }
+          if (cur.free >= 0 && A.frame - cur.free < 120) { if (saved) early.saved++; else { early.downFree++; early.at.push('free+' + (A.frame - cur.free)); } }
         }
         if (ev.includes('chamberclear')) cur.clearAt = A.frame / 60;
       } else if (!below && upF >= 0 && ev.includes('drain') && f - upF < 120) { early.up++; early.at.push('up+' + (f - upF)); }
@@ -89,7 +90,7 @@ else out.forEach((r) => {
     + ' | cleared ' + r.cleared + ' (' + (100 * r.clearRate).toFixed(0) + '%), median clear at ' + r.clearAt.toFixed(1) + ' s'
     + ' | stay median ' + r.stay.median.toFixed(1) + ' s (10% ' + r.stay.p10.toFixed(1) + ', 90% ' + r.stay.p90.toFixed(1) + ')'
     + ' | ends ' + JSON.stringify(r.how) + ' | median trip score ' + E.fmt(r.score)
-    + ' | drains within 2 s: of the cut down ' + r.early.down + ', of the ball free below ' + r.early.downFree + ', of the cut up ' + r.early.up
+    + ' | drains within 2 s: of the cut down ' + r.early.down + ', of the ball free below ' + r.early.downFree + ' (+' + r.early.saved + ' saved), of the cut up ' + r.early.up
     + (r.early.at.length ? ' ' + JSON.stringify(r.early.at.slice(0, 10)) : ''));
 });
 if (!JSONOUT) console.log('took ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
