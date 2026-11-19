@@ -76,7 +76,7 @@ console.log('EMBER RUN unit tests');
   ok(Math.abs(M.press - 1.2) < 1e-9 && Math.abs(M.crab - 0.96) < 1e-9 && M.save === 9 && M.decay > 0, 'pressure, crab speed, ball save, leak', JSON.stringify(M));
   R.ups = { forge: 2, lanes: 1 }; R.muts = ['deadkick']; R.deadKick = true;
   const W = Run.startRound(R);
-  ok(W.mult === 3 && W.lanes.filter(Boolean).length === 2 && W.kickback === false && W.mod.noKick && W.total === 1 && W.extraAt.length === 0, 'a round: forge x3, two lit lanes, dead kickback, one ball, no extra balls');
+  ok(W.mult === 3 && W.lanes.filter(Boolean).length === 2 && W.kickback === false && W.mod.noKick && W.total === Run.BALLS[2] && W.extraAt.length === 0, 'a round: forge x3, two lit lanes, dead kickback, the pool of ' + Run.BALLS[2] + ' balls, no extra balls');
 })();
 (function () {   // the engine applies them: the same presses with and without x4 fumaroles differ by exactly the fumaroles' extra
   const A = E.newWorld(2, 0, 9, 'ember'); A.extraAt = []; A.mod = Run.mod(Run.newRun(1, 2));
@@ -95,10 +95,10 @@ console.log('EMBER RUN unit tests');
 (function () {   // Classic: a game recorded before the run hooks went in (30 Oct 2026) still scores the same
   const W = E.newWorld(2, 0, 1, 'ember');
   for (let i = 0; i < 14400 && !W.over; i++) { E.step(W, Pilot.input(W)); W.events.length = 0; }
-  ok(!('mod' in W) && W.score === 48607000 && W.frame === 14400, 'Classic Ember Peak, seed 1, 4 minutes: 48,607,000 as before', String(W.score));
+  ok(!('mod' in W) && W.score === 295399000 && W.frame === 14400, 'Classic Ember Peak, seed 1, 4 minutes: 295,399,000 as before (wave 3: THE BIG ONE)', String(W.score));
   const O = E.newWorld(2, 0, 7, 'orbit');
   for (let i = 0; i < 14400 && !O.over; i++) { E.step(O, Pilot.input(O)); O.events.length = 0; }
-  ok(O.score === 185030 && O.frame === 8861, 'Classic orbit table, seed 7: 185,030 as before', O.score + ' @' + O.frame);
+  ok(O.score === 346940 && O.frame === 14400, 'Classic orbit table, seed 7: 346,940 @14400 as before (wave 3)', O.score + ' @' + O.frame);
 })();
 (function () {   // the boss
   const R = Run.newRun(3, 2); R.round = 3; const W = Run.startRound(R);
@@ -123,8 +123,14 @@ console.log('EMBER RUN unit tests');
 (function () {   // a real round played by the pilot: target, second wind, twin ball, summary
   const R = Run.newRun(11, 2); R.ups = { twin: 1 }; R.wind = 1; R.ups.wind = 1;
   const W = Run.startRound(R); let twin = 0, wind = false;
-  for (let i = 0; i < CAP && R.phase === 'play'; i++) { E.step(W, Pilot.input(W)); W.events.length = 0; Run.update(R, W); twin = Math.max(twin, W.balls.length); R.news.forEach((x) => { if (x.big === 'SECOND WIND') wind = true; }); R.news.length = 0; }
-  ok(twin >= 2, 'TWIN BALL puts a second ball in play');
+  // (wave 3: the pilot's balls last a median 251 s, so each ball is drained by hand after 90 s; TWIN BALL now adds a
+  // ball to every multiball, so one is started by hand)
+  for (let i = 0, f = 0; i < CAP && R.phase === 'play'; i++, f++) {
+    if (i === 600) E.api.multiball(W, 2);
+    if (W.state === 'play' && f > 60 * 90) { W.balls.length = 0; W.feed = 0; f = 0; }
+    E.step(W, Pilot.input(W)); Run.update(R, W); W.events.length = 0; twin = Math.max(twin, W.balls.length + W.feed); R.news.forEach((x) => { if (x.big === 'SECOND WIND') wind = true; }); R.news.length = 0;
+  }
+  ok(twin >= 3, 'TWIN BALL: a 2-ball multiball gets a third ball');
   ok(R.phase === 'pick' || wind || R.phase === 'over', 'the round ends in a pick or the run ends (' + R.phase + ', second wind used: ' + wind + ')');
   const s = Run.summary(R);
   ok(s.reached === 1 && s.rounds.length === 1 && typeof s.score === 'number', 'summary: reached, rounds, score');
