@@ -28,6 +28,7 @@ import ost_to_pst_page_data   # /ost-to-pst-converter/ (10 Nov 2026): appends to
 import passkey_26h2_pages_data   # /what-is-a-passkey/ + /windows-11-26h2-update/ (16 Nov 2026): appends to NEW_PAGES
 import ce_questions_page_data   # /cyber-essentials-questions/ (16 Nov 2026): appends to NEW_PAGES
 import stay_safe_pages_data as _ss   # /be-ready-digital-checklist/ (appends to NEW_PAGES) + the rebuilt /cyber-threats/ and /disaster-recovery/ (18 Nov 2026)
+import gta6_pc_page_data   # /is-gta-6-on-pc/ (19 Nov 2026, GTA VI launch day): appends to NEW_PAGES
 import t1_024_pages_data   # copy text from a picture, make a video smaller, trim a video (15 Nov 2026): appends to NEW_PAGES
 import isp_email_pages_data   # TalkTalk/Everymail, Plusnet legacy brands/Greenby, leaving BT, closed ISP email (3 Nov 2026): appends to NEW_PAGES
 import dell_new_pages   # 6 Dell pages (13 Oct 2026, seo-research/dell-2026-10-13): appends to NEW_PAGES
@@ -19085,7 +19086,7 @@ def cyber_threats_hub():
         cards += (f'          <a class="post-card" href="/{t["slug"]}/"><p class="post-card__cat">Cyber Threat</p>'
                   f'<h3>{t["name"]}</h3><p>{t["lede"]}</p><span class="post-card__more">Learn how to stay safe &#8594;</span></a>\n')
     content = "\n".join([
-      hero(bc("Cyber Threats"), "// CYBER ATTACKS &middot; UPDATED 18 NOV 2026", _ss.CT_H1, _ss.CT_LEDE,
+      hero(bc("Cyber Threats"), "// CYBER ATTACKS &middot; UPDATED 19 NOV 2026", _ss.CT_H1, _ss.CT_LEDE,
            cta1=("The eight steps", "#steps"), cta2=("Be Ready checklist", "/be-ready-digital-checklist/"),
            chips=_ss.CT_CHIPS),
       _ss.CT_LATEST_HTML,

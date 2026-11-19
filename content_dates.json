@@ -767,8 +767,8 @@
  },
  "cyber-threats": {
   "first": "2026-07-28",
-  "h": "c2c360b121c0b6e1",
-  "last": "2026-11-18"
+  "h": "46d955931dfe4ede",
+  "last": "2026-11-19"
  },
  "cybersecurity-checklist": {
   "first": "2026-07-28",
@@ -1673,6 +1673,10 @@
   "h": "c0fe2eb3f1b034b1",
   "last": "2026-09-28"
  },
+ "is-gta-6-on-pc": {
+  "first": "2026-11-19",
+  "h": "e9d616f9baea21ad"
+ },
  "is-it-down": {
   "first": "2026-07-28",
   "h": "1aa9020709c75c33",
@@ -1705,8 +1709,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "15535dbf6da7b65d",
-  "last": "2026-11-18"
+  "h": "22b8b84b22ba707f",
+  "last": "2026-11-19"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",

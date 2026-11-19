@@ -412,11 +412,15 @@ CT_OG = 'Cyber attacks in the UK: what&rsquo;s happening, and how to stay safe'
 CT_H1 = 'Cyber attacks in the UK: <em class="grad grad--green">what&rsquo;s happening, and how to stay safe</em>'
 CT_LEDE = ('Cyber attacks are in the news almost every week: shops, car makers, airports and, this month, supermarket '
            'freezers. Here&rsquo;s what a cyber attack actually is, what has been happening in the UK, what it means for '
-           'you at home or at work, and the handful of steps that protect you from nearly all of it. Updated 18 November '
+           'you at home or at work, and the handful of steps that protect you from nearly all of it. Updated 19 November '
            '2026.')
-CT_CHIPS = ['Updated 18 November 2026', 'Plain English', 'Home &amp; business']
+CT_CHIPS = ['Updated 19 November 2026', 'Plain English', 'Home &amp; business']
 
 _CT_LATEST = [
+    ('19 November 2026', 'GTA VI is out, on consoles only',
+     'Grand Theft Auto VI launched on PS5 and Xbox Series X|S, with no PC version. Fake &ldquo;GTA 6 PC&rdquo; downloads, demos '
+     'and betas carrying password stealers are everywhere. See <a href="/is-gta-6-on-pc/">is GTA 6 on PC?</a> for how to spot '
+     'them and what to do if you ran one.'),
     ('November 2026', 'Supermarket freezers attacked',
      'Attackers changed the temperature settings in the freezers of more than 100 supermarkets across Europe, spoiling '
      'food. The NCSC told UK shops to update the software on their fridge controllers. Nothing for you to do at home, '
@@ -456,7 +460,7 @@ CT_LATEST_HTML = ('''    <section class="section" aria-label="What is happening 
         .ctl p{margin:0;line-height:1.55}
         .ctl a{color:var(--cyan);text-decoration:underline;text-underline-offset:2px}
         </style>
-        <p class="eyebrow mono" data-reveal>// LATEST &middot; UPDATED 18 NOVEMBER 2026</p>
+        <p class="eyebrow mono" data-reveal>// LATEST &middot; UPDATED 19 NOVEMBER 2026</p>
         <h2 class="section-title" data-title>What&rsquo;s been happening<span class="title-underline"></span></h2>
         <ol class="ctl" data-reveal>
 ''' + "\n".join('          <li><span class="ctl__d">' + d + '</span><span class="ctl__t">' + t + '</span><p>' + x + '</p></li>'

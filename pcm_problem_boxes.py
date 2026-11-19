@@ -78,6 +78,14 @@ _BOX = {
         'you press a button.</p>'
         '<p style="margin:.6rem 0 0"><strong>Free to download and use, with no sign-up, and every new install gets 30 days of everything free</strong>, '
         'so you can try the full service and see what it finds before deciding anything.</p>'),
+    # 19 Nov 2026: /is-gta-6-on-pc/ - Safety settings (Windows' own protections on: what fake game files ask people to turn
+    # off), Remote access and the Programs check, all in the free app.
+    'fakegame': ('winsafety', 'Check what that file may have left behind',
+        '<p style="margin:0">Our free app checks whether <strong>Windows&rsquo; own protection is still switched on</strong> (fake game files often '
+        'ask you to turn it off), lists <strong>remote-control programs</strong> and which are running, and flags <strong>programs the PC '
+        'doesn&rsquo;t need</strong> and ones that no longer get security fixes. Everything is explained in plain English, and nothing changes '
+        'until you press a button.</p>'
+        '<p style="margin:.6rem 0 0"><strong>Free, no sign-up, and every new install gets 30 days of everything free.</strong></p>'),
     'remote': ('remote', 'Is anyone still connected to your PC?',
         '<p style="margin:0">Our free app&rsquo;s <strong>Remote access</strong> page says for certain whether a Remote Desktop, Quick Assist or Splashtop session is open '
         'right now, lists the remote-control programs on the PC and which are running, and reads AnyDesk&rsquo;s and TeamViewer&rsquo;s own lists of who has connected. '
@@ -142,6 +150,8 @@ PAGES = {
     'cyber-threats': ('beready', '// STEPS 3, 4 AND 5, CHECKED FOR YOU', 'See where your PC stands, free',
         'Most attacks get in through something out of date. Our free Windows app shows what needs updating, what no longer gets '
         'security fixes and whether your backup is really running, in plain English.'),
+    'is-gta-6-on-pc': ('fakegame', '// THEN CHECK THE PC', 'Check your PC, free',
+        'Once your passwords are changed from another device, check the PC itself. It takes a few minutes.'),
     'data-breaches': ('remote', '// CLICKED A LINK, OR LET SOMEONE CONNECT?', 'Check your PC, free',
         'A company&rsquo;s breach doesn&rsquo;t touch your PC. If you also clicked a scam link or let someone connect to your '
         'computer, our free Windows app checks whether anyone can still get in.'),
@@ -184,7 +194,8 @@ AFTER_SECTION = {'printer-wont-connect-to-ee-smart-hub': 's7', 'printer-wont-con
                  'printer-wont-connect-to-sky-router': 's5', 'printer-wont-connect-after-moving-house': 's5',
                  'onedrive-taking-up-space': 's7',   # 21 Oct: after "what's really using the space"
                  'be-ready-digital-checklist': 's4',   # 18 Nov: straight after "the government's cyber steps, done properly"
-                 'cyber-threats': 'what-is'}           # 18 Nov: after the guide (it holds the eight steps), before the threat cards
+                 'cyber-threats': 'what-is',           # 18 Nov: after the guide (it holds the eight steps), before the threat cards
+                 'is-gta-6-on-pc': 's4'}               # 19 Nov: straight after "already ran a GTA 6 file? do this now"
 
 
 def insert(slug, html):
