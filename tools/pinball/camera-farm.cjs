@@ -6,6 +6,8 @@
  *        [--latency=2] [--workers=24] [--seed=1] [--json=out.json]
  *        [--early=0.5] [--set=key:value,...]   (the active mode's early allowance; any of its MODES knobs, to try them)
  *        [--cam=path/to/camera.js]   (another copy of camera.js, e.g. a saved older one, to compare before and after)
+ *        [--table=chamber] [--mb=1]   (wave 3: a level, played one visit a game; a 3-ball multiball every 10 s of one ball;
+ *        pushInsWhileMulti must be 0)
  *
  * Each drawn frame (60 a second) the game takes as many steps as the camera's timeScale allows (as the page must), then
  * the camera updates. Checked:
@@ -32,9 +34,10 @@ const CAM = isMainThread ? (process.argv.find((a) => a.startsWith('--cam=')) || 
 if (CAM) { const Mod = require('module'), CP = path.resolve(CAM), EP = path.join(ROOT, 'games', 'pinball', 'engine.js'), r0 = Mod._resolveFilename; Mod._resolveFilename = function (req, par, ...rest) { return req === './engine.js' && par && par.filename === CP ? EP : r0.call(this, req, par, ...rest); }; }   // an older camera.js kept outside the tree still steps this engine
 const C = require(CAM ? path.resolve(CAM) : path.join(ROOT, 'games', 'pinball', 'camera.js'));
 const Messy = require('./messybot.cjs');
+require(path.join(ROOT, 'games', 'pinball', 'descent.js'));   // the levels' engine plugin (wave 3), as in the game
 
 function args() {
-  const o = { balls: 1000, mode: 'calm', aspect: 0.5, speed: 2, latency: 2, workers: 24, seed: 1, json: '', maxMin: 25 };
+  const o = { balls: 1000, mode: 'calm', aspect: 0.5, speed: 2, latency: 2, workers: 24, seed: 1, json: '', maxMin: 25, table: 'ember', mb: 0 };
   process.argv.slice(2).forEach((a) => { const m = /^--([^=]+)=(.*)$/.exec(a); if (m) o[m[1]] = isNaN(+m[2]) || m[2] === '' ? m[2] : +m[2]; });
   return o;
 }
@@ -47,7 +50,8 @@ function playGame(seed, o, acc) {
   if (o.set) String(o.set).split(',').forEach((kv) => { const p = kv.split(':'); C.MODES[o.mode][p[0]] = isNaN(+p[1]) ? p[1] : +p[1]; });   // --set=look:12,spare:0.2 tries the mode's knobs
   C.setMode(o.mode); C.setAspect(o.aspect); C.reset();
   const EARLY = Math.round(C.timing(o.mode).early * 60);   // steps: an early press made up to this long before a ball arrives is checked
-  const W = E.newWorld(o.speed, null, seed, 'ember'), bot = Messy.create(seed), Bt = E.table(W.tableId), T = Bt.T;
+  const W = E.newWorld(o.speed, null, seed, o.table || 'ember'), bot = Messy.create(seed), Bt = E.table(W.tableId), T = Bt.T;
+  let lastMb = -1e9, wasHome = true;   // wave 3: --mb=1 starts a 3-ball multiball every 10 s of one ball in play; push-ins while more than one ball is in play are counted
   const boxes = C.boxes(W.tableId), NS = T.storeys.length, home = C.home(o.aspect, W.tableId);
   const ring = [];   // the drawn frames: { g: game frame when drawn, shot, ts, on: [box fully on screen per storey], pts }
   const zoneHist = []; // per game frame: bitmask of storeys with a (live) ball in their zone
@@ -103,6 +107,7 @@ function playGame(seed, o, acc) {
     return m;
   }
   function stepGame() {
+    if (o.mb && W.state === 'play' && !W.mb && W.feed <= 0 && W.balls.length === 1 && W.balls[0].m === 'free' && W.balls[0].x < T.shooter.x0 && W.frame - lastMb > 600) { E.api.multiball(W, 3, {}); lastMb = W.frame; }
     const inp = bot(W);
     const bIds = W.balls.map((b) => b.id);
     E.step(W, inp);
@@ -156,7 +161,7 @@ function playGame(seed, o, acc) {
   }
   const maxFrames = o.maxMin * 3600;
   let drawn = 0;
-  while (!W.over && drawn < maxFrames * 3) {
+  while (!W.over && !(W.descent && W.descent.asc) && drawn < maxFrames * 3) {
     const ts = shot ? shot.timeScale : 1;
     accT += ts;
     while (accT >= 1 - 1e-9 && !W.over) { accT -= 1; stepGame(); }
@@ -164,6 +169,13 @@ function playGame(seed, o, acc) {
     shot = C.update(W, t, 'play', o.aspect);
     t += 1000 / 60; drawn++;
     if (shot.cut) acc.cuts++;
+    {   // wave 3: never leave home for a push-in while more than one ball is in play
+      const multi = W.balls.length + Math.max(0, W.feed || 0) > 1, isHome = shot.state === 'home' || shot.state === 'back';
+      if (multi && wasHome && !isHome) acc.pushMulti++;
+      if (multi && shot.zoom > 1.02) acc.zoomMulti++;
+      if (multi) acc.multiDrawn++;
+      wasHome = isHome;
+    }
     if (shot.emergency) { if (shot.emergency === 'rule') acc.emerg++; else acc.short++; emergAt.push([W.frame, shot.emergency]); }
     const bs = boxState(shot);
     {   // the picture's speed (screen heights a second), cuts aside
@@ -201,7 +213,7 @@ function blank() {
   return { games: 0, balls: 0, gameFrames: 0, drawn: 0, away: 0, zoomed: 0, slow: 0, states: {}, ballFrames: 0, ballOff: 0,
     entries: 0, flips: 0, liveFlips: 0, entry: k(), flip: k(), beyond: k(), cuts: 0, emerg: 0, short: 0, cutsCam: 0, pushIns: 0, asks: 0, steps: 0,
     decidedSaved: 0, decidedN: 0, badList: [], earlyFlips: 0, earlyBeyond: 0, early: k(), craters: 0, nudges: 0, tilts: 0, multiFrames: 0, scores: [],
-    spN: 0, spHist: new Array(400).fill(0), sp1: 0, sp2: 0, spMax: 0, spFast: {} };
+    spN: 0, spHist: new Array(400).fill(0), sp1: 0, sp2: 0, spMax: 0, spFast: {}, pushMulti: 0, zoomMulti: 0, multiDrawn: 0 };
 }
 function merge(a, b) {
   for (const k of Object.keys(b)) {
@@ -233,7 +245,8 @@ if (!isMainThread) {
     const a = parts.reduce(merge, blank()), pct = (x, n) => (100 * x / Math.max(1, n)).toFixed(1) + '%';
     const realMin = a.drawn / 3600, sc = a.scores.sort((x, y) => x - y);
     const out = {
-      config: { mode: o.mode, aspect: o.aspect, speed: o.speed, latency: o.latency, set: o.set || '', timing: C.timing(o.mode) },
+      config: { mode: o.mode, aspect: o.aspect, speed: o.speed, latency: o.latency, set: o.set || '', timing: C.timing(o.mode), table: o.table, mb: o.mb },
+      pushInsWhileMulti: a.pushMulti, zoomedWhileMulti: pct(a.zoomMulti, a.multiDrawn), multiDrawnFrames: a.multiDrawn,
       games: a.games, balls: a.balls, gameMinutes: +(a.gameFrames / 3600).toFixed(1), realMinutes: +realMin.toFixed(1),
       approaches: a.entry, liveFlips: a.flip, earlyFlips: a.early, earlyBeyondPromise: a.beyond, flips: a.flips,
       cuts: a.cuts, cutsPer100Balls: +(100 * a.cuts / Math.max(1, a.balls)).toFixed(2), emergencies: a.emerg, emergenciesPer100Balls: +(100 * a.emerg / Math.max(1, a.balls)).toFixed(2), shortStills: a.short, shortStillsPer100Balls: +(100 * a.short / Math.max(1, a.balls)).toFixed(2), decidedDrains: a.decidedN, decidedSaved: a.decidedSaved,
@@ -245,7 +258,7 @@ if (!isMainThread) {
       bad: a.badList.slice(0, 12),
       medianScore: sc[sc.length >> 1] || 0, seconds: Math.round((Date.now() - t0) / 1000)
     };
-    out.pass = out.approaches.bad - out.approaches.badAfterCut === 0 && out.liveFlips.bad - out.liveFlips.badAfterCut === 0 && out.earlyFlips.bad - out.earlyFlips.badAfterCut === 0 && out.emergenciesPer100Balls < 1 && out.decidedSaved === 0;
+    out.pass = out.approaches.bad - out.approaches.badAfterCut === 0 && out.liveFlips.bad - out.liveFlips.badAfterCut === 0 && out.earlyFlips.bad - out.earlyFlips.badAfterCut === 0 && out.emergenciesPer100Balls < 1 && out.decidedSaved === 0 && out.pushInsWhileMulti === 0;
     console.log(JSON.stringify(out, null, 1));
     if (o.json) require('fs').writeFileSync(o.json, JSON.stringify(out, null, 1));
   }).catch((e) => { console.error(e); process.exit(1); });
