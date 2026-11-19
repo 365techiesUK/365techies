@@ -546,6 +546,29 @@
       + (S.mutations.length ? '<p class="rs-mu">Mutations: ' + esc(S.mutations.join(', ')) + '</p>' : '')
       + '<p class="rs-best">' + (nb ? '<b>NEW BEST RUN!</b>' : B ? 'Best run: ' + (B.won ? 'won' : 'round ' + B.reached) + ' · ' + fmt(B.score) : '') + '</p>';
     OVER.classList.add('runsum'); if (BAN) BAN.className = '';
+    endLines(S);
+  }
+  // THE END CARD (wave 3, #19): the result is the heading (overText); under PLAY AGAIN one true near-miss line and one
+  // next goal; everything else folded under "Details". run.js's own summary lines (nearMiss, next) when it has them.
+  function txt(v) { return v == null ? '' : typeof v === 'string' ? v : v.text ? String(v.text) : ''; }
+  function endLines(S) {
+    var el = document.getElementById('oLines'); if (!el) return;
+    var near = '', next = '';
+    if (S) {   // Ember Run
+      near = txt(S.nearMiss); next = txt(S.next);
+      var L = S.rounds && S.rounds[S.rounds.length - 1];
+      if (!near && L && !L.hit && !S.won) {
+        if (L.boss && L.hpMax && L.hp > 0) near = 'THE VOLCANO had ' + Math.ceil(L.hp) + ' of ' + L.hpMax + ' HP left.';
+        else if (L.target && L.score < L.target) near = fmt(L.target - L.score) + ' short of round ' + L.round + '\u2019s target.';
+      }
+      if (!next) next = S.won ? 'Next: tame it again, faster.' : 'Next: ' + (PR.BOSS && PR.BOSS[S.reached] ? 'beat THE VOLCANO in round ' + S.reached : 'clear round ' + S.reached) + '.';
+    } else {   // Classic: the distance to this speed's best, and the next thing to set off
+      var a = A3(), W = a && a.world, best = +(String(document.getElementById('oBest').textContent).replace(/\D/g, '')) || 0;
+      if (W && best > W.score) near = fmt(best - W.score) + ' short of your best.';
+      var st = (W && W.stats) || {};
+      next = !st.eruptions ? 'Next: fill the pressure and shoot the crater when it says ERUPT NOW.' : !st.multiballs ? 'Next: set off THE BIG ONE multiball.' : !st.jackpots ? 'Next: a JACKPOT during the multiball.' : !st.supers ? 'Next: three jackpots light the SUPER JACKPOT.' : 'Next: beat your best.';
+    }
+    el.innerHTML = (near ? '<p class="ol-near">' + esc(near) + '</p>' : '') + (next ? '<p class="ol-next">' + esc(next) + '</p>' : '');
   }
 
   A.start({
@@ -565,6 +588,9 @@
     step: stepGame,
     hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { var st = PR.status(RUN, W); h.wave = RUN.round; h.lives = st && st.balls != null ? st.balls : h.lives + (RUN.wind || 0); } return h; },
     waveLabel: function (W) { return W && W.run ? 'Round' : 'Ball'; },
+    // the Hall of Fame's check on a pinball score (api/games-hof.php, $ARCADE['pinball']): the invitation shows only for a
+    // score the server will take. KEEP IN STEP WITH THE PHP (rate, base) - these two numbers are the only copy here.
+    hofCap: { rate: 20000, base: 300000 },
     num: fmt,   // EMBER RUN: the round in the Ball chip
     // EMBER RUN keeps its own best scores (r1-r3), as Invaders keeps its two styles apart
     statKey: function (W) { return (W && W.run ? 'r' : 'v') + W.speed; },
@@ -587,6 +613,7 @@
         try { mode = PinDemo.frame(W, t, mode, dts) || mode; } catch (e) {}
       }
       if (mode !== 'play') letGo();   // paused, game over: nothing stays held
+      if (mode === 'over' && !RS.ended) { RS.ended = true; if (!(W && W.run && RUN)) endLines(null); } else if (mode !== 'over') RS.ended = false;
       runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
       if (mode !== 'title') W = active(W);   // INTO THE VOLCANO: draw the level the ball is on
       if (info.dw && want3d(info.set)) return draw3d(g, W, t, mode, info);
@@ -599,7 +626,7 @@
     frameAudio: function (W, kit, mode, set) { if (window.PinSound && typeof PinSound.frame === 'function') PinSound.frame(W, kit, mode, set); },
     quietSay: function () { return true; },   // the dot-matrix display shows the messages; the words are for screen readers
     overText: function (W) {
-      if (W && W.run && RUN) return RUN.won ? 'Run won!' : 'Run over: round ' + RUN.round;
+      if (W && W.run && RUN) return (RUN.won ? 'Run won! ' : 'Run over in round ' + RUN.round + ' · ') + fmt(W.score);
       var s = W.stats || {}, bits = [];
       if (s.eruptions) bits.push(plural(s.eruptions, 'eruption', 'eruptions'));
       if (s.craters) bits.push(plural(s.craters, 'crater', 'craters'));
@@ -667,7 +694,10 @@
       + '.rp-k{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:rgba(255,216,74,.16);color:#ffd84a;font:700 13px Archivo,sans-serif}'
       + '.rp-ic svg,.rs-chip svg{width:44px;height:44px;fill:none;stroke:#ff9a3a;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.rp-card.sel .rp-ic svg{stroke:#ffd84a}'
       + '.rp-t b{display:block;font:700 16px/1.15 Archivo,sans-serif;letter-spacing:.04em;color:#ffd84a}.rp-t b i{font-style:normal;color:#7fe8ff;font-size:13px}.rp-t small{display:block;margin-top:3px;font:500 13.5px/1.3 Archivo,sans-serif;color:#ffe9c9}'
-      + '#oRun{display:none}#oRun .rs-tiles{grid-template-columns:1fr 1fr}#ov_over.runsum #oRun{display:block}#ov_over.runsum .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35)}#ov_over.runsum .ovbox>.tiles{display:none}'
+      + '#oRun{display:none}#oRun .rs-tiles{grid-template-columns:1fr 1fr}#ov_over.runsum #oRun{display:block}#ov_over.runsum .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35)}#ov_over.runsum #oMore>.tiles{display:none}'
+      + '#ov_over .oAgain{margin:10px 0 6px}#ov_over .oAgain #oPlay{width:100%;min-height:62px;font-size:23px;letter-spacing:.04em}#ov_over .oAgain #oStep{width:100%;margin-top:8px}'
+      + '#oLines p{margin:6px 0;font:700 16px/1.3 Archivo,sans-serif}#oLines .ol-near{color:#ffd9b0}#oLines .ol-next{color:#ffd84a}'
+      + '#oMore{margin-top:8px;text-align:left}#oMore>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:center;font:700 15px Archivo,sans-serif;color:#a9b7d6;list-style:none}#oMore>summary::-webkit-details-marker{display:none}#oMore>summary::after{content:" \\25BE";margin-left:6px}#oMore[open]>summary::after{content:" \\25B4"}#oMore .row{justify-content:center}'
       + '#oRun .rs-k{margin:0 0 6px;font:700 13px Archivo,sans-serif;letter-spacing:.14em;color:#ff8a3a}#oRun .rs-pips{display:flex;justify-content:center;gap:6px;margin:4px 0 8px}'
       + '#oRun .rs-pips i{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.25)}#oRun .rs-pips i.bs{border-radius:4px}#oRun .rs-pips i.ok{background:#ffb000;border-color:#ffd84a}#oRun .rs-pips i.no{background:#5a0f08;border-color:#ff5a3c}'
       + '#oRun .rs-ups{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px 0 4px}#oRun .rs-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px 4px 6px;border-radius:99px;background:rgba(255,106,26,.16);border:1px solid rgba(255,140,50,.5);font:700 12.5px Archivo,sans-serif;color:#ffd9b0}'
@@ -683,7 +713,20 @@
     OVER = document.getElementById('ov_over');
     var why = document.getElementById('oWhy');
     OSUM = document.createElement('div'); OSUM.id = 'oRun';
-    if (why && why.parentNode) why.parentNode.insertBefore(OSUM, why.nextSibling);
+    if (why && why.parentNode) (function () {
+      var box = why.parentNode, play = document.getElementById('oPlay'), row = play && play.parentNode;
+      var top = document.createElement('div'); top.className = 'oAgain';
+      var nb = document.createElement('p'); nb.id = 'oNew'; nb.className = 'arc-new'; nb.hidden = true;   // (the cabinet's NEW HIGH SCORE line, made here so it sits under the heading)
+      var lines = document.createElement('div'); lines.id = 'oLines';
+      var det = document.createElement('details'); det.id = 'oMore'; det.innerHTML = '<summary>Details</summary>';
+      box.insertBefore(top, why.nextSibling); box.insertBefore(nb, top); top.appendChild(play);
+      box.insertBefore(lines, top.nextSibling);
+      var hof = document.getElementById('oHof'); if (hof) box.insertBefore(hof, lines.nextSibling);
+      det.appendChild(OSUM);
+      ['.tiles', '#oBadges', '#oTro'].forEach(function (q) { var n = box.querySelector(':scope > ' + q); if (n) det.appendChild(n); });
+      if (row) det.appendChild(row);
+      box.appendChild(det);
+    })();
     PICK.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-pick]'); if (b) choose(b.getAttribute('data-pick')); });
     // keys on the pick card: 1 2 3, or the arrows and Enter (before the cabinet's own keys, which would flip the frozen table)
     window.addEventListener('keydown', function (e) {

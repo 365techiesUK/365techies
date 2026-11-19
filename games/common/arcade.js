@@ -9,7 +9,9 @@
  * step(world, input), draw(g, world, t), hud(world) -> {score, lives, wave}, sound(name, kit, event), help (list), and
  * optionally titleText, keysText, touchText, legend [{rows, colour, text}], overText(world).
  * Opt-in (wave 3, 365 Pinball Hero; a game without them is exactly as before): num(n) -> the score as shown (thousands
- * separators), waveLabel(world) -> the word on the bar's wave chip and the game-over tile (Round in a run).
+ * separators), waveLabel(world) -> the word on the bar's wave chip and the game-over tile (Round in a run),
+ * hofCap {rate, base} -> the server's own check (api/games-hof.php) made before the Hall of Fame invitation, so it only
+ * shows for a score the server will take.
  * The game reports what happened by pushing onto world.events: a sound name, {sfx, ...} or {say: 'words'};
  * world.over = true ends the game. */
 (function () {
@@ -278,7 +280,8 @@
       $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       showOverlay('over'); lastHud = ''; hud();
       celebrateOver(h, prevBest);
-      if (runP && h.score > 0) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: Math.round(played / 60), run: runP });
+      var hsecs = Math.round(played / 60);
+      if (runP && h.score > 0 && (!D.hofCap || (window.HallOfFame.fits ? HallOfFame.fits(D.hofCap, h.score, h.wave, hsecs) : true))) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: hsecs, run: runP });
       else $('oHof').hidden = true;
       setTimeout(function () { if (mode === 'over') try { $('oPlay').focus({ preventScroll: true }); } catch (e) {} }, 600);
     }
