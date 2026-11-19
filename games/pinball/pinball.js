@@ -62,6 +62,7 @@
   function waiting(W) {
     if (!W || W.over || W.state !== 'play' || !W.balls || W.balls.length !== 1) return false;
     var T = tableOf(W), b = W.balls[0], SH = T.shooter;
+    if (!SH) return false;
     return b.m === 'free' && b.x > SH.x0 && b.y > SH.tip - T.BALL - 8 && Math.abs(b.vx) + Math.abs(b.vy) < 60;
   }
 
@@ -88,7 +89,7 @@
     // meanwhile is a flipper only)
     var pulling = false;
     for (var id in held) if (Object.prototype.hasOwnProperty.call(held, id) && held[id].pull) pulling = true;
-    var h = held[e.pointerId] = { side: sideOf(e.clientX, r), pull: !pulling && waiting(a.world), y0: e.clientY, t0: performance.now(), touch: e.pointerType !== 'mouse', sw: false };
+    var h = held[e.pointerId] = { side: sideOf(e.clientX, r), pull: !pulling && waiting(active(a.world)), y0: e.clientY, t0: performance.now(), touch: e.pointerType !== 'mouse', sw: false };
     try { stageEl.setPointerCapture(e.pointerId); } catch (er) {}
     apply();
     // a press can be over before the game's next step (a very quick tap): latched until the game has seen it
@@ -341,11 +342,43 @@
     var pp = input.pp, pl = input.pl, pr = input.pr;
     if (input.ppTap) input.pp = true; if (input.plTap) input.pl = true; if (input.prTap) input.pr = true;
     input.upTap = upTaps > 0 ? upTaps : undefined; upTaps = 0;
-    E.step(W, input);
+    var Wa = active(W);   // INTO THE VOLCANO: the level the ball is on (the surface itself without descent.js)
+    E.step(Wa, input);
     input.pp = pp; input.pl = pl; input.pr = pr; input.ppTap = input.plTap = input.prTap = false; input.upTap = undefined;
-    if (W.run && RUN) runStep(W);   // EMBER RUN: the target, the boss, the round's end
-    // the effects (fx.js) see this step's events before the cabinet plays their sounds and clears them
-    if (window.PinFX && W.events.length) { try { PinFX.events(W, W.events); } catch (e) {} }
+    if (DESC) { var cut = null; try { cut = DESC.update(W); } catch (e) { cut = null; } if (cut === 'down' || cut === 'up') hardCut(cut); }
+    if (W.run && RUN) runStep(W, Wa);   // EMBER RUN: the mission, the boss, the round's end (on the active world)
+    // the effects (fx.js) and the voice see this step's events before the cabinet plays their sounds and clears them
+    if (window.PinFX && Wa.events.length) { try { PinFX.events(Wa, Wa.events); } catch (e) {} }
+    if (window.PinVoice && typeof PinVoice.events === 'function' && Wa.events.length) { try { PinVoice.events(Wa, Wa.events); } catch (e) {} }
+    if (Wa !== W && Wa.events.length) { for (var i = 0; i < Wa.events.length; i++) W.events.push(Wa.events[i]); Wa.events.length = 0; }   // (the cabinet plays the surface's list)
+  }
+
+  // ---------------------------------------------------------------- INTO THE VOLCANO (descent.js, window.PinDescent; wave 3)
+  // The cabinet keeps the surface world; descent.js holds the level below. Every step and every frame use D.active(W),
+  // the world the ball is on. A change of level is a hard cut: the screen goes black for a moment (0.25 s), never a
+  // camera flight. No descent.js on the page: the surface only, exactly as before. A new descent for every new world
+  // (a new game, each Ember Run round); none on the title screen.
+  var DESC = null, CUT = null;
+  function makeDesc(W, speed, seed) {
+    DESC = null;
+    var P = window.PinDescent;
+    if (!P || typeof P.create !== 'function' || !W || W.demo) return;
+    try { DESC = P.create(E, { speed: speed || W.speed, seed: seed != null ? seed : (W.seed || 1) }); } catch (e) { DESC = null; if (window.console) console.info('365 Pinball Hero: no levels (' + ((e && e.message) || e) + ')'); }
+  }
+  function active(W) {
+    if (!DESC || !W || W.demo) return W;
+    var A2 = null; try { A2 = DESC.active(W); } catch (e) { A2 = null; }
+    return A2 || W;
+  }
+  function depth() {   // { depth, name, clock, goal, cleared } or null
+    if (!DESC || typeof DESC.status !== 'function') return null;
+    try { return DESC.status() || null; } catch (e) { return null; }
+  }
+  function hardCut(dir) {
+    G3.slow = 0; letGo();
+    if (!CUT) return;
+    CUT.className = ''; void CUT.offsetWidth; CUT.className = 'go';
+    if (window.PinCam && typeof PinCam.cut === 'function') { try { PinCam.cut(dir); } catch (e) {} }
   }
 
   // ---------------------------------------------------------------- EMBER RUN (run.js, window.PinRun; 30 Oct 2026, owner: "change how it plays")
@@ -359,12 +392,13 @@
   function runOn(set) { return !!(PR && EMBER && !(set && set.game === 'classic')); }
   function runWorld(R) { var W = PR.startRound(R); if (W) W.run = true; return W; }
   function swapWorld(W, N) { Object.keys(W).forEach(function (k) { delete W[k]; }); Object.assign(W, N); }
-  function runStep(W) {
-    var ph = PR.update(RUN, W);
+  function runStep(W, Wa) {
+    Wa = Wa || W;
+    var ph = PR.update(RUN, Wa);
     runNews(W);
     if (ph === 'pick') {
       W.over = false;   // (a round's end, not the game's)
-      for (var i = 0; i < W.events.length; i++) if (W.events[i] === 'over') W.events[i] = 'extra';   // a cheer, not the game-over sound
+      for (var i = 0; i < Wa.events.length; i++) if (Wa.events[i] === 'over') Wa.events[i] = 'extra';   // a cheer, not the game-over sound
       setTimeout(showPick, 0);
     } else if (ph === 'over' || ph === 'won') setTimeout(showSummary, 0);   // (after the cabinet has shown its card)
   }
@@ -443,6 +477,7 @@
     var a = A3(); if (!RUN || RUN.phase !== 'pick' || !a || !a.world || !PR.pick(RUN, id)) return false;
     var N = runWorld(RUN); if (!N) return false;
     swapWorld(a.world, N); G3.slow = 0; RS.key = ''; PICK.hidden = true; letGo();
+    makeDesc(a.world, a.world.speed, (RUN.seed || 1) * 31 + RUN.round);
     try { screenEl.focus({ preventScroll: true }); } catch (e) {}
     return true;
   }
@@ -464,8 +499,11 @@
     newWorld: function (speed, set) {   // a different game every time; EMBER RUN: a new run, its first round
       G3.slow = 0; RS.key = ''; if (PICK) PICK.hidden = true; if (OVER) OVER.classList.remove('runsum');
       var seed = (Date.now() % 2147483646) + 1;
-      if (!runOn(set)) { RUN = null; return E.newWorld(speed, set, seed); }
-      RUN = PR.newRun(seed, speed); return runWorld(RUN);
+      var NW;
+      if (!runOn(set)) { RUN = null; NW = E.newWorld(speed, set, seed); }
+      else { RUN = PR.newRun(seed, speed); NW = runWorld(RUN); }
+      makeDesc(NW, speed, seed);
+      return NW;
     },
     step: stepGame,
     hud: function (W) { var h = E.hud(W); if (W && W.run && RUN && !W.demo) { h.wave = RUN.round; h.lives += RUN.wind; } return h; },   // EMBER RUN: the round in the Ball chip
@@ -491,6 +529,7 @@
       }
       if (mode !== 'play') letGo();   // paused, game over: nothing stays held
       runHud(W, mode);   // EMBER RUN's round line and bar (hidden otherwise)
+      if (mode !== 'title') W = active(W);   // INTO THE VOLCANO: draw the level the ball is on
       if (info.dw && want3d(info.set)) return draw3d(g, W, t, mode, info);
       hide3d();
       if (window.PinFlat && typeof PinFlat.draw === 'function') return PinFlat.draw(g, W, t, mode, info);
@@ -525,6 +564,13 @@
   if (!stageEl || !screenEl) return;
   // (capture: this runs before the cabinet's own screen press, and stops it when the press is a flipper's)
   stageEl.addEventListener('pointerdown', onDown, true);
+  (function () {   // INTO THE VOLCANO's hard cut: a black frame over the table for a quarter of a second
+    var st = document.createElement('style');
+    st.textContent = '#pinCut{position:absolute;inset:0;z-index:3;background:#000;opacity:0;pointer-events:none}#pinCut.go{animation:pinCut .25s steps(1,end)}@keyframes pinCut{0%{opacity:1}100%{opacity:0}}';
+    document.head.appendChild(st);
+    CUT = document.createElement('div'); CUT.id = 'pinCut'; CUT.setAttribute('aria-hidden', 'true');
+    var wr = document.getElementById('screenwrap'); if (wr) wr.appendChild(CUT);
+  })();
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (n) { window.addEventListener(n, onUp, true); });
   window.addEventListener('pointermove', onMove, true);
   // the two Flip buttons read the same, so say which is which
@@ -603,5 +649,6 @@
       if (RUN.boss) { if (hit) { RUN.hp = 0; RUN.hit = true; } } else W.score = hit ? Math.max(W.score, RUN.start + RUN.target) : RUN.start;
       W.over = true; W.state = 'over'; return true;
     } };
+  window.PinLevels = { get desc() { return DESC; }, active: function () { var a = A3(); return a && a.world ? active(a.world) : null; }, status: depth, cut: hardCut };
   window.PinControls = { sideOf: sideOf, waiting: waiting, letGo: letGo, held: function () { return { pointers: held, left: keysL, right: keysR }; } };
 })();
