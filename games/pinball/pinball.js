@@ -516,7 +516,7 @@
   }
   var PR = window.PinRun, RUN = null, RS = { sel: 0, key: '', flash: 0, hitT: 0, pu: 0 }, HUD = null, BAN = null, PICK = null, OSUM = null, OVER = null;
   function runOn(set) { return !!(PR && EMBER && !(set && set.game === 'classic')); }
-  function runWorld(R) { var W = PR.startRound(R); if (W) W.run = true; return W; }
+  function runWorld(R) { var W = PR.startRound(R); if (W) { W.run = true; W.runRound = R.round; } return W; }   // (runRound: for the display, ROUND n)
   function swapWorld(W, N) { Object.keys(W).forEach(function (k) { delete W[k]; }); Object.assign(W, N); }
   function runStep(W, Wa) {
     Wa = Wa || W;
@@ -538,8 +538,8 @@
       if (n.kind === 'win' || n.kind === 'stageclear') RS.flash = performance.now();
       var sub = n.small || '', m = RUN.mutNext;
       if (n.kind === 'round' || n.kind === 'boss' || n.kind === 'stageclear') {
-        if ((n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1) sub = 'MUTATION: ' + m.name;
-        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (RUN.target && !(RUN.mission || PR.status(RUN, W).mission) ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, n.kind === 'round' ? sub.replace(/^[^|]*\|/, '') : sub.split('|')[0], n.kind);
+        var mut = (n.kind === 'round' || n.kind === 'boss') && m && RUN.round > 1 ? 'MUTATION: ' + m.name : '';
+        banner(n.kind === 'round' ? 'ROUND ' + RUN.round + (RUN.target && !(RUN.mission || PR.status(RUN, W).mission) ? ' · TARGET ' + fmt(RUN.target) : '') : n.big, n.kind === 'round' ? mut : mut || sub.split('|')[0], n.kind);
       } else W.dmd = { big: n.big, small: n.small || '', t: 150, n: 0 };
     }
     N.length = 0;
@@ -827,7 +827,7 @@
       + '#runHud .rh-nt b{color:#ffb347;margin-right:4px}#runHud .rh-nt small{font-size:1em;font-weight:600;color:#ffd9b0}#runHud .rh-g{display:inline-flex;gap:2px;flex:none}#runHud .rh-g u{width:.7em;height:.55em;border-radius:2px;background:rgba(255,255,255,.18)}#runHud .rh-g u.on{background:#ff9a2a;box-shadow:0 0 5px #ff7a1a}'
       + '#runHud .rh-depth{display:flex;align-items:baseline;gap:5px;margin-top:4px;color:rgba(255,233,201,.55)}#runHud .rh-depth .at{color:#ffd84a}#runHud .rh-depth .q{opacity:.5}#runHud .rh-depth i{font-style:normal;opacity:.6}#runHud .rh-lava{margin-left:auto;color:#ff6a3c;font-variant-numeric:tabular-nums}'
       + '#runBan{position:absolute;left:4%;right:4%;top:24%;z-index:2;pointer-events:none;text-align:center;opacity:0}#runBan b{display:block;font:600 max(22px,calc(var(--pu,1px)*21))/1.05 "Clash Display",Archivo,sans-serif;letter-spacing:.03em;color:#ffd84a;text-shadow:0 0 14px rgba(255,106,26,.9),0 2px 3px #000}'
-      + '#runBan small{display:block;margin-top:6px;font:700 max(12px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
+      + '#runBan small{display:block;margin-top:6px;font:700 max(15px,calc(var(--pu,1px)*9))/1.25 Archivo,sans-serif;color:#ffe9c9;text-shadow:0 1px 3px #000,0 0 6px #000}#runBan.rb-boss b{color:#ff5a3c}#runBan.rb-up b{color:#7fe8ff}'
       + '#runBan.rb-go{animation:rbGo 1.2s ease-out forwards}@keyframes rbGo{0%{opacity:0;transform:scale(1.2)}12%{opacity:1;transform:scale(1)}75%{opacity:1}100%{opacity:0}}'
       + '@media (prefers-reduced-motion:reduce){#runBan.rb-go{animation:rbFade 1.2s linear forwards}@keyframes rbFade{0%,75%{opacity:1}100%{opacity:0}}#runHud.flash .rh-bar,#runHud.shake .rh-bar{animation:none}}'
       + '#ov_pick.pz{display:none}#ov_pick .ovbox{border-color:rgba(255,122,40,.75);box-shadow:0 0 30px rgba(255,90,20,.35);background:rgba(18,6,2,.92)}#ov_pick .rp-h{color:#ffd84a}#ov_pick .rp-s{color:#ffd9b0;font-size:14px;margin:4px 0 8px}'
