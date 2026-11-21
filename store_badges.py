@@ -28,7 +28,34 @@ def badge(folder):
             'loading="lazy" style="display:block;height:44px;width:auto"></a>' % (sid, name))
 
 
+# 21 Nov 2026 (owner: "it should be on there, I've had it on there about 3 times"): the Virgin pages name 365 PC
+# Manager in a sentence but have no download button, so the button rule above never reached them. On these pages the
+# badge goes on its own line after the first paragraph of the main content that names the app or links to the mover.
+VIRGIN_PAGES = (
+    'move-my-virgin-email',
+    'ntlworld-blueyonder-email-not-working',
+    'virgin-media-email-wont-add-to-new-outlook',
+    'move-virgin-media-email-to-gmail',
+    'virgin-email-mover',
+    'virgin-media-email-moving-to-junara',
+)
+_APP_PARA = re.compile(r'<p\b[^>]*>(?:(?!</p>).)*?(?:365 PC Manager|365 Mail Mover|href="/virgin-email-mover/)(?:(?!</p>).)*?</p>', re.S)
+
+
+def _virgin_badge(slug, html):
+    if slug.strip('/') not in VIRGIN_PAGES or re.search(r'ms-store-badge[^>]*' + APPS['pcm'][0], html):
+        return html
+    a = html.find('<main'); b = html.find('</main>', a)
+    m = _APP_PARA.search(html, a, b) if a >= 0 and b > a else None
+    if not m:
+        print('store_badges: no paragraph naming the app on /%s/, badge NOT added' % slug.strip('/'))
+        return html
+    row = '<p class="ms-store-badge-row" style="margin:.25rem 0 1rem">' + badge('pcm') + '</p>'
+    return html[:m.end()] + row + html[m.end():]
+
+
 def add_badges(slug, html):
+    html = _virgin_badge(slug, html)
     if '/downloads/' not in html:
         return html
     out = []; pos = 0
