@@ -1,11 +1,11 @@
 {
-  "ver": 49,
-  "version": "1.0.49",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v49.exe",
-  "sha256": "bb409bd1197bcbd10f3e01d8ae230d7b5da919fbc573c40001cf57e2659a29a2",
-  "notes": "Version 36.9: easier to get started. PC Manager now opens with one big Start my free service button, and existing 365 Techies customers can sign in straight from the top of the window - with their booking email, a key, or by simply asking us to link it. Safety settings now say whether you use a password manager (it will not fill in your passwords on a fake website) and how you sign in to Windows. And the full service screen follows your colours, light or dark. Signed by 365 Techies Ltd.",
+  "ver": 50,
+  "version": "1.0.50",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v50.exe",
+  "sha256": "71079875f0c1ebfe2b99cc2bead8a4f02c09a211caa1a58d92a8d5b11ecf0831",
+  "notes": "Version 36.9.1: moving Virgin Media email is simpler. The Virgin email page now points you straight to our free Email Mover add-on, which copies your email from the browser you already use, so there is nothing to sign in to. And when your move is finished, you can leave a review in the Microsoft Store to help other Virgin customers find the app. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v49.exe",
-    "sha256": "54e04d1cbcbf826d5798a9fd9276a2d645a5ae01301d301b7da974903f2e3eb8"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v50.exe",
+    "sha256": "ae411cb9886ad778fa3d68386ca42604aa304bc31cbe0658174201bfcedd075b"
   }
 }
