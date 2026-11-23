@@ -301,6 +301,16 @@ MANX_FAQ_TAIL = (' Junara hasn&rsquo;t published a Virgin price. The only Junara
 MANX_WHO_TAIL = (' It also took over the manx.net email addresses from Manx Telecom in the Isle of Man in 2025.'
                  if SHOW_MANX_PRECEDENT else '')
 
+# 23 Nov 2026: MoneySavingExpert (5 Nov 2026) reported the prices Virgin customers were shown in the Junara sign-up: GBP 59 to
+# GBP 99 a year per mailbox after the 99p trial. User reports, not a published price - always attributed, never as Virgin's.
+# Our biggest search group for this page is 'junara email cost / pricing' (Search Console, 3 months to 21 Nov: 334 clicks).
+MSE_SRC = '<a href="https://www.moneysavingexpert.com/news/2026/11/virgin-media-broadband-email-closure/" ' + _EXT + '>MoneySavingExpert, 5 November 2026</a>'
+MSE_COST_HTML = ('<p><strong>What Virgin customers are being quoted:</strong> MoneySavingExpert reported that users have seen '
+                 '<strong>&pound;59 to &pound;99 a year for each mailbox</strong> once the 99p trial ends (' + MSE_SRC + '). That is what '
+                 'people were shown in the sign-up, not a price Virgin or Junara has confirmed, so check yours there before you commit. '
+                 'Two mailboxes at those prices would be &pound;118 to &pound;198 a year, every year.</p>')
+MSE_FAQ_TAIL = (' MoneySavingExpert reported in November 2026 that users have been shown &pound;59 to &pound;99 a year for each '
+                'mailbox once the trial ends; neither company has confirmed it.')
 _SRC_VMO2 = '<a href="https://news.virginmediao2.co.uk/helping-customers-understand-upcoming-changes-to-their-virgin-media-email-services/" ' + _EXT + '>Virgin Media O2</a>'
 _SRC_VM = '<a href="https://www.virginmedia.com/help/email-1/email-service-change" ' + _EXT + '>Virgin Media</a>'
 _SRC_JN = '<a href="https://junara.com/virginmedia/" ' + _EXT + '>Junara</a>'
@@ -310,6 +320,7 @@ JUNARA_FACTS = [
     ("Which addresses", "virginmedia.com, blueyonder.co.uk, ntlworld.com and virgin.net", _SRC_VM),
     ("Free period", "12 months if you still have Virgin broadband, TV or a landline, plus a 99p transfer fee; 18 months if you have told Virgin you need extra support", _SRC_VMO2),
     ("After that", "A paid plan, monthly or yearly, for each mailbox. The price is shown only in the sign-up; aliases come free", _SRC_JN),
+    ("What people are quoted", "&pound;59 to &pound;99 a year per mailbox after the trial, from what users were shown in the sign-up (not confirmed by Virgin or Junara)", '<a href="https://www.moneysavingexpert.com/news/2026/11/virgin-media-broadband-email-closure/" ' + _EXT + '>MoneySavingExpert</a>'),
     ("Already left Virgin", "Paid from the start", _SRC_VMO2),
 ] + ([("A price to compare", "Isle of Man, 2025: &pound;6.50 a month or &pound;65 a year per mailbox (discounted)", '<a href="https://www.ispreview.co.uk/index.php/2025/10/manx-telecom-scraps-free-email-and-migrates-users-to-paid-platform.html" ' + _EXT + '>ISPreview</a>')] if SHOW_MANX_PRECEDENT else []) + [
     ("Your deadline", "At least 45 days from Virgin&rsquo;s first email: the date is in that email", _SRC_VM),
