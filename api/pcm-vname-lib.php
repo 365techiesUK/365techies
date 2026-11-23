@@ -7,7 +7,7 @@
 function pcm_vname($ver, $vn = '')
 {
     if (is_string($vn) && preg_match('/^\d{1,3}(\.\d{1,3}){0,2}$/', $vn)) return $vn;
-    static $names = array(37 => '36.1', 38 => '36.2', 40 => '36.3', 41 => '36.4', 42 => '36.4.1', 43 => '36.4.2', 44 => '36.5', 45 => '36.5.1', 46 => '36.6', 47 => '36.7', 48 => '36.8', 49 => '36.9', 50 => '36.9.1');   // (build 39 was never released: its changes went out in 40; 42-43 = the 17 Oct 2026 fixes; 44 = bought from us; 45 = the Techies One page fix, 19 Oct 2026; 46 = battery history + Intel RST, 22 Oct 2026; 47 = Suggest an idea + Rate us, 29 Oct 2026; 48 = the Virgin email app password way, 31 Oct 2026; 49 = easy customer sign-in, Start my free service, password advice, light service window, Nov 2026; 50 = Virgin page points to the Email Mover add-on + Store review ask, 21 Nov 2026)
+    static $names = array(37 => '36.1', 38 => '36.2', 40 => '36.3', 41 => '36.4', 42 => '36.4.1', 43 => '36.4.2', 44 => '36.5', 45 => '36.5.1', 46 => '36.6', 47 => '36.7', 48 => '36.8', 49 => '36.9', 50 => '36.9.1', 51 => '36.9.2');   // (build 39 was never released: its changes went out in 40; 42-43 = the 17 Oct 2026 fixes; 44 = bought from us; 45 = the Techies One page fix, 19 Oct 2026; 46 = battery history + Intel RST, 22 Oct 2026; 47 = Suggest an idea + Rate us, 29 Oct 2026; 48 = the Virgin email app password way, 31 Oct 2026; 49 = easy customer sign-in, Start my free service, password advice, light service window, Nov 2026; 50 = Virgin page points to the Email Mover add-on + Store review ask, 21 Nov 2026; 51 = Virgin move polish: no address to type with a copy, Google app password help + phone QR, 23 Nov 2026)
     $v = (int)$ver;
     if ($v <= 0) return '';
     return isset($names[$v]) ? $names[$v] : (string)$v;
