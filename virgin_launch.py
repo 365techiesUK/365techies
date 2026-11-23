@@ -148,16 +148,22 @@ VIRGIN_SHOTS = {
     # 7 Oct 2026 (the /virgin-email-mover/ redo): the add-on route's two app screens (make_pics.py, same frame)
     "found": ("It finds your copy", "The add-on's copy is in Downloads, so Check my Virgin email reads it: no Virgin sign-in.",
               "365 PC Manager&rsquo;s Virgin email page: your Virgin email is already copied to this PC, with a Check my Virgin email button (a sample mailbox)"),
-    "gmail": ("Make a Google app password, and start", "The app's button opens Google's page; type in your Gmail and the 16 letters.",
-              "365 PC Manager&rsquo;s Gmail step: how to make a Google app password, then boxes for your Gmail address and the app password"),
+    "gmail": ("Make a Google app password, and start", "The app's button opens Google's page, or scan its square with your phone; type in your Gmail and the 16 letters.",
+              "365 PC Manager&rsquo;s start step: your Gmail address, the Google app password box, Moving: yourname@virginmedia.com "
+              "(the copy in your Downloads folder) and the Start moving my email button (a sample mailbox)"),
 }
+# 23 Nov 2026 (36.9.2): the gmail step's picture is version 36.9.2's screen - no Virgin address box once the email is copied,
+# so no Virgin window - laid into the v36 picture's own laptop frame (scratchpad d7d6b3c5 pcm51/make_gmail_pic.py). The
+# other screens are unchanged since v36.
+VIRGIN_SHOT_VER = {"gmail": "v51"}
 VIRGIN_OG = "/images/pcm-virgin-og-v30.jpg"
 
 
 def virgin_shot(key, sizes):
     t, x, alt = VIRGIN_SHOTS[key]
-    return (f'<img src="/images/pcm-virgin-{key}-v36-1200.webp" srcset="/images/pcm-virgin-{key}-v36-1200.webp 1200w, '
-            f'/images/pcm-virgin-{key}-v36.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
+    v = VIRGIN_SHOT_VER.get(key, "v36")
+    return (f'<img src="/images/pcm-virgin-{key}-{v}-1200.webp" srcset="/images/pcm-virgin-{key}-{v}-1200.webp 1200w, '
+            f'/images/pcm-virgin-{key}-{v}.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
 
 
 def _vmc_stuck():
@@ -596,8 +602,10 @@ def _vem_steps(setup_url):
          "", "lap", virgin_shot("check", _LAP)),
         ("Make a Google app password, and start",
          "On the Gmail account you&rsquo;re moving to, switch on 2-Step Verification and make an app password: the "
-         "app&rsquo;s <b>Open Google app passwords</b> button takes you there, and <a href=\"/" + GAPP_SLUG + "/\">our "
-         "guide</a> shows every screen. Type in your Gmail address and the 16 letters, then press <b>Start moving my email</b>.",
+         "app&rsquo;s <b>Open Google app passwords</b> button takes you there. If this computer is refused, point your "
+         "phone&rsquo;s camera at the square beside it and do it on your phone. <a href=\"/" + GAPP_SLUG + "/\">Our "
+         "guide</a> shows every screen. Type in your Gmail address and the 16 letters, then press <b>Start moving my email</b>. "
+         "There&rsquo;s no Virgin address to type: it moves the copy in your Downloads folder.",
          "", "lap", virgin_shot("gmail", _LAP)),
         ("It carries on by itself",
          "Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days. Use your PC as normal. If you switch it "
