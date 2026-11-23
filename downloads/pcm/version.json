@@ -1,11 +1,11 @@
 {
-  "ver": 50,
-  "version": "1.0.50",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v50.exe",
-  "sha256": "71079875f0c1ebfe2b99cc2bead8a4f02c09a211caa1a58d92a8d5b11ecf0831",
-  "notes": "Version 36.9.1: moving Virgin Media email is simpler. The Virgin email page now points you straight to our free Email Mover add-on, which copies your email from the browser you already use, so there is nothing to sign in to. And when your move is finished, you can leave a review in the Microsoft Store to help other Virgin customers find the app. Signed by 365 Techies Ltd.",
+  "ver": 51,
+  "version": "1.0.51",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v51.exe",
+  "sha256": "84bfa08568cc496c2c98f816c63f8c50a51d16352651884fa92f477b6b6152e7",
+  "notes": "Version 36.9.2: moving Virgin Media email is easier still. Once your email is copied there is no Virgin address to type, the Google app password step has its own buttons and a QR code to do it on your phone, with simple pictures for iPhone, iPad and Android, and the finished screen shows how to read your new Gmail on your phone or in Outlook. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v50.exe",
-    "sha256": "ae411cb9886ad778fa3d68386ca42604aa304bc31cbe0658174201bfcedd075b"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v51.exe",
+    "sha256": "3c8fd57b51c2f219b49ec4e370025b71c7f725e4e0e2360049c209c9cbdc42b0"
   }
 }
