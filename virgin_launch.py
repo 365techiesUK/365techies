@@ -463,7 +463,20 @@ VEM_VIDEO_TALL = "/images/vem-howto-tall-v3.mp4"
 VEM_POSTER = "/images/vem-howto-poster-v2.webp"
 VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
 VEM_VIDEO_SECS = 89   # the lede says "An 89-second video": mind the a/an if this changes
-VEM_VIDEO_DATE = "2026-11-23"
+VEM_VIDEO_DATE = "2026-11-23T23:00:00+00:00"   # with a timezone: GSC flags a bare date as a non-critical video issue
+# 23 Nov 2026: the film's spoken words, for search and AI answers (its key moments are chapters in its YouTube
+# description, which Google reads for an embedded YouTube film - no Clip markup here: a Clip url must sit on the video's own path).
+VEM_TRANSCRIPT = ("Here's how to move your Virgin Media email to Gmail, for free. First, add our free 365 Email Mover to Chrome, "
+                  "from the Chrome Web Store. Open your Virgin email in Chrome, as you normally do. Click the 365 button at the "
+                  "top right, then press Copy my email to this PC. It copies every folder onto your PC. Just leave the tab open. "
+                  "Your Virgin mailbox isn't changed at all. When it says copied, your email is saved in your Downloads folder. "
+                  "Now open 365 PC Manager. Go to Internet and email, then Virgin email, free. Press Check my Virgin email. It "
+                  "finds your copy, so there's no need to sign in to Virgin. You'll see how many emails you have, and how long "
+                  "the move will take. Make a Google app password, then type it in with your Gmail address. If Google won't "
+                  "let you on the computer, point your phone's camera at the square, and do it there. Then press Start moving "
+                  "my email. It carries on by itself, every day. Gmail only takes about 500 MB a day, so a big mailbox takes a "
+                  "few days. When it's finished, every folder is checked off in Gmail. It's free, for Windows 10 and 11. Or if "
+                  "you'd rather, we'll do it all for you. Just ring us on 01202 775566.")
 # 19 Oct 2026 (owner: "make it public and switch the page to YouTube"): the same wide film on YouTube. Computers and
 # tablets play it from there (a play is a view on the channel); an upright phone kept our phone-shaped cut, because the
 # wide film's text is tiny there (until 25 Oct: VEM_YT_SHORT). Without the script the page plays our own wide copy.
@@ -498,6 +511,12 @@ TOOL_FAQS = [
      "It is how Gmail lets a program on your PC put email into your account. You make it once in your Google Account, "
      "which needs 2-Step Verification switched on, and you can delete it when the move has finished. Our <a href=\"/"
      + GAPP_SLUG + "/\">step-by-step guide</a> shows you how."),
+    ("What if Google won't let me make the app password?",
+     "If Google says it couldn&rsquo;t verify it&rsquo;s you, it doesn&rsquo;t trust that computer yet. 365 PC Manager shows "
+     "a square code beside the button: point your phone&rsquo;s camera at it and Google&rsquo;s own App passwords page opens "
+     "on your phone, with nothing to type, which often works when the computer is refused. Make it there, then type the 16 "
+     "letters into the PC. The app shows the page&rsquo;s address beside the square, so you can check it is google.com. A "
+     "brand-new Gmail account may have to wait a few days before Google allows it."),
     ("Does it work in Microsoft Edge?",
      "Yes. Edge adds extensions from the Chrome Web Store: open the 365 Email Mover&rsquo;s page in Edge, press Allow "
      "extensions from other stores when Edge asks, then Add to Chrome. Then open your Virgin email in Edge and carry on "
@@ -941,6 +960,7 @@ def virgin_tool_page(setup_url):
                  "thumbnailUrl": [bp.SITE + VEM_POSTER, bp.SITE + "/images/vem-howto-poster-v2.jpg"],
                  "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M29S",
                  "contentUrl": bp.SITE + VEM_VIDEO, "embedUrl": "https://www.youtube.com/embed/" + VEM_YT,
+                 "transcript": VEM_TRANSCRIPT, "inLanguage": "en-GB",
                  "publisher": {"@type": "Organization", "name": "365 Techies", "logo": {"@type": "ImageObject", "url": bp.SITE + "/logo.jpg"}}}
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d, image=VIRGIN_OG),
                          video,
