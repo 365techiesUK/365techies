@@ -456,16 +456,18 @@ def guide_task_head(d, crumbs):
 # scene lasts as long as its line, and there is a phone-shaped 720x1280 cut (phones get it: the wide one's text is tiny there).
 # 25 Oct 2026 (owner: "remake it with voice E"): v4 = v3's pictures and words re-voiced in voice E (v3's Kokoro "Emma"
 # sounded slow), 10% quicker, with music - reels/vem-revoice-2026-10-25. The tall cut below is still v3 (phones play the Short).
-VEM_VIDEO = "/images/vem-howto-v4.mp4"
+# 23 Nov 2026 (owner: "do both"): v5 = v4 with 365 PC Manager 36.9.2's screens for the Google app password and Start steps
+# (no Virgin address box once the email is copied) and a new "Easier on your phone" QR scene - reels/vem-v5-2026-11-23.
+VEM_VIDEO = "/images/vem-howto-v5.mp4"
 VEM_VIDEO_TALL = "/images/vem-howto-tall-v3.mp4"
 VEM_POSTER = "/images/vem-howto-poster-v2.webp"
 VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
-VEM_VIDEO_SECS = 83   # the lede says "An 83-second video": mind the a/an if this changes
-VEM_VIDEO_DATE = "2026-10-25"
+VEM_VIDEO_SECS = 89   # the lede says "An 89-second video": mind the a/an if this changes
+VEM_VIDEO_DATE = "2026-11-23"
 # 19 Oct 2026 (owner: "make it public and switch the page to YouTube"): the same wide film on YouTube. Computers and
 # tablets play it from there (a play is a view on the channel); an upright phone kept our phone-shaped cut, because the
 # wide film's text is tiny there (until 25 Oct: VEM_YT_SHORT). Without the script the page plays our own wide copy.
-VEM_YT = "2X93Uch0UEI"   # v4 on YouTube (25 Oct); v3 was QxO1TYRihkg
+VEM_YT = "5VHAVUCAA_8"   # v5 on YouTube (23 Nov, 36.9.2 screens); v4 was 2X93Uch0UEI, v3 QxO1TYRihkg
 # 25 Oct 2026 (owner: "switch the Mover page to YouTube"): an upright phone now plays our tall Short from YouTube
 # ("Virgin Media Email Closing? Move It to Gmail Free", 31 s, public 25 Oct) - every play on the page is a channel view.
 # It shows the app half only, so a line under it on phones links the full 85-second film (which starts with the add-on).
@@ -937,7 +939,7 @@ def virgin_tool_page(setup_url):
                  "description": ("The 365 Email Mover add-on copies a Virgin Media mailbox in Chrome, then the free 365 PC Manager "
                                  "app moves it into Gmail and checks every folder arrived. Real screens, a made-up sample mailbox, a spoken guide."),
                  "thumbnailUrl": [bp.SITE + VEM_POSTER, bp.SITE + "/images/vem-howto-poster-v2.jpg"],
-                 "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M23S",
+                 "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M29S",
                  "contentUrl": bp.SITE + VEM_VIDEO, "embedUrl": "https://www.youtube.com/embed/" + VEM_YT,
                  "publisher": {"@type": "Organization", "name": "365 Techies", "logo": {"@type": "ImageObject", "url": bp.SITE + "/logo.jpg"}}}
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d, image=VIRGIN_OG),
